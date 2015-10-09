@@ -3,7 +3,7 @@ function cdir = directional_spreading(directions,pdir,ms,varargin)
 %
 %   directional_spreading(directions,pdir,ms,<keyword,value>)
 % 
-% where pdir is the peak direction, and ms is the power in cos(directions-pdir)^ms
+% where scalar pdir is the peak direction, and scalar ms is the power in cos(directions-pdir)^ms
 %
 % By default degrees are used, otherwise use directional_spreading(...,'units','rad)
 %

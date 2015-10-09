@@ -25,7 +25,7 @@ function varargout = jonswap2(f,varargin)
 %
 %    frq = linspace(0.03,.3,30);
 %    deg  = [0 30 55 75 90:10:180 195 215 240 270]; % linspace(0,360,24);
-%    jn2 = jonswap(frq,'Hm0',1,'Tp',10,'pdir',135,'directions',deg,'ms',6);
+%    jn2 = jonswap2(frq,'Hm0',1,'Tp',10,'pdir',135,'directions',deg,'ms',6);
 %    subplot(1,2,1);pcolorcorcen(frq,deg,jn2,[.5 .5 .5]);ylim([0 360])
 %    title(4*sqrt(trapz(frq,trapz(deg,jn2))))
 %    xlabel('frequency [Hz]');ylabel('Direction [deg]');
@@ -121,12 +121,12 @@ if isempty(OPT.Tp );error('Tp  required');end
 
 %% 2D 
 
-    if     sum([any(OPT.pdir) any(OPT.ms) any(OPT.directions)])==0
-    elseif sum([any(OPT.pdir) any(OPT.ms) any(OPT.directions)])==3
+    if isscalar(OPT.ms)
+        OPT.ms = repmat(OPT.ms,size(f));
+    end
         
-        if isscalar(OPT.ms)
-            OPT.ms = repmat(OPT.ms,size(f));
-        end
+    if     sum([isscalar(OPT.pdir) any(OPT.ms) any(OPT.directions)])==0
+    elseif sum([isscalar(OPT.pdir) any(OPT.ms) any(OPT.directions)])==3
         
         jon2 = repmat(jon,[length(OPT.directions) 1]);
         for iff=1:length(f)

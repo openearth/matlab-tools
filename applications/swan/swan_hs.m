@@ -54,6 +54,8 @@ function Hs = swan_hs(f,E,varargin)
    %% contribution of known spectrum to total energy density
    %  Note that SWAN uses N = E/sigma as variable
    %  so the formulations in SWAN subroutine SWOEXA have an extra power of f
+   
+   E(isnan(E))=0;
 
       m0        = trapz(f(:),E(:));
      %m1        = trapz(f(:),E(:).*f(:));
