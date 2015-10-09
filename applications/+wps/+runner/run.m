@@ -187,18 +187,24 @@ while 1
         
         
         % if we have no file, embed inline
-        if ~exist(result, 'file')
+        if ischar(result) && ~exist(result, 'file')
             data.result = result;
         end
         % store the text version
         data.type = 'output';
         url = sprintf('%s/%s/%s', queue_url, queue_database, data.x_id);
         text = json.dump(data);
-        wps.runner.urlread2(url, 'PUT', text)
-        
-        if exist(result, 'file')
+        doc = wps.runner.urlread2(url, 'PUT', text);
+        doc = json.load(doc);
+        if ischar(result) && exist(result, 'file')
             [dir, name, ext] = fileparts(result);
-            url = sprintf('%s/%s/%s/%s', queue_url, queue_database, data.x_id, [name '.' ext]);
+            url = sprintf('%s/%s/%s/%s?rev=%s', ...
+                queue_url, ...
+                queue_database, ...
+                data.x_id, ...
+                'result',...
+                doc.rev ...
+            );
             % upload attachment
             % this should work, TODO cleanup.
             outputinfo = metadata.outputs(1);
