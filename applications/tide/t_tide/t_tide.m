@@ -41,10 +41,15 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin)
 %       'output'         where to send printed output:
 %                        'none'    (no printed output)
 %                        'screen'  (to screen) - default
-%                        FILENAME   (to a file)
+%                        FILENAME  (to a file)
+%                        FID       (to (externally) openend file)
 %
 %   Where to send the screen messages (using fprintf):
-%       'diary'          1 to screen (default), 0 ignore, otherwise to 'output'.
+%       'diary'          'none'    (no printed output)
+%                        'screen'  (to screen) - default
+%                        <output filename> (to same file as 'output')
+%                        FILENAME  (to another file)
+%                        FID       (to (externally) opened file)
 %
 %   How to sort the component dimension in tables
 %       'sort'          '<->fre<q>' (default), '<->amp<litude>','<->snr,
@@ -99,7 +104,7 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin)
 %       'error'          'wboot'  - Boostrapped confidence intervals 
 %                                   based on a correlated bivariate 
 %                                   white-noise model.
- %                METHODS THAT NEED SIGNAL PROCESSING TOOLBOX LICENSE:
+%                METHODS THAT NEED SIGNAL PROCESSING TOOLBOX LICENSE:
 %                        'cboot'  - Boostrapped confidence intervals 
 %                                   based on an uncorrelated bivariate 
 %                                   coloured-noise model (default).
@@ -230,7 +235,7 @@ errcalc      = 'cboot';
 synth        = 2;
 lsq          = 'best';
 
-k=1;
+k=1; 
 while length(varargin)>0,
     if ischar(varargin{1}),
         switch lower(varargin{1}(1:3)),
@@ -252,26 +257,34 @@ while length(varargin)>0,
                     case 'screen',
                         fid=1;
                     otherwise
-                        [fid,mesg]=fopen(filen,'w');
-                        if fid==-1,
-                            error(mesg); 
+                        if isnumeric(filen);
+                            fid=filen;
+                        else % filen is a file name
+                            [fid,mesg]=fopen(filen,'w');
+                            openinside=1;
+                            if fid==-1,
+                                error(mesg); 
+                            end;
                         end;
                 end;
             case 'dia',
                 diar=varargin{2};
                 switch diar
-                    case 0
-                    case 1
+                    case 'none'
+                        diar=0;
+                    case 'screen'
+                        diar=1;
+                    case filen
+                        diar=fid;
                     otherwise
-                        if ischar(diar)
-                            error('''diary'' must be scalar. 0=none, 1=screen, otherwise to ''output''')
+                        if isnumeric(diar)
+                            diar=varargin{2};
+                        else
+                            diar=fopen(diar,'w');
+                            if diar==-1,
+                                error(mesg);
+                            end;
                         end
-                        switch filen
-                            case 'none'
-                                diar=0;
-                            otherwise
-                                diar=fid;
-                        end;
                 end;
             case 'ray',
                 if isnumeric(varargin{2}),
@@ -870,17 +883,20 @@ if fid>0,
     fprintf(fid,['\nvar(y)= ',num2str(vary),'    var(yp)= ',num2str(varyp),'  var(yres)= ',num2str(varyr) '\n']);
     fprintf(fid,'percent var predicted/var original= %.1f %%\n',100*varyp/vary);
     fprintf(fid,'\n%s\n',['ellipse parameters with 95%% CI estimates']);
-    fprintf(fid,'\n%s\n',['tide   freq      major  emaj    minor   emin     inc    einc     pha    epha      snr']);
+    fprintf(fid,'\n%s\n',['tide  freq        major   emaj    minor    emin   inc    einc      pha     epha   snr']);
     for k=1:length(fu);
       if snr(k)>synth, fprintf(fid,'*'); else fprintf(fid,' '); end;
-      fprintf(fid,'%s %9.7f %6.3f %7.3f %7.3f %6.2f %8.2f %6.2f %8.2f %6.2f %6.2g\n',...
+      fprintf(fid,'%s %9.7f %7.3f %7.3f %8.3f %7.3f %7.2f %7.2f %8.2f %7.2f %6.2g\n',...
 	nameu(k,:),fu(k),tidecon(k,:),snr(k));
     end
     fprintf(fid,['\ntotal var= ',num2str(varx+vary),'   pred var= ',num2str(varxp+varyp) '\n']);
     fprintf(fid,'percent total var predicted/var original= %.1f %%\n\n',100*(varxp+varyp)/(varx+vary));
   end
 
-  if fid~=1, st=fclose(fid); end
+  if exist('openinside','var') %Only close logfile when created inside t_tide, if created outside you should close it there as well.
+      st=fclose(fid);
+      clear('openinside'); 
+  end
 end;
 
 if isempty(stime)
