@@ -6,12 +6,14 @@ function print2a4(fname,varargin)
 % print2a4(fname,PaperOrientation,Tall_Wide)
 % print2a4(fname,PaperOrientation,Tall_Wide,resolution)
 % print2a4(fname,PaperOrientation,Tall_Wide,resolution,OverWriteAppend)
+% print2a4(fname,PaperOrientation,Tall_Wide,resolution,OverWriteAppend,FileType)
 %
 % PaperOrientation = 'h<orizontal>' = 'L<andscape>' or
 %                    'v<ertical>'   = 'P<ortrait>' (default) 
 % Tall_Wide        = 'w<ide>' (default) or 't<all>'
 % resolution       = '-r200' (default) or 200 (screen: 93:1089x766, 87:1019 x 716)
 % OverWriteAppend  = 'o<verwrite>' or 'c<ancel>' or 'p<rompt>' (default)
+% filetype         = 'png' (default), and some other filetypes supported by print
 %
 %               +-------+                                        
 %               |    h,t|                                        
@@ -124,6 +126,25 @@ function print2a4(fname,varargin)
        end
        end
    end
+   
+   printtype = '-dpng';
+   fext  = '.png';
+   if nargin > 4
+       if ~isempty(varargin{5})
+	   % Reasonably complete list of print formats, obtained from
+       % "http://nl.mathworks.com/help/matlab/ref/print.html"
+       printtypes={'pdf','eps','epsc','eps2','epsc2','meta','svg','ps','psc','ps2','psc2',...
+       'jpeg','png','tiff','tiffn','meta','bmpmono','bmp','bmp16m','bmp256','hdf','pbm',...
+       'pbmraw','pcxmono','pcx24b','pcx256','pcx16','pgm','pgmraw','ppm','ppmraw',};
+       fexts={'.pdf','.eps','.eps','.eps','.eps','.emf','.svg','.ps','.ps','.ps','.ps',...
+       '.jpg','.png','.tif','.tif','.emf','.bmp','.bmp','.bmp','.bmp','.hdf','.pbm',...
+       '.pbm','.pcx','.pcx','.pcx','.pcx','.pgm','.pgm','.ppm','.ppm'};
+   
+       [printtype, ~, ib]=intersect(varargin{5},printtypes);
+       printtype=char(strcat('-d',printtype));
+       fext=fexts{ib};
+       end
+   end
 
    %% Paper settings
 
@@ -133,12 +154,11 @@ function print2a4(fname,varargin)
        'PaperPosition'   ,[0 0 Longside Shortside],...
        'PaperOrientation',PaperOrientation)
 
-   [fileexist,action]=filecheck(fullfile(filepathstr(fname),[filename(fname),'.png']),overwrite_append);
+   [fileexist,action]=filecheck(fullfile(filepathstr(fname),[filename(fname),fext]),overwrite_append);
    if strcmpi(action,'o')
         if ~exist(filepathstr(fname),'dir')
         mkdir(filepathstr(fname))
         end
-      print('-dpng'  ,fname,resolution);
+      print(printtype,fname,resolution);
    end
-
 %% EOF
