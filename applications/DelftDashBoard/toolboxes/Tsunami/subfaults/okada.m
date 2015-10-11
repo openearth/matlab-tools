@@ -52,10 +52,13 @@ for i=ifault1:ifault2
     
     % Display the progress
     percentDone = 100 * i / numel(subfaults.dip);
-    msg = sprintf('calculating deformation for %i of %i subfaults', ...
-        i,numel(subfaults.dip) );
-    fprintf([reverseStr, msg]);
-    reverseStr = repmat(sprintf('\b'),1, length(msg));
+    
+    if ifault2>ifault1
+        msg = sprintf('calculating deformation for %i of %i subfaults', ...
+            i,numel(subfaults.dip) );
+        fprintf([reverseStr, msg]);
+        reverseStr = repmat(sprintf('\b'),1, length(msg));
+    end
     
     % Okada model assumes x,y are at bottom center:
     x_bottom = subfaults.centers{i,1}(3,1);

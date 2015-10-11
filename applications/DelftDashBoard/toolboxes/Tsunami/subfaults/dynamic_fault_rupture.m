@@ -77,7 +77,8 @@ y = linspace(ylower,yupper,my);
 % Calculate the combined deformation from all the subfaults using Okada
 nsub=length(subfaults.dip);
 dzfinal=zeros(nsub,length(y),length(x));
-for isub=1:nsub
+for isub=1:nsub    
+    progress_text('Calculating deformation for','subfaults',isub,nsub);
     [X,Y,DZ,times] = okada(subfaults, x, y, 'subfaultnumber', isub);
     dzfinal(isub,:,:)=DZ;
 end
@@ -95,8 +96,8 @@ if ~isempty(sdufile)
     % Pre-allocate array dz_dynamic
     dz_dynamic=zeros(nt,length(y),length(x));
     % Loop through times in sdu file
-    disp('Looping through time steps ...');
-    for it=1:nt
+    for it=1:nt        
+        progress_text('Calculating deformation for','time steps',it,nt);        
         times(it)=tmin+(it-1)*dt;
         dzt=zeros(length(y),length(x));
         for isub=1:nsub
@@ -134,8 +135,11 @@ if ~isempty(sdufile)
     fprintf(fid,'%s\n','unit1            =    m                                                  # Unit of quantity1');
     fprintf(fid,'%s\n','### END OF HEADER');
     
-    disp('Interpolating onto Delft3D grid ...');
+    reverseStr = '\n'; % initial empty string for progress text
     for it=1:nt
+        
+        progress_text('Interpolation to Delft3D grid for','time steps',it,nt);        
+        
         dzt=squeeze(dz_dynamic(it,:,:));
         block=zeros(size(xz,1)+1,size(xz,2)+1);
         %    block(block==0)=NaN;
