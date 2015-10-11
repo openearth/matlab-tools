@@ -1,4 +1,4 @@
-clear all
+clear variables
 close all
 % SeanPaul La Selle, USGS
 % 13 July, 2015
@@ -24,7 +24,7 @@ plot_subfaults(subfaults,'plot_slip',1, ...
     'cbar',1,...
     'c_range',[0 60 10],...
     'Mw',1);
-
+drawnow;
 
 %% CALCULATE DTOPO
 
