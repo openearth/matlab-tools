@@ -1,4 +1,4 @@
-function plot_subfaults(subfaults, varargin)
+function h=plot_subfaults(subfaults, varargin)
 % plot_subfaults - plots subfault model
 %
 % Inputs:
@@ -103,7 +103,7 @@ if any(strcmpi(varargin,'figure_title'))==1;
     ind=find(indi==1);
     title_string = varargin{ind+1};
 else
-    title_string = 'subfaults';
+    title_string = '';
 end
 
 % draw colorbar
@@ -159,7 +159,7 @@ for i = 1:length(subfaults.latitude)
     end
     
     % plot fault edges
-    plot(x_corners, y_corners, 'k');
+    h=plot(x_corners, y_corners, 'k');
 end
 %% OTHER PARTS OF PLOT
 % colorbar
@@ -177,8 +177,10 @@ if cbar ==1
     
 end
 
-% title
-title(title_string,'fontsize',fontsize*1.5,'color',fontcolor);
+if ~isempty(title_string)
+    % title
+    title(title_string,'fontsize',fontsize*1.5,'color',fontcolor);
+end
 
 % Mw
 if Mw == 1
@@ -186,8 +188,8 @@ if Mw == 1
     text(0.05, 0.95, sprintf('M_{w} %.2f', mw), 'Units','normalized',...
         'fontsize',fontsize,'color',fontcolor);
 end
-hold off
-end
+%hold off
+%end
 
 
 
