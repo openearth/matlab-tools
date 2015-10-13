@@ -111,6 +111,8 @@ if isempty(OPT.Tp );error('Tp  required');end
 %% apply JONSWAP shape
 
     jon   = pm.*OPT.gamma.^exp(-0.5*(OPT.Tp*f-1).^2./sigma(f,1./OPT.Tp,OPT.sa,OPT.sb).^2);
+    
+    jon(isnan(jon))=0;
 
 %% Optionally correct total energy of user-discretized spectrum to match Hm0, as above methods are only an approximation
 
