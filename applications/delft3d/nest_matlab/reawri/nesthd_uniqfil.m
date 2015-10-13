@@ -16,9 +16,9 @@ fclose(fid);
 tline = tline(1:end-1);
 tline = unique(tline');
 
-fid = fopen(filename,'w') ;
-for i = 1:size(tline)
-   fprintf(fid,'%s \n ', tline{i} );
+fid = fopen(filename,'w+') ;
+for i = 1:length(tline)
+   fprintf(fid,'%s \n', tline{i});
 end
 
 fclose (fid);
