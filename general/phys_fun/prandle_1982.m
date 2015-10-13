@@ -28,18 +28,20 @@ function U0 = prandle_1982(D,E,z,w,Udepthavg,k)
 %     for is=1:length(S)
 %       E  = alpha*Um*D;% S  = Udepthavg*T/D;
 %       D = Um*T/S(is);
-%       z = s*D;
+%       z = s*D; %The height U0 should be sampled
 %       U0(is,:) = prandle_1982(D,E,z,w,Um,k);
 %     end
-%
+%     
 %     subplot(2,1,1)
 %     pcolor(S,s,abs(U0'))
 %     shading interp
 %     hold on
 %     [c,h]=contour(S,s,abs(U0'),[.64 .7 .8 .9 1.10],'k');clabel(c,h)
 %     [c,h]=contour(S,s,abs(U0'),[1.01 1.03 1.07 1.14],'k--');clabel(c,h)
-%     colorbar
+%     colorlable=colorbar;
+%     ylabel(colorlable, 'U_{0} [-]')
 %     set(gca,'xscale','log')
+%     xlabel('Depth [m]')
 %     ylabel('z/D [-]')
 %     text(0,1,' (a)','units','normalized','vert','top')
 %     
@@ -50,8 +52,10 @@ function U0 = prandle_1982(D,E,z,w,Udepthavg,k)
 %     [c,h]=contour(S,s,180*angle(U0')/pi,[-8:8],'k');
 %     clabel(c,h)
 %     colorbar
+%     colorlable=colorbar;
+%     ylabel(colorlable, 'Phase Difference [ ^{\circ}]')
 %     set(gca,'xscale','log')
-%     xlabel('Strouhal S')
+%     xlabel('Depth [m]')
 %     ylabel('z/D [-]')
 %     text(0,1,' (b)','units','normalized','vert','top')
 %
