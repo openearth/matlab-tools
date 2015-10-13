@@ -13,10 +13,17 @@ mdu.physics.Rhomean = mdf.rhow;
 mdu.wind.PavBnd     = -999;
 
 %% Salinity
-if strcmpi(mdf.sub1(1),'S') mdu.physics.Salinity = true; end
+if strcmpi(mdf.sub1(1),'S') 
+    mdu.physics.Salinity                   = true;
+    mdu.physics.Backgroundwatertemperature = mdf.tempw;
+    mdu.physics.Backgroundsalinity         = -999.999;
+end
 
 %% Temperature
 if strcmpi(mdf.sub1(2),'T')
+    mdu.physics.Backgroundwatertemperature = -999.999;
+    mdu.physics.Backgroundsalinity         = mdf.salw;
+    
     if mdf.ktemp == 0
         % No heat exchange with the atmosphere
         mdu.physics.Temperature = 1;
@@ -33,8 +40,14 @@ if strcmpi(mdf.sub1(2),'T')
 
             % Space varying forcing to implement yet\
         end
+    elseif mdf.ktemp == 3
+        mdu.physics.Temperature  = 3;
+        if simona2mdf_fieldandvalue(mdf,'filtmp')
+            [~,name,~] = fileparts(mdf.filtmp);
+            mdu.Filtem = [name '_unstruc.tem'];
+        end
     else
-        simona2mdf_message('Only Ocean Heat Flux model implemented','Window','D3D2DFLOWFM Warning','Close',true,'n_sec',10);
+        simona2mdf_message('Only Ocean Heat Flux model and Excess model implemented','Window','D3D2DFLOWFM Warning','Close',true,'n_sec',10);
     end
 else
     mdu.physics.Temperature = 0;

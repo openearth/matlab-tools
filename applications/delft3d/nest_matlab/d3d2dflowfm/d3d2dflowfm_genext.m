@@ -183,7 +183,11 @@ end
 %% write temperature
 if ~isempty(OPT.Filtem)
     i_force = i_force + 1;
-    ext_force(i_force).quantity = 'humidity_airtemperature_cloudiness';
+    if     mdu.physics.Temperature == 5
+        ext_force(i_force).quantity = 'humidity_airtemperature_cloudiness';
+    elseif mdu.physics.Temperature == 3
+        ext_force(i_force).quantity = 'humidity_airtemperature_cloudiness';
+    end
     ext_force(i_force).filename = OPT.Filtem;
     ext_force(i_force).filetype = 1;
     ext_force(i_force).method   = 1;

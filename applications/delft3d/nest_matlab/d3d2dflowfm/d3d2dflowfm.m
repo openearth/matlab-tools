@@ -67,8 +67,14 @@ mdf.named3d                 = [name_mdf ext_mdf];
 
 %% Generate the net file from the area information
 simona2mdf_message('Generating the Net file'                           ,'Window','D3D2DFLOWFM Message');
-d3d2dflowfm_grd2net([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filgrd],[path_mdf filesep mdf.fildep], ...
-                    [name_mdu '_net.nc']         ,[name_mdu '.xyz']                                          );
+if isfield(mdf,'fildep')
+    d3d2dflowfm_grd2net([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filgrd],[path_mdf filesep mdf.fildep], ...
+                        [name_mdu '_net.nc']         ,[name_mdu '.xyz']);
+else
+    d3d2dflowfm_grd2net([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filgrd],mdf.depuni                   , ...
+                        [name_mdu '_net.nc']         ,[name_mdu '.xyz']);
+end
+    
 mdu.geometry.NetFile = [name_mdu '_net.nc'];
 mdu.geometry.NetFile = simona2mdf_rmpath(mdu.geometry.NetFile);
 

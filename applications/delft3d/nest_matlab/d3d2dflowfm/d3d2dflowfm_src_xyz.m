@@ -83,36 +83,42 @@ for i_src = 1: length(m_src)
     end
 
     %% Write to pli(z) file (name of the pli(z) file is the name  of the discharge point)
-    filsrc{i_src}     = [pathdis filesep simona2mdu_replacechar(strtrim(names{i_src}),' ','_') '.pli'];
+    names{i_src}     = simona2mdu_replacechar(names{i_src},'(','');
+    names{i_src}     = simona2mdu_replacechar(names{i_src},')','');
+    names{i_src}     = simona2mdu_replacechar(names{i_src},'%','');
+    names{i_src}     = simona2mdu_replacechar(names{i_src},'/','');
+    names{i_src}     = simona2mdu_replacechar(names{i_src},'+','');
+    filsrc{i_src}    = [pathdis filesep simona2mdu_replacechar(strtrim(names{i_src}),' ','_') '.pli'];
     if ~dav filsrc{i_src} = [filsrc{i_src} 'z']; end
-    filsrc{i_src}     = simona2mdu_replacechar(filsrc{i_src},'(','');
-    filsrc{i_src}     = simona2mdu_replacechar(filsrc{i_src},')','');
-    filsrc{i_src}     = simona2mdu_replacechar(filsrc{i_src},'%','');
-    filsrc{i_src}     = simona2mdu_replacechar(filsrc{i_src},'/','');
-    filsrc{i_src}     = simona2mdu_replacechar(filsrc{i_src},'+','');
     dflowfm_io_xydata('write',filsrc{i_src},LINE);
-
+    
     %% Generate the series (for now always including salinity and temperature, not sure if that is allowed)
-    SERIES.Comments{1} = '* COLUMNN=4';
-    SERIES.Comments{2} = '* COLUMN1=Time (min) since the reference date';
-    SERIES.Comments{3} = '* COLUMN2=Discharge (m3/s), positive in';
-    SERIES.Comments{4} = '* COLUMN3=Salinity (psu)';
-    SERIES.Comments{5} = '* COLUMN4=Temperature (oC)';
-
     i_table = strmatch(strtrim(names{i_src}),location,'exact');
     SERIES.Values(:,1)   = dis.Table(i_table).Data(:,1); % times
     SERIES.Values(:,2)   = dis.Table(i_table).Data(:,2); % Flux/discharge rate
-    SERIES.Values(:,3:4) = 0.;                           % Salinity and temperature initially set to 0.
 
-    params              = {dis.Table(i_table).Parameter.Name};
-
+    nr_sal               = 0;
+    nr_temp              = 0;
+    params               = {dis.Table(i_table).Parameter.Name};
     %% Salinity (if present)
-    nr_col              = strmatch('salinity',lower(params));
-    if ~isempty(nr_col) SERIES.Values(:,3)   = dis.Table(i_table).Data(:,nr_col); end
+    nr_col               = strmatch('salinity',lower(params));
+    if ~isempty(nr_col)
+         nr_sal                      = nr_col;
+         SERIES.Comments{nr_col + 1} = ['* COLUMN' num2str(nr_col,'%1i') '=Salinity (psu)'];
+         SERIES.Values(:,nr_col)     = dis.Table(i_table).Data(:,nr_col); 
+    end
 
     %% Temperature (if present)
-    nr_col              = strmatch('temperature',lower(params));
-    if ~isempty(nr_col) SERIES.Values(:,4)   = dis.Table(i_table).Data(:,nr_col); end
+    nr_col               = strmatch('temperature',lower(params));
+    if ~isempty(nr_col)
+        nr_temp                     = nr_col;
+        SERIES.Comments{nr_col + 1} = ['* COLUMN' num2str(nr_col,'%1i') '=Temperature (oC)'];
+        SERIES.Values(:,nr_col)     = dis.Table(i_table).Data(:,nr_col);
+    end
+    SERIES.Comments{1} = ['* COLUMNN=' num2str(max(2,max(nr_sal,nr_temp)),'%1i')];
+    SERIES.Comments{2} = '* COLUMN1=Time (min) since the reference date';
+    SERIES.Comments{3} = '* COLUMN2=Discharge (m3/s), positive in';
+
 
     %% write to file
     SERIES.Values        = num2cell(SERIES.Values);
