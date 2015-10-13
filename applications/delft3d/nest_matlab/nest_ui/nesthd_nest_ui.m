@@ -382,7 +382,7 @@ function get_hd1_grid_big_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uigetfile({'*.grd;*rgf*;*mdf*;*_map.nc'},'Select grid file overall model');
+[fin,pin] = uigetfile({'*.grd;*rgf*;*mdf*;*map.nc'},'Select grid file overall model');
 cd (handles.progdir);
 
 if fin ~= 0
@@ -403,7 +403,7 @@ function get_hd1_grid_small_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uigetfile({'*.grd;*rgf*;*mdf*;siminp*;*_net.nc'},'Select grid file nested model');
+[fin,pin] = uigetfile({'*.grd;*rgf*;*mdf*;siminp*;*map.nc'},'Select grid file nested model');
 cd (handles.progdir);
 
 if fin ~= 0
@@ -428,7 +428,15 @@ function get_hd1_enclosure_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uigetfile({'*.enc;comgrid*'},'Select enclosure file detailed model');
+selection = '';
+type_nest = nesthd_det_filetype(handles.files_hd1{2});
+switch type_nest
+    case 'grd'
+        selection = {'*.enc;comgrid*'};
+    case 'DFLOWFM'
+        selection = '';
+end
+[fin,pin] = uigetfile(selection,'Select enclosure file detailled model');
 cd (handles.progdir);
 
 if fin ~= 0
@@ -449,7 +457,17 @@ function get_hd1_bnd_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uigetfile({'*.bnd;*.mdf;siminp*;*.mdu;*.ext'},'Select Boundary definition nested model');
+selection = {'*.bnd;*.mdf;siminp*;*.mdu;*.pli;*.ext'};
+if ~isempty(handles.files_hd1{2});
+     type_nest = nesthd_det_filetype(handles.files_hd1{2});
+     switch type_nest
+         case {'grd'}
+             selection = {'*.bnd;*.mdf;siminp*'};
+         case 'DFLOWFM'
+             selection = {'*.mdu;*.pli;*.ext'};
+     end
+end
+[fin,pin] = uigetfile(selection,'Select Boundary definition nested model');
 cd (handles.progdir);
 
 if fin ~= 0
@@ -475,7 +493,17 @@ function get_hd1_obs_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uiputfile('*.obs;points*;*.xyn','Specify name of the file with the nesting stations');
+selection = {'*.obs;points*;*.xyn'};
+if ~isempty (handles.files_hd1{1});
+    type_coarse = nesthd_det_filetype(handles.files_hd1{1});
+    switch type_coarse
+        case {'grd'}
+             selection = {'*.obs;points*'};
+        case 'DFLOWFM'
+             selection = {'*.xyn'};
+    end
+end
+[fin,pin] = uiputfile(selection,'Specify name of the file with the nesting stations');
 
 %% uiputfile by default puts  ".obs" to the file name. I do not want that for SIMONA files. Remove the extennsion if a name starts with points
 if length(fin) > 5 && strcmpi(fin(1:6),'points')
@@ -590,7 +618,7 @@ function get_hd2_trih_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uigetfile({'trih*.dat; SDS*; *_his.nc', 'History file (trih*, SDS*, *_his.nc)'},'Select history file overall model ');
+[fin,pin] = uigetfile({'trih*.dat; SDS*; *.nc', 'History result files (trih*, SDS*, *.nc)'},'Select result history file overall model simulation');
 cd (handles.progdir);
 
 if fin ~= 0
