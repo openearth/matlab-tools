@@ -1,6 +1,7 @@
 function nesthd_cmpfiles(files,varargin)
 
 opt.Filename = '';
+opt.Refdir   = '';
 if ~isempty(varargin)
     opt = setproperty(opt,varargin);
 end
@@ -13,10 +14,10 @@ end
 
 for itest = 1:length(files)
     if ~isempty(files{itest})
-        if exist([files{itest} '.org'],'file')
+        if exist([opt.refdir filesep files{itest} '.org'],'file')
 
-           line_n = nesthd_reatxt( files{itest}        );
-           line_o = nesthd_reatxt([files{itest} '.org']);
+           line_n = nesthd_reatxt( files{itest}                           );
+           line_o = nesthd_reatxt([opt.refdir filesep files{itest} '.org']);
 
            identical = true;
            if length(line_n) == length(line_o);
@@ -35,7 +36,7 @@ for itest = 1:length(files)
            end
         else
            string = ['New testcase  : ' files{itest}];
-           movefile(files{itest},[files{itest} '.org']);
+           movefile(files{itest},[opt.refdir filesep files{itest} '.org']);
         end
 
         if ~isempty(opt.Filename)
