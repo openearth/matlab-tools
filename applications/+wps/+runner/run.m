@@ -171,17 +171,6 @@ while 1
             fclose(fid);
             % base64 decode
             
-%             try
-%                 base64 = org.apache.commons.codec.binary.Base64.encodeBase64(uint8(bytes));
-%             catch ME
-%                 base64 = uint8([]);
-%                 if (isempty(bytes))
-%                     warning('empty bytes in result')
-%                 else
-%                     warning(['Could not encode bytes ', bytes])
-%                 end
-%             end
-%             result = char(typecast(base64, 'uint8'));
         end
         
         
@@ -190,12 +179,6 @@ while 1
         if ischar(result) && ~exist(result, 'file')
             data.result = result;
         end
-        % store the text version
-        data.type = 'output';
-        url = sprintf('%s/%s/%s', queue_url, queue_database, data.x_id);
-        text = json.dump(data);
-        doc = wps.runner.urlread2(url, 'PUT', text);
-        doc = json.load(doc);
         if ischar(result) && exist(result, 'file')
             [dir, name, ext] = fileparts(result);
             url = sprintf('%s/%s/%s/%s?rev=%s', ...
@@ -203,7 +186,7 @@ while 1
                 queue_database, ...
                 data.x_id, ...
                 'result',...
-                doc.rev ...
+                data.x_rev ...
             );
             % upload attachment
             % this should work, TODO cleanup.
@@ -211,12 +194,22 @@ while 1
             properties = struct2array(outputinfo);
             content_type = properties.type;
             try
-                response = wps.runner.urlread2(url, 'PUT', uint8(bytes)); %, 'Content-Type', content_type);
+                % todo: add this %, 'Content-Type', content_type);
+                response = wps.runner.urlread2(url, 'PUT', uint8(bytes)); 
                 warning(response);
+                response = json.load(response);
+                data.x_rev = response.rev;
+                
             catch ME
                 disp(ME);
             end
         end
+        % finally set type to output
+        data.type = 'output';
+        url = sprintf('%s/%s/%s', queue_url, queue_database, data.x_id);
+        text = json.dump(data);
+        doc = wps.runner.urlread2(url, 'PUT', text);
+        doc = json.load(doc);
     else
         warning(['Found file ', jsonfile, ' but it has no process field.']);
         continue
