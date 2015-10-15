@@ -264,7 +264,7 @@
     <showfilename>no</showfilename>
     <extension>*.2dw</extension>
     <selectiontext>Select 2D weirs file</selectiontext>
-    <onchange>ddb_Delft3DFLOW_weirs2d</onchange>
+    <onchange>ddb_Delft3DFLOW_weirs2D</onchange>
     <option1>savefile</option1>
   </element>
 </root>
