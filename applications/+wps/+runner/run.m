@@ -10,6 +10,8 @@ json.startup
 queue_url = 'http://wps.openearth.nl:5984';
 queue_database = 'wps';
 
+ignored = {};
+
 %% Check for the latest processes
 text = wps.runner.get_processes();
 processes = json.load(text);
@@ -63,6 +65,8 @@ while 1
         pause(5);
         continue
     end
+    % TODO: remove ignored id's
+    
     % select one file
     % the queue is empty
     if isempty({jsonfiles.url}) || all(cellfun(@isempty, {jsonfiles.url})) %any(isempty({jsonfiles.url}))
@@ -71,6 +75,7 @@ while 1
         pause(10)
         continue
     end
+    
     % pop  a job
     jsonfile = jsonfiles(1).url;
     % load metadata
@@ -193,16 +198,21 @@ while 1
             outputinfo = metadata.outputs(1);
             properties = struct2array(outputinfo);
             content_type = properties.type;
+            headers = struct('name', 'Content-Type', 'value', content_type);
             try
                 % todo: add this %, 'Content-Type', content_type);
-                response = wps.runner.urlread2(url, 'PUT', uint8(bytes)); 
+                response = wps.runner.urlread2(url, 'PUT', uint8(bytes), headers); 
                 warning(response);
-                response = json.load(response);
-                data.x_rev = response.rev;
-                
+                response = json.load(response);               
             catch ME
                 disp(ME);
             end
+            % now re get the document again so we get the stubs....
+            % and the latest revision
+            text = urlread(jsonfile);
+            data = json.load(text);
+            
+           
         end
         % finally set type to output
         data.type = 'output';
@@ -210,6 +220,11 @@ while 1
         text = json.dump(data);
         doc = wps.runner.urlread2(url, 'PUT', text);
         doc = json.load(doc);
+        if isfield(doc, 'error')
+            warning(['Error in url, ignoring: ', url]);
+            % add to list of ignored id's
+            ignored{length(ignored)+1} = data.x_id;
+        end
     else
         warning(['Found file ', jsonfile, ' but it has no process field.']);
         continue

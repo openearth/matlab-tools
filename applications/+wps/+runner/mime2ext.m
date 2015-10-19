@@ -5,8 +5,9 @@ function [ ext ] = mime2ext( mime )
 switch (mime)
     case 'application/netcdf'
         ext = '.nc';
+    %TODO fix in PyWPS 
     otherwise
-        ext = '';
+        ext = '.nc';
 end
 end
 
