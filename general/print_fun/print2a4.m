@@ -10,30 +10,32 @@ function print2a4(fname,varargin)
 %
 % PaperOrientation = 'h<orizontal>' = 'L<andscape>' or
 %                    'v<ertical>'   = 'P<ortrait>' (default) 
-% Tall_Wide        = 'w<ide>' (default) or 't<all>'
+% Tall_Wide        = 'n<ormal>' (default), 'r<otated>', ('w<ide>' or 't<all>')
 % resolution       = '-r200' (default) or 200 (screen: 93:1089x766, 87:1019 x 716)
 % OverWriteAppend  = 'o<verwrite>' or 'c<ancel>' or 'p<rompt>' (default)
 % filetype         = 'png' (default), and some other filetypes supported by print
 %
-%               +-------+                                        
-%               |    h,t|                                        
-%  +----------+ |Hor    |                                          
-%  | ^up   v,t| |Tall   |                                          
-%  | Vert     | |       |                                         
-%  | Tall     | |< up   |                                         
-%  +----------+ +-------+                                         
-%                                                       
-%               +-------+                                      
-%               |^ up   |                                      
-%  +----------+ |Vert   |                                                   
-%  |Hor    h,w| |Wide   |                                                  
-%  |Wide      | |       |                                                  
-%  |< up      | |    v,w|                                                  
-%  +----------+ +-------+
-%                                                    
-% where print2a4('tst','v','t') matches a screen best
-% where print2a4('tst','h','t') matches landscape figure on portrait printer best
-%       print2a4('tst','v','w') matches upright A4 best (report)
+%                  +--------+
+%                  |    p,r |
+%                  |        |
+%  +-------------+ |Portrait|
+%  | ^up   l,n   | |Rotated |
+%  | Landscape   | |        |
+%  | Normal      | |< up    |
+%  +-------------+ +--------+
+%
+%                  +--------+
+%                  |^ up    |
+%                  |        |
+%  +-------------+ |Portrait|
+%  |Landscape    | |Normal  |
+%  |Rotated      | |        |
+%  |< up    l,r  | |    p,n |
+%  +-------------+ +--------+
+%
+% where print2a4('tst','l','n') matches a screen best
+% where print2a4('tst','p','r') matches landscape figure on portrait printer best
+%       print2a4('tst','p','n') matches upright A4 best (report)
 %
 %See also: PRINT, PRINT2SCREENSIZE, PRINT2A4OVERWRITE
 
@@ -73,37 +75,51 @@ function print2a4(fname,varargin)
    %  'a' = append (no recommended as HDF is VERY inefficient 
    %                due to disk space fragmentation when appending data.)
    
-   PaperOrientation = 'Portrait';
+   PaperOrientation = 'portrait';
    if nargin>1
        if ~isempty(varargin{1})
        PaperOrientation = varargin{1};
        if     lower(PaperOrientation(1))=='h' || ...
-             lower(PaperOrientation(1))=='l'
-          PaperOrientation = 'Landscape';
+              lower(PaperOrientation(1))=='l'
+          PaperOrientation = 'landscape';
        elseif lower(PaperOrientation(1))=='v' || ...
-             lower(PaperOrientation(1))=='p'
-          PaperOrientation = 'Portrait';
+              lower(PaperOrientation(1))=='p'
+          PaperOrientation = 'portrait';
        end
        end
    end
 
    % A4 paper
-   Longside    = 20.9; % [cm] Minus
-   Shortside   = 29.7; % [cm]
+   LR   = 20.9; % [cm] Minus
+   UD   = 29.7; % [cm]
    if nargin>2
       if ~isempty(varargin{2})
       Tall_Wide = varargin{2};
-      if     lower(Tall_Wide(1))=='w'
-          % A4 paper
-         Longside    = 20.9; % [cm] Minus 
-         Shortside   = 29.7; % [cm]
-      elseif lower(Tall_Wide(1))=='t'
-         % A4 paper
-         Longside    = 29.7; % [cm] Minus 
-         Shortside   = 20.9; % [cm]
-      else
+        if strncmpi(PaperOrientation,'l',1); %LANDSCAPE
+            if     lower(Tall_Wide(1))=='w' || lower(Tall_Wide(1))=='r'
+                %A4 paper
+                LR   = 20.9; % [cm] Minus 
+                UD   = 29.7; % [cm]
+            elseif lower(Tall_Wide(1))=='t' || lower(Tall_Wide(1))=='n'
+                PaperOrientation = 'portrait';
+                % A4 paper
+                LR   = 29.7; % [cm] Minus 
+                UD   = 20.9; % [cm]
+            end
+        elseif strncmpi(PaperOrientation,'p',1); %PORTRAIT
+            if     lower(Tall_Wide(1))=='w' || lower(Tall_Wide(1))=='n'
+                %A4 paper
+                LR   = 20.9; % [cm] Minus 
+                UD   = 29.7; % [cm]
+            elseif lower(Tall_Wide(1))=='t' || lower(Tall_Wide(1))=='r'
+                PaperOrientation = 'landscape';
+                % A4 paper
+                LR   = 29.7; % [cm] Minus 
+                UD   = 20.9; % [cm]
+            end
+        else
           error(['''w<ide>'' or ''t<all>'' not ',Tall_Wide])
-      end
+        end
       end
    end
    
@@ -118,7 +134,7 @@ function print2a4(fname,varargin)
    end
 
    overwrite_append  = 'p'; % prompt
-   if nargin > 3
+   if nargin > 4
        if ~isempty(varargin{4})
        overwrite_append = lower(varargin{4}(1));
        if ~ismember(overwrite_append,{'o','c','p'})
@@ -129,14 +145,14 @@ function print2a4(fname,varargin)
    
    printtype = '-dpng';
    fext  = '.png';
-   if nargin > 4
+   if nargin > 5
        if ~isempty(varargin{5})
 	   % Reasonably complete list of print formats, obtained from
        % "http://nl.mathworks.com/help/matlab/ref/print.html"
-       printtypes={'pdf','eps','epsc','eps2','epsc2','meta','svg','ps','psc','ps2','psc2',...
+       printtypes={'eps','epsc','eps2','epsc2','meta','svg','ps','psc','ps2','psc2',...
        'jpeg','png','tiff','tiffn','meta','bmpmono','bmp','bmp16m','bmp256','hdf','pbm',...
        'pbmraw','pcxmono','pcx24b','pcx256','pcx16','pgm','pgmraw','ppm','ppmraw',};
-       fexts={'.pdf','.eps','.eps','.eps','.eps','.emf','.svg','.ps','.ps','.ps','.ps',...
+       fexts={'.eps','.eps','.eps','.eps','.emf','.svg','.ps','.ps','.ps','.ps',...
        '.jpg','.png','.tif','.tif','.emf','.bmp','.bmp','.bmp','.bmp','.hdf','.pbm',...
        '.pbm','.pcx','.pcx','.pcx','.pcx','.pgm','.pgm','.ppm','.ppm'};
    
@@ -149,10 +165,10 @@ function print2a4(fname,varargin)
    %% Paper settings
 
    set(gcf,...
-       'PaperType'       ,'A4',...
+       'PaperType'       ,'a4',...
        'PaperUnits'      ,'centimeters',...
-       'PaperPosition'   ,[0 0 Longside Shortside],...
-       'PaperOrientation',PaperOrientation)
+       'PaperPosition'   ,[0 0 LR UD],...
+       'PaperOrientation',PaperOrientation);
 
    [fileexist,action]=filecheck(fullfile(filepathstr(fname),[filename(fname),fext]),overwrite_append);
    if strcmpi(action,'o')
