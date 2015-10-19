@@ -2,7 +2,7 @@ function varargout = wind_rose(D,F,varargin)
 %WIND_ROSE   Wind rose of direction and intensity
 % 
 %   Syntax:
-%      [HANDLES,DATA] = WIND_ROSE(D,F,<keyword,value>)
+%      [HANDLES,DATA,CI] = WIND_ROSE(D,F,<keyword,value>)
 %
 %   Inputs:
 %      D   Directions
@@ -29,7 +29,7 @@ function varargout = wind_rose(D,F,varargin)
 %       - ri        empty internal radius, relative to size of higher
 %                   percentage [1/30]
 %       - legType   legend type: 1, continuous, 2, separated boxes [2]
-%       - units     units of F (string) []
+%       - units     units of F for legend ('string') []
 %       - borderColor   full rectangle border colour ['none']
 %       - bgcolor   figure background color ['w']
 %       - lineColors    line colours for axes and circles ['k']
@@ -44,11 +44,11 @@ function varargout = wind_rose(D,F,varargin)
 %       - iflip     flip the intensities as they go outward radially, ie,
 %                   highest values are placed nearest the origin [{0} 1]
 %       - inorm     normalize intensities, means all angles will have 100%
-%       - IncHiLow  if 0, data outside di limits will not be used [0 {1}]
+%       - IncHiLow  if 0, data outside 'Ag' limits will not be used [0 {1}]
 %       - directionLabels  put the labels North, East, South, West on the
-%                   axes (default: true) [true]
+%                   axes (default: true) [{true} false]
 %       - centersectors  Center sectors around 0 .. 360 (default) or not
-%                   [true]
+%                   [{true} false]
 %       - nan       'keep' (default) or 'remove', affects radial tick
 %                   scaling ['keep']
 %
@@ -58,6 +58,7 @@ function varargout = wind_rose(D,F,varargin)
 %                NOTE: if type meteo, occurrences are ordered following
 %                cartesian directions, so first sector is 90-ddir to 90
 %                deg, etc.
+%      CI        Percentage circles
 %
 %   Examle:
 %      d=0:10:350;
@@ -541,7 +542,11 @@ end
 if nargout>=2
   varargout{2}=E;
 end
-varargout{3}=g;
+
+if nargout>=3
+  varargout{3}=OPT.ci;
+end
+varargout{4}=g;
 
 %% Positioning of Wind rose on ax
 function place_wr(ax,ax2,x,y,width)
