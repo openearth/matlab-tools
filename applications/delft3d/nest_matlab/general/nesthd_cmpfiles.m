@@ -14,10 +14,11 @@ end
 
 for itest = 1:length(files)
     if ~isempty(files{itest})
-        if exist([opt.Refdir filesep files{itest} '.org'],'file')
+        [~,name,ext] = fileparts(files{itest});
+        if exist([opt.Refdir filesep [name ext] '.org'],'file')
 
            line_n = nesthd_reatxt( files{itest}                           );
-           line_o = nesthd_reatxt([opt.Refdir filesep files{itest} '.org']);
+           line_o = nesthd_reatxt([opt.Refdir filesep [name ext] '.org']);
 
            identical = true;
            if length(line_n) == length(line_o);
@@ -36,7 +37,7 @@ for itest = 1:length(files)
            end
         else
            string = ['New testcase  : ' files{itest}];
-           movefile(files{itest},[opt.Refdir filesep files{itest} '.org']);
+           movefile(files{itest},[opt.Refdir filesep [name ext] '.org']);
         end
 
         if ~isempty(opt.Filename)
