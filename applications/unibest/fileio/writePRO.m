@@ -67,6 +67,10 @@ function [err_message] = writePRO(x1,y1,z_dynamicboundary, filename , varargin)
 
 %------------Read input data----------------
 %-------------------------------------------
+landward=0;
+if nargin>6
+    landward=1;
+end
 if nargin>5
     reference_level   = varargin{1};
     dx                = varargin{2};
@@ -94,8 +98,8 @@ xoffset = find0crossing(x1,y1);
 x1 = x1 - min(xoffset); 
 
 % define coast landwards
-xdiep = x1(find(y1==max(y1)));
-xland = x1(find(y1==min(y1)));
+xdiep = x1(find(y1==max(y1),1));
+xland = x1(find(y1==min(y1),1));
 if xland>xdiep
     x1=flipud(x1);
     y1=flipud(y1);
@@ -109,14 +113,27 @@ if z_dynamicboundary>max(y1)
 end
 xdynbound = find0crossing(x1,y1,z_dynamicboundary);
 
+if landward==1
+    x1=flipud(x1);
+    y1=flipud(y1);
+    %x1=x1;
+    %xdynbound=-xdynbound;
+end
 
 %-----------Write data to file--------------
 %-------------------------------------------
 fid = fopen(filename,'wt');
+if landward==0
+    fprintf(fid,'-1                 (Code X-Direction: +1/-1  Landwards/Seawards)\n');
+elseif landward==1
+    fprintf(fid,' 1                 (Code X-Direction: +1/-1  Landwards/Seawards)\n');
+    xdynbound = max(min(x1),xdynbound);
+end
+
 fprintf(fid,'1                 (Code X-Direction: +1/-1  Landwards/Seawards)\n');
 fprintf(fid,'%3.0f                (reference X-point coastline)\n',0);
-fprintf(fid,'%3.0f                (X-point dynamic boundary)\n',xdynbound(1));
-fprintf(fid,'%3.0f                (X-point trunction transpor_CFSt)\n',xdynbound(1));
+fprintf(fid,'%5.2f                (X-point dynamic boundary)\n',xdynbound(1));
+fprintf(fid,'%5.2f                (X-point trunction transpor_CFSt)\n',xdynbound(1));
 fprintf(fid,'-1                 (Code Z-Direction; +1/-1 Bottom-Level/Depth)\n');
 fprintf(fid,'%3.0f                 (Reference level)\n',reference_level);
 fprintf(fid,' 2                 (Number of points for Dx)\n');
