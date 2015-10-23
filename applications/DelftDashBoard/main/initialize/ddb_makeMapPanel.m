@@ -90,7 +90,6 @@ set(ax,'Tag','map');
 view(2);
 set(ax,'xlim',handles.screenParameters.xLim,'ylim',handles.screenParameters.yLim,'zlim',[handles.screenParameters.cMin handles.screenParameters.cMax]);
 hold on;
-zoom v6 on;
 
 handles.GUIHandles.mapAxis=ax;
 
