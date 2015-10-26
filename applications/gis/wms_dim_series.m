@@ -10,7 +10,7 @@ function t = wms_dim_series(s)
 % The resulting values can be single values of intervals.
 % Use wms_dim_range to parse the intervals in cell.
 %
-%   value	                      - A single value.
+%   value                             - A single value.
 %   value1,value2,value3,...          - A list of multiple values.
 %   min/max/resolution                - An interval defined by its lower and upper bounds and its resolution.
 %   min1/max1/res1,min2/max2/res2,... - A list of multiple intervals.

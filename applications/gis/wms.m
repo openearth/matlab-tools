@@ -45,7 +45,7 @@ function varargout = wms(varargin)
 %  %[A,map,OPT] = imread(url); or read direct from www, but better keep local cache
 %   image(OPT.x,OPT.y,A)
 %   colormap(map)
-%   tickmap('ll');grid on;
+%   tickmap('ll');grid on;axislat
 %   set(gca,'ydir','normal')
 %
 %See also: wcs, wfs, WMS_IMAGE_PLOT, arcgis, netcdf, opendap, postgresql, xml_read

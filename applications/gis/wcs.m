@@ -82,9 +82,12 @@ OPT.crs             = 'EPSG%3A4326'; % http://viswaug.wordpress.com/2009/03/15/r
 OPT.resx            = [];            % not in getCapabilities, but in DescribeCoverage
 OPT.resy            = [];            % not in getCapabilities, but in DescribeCoverage
 OPT.interpolation   = '';            % not in getCapabilities, but in DescribeCoverage
+OPT.time            = '';            % from getCapabilities
 
 OPT.disp            = 1;             % write screen logs
 OPT.cachedir        = [tempdir,'matlab.ows',filesep]; % store cache of xml (and later png)
+
+OPT.fixqmark        = 1; % add ? to DescribeCoverage urls
 
 %% non-standard
 
@@ -143,9 +146,17 @@ else
       for ii=1:length(LL)
           if isfield(LL(ii).HTTP,'Get') % exclude Post
              url2 = LL(ii).HTTP.Get.OnlineResource.ATTRIBUTE.href;
+             if OPT.fixqmark
+             if ~strcmp(url2(end),'?')
+                 url2 = [url2 '?'];
+             end
+             end
              break
           end
       end
+      
+      % fix trailing ? for
+      % http://thredds.jpl.nasa.gov/thredds/wcs/ncml_aggregation/Chlorophyll/seawifs/aggregate__SEAWIFS_L3_CHLA_MONTHLY_9KM_R.ncml?service=WCS&version=1.0.0&request=GetCapabilities
       
 %% get_capabilities (rebuilt url)
 
@@ -162,7 +173,14 @@ else
    
 %% check crs
 
-   lim.crs = xml2.CoverageOffering.supportedCRSs.requestResponseCRSs;
+if isfield(xml2.CoverageOffering.supportedCRSs,'requestResponseCRSs')    
+    lim.crs = xml2.CoverageOffering.supportedCRSs.requestResponseCRSs;
+elseif isfield(xml2.CoverageOffering.supportedCRSs,'requestCRSs')    
+    lim.crs = xml2.CoverageOffering.supportedCRSs.requestCRSs;
+else
+    xml2.CoverageOffering.supportedCRSs
+    error('above WCS supportedCRSs not understood')
+end
    [OPT.crs] = wxs_keyword_match('a crs',OPT.crs,lim.crs,OPT);
    
 %% check interpolation (or use default)
@@ -170,21 +188,50 @@ else
    lim.interpolation = xml2.CoverageOffering.supportedInterpolations.interpolationMethod;
    [OPT.interpolation] = wxs_keyword_match('a interpolation',OPT.interpolation,lim.interpolation,OPT);
    
-%% check valid axis (not yet bbox):
+%% check valid axis and time (not yet bbox):
 
-   if isempty(OPT.axis)
+    if isempty(OPT.axis)
        LL = str2num(Layer.lonLatEnvelope.pos{1});
        UR = str2num(Layer.lonLatEnvelope.pos{2});
        OPT.axis(1) = LL(1);
        OPT.axis(2) = LL(2);
        OPT.axis(3) = UR(1);
        OPT.axis(4) = UR(2);
-   end
-   
-   LL = str2num(xml2.CoverageOffering.domainSet.spatialDomain.Envelope.pos{1});
-   UR = str2num(xml2.CoverageOffering.domainSet.spatialDomain.Envelope.pos{2});
+    end
+
+    if isfield(xml2.CoverageOffering.domainSet.spatialDomain,'EnvelopeWithTimePeriod')
+        envelope = 'EnvelopeWithTimePeriod';
+        LL = str2num(xml2.CoverageOffering.domainSet.spatialDomain.(envelope).pos(1).CONTENT);
+        UR = str2num(xml2.CoverageOffering.domainSet.spatialDomain.(envelope).pos(2).CONTENT);
+        if isfield(xml2.CoverageOffering.domainSet.spatialDomain.(envelope),'timePosition')
+        lim.time = xml2.CoverageOffering.domainSet.spatialDomain.(envelope).timePosition;
+        
+        if ~isempty(OPT.time)
+            t0 = datenum(lim.time{1},'yyyy-mm-ddTHH:MM:SS');
+            t1 = datenum(lim.time{2},'yyyy-mm-ddTHH:MM:SS');
+            
+            if ~isnumeric(OPT.time)
+            t  = datenum(OPT.time   ,'yyyy-mm-ddTHH:MM:SS');
+            else
+            t  = OPT.time;
+            end
+            while t < t0 | t > t1
+                dprintf(2,['wxs:not in valid range: ',datestr(t,'yyyy-mm-ddTHH:MM:SS'),' [',lim.time{1},'..',lim.time{2},']'])
+                t = inputdlg(['time: ',lim.time{1},'..',lim.time{2}],'WCS time',1,lim.time);
+                t = datenum(t,'yyyy-mm-ddTHH:MM:SS');
+            end
+            OPT.time = datestr(t,'yyyy-mm-ddTHH:MM:SS');
+        end
+        end
+    else
+        envelope = 'Envelope';
+        LL = str2num(xml2.CoverageOffering.domainSet.spatialDomain.(envelope).pos{1});
+        UR = str2num(xml2.CoverageOffering.domainSet.spatialDomain.(envelope).pos{2});
+    end
    
    lim.axis = [LL(1) LL(2) UR(1) UR(2)];
+   
+%% check time   
 
 %% check valid bbox: handle lon-lat vs. lat-lon:
 
@@ -214,7 +261,6 @@ else
 
   OPT.x = OPT.axis(1):OPT.resy:OPT.axis(3);
   OPT.y = OPT.axis(4):-OPT.resy:OPT.axis(2); % images are generally upside down: pixel(1,1) is upper left corner
-  
 
 %% construct url: standard keywords
 %  Note that the parameter names in all KVP encodings shall be handled
@@ -230,6 +276,16 @@ else
    '&resx='       ,         num2str(OPT.resx),...
    '&resy='       ,         num2str(OPT.resy),...
    '&crs='        ,         OPT.crs];
+
+%% construct url: standard options or non-standard extensions
+
+   if ~isempty(OPT.time)
+      if ischar(OPT.time)
+         url = [url, '&time=',OPT.time];
+      else
+         url = [url, '&time=',datestr(OPT.time,'YYYY-MM-DDTHH:MM:SS')];
+      end
+   end
 
 end % any coverages 
 
