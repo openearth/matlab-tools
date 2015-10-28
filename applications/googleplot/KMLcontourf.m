@@ -118,7 +118,7 @@ if ~isempty(tri)
 end
 
 % check for nan values
-if any(isnan(lat+lon))
+if any(isnan(lat+lon)) & ~isempty(tri)
     error('KMLtricontourf does not accept nan values (yet) in the lat and lon data')
 end
 
