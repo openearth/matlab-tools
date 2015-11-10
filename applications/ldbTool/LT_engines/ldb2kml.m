@@ -127,7 +127,7 @@ fprintf(fid,'%s \n',['	<name>' fName '</name>']);
 fprintf(fid,'%s \n',['	<Style id="style_1">']);
 fprintf(fid,'%s \n',['		<LineStyle>']);
 fprintf(fid,'%s \n',['			<color>FF' dec2hex(clr(3),2) dec2hex(clr(2),2) dec2hex(clr(1),2) '</color>']);
-fprintf(fid,'%s \n',['          <width>' num2str(linewidth) '</width>']);
+fprintf(fid,'%s \n',['			<width>' num2str(linewidth) '</width>']);
 fprintf(fid,'%s \n',['		</LineStyle>']);
 fprintf(fid,'%s \n',['		<PolyStyle>']);
 fprintf(fid,'%s \n',['			<fill>0</fill>']);
@@ -156,19 +156,15 @@ for ii=1:length(id)-1
     fprintf(fid,'%s \n','	<Placemark>');
     fprintf(fid,'%s \n',['		<name>' num2str(ii) '</name>']);
     fprintf(fid,'%s \n','		<styleUrl>style_1</styleUrl>');
-    fprintf(fid,'%s \n','		<Polygon>');
+    fprintf(fid,'%s \n','		<LineString>');
     fprintf(fid,'%s \n','			<tessellate>1</tessellate>');
-    fprintf(fid,'%s \n','			<outerBoundaryIs>');
-    fprintf(fid,'%s \n','				<LinearRing>');
-    fprintf(fid,'%s \n','					<coordinates>');
+    fprintf(fid,'%s \n','			<coordinates>');
     for ij=1:size(data,1)
-        fprintf(fid,'%s \n',[num2str(data(ij,1),'%15.6f') ',' num2str(data(ij,2),'%15.6f') ' ']);
+        fprintf(fid,'%s \n',['				' num2str(data(ij,1),'%15.6f') ',' num2str(data(ij,2),'%15.6f') ' ']);
 %        fprintf(fid,'%s \n',[num2str(data(ij,1),'%15.6f') ',' num2str(data(ij,2),'%15.6f') ', 0']);
     end
-    fprintf(fid,'%s \n','</coordinates>');
-    fprintf(fid,'%s \n','				</LinearRing>');
-    fprintf(fid,'%s \n','			</outerBoundaryIs>');
-    fprintf(fid,'%s \n','		</Polygon>');
+    fprintf(fid,'%s \n','			</coordinates>');
+    fprintf(fid,'%s \n','		</LineString>');
     fprintf(fid,'%s \n','	</Placemark>');
     waitbar(ii/(length(id)-1),hW);
 end
