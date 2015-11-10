@@ -1,4 +1,4 @@
-function [u_rot,v_rot] = rotate_vector(u,v,angle)
+function [u_rot,v_rot] = nesthd_rotate_vector(u,v,angle)
 
 % rotate_vector :rotates a vector (also works on matrices)
 
