@@ -123,8 +123,15 @@ switch upper(OPT.mpitype)
                 xb_write_sh_scripts_xbversions(fid, 'version', OPT.version)
                 fprintf(fid,'mpirun -report-bindings -np %d -map-by core -hostfile $hostFile xbeach\n\n', (OPT.nodes*4+1));
                 fprintf(fid,'rm -f $hostFile\n');
+            case 'h6'
+                fprintf(fid,'hostFile="$JOB_NAME.h$JOB_ID"\n\n');
+                fprintf(fid,'cat $PE_HOSTFILE | while read line; do\n');
+                fprintf(fid,'   echo $line | awk ''{print $1 " slots=" $4}''\n');
+                fprintf(fid,'done > $hostFile\n\n');
+                xb_write_sh_scripts_xbversions(fid, 'version', OPT.version)
+                fprintf(fid,'mpirun -report-bindings -np %d -map-by core -hostfile $hostFile xbeach\n\n', (OPT.nodes*4+1));
+                fprintf(fid,'rm -f $hostFile\n');
         end
-        fprintf(fid,'mpdallexit\n');
 otherwise
         error(['Unknown MPI type [' OPT.mpitype ']']);
 end
