@@ -102,11 +102,13 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
    end
    stride      = 1;  
    OPT2.fileName = [filename(grdfile),'_3D.kml'];
+   OPT2.kmlName = [OPT2.kmlName, ' 3D'];
    KMLsurf  (G.cor.lat(1:stride:end,1:stride:end),...
              G.cor.lon(1:stride:end,1:stride:end),...
             -G.cor.dep(1:stride:end,1:stride:end),OPT2);
          
    OPT2.fileName  = [filename(grdfile),'_2D.kml'];
+   OPT2.kmlName = regexprep(OPT2.kmlName, '3D$', '2D');
    OPT2.zScaleFun =  @(z)'clampToGround';
    KMLpcolor(G.cor.lat,G.cor.lon,-G.cen.dep,OPT2);
 
