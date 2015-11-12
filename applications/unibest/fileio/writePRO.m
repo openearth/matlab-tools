@@ -2,7 +2,7 @@ function [err_message] = writePRO(x1,y1,z_dynamicboundary, filename , varargin)
 %write PRO : Writes a unibest profile file (also computes location of shoreline, dynamic boundary and grid settings)
 %
 %   Syntax:
-%     function crossdist = writePRO(x1,y1,z_dynamicboundary, filename, reference_level, dx)
+%     function crossdist = writePRO(x1,y1,z_dynamicboundary, filename, reference_level, dx, landward)
 % 
 %   Input:
 %     X                    [1xN] vector with x coordinates
@@ -11,6 +11,7 @@ function [err_message] = writePRO(x1,y1,z_dynamicboundary, filename , varargin)
 %     filename             string with filename
 %     reference_level      (optional) reference level (default = 0)
 %     dx                   (optional) spatial grid of discretisation in x-direction (default at 200 grid-points)
+%     landward             (optional) switch to define the profile in landward direction (set to 1). The default is seaward (i.e. landward=0)
 % 
 %   Output:
 %     .pro files
@@ -130,7 +131,7 @@ elseif landward==1
     xdynbound = max(min(x1),xdynbound);
 end
 
-fprintf(fid,'1                 (Code X-Direction: +1/-1  Landwards/Seawards)\n');
+%fprintf(fid,'1                 (Code X-Direction: +1/-1  Landwards/Seawards)\n');
 fprintf(fid,'%3.0f                (reference X-point coastline)\n',0);
 fprintf(fid,'%5.2f                (X-point dynamic boundary)\n',xdynbound(1));
 fprintf(fid,'%5.2f                (X-point trunction transpor_CFSt)\n',xdynbound(1));
