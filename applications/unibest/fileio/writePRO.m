@@ -2,16 +2,16 @@ function [err_message] = writePRO(x1,y1,z_dynamicboundary, filename , varargin)
 %write PRO : Writes a unibest profile file (also computes location of shoreline, dynamic boundary and grid settings)
 %
 %   Syntax:
-%     function crossdist = writePRO(x1,y1,z_dynamicboundary, filename, reference_level, dx, landward)
+%     function crossdist = writePRO(x1,y1,z_dynamicboundary, filename, <reference_level>, <dx>, <x_dir>)
 % 
 %   Input:
 %     X                    [1xN] vector with x coordinates
 %     Y                    [1xN] vector with y coordinates
 %     z_dynamicboundary    depth at which dynamic boudnary is defined
 %     filename             string with filename
-%     reference_level      (optional) reference level (default = 0)
-%     dx                   (optional) spatial grid of discretisation in x-direction (default at 200 grid-points)
-%     landward             (optional) switch to define the profile in landward direction (set to 1). The default is seaward (i.e. landward=0)
+%     <reference_level>    (optional) reference level (default = 0)
+%     <dx>                 (optional) spatial grid of discretisation in x-direction (default at 200 grid-points)
+%     <x_dir>              (optional) switch for X-direction convention: either 1 (LandWards) or -1 (SeaWards)
 % 
 %   Output:
 %     .pro files
@@ -68,9 +68,16 @@ function [err_message] = writePRO(x1,y1,z_dynamicboundary, filename , varargin)
 
 %------------Read input data----------------
 %-------------------------------------------
-landward=1;
+x_dir=1;
 if nargin>6
-    landward=1;
+    x_dir=varargin{3};
+    try
+        if x_dir ~= 1 && x_dir ~= -1
+            error('Unknown <x_dir> input, please use eather 1 (default) or -1');
+        end
+    catch
+        error('Unknown format for <x_dir> input');
+    end
 end
 if nargin>5
     reference_level   = varargin{1};
@@ -114,7 +121,7 @@ if z_dynamicboundary>max(y1)
 end
 xdynbound = find0crossing(x1,y1,z_dynamicboundary);
 
-if landward==1
+if x_dir==1
     x1=flipud(x1);
     y1=flipud(y1);
     %x1=x1;
@@ -124,9 +131,9 @@ end
 %-----------Write data to file--------------
 %-------------------------------------------
 fid = fopen(filename,'wt');
-if landward==0
+if x_dir==0
     fprintf(fid,'-1                 (Code X-Direction: +1/-1  Landwards/Seawards)\n');
-elseif landward==1
+elseif x_dir==1
     fprintf(fid,' 1                 (Code X-Direction: +1/-1  Landwards/Seawards)\n');
     xdynbound = max(min(x1),xdynbound);
 end
