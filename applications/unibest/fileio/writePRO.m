@@ -68,7 +68,7 @@ function [err_message] = writePRO(x1,y1,z_dynamicboundary, filename , varargin)
 
 %------------Read input data----------------
 %-------------------------------------------
-landward=0;
+landward=1;
 if nargin>6
     landward=1;
 end
