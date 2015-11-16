@@ -115,18 +115,67 @@ catch
 end
 
 %read dummy
-fgetl(fid);
-
+SCOdata.isWavecurrent = 0;
+SCOdata.isDynamicBND = 0;
+SCOdata.prctDynamicBND = 50;
+SCOdata.isWind = 0;
+SCOdata.isTideoffset = 0;
+SCOdata.isTimeseries = 0;
+numFields = 5;
+readheader = true;
+while readheader
+   lin=fgetl(fid);
+   if ~isempty(findstr(lower(lin),'wave-current'))
+       SCOdata.isWavecurrent=str2num(strtok(lin));
+   elseif ~isempty(findstr(lower(lin),'dynamic boundary'))
+       [SCOdata.isDynamicBND,SCOdata.prctDynamicBND]=str2num(strtok(lin));
+   elseif ~isempty(findstr(lower(lin),'wind'))
+       SCOdata.isWind=str2num(strtok(lin));
+       if SCOdata.isWind==1;numFields = numFields+3;end
+   elseif ~isempty(findstr(lower(lin),'tide offset'))
+       SCOdata.isTideoffset=str2num(strtok(lin));
+   elseif ~isempty(findstr(lower(lin),'timeseries'))
+       SCOdata.isTimeseries=str2num(strtok(lin));
+       if SCOdata.isTimeseries==1;numFields = numFields+3;end
+   elseif ~isempty(findstr(lower(lin),'hsig')) || ~isempty(findstr(lower(lin),'tper')) || ~isempty(findstr(lower(lin),'alf')) || ~isempty(findstr(lower(lin),'duration'))
+       readheader = false;
+   end
+end
+   
 %Read data
-data=fscanf(fid,'%f',[5 numOfWaves])';
+data=fscanf(fid,'%f',[numFields numOfWaves])';
 fclose(fid);
 
 %Output arguments
-SCOdata.h0   = data(:,1);
-SCOdata.hs   = data(:,2);
-SCOdata.tp   = data(:,3);
-SCOdata.xdir = data(:,4);
-SCOdata.dur  = data(:,5);
+if numFields==5
+    SCOdata.h0     = data(:,1);
+    SCOdata.hs     = data(:,2);
+    SCOdata.tp     = data(:,3);
+    SCOdata.xdir   = data(:,4);
+    SCOdata.dur    = data(:,5);
+elseif numFields==8 && SCOdata.isWind
+    SCOdata.h0     = data(:,1);
+    SCOdata.hs     = data(:,2);
+    SCOdata.tp     = data(:,3);
+    SCOdata.xdir   = data(:,4);
+    SCOdata.dur    = data(:,5);
+    SCOdata.WS     = data(:,6);
+    SCOdata.Wdir   = data(:,7);
+    SCOdata.Wdrag  = data(:,8);
+elseif numFields==8 && SCOdata.isTimeseries
+    SCOdata.time   = data(:,1);
+    SCOdata.h0     = data(:,2);
+    SCOdata.hs     = data(:,3);
+    SCOdata.tp     = data(:,4);
+    SCOdata.xdir   = data(:,5);
+    SCOdata.Htide  = data(:,6);
+    SCOdata.Vtide  = data(:,7);
+    SCOdata.RefDep = data(:,8);
+    if length(SCOdata.time)>1
+      Dur0         = (SCOdata.time(2:end)-SCOdata.time(1:end-1));Dur0=Dur0(:);
+      SCOdata.Dur  = [Dur0(1);(Dur0(2:end)+Dur0(1:end-1))/2;Dur0(end)];
+    end
+end
 
 if nargout==1
     varargout{1}=SCOdata;
