@@ -111,9 +111,13 @@ else
            S.DATA(i).mn(i_mn) = str2num(numbers(index(i_mn):index(i_mn + 1) - 1));
        end
        S.NTables = length(S.DATA);
+       m_step = 1 ;
+       n_step = 1 ;
+       if S.DATA(i).mn(1) > S.DATA(i).mn(3) m_step = -1; end
+       if S.DATA(i).mn(2) > S.DATA(i).mn(4) n_step = -1; end
       [S.DATA(i).m,... % turn the endpoint-description along gridlines into vectors
-       S.DATA(i).n]=meshgrid(S.DATA(i).mn(1):S.DATA(i).mn(3),...
-                                  S.DATA(i).mn(2):S.DATA(i).mn(4));
+       S.DATA(i).n]=meshgrid(S.DATA(i).mn(1):m_step:S.DATA(i).mn(3),...
+                                  S.DATA(i).mn(2):n_step:S.DATA(i).mn(4));
 %      fgetl(fid); % read rest of line
     end
    
@@ -173,9 +177,9 @@ OS           = 'windows'; % or 'unix'
 for i=1:size(S.m,1)
 
    fprintf(fid,'%-20s %.3d %.3d %.3d %.3d',S.DATA(i).name,S.m(i,1),S.n(i,1),S.m(i,2),S.n(i,2));
-   if     strcmp(lower(OS(1)),'u')
+   if     strcmpi(OS(1),'u')
       fprintf(fid,'\n');
-   elseif strcmp(lower(OS(1)),'w')
+   elseif strcmpi(OS(1),'w')
       fprintf(fid,'\r\n');
    end
    
