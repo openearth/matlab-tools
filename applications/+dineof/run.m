@@ -306,9 +306,9 @@ function varargout = run(data, time, mask, varargin)
    ddir = filepathstr(mfilename('fullpath')); 
 
    if ~exist([ddir, filesep,'dineof.exe'])
-   fprintf(2,'%s\n',['To use dineof first download dineof.exe from '])
+   fprintf(2,'%s\n',['To use dineof first download dineof-3.0.zip from'])
    fprintf(2,'%s\n',['http://modb.oce.ulg.ac.be/mediawiki/index.php/DINEOF'])
-   fprintf(2,'%s\n',['into'])
+   fprintf(2,'%s\n',['and extract dineof.exe into'])
    fprintf(2,'%s\n',ddir)
    error('DINEOF')
    end
@@ -411,9 +411,9 @@ else
         nodata   = ncreadatt(['DINEOF_diagnostics.nc'],'U','missing_value');S.lftvec (S.lftvec==nodata)=NaN;
         S.rghvec = ncread   (['DINEOF_diagnostics.nc'],'V');
         nodata   = ncreadatt(['DINEOF_diagnostics.nc'],'V','missing_value');S.rghvec (S.rghvec==nodata)=NaN;
-        S.varEx  = ncread(['DINEOF_diagnostics.nc'],'varEx');
+        S.varEx  = ncread   (['DINEOF_diagnostics.nc'],'varEx');
         S.varLab = addrowcol(cellstr([num2str([1:length(S.varEx)]','Mode %d = '),num2str(S.varEx(:))]),0,1,' %');
-        S.vlsng  = ncread(['DINEOF_diagnostics.nc'],'vlsng');
+        S.vlsng  = ncread   (['DINEOF_diagnostics.nc'],'vlsng');
     end
     
     %% consistently swap user-requested signs
@@ -522,7 +522,7 @@ else
    plot(permute(tmp.U,[3 1 2]),'-o')
    hold on
    plot(permute(S.lftvec,[1 3 2]),'.')
-   xlabel('points');xlabel('U')   
+   xlabel('points');xlabel('U')
    
    end
 

@@ -60,9 +60,10 @@ if dim==1
    %% raw data
    axes(AX(4))
    pcolor(time,1:sz(1),permute(data,[1 3 2]))
+   shading interp
    xlabel('time')
    ylabel('space')
-   xlim(time([1 end]))
+   datetick('x');xlim(time([1 end]))
    ylim([0 sz(1)])
    clim(r)
    set(gca,'xAxisLocation','top')
@@ -71,8 +72,9 @@ if dim==1
    %% filled data
    axes(AX(5))
    pcolor(time,1:sz(1),permute(dataf,[1 3 2]))
+   shading interp
    xlabel('time')
-   xlim(time([1 end]))
+   datetick('x');xlim(time([1 end]))
    ylim([0 sz(1)])
    clim(r)
    set(gca,'xAxisLocation','top')
@@ -92,17 +94,18 @@ if dim==1
    grid on
    set(gca,'yticklabel',{})   
    h = legend('Location',get(AX(3),'position'));set(h,'box','off')
+   vline(S.mean,'k--',['mean = ',num2str(S.mean)])
 
    %% temporal modes
    axes(AX(2))
-   for im=1:S.P
+   for im=S.P:-1:1
    plot(time,S.rghvec(:,im),'.-','Color',repmat(interp1([S.P 0],[0.9 0],im),[1 3]),...
                              'linewidth',       interp1([S.P 0],[1 4],im),'DisplayName',S.varLab{im});
    hold on
    end   
    xlabel('time')
    ylabel('EOF rghvec')
-   xlim(time([1 end]))
+   datetick('x');xlim(time([1 end]))
    grid on
 
    set(gca,'xAxisLocation','top')
