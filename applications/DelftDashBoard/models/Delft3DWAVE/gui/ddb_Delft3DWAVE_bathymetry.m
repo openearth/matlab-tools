@@ -19,9 +19,9 @@ handles=getHandles;
 filenm = handles.model.delft3dwave.domain.domains(awg).bedlevel;
 [pathstr,name,ext] = fileparts(filenm);
 % Set grid values in handles
-handles.model.delft3dwave.domain.domains(awg).bedlevelgrid=handles.model.delft3dwave.domain.domains(awg).grid;
+%handles.model.delft3dwave.domain.domains(awg).bedlevelgrid=handles.model.delft3dwave.domain.domains(awg).grid;
 handles.model.delft3dwave.domain.domains(awg).bedlevel=[name ext];
-grid=ddb_wlgrid('read',handles.model.delft3dwave.domain(awg).bedlevelgrid);
+grid=ddb_wlgrid('read',handles.model.delft3dwave.domain.domains(awg).gridname);
 try 
     z = ddb_wldep('read',[name '.dep'],grid);
     handles.model.delft3dwave.domain.domains(awg).depth = -z(1:end-1,1:end-1);

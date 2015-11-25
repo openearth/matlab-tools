@@ -188,7 +188,12 @@ MDW.Output.WriteSpec2D.type       = 'boolean';
 
 %% Domains
 for i=1:ndomains
-    MDW.Domain(i).Grid.value           = [wave.domains(i).gridname '.grd'];
+    if strcmpi(wave.domains(i).gridname(end-2:end),'grd')
+        MDW.Domain(i).Grid.value           = wave.domains(i).gridname;
+    else
+        MDW.Domain(i).Grid.value           = [wave.domains(i).gridname '.grd'];
+    end
+        
 %    MDW.Domain(i).Grid.value           = wave.domains(i).grid;
 
 %     if ~isempty(wave.domains(i).bedlevelgrid)
