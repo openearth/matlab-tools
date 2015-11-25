@@ -99,20 +99,23 @@ fprintf(fid,'%s\n','unit1          = m s-1');
 fprintf(fid,'%s\n','unit2          = degree');
 fprintf(fid,'%s\n','unit3          = Pa');
 
-fmt1='%6.1f';
+fmt1='%9.2f';
 fmt1=[repmat(fmt1,1,ncols) '\n'];
 fmt1=repmat(fmt1,1,nrows);
 
-fmt2='%6.1f';
+fmt2='%9.2f';
 fmt2=[repmat(fmt2,1,ncols) '\n'];
 fmt2=repmat(fmt2,1,nrows);
 
-fmt3='%7.0f';
+fmt3='%9.2f';
 fmt3=[repmat(fmt3,1,ncols) '\n'];
 fmt3=repmat(fmt3,1,nrows);
 
 for it=1:length(tc.track)
     tim=1440*(tc.track(it).time-reftime);
+    tc.track(it).wind_speed(isnan(tc.track(it).wind_speed))=-999;
+    tc.track(it).wind_from_direction(isnan(tc.track(it).wind_from_direction))=-999;
+    tc.track(it).pressure_drop(isnan(tc.track(it).pressure_drop))=-999;
     fprintf(fid,'%s\n',['TIME           =   ' num2str(tim,'%10.2f') '   minutes since ' datestr(reftime,'yyyy-mm-dd HH:MM:SS') ' +00:00']);
     fprintf(fid,'%s\n',['x_spw_eye      =     ' num2str(tc.track(it).x) ]);
     fprintf(fid,'%s\n',['y_spw_eye      =     ' num2str(tc.track(it).y) ]);
