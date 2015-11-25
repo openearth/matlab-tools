@@ -3,6 +3,7 @@ function tsunami_run_model_series(run,dr,prefx,thresholdlevel,ncores,checkforfin
 % Set defaults
 rdur=120;
 tsunamifile=[];
+spiderwebfile=[];
 adjustbathymetry=0;
 
 % Read input arguments
@@ -12,12 +13,26 @@ for ii=1:length(varargin)
             case{'tsunamifile'}
                 tsunamifile=varargin{ii+1};
                 [xtsu ytsu ztsu info] = arc_asc_read(tsunamifile);
+            case{'spiderwebfile'}
+                spiderwebfile=varargin{ii+1};
             case{'runduration'}
                 rdur=varargin{ii+1};
+            case{'refdate'}
+                itdate=varargin{ii+1};
+            case{'tstart'}
+                tstart=varargin{ii+1};
+            case{'tstop'}
+                tstop=varargin{ii+1};
             case{'adjustbathymetry'}
                 adjustbathymetry=varargin{ii+1};
         end                
     end
+end
+
+if ~isempty(tsunamifile)
+    modeltype='tsunami';
+else
+    modeltype='cyclone';
 end
 
 inputdir=[dr filesep 'input' filesep];
@@ -74,20 +89,35 @@ for imodel=1:nmodels
                     % Water level at middle of offshore boundary
                     istat=strmatch(mdlname,stations,'exact');
                     wl=qpread(fid,1,'water level','griddata',0,istat);
-                    waveheight=max(wl.Val)-min(wl.Val);
+                    switch modeltype
+                        case{'tsunami'}
+                            waveheight=max(wl.Val)-min(wl.Val);
+                        case{'cyclone'}
+                            waveheight=max(wl.Val);
+                    end
                     
                     % Water level at LL corner of offshore boundary
                     istat=strmatch([mdlname ' - LL'],stations,'exact');
                     if ~isempty(istat)
                         wl=qpread(fid,1,'water level','griddata',0,istat);
-                        waveheight=max(waveheight,max(wl.Val)-min(wl.Val));
+                        switch modeltype
+                            case{'tsunami'}
+                                waveheight=max(waveheight,max(wl.Val)-min(wl.Val));
+                            case{'cyclone'}
+                                waveheight=max(wl.Val);
+                        end
                     end
                     
                     % Water level at LR corner of offshore boundary
                     istat=strmatch([mdlname ' - LR'],stations,'exact');
                     if ~isempty(istat)
                         wl=qpread(fid,1,'water level','griddata',0,istat);
-                        waveheight=max(waveheight,max(wl.Val)-min(wl.Val));
+                        switch modeltype
+                            case{'tsunami'}
+                                waveheight=max(waveheight,max(wl.Val)-min(wl.Val));
+                            case{'cyclone'}
+                                waveheight=max(wl.Val);
+                        end
                     end
                     
                 else
@@ -103,12 +133,25 @@ for imodel=1:nmodels
                         mkdir(rundir);
                     end
                     copyfile([inputdir filesep mdlname filesep 'input' filesep '*'],rundir);
-
                     
-                    % Change run duration
-                    findreplace([rundir filesep mdlname '.mdf'],'RDURKEY',num2str(rdur));
-                    findreplace([rundir filesep mdlname '.fou'],'RDURKEY',num2str(rdur));
-
+                    switch modeltype
+                        case{'tsunami'}
+                            % Change run duration
+                            findreplace([rundir filesep mdlname '.mdf'],'RDURKEY',num2str(rdur));
+                            findreplace([rundir filesep mdlname '.fou'],'RDURKEY',num2str(rdur));
+                        case{'cyclone'}
+                            % Change run duration
+                            t0=(tstart-itdate)*1440;
+                            t1=(tstop-itdate)*1440;
+                            rdur=(t1-t0);
+                            dtmap=60;
+                            dthis=10;
+                            findreplace([rundir filesep mdlname '.mdf'],'ITDATEKEY',datestr(itdate,'yyyy-mm-dd'));
+                            findreplace([rundir filesep mdlname '.mdf'],'TSTARTKEY',num2str(t0));
+                            findreplace([rundir filesep mdlname '.mdf'],'TSTOPKEY',num2str(t1));
+                            findreplace([rundir filesep mdlname '.mdf'],'DTMAPKEY',num2str(dtmap));
+                            findreplace([rundir filesep mdlname '.mdf'],'DTHISKEY',num2str(dthis));
+                    end
                     
                     % nesthd2
                     fid=fopen('nesthd2.xml','wt');
@@ -149,26 +192,84 @@ for imodel=1:nmodels
         copyfile([inputdir 'batch' filesep '*.*'],rundir);
         findreplace([rundir filesep 'config_d_hydro.xml'],'RUNIDKEY',mdlname);
         
-        % Change run duration
-        findreplace([rundir filesep mdlname '.mdf'],'RDURKEY',num2str(rdur));
-        findreplace([rundir filesep mdlname '.fou'],'RDURKEY',num2str(rdur));
-        
-        % >>> generate INITIAL CONDITIONS files <<<  
-        if ~isempty(tsunamifile)
-            
-            newSys.name='WGS 84';
-            newSys.type='geographic';
+        switch modeltype
+            case{'tsunami'}
 
-            grd=wlgrid('read',[rundir filesep mdlname '.grd']);
-            [xz,yz]=getXZYZ(grd.X,grd.Y);
-            
-            newdepfile=[rundir filesep mdlname '.dep'];
-            
-            interpolateTsunamiToGrid('xgrid',xz,'ygrid',yz,'gridcs',cs,'tsunamics',newSys, ...
-                'xtsunami',xtsu,'ytsunami',ytsu,'ztsunami',ztsu,'inifile',[rundir filesep mdlname '.ini'], ...
-                'adjustbathymetry',adjustbathymetry,'newdepfile',newdepfile);
-            
+                % Change run duration
+                findreplace([rundir filesep mdlname '.mdf'],'RDURKEY',num2str(rdur));
+                findreplace([rundir filesep mdlname '.fou'],'RDURKEY',num2str(rdur));
+                
+                % >>> generate INITIAL CONDITIONS files <<<
+                if ~isempty(tsunamifile)
+                    
+                    newSys.name='WGS 84';
+                    newSys.type='geographic';
+                    
+                    grd=wlgrid('read',[rundir filesep mdlname '.grd']);
+                    [xz,yz]=getXZYZ(grd.X,grd.Y);
+                    
+                    newdepfile=[rundir filesep mdlname '.dep'];
+                    
+                    interpolateTsunamiToGrid('xgrid',xz,'ygrid',yz,'gridcs',cs,'tsunamics',newSys, ...
+                        'xtsunami',xtsu,'ytsunami',ytsu,'ztsunami',ztsu,'inifile',[rundir filesep mdlname '.ini'], ...
+                        'adjustbathymetry',adjustbathymetry,'newdepfile',newdepfile);
+                    
+                end
+                
+            case{'cyclone'}
+
+                csin.name='WGS 84';
+                csin.type='geographic';
+                csout=cs;
+                
+                copyfile(spiderwebfile,rundir);
+                [pathstr,name,ext] = fileparts(spiderwebfile);
+                spwname=[name ext];
+                % Convert spw file to the right coordinate system
+                if ~strcmpi(csin.name,csout.name) && ~strcmpi(csin.type,csout.type)
+                    csoutname=csout.name;
+                    csoutname=strrep(csoutname,' ','');
+                    csoutname=strrep(csoutname,'/','');
+                    csoutname=lower(csoutname);
+                    tmpdir=[runsdir filesep run filesep csoutname filesep];
+                    if exist([tmpdir spwname],'file')
+                        % Spiderweb has already been converted
+                        copyfile([tmpdir spwname],rundir);
+                    else
+                        disp('Converting coordinate system spiderweb file ...');
+                        mkdir(tmpdir);
+                        copyfile(spiderwebfile,tmpdir);
+                        convert_spiderweb_coordinate_system([tmpdir spwname],[tmpdir spwname],csin,csout);
+                        copyfile([tmpdir spwname],rundir);
+                    end
+                else
+                    % No need for conversion
+                    copyfile(spiderwebfile,rundir);
+                end
+
+                % Change run duration
+                t0=(tstart-itdate)*1440;
+                t1=(tstop-itdate)*1440;
+                rdur=(t1-t0);
+                dtmap=60;
+                dthis=10;
+                
+                findreplace([rundir filesep mdlname '.mdf'],'ITDATEKEY',datestr(itdate,'yyyy-mm-dd'));
+                findreplace([rundir filesep mdlname '.mdf'],'TSTARTKEY',num2str(t0));
+                findreplace([rundir filesep mdlname '.mdf'],'TSTOPKEY',num2str(t1));
+                findreplace([rundir filesep mdlname '.mdf'],'DTMAPKEY',num2str(dtmap));
+                findreplace([rundir filesep mdlname '.mdf'],'DTHISKEY',num2str(dthis));
+                findreplace([rundir filesep mdlname '.mdf'],'SPWKEY',spwname);
+                
+                try
+                    findreplace([rundir filesep mdlname '.fou'],'TSTARTKEY',num2str(t0));
+                    findreplace([rundir filesep mdlname '.fou'],'RDURKEY',num2str(rdur));
+                end
+
+%                findreplace([rundir filesep mdlname '.fou'],'DTMAPKEY',num2str(dtmap));
+                
         end
+        
     end
     
     if ok

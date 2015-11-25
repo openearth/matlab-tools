@@ -2,6 +2,17 @@ function tsunami_make_model_series(models,polylinefile,modelsdir,iplot,varargin)
 
 global bathymetry
 
+modeltype='tsunami';
+
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'modeltype'}
+                modeltype=varargin{ii+1};
+        end
+    end
+end
+    
 % Polyline file to be used
 [xp,yp]=landboundary('read',polylinefile);
 
@@ -94,12 +105,12 @@ for im=1:length(models)
     
     % And now make the models
     
-    makeModels(models(im),xg,yg,bathymetry,modelsdir,iplot);
+    makeModels(models(im),xg,yg,bathymetry,modelsdir,modeltype,iplot);
 
 end
 
 %%
-function makeModels(model,xp,yp,bathymetry,dr,iplot)
+function makeModels(model,xp,yp,bathymetry,dr,modeltype,iplot)
 
 model.diston=model.distoff;
 
@@ -297,7 +308,7 @@ for ig=1:ngrids
     ymean=nanmean(nanmean(y));
     [xmean,ymean]=convertCoordinates(xmean,ymean,'CS2.name','WGS 84','CS2.type','geographic', ...
         'CS1.name',model.cs.name,'CS1.type',model.cs.type);
-    writeMDF([dr filesep modelname filesep 'input' filesep],modelname,size(x,1)+1,size(x,2)+1,ymean,model.dt,model.inclobs,model.solver,model.vicouv);  
+    writeMDF([dr filesep modelname filesep 'input' filesep],modelname,modeltype,size(x,1)+1,size(x,2)+1,ymean,model.dt,model.inclobs,model.solver,model.vicouv);  
     
     %% XML
     xml=[];
@@ -317,7 +328,7 @@ for ig=1:ngrids
 end
 
 %
-function writeMDF(dr,modelname,mmax,nmax,anglat,dt,inclobs,solver,vicouv)
+function writeMDF(dr,modelname,modeltype,mmax,nmax,anglat,dt,inclobs,solver,vicouv)
 
 fid=fopen([dr filesep modelname '.mdf'],'wt');
 
@@ -333,21 +344,37 @@ fprintf(fid,'%s\n',['MNKmax= ' num2str(mmax) '  ' num2str(nmax) '   1']);
 fprintf(fid,'%s\n','Thick = 1.0000000e+002');
 fprintf(fid,'%s\n',['Fildep= #' modelname '.dep#']);
 fprintf(fid,'%s\n','Fmtdep= #FR#');
-fprintf(fid,'%s\n','Itdate= #2013-01-01#');
-fprintf(fid,'%s\n','Tunit = #M#');
-fprintf(fid,'%s\n','Tstart= 0.0000000e+000');
-fprintf(fid,'%s\n','Tstop = RDURKEY');
+switch lower(modeltype)
+    case{'cyclone','tropicalcyclone'}
+        fprintf(fid,'%s\n','Itdate= #ITDATEKEY#');
+        fprintf(fid,'%s\n','Tunit = #M#');
+        fprintf(fid,'%s\n','Tstart= TSTARTKEY');
+        fprintf(fid,'%s\n','Tstop = TSTOPKEY');
+    otherwise
+        fprintf(fid,'%s\n','Itdate= #2013-01-01#');
+        fprintf(fid,'%s\n','Tunit = #M#');
+        fprintf(fid,'%s\n','Tstart= 0.0000000e+000');
+        fprintf(fid,'%s\n','Tstop = RDURKEY');
+end
 %fprintf(fid,'%s\n',['Tstop = ' num2str(rdur) ' ']);
 fprintf(fid,'%s\n',['Dt    = ' num2str(dt)]);
 fprintf(fid,'%s\n','Tzone = 0');
-fprintf(fid,'%s\n','Sub1  = #    #');
+switch lower(modeltype)
+    case{'cyclone','tropicalcyclone'}
+        fprintf(fid,'%s\n','Sub1  = #  W #');
+    otherwise
+        fprintf(fid,'%s\n','Sub1  = #    #');
+end
 fprintf(fid,'%s\n','Sub2  = #   #');
 fprintf(fid,'%s\n','Wnsvwp= #N#');
 fprintf(fid,'%s\n','Wndint= #Y#');
 % fprintf(fid,'%s\n','Zeta0 = 0.0000000e+000');
 % fprintf(fid,'%s\n','U0    = [.]');
 % fprintf(fid,'%s\n','V0    = [.]');
-fprintf(fid,'%s\n',['Filic = #' modelname '.ini#']);
+switch lower(modeltype)
+    case{'tsunami'}
+        fprintf(fid,'%s\n',['Filic = #' modelname '.ini#']);
+end
 fprintf(fid,'%s\n',['Filbnd= #' modelname '.bnd#']);
 fprintf(fid,'%s\n','Fmtbnd= #FR#');
 fprintf(fid,'%s\n',['FilbcT= #' modelname '.bct#']);
@@ -358,8 +385,8 @@ fprintf(fid,'%s\n','Alph0 = [.]');
 fprintf(fid,'%s\n','Tempw = 1.5000000e+001');
 fprintf(fid,'%s\n','Salw  = 3.1000000e+001');
 fprintf(fid,'%s\n','Rouwav= #    #');
-fprintf(fid,'%s\n','Wstres= 6.3000000e-004  0.0000000e+000  7.2300000e-003  3.0000000e+001');
-fprintf(fid,'%s\n','Rhoa  = 1.0000000e+000');
+fprintf(fid,'%s\n','Wstres= 6.3000000e-004  0.0000000e+000  2.5000000e-003  3.0000000e+001  1.5000000e-003  5.0000000e+001');
+fprintf(fid,'%s\n','Rhoa  = 1.1500000e+000');
 fprintf(fid,'%s\n','Betac = 5.0000000e-001');
 fprintf(fid,'%s\n','Equili= #Y#');
 fprintf(fid,'%s\n','Tkemod= #            #');
@@ -410,29 +437,55 @@ if inclobs
     fprintf(fid,'%s\n',['Filsta= #' modelname '.obs#']);
     fprintf(fid,'%s\n','Fmtsta= #FR#');
 end
-fprintf(fid,'%s\n','Prhis = 0.0000000e+000  0.0000000e+000  0.0000000e+000');
-fprintf(fid,'%s\n','Flmap = 0.0000000e+000  RDURKEY  RDURKEY');
-if inclobs
-    fprintf(fid,'%s\n','Flhis = 0.0000000e+000  1.0000000e+000  RDURKEY');
-else
-    fprintf(fid,'%s\n','Flhis = 0.0000000e+000  0.0000000e+000  0.0000000e+000');
+switch lower(modeltype)
+    case{'cyclone','tropicalcyclone'}
+        fprintf(fid,'%s\n','Prhis = 0.0000000e+000  0.0000000e+000  0.0000000e+000');
+        fprintf(fid,'%s\n','Flmap = TSTARTKEY  DTMAPKEY  TSTOPKEY');
+        if inclobs
+            fprintf(fid,'%s\n','Flhis = TSTARTKEY  DTHISKEY  TSTOPKEY');
+        else
+            fprintf(fid,'%s\n','Flhis = 0.0000000e+000  0.0000000e+000  0.0000000e+000');
+        end
+    otherwise
+        fprintf(fid,'%s\n','Prhis = 0.0000000e+000  0.0000000e+000  0.0000000e+000');
+        fprintf(fid,'%s\n','Flmap = 0.0000000e+000  RDURKEY  RDURKEY');
+        if inclobs
+            fprintf(fid,'%s\n','Flhis = 0.0000000e+000  1.0000000e+000  RDURKEY');
+        else
+            fprintf(fid,'%s\n','Flhis = 0.0000000e+000  0.0000000e+000  0.0000000e+000');
+        end
 end
+
 fprintf(fid,'%s\n','Flpp  = 0.0000000e+000  0.0000000e+000  0.0000000e+000');
 fprintf(fid,'%s\n','Flrst = 0.0000000e+000');
 fprintf(fid,'%s\n',['Filfou= #' modelname '.fou#']);
 fprintf(fid,'%s\n','Fmtfou= #FR#');
 fprintf(fid,'%s\n','FLNcdf= #fou map#');
+switch lower(modeltype)
+    case{'cyclone','tropicalcyclone'}
+        fprintf(fid,'%s\n','Filweb= #SPWKEY#');
+end
 
 fclose(fid);
 
 % And the fourier file
 fid=fopen([dr filesep modelname '.fou'],'wt');
-fprintf(fid,'%s\n','wl         0.00      RDURKEY     1     1.00000     0.00000      max');
-fprintf(fid,'%s\n','uv         0.00      RDURKEY     1     1.00000     0.00000  1   max');
-fprintf(fid,'%s\n','eh         0.00      RDURKEY     1     1.00000     0.00000      max');
-fprintf(fid,'%s\n','wl         0.00      RDURKEY     1     1.00000     0.00000      max  inidryonly');
-fprintf(fid,'%s\n','uv         0.00      RDURKEY     1     1.00000     0.00000  1   max  inidryonly');
-fprintf(fid,'%s\n','eh         0.00      RDURKEY     1     1.00000     0.00000      max  inidryonly');
+switch lower(modeltype)
+    case{'cyclone','tropicalcyclone'}
+        fprintf(fid,'%s\n','wl         TSTARTKEY      RDURKEY     1     1.00000     0.00000      max');
+        fprintf(fid,'%s\n','uv         TSTARTKEY      RDURKEY     1     1.00000     0.00000  1   max');
+        fprintf(fid,'%s\n','eh         TSTARTKEY      RDURKEY     1     1.00000     0.00000      max');
+        fprintf(fid,'%s\n','wl         TSTARTKEY      RDURKEY     1     1.00000     0.00000      max  inidryonly');
+        fprintf(fid,'%s\n','uv         TSTARTKEY      RDURKEY     1     1.00000     0.00000  1   max  inidryonly');
+        fprintf(fid,'%s\n','eh         TSTARTKEY      RDURKEY     1     1.00000     0.00000      max  inidryonly');
+    otherwise
+        fprintf(fid,'%s\n','wl         0.00      RDURKEY     1     1.00000     0.00000      max');
+        fprintf(fid,'%s\n','uv         0.00      RDURKEY     1     1.00000     0.00000  1   max');
+        fprintf(fid,'%s\n','eh         0.00      RDURKEY     1     1.00000     0.00000      max');
+        fprintf(fid,'%s\n','wl         0.00      RDURKEY     1     1.00000     0.00000      max  inidryonly');
+        fprintf(fid,'%s\n','uv         0.00      RDURKEY     1     1.00000     0.00000  1   max  inidryonly');
+        fprintf(fid,'%s\n','eh         0.00      RDURKEY     1     1.00000     0.00000      max  inidryonly');
+end
 fclose(fid);
 
 %%
