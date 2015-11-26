@@ -1,44 +1,163 @@
 function varargout = flag_plot(X,Y,varargin)
+%The function flag_plot let's you plot flags planted in the specified
+%coordinates (X and Y) with ample control of appearance, color, shape, etc.
 %
+%The function is called using the following syntax:
 %
+% <output> = flag_plot(X,Y,<keyword,value>);
 %
+%The X and Y coordinates are the only required input variables and can be
+%a numeric vector or matrix of any shape ([1xN], [Mx1] or [M,N]), as long
+%as X and Y are equally shaped and have a maximum of 2 dimensions.
 %
-%                ,--- flag_field_relative_width
-%                |
+%The optional <output> variable will contain the coordinates of the created
+%flags, their plotting routines and (if the flags were plotted) handles to
+%their objects. All output data is stored in a {M,N} cell (X and Y shaped).
+%
+%Various optional <keywords,value> pairs can be included, a list of these
+%is provided when simply calling:
+%
+% OPT = flag_plot();
+%
+%This call will also create a figure, which displays all the different flag
+%layouts that are available for the keyword 'flag_field_type'. Below a
+%list is provided of all keywords:
+%
+% - flag_pole_height (*)        Flag height, [1,1] or [M,N] values ([1])
+% - flag_pole_relative_width    Flag pole width, relative to height (0.02)
+% - flag_pole_plot_color        Flag pole color in colorcode or RGB (brown)
+%
+% - flag_field_type (*)         Type of flag ('square_wave') from flag_plot
+% - flag_field_relative_height  Flag field height, relative to height (0.2)
+% - flag_field_relative_width   Flag field width, relative to height (0.3)
+% - flag_field_relative_cut_out Flag field cut-out, relative to width (0.3)
+% - flag_field_plot_color (*)   Flag field color in colorcode or RGB ('r')
+%
+% - plot_to_figure              Boolean, plot flags to current fig. (true)
+% - axis_equal                  Boolean, plot flags in equal axis (true)
+% - flag_rotation               Rotation of the flags in degrees (0)
+% - flag_mirror                 Boolean, mirroring flags horizontal (false)
+%
+% - LineWidth                   Width of the flag edge lines (0.5)
+% - EdgeColor                   Color of the flag edge lines ('k')
+% - FaceAlpha                   Alpha of the flag field (1.0)
+%
+%Note that keywords indicated with (*) can also be called using the
+%following syntax:
+%
+% <output> = flag_plot(X,Y,<value only, for the most used keywords(*)>);
+%
+%Below, all optional keywords related to the flag (field and pole) are
+%visualized incl. defaults for clarification:
+%
+%                ,--- flag_field_relative_width (0.3)                         
+%                |                                                        
 %                |
 %                v
-%    ___        ___       ___
-%   |   |--___--   --___--   --.
-%   |   |                     / <--- flag_field_relative_height
-%   |   |                    /
-%   |   |      FLAG-FIELD   {<------ flag_field_relative_cut_out   
-%   |   |                    \      (relative to flag field width)
-%   |   |       ___ ^     ___ \ 
-%   |   |--___--   -|___--  ^--'
-%   |   |           |       |
-%   |   |           |       '--- flag_field_type (type of flag)
-%   | F |           |
-%   | L |           '--- flag_field_plot_color (red by default)
-%   | A |           
-%   | G |
-%   |   |
-%   |   | <--- flag_pole_height (variables are relative to this height)
-%   |   |  
-%   | <-|------ flag_pole_plot_color (brown by default)
-%   |   |  
-%   | P |
-%   | O |
-%   | L |---__  
-%   | E |     \  <--- flag_rotation (0 degrees is vertical)
-%   |   |      |       
-% __|   |__    V
-%     ^
-%     |
-%     |--- provided X,Y position(s)
-%     |
-%     '--- flag_pole_relative_width
+%      ___        ___       ___
+%     |   |--___--   --___--   --.
+%     |   |                     / <--- flag_field_relative_height (0.2)
+%     |   |                    /
+%     |   |      FLAG-FIELD   {<------ flag_field_relative_cut_out (0.3)
+%     |   |                    \      (relative to flag field width)
+%     |   |       ___ ^     ___ \ 
+%     |   |--___--   -|___--  ^--'
+%     |   |           |       |
+%     |   |           |       '--- flag_field_type (type of flag)
+%     | F |           |
+%     | L |           '--- flag_field_plot_color ('r')
+%     | A |           
+%     | G |
+%     |   |
+%     |   | <--- flag_pole_height (variables are relative to this height)
+%     |   |  
+%     | <-|------ flag_pole_plot_color (brown in RGB by default)
+%     |   |  
+%     | P |
+%     | O |
+%     | L |---__  
+%     | E |     \  <--- flag_rotation (0 degrees is vertical and default)
+%     |   |      |       
+%   __|   |__    V
+%       ^
+%       |
+%       |--- provided X,Y position(s)
+%       |
+%       '--- flag_pole_relative_width (0.02)
 %
+%Some examples for the flag_plot basics:
 %
+%flag_plot(2,2,5);            % A flag planted at (2,2) with a height of 5
+%flag_plot(4,2,'g');          % A flag planted at (2,4) with a green color
+%flag_plot(6,2,'triangle');   % A triangle field flag planted at (2,6)
+% % An old-school flag:
+%flag_plot(0,0,'flag_field_relative_width',1,...
+%              'flag_field_type','square_wave_cut_in',...
+%              'flag_field_relative_height',0.1); axis off;
+%
+%And some more advanced examples:
+%
+% % (1) A whole lot of flags:
+%cols = jet(100); types = {'triangle_wave','square_wave'}; figure; box on;
+%axis equal; set(gca,'xlim',[-2 12],'ylim',[-2 12],'XTick',[],'YTick',[]);
+%for ii=1:200;
+%    flag_plot(10*rand,10*rand,'flag_pole_height',2*rand,...
+%                        'flag_mirror',round(rand),...
+%                        'flag_rotation',360*rand,...
+%                        'flag_field_type',types{round(rand+1)},...
+%                        'flag_field_plot_color',[rand rand rand]);
+%    title([num2str(ii,'%03.0f') ' flags!']); drawnow;
+%end
+%
+% % (2) Freek Scheel was here
+% 
+%figure; set(gcf,'MenuBar','none','DockControls','off','resize','off');
+%set(gcf,'color','k','Name','Freek was here','NumberTitle','off'); axis equal;
+%set(gca,'xlim',[-2 3.333],'ylim',[-2 2],'color','k','position',[0 0 1 1]);
+%hold on; patch(10.*sind(0:360)-1.7,10.*cosd(0:360)-10.5,'w');
+%flag_plot(10.*sind(10)-1.7,10.*cosd(10)-10.5,...
+%                                       'flag_rotation',10,...
+%                                       'flag_pole_height',2,...
+%                                       'flag_field_relative_height',0.6,...
+%                                       'flag_field_relative_width',1.0);
+%text(11.5.*sind(10)+sind(100)-1.7,11.5.*cosd(10)+cosd(100)-10.5,...
+%                                       {'Freek Scheel';'was here'},...
+%                                        'horizontalalignment','center',...
+%                                        'Rotation',-10,...
+%                                        'fontweight','bold',...
+%                                        'fontsize',16);
+%
+% % (3) All different flag options:
+%
+%flag_plot;
+%__________________________________________________________________________
+%See also: patch, setproperty
+
+%   --------------------------------------------------------------------
+%       Freek Scheel 2015
+%       +31(0)88 335 8241
+%       <freek.scheel@deltares.nl>;
+%
+%       Please contact me if errors occur.
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
 
 % Flag-pole:
 OPT.flag_pole_height            = 1;
@@ -51,7 +170,7 @@ OPT.flag_field_relative_cut_out = 0.3;
 OPT.flag_field_type             = 'square_wave';
 
 % Plotting flag-pole:
-OPT.flag_pole_plot_color        = [139 69 19]./255;
+OPT.flag_pole_plot_color        = [0.545 0.271 0.075];
 
 % Plotting flag-field:
 OPT.flag_field_plot_color       = 'r';
@@ -66,6 +185,8 @@ OPT.flag_mirror                 = false;
 OPT.LineWidth                   = 0.5;
 OPT.EdgeColor                   = 'k';
 OPT.FaceAlpha                   = 1.0;
+
+if exist('odd','file') ~= 2; disp(['Please add the entire OpenEarthTools to your active Matlab-path']); end;
 
 if nargin == 0 || nargin == 1
     varargout{1} = OPT;
@@ -83,6 +204,7 @@ if nargin == 0 || nargin == 1
     end
     return
 end
+if iscell(X); X = X{:}; end; if iscell(Y); Y = Y{:}; end;
 if size(X,1) ~= size(Y,1) || size(X,2) ~= size(Y,2) || numel(X) ~= numel(Y) || numel(X) ~= size(X,1).*size(X,2)
     error(['The size of the X and Y input is inconsistent ([' num2str(size(X)) '] versus [' num2str(size(Y)) '])']);
 end
