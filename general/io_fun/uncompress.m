@@ -22,7 +22,7 @@ function OPT = uncompress(fileName, varargin)
 %       uncompress('file','c:\temp\fik.rar')
 %           uncompresses the contents of .rar file to c:\temp
 %
-%       OPT = uncompress('c:\test.rar','quiet','true','outpath',pwd)
+%       OPT = uncompress('c:\test.rar','quiet',true,'outpath',pwd)
 %           silent uncompress of the .rar file to the working directory
 %
 %   See also unzip system('7z')
