@@ -27,6 +27,16 @@ function [hfig]=plotSWDtransport(data,cstangle,x,y,dy,dS,dF,colour,linewidth,fon
 %     plotSWDtransport(data,2,2.5,2000,4000,10,1,'r',1,8,40)
 %     using data of SWDfile 2 inside struct 'data'. Plots data after 2.5 year with a approximate distance of 2000m between transport arrows (dx),
 %     plots at 4000m from shoreline (dy), with a vector scale of 10 (dS) and text at same location as arrow (colour='r', linewidth=1, fontsize=8, smoothing=40x)
+%
+%   Example 2:
+%     dy = [0.050,0.100];
+%     dS = 0.006;
+%     dF = 0.2;
+%     colour={[0 0 1],[0 0 1],[1 0 0],[0 0 0]};
+%     linewidth  = 1.5;
+%     fontsize   = 10;
+%     ID = [1:8,31:37];
+%     [hfig]=plotSWDtransport(SWDdata(ID),CSTangle2(ID),X2(ID)/1000,Y2(ID)/1000,dy,dS,dF,colour,linewidth,fontsize);
 
 %
 %   See also 
