@@ -3,7 +3,7 @@ function varargout = readMap(ncfile,varargin)
 %
 %     D = dflowfm.readMap(ncfile,<it>) 
 %     D = dflowfm.readMap(G     ,<it>) 
-%     D = dflowfm.readMap(G     [,it [,opt=val [, opt=val ...]] ]) 
+%     D = dflowfm.readMap(G     [,it [,opt, val [, opt, val ...]] ]) 
 %
 %   reads flow circumcenter(cen) data from an D-Flow FM NetCDF file. 
 %   By default is the LAST timestep is read (it=last).
@@ -46,6 +46,7 @@ function varargout = readMap(ncfile,varargin)
 
    OPT.zwl       = 1; % whether to load data 
    OPT.sal       = 0; % whether to load data 
+   OPT.dep       = 0; % whether to load data 
    OPT.vel       = 1; % whether to load data 
    OPT.spir      = 0; % whether to load data 
 
@@ -98,6 +99,9 @@ function varargout = readMap(ncfile,varargin)
 
    if OPT.zwl && nc_isvar (ncfile, 's1');
       D.face.zwl  = nc_varget(ncfile, 's1' ,[it-1 0],[1 face.mask]); % Waterlevel
+   end  
+   if OPT.dep && nc_isvar (ncfile, 'waterdepth');
+      D.face.dep  = nc_varget(ncfile, 'waterdepth' ,[it-1 0],[1 face.mask]); % Waterdepth
    end  
    if OPT.sal && nc_isvar (ncfile, 'sa1');
        info=nc_getvarinfo(ncfile,'sa1');
