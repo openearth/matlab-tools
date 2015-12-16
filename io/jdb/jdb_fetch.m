@@ -93,9 +93,13 @@ else
                         data{row,col} = rs.getInt(col);
                     case {'java.sql.Timestamp','oracle.sql.TIMESTAMP'}
                         jt = rs.getTimestamp(col);
+                        if isempty(jt)
+                        data{row,col} = NaN;
+                        else
                         mils_since_epoch = jt.getTime() - (jt.getTimezoneOffset * 60 * 1000);
                         epoch = datenum(1970,1,1);
                         data{row,col} = epoch + mils_since_epoch/1000/3600/24;
+                        end
                     case {'java.lang.Boolean'}
                         data{row,col} = logical(rs.getBoolean(col));
                     case 'org.postgresql.util.PGInterval'
