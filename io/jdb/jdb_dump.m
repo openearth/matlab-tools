@@ -23,18 +23,24 @@ OPT.all   = true;
 
 OPT = setproperty(OPT,varargin{:});
 
-[tables, owners] = jdb_gettables(conn,'all',OPT.all,'table',OPT.table);
+[tnames, towners, ttypes] = jdb_gettables(conn,'all',OPT.all,'table',OPT.table);
+[vnames, vowners, vtypes] = jdb_getviews (conn,'all',OPT.all,'table',OPT.table);
+
+tables=[tnames;vnames];
+owners=[towners;vowners];
+types=[ttypes;vtypes];
 
 for ii=1:length(tables)
     table = tables{ii};
     owner = owners{ii};
+    type  = types{ii};
     try % ERROR: relation "topology" does not exist
         [column_name,data_type,data_length] = jdb_getcolumns(conn, table, owner);
         
         pk_name = jdb_getpk(conn, table);
         %         pk_name = '';
         
-        disp([table,' (',num2str(data_length),'):'])
+        disp([table,' (',num2str(data_length),'): -- ', type])
         for j=1:length(column_name)
             if strcmpi(column_name{j},pk_name)
                 disp(['    ',column_name{j},' (',data_type{j},') [PK]'])

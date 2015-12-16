@@ -4,6 +4,8 @@ function varargout = jdb_settings(varargin)
 % JDB_SETTINGS() adds correct JDBC to dynamic java path. You need to 
 % do this every Matlab session when you want to use PostgreSQL or Oracle.
 %
+%   jdb_settings('dbtype','postgresql');
+%   jdb_settings('dbtype','oracle');
 %
 % Alternatively you can let load it automatically into the static
 % java path by adding it to in the following file that is read

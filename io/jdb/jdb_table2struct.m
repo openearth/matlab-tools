@@ -1,7 +1,7 @@
 function T = jdb_table2struct(conn, table, owner, column_names, varargin)
 %JDB_TABLE2STRUCT  Load all or some columns of table into struct
 %
-%   T = JDB_TABLE2STRUCT(conn, table, <column_names>,<limit>) loads
+%   T = JDB_TABLE2STRUCT(conn, table, owner, <column_names>, <limit>) loads
 %   all (default) or optionally only the specified column_names (cellstr) 
 %   into a struct T. Do not use for large tables, use optional limit argument 
 %   as criterion when not to load (default 2e6). Set to Inf to always load.
@@ -11,7 +11,6 @@ function T = jdb_table2struct(conn, table, owner, column_names, varargin)
 %
 %   Example:
 %   
-%   jdb_table2struct(conn,'my_table')
 %   jdb_table2struct(conn,'my_table',[])
 %   jdb_table2struct(conn,'my_table',[],1e7)
 %   jdb_table2struct(conn,'my_table',{'col1','col2'})

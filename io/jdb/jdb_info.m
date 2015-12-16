@@ -40,7 +40,12 @@ OPT.column_name  = '';
 OPT = setproperty(OPT,varargin{:});
 
 % First select the available tables
-[tables, owners] = jdb_gettables(conn,'all',OPT.all);
+[tnames, towners, ttypes] = jdb_gettables(conn,'all',OPT.all,'table',OPT.table);
+[vnames, vowners, vtypes] = jdb_getviews (conn,'all',OPT.all,'table',OPT.table);
+
+tables=[tnames;vnames];
+owners=[towners;vowners];
+types=[ttypes;vtypes];
 
 % Check if passed tables are present
 if ~isempty(OPT.table)
@@ -49,6 +54,7 @@ if ~isempty(OPT.table)
     tables = OPT.table(idx);
     [~,idb]= ismember(tables, OPT.table);
     owners = owners(idb);    
+    types  = types(idb);    
 
     %Create dummy struct fields when not present
     unknown = OPT.table(~idx);
@@ -67,7 +73,9 @@ tablefieldnames = matlab.lang.makeUniqueStrings(matlab.lang.makeValidName(tables
 for ii=1:length(tables)
     table = tables{ii};
     owner = owners{ii};
+    type  = types{ii};
     tablename = tablefieldnames{ii}; 
+    disp(['table: ',num2str(ii),'/',num2str(length(tables))])
     try
         if isempty(OPT.column_name)
             [nams, typs, siz] = jdb_getcolumns(conn,table,owner);    
@@ -84,6 +92,8 @@ for ii=1:length(tables)
         info.(tablename).isprimarykey  = ispk;
         info.(tablename).records       = siz;
         info.(tablename).err           = '';
+        info.(tablename).owner         = owner;
+        info.(tablename).type          = type;
     catch ME
         info.(tablename).table         = table;
         info.(tablename).fieldnames    = {};
@@ -91,6 +101,8 @@ for ii=1:length(tables)
         info.(tablename).isprimarykey  = [];
         info.(tablename).records       = [];
         info.(tablename).err           = ['Error in reading table: ' ME.message];
+        info.(tablename).owner         = {};
+        info.(tablename).type          = {};
     end
 end
 info = orderfields(info);

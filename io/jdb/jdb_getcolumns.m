@@ -1,13 +1,13 @@
 function [column_name, data_type,data_length] = jdb_getcolumns(conn, table, owner, column_name0)
 % List all column_names, their data_types and length from a given table
 %
-%   List all columns in a given table in the current database. Returns a
+%   List all columns in a given table or view in the current database. Returns a
 %   cellstr list with column names with the following SQL statements:
 %      SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ''table''
 %      SELECT count(*)               FROM "table"
 %
 %   Syntax:
-%   [column_name,<data_type>,<data_length>] = jdb_getcolumns(conn, table,<column_name0>)
+%   [column_name,<data_type>,<data_length>] = jdb_getcolumns(conn, table, owner, <column_name0>)
 %
 %   Input:
 %   conn         = Database connection object
@@ -35,7 +35,7 @@ function [column_name, data_type,data_length] = jdb_getcolumns(conn, table, owne
 %     [nams,typs] = jdb_getcolumns(conn,table,columns);
 %     D           = jdb_fetch2struct(R,nams,typs);
 %
-%   See also jdb_connectdb, jdb_gettables, jdb_fetch2struct, jdb_table2struct
+%   See also jdb_connectdb, jdb_gettables, jdb_getviews, jdb_fetch2struct, jdb_table2struct
 
 %% Copyright notice: see below
 
@@ -98,7 +98,11 @@ if nargout > 1
         % ?? why does '''' encapsulation not work here ??
         switch dbtype
             case 'oracle'
-                idx = ismember(owner,{'SYS' 'SYSTEM' 'MDSYS' 'XDB' 'OLAPSYS' 'APEX_030200' 'EXFSYS' 'CTXSYS'});
+                if isempty(owner)
+                    idx = true;
+                else
+                    idx = ismember(owner,{'SYS' 'SYSTEM' 'MDSYS' 'XDB' 'OLAPSYS' 'APEX_030200' 'EXFSYS' 'CTXSYS'});
+                end
                 if idx
                     strSQL = ['SELECT count(*) FROM ',jdb_quote(table)];
                 else
