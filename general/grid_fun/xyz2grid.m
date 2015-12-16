@@ -3,14 +3,18 @@ function [X, Y, Z] = xyz2grid(xyz,bbox,trash)
 %
 %    [X,Y,Z] = xyz2grid(xyz,bbox,trash); 
 %
-% xyz:   Matrix with latitude (x-dir) in the first column. Longitude (y-dir)
-%        in the second column and the corresponding depths in the third
-%        column.
-% bbox:  Input bbox as an array: [left right bottom top]. Output will only
-%        be the values in the bbox. 
-% trash: Give NaN values NaN, or zero. Trash can only be NaN or 0. If trash
-%        is set to 0, the values which are missing in the dataset will be 
-%        set to 0. Use at own risk.
+% xyz:      Matrix with latitude (x-dir) in the first column. Longitude (y-dir)
+%           in the second column and the corresponding depths in the third
+%           column.
+% bbox:     Input bbox as an array: [left right bottom top]. Output will only
+%           be the values in the bbox. 
+% trash:    Give NaN values NaN, or zero. Trash can only be NaN or 0. If trash
+%           is set to 0, the values which are missing in the dataset will be 
+%           set to 0. Use at own risk.
+%
+% This function is build using bathymetry maps from: 
+%           http://portal.emodnet-bathymetry.eu/
+% The XYZ-files downloaded here work for this function.
 %
 % Example 1:
 %           xyz = [10*abs(randn(1000,1)) 50+3*abs(randn(1000,1)) -abs(20+20*randn(1000,1))];
@@ -55,7 +59,7 @@ tmp.Y= xyz(:,2);
 tmp.Z= xyz(:,3);
 
 tmp.index = tmp.X>=bbox(1) & tmp.X<=bbox(2) ...
-            & tmp.Y>=bbox(3) & tmp.Y<=bbox(4); ...
+            & tmp.Y>=bbox(3) & tmp.Y<=bbox(4);
 
 tmp.fields2copy = {'X','Y','Z'};    
 for p = 1:numel(tmp.fields2copy)
