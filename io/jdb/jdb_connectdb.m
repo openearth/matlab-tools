@@ -52,7 +52,7 @@ function conn = jdb_connectdb(db, varargin)
 
    if nargin==0;conn = OPT;return;end
 
-   OPT = setproperty(OPT,varargin{:},'onExtraField','silentIgnore');
+   OPT = setproperty(OPT,varargin,'onExtraField','silentIgnore');
 
 %% connect to database
 switch lower(OPT.dbtype) % lower(db)
