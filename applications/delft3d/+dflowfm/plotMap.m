@@ -133,7 +133,8 @@ function varargout = plotMap(varargin)
         elseif isnumeric(varargin{2}) && ~isscalar(varargin{2})
           it      = varargin{2};
           OPT.parameter     = 'auto';
-          D.cen.(OPT.parameter) = varargin{2};
+	  D.cen.(OPT.parameter) = varargin{2};
+          D.face.(OPT.parameter) = varargin{2};
         elseif isstruct(varargin{2})
           D       = varargin{2};
         else
@@ -220,7 +221,7 @@ else
       c=colorbar;
       c.Label.String=OPT.parameter;
       c.Label.FontSize = 12;
-      title(D.datestr) 
+      %title(D.datestr) 
       
    else
 
