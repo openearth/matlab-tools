@@ -4,19 +4,26 @@ function sal_decomp(varargin)
 %   See memo of Y.Dijkstra :
 %   memo_salt_balance_diagnostic_tool.pdf 21-Jul-14  13:15
 % 
-%   Syntax:
-%   varargout = sal_decomp(varargin)
+%   Syntax: sal_decomp(varargin)
 %
-%   Input: For <keyword,value> pairs call sal_decomp() without arguments.
-%   varargin  =
+%   call without arguments assumes inpiut-file named : zoutflux.ini
+%   
+%   varargin  = optional <keyword ,value> pair ('Filinp','zoutflux_voor_gerben.ini')
 %
-%   Output:
-%   varargout =
+%% example input file:
+% -----------------------------------------------------------------
+% [Files]
+% Mydir       = d:\projects\15-hol_ijssel\runs
+% Runid       = y13
+% Crs file    = zoutflux.crs
+% Output file = zf-y13-00x.tek
+% [Timings]
+% ana_start   = '20510101  091000'
+% ana_stop    = '20511130  220000'
+% -----------------------------------------------------------------
+%%
+%   Output: tekal-file with total and decomposed fluxes.
 %
-%   Example
-%   sal_decomp
-%
-%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -66,7 +73,7 @@ clearvars -except varargin; hold off; close all; fclose all;
 no_terms = 16;
 
 %% Get general information
-Opt.Filinp  = 'zoutflux-00x.ini';
+Opt.Filinp  = 'zoutflux.ini';
 Opt         = setproperty(Opt,varargin);
 
 Info        = inifile('open',Opt.Filinp);
@@ -78,8 +85,8 @@ start       = inifile('get',Info,'Timings','ana_start   ');
 stop        = inifile('get',Info,'Timings','ana_stop    ');
 
 %% Construct filenames
-    mydir    = ['d:\projects\15-hol_ijssel\runs\' run filesep];      % run dir.
-myrun    = ['trih-' run] ;                             % run id
+mydir    = ['d:\projects\15-hol_ijssel\runs\' run filesep];      % run dir.
+myrun    = ['trih-' run] ;                                       % run id
 mymap    = ['trim-' run] ;
 outfil   = [mydir output];                         
 crsfil   = [mydir crs_tmp] ;
@@ -260,3 +267,23 @@ end
 %% Close all files
 fclose('all') ;
 
+%% Csum cross-section-summation
+function out=Csum(in)
+
+out=sum(sum(in,3),2);
+
+end
+
+%% Tavg time-average function
+function out=Tavg(in)
+
+out=mean(in,1);
+
+end
+
+%% CsumTavg cross-section-summation and time-average function
+function out=CsumTavg(in)
+
+out=mean(sum(sum(in,3),2),1);
+
+end
