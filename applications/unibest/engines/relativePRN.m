@@ -1,23 +1,19 @@
-function [PRNdata]=relativePRN(PRNdata,PRNdataREF,Xlimits,Tlimits)
+function [PRNdata2]=relativePRN(PRNdata,PRNdataREF)
 %relativePRN computes the impact with respect to a reference by substracting a reference PRNdata structure from the PRNdata.
 %
 %   Syntax:
-%     function [PRNdata]=relativePRN(PRNdata)
+%     function [PRNdata2]=relativePRN(PRNdata)
 % 
 %   Input:
 %     PRNdata              data structure that has been read with readPRN.m (either a single or multiple data structure or cell, i.e. PRNdata(ii).x etc)
 %     PRNdataREF           reference data structure that has been read with readPRN.m
-%     Xlimits              (optional) provide xlimits of model [distance in meter along the coast]
-%     Tlimits              (optional) provide time limits [year w.r.t. model reference time]
 %  
 %   Output:
-%     PRNdata              structure with PRNdata (with flipped x-direction)
+%     PRNdata2             structure with PRNdata (with flipped x-direction)
 %
 %   Example:
 %     PRNdata    = readPRN('example.PRN');
 %     PRNdataREF = readPRN('exampleREF.PRN');
-%     Xlimits    = [0,12000];
-%     Tlimits    = [0,10];
 %     [PRNdata2] = relativePRN(PRNdata,PRNdataREF)
 %
 %   See also 
@@ -74,7 +70,7 @@ function [PRNdata]=relativePRN(PRNdata,PRNdataREF,Xlimits,Tlimits)
     Tlimits=[];
     end
 
-    PRN2data=struct;
+    PRNdata2=struct;
 
     for ii=1:length(PRNdata)
         %% COMPUTE IMPACT
@@ -91,52 +87,11 @@ function [PRNdata]=relativePRN(PRNdata,PRNdataREF,Xlimits,Tlimits)
         PRNdata2(ii).stored      = PRNdata(ii).stored     -PRNdataREF(1).stored     ;        % [304x61 double]
         PRNdata2(ii).ray         = PRNdata(ii).ray;                                          % [305x61 double]
         PRNdata2(ii).alfa        = PRNdata(ii).alfa;                                         % [305x61 double]
-        PRNdata2(ii).alfaDIFF    = PRNdata(ii).alfa       -PRNdataREF(1).alfa       ;        % [305x61 double]
+        %PRNdata2(ii).alfaDIFF    = PRNdata(ii).alfa       -PRNdataREF(1).alfa       ;        % [305x61 double]
         PRNdata2(ii).transport   = PRNdata(ii).transport  -PRNdataREF(1).transport  ;        % [305x61 double]
         PRNdata2(ii).volume      = PRNdata(ii).volume     -PRNdataREF(1).volume     ;        % [305x61 double]
         PRNdata2(ii).xdist       = PRNdata(ii).xdist;                                        % [305x1 double]
         PRNdata2(ii).xdist2      = PRNdata(ii).xdist2;                                       % [304x1 double]
-
-        %% FILTER X-LOCATIONS
-        if ~isempty(Xlimits)
-        XID2 = find(PRNdata2(ii).xdist2>=Xlimits(1) & PRNdata2(ii).xdist2<=Xlimits(2));
-        XID1 = unique([XID2;XID2+1]);
-        PRNdata2(ii).no          = PRNdata2(ii).no(XID2,:);           % [304x61 double]
-        PRNdata2(ii).x           = PRNdata2(ii).x(XID2,:);            % [304x61 double]        
-        PRNdata2(ii).y           = PRNdata2(ii).y(XID2,:);            % [304x61 double]         
-        PRNdata2(ii).z           = PRNdata2(ii).z(XID2,:);            % [304x61 double]
-        PRNdata2(ii).zminz0      = PRNdata2(ii).zminz0(XID2,:);       % [304x61 double]
-        PRNdata2(ii).sourceyear  = PRNdata2(ii).sourceyear(XID2,:);   % [304x61 double]
-        PRNdata2(ii).sourcetotal = PRNdata2(ii).sourcetotal(XID2,:);  % [304x61 double]
-        PRNdata2(ii).stored      = PRNdata2(ii).stored(XID2,:);       % [304x61 double]
-        PRNdata2(ii).ray         = PRNdata2(ii).ray(XID1,:);           % [305x61 double]  
-        PRNdata2(ii).alfa        = PRNdata2(ii).alfa(XID1,:);          % [305x61 double]
-        PRNdata2(ii).alfaDIFF    = PRNdata2(ii).alfaDIFF(XID1,:);      % [305x61 double]
-        PRNdata2(ii).transport   = PRNdata2(ii).transport(XID1,:);     % [305x61 double]
-        PRNdata2(ii).volume      = PRNdata2(ii).volume(XID1,:);        % [305x61 double]
-        PRNdata2(ii).xdist       = PRNdata2(ii).xdist(XID1,:);         % [305x1 double]
-        PRNdata2(ii).xdist2      = PRNdata2(ii).xdist2(XID2,:);       % [304x1 double]
-        end
-        
-        %% FILTER TIME-IDS
-        if ~isempty(Tlimits)
-        TID = find(PRNdata2(ii).year>=Tlimits(1) & PRNdata2(ii).year<=Tlimits(2));
-        PRNdata2(ii).timestep    = PRNdata2(ii).timestep(TID);       % [61x1 double]
-        PRNdata2(ii).year        = PRNdata2(ii).year(TID);           % [61x1 double]
-        PRNdata2(ii).no          = PRNdata2(ii).no(:,TID);           % [304x61 double]
-        PRNdata2(ii).x           = PRNdata2(ii).x(:,TID);            % [304x61 double]
-        PRNdata2(ii).y           = PRNdata2(ii).y(:,TID);            % [304x61 double]
-        PRNdata2(ii).z           = PRNdata2(ii).z(:,TID);            % [304x61 double]
-        PRNdata2(ii).zminz0      = PRNdata2(ii).zminz0(:,TID);       % [304x61 double]
-        PRNdata2(ii).sourceyear  = PRNdata2(ii).sourceyear(:,TID);   % [304x61 double]
-        PRNdata2(ii).sourcetotal = PRNdata2(ii).sourcetotal(:,TID);  % [304x61 double]
-        PRNdata2(ii).stored      = PRNdata2(ii).stored(:,TID);       % [304x61 double]
-        PRNdata2(ii).ray         = PRNdata2(ii).ray(:,TID);          % [305x61 double]  
-        PRNdata2(ii).alfa        = PRNdata2(ii).alfa(:,TID);         % [305x61 double]
-        PRNdata2(ii).alfaDIFF    = PRNdata2(ii).alfaDIFF(:,TID);     % [305x61 double]
-        PRNdata2(ii).transport   = PRNdata2(ii).transport(:,TID);    % [305x61 double]
-        PRNdata2(ii).volume      = PRNdata2(ii).volume(:,TID);       % [305x61 double]    
-        end
     end
 
 end
