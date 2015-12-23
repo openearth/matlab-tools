@@ -172,28 +172,34 @@ XY1(:,2)=XY1(:,2)+XY2(:,1)*dy;
 %-----------------Vector plotting---------------------
 figure(hfig0);
 clear hq ht XYarrow
+Qtrsign=[];
 for ii=1:length(Qtr)
     if sign(Qtr(ii))*1 >=0
-        hq{ii}=quiver(XY1(ii,1),XY1(ii,2),XY2(ii,1),XY2(ii,2),scaling_factor(ii));hold on;
+        Qtrsign(ii) = 1;
     else
-        hq{ii}=quiver(XY1(ii,1),XY1(ii,2),-1*XY2(ii,1),-1*XY2(ii,2),scaling_factor(ii));hold on;
+        Qtrsign(ii) = -1;
     end
+    X1B = XY1(ii,1)-Qtrsign(ii).*0.5*XY2(ii,1)*scaling_factor(ii);
+    Y1B = XY1(ii,2)-Qtrsign(ii).*0.5*XY2(ii,2)*scaling_factor(ii);
+    hq{ii}=quiver(X1B,Y1B,Qtrsign(ii)*XY2(ii,1),Qtrsign(ii)*XY2(ii,2),scaling_factor(ii));hold on;
     set(hq{ii},'LineWidth',linewidth,'Color',colour);
+    set(hq{ii},'ZData',get(hq{ii},'XData').*0+10);
     [hf,XYarrow{ii}] = fillarrowhead(hq{ii},0.35,colour);
 end
 
 %------------------Text plotting----------------------
 if dF>0
     for ii=1:length(Qtr)
-        Xtext=XY1(ii,1)-XY2(ii,2)*dF*dy;
-        Ytext=XY1(ii,2)+XY2(ii,1)*dF*dy;    
-        Qtext=['',num2str(abs(Qtr(ii)*1000),'%5.0f'),' '];% 'km3/yr'];
-    
+        Xtext=XY1(ii,1)+Qtrsign(ii).*0.5*XY2(ii,1)*scaling_factor(ii)-XY2(ii,2)*dF*dy;
+        Ytext=XY1(ii,2)+Qtrsign(ii).*0.5*XY2(ii,2)*scaling_factor(ii)+XY2(ii,1)*dF*dy;    
+        %Qtext=['',num2str(abs(Qtr(ii)*1000),'%5.0f'),' '];% 'm3/yr'];
+        Qtext=['',num2str(abs(Qtr(ii)),'%5.0f'),' '];% 'km3/yr'];
+        
         ht{ii}=text(Xtext,Ytext,Qtext);
         set(ht{ii},'Fontsize',fontsize,'Color',colour);
         set(ht{ii},'VerticalAlignment','Middle');
         set(ht{ii},'HorizontalAlignment','Center');
-        pos = get(ht{ii},'Position') - [XYarrow{ii}(2,:)-XYarrow{ii}(1,:),0]/2;
+        pos = get(ht{ii},'Position') - [XYarrow{ii}(2,:)-XYarrow{ii}(1,:),-11]/2;
         set(ht{ii},'Position',pos);
         hold on;
     end
