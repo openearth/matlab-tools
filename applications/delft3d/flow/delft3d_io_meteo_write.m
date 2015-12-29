@@ -88,10 +88,12 @@ OPT.filetype         = 'meteo_on_curvilinear_grid';
 OPT.nodata_value     = -999;
 OPT.grid_file        = ['temp.grd'];
 OPT.writegrd         = true;
+OPT.n_quantity       = 1;
 OPT.quantity         = 'x_wind';
 OPT.unit             = 'm s-1';
 
-OPT.refdatenum       = datenum(1970,1,1);
+OPT.refdatenum       = datenum(1970,1,1); 
+OPT.hr               = (time - OPT.refdatenum)*24;
 OPT.timezone         = '+00:00';
 
 OPT.OS               = 'unix';
@@ -113,6 +115,28 @@ end
 
 OPT = setproperty(OPT,varargin{nextarg:end});
 
+%%
+% clear all; fclose all;
+% load('I.mat')
+% 
+% filehandle = 'test.tem';
+% time = I.datenum;
+% data = I.data;
+% x = I.x;
+% y = I.y;
+% OPT.filetype = 'meteo_on_equidistant_grid';
+% OPT.nodata_value = -999;
+% OPT.refdatenum = datenum(2010,10,1);
+% OPT.n_quantity = 3;
+% OPT.quantity = {'humidity','air_temperature','cloudiness'};
+% OPT.unit = {'%','Celcius','%'};
+% OPT.CoordinateSystem = 'Cartesian';
+% OPT.OS               = 'unix';
+% OPT.fmt              = '%.6g'; % sufficient for pressure, for rest %.3g' is sufficient
+% OPT.newgrid = 1;
+% OPT.timezone         = '+00:00';
+% OPT.header           = '';
+
 OPT.hr               = (time - OPT.refdatenum)*24;
 
 %% Open file
@@ -126,19 +150,36 @@ end
 %% Header
 
 if strcmpi(OPT.filetype,'meteo_on_equidistant_grid')
-    error('meteo_on_equidistant_grid not implemented yet, complete the code yourselves?')
+%     error('meteo_on_equidistant_grid not implemented yet, complete the code yourselves?')
+
+    fprintf  (fid,'### START OF HEADER');
+    fprinteol(fid,OPT.OS)
+    fprintf  (fid,'# Created with $Id$ $Headurl: $ on %s',datestr(now));
+    fprinteol(fid,OPT.OS)
+
+    OPT.header = cellstr(OPT.header);
+    for ii=1:length(OPT.header)
+        fprintf  (fid,'%s',['# ',OPT.header{ii}]);
+        fprinteol(fid,OPT.OS);
+    end
+    
     if OPT.newgrid
-        n_cols = size(data,3);
-        n_rows = size(data,2);
+        if OPT.n_quantity>1        
+            n_cols = size(data,4);
+            n_rows = size(data,3);
+        else
+            n_cols = size(data,3);
+            n_rows = size(data,2);
+        end
         dx = diff(x(1,:)); dx = dx(1);
         dy = diff(y(:,1)); dy = dy(1);
         fprintf  (fid,'FileVersion      = 1.03')                     ;%# Version of meteo input file, to check if the newest file format is used
         fprinteol(fid,OPT.OS);
         fprintf  (fid,'filetype         = meteo_on_equidistant_grid');%# Type of meteo input file: meteo_on_flow_grid, meteo_on_equidistant_grid, meteo_on_curvilinear_grid or meteo_on_spiderweb_grid
         fprinteol(fid,OPT.OS);
-        fprintf  (fid,['n_cols           =',num2str(n_cols)])
+        fprintf  (fid,['n_cols           = ',num2str(n_cols)]);
         fprinteol(fid,OPT.OS);
-        fprintf  (fid,['n_rows           =',num2str(n_rows)])
+        fprintf  (fid,['n_rows           = ',num2str(n_rows)]);
         fprinteol(fid,OPT.OS);
         fprintf  (fid,['grid_unit        = m']);
         fprinteol(fid,OPT.OS);
@@ -150,15 +191,18 @@ if strcmpi(OPT.filetype,'meteo_on_equidistant_grid')
         fprinteol(fid,OPT.OS);
         fprintf  (fid,['dy               = ',num2str(dy)]);
         fprinteol(fid,OPT.OS);
-        fprintf  (fid,['n_quantity       = 1']);
+        fprintf  (fid,['n_quantity       = ',num2str(OPT.n_quantity)]);
         fprinteol(fid,OPT.OS);
-        fprintf  (fid,['quantity1        = ',quantity]);
+        for q = 1:OPT.n_quantity
+            fprintf  (fid,['quantity' num2str(q) '        = ',OPT.quantity{q}]);
+            fprinteol(fid,OPT.OS);
+            fprintf  (fid,['unit' num2str(q) '            = ',OPT.unit{q}]);
+            fprinteol(fid,OPT.OS);
+        end
+        fprintf  (fid,['NODATA_value     = ',num2str(OPT.nodata_value)]);
         fprinteol(fid,OPT.OS);
-        fprintf  (fid,['unit1            = ',unit]);
-        fprinteol(fid,OPT.OS);
-        fprintf  (fid,['NODATA_value     = ',nodata_value]);
-        fprinteol(fid,OPT.OS);
-        
+        fprintf(fid,'### END OF HEADER');
+        fprinteol(fid,OPT.OS)
     end
     %    FileVersion   =   1.02
     % filetype      =   meteo_on_equidistant_grid
@@ -176,24 +220,33 @@ if strcmpi(OPT.filetype,'meteo_on_equidistant_grid')
     % NODATA_value  =   -999.000
     % TIME =   1.00 hours since 2006-10-26 01:00:00 +00:00
     
-    fprintf  (fid,'TIME = %f hours since %s %s %s',...
-        OPT.hr,... % write all decimals
-        datestr(OPT.refdatenum,'yyyy-mm-dd HH:MM:SS'),...
-        OPT.timezone,...
-        [' # ',datestr(time,'yyyy-mm-dd HH:MM:SS')]);    
-    fprinteol(fid,OPT.OS)
-    
     data(isnan(data))=OPT.nodata_value;
     
-    %  dim1 = rows
-    %  dim2 = columns, so loop over dim2 (see data_row = grid_row above)
-    % (dim1=0, dim2=0) is lower left corner, so loop dim in reverse, to have LL as first value (see first_data_value = grid_llcorner above)
-    
-    for m=size(data,2):-1:1
-        fprintf  (fid,[OPT.fmt,' '],data(:,m));
-        fprinteol(fid,OPT.OS);
+    for t = 1:length(time)
+        fprintf(fid,'TIME = %f hours since %s %s %s',...
+            OPT.hr(t),... % write all decimals
+            datestr(OPT.refdatenum,'yyyy-mm-dd HH:MM:SS'),...
+            OPT.timezone,...
+            [' # ',datestr(time(t),'yyyy-mm-dd HH:MM:SS')]);    
+        fprinteol(fid,OPT.OS)
+
+        %  dim1 = rows
+        %  dim2 = columns, so loop over dim2 (see data_row = grid_row above)
+        % (dim1=0, dim2=0) is lower left corner, so loop dim in reverse, to have LL as first value (see first_data_value = grid_llcorner above)
+        if OPT.n_quantity>1
+            for q = 1:OPT.n_quantity
+                for m=size(data,3):-1:1
+                    fprintf  (fid,[OPT.fmt,' '],data(q,t,m,:));
+                    fprinteol(fid,OPT.OS);
+                end
+            end
+        else
+            for m=size(data,2):-1:1
+                fprintf  (fid,[OPT.fmt,' '],data(t,m,:));
+                fprinteol(fid,OPT.OS);
+            end
+        end
     end
-    
 elseif strcmpi(OPT.filetype,'meteo_on_curvilinear_grid')
     
     if OPT.newgrid
