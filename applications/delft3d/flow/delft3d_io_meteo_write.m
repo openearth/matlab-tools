@@ -7,6 +7,10 @@ function fid = delft3d_io_meteo_write(filehandle,time,data,varargin)
 % wipes existing file with same name), time is the time in Matlab datenumbers.
 % A header block is inserted when newgrid==1 or x and y are supplied.
 %
+% Make sure first dimension is parameter number (only in case more than one), 
+% second dimension is time, third dimension is y-coordinate and fourth dimension
+% is x-coordinate!!
+%
 % The following <keyword,value> pairs have been implemented:
 %
 %    filetype         = 'meteo_on_equidistant_grid','meteo_on_spiderweb_grid',
@@ -85,15 +89,14 @@ function fid = delft3d_io_meteo_write(filehandle,time,data,varargin)
 OPT.header           = '';
 
 OPT.filetype         = 'meteo_on_curvilinear_grid';
-OPT.nodata_value     = -999;
-OPT.grid_file        = ['temp.grd'];
+OPT.nodata_value     = -9;
+OPT.grid_file        = 'temp.grd';
 OPT.writegrd         = true;
 OPT.n_quantity       = 1;
 OPT.quantity         = 'x_wind';
 OPT.unit             = 'm s-1';
 
 OPT.refdatenum       = datenum(1970,1,1); 
-OPT.hr               = (time - OPT.refdatenum)*24;
 OPT.timezone         = '+00:00';
 
 OPT.OS               = 'unix';
@@ -114,30 +117,7 @@ if nargin > 3
 end
 
 OPT = setproperty(OPT,varargin{nextarg:end});
-
-%%
-% clear all; fclose all;
-% load('I.mat')
-% 
-% filehandle = 'test.tem';
-% time = I.datenum;
-% data = I.data;
-% x = I.x;
-% y = I.y;
-% OPT.filetype = 'meteo_on_equidistant_grid';
-% OPT.nodata_value = -999;
-% OPT.refdatenum = datenum(2010,10,1);
-% OPT.n_quantity = 3;
-% OPT.quantity = {'humidity','air_temperature','cloudiness'};
-% OPT.unit = {'%','Celcius','%'};
-% OPT.CoordinateSystem = 'Cartesian';
-% OPT.OS               = 'unix';
-% OPT.fmt              = '%.6g'; % sufficient for pressure, for rest %.3g' is sufficient
-% OPT.newgrid = 1;
-% OPT.timezone         = '+00:00';
-% OPT.header           = '';
-
-OPT.hr               = (time - OPT.refdatenum)*24;
+OPT.hr = (time - OPT.refdatenum)*24;
 
 %% Open file
 
@@ -149,20 +129,22 @@ end
 
 %% Header
 
-if strcmpi(OPT.filetype,'meteo_on_equidistant_grid')
-%     error('meteo_on_equidistant_grid not implemented yet, complete the code yourselves?')
+fprintf  (fid,'### START OF HEADER');
+fprinteol(fid,OPT.OS)
+fprintf  (fid,'# Created with $Id$ $Headurl: $ on %s',datestr(now));
+fprinteol(fid,OPT.OS)
 
-    fprintf  (fid,'### START OF HEADER');
-    fprinteol(fid,OPT.OS)
-    fprintf  (fid,'# Created with $Id$ $Headurl: $ on %s',datestr(now));
-    fprinteol(fid,OPT.OS)
+OPT.header = cellstr(OPT.header);
+for ii=1:length(OPT.header)
+    fprintf  (fid,'%s',['# ',OPT.header{ii}]);
+    fprinteol(fid,OPT.OS);
+end
 
-    OPT.header = cellstr(OPT.header);
-    for ii=1:length(OPT.header)
-        fprintf  (fid,'%s',['# ',OPT.header{ii}]);
-        fprinteol(fid,OPT.OS);
-    end
+fprintf  (fid,'FileVersion      = 1.03')                     ;%# Version of meteo input file, to check if the newest file format is used
+fprinteol(fid,OPT.OS)
     
+if strcmpi(OPT.filetype,'meteo_on_equidistant_grid')
+
     if OPT.newgrid
         if OPT.n_quantity>1        
             n_cols = size(data,4);
@@ -203,71 +185,17 @@ if strcmpi(OPT.filetype,'meteo_on_equidistant_grid')
         fprinteol(fid,OPT.OS);
         fprintf(fid,'### END OF HEADER');
         fprinteol(fid,OPT.OS)
-    end
-    %    FileVersion   =   1.02
-    % filetype      =   meteo_on_equidistant_grid
-    % n_cols        =   77
-    % n_rows        =   75
-    % grid_unit     =   m
-    % x_llcorner    =   -85000.000
-    % y_llcorner    =   325000.000
-    % value_pos     =   centre
-    % dx            =   5000
-    % dy            =   5000
-    % n_quantity    =   1
-    % quantity1     =   air_pressure
-    % unit1         =   mbar
-    % NODATA_value  =   -999.000
-    % TIME =   1.00 hours since 2006-10-26 01:00:00 +00:00
+    end    
     
-    data(isnan(data))=OPT.nodata_value;
-    
-    for t = 1:length(time)
-        fprintf(fid,'TIME = %f hours since %s %s %s',...
-            OPT.hr(t),... % write all decimals
-            datestr(OPT.refdatenum,'yyyy-mm-dd HH:MM:SS'),...
-            OPT.timezone,...
-            [' # ',datestr(time(t),'yyyy-mm-dd HH:MM:SS')]);    
-        fprinteol(fid,OPT.OS)
-
-        %  dim1 = rows
-        %  dim2 = columns, so loop over dim2 (see data_row = grid_row above)
-        % (dim1=0, dim2=0) is lower left corner, so loop dim in reverse, to have LL as first value (see first_data_value = grid_llcorner above)
-        if OPT.n_quantity>1
-            for q = 1:OPT.n_quantity
-                for m=size(data,3):-1:1
-                    fprintf  (fid,[OPT.fmt,' '],data(q,t,m,:));
-                    fprinteol(fid,OPT.OS);
-                end
-            end
-        else
-            for m=size(data,2):-1:1
-                fprintf  (fid,[OPT.fmt,' '],data(t,m,:));
-                fprinteol(fid,OPT.OS);
-            end
-        end
-    end
 elseif strcmpi(OPT.filetype,'meteo_on_curvilinear_grid')
     
     if OPT.newgrid
-        fprintf  (fid,'### START OF HEADER');
+            
+        fprintf  (fid, 'filetype         = meteo_on_curvilinear_grid')  ;%# Type of meteo input file: meteo_on_flow_grid, meteo_on_equidistant_grid, meteo_on_curvilinear_grid or meteo_on_spiderweb_grid
         fprinteol(fid,OPT.OS)
-        fprintf  (fid,'# Created with $Id$ $Headurl: $ on %s',datestr(now));
+        fprintf  (fid,['NODATA_value     = ',num2str(OPT.nodata_value)]);%# Value used for undefined or missing data
         fprinteol(fid,OPT.OS)
-        
-        OPT.header = cellstr(OPT.header);
-        for ii=1:length(OPT.header)
-            fprintf  (fid,'%s',['# ',OPT.header{ii}]);
-            fprinteol(fid,OPT.OS);
-        end
-        
-        fprintf  (fid,'FileVersion      = 1.03')                     ;%# Version of meteo input file, to check if the newest file format is used
-        fprinteol(fid,OPT.OS)
-        fprintf  (fid,'filetype         = meteo_on_curvilinear_grid');%# Type of meteo input file: meteo_on_flow_grid, meteo_on_equidistant_grid, meteo_on_curvilinear_grid or meteo_on_spiderweb_grid
-        fprinteol(fid,OPT.OS)
-        fprintf  (fid,'NODATA_value     = %f',OPT.nodata_value)      ;%# Value used for undefined or missing data
-        fprinteol(fid,OPT.OS)
-        fprintf  (fid,'grid_file        = %s',OPT.grid_file)         ;%# Separate (curvi-linear) grid on which the wind can be specified
+        fprintf  (fid, 'grid_file        = %s',OPT.grid_file)           ;%# Separate (curvi-linear) grid on which the wind can be specified
         
         % grid has to be written inside DELFT3D_IO_METEO_WRITE to ensure same shape as data block
         
@@ -285,42 +213,20 @@ elseif strcmpi(OPT.filetype,'meteo_on_curvilinear_grid')
         end
         
         fprinteol(fid,OPT.OS)
-        fprintf  (fid,'first_data_value = grid_llcorner')            ;%# Options: grid_llcorner, grid_ul_corner, grid_lrcorner or grid_urcorner
+        fprintf  (fid, 'first_data_value = grid_llcorner')            ;%# Options: grid_llcorner, grid_ul_corner, grid_lrcorner or grid_urcorner
         fprinteol(fid,OPT.OS)
-        fprintf  (fid,'data_row         = grid_row')                 ;%# Options: grid_row or grid_col. For switching rows and columns.
+        fprintf  (fid, 'data_row         = grid_column')              ;%# Options: grid_row or grid_col. For switching rows and columns.
         fprinteol(fid,OPT.OS)
-        fprintf  (fid,'n_quantity       = 1')                        ;%# Number of quantities prescribed in the file
+        fprintf  (fid,['n_quantity       = ' num2str(OPT.n_quantity)]);%# Number of quantities prescribed in the file
         fprinteol(fid,OPT.OS)
-        fprintf  (fid,'quantity1        = %s',OPT.quantity)          ;%# Name of quantity1 (x_wind, y_wind, air_pressure, relative_humidity, air_temperature or cloudiness)
-        fprinteol(fid,OPT.OS)
-        fprintf  (fid,'unit1            = %s',OPT.unit)              ;%# Unit of quantity1 (m s-1 for velocities, Pa/ mbar for air_pressure, % for relative_humidity or cloudiness and Celcius for air_temperature)
-        fprinteol(fid,OPT.OS)
+        for q = 1:OPT.n_quantity
+	            fprintf  (fid,['quantity' num2str(q) '        = ',OPT.quantity{q}]);
+	            fprinteol(fid,OPT.OS);
+	            fprintf  (fid,['unit' num2str(q) '            = ',OPT.unit{q}]);
+	            fprinteol(fid,OPT.OS);
+        end
         fprintf(fid,'### END OF HEADER');
         fprinteol(fid,OPT.OS)
-    end
-    
-    %% Time
-    %  # Fixed format: <time> <time unit> "since" <date> <time> <time zone>
-    
-    fprintf  (fid,'TIME = %f hours since %s %s %s',...
-        OPT.hr,... % write all decimals
-        datestr(OPT.refdatenum,'yyyy-mm-dd HH:MM:SS'),...
-        OPT.timezone,...
-        [' # ',datestr(time,'yyyy-mm-dd HH:MM:SS'),' ',OPT.comment]);
-    fprinteol(fid,OPT.OS)
-    
-    %% Data
-    
-    data(isnan(data))=OPT.nodata_value;
-    
-    %  dim1 = rows
-    %  dim2 = columns, so loop over dim2 (see data_row = grid_row above)
-    % (dim1=0, dim2=0) is lower left corner, so loop dim in reverse, to have LL as first value (see first_data_value = grid_llcorner above)
-    
-%     for m=size(data,2):-1:1 (WRONG???)
-    for m=1:size(data,2);        
-        fprintf  (fid,[OPT.fmt,' '],data(:,m));
-        fprinteol(fid,OPT.OS);
     end
     
 elseif strcmpi(OPT.filetype,'meteo_on_spiderweb_grid')
@@ -331,6 +237,37 @@ else
     
     error(['Unknown meteo filetype: ''',OPT.filetype,''''])
     
+end
+
+%% Write data
+
+data(isnan(data))=OPT.nodata_value;
+    
+for t = 1:length(time)
+    fprintf(fid,'TIME = %f hours since %s %s %s',...
+        OPT.hr(t),... % write all decimals
+        datestr(OPT.refdatenum,'yyyy-mm-dd HH:MM:SS'),...
+        OPT.timezone,...
+        [' # ',datestr(time(t),'yyyy-mm-dd HH:MM:SS')]);    
+    fprinteol(fid,OPT.OS)
+
+    %  dim1 = rows
+    %  dim2 = columns, so loop over dim2 (see data_row = grid_row above)
+    % (dim1=0, dim2=0) is lower left corner, so loop dim in reverse, to have LL as first value (see first_data_value = grid_llcorner above)
+
+    if OPT.n_quantity>1
+        for q = 1:OPT.n_quantity
+            for m=size(data,3):-1:1
+                fprintf  (fid,[OPT.fmt,' '],data(q,t,m,:));
+                fprinteol(fid,OPT.OS);
+            end
+        end
+    else
+        for m=size(data,2):-1:1
+            fprintf  (fid,[OPT.fmt,' '],data(t,m,:));
+            fprinteol(fid,OPT.OS);
+        end
+    end
 end
 
 %% Close files (only when 1st call AND no reuse requested)
