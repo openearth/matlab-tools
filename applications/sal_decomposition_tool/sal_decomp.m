@@ -82,16 +82,14 @@ for i_sim = 1: length(OPT.Filinp)
     Info        = inifile('open',OPT.Filinp{i_sim});
     mydir       = inifile('get',Info,'Files'  ,'Mydir       ');
     run         = inifile('get',Info,'Files'  ,'Runid       ');
-    crs_tmp     = inifile('get',Info,'Files'  ,'Crs file    ');
-    output      = inifile('get',Info,'Files'  ,'Output file ');
+    crsfil      = inifile('get',Info,'Files'  ,'Crs file    ');
+    outfil      = inifile('get',Info,'Files'  ,'Output file ');
     start       = inifile('get',Info,'Timings','ana_start   ');
     stop        = inifile('get',Info,'Timings','ana_stop    ');
     
     %% Construct filenames
     myrun    = ['trih-' run] ;                                       % run id
     mymap    = ['trim-' run] ;
-    outfil   = [mydir filesep output];
-    crsfil   = [mydir filesep crs_tmp] ;
     
     %% Read cross section
     crs    = delft3d_io_crs('read',crsfil) ;
@@ -298,7 +296,49 @@ for i_sim = 1: length(OPT.Filinp)
             river,tide,variation,dummy,terms(i_crs,:));
     end
     
-    %% Close all files
+    fclose(fid)
+    %% A second file with matrix of mean max and min salinities
+    
+    point   = strfind(outfil,'.');
+    outfil = [outfil(1:point(end)-1) '.map'];
+    fid     = fopen (outfil,'w');            
+        
+    for i_crs = 1: no_crs
+      
+       % averaging, maximum and minimum
+       dp_mean(i_crs)  = -1.0*mean(mean(dps(:,mymask(:,i_crs))));
+       s1_mean(i_crs)  =      mean(mean(zwl(:,mymask(:,i_crs))));
+       sal_mean(i_crs,:) =      mean(mean(sal(:,mymask(:,i_crs),:),2),1);
+       sal_max (i_crs,:) =      max (mean(sal(:,mymask(:,i_crs),:),2),[],1);
+       sal_min (i_crs,:) =      min (mean(sal(:,mymask(:,i_crs),:),2),[],1);
+       
+       % positions
+       x(i_crs,1) = i_crs;
+       y(i_crs,1) = s1_mean(i_crs) - 0.5*thick(1)*(s1_mean(i_crs) - dp_mean(i_crs));
+       for k = 2:kmax
+           x(i_crs,k) = i_crs;
+           y(i_crs,k) = y(i_crs,k-1) - thick(k)*(s1_mean(i_crs) - dp_mean(i_crs));
+       end
+    end
+    
+    % write to output file
+    fprintf(fid,'* Salinities \n');
+    fprintf(fid,'* Column 1: x-coordinate (cross section number) \n');
+    fprintf(fid,'* Column 2: y-coordinate                        \n');
+    fprintf(fid,'* Column 3: mean salinity                       \n');
+    fprintf(fid,'* Column 4: maximum salinity                    \n');
+    fprintf(fid,'* Column 5: minimum salinity                    \n');
+    fprintf(fid,'Salinity                                        \n');
+    fprintf(fid,[repmat(' %5i',1,4) '\n' ],no_crs*kmax,5,kmax,no_crs);
+    for i_crs = 1: no_crs
+        for k = 1: kmax
+            fprintf(fid,[' %5i' repmat(' %12.6f',1,4) '\n'],x       (i_crs,k),y      (i_crs,k), ...
+                                                           sal_mean(i_crs,k),sal_max(i_crs,k), ...
+                                                           sal_min (i_crs,k)                 );
+        end
+    end
+    
+    %% Close tekal file
     fclose(fid) ;
     clearvars -except OPT;
 end
