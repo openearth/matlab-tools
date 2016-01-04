@@ -57,7 +57,7 @@ function stringout = mkvar(stringin,varargin);
 % $Keywords$
 
    OPT.whattodo1st = 'add';
-   OPT.excludes    = char([181 223 228]); % [µ ß ä], special problemetic chars that are a true letter nevertheless
+   OPT.excludes    = char([181 223 228 239 240]); % [µ ß ä ï ð], special problemetic chars that are a true letter nevertheless
    OPT.firstletter = 'x';
    
    if isempty(stringin)
