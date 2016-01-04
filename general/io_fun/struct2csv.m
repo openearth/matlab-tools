@@ -1,13 +1,6 @@
 function varargout = struct2csv(fname,S,varargin)
 %STRUCT2CSV   Save 1D data + fieldnames from matlab struct into csv file
 %
-% STRUCT2CSV is a modifed copy of STRUCT2XLS
-% Instead of writing to xls, which requires a installed Excel on the
-% machine, it writes to a Comma Separated Values file.
-% The conversion of the structure is not changed.
-%
-%   Remark: NOT ALL OPTIONS (from struct2xls) ARE TESTED YET!
-%
 % STRUCT2CSV(filename,struct) converts a matlab struct
 % with 1D numerical fields !! to an csv file. Non-numeric
 % arrays are allowed.
@@ -18,11 +11,11 @@ function varargout = struct2csv(fname,S,varargin)
 %  Example of resulting *.csv file:
 %
 %  +---------------+---------------+---------------+---------------+
-%  |# textline 1   |               |               |               |
-%  |# textline 2   |               |               |               |
-%  |# textline 3   |               |               |               |
+% <|# textline 1   |               |               |               |> optional
+% <|# textline 2   |               |               |               |> optional
+% <|# textline 3   |               |               |               |> optional
 %  | columnname_01 | columnname_02 | columnname_03 | columnname_04 |
-%  | units         | units         | units         | units         |
+% <| units         | units         | units         | units         |> optional
 %  | number/string | number/string | number/string | number/string |
 %  | number/string | number/string | number/string | number/string |
 %  | number/string | number/string | number/string | number/string |
@@ -30,34 +23,35 @@ function varargout = struct2csv(fname,S,varargin)
 %  | number/string | number/string | number/string | number/string |
 %  +---------------+---------------+---------------+---------------+
 %
-% * Beta version.
-% * Is not (by default) reciprocal of xls2struct (due to units line below column headers)
-%   and cell aray for 2D char arrays
+% * Is not (by default) reciprocal of csv2struct (due to units line 
+%   below column headers) and cell aray for 2D char arrays
+% * Use orderfields to change column order
+% * replaces char(10) with \n
 %
-% STRUCT2CSV(filename,struct,<keyword,value>) where
-% implemented key words are:
-% * units       - 0 = not,
-%               - 1 = empty line
-%               - cell array is yes
-%               - struct with a fieldnames matching the struct field names is yes
-% * coldimnum   dimension of fieldname input arrays to be used as column in excel (1 or 2)
-%               (default 2) after option oneD has optionally reshaped so the 1st dimension is 1.
+% STRUCT2CSV(filename,struct,<keyword,value>) implemented key words:
+% * units        - 0 = not,
+%                - 1 = empty line
+%                - cell array is yes
+%                - struct with a fieldnames matching the struct field names is yes
+% * coldimnum    dimension of fieldname input arrays to be used as column in excel (1 or 2)
+%                (default 2) after option oneD has optionally reshaped so the 1st dimension is 1.
 % * coldimchar   dimension of fieldname input arrays to be used as column in excel (1 or 2)
-%               (default 2) after option oneD has optionally reshaped so the 1st dimension is 1.
-% * oneD        makes sure that both numeric matrix columns and matrix rows are written as Excel
-%               columns (default 1), only works for arrays where either 1st or 2nd dimension has lenght 1..
-% * header      cell array of comment lines above column names (see also keyword commentchar)
-% * overwrite   which can be
-%               'o' = overwrite (1)
-%               'c' = cancel
-%               'p' = prompt (default, after which o/a/c can be chosen) (0)
-% * commentchar character to append to start of comment (header) line (default '#')
-% * sorfields   flag for sorting the fields before sending to the output (default = 0)
+%                (default 2) after option oneD has optionally reshaped so the 1st dimension is 1.
+% * oneD         makes sure that both numeric matrix columns and matrix rows are written as Excel
+%                columns (default 1), only works for arrays where either 1st or 2nd dimension has lenght 1..
+% * header       cell array of comment lines above column names (see also keyword commentchar)
+% * overwrite    which can be
+%                'o' = overwrite (1)
+%                'c' = cancel
+%                'p' = prompt (default, after which o/a/c can be chosen) (0)
+% * commentchar  character to append to start of comment (header) line (default '#')
+% * sorfields    flag for sorting the fields before sending to the output (default = 0)
+% * column_names struct with name of columns in csv file (may contain spaces and special characters)
 %
 % [success]   = STRUCT2CSV(...)
 % [success,M] = STRUCT2CSV(...) where M is the cell array passed to WRITETABLE.
 %
-% See also: STRUCT2XLS, TABLE, WRITETABLE, XLS2STRUCT, XLSDATE2DATENUM, XLSREAD, XLSWRITE (2006b, otherwise mathsworks downloadcentral)
+% See also: CSV2STRUCT, STRUCT2XLS, XLS2STRUCT, TABLE, TEXTREAD
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -114,16 +108,18 @@ function varargout = struct2csv(fname,S,varargin)
 
 %% Keywords
 
-OPT.coldimchar  = 1;
-OPT.coldimnum   = 1; %2;
-OPT.addunits    = 1; % empty line
-OPT.units       = [];
-OPT.header{1}   = ['This file has been created with struct2csv.m and writetable.m @ ',datestr(now)];
-OPT.oned        = 1; % reshape 1D matlab rows and columns into excel columns (numeric, logical and cellstr)
-OPT.commentchar = '#';
-OPT.overwrite   = 'p'; %prompt
-OPT.warning     = 0;
-OPT.sortfields  = 0;
+OPT.coldimchar   = 1;
+OPT.coldimnum    = 1; %2;
+OPT.addunits     = 0;
+OPT.units        = [];
+OPT.header       = {}; %{['This file has been created with struct2csv.m and writetable.m @ ',datestr(now)]};
+OPT.oned         = 1; % reshape 1D matlab rows and columns into excel columns (numeric, logical and cellstr)
+OPT.commentchar  = '#';
+OPT.overwrite    = 'p'; %prompt
+OPT.warning      = 0;
+OPT.sortfields   = 0;
+OPT.replace      = {{char(10),'\n'}};
+OPT.column_names = [];
 
 if nargin==0
     varargout = {OPT};
@@ -259,7 +255,12 @@ for ifld=1:nfld
     fldname             = char(fldnames(ifld));
     fldsize             = size(S.(fldname));
     
-    M{nheader + 1,ifld}    = fldname;
+    if isempty(OPT.column_names)
+        M{nheader + 1,ifld}    = fldname;
+    else
+        M{nheader + 1,ifld}    = OPT.column_names.(fldname);
+    end    
+    
     if ~isempty(OPT.units)
         if iscell(OPT.units)
             M{nheader + 2,ifld}    = char(OPT.units{ifld});
