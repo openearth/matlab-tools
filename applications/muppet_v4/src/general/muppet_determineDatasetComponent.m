@@ -18,11 +18,35 @@ switch dataset.rawquantity
             case('angle (degrees)')
                 d.Val=mod(0.5*pi-atan2(d.YComp,d.XComp),2*pi)*180/pi;
                 dataset.quantity='scalar';
-            case('m-component')
-                d.Val=d.XComp;
+            case{'m-component','m component','mcomponent'}
+                alf = dataset.alfas*pi/180;
+                switch dataset.plane
+                    case{'tz'}
+                        xcomp=d.XComp;
+                        ycomp=d.YComp;
+                        [val1,val2]=muppet_cur2ca(xcomp,ycomp,alf);
+                    case{'xy','xz'}
+                        xcomp(1,:,:)=d.XComp;
+                        ycomp(1,:,:)=d.YComp;
+                        alf=alf';
+                        [val1,val2]=muppet_cur2ca(xcomp,ycomp,alf);
+                end
+                d.Val=squeeze(val1);
                 dataset.quantity='scalar';
-            case('n-component')
-                d.Val=d.YComp;
+            case{'n-component','n component','ncomponent'}
+                alf = dataset.alfas*pi/180;
+                switch dataset.plane
+                    case{'tz'}
+                        xcomp=d.XComp;
+                        ycomp=d.YComp;
+                        [val1,val2]=muppet_cur2ca(xcomp,ycomp,alf);
+                    case{'xy','xz'}
+                        xcomp(1,:,:)=d.XComp;
+                        ycomp(1,:,:)=d.YComp;
+                        alf=alf';
+                        [val1,val2]=muppet_cur2ca(xcomp,ycomp,alf);
+                end
+                d.Val=squeeze(val2);
                 dataset.quantity='scalar';
             case{'x-component','x component','xcomponent'}
                 d.Val=d.XComp;
