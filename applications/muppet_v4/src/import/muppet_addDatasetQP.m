@@ -78,8 +78,12 @@ tp='projected';
 if isfield(fid,'SubType')
     switch fid.SubType
         case{'Delft3D-trih'}
+            alfas=vs_get(fid,'his-const','ALFAS','quiet');
+            dataset.alfas=alfas;
         case{'Delft3D-trim'}
             tp=vs_get(fid,'map-const','COORDINATES','quiet');
+            alfas=vs_get(fid,'map-const','ALFAS','quiet');
+            dataset.alfas=alfas;
     end
 end
 cs=[];
@@ -329,6 +333,26 @@ end
 if ~isempty(dataset.subfields)
     if isempty(dataset.subfields{1})
         dataset.subfields=[];
+    end
+end
+
+% Get grid angles
+try
+    if isfield(dataset,'alfas')
+        switch fid.SubType
+            case{'Delft3D-trih'}
+                dataset.alfas=dataset.alfas(istation);
+            case{'Delft3D-trim'}
+                if isempty(dataset.m) && isempty(dataset.n)
+                elseif ~isempty(dataset.m) && isempty(dataset.n)
+                    dataset.alfas=dataset.alfas(m,:);
+                elseif isempty(dataset.m) && ~isempty(dataset.n)
+                    dataset.alfas=dataset.alfas(n,:);
+                elseif ~isempty(dataset.m) && ~isempty(dataset.n)
+                    dataset.alfas=dataset.alfas(n,m);
+                end
+        end
+        dataset.alfas=squeeze(dataset.alfas);
     end
 end
 
