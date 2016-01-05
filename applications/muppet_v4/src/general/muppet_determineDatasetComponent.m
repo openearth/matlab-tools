@@ -21,7 +21,7 @@ switch dataset.rawquantity
             case{'m-component','m component','mcomponent'}
                 alf = dataset.alfas*pi/180;
                 switch dataset.plane
-                    case{'tz'}
+                    case{'tz','vz'}
                         xcomp=d.XComp;
                         ycomp=d.YComp;
                         [val1,val2]=muppet_cur2ca(xcomp,ycomp,alf);
@@ -36,7 +36,7 @@ switch dataset.rawquantity
             case{'n-component','n component','ncomponent'}
                 alf = dataset.alfas*pi/180;
                 switch dataset.plane
-                    case{'tz'}
+                    case{'tz','vz'}
                         xcomp=d.XComp;
                         ycomp=d.YComp;
                         [val1,val2]=muppet_cur2ca(xcomp,ycomp,alf);
