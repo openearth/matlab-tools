@@ -48,7 +48,13 @@ function varargout = readMap(ncfile,varargin)
    OPT.sal       = 0; % whether to load data 
    OPT.dep       = 0; % whether to load data 
    OPT.vel       = 1; % whether to load data 
-   OPT.spir      = 0; % whether to load data 
+   OPT.spir      = 0; % whether to load data
+   OPT.lyrcc     = 1; % whether to calculate 
+                      % layer pressure point vertical coordinates
+   if (OPT.lyrcc==1)
+       OPT.dep = 1;
+       OPT.zwl = 1;
+   end
 
    if nargin==0
       varargout = {OPT};
@@ -102,7 +108,21 @@ function varargout = readMap(ncfile,varargin)
    end  
    if OPT.dep && nc_isvar (ncfile, 'waterdepth');
       D.face.dep  = nc_varget(ncfile, 'waterdepth' ,[it-1 0],[1 face.mask]); % Waterdepth
-   end  
+   end
+   if OPT.lyrcc && nc_isvar(ncfile, 'LayCoord_cc')
+      info=nc_getvarinfo(ncfile,'ucx');
+      NDIM=length(info.Size);
+      if ( NDIM==2 )   % safety, in principle (see unstruc_netcdf.f90) not possible
+         D.face.z_cc = (s1-0.5*waterdepth)*ones(1, face.mask);
+      elseif (NDIM==3)
+          z_cc = nc_varget(ncfile,'LayCoord_cc',[0],[laydim]);
+          dep = repmat(squeeze(D.face.dep),1,10);
+          for jj = face.mask:-1:1     % dynamically pre-allocate
+             res(jj,:) = z_cc'.*dep(jj,:); 
+             D.face.z_cc(jj,:) = (D.face.zwl(jj)-D.face.dep(jj))+res(jj,:);
+          end
+      end
+   end
    if OPT.sal && nc_isvar (ncfile, 'sa1');
        info=nc_getvarinfo(ncfile,'sa1');
        NDIM=length(info.Size);
@@ -156,4 +176,4 @@ function varargout = readMap(ncfile,varargin)
 
 
 
-varargout = {D};
+varargout = {D,dep,z_cc};
