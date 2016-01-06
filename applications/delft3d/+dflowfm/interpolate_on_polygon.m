@@ -102,10 +102,10 @@ for idmnp1=1:length(Gin)    % idmn + 1
     numlay=size(D.face.u,2);
     if ( numlay>1 )
     %   compute water depth
-        h=polout.face.zwl(:)-polout.face.z(:);
+        h=polout.face.zwl(:)-polout.face.FlowElem_z(:);
         h=reshape(h,length(h),1);
     %   layers are assumed to be uniformly distributed along the water column
-        polout.z=repmat((1:numlay)-0.5, length(h),1)/numlay .* repmat(h,1,numlay) + repmat(polout.face.z(:),1,numlay);
+        polout.z=repmat((1:numlay)-0.5, length(h),1)/numlay .* repmat(h,1,numlay) + repmat(polout.face.FlowElem_z(:),1,numlay);
         polout.arc=repmat(polout.arc(:),1,numlay);
         polout.ang=repmat(polout.ang(:),1,numlay);
         polout.x=repmat(polout.x(:),1,numlay);
