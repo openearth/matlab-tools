@@ -1,5 +1,5 @@
 function varargout = xls2struct(fname,varargin)
-%XLS2STRUCT    Read columns from xls file into matlab struct fields 
+%XLS2STRUCT    Read table from xls file into matlab struct fields 
 %
 % DATA = xls2struct(fname)
 % DATA = xls2struct(fname,work_sheet_name)
@@ -10,10 +10,10 @@ function varargout = xls2struct(fname,varargin)
 % [DATA,units,metainfo] = xls2struct(fname,work_sheet_name,<keyword,value>)
 %
 % where the xls has the following structure:
+% * optionally every (!) line starting with special char is interpreted as a comment line.
+% * optionally headerlines can be skipped
 % * fieldnames (column names) at the first line.
-% * units at the second line.
-% * every line starting with one of '*%#' is interpreted 
-%   as a comment line.
+% * optionally units at the second line.
 % * all text fields with text 'NaN' are interpreted as numeric NaNs
 %
 % Example:
@@ -33,21 +33,16 @@ function varargout = xls2struct(fname,varargin)
 %
 % and <keyword,value> pairs are:
 %
-% * addunits    true by default, adds units to DATA struct when 
-%               there is only 1 output argument (this option should be 
-%               removed, as there can be columns in the xls labelled units)
-%               e.g. ..\..\applications\knmi\knmi_etmgeg.csv
-% * error       throw error when instead of returning empty matrices.
-% * units       true by default, specifies whether the units at 
-%               the second line are present.
-% * fillstr     str that represents dummy string values that should be replaced with number fillnum
-%               (Default {}, suggestion: {'NA'})
-% * fillnum     number that replaces fillstr 
-%               (Default NaN)
-% * commentchar characters that define the start of a comment (header) line (default '%*#')  
-% * last2d      inserts all data to the right of the last column name 
-%               into the last variable such that the last variable is a (ragged) 2D array
-%               (default false as otherwise crap cratch notes might end up in your data)
+% * error        throw error when instead of returning empty matrices.
+% * units        whether units at are present at 2nd line (default false)
+% * fillstr      str that represents dummy string values that should be replaced with number fillnum
+%                (Default {}, suggestion: {'NA'})
+% * fillnum      number that replaces fillstr (Default NaN)
+% * commentstyle list of characters that define start of a header row, default {'%*#'} OR 
+% * headerlines  number of header rows to skip
+% * last2d       inserts all data to the right of the last column name 
+%                into the last variable such that the last variable is a (ragged) 2D array
+%                (default false as otherwise crap cratch notes might end up in your data)
 %
 % Notes:
 % 
@@ -129,15 +124,15 @@ function varargout = xls2struct(fname,varargin)
 
 %% Input
 
-   OPT.addunits    = false; % this option should be phased out   
-   OPT.error       = true;   
-   OPT.units       = true;
-   OPT.sheet       = [];
-   OPT.debug       = 0;
-   OPT.fillstr     = {};
-   OPT.fillnum     = NaN;
-   OPT.commentchar = '%*#';
-   OPT.last2d      = 0;
+   OPT.error        = true;   
+   OPT.units        = false;
+   OPT.sheet        = [];
+   OPT.debug        = 0;
+   OPT.fillstr      = {};
+   OPT.fillnum      = NaN;
+   OPT.last2d       = 0;
+   OPT.commentstyle = '%*#';
+   OPT.headerlines  = 0;
    
    if nargin==0
       varargout = {OPT};
@@ -273,20 +268,19 @@ function varargout = xls2struct(fname,varargin)
    %% Take care of fact that excel skips certain rows/columns
    %  depending on data type (numerical/string)
       
-      if iscell(tsttxt) 
-         commentlines       = zeros(1,size(tstraw,1));
+	commentlines       = zeros(1,size(tstraw,1));
+      if iscell(tsttxt) & ischar(OPT.commentstyle)
          for j=1:size(tstraw,1)
             if ~isnan(tstraw{j,1})
             if ~isnumeric(tstraw{j,1})
-            commentlines(j) = iscommentline(char(tstraw{j,1}(1)),OPT.commentchar);
+            commentlines(j) = iscommentline(char(tstraw{j,1}(1)),OPT.commentstyle);
             else
             commentlines(j) = 0;
             end
             end
          end
-      elseif iscell(tsttxt) 
-         error('tsttxt not char')
       end
+     commentlines(1:OPT.headerlines) = 1;
       
      %row_skipped_in_numeric_data = size(tstraw,1) - size(tstdat,1);
      %col_skipped_in_numeric_data = size(tstraw,2) - size(tstdat,2);
@@ -443,9 +437,6 @@ function varargout = xls2struct(fname,varargin)
 %% out
 
    if nargout<2
-      if OPT.units & OPT.addunits
-         DAT.units = UNITS;
-      end
       varargout = {DAT};
    elseif nargout==2
       varargout = {DAT,UNITS};

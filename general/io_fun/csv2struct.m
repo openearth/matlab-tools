@@ -1,5 +1,5 @@
 function varargout = csv2struct(fname,varargin)
-%CSV2STRUCT    Read columns from xls file into matlab struct fields 
+%CSV2STRUCT    Read table from xls file into matlab struct fields 
 %
 %    DATA = csv2struct(fname)
 %
@@ -13,8 +13,13 @@ function varargout = csv2struct(fname,varargin)
 %
 % e.g. D = csv2struct('somefile.csv','delimiter',';','commentstyle','%')
 %
-% Column values are mapped smartly to numeric, columns where char conversion
-% yields any NaN are kept as char (incl. lines with pure text, excl. empty values)
+% where the csv has the following structure:
+% * optionally every (!) line starting with special char is interpreted as a comment line.
+% * optionally headerlines can be skipped
+% * fieldnames (column names) at the first line.
+% * optionally units at the second line.
+% * Column values are smartly mapped to numeric, columns where char conversion
+%   yields any NaN are kept as char (incl. lines with pure text, excl. empty values)
 %
 % Double quotes are kept, unless explicitly specified not to, for 
 % (1) column names and (2) column values  with keyword 'quotes' as 
@@ -65,11 +70,11 @@ function varargout = csv2struct(fname,varargin)
 
 %% options
 
-   OPT.units        = 0;
    OPT.delimiter    = ',';
    OPT.error        = 0;
-   OPT.commentstyle = '#'; % switched to lower case 2013-05
    OPT.quotes       = [0 0];
+   OPT.units        = false;
+   OPT.commentstyle = '#'; % switched to lower case 2013-05
    OPT.headerlines  = 0;
    
    if nargin==0
