@@ -229,21 +229,21 @@ for i_sim = 1: length(OPT.Filinp)
                 %% Cross-sections and weights
                 if strcmp(type{i_crs},'u')
                     % u section
-                    A       = mean(sum(crsu_area(:,mymask(:,i_crs)),2)) ;
-                    aap     = sum(crsu_area(:,mymask(:,i_crs)),2) - A ;
-                    Avar    = repmat(sum(crsu_area(:,mymask(:,i_crs)),2),[1,no_pts,kmax]);
-                    weights = crs2_u(:,mymask(:,i_crs),:)./Avar;
+                    A              = mean(sum(crsu_area(:,mymask(:,i_crs)),2)) ;
+                    aap            = sum(crsu_area(:,mymask(:,i_crs)),2) - A ;
+                    Avar           = repmat(sum(crsu_area(:,mymask(:,i_crs)),2),[1,no_pts,kmax]);
+                    weights(i_crs,:,:,:) = crs2_u(:,mymask(:,i_crs),:)./Avar;
                 else
                     % v section
-                    A       = mean(sum(crsv_area(:,mymask(:,i_crs)),2)) ;
-                    aap     = sum(crsv_area(:,mymask(:,i_crs)),2) - A ;
-                    Avar    = repmat(sum(crsv_area(:,mymask(:,i_crs)),2),[1,no_pts,kmax]);
-                    weights = crs2_v(:,mymask(:,i_crs),:)./Avar;
+                    A              = mean(sum(crsv_area(:,mymask(:,i_crs)),2)) ;
+                    aap            = sum(crsv_area(:,mymask(:,i_crs)),2) - A ;
+                    Avar           = repmat(sum(crsv_area(:,mymask(:,i_crs)),2),[1,no_pts,kmax]);
+                    weights(i_crs,:,:,:) = crs2_v(:,mymask(:,i_crs),:)./Avar;
                 end
 
                 %%  create weighed time series of velocity 
-                weights = weights*no_pts*kmax;
-                uu      = uu.*weights;
+                weights(i_crs,:,:,:) = weights(i_crs,:,:,:)*no_pts*kmax;
+                uu                   = uu.*squeeze(weights(i_crs,:,:,:));
                 
                 %% decompose velocity
                 ua=1/A*CTavg(uu.*Avar);
@@ -299,6 +299,7 @@ for i_sim = 1: length(OPT.Filinp)
                 
                 s1       = CTavg(sal  (times,mymask (:,i_crs),:));
                 s2       = CTavg(sal  (times,mymask2(:,i_crs),:));
+                conc     = (sal  (times,mymask (:,i_crs),:) + sal  (times,mymask2 (:,i_crs),:))/2.;
                 dist     = 0.;
                 if strcmp(type{i_crs},'u')
                     m  = crs.DATA(i_crs).mn(1);
@@ -313,9 +314,12 @@ for i_sim = 1: length(OPT.Filinp)
                     m    = sort(m);
                     dist = mean(guv(n,m(1):m(2)));
                 end
-                dcdx(i_crs) = (s2-s1)/dist;
-                D   (i_crs) = 0.;
-                if dcdx(i_crs) > 1e-20
+                smean(i_crs) = mean(mean(mean(conc.*squeeze(weights(i_crs,:,:,:)),3),2),1);
+                smax (i_crs) = max (mean(mean(conc.*squeeze(weights(i_crs,:,:,:)),3),2),[],1);
+                smin (i_crs) = min (mean(mean(conc.*squeeze(weights(i_crs,:,:,:)),3),2),[],1); 
+                dcdx (i_crs) = (s2 - s1)/dist;
+                D    (i_crs) = 0.;
+                if abs(dcdx(i_crs)) > 1e-10
                     D   (i_crs) = -1.*variation(i_crs)/(A*dcdx(i_crs));
                 end
             end
@@ -339,18 +343,18 @@ for i_sim = 1: length(OPT.Filinp)
             fprintf (fid,'%s%s%s%s \n','* cs       check  check_atr        mtx      river       tide  variation     dummy      ',...
                  'term1      term2      term3      term4      term5      term6      term7      term8      ',... ;
                  'term9     term10     term11     term12     term13     term14     term15     term16      ',...
-                 ' dcdx          k');
+                 'smean       smax       smin       dSdx          k');
 
             fprintf (fid,'%s \n',   'BL01') ;
-            fprintf (fid,'%4i %i \n',no_crs, 26) ;
+            fprintf (fid,'%4i %i \n',no_crs, 29) ;
 
             %% Print the results (the decomposed fluxes)
             for i_crs = 1: no_crs
                 dummy    = 999.999;
-                fprintf (fid,['%4i  ' repmat('%10.3f ',1,no_terms + 7) '%12.6f ' '%10.0f \n'],             ... 
-                    i_crs         , fff (i_crs), catos(end,no_crs_tra(i_crs))/(T.t(end)-T.t(1)),mtx(i_crs), ...
-                    river(i_crs)  , tide(i_crs), variation(i_crs),dummy,                                    ...
-                    terms(i_crs,:),dcdx(i_crs) ,D(i_crs)               );
+                fprintf (fid,['%4i  ' repmat('%10.3f ',1,no_terms + 10) '%12.6f ' '%10.0f \n'],              ... 
+                    i_crs         , fff (i_crs) , catos(end,no_crs_tra(i_crs))/(T.t(end)-T.t(1)),mtx(i_crs), ...
+                    river(i_crs)  , tide(i_crs) , variation(i_crs), dummy      ,                             ...
+                    terms(i_crs,:), smean(i_crs), smax     (i_crs), smin(i_crs), dcdx(i_crs)     ,D(i_crs)   );
             end
             fclose(fid);
 
