@@ -308,7 +308,7 @@ if isfield(mdfkeywds,'rhoa') == 0;
     mdfkeywds.rhoa = 0;
 end
 if isfield(mdfkeywds,'pavbnd') == 0; 
-    mdfkeywds.pavbnd = 101325.0;
+    mdfkeywds.pavbnd = 0;
 end
 if isfield(mdfkeywds,'gapres') == 0; 
     mdfkeywds.gapres = 101325.0;
