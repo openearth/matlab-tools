@@ -122,6 +122,7 @@ for i_sim = 1: length(OPT.Filinp)
             T        = vs_time(myfile) ;                                                      % read timesteps
             it_start = find( T.datenum >= datenum(start(2:end-1),'yyyymmdd HHMMSS'),1,'first' ) ;
             it_stop  = find( T.datenum >= datenum(stop (2:end-1),'yyyymmdd HHMMSS'),1,'first' ) ;
+            times    = T.datenum(it_start:it_stop);  
 
             %  stations
             trih     = vs_use(myfile);                                                        % open trih file
@@ -163,8 +164,7 @@ for i_sim = 1: length(OPT.Filinp)
             kmax     = length(thick)    ;
             mmax     = G.mmax ;
             nmax     = G.nmax ;
-            times    = 1:size((sal),1)  ;
-            no_times = length(times) ;
+            no_times = size(sal,1);
 
             %% Calculate areas per timestep per obs-point
             display ('calculate areas per timestep per obs-point (to use in eq.8 of doc. of Yoeri)')
@@ -215,35 +215,35 @@ for i_sim = 1: length(OPT.Filinp)
                 no_pts = length(find(mymask(:,i_crs)==1)) ; %Number of stations buiding the crs section derived from the history stations
                 if strcmp(type{i_crs},'u')
                     % u section
-                    uu=zcuru  (times,mymask(:,i_crs),:);
-                    aa=crs2_u (times,mymask(:,i_crs),:);
+                    uu=zcuru  (:,mymask(:,i_crs),:);
+                    aa=crs2_u (:,mymask(:,i_crs),:);
                 else
                     % v section
-                    uu=zcurv  (times,mymask(:,i_crs),:);
-                    aa=crs2_v (times,mymask(:,i_crs),:);
+                    uu=zcurv  (:,mymask(:,i_crs),:);
+                    aa=crs2_v (:,mymask(:,i_crs),:);
                 end
-                ss        =sal  (times,mymask(:,i_crs),:);
+                ss        =sal  (:,mymask(:,i_crs),:);
                 ff        =uu.*ss.*aa;
                 fff(i_crs)=mean(sum(sum(ff,3),2));
 
                 %% Cross-sections and weights
                 if strcmp(type{i_crs},'u')
                     % u section
-                    A              = mean(sum(crsu_area(:,mymask(:,i_crs)),2)) ;
-                    aap            = sum(crsu_area(:,mymask(:,i_crs)),2) - A ;
-                    Avar           = repmat(sum(crsu_area(:,mymask(:,i_crs)),2),[1,no_pts,kmax]);
-                    weights(i_crs,:,:,:) = crs2_u(:,mymask(:,i_crs),:)./Avar;
+                    A                  = mean(sum(crsu_area(:,mymask(:,i_crs)),2)) ;
+                    aap                = sum(crsu_area(:,mymask(:,i_crs)),2) - A ;
+                    Avar               = repmat(sum(crsu_area(:,mymask(:,i_crs)),2),[1,no_pts,kmax]);
+                    weights(i_crs).val = crs2_u(:,mymask(:,i_crs),:)./Avar;
                 else
                     % v section
-                    A              = mean(sum(crsv_area(:,mymask(:,i_crs)),2)) ;
-                    aap            = sum(crsv_area(:,mymask(:,i_crs)),2) - A ;
-                    Avar           = repmat(sum(crsv_area(:,mymask(:,i_crs)),2),[1,no_pts,kmax]);
-                    weights(i_crs,:,:,:) = crs2_v(:,mymask(:,i_crs),:)./Avar;
+                    A                  = mean(sum(crsv_area(:,mymask(:,i_crs)),2)) ;
+                    aap                = sum(crsv_area(:,mymask(:,i_crs)),2) - A ;
+                    Avar               = repmat(sum(crsv_area(:,mymask(:,i_crs)),2),[1,no_pts,kmax]);
+                    weights(i_crs).val = crs2_v(:,mymask(:,i_crs),:)./Avar;
                 end
 
                 %%  create weighed time series of velocity 
-                weights(i_crs,:,:,:) = weights(i_crs,:,:,:)*no_pts*kmax;
-                uu                   = uu.*squeeze(weights(i_crs,:,:,:));
+                weights(i_crs).val = weights(i_crs).val*no_pts*kmax;
+                uu                 = uu.*weights(i_crs).val;
                 
                 %% decompose velocity
                 ua=1/A*CTavg(uu.*Avar);
@@ -260,7 +260,25 @@ for i_sim = 1: length(OPT.Filinp)
                 sd=ss-repmat(sb,[1,no_pts,kmax])- ...
                       repmat(sc,[no_times,1,1]) - ...
                       repmat(sa,[no_times,no_pts,kmax]);
-                
+                  
+                %% Temporary (for henk)
+                if i_crs == 3
+                    u_henk = Cavg(uu);
+                    s_henk = Cavg(ss);
+                    fid = fopen('Series_henk','w');
+                    fprintf(fid,'* Column  1: Date\n');
+                    fprintf(fid,'* Column  2: Time\n');
+                    fprintf(fid,'* Column  3: Cross sectional averaged velocity\n');
+                    fprintf(fid,'* Column  4: Cross sectional averaged dalinity\n');
+                    fprintf(fid,'Simulatiion b04, cross section 3 (Nieuwe Maas)\n');
+                    fprintf(fid,' %5i  4\n',length(u_henk));
+                    for i_time = 1: length(times)
+                        fprintf (fid,'%16s  %12.6f  %12.6f \n',datestr(times(i_time),'yyyymmdd  HHMMSS'), ...
+                                                               u_henk(i_time), s_henk(i_time));
+                    end
+                    fclose(fid);
+                end
+                    
                 %% Construct the terms
                 term(1)=sa*ua*A;
                 term(2)=sa*Tavg(ub.*aap);
@@ -297,9 +315,9 @@ for i_sim = 1: length(OPT.Filinp)
             %% Compute dispersion coeffcient, start with concentration gradient
             for i_crs = 1: no_crs
                 
-                s1       = CTavg(sal  (times,mymask (:,i_crs),:));
-                s2       = CTavg(sal  (times,mymask2(:,i_crs),:));
-                conc     = (sal  (times,mymask (:,i_crs),:) + sal  (times,mymask2 (:,i_crs),:))/2.;
+                s1       = CTavg(sal  (:,mymask (:,i_crs),:));
+                s2       = CTavg(sal  (:,mymask2(:,i_crs),:));
+                conc     = (sal  (:,mymask (:,i_crs),:) + sal  (:,mymask2 (:,i_crs),:))/2.;
                 dist     = 0.;
                 if strcmp(type{i_crs},'u')
                     m  = crs.DATA(i_crs).mn(1);
@@ -314,9 +332,9 @@ for i_sim = 1: length(OPT.Filinp)
                     m    = sort(m);
                     dist = mean(guv(n,m(1):m(2)));
                 end
-                smean(i_crs) = mean(mean(mean(conc.*squeeze(weights(i_crs,:,:,:)),3),2),1);
-                smax (i_crs) = max (mean(mean(conc.*squeeze(weights(i_crs,:,:,:)),3),2),[],1);
-                smin (i_crs) = min (mean(mean(conc.*squeeze(weights(i_crs,:,:,:)),3),2),[],1); 
+                smean(i_crs) = mean(mean(mean(conc.*weights(i_crs).val,3),2),1);
+                smax (i_crs) = max (mean(mean(conc.*weights(i_crs).val,3),2),[],1);
+                smin (i_crs) = min (mean(mean(conc.*weights(i_crs).val,3),2),[],1); 
                 dcdx (i_crs) = (s2 - s1)/dist;
                 D    (i_crs) = 0.;
                 if abs(dcdx(i_crs)) > 1e-10
