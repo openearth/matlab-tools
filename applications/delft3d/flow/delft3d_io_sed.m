@@ -55,7 +55,7 @@ function varargout = delft3d_io_sed(fname,varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
-% clear all; fname = 'p:\1210301-3d-zand-slib\05_simulaties\3D\coarse\run12\mond.sed';
+
 OPT.commentchar = '*';
 OPT.FileOption  = {{'Sediment','SdBUni'},...
                    {'Sediment','TcrSed'},...
