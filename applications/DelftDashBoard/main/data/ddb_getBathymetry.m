@@ -373,7 +373,7 @@ switch lower(tp)
                                         mkdir(localdir);
                                     end
                                     try
-                                        urlwrite([remotedir filename],[localdir filename],'Timeout',1);
+                                        urlwrite([remotedir filename],[localdir filename],'Timeout',5);
                                     end
                                 end
                                 ncfile=[localdir filename];
