@@ -176,4 +176,4 @@ function varargout = readMap(ncfile,varargin)
 
 
 
-varargout = {D,dep,z_cc};
+varargout = {D};

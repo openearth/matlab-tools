@@ -112,32 +112,36 @@ function varargout = patch2tri(corx,cory,map,varargin)
    ind = find(nface==4);
    n   = ntyp(3);
    
+   ismaindiag = [];
    % Split quad into two triangles directly: cut 'along' shortest diagonal.
-   ismaindiag = (   (corx(map(ind,1)) - corx(map(ind,3))).^2 ...
-                  + (cory(map(ind,1)) - cory(map(ind,3))).^2 ...
-                ) > (corx(map(ind,2)) - corx(map(ind,4))).^2 ...
-                  + (cory(map(ind,2)) - cory(map(ind,4))).^2;
+   numquads = length(ind);
+   if length(ind) > 0
+       ismaindiag = (   (corx(map(ind,1)) - corx(map(ind,3))).^2 ...
+                      + (cory(map(ind,1)) - cory(map(ind,3))).^2 ...
+                    ) > (corx(map(ind,2)) - corx(map(ind,4))).^2 ...
+                      + (cory(map(ind,2)) - cory(map(ind,4))).^2;
 
-   ntri1 = sum( ismaindiag);
-   ntri2 = sum(~ismaindiag);
-   i1    = ind( ismaindiag);
-   i2    = ind(~ismaindiag);
+       ntri1 = sum( ismaindiag);
+       ntri2 = sum(~ismaindiag);
+       i1    = ind( ismaindiag);
+       i2    = ind(~ismaindiag);
 
-   % Quads where 2--4 is shortest diagonal: tri's are 1-2-4 and 2-3-4
-   tri (n+1      :n+  ntri1,    1:3) = map(i1,[1 2 4]);
-   tri (n+1+ntri1:n+2*ntri1,    1:3) = map(i1,[2 3 4]);
-   map3(n+1      :n+  ntri1)         = i1;
-   map3(n+1+ntri1:n+2*ntri1)         = i1;
-   n =            n+2*ntri1;
+       % Quads where 2--4 is shortest diagonal: tri's are 1-2-4 and 2-3-4
+       tri (n+1      :n+  ntri1,    1:3) = map(i1,[1 2 4]);
+       tri (n+1+ntri1:n+2*ntri1,    1:3) = map(i1,[2 3 4]);
+       map3(n+1      :n+  ntri1)         = i1;
+       map3(n+1+ntri1:n+2*ntri1)         = i1;
+       n =            n+2*ntri1;
 
-   %plot(tri(:,1));hold on;plot(map3,'r');xlim([0 ntri]);pausedisp;clf
+       %plot(tri(:,1));hold on;plot(map3,'r');xlim([0 ntri]);pausedisp;clf
 
-   % Quads where 1--3 is shortest diagonal: tri's are 1-2-3 and 1-3-4
-   tri (n+1      :n+  ntri2,    1:3) = map(i2,[1 2 3]);
-   tri (n+1+ntri2:n+2*ntri2,    1:3) = map(i2,[1 3 4]);
-   map3(n+1      :n+  ntri2)         = i2;
-   map3(n+1+ntri2:n+2*ntri2)         = i2;
-   n =            n+2*ntri2;
+       % Quads where 1--3 is shortest diagonal: tri's are 1-2-3 and 1-3-4
+       tri (n+1      :n+  ntri2,    1:3) = map(i2,[1 2 3]);
+       tri (n+1+ntri2:n+2*ntri2,    1:3) = map(i2,[1 3 4]);
+       map3(n+1      :n+  ntri2)         = i2;
+       map3(n+1+ntri2:n+2*ntri2)         = i2;
+       n =            n+2*ntri2;
+   end
 
    %[D.tri,n] = nface2tri(map,corx,cory,tri,4,n,ind,OPT.debug,'quadrilateral');
    
