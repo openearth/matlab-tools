@@ -114,21 +114,34 @@ switch dataset.type
             if ~isempty(xg)
                 dataset.x=xg;
                 dataset.y=yg;
-                zz=dataset.z; % original data in cell centres
-                z(1,:,:)=zz(1:end-1,1:end-1);
-                z(2,:,:)=zz(2:end,1:end-1);
-                z(3,:,:)=zz(2:end,2:end);
-                z(4,:,:)=zz(1:end-1,2:end);
-                z=squeeze(nanmean(z,1)); % values in cell corners
-                dataset.z=zeros(size(z,1)+1,size(z,2)+2);
+                z0=dataset.z; % data in cell centres (both horizontal and vertical)
+
+                % Compute data in horizontal cell centres and vertical cell
+                % faces (used for contour plots and shades)
+                z=[];
+                z(1,:,:)=z0(:,1:end-1);
+                z(2,:,:)=z0(:,2:end  );
+                z=squeeze(nanmean(z,1));
+
+                dataset.z=zeros(size(z,1),size(z,2)+2);
                 dataset.z(dataset.z==0)=NaN;
-                dataset.zz=dataset.z;
-                dataset.z(1:end-1,2:end-1)=z;
+                dataset.z(:,2:end-1)=z;
+                % Copy data to top and bottom row
                 dataset.z(:,1)=dataset.z(:,2);
                 dataset.z(:,end)=dataset.z(:,end-1);                
-                dataset.zz(:,1:end-1)=zz;
                 
-                % Cut off NaN rows
+                % And now the data on horizontal cell faces and vertical
+                % cell centres (used for patches)
+                z=[];
+                z(1,:,:)=z0(1:end-1,:);
+                z(2,:,:)=z0(2:end  ,:);
+                z=squeeze(nanmean(z,1));
+
+                dataset.zz=zeros(size(z,1)+1,size(z,2)+1);
+                dataset.zz(dataset.zz==0)=NaN;
+                dataset.zz(2:end,1:end-1)=z;
+                
+                % Cut off NaN rows (these give problems in contour maps)
                 if sum(isnan(dataset.x(end,:)))>0
                     dataset.x=dataset.x(1:end-1,:);
                     dataset.y=dataset.y(1:end-1,:);
