@@ -17,7 +17,7 @@ ymin=ymin0-0.1*(ymax0-ymin0);
 ymax=ymax0+0.1*(ymax0-ymin0);
 
 dx=opt.curvecspacing;
-nt=20;
+nt=40;
 
 hdthck=opt.headthickness;
 arthck=opt.arrowthickness;
@@ -151,6 +151,7 @@ if strcmpi(handles.figures(i).figure.renderer,'opengl') && opt.fadecurvyarrows
     end
     facevertexalphadata(nverticesperarrow,:)=1;
     facevertexalphadata=reshape(facevertexalphadata,[narrows*nverticesperarrow 1]);
+    facevertexalphadata=facevertexalphadata*0.75;
     set(fl,'FaceVertexAlphaData',facevertexalphadata);
     set(fl,'AlphaDataMapping','direct');
     set(fl,'FaceAlpha','interp');

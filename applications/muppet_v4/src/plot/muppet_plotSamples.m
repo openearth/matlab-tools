@@ -28,8 +28,12 @@ z1=z1+3000;
 %% Plot samples
 h=[];
 if ~strcmpi(opt.marker,'none')
-%    s=scatter3(x,y,z1,opt.markersize,z,'filled',opt.marker);
-    s=scatter(x,y,opt.markersize,z,'filled',opt.marker);
+    s=scatter3(x,y,z1,opt.markersize,z,'filled',opt.marker);
+%    s=scatter(x,y,opt.markersize,z,'filled',opt.marker);
+%    sz=10*z;
+%    sz=100*max(log10(sz),0.001);
+%    sz=max(sz,5);
+%    s=scatter(x,y,sz,z,'filled',opt.marker);
     if ~strcmpi(opt.markeredgecolor,'automatic')
         set(s,'MarkerEdgeColor',colorlist('getrgb','color',opt.markeredgecolor));
     end
@@ -37,6 +41,7 @@ if ~strcmpi(opt.marker,'none')
         set(s,'MarkerFaceColor',colorlist('getrgb','color',opt.markerfacecolor));
     end
     h=s(1);
+    set(s,'Clipping','on');
 end
 
 %% Add text

@@ -76,9 +76,11 @@ opt.areatext=1;
 opt.decimals=0;
 opt.fillareas=1;
 
-opt.plotwindrosetotals=1;
-opt.addwindroselegend=1;
-opt.coloredwindrose=1;
+% Wind/wave rose
+opt.firstcolumncalm=1;
+opt.addrosetotals=1;
+opt.addroselegend=1;
+opt.coloredrose=1;
 opt.maxradius=16;
 opt.radiusstep=4;
 

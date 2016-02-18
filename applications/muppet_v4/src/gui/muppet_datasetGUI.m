@@ -741,9 +741,9 @@ if dataset.adjustname
                     str='x component';
                   case{'ycomponent','y component'}
                     str='y component';
-                  case{'mcomponent'}
+                  case{'m component'}
                     str='m component';
-                  case{'ncomponent'}
+                  case{'n component'}
                     str='n component';
                 end                
                 compstr=[ ' - ' str];

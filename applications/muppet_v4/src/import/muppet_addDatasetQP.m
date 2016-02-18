@@ -313,6 +313,7 @@ end
 
 % Find data indices
 [timestep,istation,m,n,k,idomain]=muppet_findDataIndices(dataset);
+dataset.timestep=timestep;
 
 %% Load data into structure d
 inparg{1}=timestep;

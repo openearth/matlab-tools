@@ -284,7 +284,8 @@ switch dataset.tekaltype
                 parameter.y(isnan(parameter.u))=NaN;
         end
     case{'xy'}
-        icolx=strmatch(lower(dataset.xcoordinate),lower(dataset.columnlabels),'exact');
+%        icolx=strmatch(lower(dataset.xcoordinate),lower(dataset.columnlabels),'exact');
+        icolx=1;
         icoly=strmatch(lower(dataset.ycoordinate),lower(dataset.columnlabels),'exact');
         parameter.x=fid.Field(iblock).Data(:,icolx);
         parameter.y=fid.Field(iblock).Data(:,icoly);

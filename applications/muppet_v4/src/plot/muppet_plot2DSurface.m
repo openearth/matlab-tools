@@ -70,8 +70,13 @@ switch(lower(opt.plotroutine))
         xmean=mean(x(isfinite(x)));
         ymean=mean(y(isfinite(y)));
         x(isnan(x))=xmean;
-        y(isnan(y))=ymean;
+        y(isnan(y))=ymean+10000;
+%        y(isnan(y))=ymean;
+%         x(isnan(x))=0;
+%         y(isnan(y))=0;
         z(isnan(x))=NaN;
+%         z(isnan(x))=0;
+%        z(isnan(z))=0;
         if ~plt.usecustomcontours
             zc=z;
             cax=[col(1)-dc col(end)];

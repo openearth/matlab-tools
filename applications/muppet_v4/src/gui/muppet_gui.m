@@ -323,7 +323,7 @@ if ok
                 plt=muppet_setDefaultAxisProperties;
                 plt.name=['Subplot ' num2str(n+nplots0)];
                 plt.position(1)=s.originhorizontal+(ii-1)*(s.sizehorizontal+s.spacinghorizontal);
-                plt.position(2)=s.originvertical+(s.numbervertical-jj)*(s.sizevertical+s.spacinghorizontal);
+                plt.position(2)=s.originvertical+(s.numbervertical-jj)*(s.sizevertical+s.spacingvertical);
                 plt.position(3)=s.sizehorizontal;
                 plt.position(4)=s.sizevertical;
                 handles.figures(ifig).figure.subplots(n+nplots0).subplot=plt;
@@ -1044,12 +1044,12 @@ function makeAnimation
 handles=getHandles;
 
 % Check animation size
-nhor=handles.figures(handles.activefigure).figure.width*handles.figures(handles.activefigure).figure.resolution/2.5;
-nver=handles.figures(handles.activefigure).figure.height*handles.figures(handles.activefigure).figure.resolution/2.5;
+nhor=handles.figures(handles.activefigure).figure.width*handles.figures(handles.activefigure).figure.resolution/2.54;
+nver=handles.figures(handles.activefigure).figure.height*handles.figures(handles.activefigure).figure.resolution/2.54;
 
 switch lower(handles.animationsettings.format)
     case{'mp4'}
-        if nhor>1920 || nver>1088
+        if nhor>1920 || nver>1080
             muppet_giveWarning('text','Figures to large for animation! Please reduce the resolution.');
             return
         end

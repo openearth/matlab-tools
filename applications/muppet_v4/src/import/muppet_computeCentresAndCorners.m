@@ -105,28 +105,42 @@ switch dataset.type
                         if isempty(n)
                             n=0;
                         end                        
-                        grd=qpread(dataset.fid,'hydrodynamic grid','griddata',1,m,n,0);
-                        yg=squeeze(grd.Z);                        
+                        grdh=qpread(dataset.fid,'hydrodynamic grid','griddata',dataset.timestep,m,n,0);
+                        yg=squeeze(grdh.Z);
+                        xg=repmat(xg(:,1),[1 size(yg,2)]);
                 end
             end
 
             if ~isempty(xg)
                 dataset.x=xg;
                 dataset.y=yg;
-                z(1,:,:)=dataset.zz(1:end-1,1:end-1);
-                z(2,:,:)=dataset.zz(2:end,1:end-1);
-                z(3,:,:)=dataset.zz(2:end,2:end);
-                z(4,:,:)=dataset.zz(1:end-1,2:end);
-                z=squeeze(nanmean(z,1));
-                dataset.z=zeros(size(dataset.z));
+                zz=dataset.z; % original data in cell centres
+                z(1,:,:)=zz(1:end-1,1:end-1);
+                z(2,:,:)=zz(2:end,1:end-1);
+                z(3,:,:)=zz(2:end,2:end);
+                z(4,:,:)=zz(1:end-1,2:end);
+                z=squeeze(nanmean(z,1)); % values in cell corners
+                dataset.z=zeros(size(z,1)+1,size(z,2)+2);
                 dataset.z(dataset.z==0)=NaN;
-                dataset.z(1:end-1,1:end-1)=z;
-                % Also shift zz, so that it will plot properly with pcolor
-                % and shading flat
-                zz=dataset.zz(2:end,2:end);
-                dataset.zz=zeros(size(dataset.zz));
-                dataset.zz(dataset.zz==0)=NaN;
-                dataset.zz(1:end-1,1:end-1)=zz;
+                dataset.zz=dataset.z;
+                dataset.z(1:end-1,2:end-1)=z;
+                dataset.z(:,1)=dataset.z(:,2);
+                dataset.z(:,end)=dataset.z(:,end-1);                
+                dataset.zz(:,1:end-1)=zz;
+                
+                % Cut off NaN rows
+                if sum(isnan(dataset.x(end,:)))>0
+                    dataset.x=dataset.x(1:end-1,:);
+                    dataset.y=dataset.y(1:end-1,:);
+                    dataset.z=dataset.z(1:end-1,:);
+                    dataset.zz=dataset.zz(1:end-1,:);
+                end
+                if sum(isnan(dataset.x(1,:)))>0
+                    dataset.x=dataset.x(2:end,:);
+                    dataset.y=dataset.y(2:end,:);
+                    dataset.z=dataset.z(2:end,:);
+                    dataset.zz=dataset.zz(2:end,:);
+                end
             end
                    
         else

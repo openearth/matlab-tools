@@ -1643,8 +1643,6 @@
       </check>
     </dependency>
   </plotoption>
-
-
   <plotoption>
     <name>unitvector</name>
     <variable>unitvector</variable>
@@ -1762,5 +1760,47 @@
         <value>1</value>
       </check>
     </dependency>
+  </plotoption>
+  <plotoption>
+    <name>radiusstep</name>
+    <variable>radiusstep</variable>
+    <type>real</type>
+    <keyword>RadiusStep</keyword>
+    <default>4</default>
+  </plotoption>
+  <plotoption>
+    <name>maxradius</name>
+    <variable>maxradius</variable>
+    <type>real</type>
+    <keyword>MaxRadius</keyword>
+    <default>16</default>
+  </plotoption>
+  <plotoption>
+    <name>firstcolumncalm</name>
+    <variable>firstcolumncalm</variable>
+    <type>boolean</type>
+    <keyword>FirstColumnCalm</keyword>
+    <default>1</default>
+  </plotoption>
+  <plotoption>
+    <name>addrosetotals</name>
+    <variable>addrosetotals</variable>
+    <type>boolean</type>
+    <keyword>AddRoseTotals</keyword>
+    <default>1</default>
+  </plotoption>
+  <plotoption>
+    <name>addroselegend</name>
+    <variable>addroselegend</variable>
+    <type>boolean</type>
+    <keyword>AddRoseLegend</keyword>
+    <default>1</default>
+  </plotoption>
+  <plotoption>
+    <name>coloredrose</name>
+    <variable>coloredrose</variable>
+    <type>boolean</type>
+    <keyword>ColoredRose</keyword>
+    <default>1</default>
   </plotoption>
 </root>

@@ -41,11 +41,15 @@ if opt.originmarker.enable
     end
 end
 
+transp=0;
+
 if opt.timemarker.enable
     
+    transp=1;
+    
     for itrack=1:ntracks
-                        
-        % Last position        
+        
+        % Last position
         xmlast(itrack)=interp1(data.times,x(:,itrack),opt.timemarker.time);
         ymlast(itrack)=interp1(data.times,y(:,itrack),opt.timemarker.time);
         
@@ -64,46 +68,55 @@ if opt.timemarker.enable
         end
     end
     
-
-switch opt.timemarker.trackoption
-    case{'uptomarker'}
-        it=find(data.times<=opt.timemarker.time,1,'last');
-        if isempty(it)
-            it=1;
-        end
-        
-        x=x(1:it,:);
-        y=y(1:it,:);
-                
-        x=[x;xmlast];
-        y=[y;ymlast];
-        
-    case{'frommarker'}
-        it=find(data.times>=opt.timemarker.time,1,'first');
-        if isempty(it)
-            it=length(x);
-        end
-        x=x(it:end,:);
-        y=y(it:end,:);
-        %             if size(x,1)==1
-        %                 % row
-        %                 x=[xm x];
-        %                 y=[ym y];
-        %             else
-        % column
-        x=[xm;x];
-        y=[ym;y];
-        %             end
-    case{'none'}
-        x=NaN;
-        y=NaN;
-    case{'complete'}
-        % No need to change x and y
+    switch opt.timemarker.trackoption
+        case{'uptomarker'}
+            it=find(data.times<=opt.timemarker.time,1,'last');
+            if isempty(it)
+                it=1;
+            end
+            
+            x=x(1:it,:);
+            y=y(1:it,:);
+            
+            x=[x;xmlast];
+            y=[y;ymlast];
+            
+        case{'frommarker'}
+            it=find(data.times>=opt.timemarker.time,1,'first');
+            if isempty(it)
+                it=length(x);
+            end
+            x=x(it:end,:);
+            y=y(it:end,:);
+            %             if size(x,1)==1
+            %                 % row
+            %                 x=[xm x];
+            %                 y=[ym y];
+            %             else
+            % column
+            x=[xm;x];
+            y=[ym;y];
+            %             end
+        case{'none'}
+            x=NaN;
+            y=NaN;
+        case{'complete'}
+            % No need to change x and y
+    end
+    
 end
 
+if transp
+    z=zeros(size(x))-1;
+    h1=patchline(x,y,z,'edgealpha',0.05);
+    set(h1,'LineWidth',opt.linewidth,'EdgeColor',colorlist('getrgb','color',opt.linecolor));
+else
+%    z=zeros(size(x));
+%    z=z-100;
+%    h1=line(x,y,z);
+    h1=line(x,y);
+    set(h1,'LineWidth',opt.linewidth,'Color',colorlist('getrgb','color',opt.linecolor));
 end
-
-h1=line(x,y);
 
 % z=zeros(size(get(h1,'ZData')))+opt.polygonelevation;
 % set(h1,'ZData',z);
@@ -114,7 +127,8 @@ else
     set(h1,'LineStyle','none');
 end
 
-set(h1,'LineWidth',opt.linewidth,'Color',colorlist('getrgb','color',opt.linecolor));
+%set(h1,'LineWidth',opt.linewidth,'Color',colorlist('getrgb','color',opt.linecolor));
+%set(h1,'LineWidth',opt.linewidth,'EdgeColor',colorlist('getrgb','color',opt.linecolor));
 
 if opt.fillclosedpolygons
     set(h2,'EdgeColor',colorlist('getrgb','color',opt.linecolor));
