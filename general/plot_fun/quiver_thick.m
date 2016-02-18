@@ -396,7 +396,7 @@ if strcmp(keywords.scaling_type,'uniform')
             disp('Warning');
             disp(' ');
             disp('You are advised to specify ''plot_color'' yourself when using uniform scaling, it is now automatically set to black...');
-        elseif strcmp(varargin{1,(find(cellfun(@isempty,strfind(varargin(cellfun(@ischar,varargin)),'plot_color'))==0)+1)},'magnitude')
+        elseif strcmp(varargin{1,(find(strcmp(varargin(cellfun(@ischar,varargin)),'plot_color')==1)+1)},'magnitude')
             varargin{1,(find(cellfun(@isempty,strfind(varargin(cellfun(@ischar,varargin)),'plot_color'))==0)+1)} = 'k';
             disp('Warning');
             disp(' ');
