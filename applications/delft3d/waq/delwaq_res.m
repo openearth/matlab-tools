@@ -81,7 +81,7 @@ else
    else
       S.Time = 0;
    end      
-   [S.NumSubs S.NumSegm] =  size(S.data);
+   [S.NumSubs, S.NumSegm] =  size(S.data);
    S.NBytesBlock = (S.NumSubs * S.NumSegm*4) + 4;
 end
    
