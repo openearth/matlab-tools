@@ -15,6 +15,7 @@ function segnr = delwaq_xy2segnr(varargin)
 %   http://www.delftsoftware.com
 %   2011-Jul-12 Created by Gaytan-Aguilar
 %   email: sandra.gaytan@deltares.com
+%   TODO: When dd grid data in the edges gets nans
 %--------------------------------------------------------------------------
 
 if ischar(varargin{1})
