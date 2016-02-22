@@ -1,6 +1,6 @@
 %DELWAQ_DMO Reads dmo file from delwaq
 %
-%   [name segments] = DELWAQ_OBS(dmoFile) Read the observation file
+%   [name segments] = DELWAQ_DMO(dmoFile) Read the observation file
 %   <obsFile>  and gives back x,y, layer and the id.
 %
 %   NOTE: <obsFile> has to be a delwaq *.obs format
