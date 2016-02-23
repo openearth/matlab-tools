@@ -5,6 +5,9 @@ function simona2dflowfm (varargin)
 %                secondly the mdf file is converted into an mdu file and belonging attribute files
 %                finally the mdf file is removed
 %
+%                simona2dflowfm(filewaq,filemdu)
+%                   filwaq: filepath to SIMONA siminp.-file (import)
+%                   filmdu: filepath to D-FLOW FM .mdu-file (export)
 
 Gen_inf    = {'This tool converts a SIMONA siminp file into a D-Flow FM mdu file'                                  ;
               'with belonging attribute files'                                                                     ;
@@ -69,7 +72,7 @@ simona2mdf (filwaq,name_mdf,'DispGen',false);
 
 d3d2dflowfm (name_mdf,name_mdu,'DispGen',false);
 
-%% Finally, delte the temporary directory
+%% Finally, delete the temporary directory
 
 fclose all;
 rmdir(path_mdf,'s');
