@@ -63,6 +63,14 @@ debug = 0;
     InUnits = beautify( InUnits0);
    OutUnits = beautify(OutUnits0);
 
+%% convert combined units
+   if any(strcmpi(InUnits,{'kts' 'knt' 'knts' 'knoop' 'knopen'}))
+       InUnits = 'NM/hr';
+   end
+   if any(strcmpi(OutUnits,{'kts' 'knt' 'knts' 'knoop' 'knopen'}))
+       OutUnits = 'NM/hr';
+   end
+   
 %% start unit conversion
 
    percent         = 0.01; % same as in UD units
@@ -309,7 +317,8 @@ debug = 0;
    Hz              = hz;                        % hertz 
    rpm             = 60;                        % revolutions per minute
    RPM             = rpm;                       % revolutions per minute
-   
+   rmp             = rpm;   % common typo
+   RMP             = rpm;   % common typo
    
 %% Find conversion factor 
    if debug
