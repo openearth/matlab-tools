@@ -40,7 +40,7 @@ if isempty(statname)
         hisdata.salinity        = nc_varget(filename, 'salinity');
     end    
     
-    
+    hisdata.cross_section_name  = cross_section_name;
     hisdata.cross_section_discharge = nc_varget(filename, 'cross_section_discharge');
     hisdata.cross_section_discharge_int = nc_varget(filename, 'cross_section_discharge_int');
     hisdata.cross_section_discharge_avg = nc_varget(filename, 'cross_section_discharge_avg');
