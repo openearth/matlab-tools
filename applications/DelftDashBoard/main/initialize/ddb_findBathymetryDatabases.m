@@ -95,6 +95,10 @@ for i=1:bathymetry.nrDatasets
                                 % without internet connection!
                                 x0=nc_varget([localdir 'temp.nc'],'x0');
                                 movefile([localdir 'temp.nc'],[localdir bathymetry.dataset(i).name '.nc']);
+                            else
+                                % Metadata file could not be downloaded,
+                                % probably due to a time-out
+                                bathymetry.dataset(i).isAvailable=0;
                             end
                             fname = [bathymetry.dir bathymetry.dataset(i).name filesep bathymetry.dataset(i).name '.nc'];
                         catch
