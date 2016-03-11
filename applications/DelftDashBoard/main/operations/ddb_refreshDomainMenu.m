@@ -113,8 +113,10 @@ model=handles.activeModel.name;
 for i=1:length(hc)
     set(hc(i),'Checked','off');
 end
+
 h=findobj(hc,'UserData',nr);
 set(h,'Checked','on');
+
 % Update the figure
 for i=1:handles.model.(model).nrDomains
     feval(handles.model.(model).plotFcn,'update','active',0,'visible',1,'domain',i);
@@ -139,8 +141,7 @@ if handles.model.(model).nrDomains>1
     setHandles(handles);
     feval(handles.model.(model).plotFcn,'plot','active',0,'visible',1,'domain',0);
     ddb_refreshDomainMenu;
-    
-    %% And now set all elements and execute active tab!
-    
 end
+%% And now set all elements and execute active tab!
+
 

@@ -347,5 +347,22 @@ y(iac2==0)=NaN;
 
 clear iac iac2
 
+% Ingehackt LDB in lezen
+% load 'p:\1201428-delftdashboard\Validation\noordzee\Observations\ldb_Europe.mat'
+% figure; hold on;
+% plot(x,y,'k')
+% plot(x',y','k')
+% plot(x_ldb, y_ldb, 'r')
+% [xinds,yinds, X, Y] = imgselct
+% save_ldb(7).x = X;
+% save_ldb(7).y = Y;
+% load 'p:\1201428-delftdashboard\Validation\noordzee\Aanmaak\fix_lowlying_v2.mat'
+% for ii = 1:7
+%     in = inpolygon(x,y,save_ldb(ii).x, save_ldb(ii).y);
+%     x(in) = NaN;
+%     y(in) = NaN;
+% end
+% Uitgehackt
+
 [x,y,mcut,ncut]=CutNanRows(x,y);
 

@@ -94,6 +94,10 @@ else
             generateBoundaryConditions;
         case{'generateinitialconditions'}
             generateInitialConditions;
+        case{'automatetimestep'}
+            automateTimestep;
+        case{'changetimes'}
+            changeTimes;
     end
     
 end
@@ -103,7 +107,7 @@ function drawGridOutline
 handles=getHandles;
 setInstructions({'','','Use mouse to draw grid outline on map'});
 UIRectangle(handles.GUIHandles.mapAxis,'draw','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline,'onstart',@deleteGridOutline, ...
-    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY);
+    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY,'number',1);
 
 %%
 function updateGridOutline(x0,y0,dx,dy,rotation,h)
@@ -137,6 +141,66 @@ if ~isempty(handles.toolbox.modelmaker.gridOutlineHandle)
 end
 
 %%
+function automateTimestep
+% Start
+    handles=getHandles;
+
+% Get X,Y,Z in projection
+    dataCoord=handles.screenParameters.coordinateSystem;
+    ad = handles.activeDomain;
+
+if strfind(dataCoord.type,'Geographic')
+    
+     % Determine UTM zone of the middle
+    x = handles.model.delft3dflow.domain(ad).gridX;
+    y = handles.model.delft3dflow.domain(ad).gridY;
+    Z = handles.model.delft3dflow.domain(ad).depth;
+	[ans1,ans2, utmzone_total, utmzone_parts] = ddb_deg2utm(nanmean(nanmean(y)),nanmean(nanmean(x)));
+    
+    % Change coordinate system to UTM of the middle
+    coord.name = 'WGS 84 / UTM zone ';
+    s           = {coord.name, '',num2str(utmzone_parts.number), utmzone_parts.lat};
+    coord.name  = [s{:}];
+    coord.type = 'Cartesian'
+    [X,Y]             = ddb_coordConvert(x,y,dataCoord,coord);
+else
+    X = handles.model.delft3dflow.domain(ad).gridX;
+    Y = handles.model.delft3dflow.domain(ad).gridY;
+    Z = handles.model.delft3dflow.domain(ad).depth;
+end
+
+% Timestep is projected orientation
+    timestep = ddb_determinetimestepDelft3DFLOW(X,Y,Z);
+    handles.model.delft3dflow.domain(ad).timeStep = timestep;
+
+% Make history and map files deelbaar door timestep
+    handles = ddb_fixtimestepDelft3DFLOW(handles, ad)   
+    setHandles(handles);
+    
+    handles = getHandles;
+    ddb_updateOutputTimesDelft3DFLOW
+    handles.model.delft3dflow.domain(ad).mapStopTime = handles.model.delft3dflow.domain(ad).stopTime;
+    handles.model.delft3dflow.domain(ad).hisStopTime = handles.model.delft3dflow.domain(ad).stopTime;
+    handles.model.delft3dflow.domain(ad).comStopTime = handles.model.delft3dflow.domain(ad).stopTime;
+
+% Finish
+    setHandles(handles);
+    gui_updateActiveTab;
+
+%%
+function changeTimes
+% Start
+    handles = getHandles;
+    ad = handles.activeDomain;
+    timestep = handles.model.delft3dflow.domain(ad).timeStep;
+
+% Make history and map files deelbaar door timestep
+    handles = ddb_fixtimestepDelft3DFLOW(handles, ad)   
+
+% Finish
+    setHandles(handles);
+    gui_updateActiveTab;
+%%
 function editGridOutline
 
 handles=getHandles;
@@ -154,7 +218,7 @@ lenx=handles.toolbox.modelmaker.dX*handles.toolbox.modelmaker.nX;
 leny=handles.toolbox.modelmaker.dY*handles.toolbox.modelmaker.nY;
 h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline, ...
     'x0',handles.toolbox.modelmaker.xOri,'y0',handles.toolbox.modelmaker.yOri,'dx',lenx,'dy',leny,'rotation',handles.toolbox.modelmaker.rotation, ...
-    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY);
+    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY,'number',1);
 handles.toolbox.modelmaker.gridOutlineHandle=h;
 
 setHandles(handles);
@@ -188,7 +252,8 @@ end
 h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline, ...
     'x0',handles.toolbox.modelmaker.xOri,'y0',handles.toolbox.modelmaker.yOri,'dx',handles.toolbox.modelmaker.lengthX,'dy',handles.toolbox.modelmaker.lengthY, ...
     'rotation',handles.toolbox.modelmaker.rotation, ...
-    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY);
+    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY,'number',1)
+    
 handles.toolbox.modelmaker.gridOutlineHandle=h;
 
 setHandles(handles);
@@ -210,7 +275,8 @@ function generateBathymetry
 handles=getHandles;
 % Use background bathymetry data
 datasets(1).name=handles.screenParameters.backgroundBathymetry;
-handles=ddb_ModelMakerToolbox_Delft3DFLOW_generateBathymetry(handles,datasets);
+ad = handles.activeDomain;
+handles=ddb_ModelMakerToolbox_Delft3DFLOW_generateBathymetry(handles,ad,datasets);
 setHandles(handles);
 
 %%

@@ -171,6 +171,9 @@ end
 xb=x(m1:dm:m2,n1:dn:n2);
 yb=y(m1:dm:m2,n1:dn:n2);
 
+    
+
+
 
 % Find rotation
 % End A

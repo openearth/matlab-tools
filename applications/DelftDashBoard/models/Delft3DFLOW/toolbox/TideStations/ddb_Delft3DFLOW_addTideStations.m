@@ -65,6 +65,26 @@ handles=getHandles;
 posx=[];
 
 iac=handles.toolbox.tidestations.activeDatabase;
+
+% % In gehackt op 30-Oct-15
+% load 'p:\1201428-delftdashboard\Validation\noordzee\Observations\Total.mat'
+% for ii = 1:length(waterlevels_obs)
+%     xloc(ii) = waterlevels_obs(ii).lon;
+%     yloc(ii) = waterlevels_obs(ii).lat;
+%     name{:,ii} = waterlevels_obs(ii).stationname;
+% end
+% handles.toolbox.tidestations.database(iac).stationShortNames    = name;
+% handles.toolbox.tidestations.database(iac).stationList          = name;
+% handles.toolbox.tidestations.database(iac).xLocLocal            = xloc;
+% handles.toolbox.tidestations.database(iac).yLocLocal            = yloc;
+% handles.toolbox.tidestations.database(iac).xLoc                 = xloc;
+% handles.toolbox.tidestations.database(iac).yLoc                 = yloc;
+% handles.toolbox.tidestations.database(iac).idCodes = [];
+% for ii = 1:length(xloc);
+%     handles.toolbox.tidestations.database(iac).idCodes{ii} = num2str(ii);
+% end
+% % Uitgehackt
+
 names=handles.toolbox.tidestations.database(iac).stationShortNames;
 
 xg=handles.model.delft3dflow.domain(ad).gridX;
@@ -80,6 +100,8 @@ n=0;
 
 x=handles.toolbox.tidestations.database(iac).xLocLocal;
 y=handles.toolbox.tidestations.database(iac).yLocLocal;
+
+
 
 % First find points within grid bounding box
 for i=1:ns

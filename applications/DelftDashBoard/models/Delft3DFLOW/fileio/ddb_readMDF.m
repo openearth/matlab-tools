@@ -65,6 +65,7 @@ function handles = ddb_readMDF(handles, filename, id)
 MDF=ddb_readMDFText(filename);
 
 %% Grid and bathymetry
+handles.model.delft3dflow.domain(id).pathmodel=pwd;
 handles.model.delft3dflow.domain(id).grdFile=MDF.filcco;
 handles.model.delft3dflow.domain(id).description=MDF.runtxt;
 if isfield(MDF,'anglat')

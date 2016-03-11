@@ -141,7 +141,8 @@ for i=1:length(varargin)
                 ddx=varargin{i+1};
             case{'ddy'}
                 ddy=varargin{i+1};
-                
+            case{'number'}
+                number=varargin{i+1};
         end
     end
 end
@@ -180,7 +181,8 @@ switch lower(opt)
         setappdata(hg,'movable',movable);
         setappdata(hg,'windowbuttonupdownfcn',windowbuttonupdownfcn);
         setappdata(hg,'windowbuttonmotionfcn',windowbuttonmotionfcn);
-        
+        setappdata(hg,'number',number);
+
         set(gcf, 'windowbuttondownfcn',   {@startRectangle,hg});
         set(gcf, 'windowbuttonmotionfcn', {@dragRectangle,hg});
         
@@ -210,7 +212,8 @@ switch lower(opt)
         setappdata(hg,'movable',movable);
         setappdata(hg,'windowbuttonupdownfcn',windowbuttonupdownfcn);
         setappdata(hg,'windowbuttonmotionfcn',windowbuttonmotionfcn);
-        
+        setappdata(hg,'number',number);
+
         hg=plotRectangle(hg,'nocallback');
         
     case{'delete'}
@@ -289,7 +292,7 @@ if ~isempty(x0)
     setappdata(hg,'axes',ax);
     setappdata(hg,'windowbuttonupdownfcn',windowbuttonupdownfcn);
     setappdata(hg,'windowbuttonmotionfcn',windowbuttonmotionfcn);
-    
+
     for i=1:length(x)-1
         if i==1
             % Origin

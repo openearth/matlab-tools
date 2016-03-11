@@ -1,11 +1,10 @@
-function handles=ddb_ModelMakerToolbox_Delft3DFLOW_generateBathymetry(handles,datasets,varargin)
+function handles=ddb_ModelMakerToolbox_Delft3DFLOW_generateBathymetry(handles,id, datasets,varargin)
 
 %% Initial settings
 icheck=1;
 overwrite=1;
-filename=[];
-id=ad;
 modeloffset=0;
+filename = '';
 
 %% Read input arguments
 for i=1:length(varargin)
@@ -33,13 +32,14 @@ if icheck
         return
     end
     % File name
-    if isempty(handles.model.delft3dflow.domain(id).depFile)
-        handles.model.delft3dflow.domain(id).depFile=[handles.model.delft3dflow.domain(id).attName '.dep'];
+        
+    if isempty(handles.model.delft3dflow.domain(id).depFile) && isempty(filename)
+        [filename, pathname, filterindex] = uiputfile('*.dep', 'Dep File Name',[handles.model.delft3dflow.domain(id).attName '.dep']);
+    else
+        pathname = pwd;
     end
-    [filename,ok]=gui_uiputfile('*.dep', 'Depth File Name',handles.model.delft3dflow.domain(id).depFile);
-    if ~ok
-        return
-    end
+
+    
     % Check if there is already data in depth matrix
     dmax=max(max(handles.model.delft3dflow.domain(id).depth));
     if isnan(dmax)
