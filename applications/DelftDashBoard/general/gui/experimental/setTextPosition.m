@@ -7,7 +7,8 @@ switch lower(textpos)
         txtpos=[pos(1)-ext(3)-0 pos(2)+pos(4)-19 ext(3) hgt];
         horal='right';
     case{'right'}
-        txtpos=[pos(1)+pos(3)+5 pos(2)+1 ext(3) hgt];
+%        txtpos=[pos(1)+pos(3)+5 pos(2)+1 ext(3) hgt];
+        txtpos=[pos(1)+pos(3)+5 pos(2)+pos(4)-19 ext(3) hgt];
         horal='left';
     case{'above-left'}
         txtpos=[pos(1) pos(2)+pos(4)+1 ext(3) hgt];
