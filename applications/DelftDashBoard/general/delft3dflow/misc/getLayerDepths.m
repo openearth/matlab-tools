@@ -77,7 +77,8 @@ if nargin==2
         sig(i)=sig(i-1)+0.5*thick(i-1)+0.5*thick(i);
     end
     
-    if ndims(dp)==2
+%    if ndims(dp)==2
+    if mmax>2
         % Initial Conditions
         % Make sure that boundary points are also computed. This is necessary
         % for Domain Decomposition.
