@@ -110,7 +110,7 @@ end
 
 %%  Get coordinates of rectangular grid
 % -> different for rotated geographic grids
-if~rot==0 & strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+if ~rot==0 &  ~rot==90  &  ~rot==180  &  ~rot==360 & strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
 
     % Determine UTM zone of the middle
 	[ans1,ans2, utmzone_total, utmzone_parts] = ddb_deg2utm(mean(y),mean(x))

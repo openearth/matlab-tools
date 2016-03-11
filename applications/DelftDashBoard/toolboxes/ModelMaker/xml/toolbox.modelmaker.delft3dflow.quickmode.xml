@@ -87,6 +87,14 @@
   </element>
   <element>
     <style>pushbutton</style>
+    <position>210 80 100 20</position>
+    <tooltipstring>Push to determine stable time step</tooltipstring>
+    <text>Automate timestep</text>
+    <callback>ddb_ModelMakerToolbox_Delft3DFLOW_quickMode</callback>
+    <option1>automatetimestep</option1>
+  </element>
+  <element>
+    <style>pushbutton</style>
     <position>320 110 140 20</position>
     <tooltipstring>Push to generate model grid</tooltipstring>
     <text>Make Rectangular Grid</text>
@@ -223,6 +231,8 @@
     <text>Time Step</text>
     <textposition>left</textposition>
     <variable>handles.model.delft3dflow.domain(ad).timeStep</variable>
+    <callback>ddb_ModelMakerToolbox_Delft3DFLOW_quickMode</callback>
+    <option1>changetimes</option1>
     <type>real</type>
   </element>
 </root>

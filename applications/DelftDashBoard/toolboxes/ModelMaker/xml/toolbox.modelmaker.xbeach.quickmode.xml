@@ -14,8 +14,8 @@
   <element>
     <style>edit</style>
     <position>50 85 50 20</position>
-    <tooltipstring>Edit number of grid cells in M direction</tooltipstring>
-    <text>M Max</text>
+    <tooltipstring>Edit number of grid cells in x direction</tooltipstring>
+    <text>X max</text>
     <textposition>left</textposition>
     <onchange>ddb_ModelMakerToolbox_XBeach_quickMode</onchange>
     <option1>editgridoutline</option1>
@@ -25,8 +25,8 @@
   <element>
     <style>edit</style>
     <position>50 60 50 20</position>
-    <tooltipstring>Edit grid size in m direction</tooltipstring>
-    <text>Delta X</text>
+    <tooltipstring>Edit minimum grid size in x direction</tooltipstring>
+    <text>dx_min</text>
     <textposition>left</textposition>
     <onchange>ddb_ModelMakerToolbox_XBeach_quickMode</onchange>
     <option1>editresolution</option1>
@@ -35,15 +35,13 @@
   </element>
   <element>
     <style>edit</style>
-    <position>50 35 50 20</position>
-    <tooltipstring>Edit grid rotation in degrees</tooltipstring>
-    <text>Rotation</text>
+    <position>250 60 50 20</position>
+    <tooltipstring>Edit maximum grid size in x direction</tooltipstring>
+    <text>dx_max</text>
     <textposition>left</textposition>
-    <onchange>ddb_ModelMakerToolbox_XBeach_quickMode</onchange>
-    <option1>editgridoutline</option1>
     <type>real</type>
-    <variable>handles.toolbox.modelmaker.rotation</variable>
-  </element>
+    <variable>handles.toolbox.modelmaker.dxmax</variable>
+   </element>
   <element>
     <style>edit</style>
     <position>150 110 50 20</position>
@@ -55,27 +53,119 @@
     <type>real</type>
     <variable>handles.toolbox.modelmaker.yOri</variable>
   </element>
-  <element>
+   <element>
     <style>edit</style>
     <position>150 85 50 20</position>
     <tooltipstring>Edit number of grid cells in N direction</tooltipstring>
-    <text>N Max</text>
+    <text>Y max</text>
     <textposition>left</textposition>
     <onchange>ddb_ModelMakerToolbox_XBeach_quickMode</onchange>
     <option1>editgridoutline</option1>
     <type>integer</type>
     <variable>handles.toolbox.modelmaker.nY</variable>
-  </element>
-  <element>
+   </element>
+   <element>
     <style>edit</style>
     <position>150 60 50 20</position>
-    <tooltipstring>Edit grid size in n direction</tooltipstring>
-    <text>Delta Y</text>
+    <tooltipstring>Edit minimum grid size in y direction</tooltipstring>
+    <text>dy_min</text>
     <textposition>left</textposition>
     <onchange>ddb_ModelMakerToolbox_XBeach_quickMode</onchange>
     <option1>editresolution</option1>
     <type>real</type>
     <variable>handles.toolbox.modelmaker.dY</variable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>350 60 50 20</position>
+    <tooltipstring>Edit maximum grid size in y direction</tooltipstring>
+    <text>dy_max</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.toolbox.modelmaker.dymax</variable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>350 85 50 20</position>
+    <tooltipstring>Edit grid rotation in degrees</tooltipstring>
+    <text>Rotation</text>
+    <textposition>left</textposition>
+    <onchange>ddb_ModelMakerToolbox_XBeach_quickMode</onchange>
+    <option1>editgridoutline</option1>
+    <type>real</type>
+    <variable>handles.toolbox.modelmaker.rotation</variable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>50 35 50 20</position>
+    <tooltipstring>Storm Surge Level (m)</tooltipstring>
+    <text>SSL</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.toolbox.modelmaker.SSL</variable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>350 35 50 20</position>
+    <tooltipstring>Storm duration (s)</tooltipstring>
+    <text>T</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.model.xbeach.domain.tstop</variable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>250 35 50 20</position>
+    <tooltipstring>Peak wave period (s)</tooltipstring>
+    <text>Tp</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.model.xbeach.domain.Tp</variable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>50 10 50 20</position>
+    <tooltipstring>Wave direction (degrees)</tooltipstring>
+    <text>Wave dir</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.model.xbeach.domain.waveangle</variable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>150 10 50 20</position>
+    <tooltipstring>Minimum wave grid direction (degrees)</tooltipstring>
+    <text>Thetamin</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.model.xbeach.domain.thetamin</variable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>250 10 50 20</position>
+    <tooltipstring>Maximum wave grid direction (degrees)</tooltipstring>
+    <text>Thetamax</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.model.xbeach.domain.thetamax</variable>
+  </element>
+  <element>
+     <style>edit</style>
+     <position>250 85 50 20</position>
+     <tooltipstring>Longshore area of interest (%)</tooltipstring>
+     <text>%y</text>
+     <textposition>left</textposition>
+     <type>real</type>
+     <variable>handles.toolbox.modelmaker.areasize</variable>
+  </element>
+   <element>
+     <style>edit</style>
+     <position>150 35 50 20</position>
+     <tooltipstring>Significant wave height(m)</tooltipstring>
+     <text>Hs</text>
+     <textposition>left</textposition>
+     <type>real</type>
+     <variable>handles.toolbox.modelmaker.Hs</variable>
   </element>
   <element>
     <style>pushbutton</style>
@@ -89,61 +179,8 @@
     <style>pushbutton</style>
     <position>320 110 140 20</position>
     <tooltipstring>Push to generate model grid</tooltipstring>
-    <text>Make Rectangular Grid</text>
+    <text>Make grid and model</text>
     <callback>ddb_ModelMakerToolbox_XBeach_quickMode</callback>
     <option1>generategrid</option1>
-  </element>
-  <element>
-    <style>pushbutton</style>
-    <position>320 85 140 20</position>
-    <tooltipstring>Push to generate model bathymetry</tooltipstring>
-    <text>Make Bathymetry</text>
-    <callback>ddb_ModelMakerToolbox_XBeach_quickMode</callback>
-    <option1>generatebathymetry</option1>
-    <enable>1</enable>
-  </element>
-  <element>
-    <style>pushbutton</style>
-    <position>320 60 140 20</position>
-    <tooltipstring>Push to generate open boundary locations</tooltipstring>
-    <text>Make Open Boundaries</text>
-    <callback>ddb_ModelMakerToolbox_XBeach_quickMode</callback>
-    <option1>generateopenboundaries</option1>
-  </element>
-  <element>
-    <style>pushbutton</style>
-    <position>320 35 140 20</position>
-    <tooltipstring>Push to generate astronomical boundary conditions</tooltipstring>
-    <text>Make Boundary Conditions</text>
-    <callback>ddb_ModelMakerToolbox_XBeach_quickMode</callback>
-    <option1>generateboundaryconditions</option1>
-  </element>
-  <element>
-    <style>edit</style>
-    <position>470 110 30 20</position>
-    <tooltipstring>Edit maximum elevation for grid generation. Land areas at elevations above this value will not be included in the grid.</tooltipstring>
-    <text>Z Max (m)</text>
-    <textposition>right</textposition>
-    <type>real</type>
-    <variable>handles.toolbox.modelmaker.zMax</variable>
-  </element>
-  <element>
-    <style>edit</style>
-    <position>470 60 50 20</position>
-    <tooltipstring>Edit maximum distance between boundary nodes (in metres)</tooltipstring>
-    <text>Max Distance</text>
-    <textposition>right</textposition>
-    <type>integer</type>
-    <variable>handles.toolbox.modelmaker.sectionLengthMetres</variable>
-  </element>
-  <element>
-    <style>popupmenu</style>
-    <position>470 35 100 20</position>
-    <tooltipstring>Select tide database for boundary conditions</tooltipstring>
-    <variable>handles.toolbox.modelmaker.activeTideModelBC</variable>
-    <type>integer</type>
-    <listtext>
-      <variable>handles.tideModels.longNames</variable>
-    </listtext>
   </element>
 </root>
