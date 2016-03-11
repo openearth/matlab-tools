@@ -56,19 +56,6 @@ MDW.General.WindSpeed.value     = wave.windspeed;
 MDW.General.WindSpeed.type      = 'real';
 MDW.General.WindDir.value       = wave.winddir;
 MDW.General.WindDir.type        = 'real';
-% MDW.General.DirSpace.value      = wave.dirspace;
-% MDW.General.NDir.value          = wave.domains(1).ndir;
-% MDW.General.NDir.type           = 'integer';
-% MDW.General.StartDir.value      = wave.domains(1).startdir;
-% MDW.General.StartDir.type       = 'real';
-% MDW.General.EndDir.value        = wave.domains(1).enddir;
-% MDW.General.EndDir.type         = 'real';
-% MDW.General.NFreq.value         = wave.domains(1).nfreq;
-% MDW.General.NFreq.type          = 'integer';
-% MDW.General.FreqMin.value       = wave.domains(1).freqmin;
-% MDW.General.FreqMin.type        = 'real';
-% MDW.General.FreqMax.value       = wave.domains(1).freqmax;
-% MDW.General.FreqMax.type        = 'real';
 if ~isempty(wave.hotfileid)
     MDW.General.HotFileID.value       = wave.hotfileid;
 end
