@@ -75,13 +75,9 @@ else
         case{'editresolution'}
             editResolution;
         case{'generategrid'}
-            generateGrid;
-        case{'generatebathymetry'}
-            generateBathymetry;
-        case{'generateopenboundaries'}
-            generateOpenBoundaries;
-        case{'generateboundaryconditions'}
-            generateBoundaryConditions;
+            generatemodel;
+        case('updategui')
+            updateGUI;
     end
     
 end
@@ -91,7 +87,7 @@ function drawGridOutline
 handles=getHandles;
 setInstructions({'','','Use mouse to draw grid outline on map'});
 UIRectangle(handles.GUIHandles.mapAxis,'draw','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline,'onstart',@deleteGridOutline, ...
-    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY);
+    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY,'number', 1);
 
 %%
 function updateGridOutline(x0,y0,dx,dy,rotation,h)
@@ -142,7 +138,7 @@ lenx=handles.toolbox.modelmaker.dX*handles.toolbox.modelmaker.nX;
 leny=handles.toolbox.modelmaker.dY*handles.toolbox.modelmaker.nY;
 h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline, ...
     'x0',handles.toolbox.modelmaker.xOri,'y0',handles.toolbox.modelmaker.yOri,'dx',lenx,'dy',leny,'rotation',handles.toolbox.modelmaker.rotation, ...
-    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY);
+    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY,'number',1);
 handles.toolbox.modelmaker.gridOutlineHandle=h;
 
 setHandles(handles);
@@ -179,215 +175,35 @@ end
 h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline, ...
     'x0',handles.toolbox.modelmaker.xOri,'y0',handles.toolbox.modelmaker.yOri,'dx',handles.toolbox.modelmaker.lengthX,'dy',handles.toolbox.modelmaker.lengthY, ...
     'rotation',handles.toolbox.modelmaker.rotation, ...
-    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY);
+    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY, 'number',1);
 handles.toolbox.modelmaker.gridOutlineHandle=h;
 
 setHandles(handles);
 
 %%
-function generateGrid
+function updateGUI
+ddb_updateDataInScreen;
+gui_updateActiveTab;
+ddb_refreshDomainMenu; 
 
+
+function generatemodel
 handles=getHandles;
-npmax=20000000;
-if handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.nY<=npmax
-    handles=ddb_ModelMakerToolbox_XBeach_generateGrid(handles,ad);
-    setHandles(handles);
-else
-    ddb_giveWarning('Warning',['Maximum number of grid points (' num2str(npmax) ') exceeded ! Please reduce grid resolution.']);
-end
+handles=ddb_ModelMakerToolbox_XBeach_generateModel(handles);
 
-
-function generateGrid_OLD
-
-handles=getHandles;
-
-npmax=20000000;
-
-if handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.nY<=npmax
-    
-    wb = waitbox('Generating grid ...');pause(0.1);
-    
-    xori=handles.toolbox.modelmaker.xOri;
-    nx=handles.toolbox.modelmaker.nX;
-    dx=handles.toolbox.modelmaker.dX;
-    yori=handles.toolbox.modelmaker.yOri;
-    ny=handles.toolbox.modelmaker.nY;
-    dy=handles.toolbox.modelmaker.dY;
-    rot=pi*handles.toolbox.modelmaker.rotation/180;
-    zmax=handles.toolbox.modelmaker.zMax;
-    
-    % Find minimum grid resolution (in metres)
-    dmin=min(dx,dy);
-    if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-        dmin=dmin*111111;
-    end
-    
-    % Find coordinates of corner points
-    x(1)=xori;
-    y(1)=yori;
-    x(2)=x(1)+nx*dx*cos(pi*handles.toolbox.modelmaker.rotation/180);
-    y(2)=y(1)+nx*dx*sin(pi*handles.toolbox.modelmaker.rotation/180);
-    x(3)=x(2)+ny*dy*cos(pi*(handles.toolbox.modelmaker.rotation+90)/180);
-    y(3)=y(2)+ny*dy*sin(pi*(handles.toolbox.modelmaker.rotation+90)/180);
-    x(4)=x(3)+nx*dx*cos(pi*(handles.toolbox.modelmaker.rotation+180)/180);
-    y(4)=y(3)+nx*dx*sin(pi*(handles.toolbox.modelmaker.rotation+180)/180);
-    
-    xl(1)=min(x);
-    xl(2)=max(x);
-    yl(1)=min(y);
-    yl(2)=max(y);
-    dbuf=(xl(2)-xl(1))/20;
-    xl(1)=xl(1)-dbuf;
-    xl(2)=xl(2)+dbuf;
-    yl(1)=yl(1)-dbuf;
-    yl(2)=yl(2)+dbuf;
-    
-    % Convert limits to cs of bathy data
-    coord=handles.screenParameters.coordinateSystem;
-    iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
-    dataCoord.name=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
-    dataCoord.type=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
-    
-    [xlb,ylb]=ddb_coordConvert(xl,yl,coord,dataCoord);
-    
-    [xx,yy,zz,ok]=ddb_getBathymetry(handles.bathymetry,xlb,ylb,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
-    
-    % xx and yy are in coordinate system of bathymetry (usually WGS 84)
-    % convert bathy grid to active coordinate system
-    
-    if ~strcmpi(dataCoord.name,coord.name) || ~strcmpi(dataCoord.type,coord.type)
-        dmin=min(dx,dy);
-        [xg,yg]=meshgrid(xl(1):dmin:xl(2),yl(1):dmin:yl(2));
-        [xgb,ygb]=ddb_coordConvert(xg,yg,coord,dataCoord);
-        zz=interp2(xx,yy,zz,xgb,ygb);
-    else
-        xg=xx;
-        yg=yy;
-    end
-    
-    [x y z] = ddb_ModelMakerToolbox_XBeach_generateGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
-    
-    close(wb);
-    setHandles(handles);
-    
-else
-    ddb_giveWarning('Warning',['Maximum number of grid points (' num2str(npmax) ') exceeded ! Please reduce grid resolution.']);
-end
-
-%%
-function generateBathymetry
-handles=getHandles;
-% Use background bathymetry data
-datasets(1).name=handles.screenParameters.backgroundBathymetry;
-handles=ddb_ModelMakerToolbox_XBeach_generateBathymetry(handles,datasets);
+% Plotting
+handles=ddb_initializeXBeach(handles,1,'xbeach1');% Check
+pathname = pwd; filename='\params.txt';
+handles.model.xbeach.domain(handles.activeDomain).params_file=[pathname filename];
+handles=ddb_readParams(handles,[pathname filename],1);
+handles=ddb_XBeach_readAttributeFiles(handles,[pathname,'\']); % need to add all files
+ddb_plotXBeach('plot','domain',ad); % make
 setHandles(handles);
 
-%%
-function generateOpenBoundaries
+ddb_updateDataInScreen;
+gui_updateActiveTab;
+ddb_refreshDomainMenu; 
 
-handles=getHandles;
-
-maxdist=handles.toolbox.modelmaker.sectionLengthMetres;
-minlev=handles.toolbox.modelmaker.zMax;
-
-boundaries=[];
-
-boundarysections=findBoundarySections(handles.model.xbeach.domain(ad).netstruc,maxdist,minlev,handles.screenParameters.coordinateSystem.type);
-
-handles.model.xbeach.domain(ad).boundarynames={''};
-
-for ib=1:length(boundarysections)
-    boundaries = ddb_DFlowFM_initializeBoundary(boundaries,boundarysections(ib).x,boundarysections(ib).y,['bnd' num2str(ib,'%0.3i')],ib, ...
-        handles.model.xbeach.domain(ad).tstart,handles.model.xbeach.domain(ad).tstop);
-    handles.model.xbeach.domain(ad).boundarynames{ib}=['bnd' num2str(ib,'%0.3i')];
-end
-
-handles.model.xbeach.domain(ad).boundaries=boundaries;
-handles.model.xbeach.domain(ad).nrboundaries=length(boundaries);
-
-handles=ddb_DFlowFM_plotBoundaries(handles,'plot','active',1);
-
-%% Save file
-ddb_DFlowFM_saveBoundaryPolygons('.\',handles.model.xbeach.domain(ad).boundaries);
-
-%% External forcing file
-handles.model.xbeach.domain(ad).extforcefile='forcing.ext';
-ddb_DFlowFM_saveExtFile(handles);
-
-setHandles(handles);
-
-%%
-function generateBoundaryConditions
-
-wb = waitbox('Generating Boundary Conditions ...');
-
-try
-    
-    handles=getHandles;
-    ii=handles.toolbox.modelmaker.activeTideModelBC;
-    name=handles.tideModels.model(ii).name;
-    if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
-        tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
-    else
-        tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
-    end
-    
-    %% Find constituents
-    % Make one vector with all boundary points
-    xb=[];
-    yb=[];
-    boundaries=handles.model.xbeach.domain(ad).boundaries;
-    
-    for ipol=1:length(boundaries)
-        xb=[xb boundaries(ipol).x];
-        yb=[yb boundaries(ipol).y];
-    end
-    
-    cs.name='WGS 84';
-    cs.type='Geographic';
-    
-    [xb,yb]=ddb_coordConvert(xb,yb,handles.screenParameters.coordinateSystem,cs);
-    
-    [ampz,phasez,conList] = readTideModel(tidefile,'type','h','x',xb,'y',yb,'constituent','all');
-    ip=0;
-    for ipol=1:length(boundaries)
-        for jj=1:length(boundaries(ipol).x)
-            boundaries(ipol).nodes(jj).components=[];
-            ip=ip+1;
-            for ic=1:size(ampz,1)
-                boundaries(ipol).nodes(jj).components(ic).component=conList{ic};
-                boundaries(ipol).nodes(jj).components(ic).amplitude=ampz(ic,ip);
-                boundaries(ipol).nodes(jj).components(ic).phase=phasez(ic,ip);
-            end
-            ddb_DFlowFM_writeComponentsFile(boundaries,ipol,jj);
-        end
-    end
-    handles.model.xbeach.domain(ad).boundaries=boundaries;
-    
-    setHandles(handles);
-    
-end
-
-close(wb);
-
-%%
-function generateInitialConditions
-handles=getHandles;
-f=str2func(['ddb_generateInitialConditions' handles.Model(md).name]);
-try
-    handles=feval(f,handles,ad,'ddb_test','ddb_test');
-catch
-    ddb_giveWarning('text',['Initial conditions generation not supported for ' handles.Model(md).longName]);
-    return
-end
-if ~isempty(handles.model.xbeach.domain(ad).grdFile)
-    attName=handles.model.xbeach.domain(ad).attName;
-    handles.model.xbeach.domain(ad).iniFile=[attName '.ini'];
-    handles.model.xbeach.domain(ad).initialConditions='ini';
-    handles.model.xbeach.domain(ad).smoothingTime=0.0;
-    handles=feval(f,handles,ad,handles.model.xbeach.domain(ad).iniFile);
-else
-    ddb_giveWarning('Warning','First generate or load a grid');
-end
-setHandles(handles);
+% Overview
+ddb_ModelMakerToolbox_XBeach_modelsetup(handles)
 

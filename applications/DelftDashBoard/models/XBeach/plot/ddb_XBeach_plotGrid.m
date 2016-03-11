@@ -87,22 +87,33 @@ switch lower(opt)
     case{'plot'}
         
         % First delete old grid
+        try
         if isfield(handles.model.xbeach.domain(id).grid,'plothandles')
             if ~isempty(handles.model.xbeach.domain(id).grid.plothandles)
                 try
+                    handles.model.xbeach.domain(id).grid.plothandles = [];
                     delete(handles.model.xbeach.domain(id).grid.plothandles);
                 end
             end
+        end
         end
         
         % Now plot new grid
         x=handles.model.xbeach.domain(id).grid.x;
         y=handles.model.xbeach.domain(id).grid.y;
-        handles.model.xbeach.domain(id).grid.plothandles=ddb_plotCurvilinearGrid(x,y,'color',col);
+        
+        % Reduce amount of lines for better plotting
+        [ny nx] = size(x);
+        dx = 1; dy = 1;
+        x = x([1:dy:ny],[1:dx:nx]);
+        y = y([1:dy:ny],[1:dx:nx]);
+
+        handle =ddb_plotCurvilinearGrid(x',y','color',col);
+        handles.model.xbeach.domain(id).grid.plothandles = handle;
         if vis
             set(handles.model.xbeach.domain(id).grid.plothandles,'Color',col,'Visible','on');
         else
-            set(handles.model.xbeach.domain(id).grid.plothandles,'Color',col,'Visible','off');
+            set(handles.model.xbeach.domain(id).grid.plothandles,'Color',col,'Visible','of');
         end
         
     case{'delete'}

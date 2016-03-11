@@ -18,7 +18,7 @@
     <tab>
       <tabstring>Model domain</tabstring>
       <element>model.xbeach.Domain.xml</element>
-      <enable>1</enable>
+      <enable>0</enable>
     </tab>
     <tab>
       <tabstring>Time input</tabstring>

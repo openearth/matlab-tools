@@ -39,10 +39,20 @@ n2 = 1;
 for id=n1:n2
     
     try
-        handles=ddb_XBeach_plotGrid(handles,option,'domain',id);
         handles=ddb_XBeach_plotBathymetry(handles,option,'domain',id);
+        %handles=ddb_XBeach_plotGrid(handles,option,'domain',id);
     end
     
+end
+
+% Grid
+try
+xl(1)=min(min(handles.model.xbeach.domain(id).grid.x));
+xl(2)=max(max(handles.model.xbeach.domain(id).grid.x));
+yl(1)=min(min(handles.model.xbeach.domain(id).grid.y));
+yl(2)=max(max(handles.model.xbeach.domain(id).grid.y));
+handles=ddb_zoomTo(handles,xl,yl,0.1);
+catch
 end
 
 setHandles(handles);

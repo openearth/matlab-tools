@@ -89,6 +89,7 @@ switch lower(option)
     case{'plot'}
         
         % First delete old bathy
+        try
         if isfield(handles.model.xbeach.domain(id).bathymetry,'plothandles')
             if ~isempty(handles.model.xbeach.domain(id).bathymetry.plothandles)
                 try
@@ -96,14 +97,16 @@ switch lower(option)
                 end
             end
         end
+        end
         
         if size(handles.model.xbeach.domain(id).depth,1)>0
             
             x=handles.model.xbeach.domain(id).grid.x;
             y=handles.model.xbeach.domain(id).grid.y;
-            z=handles.model.xbeach.domain(id).depth;
+            z=handles.model.xbeach.domain(id).depth';
             
-            handles.model.xbeach.domain(id).bathymetry.plothandles=ddb_plotBathy(x,y,z);
+            bathyhandle = ddb_plotBathy(x,y,z);
+            handles.model.xbeach.domain(id).bathymetry.plothandles=bathyhandle;
             
             if vis
                 set(handles.model.xbeach.domain(id).bathymetry.plothandles,'Visible','on');
@@ -114,12 +117,10 @@ switch lower(option)
         end
         
     case{'delete'}
-        if isfield(handles.model.xbeach.domain(id).bathymetry,'plothandles')
             if ~isempty(handles.model.xbeach.domain(id).bathymetry.plothandles)
                 try
                     delete(handles.model.xbeach.domain(id).bathymetry.plothandles);
                 end
-            end
         end
         
     case{'update'}
