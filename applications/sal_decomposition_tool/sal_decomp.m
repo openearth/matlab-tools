@@ -302,6 +302,7 @@ for i_sim = 1: length(OPT.Filinp)
                 
                 %% Store
                 terms(i_crs,1:length(term))=term;
+                AA   (i_crs)               = A;  
             end
             
             %% Combine the terms
@@ -338,7 +339,7 @@ for i_sim = 1: length(OPT.Filinp)
                 dcdx (i_crs) = (s2 - s1)/dist;
                 D    (i_crs) = 0.;
                 if abs(dcdx(i_crs)) > 1e-10
-                    D   (i_crs) = -1.*variation(i_crs)/(A*dcdx(i_crs));
+                    D   (i_crs) = -1.*variation(i_crs)/(AA(i_crs)*dcdx(i_crs));
                 end
             end
             
