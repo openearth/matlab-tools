@@ -166,3 +166,14 @@ handles.toolbox.modelmaker.initialConditions.dataSource='Constant';
 handles.toolbox.modelmaker.roughness.landelevation=0;
 handles.toolbox.modelmaker.roughness.landroughness=0.08;
 handles.toolbox.modelmaker.roughness.searoughness=0.024;
+
+%% XBeach specific
+handles.toolbox.modelmaker.areasize = 50;
+handles.toolbox.modelmaker.dxmax = 50;
+handles.toolbox.modelmaker.dymax = 50;
+handles.toolbox.modelmaker.SSL = 2;
+handles.toolbox.modelmaker.Hs = 5;
+handles.toolbox.modelmaker.Tp = 10;
+handles.model.xbeach.domain.waveangle = 180;
+handles.model.xbeach.domain.thetamin = 90;
+handles.model.xbeach.domain.thetamax = 270;

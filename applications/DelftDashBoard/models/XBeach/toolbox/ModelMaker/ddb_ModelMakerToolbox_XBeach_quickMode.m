@@ -59,7 +59,7 @@ if isempty(varargin)
     ddb_plotModelMaker('activate');
     if ~isempty(handles.toolbox.modelmaker.gridOutlineHandle)
         setInstructions({'Left-click and drag markers to change corner points','Right-click and drag YELLOW marker to move entire box', ...
-            'Right-click and drag RED markers to rotate box (note: rotating grid in geographic coordinate systems is NOT recommended!)'});
+            'Right-click and drag RED markers to rotate box)', 'Note: make sure origin is offshore and x direction is cross-shore'});
     end
 else
     

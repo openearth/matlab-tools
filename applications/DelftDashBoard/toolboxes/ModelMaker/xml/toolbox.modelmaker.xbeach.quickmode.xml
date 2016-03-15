@@ -120,7 +120,7 @@
     <text>Tp</text>
     <textposition>left</textposition>
     <type>real</type>
-    <variable>handles.model.xbeach.domain.Tp</variable>
+    <variable>handles.toolbox.modelmaker.Tp</variable>
   </element>
   <element>
     <style>edit</style>
