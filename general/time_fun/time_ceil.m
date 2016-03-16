@@ -21,6 +21,8 @@ if nargin<2
 end
 
 switch type
+    case 'day'
+          t = 1;          
     case 'hour'
           t = 24;          
     case 'minute'
