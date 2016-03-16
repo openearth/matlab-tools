@@ -21,14 +21,18 @@ if nargin<2
 end
 
 switch type
+    case 'day'
+          t = 1;          
     case 'hour'
-          t = 24;          
+          t = 24;  
+    case 'halfhour'
+          t = 48;          
     case 'minute'
           t = 24*60;
     case 'second'
           t = 24*60*60;
 end
-
+    
 % round
 Tout = T +((.5/t)-rem(T,.5/t));
 Tout = Tout - rem(Tout,1/t);
