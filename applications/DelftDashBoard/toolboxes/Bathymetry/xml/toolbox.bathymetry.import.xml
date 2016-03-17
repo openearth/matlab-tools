@@ -174,8 +174,18 @@
     <tooltipstring>Edit vertical coordinate system (e.g. MSL, NAP or NAVD88)</tooltipstring>
   </element>
   <element>
+    <style>edit</style>
+    <position>270 10 60 20</position>
+    <text>Vertical Level</text>
+    <textposition>right</textposition>
+    <enable>1</enable>
+    <variable>handles.toolbox.bathymetry.import.vertCoordLevel</variable>
+    <type>real</type>
+    <tooltipstring>Edit vertical level w.r.t. Mean Sea Level</tooltipstring>
+  </element>
+  <element>
     <style>popupmenu</style>
-    <position>500 35 60 20</position>
+    <position>470 35 60 20</position>
     <text>Unit</text>
     <textposition>left</textposition>
     <variable>handles.toolbox.bathymetry.import.vertUnits</variable>
@@ -189,18 +199,8 @@
     <listvalue>ft</listvalue>
   </element>
   <element>
-    <style>edit</style>
-    <position>270 10 60 20</position>
-    <text>Vertical Level</text>
-    <textposition>right</textposition>
-    <enable>1</enable>
-    <variable>handles.toolbox.bathymetry.import.vertCoordLevel</variable>
-    <type>real</type>
-    <tooltipstring>Edit vertical level w.r.t. Mean Sea Level</tooltipstring>
-  </element>
-  <element>
     <style>popupmenu</style>
-    <position>500 10 60 20</position>
+    <position>470 10 60 20</position>
     <text>Positive</text>
     <textposition>left</textposition>
     <variable>handles.toolbox.bathymetry.import.positiveUp</variable>
@@ -210,6 +210,26 @@
     <listtext>down</listtext>
     <listvalue>1</listvalue>
     <listvalue>0</listvalue>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>620 35 60 20</position>
+    <text>Max Elevation</text>
+    <textposition>left</textposition>
+    <enable>1</enable>
+    <variable>handles.toolbox.bathymetry.import.maxElevation</variable>
+    <type>real</type>
+    <tooltipstring>Edit maximum elevation for data to be imported. Data with higher elevations will be discarded.</tooltipstring>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>620 10 60 20</position>
+    <text>Min Elevation</text>
+    <textposition>left</textposition>
+    <enable>1</enable>
+    <variable>handles.toolbox.bathymetry.import.minElevation</variable>
+    <type>real</type>
+    <tooltipstring>Edit minimum elevation for data to be imported. Data with lower elevations will be discarded.</tooltipstring>
   </element>
   <element>
     <style>popupmenu</style>

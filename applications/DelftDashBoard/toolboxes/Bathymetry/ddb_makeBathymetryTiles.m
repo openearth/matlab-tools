@@ -1,4 +1,4 @@
-function ddb_makeBathymetryTiles(fname1,dr,dataname,rawdataformat,rawdatatype,nx,ny,x0,y0,dx,dy,OPT)
+function ddb_makeBathymetryTiles(fname1,dr,dataname,rawdataformat,rawdatatype,nx,ny,x0,y0,dx,dy,zrange,OPT)
 %MAKENCBATHYTILES  One line description goes here.
 %
 %   More detailed description goes here.
@@ -78,6 +78,9 @@ function ddb_makeBathymetryTiles(fname1,dr,dataname,rawdataformat,rawdatatype,nx
 % Determine : ncols, nrows (x0, y0, dx, dy are input arguments to this function)
 
 wb = waitbox('Reading data file ...');
+
+pbyp=0;
+
 switch lower(rawdataformat)
     case{'arcinfogrid'}
         [x,y,z]=readArcInfo(fname1);
@@ -148,6 +151,24 @@ switch lower(rawdataformat)
         dy=y(2)-y(1);
         ncols=length(x);
         nrows=length(y);
+    case{'geotiff'}
+        [z,x,y,I] = geoimread(fname1,'info');
+        z=flipud(z);
+        z(z<-15000)=NaN; % Get rid of no data values
+        x00=min(x);
+        y00=min(y);
+        dx=abs(x(2)-x(1));
+        dy=abs(y(2)-y(1));
+        ncols=length(x);
+        nrows=length(y);
+        if ncols*nrows>225000000
+            % Too large, read piece by piece...
+            pbyp=1;
+        else
+            [z,xdum,ydum,I] = geoimread(fname1,'info');
+            z=flipud(z);
+            z(z<-15000)=NaN;
+        end
 end
 close(wb);
 
@@ -165,11 +186,7 @@ if isempty(iiy)
 end
 nrzoom=max(iix,iiy);
 
-% pbyp=0;
 % 
-% if ncols*nrows>250000000000
-%     % Too large, read piece by piece...
-%     pbyp=1;
 % else
 %     % Read in one go!
 %     switch lower(rawdatatype)
@@ -258,17 +275,38 @@ if imaketiles
                     
                     zz=nan(ny,nx);
                     
-%                     if pbyp
-%                         % Read data piece by piece
-%                         %                        [x,y,z]=readArcInfo(fname1,'columns',[j1 j2],'rows',[i1 i2],'x',xx,'y',yy);
-%                         [x,y,zz]=readArcInfo(fname1,'x',xx,'y',yy);
-%                         %                        zz(1:(j2-j1+1),1:(i2-i1+1))=single(z);
-%                     else
+                     if pbyp
+                         % Read data piece by piece
+                         switch lower(rawdataformat)
+                             case{'arcinfogrid'}
+                                 [x,y,zz]=readArcInfo(fname1,'x',xx,'y',yy);
+                             case{'geotiff'}
+                                 [zz,xdum,ydum,I] = geoimread(fname1,[xmin xmax],[ymin ymax]);
+                                 zz=flipud(zz);
+                                 zz(zz<-15000)=NaN;
+                                 zz(zz>15000)=NaN;
+                                 
+                                 if ~OPT.positiveup
+				     z=z*-1;
+				 end
+                                 sztile=size(zz);
+                                 if sztile(1)~=300 || sztile(2)~=300
+                                     zz1=zeros(ny,nx);
+                                     zz1(zz1==0)=NaN;
+                                     zz1(1:size(zz,1),1:size(zz,2))=zz;
+                                     zz=single(zz1);
+                                 end
+                         end
+                         %                        zz(1:(j2-j1+1),1:(i2-i1+1))=single(z);
+                     else
                         zsingle=full(z(j1:j2,i1:i2));
                         zz(1:(j2-j1+1),1:(i2-i1+1))=single(zsingle);
-%                     end
-                    
-                    %                    zz(1:(j2-j1+1),1:(i2-i1+1))=single(z(j1:j2,i1:i2));
+                     end
+                     
+                     if zrange(1)>-15000 || zrange(2)<15000
+                         zz(zz<zrange(1))=NaN;
+                         zz(zz>zrange(2))=NaN;
+                     end
                     % Only save files that contain at least some valid
                     % values
                     if ~isnan(nanmax(nanmax(zz)))
@@ -353,22 +391,10 @@ if imaketiles
                                     z=zeros(ny,nx);
                                     z(z==0)=NaN;
                                 end
-                                %                        subplot(4,4,ii*jj)
-                                %                        surf(double(z));view(2);axis equal;shading flat;colorbar;
-                                
                                 zz((jj-1)*ny+1:jj*ny,(ii-1)*nx+1:ii*nx)=z;
-                                %                                 clf;
-                                %                                 surf(double(zz));view(2);axis equal;shading flat;colorbar;hold on;set(gca,'xlim',[0 1200],'ylim',[0 1200]);
-                                %                                 drawnow;
-                                %                                pause(2)
                             end
                         end
-                        %                         if (i-1)*nny+j==13
-                        %                             xxxx=1
-                        %                         end
-                        % Now crop and derefine tile
                         
-                        %                        zz=zz(ny-1:3*ny-1,nx-1:3*nx-1);
                         zz=zz(ny:3*ny,nx:3*nx);
                         z=derefine3(zz);
                         z=z';

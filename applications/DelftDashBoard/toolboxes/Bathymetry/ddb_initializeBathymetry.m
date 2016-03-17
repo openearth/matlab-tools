@@ -113,6 +113,8 @@ handles.toolbox.bathymetry.import.ny=300;
 handles.toolbox.bathymetry.import.dx=0;
 handles.toolbox.bathymetry.import.dy=0;
 handles.toolbox.bathymetry.import.nrZoom=5;
+handles.toolbox.bathymetry.import.maxElevation=100000;
+handles.toolbox.bathymetry.import.minElevation=-100000;
 
 handles.toolbox.bathymetry.import.dataFile='';
 handles.toolbox.bathymetry.import.dataName='';
@@ -149,6 +151,11 @@ handles.toolbox.bathymetry.import.rawDataFormats{6}='xyzregular';
 handles.toolbox.bathymetry.import.rawDataFormatsText{6}='XYZ (regular grid)';
 handles.toolbox.bathymetry.import.rawDataFormatsExtension{6}='*.xyz';
 handles.toolbox.bathymetry.import.rawDataFormatsType{6}='structured';        
+
+handles.toolbox.bathymetry.import.rawDataFormats{7}='geotiff';
+handles.toolbox.bathymetry.import.rawDataFormatsText{7}='GeoTIFF';
+handles.toolbox.bathymetry.import.rawDataFormatsExtension{7}='*.tif';
+handles.toolbox.bathymetry.import.rawDataFormatsType{7}='structured';        
 
 handles.toolbox.bathymetry.import.rawDataFormat=handles.toolbox.bathymetry.import.rawDataFormats{1};
 handles.toolbox.bathymetry.import.rawDataFormatExtension=handles.toolbox.bathymetry.import.rawDataFormatsExtension{1};

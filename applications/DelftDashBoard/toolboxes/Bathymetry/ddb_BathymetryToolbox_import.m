@@ -129,7 +129,6 @@ try
             y0=s.y(1);
             dx=s.x(2)-s.x(1);
             dy=s.y(2)-s.y(1);
-            
         case{'netcdf'}
             wb = waitbox('Reading data file ...');
             x=nc_varget(handles.toolbox.bathymetry.import.dataFile,'x');
@@ -159,6 +158,13 @@ try
             y0=min(yg);
             dx=xg(2)-xg(1);
             dy=yg(2)-yg(1);
+        case{'geotiff'}
+            wb = waitbox('Reading data file ...');
+            [A,x,y,I] = geoimread(handles.toolbox.bathymetry.import.dataFile,'info');
+            x0=min(x);
+            y0=min(y);
+            dx=abs(x(2)-x(1));
+            dy=abs(y(2)-y(1));
     end
     try
         close(wb);
@@ -280,7 +286,8 @@ if ~isempty(strmatch(handles.toolbox.bathymetry.import.attributes.title,handles.
     return;
 end
 
-ddb_makeBathymetryTiles(fname,dr,dataname,dataformat,datatype,nx,ny,x0,y0,dx,dy,OPT);
+zrange=[handles.toolbox.bathymetry.import.minElevation handles.toolbox.bathymetry.import.maxElevation];
+ddb_makeBathymetryTiles(fname,dr,dataname,dataformat,datatype,nx,ny,x0,y0,dx,dy,zrange,OPT);
 
 % Now add data to data xml
 fname = [handles.bathymetry.dir 'bathymetry.xml'];
