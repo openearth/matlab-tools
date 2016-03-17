@@ -1,11 +1,9 @@
-function inspect(data, time, mask, dataf, S,varargin)
-%inspect  inspect DINEOF results for inspection via plot
+function varargout = display(data, time, mask, dataf, S,varargin)
+%display  display DINEOF results for inspection via plot
 %
-%   dineof.inspect(data, time, mask, dataf, D)
+%   dineof.display(data, time, mask, dataf, eofs)
 %
-% plot the results of DINEOF analysis
-%
-%    [dataf,D] = dineof.run(data, time, mask)
+% plot the results of DINEOF analysis [dataf,eofs] = dineof.run(...)
 %
 %See also: DINEOF
 
@@ -55,7 +53,7 @@ function inspect(data, time, mask, dataf, S,varargin)
 %% space-time field for 1D spaces
 if dim==1
 
-   AX = subplot_meshgrid(3,3,[.08 .02 .02 .05],[.08 .02 .02 .05],[nan nan nan],[nan nan .05]);
+   AX = subplot_meshgrid(3,3,[.08 .02 .02 .05],[.08 .02 .05 .05],[nan nan nan],[nan nan .05]);
 
    %% raw data
    axes(AX(4))
@@ -66,8 +64,8 @@ if dim==1
    datetick('x');xlim(time([1 end]))
    ylim([0 sz(1)])
    clim(r)
-   set(gca,'xAxisLocation','top')
-   [ax1,h1,txt1]=colorbarwithhtext('raw data','horiz','position',get(AX(7),'position'));
+   set(AX(4),'xAxisLocation','bot')
+   [ax1,h1,txt1]=colorbarwithhtext('\uparrow residual        \downarrow raw data','horiz','position',get(AX(7),'position'));
    
    %% filled data
    axes(AX(5))
@@ -77,9 +75,8 @@ if dim==1
    datetick('x');xlim(time([1 end]))
    ylim([0 sz(1)])
    clim(r)
-   set(gca,'xAxisLocation','top')
-   set(gca,'xticklabel',{})
-   set(gca,'yticklabel',{})
+   set(AX(5),'xAxisLocation','bot')
+   set(AX(5),'yticklabel',{})
    [ax2,h2,txt2]=colorbarwithhtext('data filled','horiz','position',get(AX(8),'position'));
    
    %% spatial modes
@@ -92,9 +89,10 @@ if dim==1
    xlabel('EOF lftvec')
    ylim([0 sz(1)])
    grid on
-   set(gca,'yticklabel',{})   
+   set(AX(6),'yAxisLocation','right')   
    h = legend('Location',get(AX(3),'position'));set(h,'box','off')
    vline(S.mean,'k--',['mean = ',num2str(S.mean)])
+   ylabel('space')   
 
    %% temporal modes
    axes(AX(2))
@@ -108,9 +106,22 @@ if dim==1
    datetick('x');xlim(time([1 end]))
    grid on
 
-   set(gca,'xAxisLocation','top')
+   set(AX(2),'xAxisLocation','top')
+   set(AX(2),'yAxisLocation','right')   
+
+   %% diff
+   axes(AX(1))
+   pcolor(time,1:sz(1),permute(data - dataf,[1 3 2]))
+   shading interp
+   xlabel('time')
+   datetick('x');xlim(time([1 end]))
+   ylim([0 sz(1)])
+   clim(r)
+   set(AX(1),'xAxisLocation','top')
+   ylabel('space')
+   %[ax2,h2,txt2]=colorbarwithhtext('data filled','horiz','position',get(AX(8),'position'));
    
-   delete(AX([1 3 7:9]))
+   delete(AX([3 7:9]))
 
 %% 3D movie for 2D spaces
 elseif dim==2
@@ -128,10 +139,10 @@ elseif dim==2
    colorbarwithhtext('EOF leftvec','horiz','position',get(AX(8),'position'));
    shading interp
    zlabel('modes')  
-   set(gca,'zdir','reverse')
+   set(AX(4),'zdir','reverse')
    view(-20,10)
-   set(gca,'ztick',1:S.P)    
-  %set(gca,'zAxisLocation','right')  
+   set(AX(4),'ztick',1:S.P)    
+  %set(AX(4),'zAxisLocation','right')  
    
    %% 1st temporal modes
    axes(AX(3))
@@ -146,8 +157,8 @@ elseif dim==2
    ylabel('time')
    h = legend('Location',get(AX(7),'position'));set(h,'box','off')
    view(-20,10)
-   set(gca,'ytick',[]) 
-   set(gca,'zticklabel',{}) 
+   set(AX(3),'ytick',[]) 
+   set(AX(3),'zticklabel',{}) 
    lim = xlim;
    plot3([lim([1 2 2 1 1])],[0 0 0 0 0],[time([1 1 end end 1])],'k')
    
@@ -163,7 +174,7 @@ elseif dim==2
    clim(r)
    colorbarwithhtext('raw data','horiz','position',get(AX(5),'position'));
    view(-20,10)
-   set(gca,'xticklabel',{})
+   set(AX(1),'xticklabel',{})
    
    %% data filled
    axes(AX(2))
@@ -176,8 +187,8 @@ elseif dim==2
    clim(r)
    colorbarwithhtext('filled data','horiz','position',get(AX(6),'position'));
    view(-20,10)
-   set(gca,'yticklabel',{})
-   set(gca,'zticklabel',{})   
+   set(AX(2),'yticklabel',{})
+   set(AX(2),'zticklabel',{})   
    for it=1:nt
    
       if nt > 20

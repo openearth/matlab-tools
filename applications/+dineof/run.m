@@ -519,9 +519,17 @@ else
    xlabel('time');xlabel('V')
 
    subplot(2,1,2)
-   plot(permute(tmp.U,[3 1 2]),'-o')
-   hold on
-   plot(permute(S.lftvec,[1 3 2]),'.')
+   if length(size(tmp.U))==2
+       plot(permute(tmp.U,[3 1 2]),'-o')
+       hold on
+       plot(permute(S.lftvec,[1 3 2]),'.')
+   else % 2D spatial mode
+       xx = permute(tmp.U,[1 3 2]);xx = xx(:,:)';
+       plot(xx,'-o')
+       hold on
+       xx = permute(S.lftvec,[3 1 2]);xx = xx(:,:)';
+       plot(xx,'.')       
+   end
    xlabel('points');xlabel('U')
    
    end
@@ -555,7 +563,7 @@ else
 
    if OPT.plot
       TMP = figure;
-      dineof.inspect(data, time, mask, dataf, S);
+      dineof.display(data, time, mask, dataf, S);
       %if OPT.export
       %   print2screensize(strrep(OPT.eoffile,'.nc','.png'))
       %end

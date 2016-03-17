@@ -22,7 +22,7 @@
 %
 % high-level
 %   run                            - run DINEOF (via memory, without explicit file IO)
-%   inpect                         - inspect DINEOF results with plot
+%   display                        - display DINEOF results with plot
 %   L2bin2nc                       - write netCDF file of image time series fit for DINEOF
 %
 % low-level
