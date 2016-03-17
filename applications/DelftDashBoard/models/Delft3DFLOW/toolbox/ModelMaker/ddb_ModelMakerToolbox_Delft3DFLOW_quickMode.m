@@ -149,7 +149,7 @@ function automateTimestep
     dataCoord=handles.screenParameters.coordinateSystem;
     ad = handles.activeDomain;
 
-if strfind(dataCoord.type,'Geographic')
+if strcmpi(dataCoord.type,'geographic')
     
      % Determine UTM zone of the middle
     x = handles.model.delft3dflow.domain(ad).gridX;
@@ -161,7 +161,7 @@ if strfind(dataCoord.type,'Geographic')
     coord.name = 'WGS 84 / UTM zone ';
     s           = {coord.name, '',num2str(utmzone_parts.number), utmzone_parts.lat};
     coord.name  = [s{:}];
-    coord.type = 'Cartesian'
+    coord.type = 'Cartesian';
     [X,Y]             = ddb_coordConvert(x,y,dataCoord,coord);
 else
     X = handles.model.delft3dflow.domain(ad).gridX;
@@ -174,14 +174,16 @@ end
     handles.model.delft3dflow.domain(ad).timeStep = timestep;
 
 % Make history and map files deelbaar door timestep
-    handles = ddb_fixtimestepDelft3DFLOW(handles, ad)   
+% Maybe not such a great idea. We want to have control over our output
+% times.
+%     handles = ddb_fixtimestepDelft3DFLOW(handles, ad);
     setHandles(handles);
     
     handles = getHandles;
-    ddb_updateOutputTimesDelft3DFLOW
-    handles.model.delft3dflow.domain(ad).mapStopTime = handles.model.delft3dflow.domain(ad).stopTime;
-    handles.model.delft3dflow.domain(ad).hisStopTime = handles.model.delft3dflow.domain(ad).stopTime;
-    handles.model.delft3dflow.domain(ad).comStopTime = handles.model.delft3dflow.domain(ad).stopTime;
+%     ddb_updateOutputTimesDelft3DFLOW
+%     handles.model.delft3dflow.domain(ad).mapStopTime = handles.model.delft3dflow.domain(ad).stopTime;
+%     handles.model.delft3dflow.domain(ad).hisStopTime = handles.model.delft3dflow.domain(ad).stopTime;
+%     handles.model.delft3dflow.domain(ad).comStopTime = handles.model.delft3dflow.domain(ad).stopTime;
 
 % Finish
     setHandles(handles);
