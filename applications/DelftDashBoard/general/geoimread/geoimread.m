@@ -133,15 +133,27 @@ for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
             case{'info'}
-                x0=I.ModelTiepointTag(4);
-                y0=I.ModelTiepointTag(5);
-                dx=I.ModelPixelScaleTag(1);
-                dy=-I.ModelPixelScaleTag(2);
-                nx=I.Width;
-                ny=I.Height;
-                x=x0:dx:x0+(nx-1)*dx;
-                y=y0:dy:y0+(ny-1)*dy;
-                A=[];
+                if license('test','map_toolbox')
+                    x0=I.TiePoints.WorldPoints.X;
+                    y0=I.TiePoints.WorldPoints.Y;
+                    dx=I.PixelScale(1);
+                    dy=-I.PixelScale(2);
+                    nx=I.Width;
+                    ny=I.Height;
+                    x=x0:dx:x0+(nx-1)*dx;
+                    y=y0:dy:y0+(ny-1)*dy;
+                    A=[];
+                else
+                    x0=I.ModelTiepointTag(4);
+                    y0=I.ModelTiepointTag(5);
+                    dx=I.ModelPixelScaleTag(1);
+                    dy=-I.ModelPixelScaleTag(2);
+                    nx=I.Width;
+                    ny=I.Height;
+                    x=x0:dx:x0+(nx-1)*dx;
+                    y=y0:dy:y0+(ny-1)*dy;
+                    A=[];
+                end
                 return
         end
     end
