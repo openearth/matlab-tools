@@ -320,7 +320,11 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
         
         setHandles(handles);
         
+        ddb_refreshDomainMenu;
         
+        % Generate dd boundaries
+        generateDD;
+
         % Now replot all domains
         for id=1:handles.model.delft3dflow.nrDomains
             if id==ad
@@ -329,11 +333,6 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
                 ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',id);
             end
         end
-        
-        ddb_refreshDomainMenu;
-        
-        % Generate dd boundaries
-        generateDD;
         
         switch lower(handles.model.delft3dflow.domain(ad).initialConditions)
             case{'ini','trim','rst'}
@@ -499,12 +498,11 @@ for i=1:handles.model.delft3dflow.nrDomains-1
         runid1=handles.model.delft3dflow.domain(i).runid;
         runid2=handles.model.delft3dflow.domain(j).runid;
         ddbound=ddb_findDDBoundaries(ddbound,xg1,yg1,xg2,yg2,runid1,runid2);
-%        ddbound=ddb_findDDBoundaries(ddbound,xg2,yg2,xg1,yg1,runid1,runid2);
     end
 end
 
 
-ddbound=handles.model.delft3dflow.DDBoundaries;
+% ddbound=handles.model.delft3dflow.DDBoundaries;
 
 
 handles.model.delft3dflow.DDBoundaries=ddbound;
@@ -520,9 +518,6 @@ if ~isempty(ddbound)
                 runid1=handles.model.delft3dflow.domain(i).runid;
                 runid2=handles.model.delft3dflow.domain(j).runid;
                 [z1,z2]=ddb_matchDDDepths(ddbound,z1,z2,runid1,runid2,handles.model.delft3dflow.domain(i).dpsOpt);
-
-                
-                
                 handles.model.delft3dflow.domain(i).depth=z1;
                 handles.model.delft3dflow.domain(j).depth=z2;
             end

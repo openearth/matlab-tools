@@ -98,9 +98,9 @@ else
     handles.model.delft3dflow.domain(id2).depFile=[runid2 '.dep'];
 
     % Bathymetry
-    if isfield(handles.model.delft3dflow.domain(id1),'depth') && size(handles.model.delft3dflow.domain(id1).depth,1)>1        
-        f=str2func(['ddb_generateBathymetry_Delft3DFLOW']);%Only DD for flow, otherwise make switch case since active model name is not exact case match for function
-        handles=feval(f,handles,id2,handles.model.delft3dflow.domain(id2).depFile);
+    if isfield(handles.model.delft3dflow.domain(id1),'depth') && size(handles.model.delft3dflow.domain(id1).depth,1)>1
+        datasets(1).name=handles.screenParameters.backgroundBathymetry;
+        handles=ddb_ModelMakerToolbox_Delft3DFLOW_generateBathymetry(handles,id2, datasets,'filename',[handles.toolbox.dd.attributeName '.dep']);
     end
     
     %     if exist(handles.toolbox.dd.originalDomain.obsFile)
