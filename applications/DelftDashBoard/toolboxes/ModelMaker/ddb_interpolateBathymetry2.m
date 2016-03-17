@@ -36,7 +36,7 @@ function zgnew=ddb_interpolateBathymetry2(bathymetry,datasets,xg,yg,zg,modeloffs
 
 % If now input bathymetry is given, fill matrix with nans
 if isempty(zg)
-    zg=zeros(size(zg));
+    zg=zeros(size(xg));
     zg(zg==0)=NaN;
 end
 % Copy original bathymetry matrix to zg0
@@ -56,7 +56,7 @@ else
     dmin=5;
     dmax=5;
 end
-
+%dmin=dmin/2;
 xg0=xg;
 yg0=yg;
 
@@ -102,7 +102,14 @@ for id=1:length(datasets)
     yl(2)=yl(2)+dbuf;
     
     % Download bathymetry data
+%     dmin=dmin/10;
+
     [xx,yy,zz,ok]=ddb_getBathymetry(bathymetry,xl,yl,'bathymetry',bathyset,'maxcellsize',dmin,'startdate',startdate,'searchinterval',searchinterval);
+    
+%     figure(20)
+%     pcolor(xx,yy,zz);shading flat;
+%     hold on
+%     plot(xg,yg);plot(xg',yg');
     
     % Convert to MSL
     zz=zz+verticaloffset;
@@ -115,8 +122,16 @@ for id=1:length(datasets)
     % Next two line are necessary in Matlab 2010b (and older?)
     xg(isn)=0;
     yg(isn)=0;
+    
     % Interpolate data to grid
-    z0=interp2(xx,yy,zz,xg,yg);    
+    z0=interp2(xx,yy,zz,xg,yg);
+
+    
+%     xx=xx(1,:);
+%     yy=yy(:,1);
+%     z0a=grid_cell_averaging5(xx,yy,zz,xg,yg);
+%     z0(2:end,2:end)=z0a(1:end-1,1:end-1);
+    
     z0(isn)=NaN; 
     % Copy new values (that are not NaN) to new bathymetry    
     zg(~isnan(z0))=z0(~isnan(z0));

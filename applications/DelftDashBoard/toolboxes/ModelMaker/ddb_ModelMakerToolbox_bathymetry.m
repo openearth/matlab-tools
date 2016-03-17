@@ -183,15 +183,15 @@ end
 
 switch lower(handles.activeModel.name)
     case{'delft3dflow'}
-        handles=ddb_ModelMakerToolbox_Delft3DFLOW_generateBathymetry(handles,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
+        handles=ddb_ModelMakerToolbox_Delft3DFLOW_generateBathymetry(handles,ad,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
     case{'delft3dwave'}
-        handles=ddb_ModelMakerToolbox_Delft3DWAVE_generateBathymetry(handles,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
+        handles=ddb_ModelMakerToolbox_Delft3DWAVE_generateBathymetry(handles,ad,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
     case{'dflowfm'}
-        handles=ddb_ModelMakerToolbox_DFlowFM_generateBathymetry(handles,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
+        handles=ddb_ModelMakerToolbox_DFlowFM_generateBathymetry(handles,ad,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
     case{'xbeach'}
-        handles=ddb_ModelMakerToolbox_XBeach_generateBathymetry(handles,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
+        handles=ddb_ModelMakerToolbox_XBeach_generateBathymetry(handles,ad,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
     case{'ww3'}
-        handles=ddb_ModelMakerToolbox_ww3_generate_bathymetry(handles,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
+        handles=ddb_ModelMakerToolbox_ww3_generate_bathymetry(handles,ad,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
 end
 
 setHandles(handles);
