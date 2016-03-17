@@ -85,34 +85,43 @@ for it=1:nt
         wvel=squeeze(wvel0(it1,:,:));
         wdir=0.5*pi-pi*squeeze(wdir0(it1,:,:))/180; % Convert to cartesian (but still where the winds are coming from)
         pdrp=squeeze(pdrp0(it1,:,:));
+        u=-wvel.*cos(wdir);
+        v=-wvel.*sin(wdir);
     else
+        
         wvel1=squeeze(wvel0(it1,:,:));
         wdir1=0.5*pi-pi*squeeze(wdir0(it1,:,:))/180; % Convert to cartesian (but still where the winds are coming from)
         pdrp1=squeeze(pdrp0(it1,:,:));
+        % Convert to coming from
+        u1=-wvel1.*cos(wdir1);
+        v1=-wvel1.*sin(wdir1);
+        
         wvel2=squeeze(wvel0(it2,:,:));
         wdir2=0.5*pi-pi*squeeze(wdir0(it2,:,:))/180; % Convert to cartesian (but still where the winds are coming from)
         pdrp2=squeeze(pdrp0(it2,:,:));
-        wvel=tfrac1*wvel1+tfrac2*wvel2;
-        wdir=tfrac1*wdir1+tfrac2*wdir2;
+        % Convert to coming from
+        u2=-wvel2.*cos(wdir2);
+        v2=-wvel2.*sin(wdir2);
+        
+        u=tfrac1*u1+tfrac2*u2;
+        v=tfrac1*v1+tfrac2*v2;
         pdrp=tfrac1*pdrp1+tfrac2*pdrp2;
+
     end
     
-    wvel(:,end+1)=wvel(:,1);
-    wdir(:,end+1)=wdir(:,1);
+    u(:,end+1)=u(:,1);
+    v(:,end+1)=v(:,1);
     pdrp(:,end+1)=pdrp(:,1);
     
-    % Convert to coming from
-    u=-wvel.*cos(wdir);
-    v=-wvel.*sin(wdir);
-
     % Interpolate
     if isempty(mergefrac)
         ug(it,:,:)=radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,u,'nautical');
+        vg(it,:,:)=radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,v,'nautical');
     else
         [ug(it,:,:),frac0]=radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,u,'nautical','mergefrac',mergefrac);
+        [vg(it,:,:),frac0]=radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,v,'nautical','mergefrac',mergefrac);
         frac(it,:,:)=frac0;
     end
-    vg(it,:,:)=radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,v,'nautical');
     pg(it,:,:)=backgroundpressure-radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,pdrp,'nautical');
     
 end

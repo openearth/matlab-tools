@@ -139,4 +139,6 @@ switch lower(meteosource)
         urlstr=['http://nomads.ncep.noaa.gov:9090/dods/nam/nam' datestr(cycledate,'yyyymmdd') '/nam_hawaiinest_' num2str(cyclehour,'%0.2i') 'z'];
     case{'gfs_anl4'}
         urlstr=['http://nomads.ncdc.noaa.gov/thredds/dodsC/gfs-004-anl/' datestr(cycledate,'yyyymm') '/' datestr(cycledate,'yyyymmdd') '/gfsanl_4_' datestr(cycledate,'yyyymmdd') '_' datestr(cycledate,'HHMM') '_' num2str(forecasthour,'%0.3i') '.grb2'];
+    case{'gfs_anl3'}
+        urlstr=['http://nomads.ncdc.noaa.gov/thredds/dodsC/gfs-003-anl/' datestr(cycledate,'yyyymm') '/' datestr(cycledate,'yyyymmdd') '/gfsanl_3_' datestr(cycledate,'yyyymmdd') '_' datestr(cycledate,'HHMM') '_' num2str(forecasthour(1),'%0.3i') '.grb'];
 end

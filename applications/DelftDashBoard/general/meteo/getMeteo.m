@@ -156,7 +156,7 @@ else
         
 %        switch lower(meteoloc)
 %            case{'nomads'}
-                [lon,lat,err]=getMeteoFromNomads4(meteoname,outputMeteoName,cycledate,cyclehour,tt,xlim,ylim,outdir,pars,pr,'lon',lon,'lat',lat);
+                [lon,lat,err]=getMeteoFromNomads5(meteoname,outputMeteoName,cycledate,cyclehour,tt,xlim,ylim,outdir,pars,pr,'lon',lon,'lat',lat);
 %        end
         
         if tnext>tLastAnalyzed

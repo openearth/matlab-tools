@@ -181,6 +181,9 @@ if ~isempty(spwfile)
     v=v(it0:it1,:,:);
     p=p(it0:it1,:,:);
     spwfrac=spwfrac(it0:it1,:,:);
+    
+    u(isnan(u))=0;
+    v(isnan(v))=0;
 
     spw.type='fromspiderweb';
     
@@ -496,6 +499,6 @@ switch lower(model)
             end
         end        
 
-        save([rundir fname '.mat'],'-struct','st');
+        save([rundir fname],'-struct','st');
 
 end
