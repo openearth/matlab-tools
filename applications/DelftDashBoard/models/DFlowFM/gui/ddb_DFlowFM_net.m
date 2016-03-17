@@ -67,8 +67,8 @@ handles.model.dflowfm.domain(ad).netstruc.nodeY=nc_varget(fname,'NetNode_y');
 handles.model.dflowfm.domain(ad).netstruc.nodeZ=nc_varget(fname,'NetNode_z');
 handles.model.dflowfm.domain(ad).netstruc.linkNodes=nc_varget(fname,'NetLink');
 handles.model.dflowfm.domain(ad).netstruc.linkType=nc_varget(fname,'NetLinkType');
-handles.model.dflowfm.domain(ad).netstruc.elemNodes=nc_varget(fname,'NetElemNode');
-handles.model.dflowfm.domain(ad).netstruc.bndLink=nc_varget(fname,'BndLink');
+% handles.model.dflowfm.domain(ad).netstruc.elemNodes=nc_varget(fname,'NetElemNode');
+% handles.model.dflowfm.domain(ad).netstruc.bndLink=nc_varget(fname,'BndLink');
 
 handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',ad,'color',[0.35 0.35 0.35],'visible',1,'active',1);
 
