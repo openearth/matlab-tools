@@ -64,7 +64,7 @@ function ddb_saveFouFile(handles, id)
 tab=handles.model.delft3dflow.domain(id).fourier.editTable;
 fid=fopen(handles.model.delft3dflow.domain(id).fouFile,'wt');
 plist=handles.model.delft3dflow.domain(ad).fourier.pList;
-for i=1:length(tab.period)
+for i=1:length(tab.parameterNumber)
     par=plist{tab.parameterNumber(i)};
     parstr=par;
     if strcmpi(par,'wl')

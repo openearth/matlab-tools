@@ -92,7 +92,10 @@ if ~isempty(handles.model.delft3dflow.domain(id).grdFile)
         handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','openboundaries');
         
         d=handles.toolbox.modelmaker.sectionLength;
-        zmax=handles.toolbox.modelmaker.zMax;
+        zmax=-handles.toolbox.modelmaker.delft3d.boundary_minimum_depth;
+        auto_section_length=handles.toolbox.modelmaker.delft3d.boundary_auto_section_length;
+        bnd_type=handles.toolbox.modelmaker.delft3d.boundary_type;
+        bnd_forcing=handles.toolbox.modelmaker.delft3d.boundary_forcing;
         
         attName=filename(1:end-4);
         
@@ -101,9 +104,11 @@ if ~isempty(handles.model.delft3dflow.domain(id).grdFile)
         x=handles.model.delft3dflow.domain(id).gridX;
         y=handles.model.delft3dflow.domain(id).gridY;
         z=handles.model.delft3dflow.domain(id).depth;
+        z=handles.model.delft3dflow.domain(id).depthZ;
         
         % Boundary locations
-        handles.model.delft3dflow.domain(id).openBoundaries=findBoundarySectionsOnStructuredGrid(handles.model.delft3dflow.domain(id).openBoundaries,z,zmax,d,'dpsopt',handles.model.delft3dflow.domain(id).dpsOpt);
+%        handles.model.delft3dflow.domain(id).openBoundaries=findBoundarySectionsOnStructuredGrid(handles.model.delft3dflow.domain(id).openBoundaries,z,zmax,d,'dpsopt',handles.model.delft3dflow.domain(id).dpsOpt);
+        handles.model.delft3dflow.domain(id).openBoundaries=find_boundary_sections_on_structured_grid(handles.model.delft3dflow.domain(id).openBoundaries,z,zmax,d,'dpsopt','dp','autolength',auto_section_length);
 
         nb=length(handles.model.delft3dflow.domain(id).openBoundaries);
         handles.model.delft3dflow.domain(id).nrOpenBoundaries=nb;
@@ -121,6 +126,8 @@ if ~isempty(handles.model.delft3dflow.domain(id).grdFile)
         for ib=1:nb
             % Initialize
             handles.model.delft3dflow.domain(id).openBoundaries=delft3dflow_setDefaultBoundaryType(handles.model.delft3dflow.domain(id).openBoundaries,ib);
+            handles.model.delft3dflow.domain(id).openBoundaries(ib).type=bnd_type;
+            handles.model.delft3dflow.domain(id).openBoundaries(ib).forcing=bnd_forcing;
             handles.model.delft3dflow.domain(id).openBoundaries=delft3dflow_initializeOpenBoundary(handles.model.delft3dflow.domain(id).openBoundaries,ib, ...
                 t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs,kmax);
             % Set boundary name in one cell array

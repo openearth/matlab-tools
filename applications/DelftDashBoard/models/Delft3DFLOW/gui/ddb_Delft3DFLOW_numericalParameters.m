@@ -72,19 +72,23 @@ else
         
         case{'selectdps'}
             handles=getHandles;
-            
-            % Depth in cell centres
-            handles.model.delft3dflow.domain(ad).depthZ=getDepthZ(handles.model.delft3dflow.domain(ad).depth,handles.model.delft3dflow.domain(ad).dpsOpt);
-            handles=ddb_Delft3DFLOW_plotBathy(handles,'plot','visible',1,'domain',ad);
-            
-            % Boundary depths
+
             x=handles.model.delft3dflow.domain(ad).gridX;
             y=handles.model.delft3dflow.domain(ad).gridY;
-            depthZ=handles.model.delft3dflow.domain(ad).depthZ;
-            kcs=handles.model.delft3dflow.domain(ad).kcs;
-            for ib=1:handles.model.delft3dflow.domain(ad).nrOpenBoundaries
-                [xb,yb,zb,alphau,alphav,side,orientation]=delft3dflow_getBoundaryCoordinates(handles.model.delft3dflow.domain(ad).openBoundaries(ib),x,y,depthZ,kcs);
-                handles.model.delft3dflow.domain(ad).openBoundaries(ib).depth=zb;
+            
+            if ~isempty(x)
+                
+                % Depth in cell centres
+                handles.model.delft3dflow.domain(ad).depthZ=getDepthZ(handles.model.delft3dflow.domain(ad).depth,handles.model.delft3dflow.domain(ad).dpsOpt);
+                handles=ddb_Delft3DFLOW_plotBathy(handles,'plot','visible',1,'domain',ad);
+                
+                depthZ=handles.model.delft3dflow.domain(ad).depthZ;
+                kcs=handles.model.delft3dflow.domain(ad).kcs;
+                % Boundary depths
+                for ib=1:handles.model.delft3dflow.domain(ad).nrOpenBoundaries
+                    [xb,yb,zb,alphau,alphav,side,orientation]=delft3dflow_getBoundaryCoordinates(handles.model.delft3dflow.domain(ad).openBoundaries(ib),x,y,depthZ,kcs);
+                    handles.model.delft3dflow.domain(ad).openBoundaries(ib).depth=zb;
+                end
             end
             
             if strcmpi(handles.model.delft3dflow.domain(ad).dpsOpt,'DP')

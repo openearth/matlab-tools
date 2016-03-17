@@ -33,7 +33,8 @@ if icheck
     end
     % File name
         
-    if isempty(handles.model.delft3dflow.domain(id).depFile) && isempty(filename)
+%    if isempty(handles.model.delft3dflow.domain(id).depFile) && isempty(filename)
+    if isempty(filename)
         [filename, pathname, filterindex] = uiputfile('*.dep', 'Dep File Name',[handles.model.delft3dflow.domain(id).attName '.dep']);
     else
         pathname = pwd;

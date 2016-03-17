@@ -203,7 +203,7 @@
   </element>
   <element>
     <style>table</style>
-    <position>380 15</position>
+    <position>380 35</position>
     <nrrows>5</nrrows>
     <includenumbers>no</includenumbers>
     <includebuttons>yes</includebuttons>
@@ -212,7 +212,7 @@
     <column>
       <style>edittime</style>
       <variable>handles.model.delft3dflow.domain(ad).windTimeSeriesT</variable>
-      <width>110</width>
+      <width>130</width>
       <text>Time</text>
     </column>
     <column>
@@ -239,6 +239,15 @@
         <operator>eq</operator>
       </check>
     </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>450 10 50 20</position>
+    <text>PavBnd</text>
+    <textposition>left</textposition>
+    <variable>handles.model.delft3dflow.domain(ad).pAvBnd</variable>
+    <type>real</type>
+    <tooltipstring>Edit background pressure (in Pa) at open boundaries to correct for inverse barometer effect. Leave at -999 for nested models!</tooltipstring>
   </element>
   <element>
     <style>panel</style>

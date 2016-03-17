@@ -209,19 +209,21 @@
   </element>
   <element>
     <style>pushbutton</style>
+    <position>303 5 65 20</position>
+    <text>Fill Table</text>
+    <callback>ddb_Delft3DFLOW_fourier</callback>
+    <option1>maketable</option1>
+    <parent>generatepanel</parent>
+    <tooltipstring>Click to fill table with M2, S2, N2, K2, K1, O1, P1, Q1.</tooltipstring>
+  </element>
+  <element>
+    <style>pushbutton</style>
     <position>550 30 70 20</position>
     <text>Generate</text>
     <callback>ddb_Delft3DFLOW_fourier</callback>
     <option1>generateinput</option1>
     <parent>generatepanel</parent>
-  </element>
-  <element>
-    <style>pushbutton</style>
-    <position>550 5 70 20</position>
-    <text>Fill Table</text>
-    <callback>ddb_Delft3DFLOW_fourier</callback>
-    <option1>maketable</option1>
-    <parent>generatepanel</parent>
+    <tooltipstring>Click to compute values in the Fourier table. Make sure you have correctly set start and stop times of the model.</tooltipstring>
   </element>
   <element>
     <style>edit</style>
@@ -230,5 +232,6 @@
     <parent>generatepanel</parent>
     <variable>handles.model.delft3dflow.domain(ad).fourier.spinUpTime</variable>
     <type>real</type>
+    <tooltipstring>Edit spin-up time of the model. This time will not be included in the Fourier analysis.</tooltipstring>
   </element>
 </root>

@@ -97,61 +97,11 @@ if isempty(varargin)
     end
     
     setHandles(handles);
-    % setUIElements('delft3dflow.output.outputpanel.fourier');
-    
-    
-    %     enab=ones(length(handles.model.delft3dflow.domain(ad).fourier.editTable.startTime),10);
-    %     for i=1:length(handles.model.delft3dflow.domain(ad).fourier.editTable.startTime)
-    %         if handles.model.delft3dflow.domain(ad).fourier.editTable.nrCycles(i)==0
-    %             enab(i,10)=0;
-    %         else
-    %             enab(i,8:9)=0;
-    %         end
-    %     end
-    %     h=findobj(gcf,'Tag','delft3dflow.output.outputpanel.fourier.fouriertable1');
-    %     table(h,'refresh','enable',enab);
-    
-    %     enab=ones(length(handles.model.delft3dflow.domain(ad).fourier.generateTable.parameterNumber),6);
-    %     for i=1:length(handles.model.delft3dflow.domain(ad).fourier.generateTable.parameterNumber)
-    %         if handles.model.delft3dflow.domain(ad).fourier.generateTable.componentNumber(i)==1
-    %             % A0
-    %             enab(i,6)=0;
-    %         else
-    %             enab(i,4:5)=0;
-    %         end
-    %     end
-    %     h=findobj(gcf,'Tag','delft3dflow.output.outputpanel.fourier.fouriertable2');
-    %     table(h,'refresh','enable',enab);
     
 else
     handles=getHandles;
     opt=varargin{1};
     switch(lower(opt))
-        case{'changetable1'}
-            %             enab=ones(length(handles.model.delft3dflow.domain(ad).fourier.editTable.startTime),10);
-            %             for i=1:length(handles.model.delft3dflow.domain(ad).fourier.editTable.startTime)
-            %                 if handles.model.delft3dflow.domain(ad).fourier.editTable.nrCycles(i)==0
-            %                     enab(i,10)=0;
-            %                 else
-            %                     enab(i,8:9)=0;
-            %                 end
-            %             end
-            %             % setUIElements('delft3dflow.output.outputpanel.fourier');
-            %             h=findobj(gcf,'Tag','delft3dflow.output.outputpanel.fourier.fouriertable1');
-            %             table(h,'refresh','enable',enab);
-        case{'changetable2'}
-            %             enab=ones(length(handles.model.delft3dflow.domain(ad).fourier.generateTable.parameterNumber),6);
-            %             for i=1:length(handles.model.delft3dflow.domain(ad).fourier.generateTable.parameterNumber)
-            %                 if handles.model.delft3dflow.domain(ad).fourier.generateTable.componentNumber(i)==1
-            %                     % A0
-            %                     enab(i,6)=0;
-            %                 else
-            %                     enab(i,4:5)=0;
-            %                 end
-            %             end
-            %             % setUIElements('delft3dflow.output.outputpanel.fourier');
-            %             h=findobj(gcf,'Tag','delft3dflow.output.outputpanel.fourier.fouriertable2');
-            %             table(h,'refresh','enable',enab);
             
         case{'maketable'}
             
@@ -272,9 +222,9 @@ else
                 end
             end
             
-            setHandles(handles);
+            handles.model.delft3dflow.domain(ad).fourier.include=1;
             
-            % setUIElements('delft3dflow.output.outputpanel.fourier');
+            setHandles(handles);
             
         case{'savefoufile'}
             ddb_saveFouFile(handles,ad);

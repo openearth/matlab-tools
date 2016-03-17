@@ -1,4 +1,4 @@
-function ddb_ModelMakerToolbox_quickMode_Delft3DFLOW(varargin)
+function ddb_ModelMakerToolbox_Delft3DFLOW_quickMode(varargin)
 %DDB_MODELMAKERTOOLBOX_QUICKMODE  One line description goes here.
 %
 %   More detailed description goes here.
@@ -69,7 +69,7 @@ if isempty(varargin)
     ddb_plotModelMaker('activate');
     if ~isempty(handles.toolbox.modelmaker.gridOutlineHandle)
         setInstructions({'Left-click and drag markers to change corner points','Right-click and drag YELLOW marker to move entire box', ...
-            'Right-click and drag RED markers to rotate box (note: rotating grid in geographic coordinate systems is NOT recommended!)'});
+            'Right-click and drag RED markers to rotate box'});
     end
 else
     
@@ -113,7 +113,7 @@ UIRectangle(handles.GUIHandles.mapAxis,'draw','Tag','GridOutline','Marker','o','
 function updateGridOutline(x0,y0,dx,dy,rotation,h)
 
 setInstructions({'Left-click and drag markers to change corner points','Right-click and drag YELLOW marker to move entire box', ...
-    'Right-click and drag RED markers to rotate box (note: rotating grid in geographic coordinate systems is NOT recommended!)'});
+    'Right-click and drag RED markers to rotate box'});
 
 handles=getHandles;
 
@@ -282,6 +282,25 @@ setHandles(handles);
 %%
 function generateOpenBoundaries
 handles=getHandles;
+
+% First edit type of boundary etc.
+h.type=handles.toolbox.modelmaker.delft3d.boundary_type;
+h.forcing=handles.toolbox.modelmaker.delft3d.boundary_forcing;
+h.minimum_depth=handles.toolbox.modelmaker.delft3d.boundary_minimum_depth;
+h.auto_section_length=handles.toolbox.modelmaker.delft3d.boundary_auto_section_length;
+xmldir=handles.model.delft3dflow.xmlDir;
+xmlfile='model.delft3dflow.modelmaker.boundaryoptions.xml';
+[h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif'],'modal',1);
+if ok
+    handles.toolbox.modelmaker.delft3d.boundary_type=h.type;
+    handles.toolbox.modelmaker.delft3d.boundary_forcing=h.forcing;
+    handles.toolbox.modelmaker.delft3d.boundary_minimum_depth=h.minimum_depth;
+    handles.toolbox.modelmaker.delft3d.boundary_auto_section_length=h.auto_section_length;
+else
+    return
+end
+
+
 [filename, pathname, filterindex] = uiputfile('*.bnd', 'Boundary File Name',[handles.model.delft3dflow.domain(ad).attName '.bnd']);
 if pathname~=0    
     handles=ddb_ModelMakerToolbox_Delft3DFLOW_generateBoundaryLocations(handles,ad,filename);
