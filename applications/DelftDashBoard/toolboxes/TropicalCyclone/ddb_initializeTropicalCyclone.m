@@ -172,8 +172,10 @@ handles.toolbox.tropicalcyclone.wind_profile_options={'holland1980','holland2010
 handles.toolbox.tropicalcyclone.wind_profile_option_names={'Holland (1980)','Holland (2010)','Fujita (1952)'};
 
 handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';
-handles.toolbox.tropicalcyclone.wind_pressure_relation_options={'holland2008','kz2007','vatvani'};
-handles.toolbox.tropicalcyclone.wind_pressure_relation_options_names={'Holland (2008)','Knaff & Zehr (2007)','Vatvani'};
+% handles.toolbox.tropicalcyclone.wind_pressure_relation_options={'holland2008','kz2007','vatvani'};
+% handles.toolbox.tropicalcyclone.wind_pressure_relation_options_names={'Holland (2008)','Knaff & Zehr (2007)','Vatvani'};
+handles.toolbox.tropicalcyclone.wind_pressure_relation_options={'holland2008','vatvani'};
+handles.toolbox.tropicalcyclone.wind_pressure_relation_options_names={'Holland (2008)','Vatvani'};
 
 handles.toolbox.tropicalcyclone.rmax_relation='gross2004';
 handles.toolbox.tropicalcyclone.rmax_relation_options={'gross2004','25nm','pagasajma'};

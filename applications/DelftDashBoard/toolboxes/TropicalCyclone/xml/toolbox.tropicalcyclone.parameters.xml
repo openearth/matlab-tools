@@ -194,18 +194,11 @@
   </element>
   <element>
     <style>pushbutton</style>
-    <position>750 10 100 20</position>
+    <position>890 10 100 20</position>
     <text>Compute Cyclone</text>
     <callback>ddb_TropicalCyclone_set_parameters</callback>
     <option1>computecyclone</option1>
     <tooltipstring>Compute cyclone winds to generate spider web file</tooltipstring>
-  </element>
-  <element>
-    <style>checkbox</style>
-    <position>860 10</position>
-    <text>Delete temporary files</text>
-    <variable>handles.toolbox.tropicalcyclone.deleteTemporaryFiles</variable>
-    <tooltipstring>Delete temporary files that are made while generating spiderweb file</tooltipstring>
   </element>
   <element>
     <style>panel</style>
