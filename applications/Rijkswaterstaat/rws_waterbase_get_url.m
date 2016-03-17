@@ -194,7 +194,7 @@ function varargout = rws_waterbase_get_url(varargin);
         %FileName = ['id',num2str(Substance.Code(indSub)),'-',LOC.ID{indLoc(1)},'-',startdate,'-',enddate,'.txt'];
          FileName = ['id',num2str(Substance.Code(indSub)),'-',LOC.ID{indLoc(1)},'.txt'];
       else
-         [FilePath,FileName,EXT,VERSN] = fileparts(indName);
+         [FilePath,FileName,EXT] = fileparts(indName);
       end
    else
       [FileName, FilePath] = uiputfile('*.txt','Save data');

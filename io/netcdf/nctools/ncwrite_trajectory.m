@@ -3,7 +3,7 @@ function varargout = ncwrite_trajectory(ncfile,varargin)
 %
 %  Make a netCDF file with CF conventions of a variable that 
 %  is a trajectory gathered by a moving vessel with FerryBox (fixex z, 2D)
-%  or glider (varying z, 3D). In this special case the main dimension are 
+%  or glider (varying z, 3D). In this special case the main dimension are:
 %  * a 1D time axis
 %
 %  This case is described in:
@@ -11,7 +11,7 @@ function varargout = ncwrite_trajectory(ncfile,varargin)
 %  GOOS: http://www.oceansites.org/docs/oceansites_user_manual_version1.2.pdf
 %  SDN:  http://www.seadatanet.org/Standards-Software/Data-Transport-Formats
 %
-%See also: netcdf, ncwriteschema, ncwrite, SNCTOOLS,
+%See also: netcdf, ncwriteschema, ncwrite, 
 %          ncwritetutorial_grid_lat_lon_curvilinear
 %          ncwrite_timeseries, ncwrite_profile
 %          ncwrite_trajectory_tutorial

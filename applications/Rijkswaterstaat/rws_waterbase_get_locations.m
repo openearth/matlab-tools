@@ -1,5 +1,5 @@
 function Station = rws_waterbase_get_locations(Code,CodeName,varargin)
-%RWS_WATERBASE_GET_LOCATIONS   reads all avilable location info for 1 DONAR Substance
+%RWS_WATERBASE_GET_LOCATIONS   reads all available location info for 1 DONAR Substance
 %
 %    Station = rws_waterbase_get_locations(Code,CodeName)
 %

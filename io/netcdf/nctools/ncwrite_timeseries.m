@@ -14,7 +14,7 @@ function varargout = ncwrite_timeseries(ncfile,varargin)
 %  GOOS: http://www.oceansites.org/docs/oceansites_user_manual_version1.2.pdf
 %  SDN:  http://www.seadatanet.org/Standards-Software/Data-Transport-Formats
 %
-%See also: netcdf, ncwriteschema, ncwrite, SNCTOOLS,
+%See also: netcdf, ncwriteschema, ncwrite, 
 %          ncwritetutorial_grid_lat_lon_curvilinear
 %          ncwrite_trajectory, ncwrite_profile
 %          ncwrite_timeseries_tutorial

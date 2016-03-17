@@ -9,7 +9,7 @@ function ncwrite_trajectory_tutorial(ncfile0,varargin)
 %
 % An example of a 3D trajectory is FerryBox data (http://www.ferrybox.org/)
 %
-%See also: netcdf, ncwriteschema, ncwrite, SNCTOOLS,
+%See also: netcdf, ncwriteschema, ncwrite, 
 %          ncwritetutorial_grid
 %          ncwritetutorial_timeseries
 %          ncwritetutorial_profile

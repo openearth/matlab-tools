@@ -42,6 +42,10 @@ for ifld=1:length(flds)
     fld = flds{ifld};
     if iscell(D.(fld))
         D2.(fld) = {D.(fld){ind}};
+		% preserve orientation (only needed for cell)
+        if iscolumn(D.(fld))
+            D2.(fld) = D2.(fld)';
+        end        
     else % isnumeric(D.(fld))
         D2.(fld) = D.(fld)(ind);
     end

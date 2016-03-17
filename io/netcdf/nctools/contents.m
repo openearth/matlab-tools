@@ -66,7 +66,8 @@
 %     ncwritetutorial_grid_x_y_curvilinear     - Create netCDF-CF file of curvilinear x-y grid
 %     ncwritetutorial_grid_x_y_orthogonal      - Create netCDF-CF file of orthogonal  x-y grid
 %
-% Functions to write special netCDF data types incl tutorial:
+% Functions to create special standardized netCDF data types incl tutorial:
+% These files aim to adhere to the CF, OceanSites and SeaDataNet conventions.
 %
 %     ncwrite_profile                 - write timeSeriesProfile to netCDF-CF file
 %     ncwrite_profile_tutorial        - tutorial for writing timeSeriesProfile to netCDF-CF file
@@ -75,6 +76,8 @@
 %     ncwrite_trajectory              - write trajectory to netCDF-CF file
 %     ncwrite_trajectory_tutorial     - tutorial for writing trajectory to netCDF-CF file
 %
+% Functions to read special netCDF data types incl tutorial:
+%
 %     nc_cf_timeseries_tutorial       - how to read and subset a netCDF time series file
 %     nc_cf_grid                      - load/plot one variable from netCDF grid file
 %     nc_cf_grid_tutorial             - how to read and subset a netCDF grid file
@@ -82,4 +85,4 @@
 %     nc_cf_line                      - write  (NaN-seperated) (poly-)line (segments) to netCDF file
 %     nc_cf_timeseries                - load/plot one variable from TimeSeries netCDF file
 %
-% See also: netcdf, snctools
+% See also: netcdf, ncread, ncwrite, outdated: snctools

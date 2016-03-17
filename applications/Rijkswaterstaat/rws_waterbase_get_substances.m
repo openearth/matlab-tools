@@ -10,6 +10,7 @@ function D = rws_waterbase_get_substances(varargin)
 %    S = rws_waterbase_get_substances('Code',209)
 %
 % gets list of all SUBSTANCES available for queries at <a href="http://live.waterbase.nl">live.waterbase.nl</a>.
+% Saves list to csv for drill-down and offline use by rws_waterbase_get_substances.
 %
 % struct S has fields:
 %
@@ -17,7 +18,7 @@ function D = rws_waterbase_get_substances(varargin)
 % * CodeName, e.g. 22%7CSignificante+golfhoogte+uit+energiespectrum+van+30-500+mhz+in+cm+in+oppervlaktewater"
 % * Code    , e.g. 22
 %
-% See also: <a href="http://live.waterbase.nl">live.waterbase.nl</a>, rijkswaterstaat
+% See also: rws_waterbase_get_substances_csv, <a href="http://live.waterbase.nl">live.waterbase.nl</a>, rijkswaterstaat
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -78,6 +79,7 @@ function D = rws_waterbase_get_substances(varargin)
    OPT.FullName = ''; 
    OPT.CodeName = ''; 
    OPT.Code     = []; 
+   OPT.csv      = '';
    
    OPT = setproperty(OPT,varargin{:});
    
@@ -113,8 +115,16 @@ function D = rws_waterbase_get_substances(varargin)
       symbol = OPT.symbols{isymbol};
       D.CodeName{ii} = strrep(D.CodeName{ii},symbol,['%',dec2hex(unicode2native(symbol, 'ISO-8859-1'))]);
       end
-      
    end   
+      
+%% save to csv
+
+    if isempty(OPT.csv)
+        OPT.csv = fullfile(mfilename('fullpath'),'rws_waterbase_substances.csv');
+    end    
+    struct2csv(OPT.csv,D)
+    disp('saved to')
+    disp(OPT.csv)
    
 %% check substances from website by comparing with csv file.
    
@@ -136,7 +146,7 @@ function D = rws_waterbase_get_substances(varargin)
 %% subset (optionally)
 
    if ~isempty(OPT.Code)
-      indSub = find(D.Code==OPT.Code)
+      indSub = find(D.Code==OPT.Code);
       D.CodeName = D.CodeName{indSub};
       D.FullName = D.FullName{indSub};
       D.Code     = D.Code    (indSub);
@@ -151,5 +161,6 @@ function D = rws_waterbase_get_substances(varargin)
       D.FullName = D.FullName{indSub};
       D.Code     = D.Code    (indSub);
    end
+  
 
 %% EOF

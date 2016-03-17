@@ -1,4 +1,4 @@
-function D = nc_cf_gridset_example(varargin)
+%function D = nc_cf_gridset_example(varargin)
 %NC_CF_GRIDSET_TUTORIAL  how to acces a set of netCDF tiles
 %
 %  D = nc_cf_gridset_example(<keyword,value>)
@@ -8,8 +8,8 @@ function D = nc_cf_gridset_example(varargin)
 %
 % See also: snctools, opendap_catalog, grid_2D_orthogonal
 
-catalog_url = 'f:\opendap\thredds\rijkswaterstaat\kustlidar\';
-catalog_url = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/kustlidar/catalog.html';
+%catalog_url = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/kustlidar/catalog.html';
+catalog_url = '.'; % keep out 
 
 %% get list of netCDF grid files from which to obtain data
 
@@ -17,10 +17,10 @@ nc_files  = opendap_catalog(catalog_url);
 
 %% define bounding box of area where to get data
 
-OPT.x       = [114019 116147 118541 116945];
-OPT.y       = [572317 575643 574047 570455];
+OPT.x       = [ 90010 109990 109990  90010  90010];
+OPT.y       = [500010 500010 524990 524990 500010];
 OPT.stride  = 5;
-OPT.t       = datenum([2006 2010],1,1); % TO DO CHECK FOR THIS !!
+OPT.t       = datenum([2007 2015],1,1); % TO DO CHECK FOR THIS !!
 OPT.epsg    = 28992; % TO DO CHECK FOR THIS !!
 
 plot(OPT.x([1 2 2 1 1]),OPT.y([1 1 2 2 1]),'r')
@@ -78,6 +78,10 @@ for i=1:length(nc_files)
 end % tiles
 
 axis equal
+colorbar
+axis([min(OPT.x) max(OPT.x) min(OPT.y) max(OPT.y)])
 grid on
 tickmap('xy')
-colorbar
+
+L = nc2struct('http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc')
+plot(L.x,L.y)

@@ -10,7 +10,7 @@ function varargout = ncwrite_timeseries_tutorial(ncfile,varargin);
 %  This case is described in CF: http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/ch09.html
 %
 %See also: nc_cf_timeseries_write_tutorial, nc_cf_timeseries,
-%          netcdf, ncwriteschema, ncwrite, SNCTOOLS,
+%          netcdf, ncwriteschema, ncwrite, 
 %          ncwritetutorial_grid
 %          ncwritetutorial_trajectory
 

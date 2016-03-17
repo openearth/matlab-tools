@@ -1,9 +1,9 @@
 function varargout = ncwrite_profile(ncfile,varargin)
-%NCWRITE_PROFILE write timeSeriesProfile to netCDF-CF file
+%NCWRITE_PROFILE write (ADCP) timeSeriesProfile to netCDF-CF file
 %
 %  Make a netCDF file with CF conventions of a variable that 
 %  is a timeSeriesProfile at one specific target location.
-%  In this special case the main dimension are 
+%  In this special case the main dimension are:
 %  * a 1D z axis which can usually differs per profile. Therefore
 %    a 2D array [t,z] of z values is stored, with the same size as the data.
 %  * a 1D time axis or unique profile counter axis. For profiles
@@ -16,7 +16,7 @@ function varargout = ncwrite_profile(ncfile,varargin)
 %  GOOS: http://www.oceansites.org/docs/oceansites_user_manual_version1.2.pdf
 %  SDN:  http://www.seadatanet.org/Standards-Software/Data-Transport-Formats
 %
-%See also: netcdf, ncwriteschema, ncwrite, SNCTOOLS,
+%See also: netcdf, ncwriteschema, ncwrite, 
 %          ncwritetutorial_grid_lat_lon_curvilinear
 %          ncwrite_timeseries, ncwrite_trajectory
 %          ncwrite_profile_tutorial

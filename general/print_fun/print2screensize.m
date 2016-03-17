@@ -133,7 +133,7 @@ Shortside   = (( height) + dh)./resolution;
    [fileexist,action]=filecheck(fullfile(filepathstr(fname),[filename(fname),'.png']));
    if strcmpi(action,'o')
       if ~exist(filepathstr(fname),'dir')
-      mkpath(filepathstr(fname))
+      mkdir(filepathstr(fname))
       end
       print(gcf,imageformat,['-r',num2str(resolution)],fname);
    end
