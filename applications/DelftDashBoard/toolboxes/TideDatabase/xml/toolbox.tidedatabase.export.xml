@@ -67,10 +67,32 @@
   </element>
   <element>
     <style>popupmenu</style>
+    <text></text>
+    <textposition>left</textposition>
+    <variable>handles.toolbox.tidedatabase.activeConstituent</variable>
+    <position>900 40 70 20</position>
+    <tooltipstring>Select constituent for visualization</tooltipstring>
+    <type>integer</type>
+    <callback>ddb_TideDatabaseToolbox_export</callback>
+    <option1>selectconstituent</option1>
+    <listtext>
+      <variable>handles.toolbox.tidedatabase.constituentList</variable>
+    </listtext>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>900 15 70 20</position>
+    <text>View</text>
+    <callback>ddb_TideDatabaseToolbox_export</callback>
+    <option1>view</option1>
+    <tooltipstring>View co-tidal chart</tooltipstring>
+  </element>
+  <element>
+    <style>popupmenu</style>
     <text>Export Format</text>
     <textposition>left</textposition>
     <variable>handles.toolbox.tidedatabase.activeExportFormatIndex</variable>
-    <position>500 40 70 20</position>
+    <position>800 40 70 20</position>
     <tooltipstring>Select output format</tooltipstring>
     <type>integer</type>
     <callback>ddb_TideDatabaseToolbox_export</callback>
@@ -81,7 +103,7 @@
   </element>
   <element>
     <style>pushsavefile</style>
-    <position>500 15 70 20</position>
+    <position>800 15 70 20</position>
     <text>Export</text>
     <variable>handles.toolbox.tidedatabase.exportFile</variable>
     <onchange>ddb_TideDatabaseToolbox_export</onchange>

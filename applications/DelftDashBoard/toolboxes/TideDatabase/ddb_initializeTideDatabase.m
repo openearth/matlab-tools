@@ -81,3 +81,6 @@ handles.toolbox.tidedatabase.fourierFile='';
 handles.toolbox.tidedatabase.fourierOutFile='';
 handles.toolbox.tidedatabase.exportFile='';
 
+handles.toolbox.tidedatabase.constituentList={''};
+handles.toolbox.tidedatabase.activeConstituent=1;
+

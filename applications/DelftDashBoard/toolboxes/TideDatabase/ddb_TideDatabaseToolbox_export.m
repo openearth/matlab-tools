@@ -81,6 +81,8 @@ else
             UIRectangle(handles.GUIHandles.mapAxis,'draw','Tag','TideDatabaseBox','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',0,'callback',@changeTideDatabaseBox,'onstart',@deleteTideDatabaseBox);
         case{'export'}
             exportData;
+        case{'view'}
+            viewCoTidalChart;
         case{'editoutline'}
             editOutline;
         case{'selectexportformat'}
@@ -105,8 +107,76 @@ gui_updateActiveTab;
 %%
 function selectModel
 handles=getHandles;
+ii=handles.toolbox.tidedatabase.activeModel;
+name=handles.tideModels.model(ii).name;
+    if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
+        tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
+    else
+        tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
+    end
+%nc_dump(tidefile);
+cnst=nc_varget(tidefile,'tidal_constituents');
+for ii=1:length(cnst)
+    cnstlist{ii}=deblank(upper(cnst(ii,:)));
+end
+handles.toolbox.tidedatabase.constituentList=cnstlist;
+handles.toolbox.tidedatabase.activeConstituent=1;
+
 setHandles(handles);
 
+%%
+function viewCoTidalChart
+handles=getHandles;
+ii=handles.toolbox.tidedatabase.activeModel;
+iac=handles.toolbox.tidedatabase.activeConstituent;
+name=handles.tideModels.model(ii).name;
+if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
+    tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
+else
+    tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
+end
+
+xx=handles.toolbox.tidedatabase.xLim;
+yy=handles.toolbox.tidedatabase.yLim;
+
+if xx(2)==xx(1)
+    ddb_giveWarning('text','First draw a box around the area of interest!');
+    return
+end
+
+if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+    xg=xx(1):(xx(2)-xx(1))/10:xx(2);
+    yg=yy(1):(yy(2)-yy(1))/10:yy(2);
+    [xg,yg]=meshgrid(xg,yg);
+    cs.name='WGS 84';
+    cs.type='geographic';
+    [xg,yg]=ddb_coordConvert(xg,yg,handles.screenParameters.coordinateSystem,cs);
+    xx(1)=min(min(xg))-1;
+    yy(1)=min(min(yg))-1;
+    xx(2)=max(max(xg))+1;
+    yy(2)=max(max(yg))+1;
+end
+
+cnst=handles.toolbox.tidedatabase.constituentList{iac};
+[lon,lat,ampz,phasez,conList] = readTideModel(tidefile,'type','h','xlim',xx,'ylim',yy,'constituent',upper(cnst));
+ampz=squeeze(ampz(:,:,iac));
+phasez=squeeze(phasez(:,:,iac));
+
+figure(20)
+clf;
+subplot(2,1,1)
+ampm=reshape(ampz,[1 size(ampz,1)*size(ampz,2)]);
+ampm=ampm(~isnan(ampm));
+ampm=sort(ampm);
+i98=round(0.98*length(ampm));
+cmax=ampm(i98);
+pcolor(lon,lat,ampz);shading flat;axis equal;caxis([0 cmax]);colorbar;
+set(gca,'xlim',[lon(1) lon(end)],'ylim',[lat(1) lat(end)]);
+subplot(2,1,2)
+pcolor(lon,lat,phasez);shading flat;axis equal;caxis([0 360]);colorbar;
+set(gca,'xlim',[lon(1) lon(end)],'ylim',[lat(1) lat(end)]);
+
+    
 %%
 function selectExportFormat
 
@@ -120,6 +190,14 @@ setHandles(handles);
 function exportData
 
 handles=getHandles;
+
+xx=handles.toolbox.tidedatabase.xLim;
+yy=handles.toolbox.tidedatabase.yLim;
+
+if xx(2)==xx(1)
+    ddb_giveWarning('text','First draw a box around the area of interest!');
+    return
+end
 
 wb = waitbox('Exporting tide data ...');pause(0.1);
 
@@ -139,10 +217,6 @@ try
     end
 
     % H
-
-    xx=handles.toolbox.tidedatabase.xLim;
-    yy=handles.toolbox.tidedatabase.yLim;
-
     if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
         xg=xx(1):(xx(2)-xx(1))/10:xx(2);
         yg=yy(1):(yy(2)-yy(1))/10:yy(2);
