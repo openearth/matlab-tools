@@ -52,11 +52,11 @@ function ddb_TropicalCycloneToolbox_setParameters(varargin)
 % Created: 02 Dec 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: ddb_TropicalCycloneToolbox_setParameters.m 11511 2014-12-04 21:34:18Z ormondt $
+% $Date: 2014-12-04 22:34:18 +0100 (Thu, 04 Dec 2014) $
+% $Author: ormondt $
+% $Revision: 11511 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/toolboxes/TropicalCyclone/ddb_TropicalCycloneToolbox_setParameters.m $
 % $Keywords: $
 
 %%
@@ -65,19 +65,41 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     ddb_plotTropicalCyclone('activate');
+    h=findobj(gca,'Tag','rawensemble');
+    if ~isempty(h)
+        set(h,'Visible','off');
+    end
+    h=findobj(gca,'Tag','finalensemble');
+    if ~isempty(h)
+        set(h,'Visible','off');
+    end
     handles=getHandles;
-    % setUIElements('tropicalcyclonepanel.parameters');
     if strcmpi(handles.screenParameters.coordinateSystem.type,'cartesian')
         ddb_giveWarning('text','The Tropical Cyclone Toolbox currently only works for geographic coordinate systems!');
     end
 else
     %Options selected
     opt=lower(varargin{1});
+
+    handles=getHandles;
+    if handles.toolbox.tropicalcyclone.drawingtrack
+        % The user was drawing a track but did not finish it with a
+        % right-click.
+        set(gcf, 'windowbuttondownfcn',[]);
+        set(gcf, 'windowbuttonmotionfcn',[]);
+        hg=findobj(gcf,'tag','cyclonetrack');
+        x=getappdata(hg,'x');
+        y=getappdata(hg,'y');
+        ddb_TropicalCyclone_change_cyclone_track(hg,x,y);
+    end
+    
     switch opt
         case{'computecyclone'}
             computeCyclone;
         case{'drawtrack'}
             drawTrack;
+        case{'deletetrack'}
+            deleteTrack;
         case{'edittracktable'}
             editTrackTable;
         case{'loaddata'}
@@ -86,8 +108,6 @@ else
             saveDataFile;
         case{'importtrack'}
             importTrack;
-        case{'selectquadrantoption'}
-            selectQuadrantOption;
         case{'selectbasinoption'}
             selectBasinOption;
         case{'downloadtrack'}
@@ -112,37 +132,29 @@ if ok
     
     setInstructions({'','Click on map to draw cyclone track','Use right-click to end cyclone track'});
     
-    handles=deleteCycloneTrack(handles);
+    handles=ddb_TropicalCyclone_delete_cyclone_track(handles);
     
     ddb_zoomOff;
     
-    gui_polyline('draw','Tag','cyclonetrack','Marker','o','createcallback',@ddb_changeCycloneTrack,'changecallback',@ddb_changeCycloneTrack, ...
+    gui_polyline('draw','Tag','cyclonetrack','Marker','o','createcallback',@ddb_TropicalCyclone_change_cyclone_track,'changecallback',@ddb_TropicalCyclone_change_cyclone_track, ...
         'rightclickcallback',@ddb_selectCyclonePoint,'closed',0);
+    
+    handles.toolbox.tropicalcyclone.drawingtrack=1;
     
     setHandles(handles);
     
 end
 
 %%
-function selectQuadrantOption
+function deleteTrack
 
 handles=getHandles;
-
-if strcmpi(handles.toolbox.tropicalcyclone.quadrantOption,'uniform')
-    handles.toolbox.tropicalcyclone.quadrant=1;
-end
-
-handles=ddb_setTrackTableValues(handles);
-
+handles.toolbox.tropicalcyclone.track=ddb_TropicalCyclone_set_dummy_track_values(1);
+handles.toolbox.tropicalcyclone.nrTrackPoints=0;
+handles=ddb_TropicalCyclone_delete_cyclone_track(handles);
 setHandles(handles);
 
 %%
-function selectQuadrant
-
-handles=getHandles;
-handles=ddb_setTrackTableValues(handles);
-setHandles(handles);
-
 function selectBasinOption
 
 %  Retrieve the current handles data structure.
@@ -164,10 +176,10 @@ end
 %  Check whether the TC basins are to be displayed.
 if (handles.toolbox.tropicalcyclone.showTCBasins == 1)
     %  One or more basins will be displayed, so load polygon data.
-    handles = ddb_selectTropicalCycloneBasins(handles);
+    handles = ddb_TropicalCyclone_select_tropical_cyclone_basins(handles);
 else
     %  One or more basins will be turned off, so "turn off" the polygon data.
-    handles = ddb_selectTropicalCycloneBasins(handles);
+    handles = ddb_TropicalCyclone_select_tropical_cyclone_basins(handles);
 end
 
 %  Update the TC widgets within the GUI.
@@ -175,6 +187,7 @@ end
 %  Store the current handles data structure.
 setHandles(handles);
 
+%%
 function loadDataFile
 
 handles=getHandles;
@@ -188,17 +201,17 @@ end;
 filename=[pathname filename];
 
 handles.toolbox.tropicalcyclone.cycloneFile=[pathname filename];
-handles=ddb_readCycloneFile(handles,filename);
+handles=ddb_TropicalCyclone_read_cyclone_file(handles,filename);
 
-handles.toolbox.tropicalcyclone.quadrant=1;
+% Ensemble parameters
+handles.toolbox.tropicalcyclone.ensemble.t0=handles.toolbox.tropicalcyclone.track.time(1);
+handles.toolbox.tropicalcyclone.ensemble.length=handles.toolbox.tropicalcyclone.track.time(end)-handles.toolbox.tropicalcyclone.track.time(1);
 
-handles=ddb_setTrackTableValues(handles);
-
-handles=deleteCycloneTrack(handles);
+handles=ddb_TropicalCyclone_delete_cyclone_track(handles);
 
 setHandles(handles);
 
-ddb_plotCycloneTrack;
+ddb_TropicalCyclone_plot_cyclone_track;
 
 %%
 function saveDataFile
@@ -212,7 +225,7 @@ end
 filename=[pathname filename];
 handles.toolbox.tropicalcyclone.cycloneFile=filename;
 setHandles(handles);
-ddb_saveCycloneFile(filename,handles.toolbox.tropicalcyclone,'version',handles.delftDashBoardVersion);
+ddb_TropicalCyclone_save_cyclone_file(filename,handles.toolbox.tropicalcyclone,'version',handles.delftDashBoardVersion);
 
 %%
 function downloadTrackData
@@ -517,136 +530,145 @@ try
     switch lower(handles.toolbox.tropicalcyclone.importFormat)
         case{'jtwcbesttrack'}
             tc=readBestTrackJTWC([pathname filename]);
-            handles.toolbox.tropicalcyclone.method=2;
-            handles.toolbox.tropicalcyclone.quadrantOption='perquadrant';
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
         case{'unisysbesttrack'}
             tc=readBestTrackUnisys([pathname filename]);
-            handles.toolbox.tropicalcyclone.method=4;
-            handles.toolbox.tropicalcyclone.quadrantOption='uniform';
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
         case{'jtwccurrenttrack', 'nhccurrenttrack'}
             %  JTWC, NHC current tracks in generic .trk format:
             tc=ddb_readGenericTrackFile([pathname filename]);
-            handles.toolbox.tropicalcyclone.method=tc.method;
-            handles.toolbox.tropicalcyclone.quadrantOption=tc.quadrantOption;
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
             itype = 1;
         case{'jmv30'}
             tc=readjmv30([pathname filename]);
-%            tc=readgdacs([pathname filename]);
-            handles.toolbox.tropicalcyclone.method=2;
-            handles.toolbox.tropicalcyclone.quadrantOption='perquadrant';
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
+            handles.toolbox.tropicalcyclone.wind_profile='holland2010';
+            handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';
+        case{'hurdat2besttrack'}
+            tc=readBestTrackHURDAT2([pathname filename]);
+            handles.toolbox.tropicalcyclone.cyclonename=tc.name;
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
+        case{'pagasa'}
+            tc=read_pagasa_cyclone_track([pathname filename]);
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
+            handles.toolbox.tropicalcyclone.wind_profile='holland2010';
+            handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';
         otherwise
             giveWarning('text','Sorry, present import format not supported!');
             return
     end
-       
-    handles.toolbox.tropicalcyclone.quadrant=1;
     
     nt=length(tc.time);
     
     % Set dummy values
-    handles.toolbox.tropicalcyclone.trackT=zeros([nt 1]);
-    handles.toolbox.tropicalcyclone.trackX=zeros([nt 1]);
-    handles.toolbox.tropicalcyclone.trackY=zeros([nt 1]);
-    handles.toolbox.tropicalcyclone.trackVMax=zeros([nt 4])-999;
-    handles.toolbox.tropicalcyclone.trackPDrop=zeros([nt 4])-999;
-    handles.toolbox.tropicalcyclone.trackRMax=zeros([nt 4])-999;
-    handles.toolbox.tropicalcyclone.trackR100=zeros([nt 4])-999;
-    handles.toolbox.tropicalcyclone.trackR65=zeros([nt 4])-999;
-    handles.toolbox.tropicalcyclone.trackR50=zeros([nt 4])-999;
-    handles.toolbox.tropicalcyclone.trackR35=zeros([nt 4])-999;
-    handles.toolbox.tropicalcyclone.trackA=zeros([nt 4])-999;
-    handles.toolbox.tropicalcyclone.trackB=zeros([nt 4])-999;
-    
-    k=0;
-    for it=1:nt
-        
-        %        if (tc(it).r34(1))>=0
-        
-        k=k+1;
-        
-        handles.toolbox.tropicalcyclone.trackT(k)=tc.time(it);
-        handles.toolbox.tropicalcyclone.trackX(k)=tc.lon(it);
-        handles.toolbox.tropicalcyclone.trackY(k)=tc.lat(it);
-        if isfield(tc,'vmax')
-            handles.toolbox.tropicalcyclone.trackVMax(k,1:4)=tc.vmax(it,:);
-        end
-        if isfield(tc,'p')
-            if (itype == 0)
-                %  Modified to use a better value for background atm.
-                %  pressure (RSL, 16 Dec 2011)
-                %handles.toolbox.tropicalcyclone.trackPDrop(k,1:4)=[101200 101200 101200 101200] - tc.p(it,:);
-                handles.toolbox.tropicalcyclone.trackPDrop(k,1:4)=[bg_press_Pa bg_press_Pa bg_press_Pa bg_press_Pa] - tc.p(it,:);
-            else
-                %  JTWC, NHC current warning files: pressure drop is
-                %  calculated by the parsing script(s).
-                handles.toolbox.tropicalcyclone.trackPDrop(k,1:4) = tc.p(it,:);
-            end
-        end
-        if isfield(tc,'rmax')
-            handles.toolbox.tropicalcyclone.trackRMax(k,1:4)=tc.rmax(it,:);
-        end
-        if isfield(tc,'a')
-            handles.toolbox.tropicalcyclone.trackA(k,1:4)=tc.a(it,:);
-        end
-        if isfield(tc,'b')
-            handles.toolbox.tropicalcyclone.trackB(k,1:4)=tc.b(it,:);
-        end
-        
-        if isfield(tc,'r34')
-            handles.toolbox.tropicalcyclone.trackR35(k,1)=tc.r34(it,1);
-            handles.toolbox.tropicalcyclone.trackR35(k,2)=tc.r34(it,2);
-            handles.toolbox.tropicalcyclone.trackR35(k,3)=tc.r34(it,3);
-            handles.toolbox.tropicalcyclone.trackR35(k,4)=tc.r34(it,4);
-        elseif isfield(tc,'r35')
-            %  See ddb_readGenericTrackFile.m
-            handles.toolbox.tropicalcyclone.trackR35(k,1)=tc.r35(it,1);
-            handles.toolbox.tropicalcyclone.trackR35(k,2)=tc.r35(it,2);
-            handles.toolbox.tropicalcyclone.trackR35(k,3)=tc.r35(it,3);
-            handles.toolbox.tropicalcyclone.trackR35(k,4)=tc.r35(it,4);
-        end
-        
-        if isfield(tc,'r50')
-            handles.toolbox.tropicalcyclone.trackR50(k,1)=tc.r50(it,1);
-            handles.toolbox.tropicalcyclone.trackR50(k,2)=tc.r50(it,2);
-            handles.toolbox.tropicalcyclone.trackR50(k,3)=tc.r50(it,3);
-            handles.toolbox.tropicalcyclone.trackR50(k,4)=tc.r50(it,4);
-        end
-        
-        if isfield(tc,'r64')
-            handles.toolbox.tropicalcyclone.trackR65(k,1)=tc.r64(it,1);
-            handles.toolbox.tropicalcyclone.trackR65(k,2)=tc.r64(it,2);
-            handles.toolbox.tropicalcyclone.trackR65(k,3)=tc.r64(it,3);
-            handles.toolbox.tropicalcyclone.trackR65(k,4)=tc.r64(it,4);
-        elseif isfield(tc, 'r65')
-            %  See ddb_readGenericTrackFile.m
-            handles.toolbox.tropicalcyclone.trackR65(k,1)=tc.r65(it,1);
-            handles.toolbox.tropicalcyclone.trackR65(k,2)=tc.r65(it,2);
-            handles.toolbox.tropicalcyclone.trackR65(k,3)=tc.r65(it,3);
-            handles.toolbox.tropicalcyclone.trackR65(k,4)=tc.r65(it,4);
-        end
-        
-        if isfield(tc,'r100')
-            handles.toolbox.tropicalcyclone.trackR100(k,1)=tc.r100(it,1);
-            handles.toolbox.tropicalcyclone.trackR100(k,2)=tc.r100(it,2);
-            handles.toolbox.tropicalcyclone.trackR100(k,3)=tc.r100(it,3);
-            handles.toolbox.tropicalcyclone.trackR100(k,4)=tc.r100(it,4);
-        end
-        
-        %     end
+    track=ddb_TropicalCyclone_set_dummy_track_values(nt);
+
+    handles.toolbox.tropicalcyclone.cyclonename=tc.name;
+
+    % Copy values from tc structure to track structure
+    fldnames=fieldnames(tc);
+    for ifld=1:length(fldnames)
+        track.(fldnames{ifld})=tc.(fldnames{ifld});
     end
+    handles.toolbox.tropicalcyclone.track=track;
     
-    if k>0
+    % Ensemble parameters
+    handles.toolbox.tropicalcyclone.ensemble.t0=tc.time(1);
+    handles.toolbox.tropicalcyclone.ensemble.length=tc.time(end)-tc.time(1);
+    
+%     k=0;
+%     for it=1:nt
+%         
+%         k=k+1;
+%         
+%         handles.toolbox.tropicalcyclone.track.time=tc.time;
+%         handles.toolbox.tropicalcyclone.track.x=tc.lon;
+%         handles.toolbox.tropicalcyclone.track.y=tc.lat;
+%         if isfield(tc,'vmax')
+%             handles.toolbox.tropicalcyclone.track.vmax=tc.vmax;
+%         end
+%         if isfield(tc,'p')
+% %             if (itype == 0)
+% %                 %  Modified to use a better value for background atm.
+% %                 %  pressure (RSL, 16 Dec 2011)
+% %                 %handles.toolbox.tropicalcyclone.trackPDrop(k,1:4)=[101200 101200 101200 101200] - tc.p(it,:);
+% %                 handles.toolbox.tropicalcyclone.trackPDrop(k,1:4)=[bg_press_Pa bg_press_Pa bg_press_Pa bg_press_Pa] - tc.p(it,:);
+% %             else
+% %                 %  JTWC, NHC current warning files: pressure drop is
+% %                 %  calculated by the parsing script(s).
+%                 handles.toolbox.tropicalcyclone.track.pc = tc.p;
+% %             end
+%         end
+%         if isfield(tc,'pc')
+% %             if (itype == 0)
+% %                 %  Modified to use a better value for background atm.
+% %                 %  pressure (RSL, 16 Dec 2011)
+% %                 %handles.toolbox.tropicalcyclone.trackPDrop(k,1:4)=[101200 101200 101200 101200] - tc.p(it,:);
+% %                 handles.toolbox.tropicalcyclone.trackPDrop(k,1:4)=[bg_press_Pa bg_press_Pa bg_press_Pa bg_press_Pa] - tc.pc(it,:);
+% %             else
+% %                 %  JTWC, NHC current warning files: pressure drop is
+% %                 %  calculated by the parsing script(s).
+%                 handles.toolbox.tropicalcyclone.track.pc = tc.pc;
+% %             end
+%         end
+%         if isfield(tc,'rmax')
+%             handles.toolbox.tropicalcyclone.track.rmax=tc.rmax;
+%         end        
+%         if isfield(tc,'r34')
+%             handles.toolbox.tropicalcyclone.track.r35ne=tc.r34(:,1);
+%             handles.toolbox.tropicalcyclone.track.r35se=tc.r34(:,2);
+%             handles.toolbox.tropicalcyclone.track.r35sw=tc.r34(:,3);
+%             handles.toolbox.tropicalcyclone.track.r35nw=tc.r34(:,4);
+%         elseif isfield(tc,'r35')
+%             %  See ddb_readGenericTrackFile.m
+%             handles.toolbox.tropicalcyclone.trackR35(k,1)=tc.r35(it,1);
+%             handles.toolbox.tropicalcyclone.trackR35(k,2)=tc.r35(it,2);
+%             handles.toolbox.tropicalcyclone.trackR35(k,3)=tc.r35(it,3);
+%             handles.toolbox.tropicalcyclone.trackR35(k,4)=tc.r35(it,4);
+%         end
+%         
+%         if isfield(tc,'r50')
+%             handles.toolbox.tropicalcyclone.trackR50(k,1)=tc.r50(it,1);
+%             handles.toolbox.tropicalcyclone.trackR50(k,2)=tc.r50(it,2);
+%             handles.toolbox.tropicalcyclone.trackR50(k,3)=tc.r50(it,3);
+%             handles.toolbox.tropicalcyclone.trackR50(k,4)=tc.r50(it,4);
+%         end
+%         
+%         if isfield(tc,'r64')
+%             handles.toolbox.tropicalcyclone.trackR65(k,1)=tc.r64(it,1);
+%             handles.toolbox.tropicalcyclone.trackR65(k,2)=tc.r64(it,2);
+%             handles.toolbox.tropicalcyclone.trackR65(k,3)=tc.r64(it,3);
+%             handles.toolbox.tropicalcyclone.trackR65(k,4)=tc.r64(it,4);
+%         elseif isfield(tc, 'r65')
+%             %  See ddb_readGenericTrackFile.m
+%             handles.toolbox.tropicalcyclone.trackR65(k,1)=tc.r65(it,1);
+%             handles.toolbox.tropicalcyclone.trackR65(k,2)=tc.r65(it,2);
+%             handles.toolbox.tropicalcyclone.trackR65(k,3)=tc.r65(it,3);
+%             handles.toolbox.tropicalcyclone.trackR65(k,4)=tc.r65(it,4);
+%         end
+%         
+%         if isfield(tc,'r100')
+%             handles.toolbox.tropicalcyclone.trackR100(k,1)=tc.r100(it,1);
+%             handles.toolbox.tropicalcyclone.trackR100(k,2)=tc.r100(it,2);
+%             handles.toolbox.tropicalcyclone.trackR100(k,3)=tc.r100(it,3);
+%             handles.toolbox.tropicalcyclone.trackR100(k,4)=tc.r100(it,4);
+%         end
+%         
+%         %     end
+%     end
+    
+    if nt>1
         
-        handles.toolbox.tropicalcyclone.nrTrackPoints=k;
+        handles.toolbox.tropicalcyclone.nrTrackPoints=nt;
         handles.toolbox.tropicalcyclone.name=tc.name;
-        
-        handles=ddb_setTrackTableValues(handles);
-        
-        handles=deleteCycloneTrack(handles);
+
+        % Delete existing cyclone track
+        handles=ddb_TropicalCyclone_delete_cyclone_track(handles);
         
         setHandles(handles);
         
-        ddb_plotCycloneTrack;
+        % Plot new cyclone track
+        ddb_TropicalCyclone_plot_cyclone_track;
         
     end
     
@@ -664,16 +686,108 @@ if filename==0
     return
 else
     try
-        wb = waitbox('Generating Spiderweb Wind Field ...');%pause(0.1);
-
-        create_spw_file(filename, handles.toolbox.tropicalcyclone, handles.toolbox.tropicalcyclone.dataDir);
+        wb = waitbox('Generating Spiderweb Wind Field ...');
         
+        wesopt='matlab';
+
         [path,name,ext]=fileparts(filename);
+        
         model=handles.activeModel.name;
-        handles.model.(model).domain(ad).spwFile=[name '.spw'];
-        handles.model.(model).domain(ad).wind=1;
-        handles.model.(model).domain(ad).windType='spiderweb';
-        handles.model.(model).domain(ad).airOut=1;
+        
+        switch lower(model)
+            case{'delft3dflow'}
+                reftime=handles.model.(model).domain(ad).itDate;
+            otherwise
+                reftime=floor(handles.toolbox.tropicalcyclone.trackT(1));
+        end
+        
+        switch lower(wesopt)
+            case{'exe'}
+                
+                create_spw_file(filename, handles.toolbox.tropicalcyclone, handles.toolbox.tropicalcyclone.dataDir);
+                
+            case{'matlab'}
+                
+                inp=handles.toolbox.tropicalcyclone;
+                
+                % Create SPW file
+                
+                % First spw grid stuff
+                spw.radius=inp.radius*1000; % km
+                spw.nr_directional_bins=inp.nrDirectionalBins;
+                spw.nr_radial_bins=inp.nrRadialBins;
+                spw.reference_time=reftime;
+                spw.cs.name='WGS 84';
+                spw.cs.type='geographic';
+                spw.cut_off_speed=35;
+                spw.phi_spiral=inp.phi_spiral;
+                spw.rhoa=1.05;
+                spw.wind_conversion_factor=inp.windconversionfactor;
+                spw.wind_profile=inp.wind_profile;
+                spw.wind_pressure_relation=inp.wind_pressure_relation;
+                spw.rmax_relation=inp.rmax_relation;
+                spw.asymmetry_option='schwerdt1979';
+                spw.cut_off_speed=30/1.85;  
+                spw.pn=inp.pn;
+
+                % And now the actual tropical cyclone data                
+                tc.radius_velocity=[34 50 64 100];
+                tc.wind_speed_unit='kts';
+                tc.radius_unit='NM';
+                tc.cs.name='WGS 84';
+                tc.cs.type='geographic';
+
+                tc.track=handles.toolbox.tropicalcyclone.track;
+                
+                % Run WES
+                tc=wes3(tc,'tcstructure',spw,[name '.spw']);
+ 
+                % Create polygon file for visualization
+                fid=fopen([name '.pol'],'wt');
+                fprintf(fid,'%s\n',name);
+                fprintf(fid,'%i %i\n',handles.toolbox.tropicalcyclone.nrTrackPoints,2);
+                for j=1:handles.toolbox.tropicalcyclone.nrTrackPoints
+                    fprintf(fid,'%6.3f %6.3f\n',handles.toolbox.tropicalcyclone.track.x(j),handles.toolbox.tropicalcyclone.track.y(j));
+                end
+                fclose(fid);
+                
+        end
+        
+        switch lower(model)
+            case{'delft3dflow'}
+                % Adjust Delft3D-FLOW model inputs
+                handles.model.(model).domain(ad).spwFile=[name '.spw'];
+                handles.model.(model).domain(ad).wind=1;
+                handles.model.(model).domain(ad).windType='spiderweb';
+                handles.model.(model).domain(ad).airOut=1;
+                if handles.model.(model).domain(ad).pAvBnd<0
+                    ButtonName = questdlg('Apply correction to account for inverse barometer effect at open boundaries?','','No', 'Yes', 'Yes');
+                    switch ButtonName,
+                        case 'Yes'                            
+                            handles.model.(model).domain(ad).pAvBnd=inp.pn*100;
+                    end
+                end
+            case{'ww3'}
+                spwfile=[name '.spw'];
+                meteodir='';
+                meteoname='';
+                parameter='';
+                rundir='.\';
+                fname='ww3.wnd';
+                nx=handles.model.(model).domain.nx;
+                ny=handles.model.(model).domain.ny;
+                dx=handles.model.(model).domain.dx;
+                dy=handles.model.(model).domain.dy;
+                xlim(1)=handles.model.(model).domain.x0;
+                xlim(2)=xlim(1)+(nx-1)*dx;
+                ylim(1)=handles.model.(model).domain.y0;
+                ylim(2)=ylim(1)+(ny-1)*dy;
+                tstart=tc.track(1).time;
+                tstop=tc.track(end).time;
+                dt=60;                
+                write_meteo_file(meteodir, meteoname, parameter, rundir, fname, xlim, ylim, tstart, tstop, 'model',model,'spwfile',spwfile,'dx',dx,'dy',dy,'dt',dt);                
+                write_meteo_file(meteodir, meteoname, {'u','v','p'}, rundir, [name '.mat'], xlim, ylim, tstart, tstop, 'model','mat','spwfile',spwfile,'dx',dx,'dy',dy,'dt',dt);                
+        end
         
         close(wb);
         setHandles(handles);
@@ -682,13 +796,6 @@ else
         ddb_giveWarning('text','An error occured while generating spiderweb wind file');
     end
 end
-
-%%
-function handles=deleteCycloneTrack(handles)
-try
-    delete(handles.toolbox.tropicalcyclone.trackhandle);
-end
-handles.toolbox.tropicalcyclone.trackhandle=[];
 
 %%
 function storm_name = get_user_storm_name(iflag,current_name,region_code,tc_dir)
@@ -814,6 +921,7 @@ end
 
 return;
 
+%%
 function tc_basin_str = get_basin_option(basin_list)
 %*******************************************************************************
 %

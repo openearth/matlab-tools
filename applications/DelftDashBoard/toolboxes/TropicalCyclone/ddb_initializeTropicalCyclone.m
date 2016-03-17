@@ -68,6 +68,8 @@ if ~isdir(handles.toolbox.tropicalcyclone.dataDir)
     mkdir(handles.toolbox.tropicalcyclone.dataDir);
 end
 
+handles.toolbox.tropicalcyclone.drawingtrack=0;
+
 handles.toolbox.tropicalcyclone.nrTrackPoints   = 0;
 handles.toolbox.tropicalcyclone.initSpeed = 0;
 handles.toolbox.tropicalcyclone.initDir   = 0;
@@ -77,41 +79,39 @@ handles.toolbox.tropicalcyclone.timeStep=6;
 handles.toolbox.tropicalcyclone.quadrantOption='uniform';
 handles.toolbox.tropicalcyclone.quadrant=1;
 
-handles.toolbox.tropicalcyclone.vMax=120;
-handles.toolbox.tropicalcyclone.rMax=20;
-handles.toolbox.tropicalcyclone.pDrop=8000;
-handles.toolbox.tropicalcyclone.parA=1;
-handles.toolbox.tropicalcyclone.parB=1;
-handles.toolbox.tropicalcyclone.r100=0;
-handles.toolbox.tropicalcyclone.r65=0;
-handles.toolbox.tropicalcyclone.r50=0;
-handles.toolbox.tropicalcyclone.r35=0;
+handles.toolbox.tropicalcyclone.vmax=120;
+handles.toolbox.tropicalcyclone.rmax=-999;
+handles.toolbox.tropicalcyclone.pc=-999;
+handles.toolbox.tropicalcyclone.r100=-999;
+handles.toolbox.tropicalcyclone.r65=-999;
+handles.toolbox.tropicalcyclone.r50=-999;
+handles.toolbox.tropicalcyclone.r35=-999;
 
 % Track
-handles.toolbox.tropicalcyclone.trackT=floor(now);
-handles.toolbox.tropicalcyclone.trackX=0;
-handles.toolbox.tropicalcyclone.trackY=0;
-handles.toolbox.tropicalcyclone.trackVMax=0;
-handles.toolbox.tropicalcyclone.trackPDrop=0;
-handles.toolbox.tropicalcyclone.trackRMax=0;
-handles.toolbox.tropicalcyclone.trackR100=0;
-handles.toolbox.tropicalcyclone.trackR65=0;
-handles.toolbox.tropicalcyclone.trackR50=0;
-handles.toolbox.tropicalcyclone.trackR35=0;
-handles.toolbox.tropicalcyclone.trackA=0;
-handles.toolbox.tropicalcyclone.trackB=0;
+handles.toolbox.tropicalcyclone.track.time=floor(now);
+handles.toolbox.tropicalcyclone.track.x=0;
+handles.toolbox.tropicalcyclone.track.y=0;
+handles.toolbox.tropicalcyclone.track.vmax=0;
+handles.toolbox.tropicalcyclone.track.pc=0;
+handles.toolbox.tropicalcyclone.track.rmax=0;
+handles.toolbox.tropicalcyclone.track.r35ne=-999;
+handles.toolbox.tropicalcyclone.track.r35se=-999;
+handles.toolbox.tropicalcyclone.track.r35sw=-999;
+handles.toolbox.tropicalcyclone.track.r35nw=-999;
+handles.toolbox.tropicalcyclone.track.r50ne=-999;
+handles.toolbox.tropicalcyclone.track.r50se=-999;
+handles.toolbox.tropicalcyclone.track.r50sw=-999;
+handles.toolbox.tropicalcyclone.track.r50nw=-999;
+handles.toolbox.tropicalcyclone.track.r65ne=-999;
+handles.toolbox.tropicalcyclone.track.r65se=-999;
+handles.toolbox.tropicalcyclone.track.r65sw=-999;
+handles.toolbox.tropicalcyclone.track.r65nw=-999;
+handles.toolbox.tropicalcyclone.track.r100ne=-999;
+handles.toolbox.tropicalcyclone.track.r100se=-999;
+handles.toolbox.tropicalcyclone.track.r100sw=-999;
+handles.toolbox.tropicalcyclone.track.r100nw=-999;
 
-% Table
-handles.toolbox.tropicalcyclone.tableVMax=0;
-handles.toolbox.tropicalcyclone.tablePDrop=0;
-handles.toolbox.tropicalcyclone.tableRMax=0;
-handles.toolbox.tropicalcyclone.tableR100=0;
-handles.toolbox.tropicalcyclone.tableR65=0;
-handles.toolbox.tropicalcyclone.tableR50=0;
-handles.toolbox.tropicalcyclone.tableR35=0;
-handles.toolbox.tropicalcyclone.tableA=0;
-handles.toolbox.tropicalcyclone.tableB=0;
-
+%
 handles.toolbox.tropicalcyclone.showDetails=1;
 handles.toolbox.tropicalcyclone.cyclonename='TC Deepak';
 handles.toolbox.tropicalcyclone.radius=1000;
@@ -119,6 +119,8 @@ handles.toolbox.tropicalcyclone.nrRadialBins=500;
 handles.toolbox.tropicalcyclone.nrDirectionalBins=36;
 handles.toolbox.tropicalcyclone.method=4;
 handles.toolbox.tropicalcyclone.windconversionfactor=1.0;
+handles.toolbox.tropicalcyclone.pn=1012;
+handles.toolbox.tropicalcyclone.phi_spiral=20;
 
 handles.toolbox.tropicalcyclone.deleteTemporaryFiles=1;
 
@@ -158,11 +160,33 @@ handles.toolbox.tropicalcyclone.tcBasinsDir = [fileparts(fileparts(handles.setti
 handles.toolbox.tropicalcyclone.tcBasinsFiles = dir([handles.toolbox.tropicalcyclone.tcBasinsDir filesep '*.xy']);
 
 handles.toolbox.tropicalcyclone.importFormat='JTWCCurrentTrack';
-handles.toolbox.tropicalcyclone.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30'};
-handles.toolbox.tropicalcyclone.importFormatNames={'JTWC Current Track...','NHC Current Track...','JTWC Best Track','Unisys Best Track','JMV 3.0'};
+handles.toolbox.tropicalcyclone.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30','hurdat2besttrack','pagasa'};
+handles.toolbox.tropicalcyclone.importFormatNames={'JTWC Current Track','NHC Current Track','JTWC Best Track','Unisys Best Track','JMV 3.0','HURDAT2','PAGASA'};
 
 handles.toolbox.tropicalcyclone.downloadLocation='JTWCCurrentTracks';
 handles.toolbox.tropicalcyclone.downloadLocations={'JTWCCurrentTracks','NHCCurrentTracks','UnisysBestTracks','JTWCBestTracks','JTWCCurrentCyclones'};
-handles.toolbox.tropicalcyclone.downloadLocationNames={'JTWC Current Cyclones...','NHC Current Hurricanes...','UNISYS Track Archive','JTWC Track Archive','JTWC Current Cyclones (Web)'};
+handles.toolbox.tropicalcyclone.downloadLocationNames={'JTWC Current Cyclones','NHC Current Hurricanes','UNISYS Track Archive','JTWC Track Archive','JTWC Current Cyclones (Web)'};
 
+handles.toolbox.tropicalcyclone.wind_profile='holland2010';
+handles.toolbox.tropicalcyclone.wind_profile_options={'holland1980','holland2010','fujita1952'};
+handles.toolbox.tropicalcyclone.wind_profile_option_names={'Holland (1980)','Holland (2010)','Fujita (1952)'};
+
+handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';
+handles.toolbox.tropicalcyclone.wind_pressure_relation_options={'holland2008','kz2007','vatvani'};
+handles.toolbox.tropicalcyclone.wind_pressure_relation_options_names={'Holland (2008)','Knaff & Zehr (2007)','Vatvani'};
+
+handles.toolbox.tropicalcyclone.rmax_relation='gross2004';
+handles.toolbox.tropicalcyclone.rmax_relation_options={'gross2004','25nm','pagasajma'};
+handles.toolbox.tropicalcyclone.rmax_relation_option_names={'Gross (2004)','25NM','Pagasa-JMA'};
+
+handles.toolbox.tropicalcyclone.ensemble.t0=datenum(2008,9,11,0,0,0);
+handles.toolbox.tropicalcyclone.ensemble.length=3; % days
+handles.toolbox.tropicalcyclone.ensemble.number_of_realizations=1000;
+handles.toolbox.tropicalcyclone.ensemble.sigma.ate=40000;
+handles.toolbox.tropicalcyclone.ensemble.sigma.cte=40000;
+handles.toolbox.tropicalcyclone.ensemble.sigma.ve=10;
+
+handles.toolbox.tropicalcyclone.ensemble.ncross=7;
+handles.toolbox.tropicalcyclone.ensemble.nspd=3;
+handles.toolbox.tropicalcyclone.ensemble.nvmax=3;
 

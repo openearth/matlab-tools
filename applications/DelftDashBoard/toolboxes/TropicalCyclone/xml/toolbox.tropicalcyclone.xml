@@ -8,14 +8,26 @@
     <style>tabpanel</style>
     <tab>
       <tabstring>Parameters</tabstring>
-      <callback>ddb_TropicalCycloneToolbox_setParameters</callback>
+      <callback>ddb_TropicalCyclone_set_parameters</callback>
       <formodel>delft3dflow</formodel>
       <element>toolbox.tropicalcyclone.parameters.xml</element>
     </tab>
     <tab>
       <tabstring>Track</tabstring>
-      <callback>ddb_TropicalCycloneToolbox_editTrackTable</callback>
+      <callback>ddb_TropicalCyclone_edit_track_table</callback>
       <formodel>delft3dflow</formodel>
+      <element>toolbox.tropicalcyclone.tracktable.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Parameters</tabstring>
+      <callback>ddb_TropicalCyclone_set_parameters</callback>
+      <formodel>ww3</formodel>
+      <element>toolbox.tropicalcyclone.parameters.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Track</tabstring>
+      <callback>ddb_TropicalCyclone_edit_track_table</callback>
+      <formodel>ww3</formodel>
       <element>toolbox.tropicalcyclone.tracktable.xml</element>
     </tab>
     <tab>
@@ -41,12 +53,6 @@
       <callback>ddb_dummyTabCallback</callback>
       <formodel>fast</formodel>
       <element>toolbox.tropicalcyclone.fast.xml</element>
-    </tab>    
-    <tab>
-      <tabstring>Tropical Cyclone</tabstring>
-      <callback>ddb_dummyTabCallback</callback>
-      <formodel>ww3</formodel>
-      <element>toolbox.tropicalcyclone.ww3.xml</element>
     </tab>    
   </element>
 </root>

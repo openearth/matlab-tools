@@ -1,19 +1,19 @@
-function ddb_plotCycloneTrack
-%DDB_PLOTCYCLONETRACK  One line description goes here.
+function ddb_TropicalCycloneToolbox_editTrackTable(varargin)
+%DDB_TROPICALCYCLONETOOLBOX_EDITTRACKTABLE  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   ddb_plotCycloneTrack
+%   ddb_TropicalCycloneToolbox_editTrackTable(varargin)
 %
 %   Input:
-
+%   varargin =
 %
 %
 %
 %
 %   Example
-%   ddb_plotCycloneTrack
+%   ddb_TropicalCycloneToolbox_editTrackTable
 %
 %   See also
 
@@ -52,22 +52,46 @@ function ddb_plotCycloneTrack
 % Created: 02 Dec 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: ddb_TropicalCycloneToolbox_editTrackTable.m 10436 2014-03-24 22:26:17Z ormondt $
+% $Date: 2014-03-24 23:26:17 +0100 (Mon, 24 Mar 2014) $
+% $Author: ormondt $
+% $Revision: 10436 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/toolboxes/TropicalCyclone/ddb_TropicalCycloneToolbox_editTrackTable.m $
 % $Keywords: $
 
 %%
-handles=getHandles;
-
-for i=1:handles.toolbox.tropicalcyclone.nrTrackPoints
-    txt{i}=datestr(handles.toolbox.tropicalcyclone.trackT(i),'dd-mmm-yyyy HH:MM');
+if isempty(varargin)
+    % New tab selected
+    ddb_zoomOff;
+    ddb_refreshScreen;
+    ddb_plotTropicalCyclone('activate');
+    h=findobj(gca,'Tag','rawensemble');
+    if ~isempty(h)
+        set(h,'Visible','off');
+    end
+    h=findobj(gca,'Tag','finalensemble');
+    if ~isempty(h)
+        set(h,'Visible','off');
+    end
+    gui_updateActiveTab;
+    handles=getHandles;
+    if strcmpi(handles.screenParameters.coordinateSystem.type,'cartesian')
+        ddb_giveWarning('text','The Tropical Cyclone Toolbox currently only works for geographic coordinate systems!');
+    end
+else
+    %Options selected
+    opt=lower(varargin{1});
+    switch opt
+        case{'edittracktable'}
+            editTrackTable;
+    end
 end
 
-handles.toolbox.tropicalcyclone.trackhandle=gui_polyline('plot','tag','cyclonetrack','marker','o', ...
-    'changecallback',@ddb_changeCycloneTrack,'rightclickcallback',@ddb_selectCyclonePoint, ...
-    'closed',0,'x',handles.toolbox.tropicalcyclone.trackX,'y',handles.toolbox.tropicalcyclone.trackY,'text',txt);
+%%
+function editTrackTable
 
+handles=getHandles;
+handles=ddb_TropicalCyclone_delete_cyclone_track(handles);
 setHandles(handles);
+
+ddb_TropicalCyclone_plot_cyclone_track;

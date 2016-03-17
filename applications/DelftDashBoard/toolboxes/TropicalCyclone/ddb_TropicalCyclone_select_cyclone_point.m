@@ -1,19 +1,19 @@
-function handles = ddb_setTrackTableValues(handles)
-%DDB_SETTRACKTABLEVALUES  One line description goes here.
+function ddb_selectCyclonePoint(h,x,y,nr)
+%DDB_SELECTCYCLONEPOINT  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   handles = ddb_setTrackTableValues(handles)
+%   ddb_selectCyclonePoint(h)
 %
 %   Input:
-%   handles =
+%   h =
 %
-%   Output:
-%   handles =
+%
+%
 %
 %   Example
-%   ddb_setTrackTableValues
+%   ddb_selectCyclonePoint
 %
 %   See also
 
@@ -52,22 +52,24 @@ function handles = ddb_setTrackTableValues(handles)
 % Created: 02 Dec 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: ddb_selectCyclonePoint.m 10499 2014-04-08 10:02:33Z ormondt $
+% $Date: 2014-04-08 12:02:33 +0200 (Tue, 08 Apr 2014) $
+% $Author: ormondt $
+% $Revision: 10499 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/toolboxes/TropicalCyclone/ddb_selectCyclonePoint.m $
 % $Keywords: $
 
-%%
-iq=handles.toolbox.tropicalcyclone.quadrant;
-handles.toolbox.tropicalcyclone.tableVMax=squeeze(handles.toolbox.tropicalcyclone.trackVMax(:,iq));
-handles.toolbox.tropicalcyclone.tableRMax=squeeze(handles.toolbox.tropicalcyclone.trackRMax(:,iq));
-handles.toolbox.tropicalcyclone.tablePDrop=squeeze(handles.toolbox.tropicalcyclone.trackPDrop(:,iq));
-handles.toolbox.tropicalcyclone.tableR100=squeeze(handles.toolbox.tropicalcyclone.trackR100(:,iq));
-handles.toolbox.tropicalcyclone.tableR65=squeeze(handles.toolbox.tropicalcyclone.trackR65(:,iq));
-handles.toolbox.tropicalcyclone.tableR50=squeeze(handles.toolbox.tropicalcyclone.trackR50(:,iq));
-handles.toolbox.tropicalcyclone.tableR35=squeeze(handles.toolbox.tropicalcyclone.trackR35(:,iq));
-handles.toolbox.tropicalcyclone.tableA=squeeze(handles.toolbox.tropicalcyclone.trackA(:,iq));
-handles.toolbox.tropicalcyclone.tableB=squeeze(handles.toolbox.tropicalcyclone.trackB(:,iq));
+%% DDB - Call GUI to change values in cyclone track file for individual
+% points. Called when double-clicking on cyclone track.
+handles=getHandles;
 
+handles.toolbox.tropicalcyclone.activeCyclonePoint=nr;
+
+xmldir=handles.toolbox.tropicalcyclone.xmlDir;
+xmlfile='toolbox.tropicalcyclone.pointtrackparameters.xml';
+h=handles;
+[h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile);
+if ok
+    handles=h;
+    setHandles(handles);
+end

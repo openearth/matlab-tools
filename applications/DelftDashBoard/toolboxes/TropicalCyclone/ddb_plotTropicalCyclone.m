@@ -67,13 +67,40 @@ switch lower(option)
         if ~isempty(h)
             delete(h);
         end
+        h=findobj(gca,'Tag','rawensemble');
+        if ~isempty(h)
+            delete(h);
+        end
+        h=findobj(gca,'Tag','finalensemble');
+        if ~isempty(h)
+            delete(h);
+        end
     case{'activate'}
         h=findobj(gca,'Tag','cyclonetrack');
+        if ~isempty(h)
+            set(h,'Visible','on');
+            try
+            uistack(h,'Top');
+            end
+        end
+        h=findobj(gca,'Tag','rawensemble');
+        if ~isempty(h)
+            set(h,'Visible','on');
+        end
+        h=findobj(gca,'Tag','finalensemble');
         if ~isempty(h)
             set(h,'Visible','on');
         end
     case{'deactivate'}
         h=findobj(gca,'Tag','cyclonetrack');
+        if ~isempty(h)
+            set(h,'Visible','off');
+        end
+        h=findobj(gca,'Tag','rawensemble');
+        if ~isempty(h)
+            set(h,'Visible','off');
+        end
+        h=findobj(gca,'Tag','finalensemble');
         if ~isempty(h)
             set(h,'Visible','off');
         end

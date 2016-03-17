@@ -1,10 +1,10 @@
-function ddb_changeCycloneTrack(varargin)
-%DDB_CHANGECYCLONETRACK  One line description goes here.
+function ddb_TropicalCyclone_change_cyclone_track(varargin)
+%ddb_TropicalCyclone_change_cyclone_track  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   ddb_changeCycloneTrack(x, y, varargin)
+%   ddb_TropicalCyclone_change_cyclone_track(x, y, varargin)
 %
 %   Input:
 %   x        =
@@ -15,7 +15,7 @@ function ddb_changeCycloneTrack(varargin)
 %
 %
 %   Example
-%   ddb_changeCycloneTrack
+%   ddb_TropicalCyclone_change_cyclone_track
 %
 %   See also
 
@@ -54,16 +54,18 @@ function ddb_changeCycloneTrack(varargin)
 % Created: 02 Dec 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: ddb_TropicalCyclone_change_cyclone_track.m 10447 2014-03-26 07:06:47Z ormondt $
+% $Date: 2014-03-26 08:06:47 +0100 (Wed, 26 Mar 2014) $
+% $Author: ormondt $
+% $Revision: 10447 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/toolboxes/TropicalCyclone/ddb_TropicalCyclone_change_cyclone_track.m $
 % $Keywords: $
 
 %%
 
 handles=getHandles;
+
+inp=handles.toolbox.tropicalcyclone;
 
 h=varargin{1};
 x=varargin{2};
@@ -76,49 +78,55 @@ end
 
 setInstructions({'','Left-click and drag track vertices to change track position','Right-click track vertices to change cyclone parameters'});
 
-
-handles.toolbox.tropicalcyclone.nrTrackPoints=length(x);
-handles.toolbox.tropicalcyclone.trackX=x;
-handles.toolbox.tropicalcyclone.trackY=y;
+inp.nrTrackPoints=length(x);
+inp.track.x=x;
+inp.track.y=y;
 
 if isempty(nr)
 
-    % New track
+    % This is a new track
     
     % Delete existing track
     try
         delete(h);
     end
-    handles.toolbox.tropicalcyclone.trackhandle=[];
+    inp.trackhandle=[];
 
-    handles.toolbox.tropicalcyclone.trackT=handles.toolbox.tropicalcyclone.startTime:handles.toolbox.tropicalcyclone.timeStep/24:handles.toolbox.tropicalcyclone.startTime+(length(x)-1)*handles.toolbox.tropicalcyclone.timeStep/24;
-    zers=zeros(length(x),4);
-    handles.toolbox.tropicalcyclone.trackVMax=zers+handles.toolbox.tropicalcyclone.vMax;
-    handles.toolbox.tropicalcyclone.trackPDrop=zers+handles.toolbox.tropicalcyclone.pDrop;
-    handles.toolbox.tropicalcyclone.trackRMax=zers+handles.toolbox.tropicalcyclone.rMax;
-    handles.toolbox.tropicalcyclone.trackR100=zers+handles.toolbox.tropicalcyclone.r100;
-    handles.toolbox.tropicalcyclone.trackR65=zers+handles.toolbox.tropicalcyclone.r65;
-    handles.toolbox.tropicalcyclone.trackR50=zers+handles.toolbox.tropicalcyclone.r50;
-    handles.toolbox.tropicalcyclone.trackR35=zers+handles.toolbox.tropicalcyclone.r35;
-    handles.toolbox.tropicalcyclone.trackA=zers+handles.toolbox.tropicalcyclone.parA;
-    handles.toolbox.tropicalcyclone.trackB=zers+handles.toolbox.tropicalcyclone.parB;
+    nt=length(x);
     
-    handles=ddb_setTrackTableValues(handles);
+    inp.track=ddb_TropicalCyclone_set_dummy_track_values(nt);
+    
+    inp.track.time=inp.startTime:inp.timeStep/24:inp.startTime+(nt-1)*inp.timeStep/24;
+    
+    inp.track.x=x;
+    inp.track.y=y;
+    inp.track.vmax=zeros(nt,1)+inp.vmax;
+    inp.track.pc=zeros(nt,1)+inp.pc;
+    inp.track.rmax=zeros(nt,1)+inp.rmax;
+
+    % Ensemble parameters
+    inp.ensemble.t0=inp.track.time(1);
+    inp.ensemble.length=inp.track.time(end)-inp.track.time(1);
+    
+    inp.drawingtrack=0;
+
+    handles.toolbox.tropicalcyclone=inp;
     
     setHandles(handles);
     
-    ddb_plotCycloneTrack;
+    ddb_TropicalCyclone_plot_cyclone_track;
 
     model=handles.activeModel.name;
-    if handles.toolbox.tropicalcyclone.trackT(1)>handles.model.(model).domain(ad).startTime
+    if inp.track.time(1)>handles.model.(model).domain(ad).startTime
         ddb_giveWarning('text','Start time cyclone is greater than simulation start time!');
     end
     
-    if handles.toolbox.tropicalcyclone.trackT(end)<handles.model.(model).domain(ad).stopTime
+    if inp.track.time(end)<handles.model.(model).domain(ad).stopTime
         ddb_giveWarning('text','Stop time cyclone is smaller than simulation stop time!');
     end
 
 else
+    handles.toolbox.tropicalcyclone=inp;
     setHandles(handles);
 end
 
