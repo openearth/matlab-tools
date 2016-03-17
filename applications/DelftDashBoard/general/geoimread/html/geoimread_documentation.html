@@ -1,0 +1,256 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>geoimread</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-11-05"><meta name="DC.source" content="geoimread_documentation.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1><tt>geoimread</tt></h1><!--introduction--><p>This function reads a sub region of a geotiff or geojp2 image.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Examples</a></li><li><a href="#9">Returning data</a></li><li><a href="#13">Author Info</a></li></ul></div><h2>Syntax<a name="1"></a></h2><pre>A = geoimread(filename)
+A = geoimread(filename,xlim,ylim)
+A = geoimread(filename,latlim,lonlim)
+A = geoimread(...,buffer)
+[A,x,y,I] = geoimread(...)
+geoimread(...)</pre><h2>Description<a name="2"></a></h2><p><tt>A = geoimread(filename)</tt> returns the full image given by a <tt>filename</tt>. This syntax is equivalent to <tt>A = geotiffread(filename)</tt>.</p><p><tt>A = geoimread(filename,xlim,ylim)</tt> limits the region of the geotiff file to the limits given by <tt>xlim</tt> and <tt>ylim</tt>, which are map units (usually meters) relative to the data projection. For example, if the geotiff is projected in Texas Centric Mapping System/Lambert Conformal coordinates, <tt>xlim</tt> and <tt>ylim</tt> will have units of meters relative to the origin (100 W, 18 N). <tt>xlim</tt> and <tt>ylim</tt> can be multimensional, in which case the limits of the map will be taken as the limits of the limits of the distribution of all points in <tt>xlim</tt>, <tt>ylim</tt>.</p><p><tt>A = geoimread(filename,latlim,lonlim)</tt> if no values in <tt>xlim</tt>, <tt>ylim</tt> exceed normal values of latitudes and longitudes, <tt>geoimread</tt> assumes you've entered limits in geographic coordinates of degrees latitude and longitude. The first input is latitude, the second input is longitude (this order is switched from the original <tt>geoimread</tt> function.)</p><p><tt>A = geoimread(...,buffer)</tt> adds a buffer in map units (usually meters or feet) to the limits of the region of interest.  This may be useful if you want to load an image surrounding scattered lat/lon data.  If you'd like an extra 2 kilometers of image around your data, enter 2000 as the buffer.  If buffer is a two-element vector, the first element is applied to the left and right extents of the image, and the second element is applied to the top and bottom extents of the image.</p><p><tt>[A,x,y,I] = geoimread(...)</tt> also returns pixel center coordinates <tt>(x,y)</tt> of the output image and a geotiff info structure <tt>I</tt>. <tt>I</tt> is a useful input for <tt>projfwd</tt> and <tt>projinv</tt>.</p><p><tt>geoimread(...)</tt> without any outputs shows the output image <tt>A</tt> without loading any data into the workspace.</p><h2>Examples<a name="3"></a></h2><p>Start by using Matlab's example shown in the documentation for <tt>geotiffread</tt>:</p><pre class="codeinput">[A,R] = geotiffread(<span class="string">'boston.tif'</span>);
+mapshow(A,R)
+</pre><img vspace="5" hspace="5" src="geoimread_documentation_01.png" alt=""> <p>And you have some measurements corresponding to the following map x,y coordinates:</p><pre class="codeinput">mapx = [765884 766035 766963];
+mapy = [2959218 2957723 2958972];
+
+hold <span class="string">on</span>
+plot(mapx,mapy,<span class="string">'yp'</span>,<span class="string">'markersize'</span>,20,<span class="string">'linewidth'</span>,1,<span class="string">'markerfacecolor'</span>,<span class="string">'k'</span>)
+</pre><img vspace="5" hspace="5" src="geoimread_documentation_02.png" alt=""> <p>There's no sense in reading that whole boston.tif file if you're only interested in the top left corner of the image, so we use <tt>geoimread</tt> to read only the portion of the image bound by our data:</p><pre class="codeinput">close <span class="comment">% closes the previous figure</span>
+geoimread(<span class="string">'boston.tif'</span>,mapx,mapy)
+</pre><img vspace="5" hspace="5" src="geoimread_documentation_03.png" alt=""> <p>Above, <tt>geoimread</tt> has read and shown the part of Boston that is bound by our three data points, but sometimes we want context for our measurements.  Add a 500 foot buffer around the data points (note that units of the Boston map are given in feet):</p><pre class="codeinput">close
+geoimread(<span class="string">'boston.tif'</span>,mapx,mapy,500)
+hold <span class="string">on</span>;
+plot(mapx,mapy,<span class="string">'yp'</span>,<span class="string">'markersize'</span>,20,<span class="string">'linewidth'</span>,2,<span class="string">'markerfacecolor'</span>,<span class="string">'k'</span>)
+</pre><img vspace="5" hspace="5" src="geoimread_documentation_04.png" alt=""> <p>Similarly, you may want the buffer to be 1500 feet in the x direction and 500 feet in the y direction:</p><pre class="codeinput">close
+geoimread(<span class="string">'boston.tif'</span>,mapx,mapy,[1500 500])
+hold <span class="string">on</span>;
+plot(mapx,mapy,<span class="string">'yp'</span>,<span class="string">'markersize'</span>,20,<span class="string">'linewidth'</span>,2,<span class="string">'markerfacecolor'</span>,<span class="string">'k'</span>)
+</pre><img vspace="5" hspace="5" src="geoimread_documentation_05.png" alt=""> <p>It is possible that you don't have data in map x/y coordinates.  If you walk around Boston with a GPS device and take measurements, it's more likely that your data points are in lat/lon coordinates.  If that's the case, just enter lat/lons instead of x/y values:</p><pre class="codeinput">lat = [42.3675288 42.3634246 42.3668397];
+lon = [-71.0940009 -71.0934685 -71.0900125];
+
+close
+geoimread(<span class="string">'boston.tif'</span>,lat,lon,[1500 500]);
+</pre><img vspace="5" hspace="5" src="geoimread_documentation_06.png" alt=""> <h2>Returning data<a name="9"></a></h2><p>To get data from <tt>geoimread</tt> without showing it in a figure, simply request outputs like this:</p><pre class="codeinput">[A,x,y,I] = geoimread(<span class="string">'boston.tif'</span>,lat,lon,[1500 500]);
+</pre><p>To show that data as an image, try this:</p><pre class="codeinput">close
+imshow(A,<span class="string">'XData'</span>,x,<span class="string">'YData'</span>,y)
+axis <span class="string">xy</span>
+</pre><img vspace="5" hspace="5" src="geoimread_documentation_07.png" alt=""> <p>To show the image in map coordinates, do this:</p><pre class="codeinput">close
+mapshow(A,I.RefMatrix)
+axis <span class="string">tight</span>
+xlabel(<span class="string">'eastings (ft)'</span>)
+ylabel(<span class="string">'northings (ft)'</span>)
+</pre><img vspace="5" hspace="5" src="geoimread_documentation_08.png" alt=""> <p>To show the data in georeferenced coordinates, do this:</p><pre class="codeinput">[xgrid,ygrid] = meshgrid(x,y);
+[latgrid,longrid] = projinv(I,xgrid,ygrid);
+
+close
+usamap([min(latgrid(:)) max(latgrid(:))],[min(longrid(:)) max(longrid(:))])
+geoshow(latgrid,longrid,A)
+</pre><img vspace="5" hspace="5" src="geoimread_documentation_09.png" alt=""> <h2>Author Info<a name="13"></a></h2><p>This function was created by <a href="http://www.glaciology.net/">Aslak Grinsted</a> in 2014 and includes some modifications made by <a href="http://www.chadagreene.com">Chad A. Greene</a> of the University of Texas at Austin's Institute for Geophysics.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% |geoimread| 
+% This function reads a sub region of a geotiff or geojp2 image.  
+% 
+% 
+%% Syntax
+%
+%  A = geoimread(filename) 
+%  A = geoimread(filename,xlim,ylim)
+%  A = geoimread(filename,latlim,lonlim)
+%  A = geoimread(...,buffer)
+%  [A,x,y,I] = geoimread(...)
+%  geoimread(...) 
+%
+% 
+%% Description
+%
+% |A = geoimread(filename)| returns the full image given by a |filename|. This 
+% syntax is equivalent to |A = geotiffread(filename)|. 
+% 
+% |A = geoimread(filename,xlim,ylim)| limits the region of the geotiff file to 
+% the limits given by |xlim| and |ylim|, which are map units (usually meters) relative
+% to the data projection. For example, if the geotiff is projected in Texas Centric 
+% Mapping System/Lambert Conformal coordinates, |xlim| and |ylim| will have units of 
+% meters relative to the origin (100 W, 18 N). |xlim| and |ylim| can be multimensional, 
+% in which case the limits of the map will be taken as the limits of the limits of 
+% the distribution of all points in |xlim|, |ylim|.  
+% 
+% |A = geoimread(filename,latlim,lonlim)| if no values in |xlim|, |ylim| exceed 
+% normal values of latitudes and longitudes, |geoimread| assumes you've entered
+% limits in geographic coordinates of degrees latitude and longitude. The first 
+% input is latitude, the second input is longitude (this order is switched from 
+% the original |geoimread| function.) 
+%
+% |A = geoimread(...,buffer)| adds a buffer in map units (usually meters or feet) to the 
+% limits of the region of interest.  This may be useful if you want to load an image 
+% surrounding scattered lat/lon data.  If you'd like an extra 2 kilometers of image around
+% your data, enter 2000 as the buffer.  If buffer is a two-element vector, the first
+% element is applied to the left and right extents of the image, and the second element 
+% is applied to the top and bottom extents of the image.    
+%
+% |[A,x,y,I] = geoimread(...)| also returns pixel center coordinates |(x,y)| of the 
+% output image and a geotiff info structure |I|. |I| is a useful input for |projfwd| and |projinv|. 
+%
+% |geoimread(...)| without any outputs shows the output image |A| without loading 
+% any data into the workspace.  
+%
+% 
+%% Examples 
+% Start by using Matlab's example shown in the documentation for
+% |geotiffread|:
+
+[A,R] = geotiffread('boston.tif');
+mapshow(A,R)
+
+%% 
+% And you have some measurements corresponding to the following map x,y
+% coordinates: 
+
+mapx = [765884 766035 766963]; 
+mapy = [2959218 2957723 2958972]; 
+
+hold on
+plot(mapx,mapy,'yp','markersize',20,'linewidth',1,'markerfacecolor','k')
+
+%% 
+% There's no sense in reading that whole boston.tif file if you're only
+% interested in the top left corner of the image, so we use
+% |geoimread| to read only the portion of the image bound by our
+% data: 
+
+close % closes the previous figure
+geoimread('boston.tif',mapx,mapy)
+
+%% 
+% Above, |geoimread| has read and shown the part of Boston that is
+% bound by our three data points, but sometimes we want context for our
+% measurements.  Add a 500 foot buffer around the data points (note that 
+% units of the Boston map are given in feet): 
+
+close
+geoimread('boston.tif',mapx,mapy,500)
+hold on; 
+plot(mapx,mapy,'yp','markersize',20,'linewidth',2,'markerfacecolor','k')
+ 
+%% 
+% Similarly, you may want the buffer to be 1500 feet in the x direction
+% and 500 feet in the y direction: 
+
+close
+geoimread('boston.tif',mapx,mapy,[1500 500])
+hold on; 
+plot(mapx,mapy,'yp','markersize',20,'linewidth',2,'markerfacecolor','k')
+
+%% 
+% It is possible that you don't have data in map x/y coordinates.  If you
+% walk around Boston with a GPS device and take measurements, it's more
+% likely that your data points are in lat/lon coordinates.  If that's the
+% case, just enter lat/lons instead of x/y values: 
+
+lat = [42.3675288 42.3634246 42.3668397];
+lon = [-71.0940009 -71.0934685 -71.0900125];
+
+close
+geoimread('boston.tif',lat,lon,[1500 500]);
+
+%% Returning data 
+% To get data from |geoimread| without showing it in a figure,
+% simply request outputs like this: 
+
+[A,x,y,I] = geoimread('boston.tif',lat,lon,[1500 500]);
+
+%% 
+% To show that data as an image, try this: 
+
+close
+imshow(A,'XData',x,'YData',y)
+axis xy
+
+%% 
+% To show the image in map coordinates, do this:
+
+close
+mapshow(A,I.RefMatrix)
+axis tight
+xlabel('eastings (ft)')
+ylabel('northings (ft)') 
+
+%% 
+% To show the data in georeferenced coordinates, do this: 
+
+[xgrid,ygrid] = meshgrid(x,y);
+[latgrid,longrid] = projinv(I,xgrid,ygrid);
+
+close
+usamap([min(latgrid(:)) max(latgrid(:))],[min(longrid(:)) max(longrid(:))])
+geoshow(latgrid,longrid,A)
+
+%% Author Info
+% This function was created by <http://www.glaciology.net/ Aslak Grinsted>
+% in 2014 and includes some modifications made by
+% <http://www.chadagreene.com Chad A. Greene> of the University of Texas at
+% Austin's Institute for Geophysics. 
+##### SOURCE END #####
+--></body></html>
