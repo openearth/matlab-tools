@@ -82,6 +82,7 @@ function nestHD1
     
 handles=getHandles;
 
+
 % Should use the nesthd1 compiled for this system if that is
 % available
 if exist([handles.model.delft3dflow.exedir,'nesthd1.exe'],'file'),
@@ -97,7 +98,8 @@ switch handles.toolbox.nesting.delft3dflow.detailmodeltype
     case{'delft3dflow'}
         
         %% Detail model is Delft3D-FLOW
-        
+
+
         if isempty(handles.toolbox.nesting.delft3dflow.grdFile)
             ddb_giveWarning('text','Please first load grid file of nested model!');
             return
@@ -201,6 +203,13 @@ for i=1:length(obspoints)
 end
 
 handles.model.delft3dflow.domain(ad).nrObservationPoints=length(handles.model.delft3dflow.domain(ad).observationPoints);
+
+[filename, pathname, filterindex] = uiputfile('*.obs', 'Select Observations File',handles.model.delft3dflow.domain(ad).obsFile);
+if filename~=0
+    [path,name,ext]=fileparts(filename);
+    handles.model.delft3dflow.domain(ad).obsFile=[name '.obs'];
+    ddb_saveObsFile(handles,ad);
+end
 
 handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints','domain',ad,'visible',1,'active',0);
 
