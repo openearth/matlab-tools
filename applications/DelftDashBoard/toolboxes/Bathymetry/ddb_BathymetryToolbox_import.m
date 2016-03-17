@@ -277,11 +277,11 @@ if strcmpi(handles.toolbox.bathymetry.import.attributes.title,'Name of data set'
     ddb_giveWarning('text','Please enter proper title of dataset in attributes.');
     return;
 end
-if exist(dr,'dir')
-    ddb_giveWarning('text','A dataset with this name already exists. Please remove it first.');
+if ~isempty(strmatch(lower(dataname),lower(handles.bathymetry.datasets),'exact'))
+    ddb_giveWarning('text','A dataset with this name already exists. Please remove that one first or change the name of the dataset.');
     return;
 end
-if ~isempty(strmatch(handles.toolbox.bathymetry.import.attributes.title,handles.bathymetry.longNames))
+if ~isempty(strmatch(handles.toolbox.bathymetry.import.attributes.title,handles.bathymetry.longNames,'exact'))
     ddb_giveWarning('text','A dataset with this title already exists. Please change the title in attributes.');
     return;
 end

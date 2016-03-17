@@ -165,7 +165,7 @@ switch lower(rawdataformat)
             % Too large, read piece by piece...
             pbyp=1;
         else
-            [z,xdum,ydum,I] = geoimread(fname1,'info');
+            [z,xdum,ydum,I] = geoimread(fname1);
             z=flipud(z);
             z(z<-15000)=NaN;
         end
