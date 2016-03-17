@@ -82,7 +82,12 @@ obspoints=[];
 
 %% Detail grid
 grd=ddb_wlgrid('read',detail.grdfile);
+
 % Convert detailed grid (if necessary)
+if ~isfield(detail,'cs')
+    detail.cs.name='unspecified';
+end
+
 if ~strcmpi(detail.cs.name,'unspecified')
     [grd.X,grd.Y]=convertCoordinates(grd.X,grd.Y,'CS1.name',detail.cs.name,'CS1.type',detail.cs.type,'CS2.name',overall.cs.name,'CS2.type',overall.cs.type);
     switch lower(overall.cs.type)
