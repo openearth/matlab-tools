@@ -86,6 +86,35 @@ else
         case{'checkroller'}
             
         case{'checktidalforces'}
+            handles=getHandles;
+            if ~handles.model.delft3dflow.domain(ad).tidalForce.M2 && ...
+               ~handles.model.delft3dflow.domain(ad).tidalForce.N2 && ...
+               ~handles.model.delft3dflow.domain(ad).tidalForce.K2 && ...
+               ~handles.model.delft3dflow.domain(ad).tidalForce.S2 && ...
+               ~handles.model.delft3dflow.domain(ad).tidalForce.K1 && ...
+               ~handles.model.delft3dflow.domain(ad).tidalForce.O1 && ...
+               ~handles.model.delft3dflow.domain(ad).tidalForce.P1 && ...
+               ~handles.model.delft3dflow.domain(ad).tidalForce.Q1 && ...
+               ~handles.model.delft3dflow.domain(ad).tidalForce.MM && ...
+               ~handles.model.delft3dflow.domain(ad).tidalForce.MF && ...
+               ~handles.model.delft3dflow.domain(ad).tidalForce.SSA
+
+               handles.model.delft3dflow.domain(ad).tidalForce.M2=1;
+               handles.model.delft3dflow.domain(ad).tidalForce.N2=1;
+               handles.model.delft3dflow.domain(ad).tidalForce.K2=1;
+               handles.model.delft3dflow.domain(ad).tidalForce.S2=1;
+               handles.model.delft3dflow.domain(ad).tidalForce.K1=1;
+               handles.model.delft3dflow.domain(ad).tidalForce.O1=1;
+               handles.model.delft3dflow.domain(ad).tidalForce.P1=1;
+               handles.model.delft3dflow.domain(ad).tidalForce.Q1=1;
+               handles.model.delft3dflow.domain(ad).tidalForce.MM=1;
+               handles.model.delft3dflow.domain(ad).tidalForce.MF=1;
+               handles.model.delft3dflow.domain(ad).tidalForce.SSA=1;
+
+               setHandles(handles);
+            
+            end
+
             
         case{'checkdredging'}
             
