@@ -65,6 +65,10 @@ function handles = ddb_plotBackgroundBathymetryImage(handles, x, y, z)
 %%
 xx=x;
 yy=y;
+dx=x(2)-x(1);
+dy=y(2)-y(1);
+xx=xx-0.5*dx;
+yy=yy-0.5*dy;
 
 h=handles.mapHandles.backgroundImage;
 
