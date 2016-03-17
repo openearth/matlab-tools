@@ -54,5 +54,11 @@
       <formodel>fast</formodel>
       <element>toolbox.tropicalcyclone.fast.xml</element>
     </tab>    
+    <tab>
+      <tabstring>Tropical Cyclone</tabstring>
+      <callback>ddb_dummyTabCallback</callback>
+      <formodel>qflood</formodel>
+      <element>toolbox.tropicalcyclone.qflood.xml</element>
+    </tab>    
   </element>
 </root>
