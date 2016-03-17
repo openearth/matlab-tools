@@ -176,7 +176,7 @@ end
 % Make history and map files deelbaar door timestep
 % Maybe not such a great idea. We want to have control over our output
 % times.
-%     handles = ddb_fixtimestepDelft3DFLOW(handles, ad);
+     handles = ddb_fixtimestepDelft3DFLOW(handles, ad);
     setHandles(handles);
     
     handles = getHandles;
@@ -191,17 +191,10 @@ end
 
 %%
 function changeTimes
-% Start
-    handles = getHandles;
-    ad = handles.activeDomain;
-    timestep = handles.model.delft3dflow.domain(ad).timeStep;
+% Check time step
+handles = getHandles;
+ddb_fixtimestepDelft3DFLOW(handles, ad);
 
-% Make history and map files deelbaar door timestep
-    handles = ddb_fixtimestepDelft3DFLOW(handles, ad)   
-
-% Finish
-    setHandles(handles);
-    gui_updateActiveTab;
 %%
 function editGridOutline
 

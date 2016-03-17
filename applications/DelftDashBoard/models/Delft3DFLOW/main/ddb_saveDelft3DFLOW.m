@@ -62,6 +62,8 @@ function ddb_saveDelft3DFLOW(opt)
 %%
 handles=getHandles;
 
+ddb_fixtimestepDelft3DFLOW(handles, ad); % Check input and output times
+
 switch lower(opt)
     case{'save'}
         ddb_saveMDF(handles,ad);
