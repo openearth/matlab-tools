@@ -89,6 +89,7 @@ dy=[];
 rotation=0;
 ddx=[];
 ddy=[];
+number=[];
 
 tag='';
 
