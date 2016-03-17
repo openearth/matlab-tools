@@ -61,9 +61,20 @@ function ddb_NestingToolbox_Delft3DFLOW_nest2(varargin)
 
 %%
 if isempty(varargin)
+    
     % New tab selected
     ddb_zoomOff;
     ddb_refreshScreen;
+    
+    % Check to see if there are any constituents in the model. If not, make
+    % sure the transport box is not ticked.
+    handles=getHandles;
+    handles = ddb_checkForConstituents(handles, ad);
+    if ~handles.model.delft3dflow.domain(ad).constituents
+        handles.toolbox.nesting.nestTransport=0;
+    end
+    setHandles(handles);
+    
     setInstructions({'Click Run Nesting in order to generate boundary conditions for the nested model', ...
         'The overall model simulation must be finished and a history file must be present','The nested model domain must be selected!'});
 else
