@@ -1,4 +1,4 @@
-function tc = readBestTrackUnisys(fname)
+function tc = tc_read_unisys_best_track(fname)
 %READBESTTRACKUNISYS  Reads the best cyclone track from a Unisys file
 %
 %   see http://weather.unisys.com/hurricane/ for best track files
@@ -107,11 +107,13 @@ for i=1:10000
         else
             n=n+1;
         end
+        
+        tc=set_default_values(tc,n);
         tc.time(n)=tnew;
-        tc.lon(n)=lon;
-        tc.lat(n)=lat;
-        tc.vmax(n,:)=[vel vel vel vel];
-        tc.p(n,:)=[pr pr pr pr];
+        tc.x(n)=lon;
+        tc.y(n)=lat;
+        tc.vmax(n)=vel;
+        tc.pc(n)=pr;
     else
         break;
     end
@@ -119,3 +121,25 @@ end
 
 fclose(fid);
 
+%%
+function tc=set_default_values(tc,it)
+
+tc.vmax(it)=-999;
+tc.pc(it)=-999;
+tc.rmax(it)=-999;
+tc.r35ne(it)=-999;
+tc.r35se(it)=-999;
+tc.r35sw(it)=-999;
+tc.r35nw(it)=-999;
+tc.r50ne(it)=-999;
+tc.r50se(it)=-999;
+tc.r50sw(it)=-999;
+tc.r50nw(it)=-999;
+tc.r65ne(it)=-999;
+tc.r65se(it)=-999;
+tc.r65sw(it)=-999;
+tc.r65nw(it)=-999;
+tc.r100ne(it)=-999;
+tc.r100se(it)=-999;
+tc.r100sw(it)=-999;
+tc.r100nw(it)=-999;

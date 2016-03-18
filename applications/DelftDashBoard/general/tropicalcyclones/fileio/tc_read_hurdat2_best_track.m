@@ -1,4 +1,4 @@
-function tc = readBestTrackHURDAT2(fname)
+function tc = tc_read_hurdat2_best_track(fname)
 %READBESTTRACKHURDAT2  Reads the best cyclone track from a HURDAT2 file
 %
 %   Syntax:
@@ -81,38 +81,39 @@ while 1
     tc.status{it}=v0{4};
         
     if strcmpi(v0{5}(end),'n')
-        tc.lat(it)=str2double(v0{5}(1:end-1));
+        tc.y(it)=str2double(v0{5}(1:end-1));
     else
-        tc.lat(it)=-str2double(v0{5}(1:end-1));
+        tc.y(it)=-str2double(v0{5}(1:end-1));
     end
     if strcmpi(v0{6}(end),'e')
-        tc.lon(it)=str2double(v0{6}(1:end-1));
+        tc.x(it)=str2double(v0{6}(1:end-1));
     else
-        tc.lon(it)=-str2double(v0{6}(1:end-1));
+        tc.x(it)=-str2double(v0{6}(1:end-1));
     end
-    tc.vmax(it,1:4)=str2double(v0{7});
-    tc.p(it,1:4)=100*str2double(v0{8});
     
-    tc.r34(it,1)=str2double(v0{9});
-    tc.r34(it,2)=str2double(v0{10});
-    tc.r34(it,3)=str2double(v0{11});
-    tc.r34(it,4)=str2double(v0{12});
+    tc.vmax(it)=str2double(v0{7});
+    tc.pc(it)=100*str2double(v0{8});
+    
+    tc.r34ne(it)=str2double(v0{9});
+    tc.r34se(it)=str2double(v0{10});
+    tc.r34sw(it)=str2double(v0{11});
+    tc.r34nw(it)=str2double(v0{12});
 
-    tc.r50(it,1)=str2double(v0{13});
-    tc.r50(it,2)=str2double(v0{14});
-    tc.r50(it,3)=str2double(v0{15});
-    tc.r50(it,4)=str2double(v0{16});
+    tc.r50ne(it)=str2double(v0{13});
+    tc.r50se(it)=str2double(v0{14});
+    tc.r50sw(it)=str2double(v0{15});
+    tc.r50nw(it)=str2double(v0{16});
 
-    tc.r64(it,1)=str2double(v0{17});
-    tc.r64(it,2)=str2double(v0{18});
-    tc.r64(it,3)=str2double(v0{19});
-    tc.r64(it,4)=str2double(v0{20});
+    tc.r64ne(it)=str2double(v0{17});
+    tc.r64se(it)=str2double(v0{18});
+    tc.r64sw(it)=str2double(v0{19});
+    tc.r64nw(it)=str2double(v0{20});
 
-    tc.r100(it,1)=-999;
-    tc.r100(it,2)=-999;
-    tc.r100(it,3)=-999;
-    tc.r100(it,4)=-999;
+    tc.r100ne(it)=-999;
+    tc.r100se(it)=-999;
+    tc.r100sw(it)=-999;
+    tc.r100nw(it)=-999;
     
 end
-fclose(fid);
 
+fclose(fid);

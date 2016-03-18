@@ -1,4 +1,4 @@
-function tc=readjmv30(fname)
+function tc=tc_read_jmv30(fname)
 
 fid=fopen(fname,'r');
 
@@ -134,7 +134,6 @@ for ii=istart:istop
     
     tc0.time(it)=datenum(f{1}(3:end),'yymmddHH');
     
-%    latstr=f{2};
     idir=find(f{2}=='N');
     if isempty(idir)
         idir=find(f{2}=='S');
@@ -146,7 +145,6 @@ for ii=istart:istop
         tc0.y(it)=-0.10*str2double(latstr(1:end-1));
     end
         
-%    lonstr=f{3};
     lonstr=f{2}(idir+1:end);
     if strcmpi(lonstr(end),'E')
         tc0.x(it)=0.10*str2double(lonstr(1:end-1));
