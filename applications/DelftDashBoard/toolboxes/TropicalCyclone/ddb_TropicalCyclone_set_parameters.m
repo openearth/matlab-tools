@@ -529,10 +529,10 @@ try
     
     switch lower(handles.toolbox.tropicalcyclone.importFormat)
         case{'jtwcbesttrack'}
-            tc=readBestTrackJTWC([pathname filename]);
+            tc=tc_read_jtwc_best_track([pathname filename]);
             handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
         case{'unisysbesttrack'}
-            tc=readBestTrackUnisys([pathname filename]);
+            tc=tc_read_unisys_best_track([pathname filename]);
             handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
         case{'jtwccurrenttrack', 'nhccurrenttrack'}
             %  JTWC, NHC current tracks in generic .trk format:
@@ -540,12 +540,12 @@ try
             handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
             itype = 1;
         case{'jmv30'}
-            tc=readjmv30([pathname filename]);
+            tc=tc_read_jmv30([pathname filename]);
             handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
             handles.toolbox.tropicalcyclone.wind_profile='holland2010';
             handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';
         case{'hurdat2besttrack'}
-            tc=readBestTrackHURDAT2([pathname filename]);
+            tc=tc_read_hurdat2_best_track([pathname filename]);
             handles.toolbox.tropicalcyclone.cyclonename=tc.name;
             handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
         case{'pagasa'}
