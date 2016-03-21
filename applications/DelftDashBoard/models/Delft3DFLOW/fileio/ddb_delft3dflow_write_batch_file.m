@@ -108,14 +108,19 @@ if ispc,
             
         case{'6.00.xx','N/A'}
             
+            % Some work arounds. Use win32 folder as the real exe folder.
+            
+            
             % Batch file
             fid=fopen(fname,'w');
             fprintf(fid,'%s\n','@ echo off');
             fprintf(fid,'%s\n','set argfile=config_d_hydro.xml');
-            fprintf(fid,'%s\n',['set flowexedir="' handles.model.delft3dflow.exedir '"']);
+            fprintf(fid,'%s\n',['set flowexedir=' handles.model.delft3dflow.exedir]);
             if ~isempty(mdwfile)
-                fprintf(fid,'%s\n',['set waveexedir="' handles.model.delft3dwave.exedir '"']);
+                fprintf(fid,'%s\n',['set waveexedir=' handles.model.delft3dwave.exedir]);
             end
+            % Assume swan sits one directory higher
+            
             fprintf(fid,'%s\n','set PATH=%flowexedir%;%waveexedir%;%PATH%');
             if ~isempty(mdwfile)
                 fprintf(fid,'%s\n','start %flowexedir%\d_hydro.exe %argfile%');
@@ -124,6 +129,9 @@ if ispc,
                 fprintf(fid,'%s\n','%flowexedir%\d_hydro.exe %argfile%');
             end
             fclose(fid);
+
+
+
             
             % Write xml config file
             fini=fopen('config_d_hydro.xml','w');

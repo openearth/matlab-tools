@@ -107,21 +107,40 @@ if ispc,
             fclose(fini);
             
         case{'6.00.xx','N/A'}
-            
+
+            % Some work arounds. Use win32 folder as the real exe folder.
+            flowexedir=handles.model.delft3dflow.exedir;
+            waveexedir=handles.model.delft3dwave.exedir;
+            if isfield(handles.model.delft3dwave,'swandir')
+                swandir=handles.model.delft3dwave.swandir;
+            else
+                % Assume swan sits two directories higher
+                if strcmpi(waveexedir(end),filesep)
+                    waveexedir=waveexedir(1:end-1);
+                end
+                [pathstr,name,ext]=fileparts(waveexedir);
+                [pathstr,name,ext]=fileparts(pathstr);
+                swandir=[pathstr filesep 'swan'];
+            end
+
             % Batch file
             fid=fopen(fname,'w');
             fprintf(fid,'%s\n','@ echo off');
             fprintf(fid,'%s\n','set argfile=config_d_hydro.xml');
-            fprintf(fid,'%s\n',['set flowexedir="' handles.model.delft3dflow.exedir '"']);
+            fprintf(fid,'%s\n',['set flowexedir=' flowexedir]);
             if ~isempty(mdwfile)
-                fprintf(fid,'%s\n',['set waveexedir="' handles.model.delft3dwave.exedir '"']);
-            end
-            fprintf(fid,'%s\n','set PATH=%flowexedir%;%waveexedir%;%PATH%');
-            if ~isempty(mdwfile)
-                fprintf(fid,'%s\n','start %flowexedir%\d_hydro.exe %argfile%');
-                fprintf(fid,'%s\n',['%waveexedir%\wave.exe ' mdwfile ' 1']);
+                fprintf(fid,'%s\n',['set waveexedir=' waveexedir]);
+                fprintf(fid,'%s\n',['set swanexedir=' swandir filesep 'bin']);
+                fprintf(fid,'%s\n',['set swanlibdir=' swandir filesep 'lib']);
+                fprintf(fid,'%s\n',['set swanbatdir=' swandir filesep 'scripts']);
+                fprintf(fid,'%s\n','set PATH=%flowexedir%;%PATH%');
+                fprintf(fid,'%s\n','set PATH=%waveexedir%;%PATH%');
+                fprintf(fid,'%s\n','set PATH=%swanexedir%;%swanlibdir%;%swanbatdir%;%PATH%');
+                fprintf(fid,'%s\n','start "" "%flowexedir%\d_hydro.exe" %argfile%');
+                fprintf(fid,'%s\n',['"%waveexedir%\wave.exe" ' mdwfile ' 1']);
             else
-                fprintf(fid,'%s\n','%flowexedir%\d_hydro.exe %argfile%');
+                fprintf(fid,'%s\n','set PATH=%flowexedir%;%PATH%');
+                fprintf(fid,'%s\n','"%flowexedir%\d_hydro.exe" %argfile%');
             end
             fclose(fid);
             
