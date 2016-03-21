@@ -61,9 +61,12 @@ function ddb_compile
 
 %%
 
-matlabfolder='n:/Applications/Matlab/Matlab2013b/';
-compilefolder='d:/delftdashboardsetup/';
-ddbsettingsdir='d:/ddbsettings/';
+matlabfolder='c:\Program Files\MATLAB\MATLAB2013b_64\';
+compilefolder='d:\delftdashboardsetup\';
+ddbsettingsdir='d:\ddbsettings\';
+
+include_additional_toolboxes=0;
+
 
 % Throw away compilefolder
 if exist(compilefolder,'dir')
@@ -165,36 +168,37 @@ for j=1:length(flist)
     end
 end
 
-% Add additional toolboxes
-inifile=[inipath 'DelftDashboard.ini'];
-%DataDir=getINIValue(inifile,'DataDir');
-try
-    additionalToolboxDir=getINIValue(inifile,'AdditionalToolboxDir');
-catch
-    additionalToolboxDir=[];
-end
-if ~isempty(additionalToolboxDir)
-    % Add toolboxes
-    flist=dir(additionalToolboxDir);
-    for j=1:length(flist)
-        if flist(j).isdir
-            toolbox=flist(j).name;
-            % Check if xml file exists and whether toolbox is enabled
-            xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep 'toolbox.' lower(toolbox) '.xml'];
-            if exist(xmlfile,'file')
-                xml=xml2struct(xmlfile);
-                switch lower(xml(1).enable)
-                    case{'1','y','yes'}
-                        % Model is enabled
-                        files=ddb_findAllFiles([additionalToolboxDir toolbox],'*.m');
-                        for i=1:length(files)
-                            fprintf(fid,'%s\n',files{i});
-                        end
-                        % Copy xml files
-                        try
-                            mkdir([ddbsettingsdir filesep 'toolboxes' filesep toolbox filesep 'xml']);
-                            copyfile([additionalToolboxDir filesep toolbox filesep 'xml' filesep '*.xml'],[ddbsettingsdir filesep 'toolboxes' filesep toolbox filesep 'xml']);
-                        end
+additionalToolboxDir=[];
+if include_additional_toolboxes
+    % Add additional toolboxes
+    inifile=[inipath 'DelftDashboard.ini'];
+    %DataDir=getINIValue(inifile,'DataDir');
+    try
+        additionalToolboxDir=getINIValue(inifile,'AdditionalToolboxDir');
+    end
+    if ~isempty(additionalToolboxDir)
+        % Add toolboxes
+        flist=dir(additionalToolboxDir);
+        for j=1:length(flist)
+            if flist(j).isdir
+                toolbox=flist(j).name;
+                % Check if xml file exists and whether toolbox is enabled
+                xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep 'toolbox.' lower(toolbox) '.xml'];
+                if exist(xmlfile,'file')
+                    xml=xml2struct(xmlfile);
+                    switch lower(xml(1).enable)
+                        case{'1','y','yes'}
+                            % Model is enabled
+                            files=ddb_findAllFiles([additionalToolboxDir toolbox],'*.m');
+                            for i=1:length(files)
+                                fprintf(fid,'%s\n',files{i});
+                            end
+                            % Copy xml files
+                            try
+                                mkdir([ddbsettingsdir filesep 'toolboxes' filesep toolbox filesep 'xml']);
+                                copyfile([additionalToolboxDir filesep toolbox filesep 'xml' filesep '*.xml'],[ddbsettingsdir filesep 'toolboxes' filesep toolbox filesep 'xml']);
+                            end
+                    end
                 end
             end
         end

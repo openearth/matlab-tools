@@ -56,7 +56,7 @@ warning('off','all')
 Revision = '$Revision$';
 eval([strrep(Revision(Revision~='$'),':','=') ';']);
 
-handles.delftDashBoardVersion=['1.01.' num2str(Revision)];
+handles.delftDashBoardVersion=['2.01.' num2str(Revision)];
 handles.matlabVersion=version;
 handles.debugMode=0;
 
