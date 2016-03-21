@@ -13,6 +13,12 @@
       <element>toolbox.tsunami.okada.xml</element>
     </tab>
     <tab>
+      <tabstring>Subfaults</tabstring>
+      <callback>ddb_TsunamiToolbox</callback>
+      <formodel>delft3dflow</formodel>
+      <element>toolbox.tsunami.subfaults.xml</element>
+    </tab>
+    <tab>
       <tabstring>File</tabstring>
       <callback>ddb_TsunamiToolbox</callback>
       <formodel>delft3dflow</formodel>

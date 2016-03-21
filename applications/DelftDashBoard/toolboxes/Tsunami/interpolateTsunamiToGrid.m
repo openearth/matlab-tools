@@ -59,6 +59,8 @@ else
     error('No grid coordinates specified!');
 end
 
+xz=xz-360;
+
 % Tsunami
 if ~isempty(OPT.tsunamifile)
     % Read tsunami asc file
