@@ -73,14 +73,17 @@ switch varargin{1}
                     % Delft3D-FLOW
                     if exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow2d3d\bin\d_hydro.exe'],'file')
                         handles.model.(model).version='6.00.xx';
-                        handles.model.(model).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\flow2d3d\bin\'];
+                        handles.model.(model).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\flow2d3d\bin'];
                     elseif exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\deltares_hydro.exe'],'file')
                         handles.model.(model).version='5.00.xx';
-                        handles.model.(model).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\'];
+                        handles.model.(model).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin'];
                     end
                     
                 case{'delft3dwave'}
-                    handles.model.(model).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\'];
+                    if exist([getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\wave.exe'],'file')
+                        handles.model.(model).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin'];
+                        handles.model.(model).swandir=[getenv('D3D_HOME') '\' getenv('ARCH') '\swan'];
+                    end
 
 %                 case{'ww3'}
 %                     handles.model.(model).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\'];
@@ -112,6 +115,9 @@ switch varargin{1}
                     end
                     % Exe dir
                     handles.model.(model).exedir=xml.model(ii).model.exedir;
+                    if isfield(xml.model(ii).model,'swandir')
+                        handles.model.(model).swandir=xml.model(ii).model.swandir;
+                    end
                     if isempty(handles.model.(model).exedir)
                         handles.model.(model).version='d:\unknownfolder\';
                     end
@@ -125,6 +131,9 @@ switch varargin{1}
                 xml.model(ii).model.name=models{ii};
                 xml.model(ii).model.version=handles.model.(models{ii}).version;
                 xml.model(ii).model.exedir=handles.model.(models{ii}).exedir;
+                if strcmpi(xml.model(ii).model.name,'delft3dwave')
+                    xml.model(ii).model.swandir=handles.model.(models{ii}).swandir;
+                end
             end
             struct2xml(filename,xml,'structuretype','short');
             

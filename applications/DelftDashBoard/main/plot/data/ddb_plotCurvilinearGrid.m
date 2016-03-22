@@ -77,16 +77,23 @@ for i=1:length(varargin)
     end
 end
 
-grd1=plot(x,y,'k');
-set(grd1,'Color',col);
-set(grd1,'HitTest','off');
-grd2=plot(x',y','k');
-set(grd2,'Color',col);
-set(grd2,'HitTest','off');
-grd=[grd1;grd2];
+x1=zeros(size(x,1)+1,size(x,2)+1);
+x1(x1==0)=NaN;
+y1=x1;
+x1(1:end-1,1:end-1)=x;
+y1(1:end-1,1:end-1)=y;
 
+x2a=reshape(x1,[1 size(x1,1)*size(x1,2)]);
+y2a=reshape(y1,[1 size(x1,1)*size(x1,2)]);
+x2b=reshape(x1',[1 size(x1,1)*size(x1,2)]);
+y2b=reshape(y1',[1 size(x1,1)*size(x1,2)]);
+x2=[x2a x2b];
+y2=[y2a y2b];
+
+grd=plot(x2,y2,'k');
+set(grd,'Color',col);
+set(grd,'HitTest','off');
 if ~isempty(tag)
-    set(grd1,'Tag',tag);
-    set(grd2,'Tag',tag);
+    set(grd,'Tag',tag);
 end
 
