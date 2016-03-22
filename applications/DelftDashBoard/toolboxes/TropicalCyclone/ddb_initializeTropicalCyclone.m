@@ -183,14 +183,15 @@ handles.toolbox.tropicalcyclone.rmax_relation='gross2004';
 handles.toolbox.tropicalcyclone.rmax_relation_options={'gross2004','25nm','pagasajma'};
 handles.toolbox.tropicalcyclone.rmax_relation_option_names={'Gross (2004)','25NM','Pagasa-JMA'};
 
+%% Ensemble
 handles.toolbox.tropicalcyclone.ensemble.t0=datenum(2008,9,11,0,0,0);
+handles.toolbox.tropicalcyclone.ensemble.t0_spw=datenum(2008,9,11,0,0,0);
 handles.toolbox.tropicalcyclone.ensemble.length=3; % days
 handles.toolbox.tropicalcyclone.ensemble.number_of_realizations=1000;
 handles.toolbox.tropicalcyclone.ensemble.sigma.ate=40000;
 handles.toolbox.tropicalcyclone.ensemble.sigma.cte=40000;
 handles.toolbox.tropicalcyclone.ensemble.sigma.ve=10;
-
 handles.toolbox.tropicalcyclone.ensemble.ncross=7;
 handles.toolbox.tropicalcyclone.ensemble.nspd=3;
 handles.toolbox.tropicalcyclone.ensemble.nvmax=3;
-
+handles.toolbox.tropicalcyclone.ensemble.spwname='testing';

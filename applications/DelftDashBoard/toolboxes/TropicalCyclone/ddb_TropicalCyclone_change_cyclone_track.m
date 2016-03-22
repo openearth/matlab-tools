@@ -106,6 +106,7 @@ if isempty(nr)
 
     % Ensemble parameters
     inp.ensemble.t0=inp.track.time(1);
+    inp.ensemble.t0_spw=inp.track.time(1);
     inp.ensemble.length=inp.track.time(end)-inp.track.time(1);
     
     inp.drawingtrack=0;

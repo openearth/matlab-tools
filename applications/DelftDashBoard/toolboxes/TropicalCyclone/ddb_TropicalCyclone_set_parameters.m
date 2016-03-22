@@ -205,6 +205,7 @@ handles=ddb_TropicalCyclone_read_cyclone_file(handles,filename);
 
 % Ensemble parameters
 handles.toolbox.tropicalcyclone.ensemble.t0=handles.toolbox.tropicalcyclone.track.time(1);
+handles.toolbox.tropicalcyclone.ensemble.t0_spw=handles.toolbox.tropicalcyclone.track.time(1);
 handles.toolbox.tropicalcyclone.ensemble.length=handles.toolbox.tropicalcyclone.track.time(end)-handles.toolbox.tropicalcyclone.track.time(1);
 
 handles=ddb_TropicalCyclone_delete_cyclone_track(handles);
@@ -574,6 +575,7 @@ try
     
     % Ensemble parameters
     handles.toolbox.tropicalcyclone.ensemble.t0=tc.time(1);
+    handles.toolbox.tropicalcyclone.ensemble.t0_spw=tc.time(1);
     handles.toolbox.tropicalcyclone.ensemble.length=tc.time(end)-tc.time(1);
         
     if nt>1
