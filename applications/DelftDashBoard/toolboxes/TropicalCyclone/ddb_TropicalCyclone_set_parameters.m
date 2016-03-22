@@ -1,4 +1,4 @@
-function ddb_TropicalCycloneToolbox_setParameters(varargin)
+function ddb_TropicalCyclone_set_parameters(varargin)
 %DDB_TROPICALCYCLONETOOLBOX_SETPARAMETERS  One line description goes here.
 %
 %   More detailed description goes here.
@@ -617,7 +617,7 @@ else
             case{'delft3dflow'}
                 reftime=handles.model.(model).domain(ad).itDate;
             otherwise
-                reftime=floor(handles.toolbox.tropicalcyclone.trackT(1));
+                reftime=floor(handles.toolbox.tropicalcyclone.track.time(1));
         end
         
         switch lower(wesopt)
