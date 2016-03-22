@@ -143,51 +143,52 @@ end
 %%
 function automateTimestep
 % Start
-    handles=getHandles;
+handles=getHandles;
 
 % Get X,Y,Z in projection
-    dataCoord=handles.screenParameters.coordinateSystem;
-    ad = handles.activeDomain;
+dataCoord=handles.screenParameters.coordinateSystem;
+ad = handles.activeDomain;
+
+x = handles.model.delft3dflow.domain(ad).gridX;
+y = handles.model.delft3dflow.domain(ad).gridY;
+z = handles.model.delft3dflow.domain(ad).depth;
+
+if isempty(x)
+    return
+end
 
 if strcmpi(dataCoord.type,'geographic')
     
-     % Determine UTM zone of the middle
-    x = handles.model.delft3dflow.domain(ad).gridX;
-    y = handles.model.delft3dflow.domain(ad).gridY;
-    Z = handles.model.delft3dflow.domain(ad).depth;
-	[ans1,ans2, utmzone_total, utmzone_parts] = ddb_deg2utm(nanmean(nanmean(y)),nanmean(nanmean(x)));
+    % Determine UTM zone of the middle
+    [ans1,ans2, utmzone_total, utmzone_parts] = ddb_deg2utm(nanmean(nanmean(y)),nanmean(nanmean(x)));
     
     % Change coordinate system to UTM of the middle
     coord.name = 'WGS 84 / UTM zone ';
     s           = {coord.name, '',num2str(utmzone_parts.number), utmzone_parts.lat};
     coord.name  = [s{:}];
     coord.type = 'Cartesian';
-    [X,Y]             = ddb_coordConvert(x,y,dataCoord,coord);
-else
-    X = handles.model.delft3dflow.domain(ad).gridX;
-    Y = handles.model.delft3dflow.domain(ad).gridY;
-    Z = handles.model.delft3dflow.domain(ad).depth;
+    [x,y]             = ddb_coordConvert(x,y,dataCoord,coord);
 end
 
 % Timestep is projected orientation
-    timestep = ddb_determinetimestepDelft3DFLOW(X,Y,Z);
-    handles.model.delft3dflow.domain(ad).timeStep = timestep;
+timestep = ddb_determinetimestepDelft3DFLOW(x,y,z);
+handles.model.delft3dflow.domain(ad).timeStep = timestep;
 
 % Make history and map files deelbaar door timestep
 % Maybe not such a great idea. We want to have control over our output
 % times.
-     handles = ddb_fixtimestepDelft3DFLOW(handles, ad);
-    setHandles(handles);
-    
-    handles = getHandles;
+handles = ddb_fixtimestepDelft3DFLOW(handles, ad);
+setHandles(handles);
+
+handles = getHandles;
 %     ddb_updateOutputTimesDelft3DFLOW
 %     handles.model.delft3dflow.domain(ad).mapStopTime = handles.model.delft3dflow.domain(ad).stopTime;
 %     handles.model.delft3dflow.domain(ad).hisStopTime = handles.model.delft3dflow.domain(ad).stopTime;
 %     handles.model.delft3dflow.domain(ad).comStopTime = handles.model.delft3dflow.domain(ad).stopTime;
 
 % Finish
-    setHandles(handles);
-    gui_updateActiveTab;
+setHandles(handles);
+gui_updateActiveTab;
 
 %%
 function changeTimes
