@@ -64,6 +64,9 @@ function fout = waitbox(name,varargin)
 
 global figureiconfile
 
+% Current axis
+hax=gca;
+
 vertMargin = 0;
 
 oldRootUnits = get(0,'Units');
@@ -155,4 +158,7 @@ drawnow;
 if nargout==1,
     fout = f;
 end
+
+% Return to current axis
+axes(hax);
 
