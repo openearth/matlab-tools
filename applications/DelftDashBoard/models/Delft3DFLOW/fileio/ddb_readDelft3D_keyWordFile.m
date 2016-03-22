@@ -63,6 +63,7 @@ function s = ddb_readDelft3D_keyWordFile(fname,varargin)
 
 lowercase=1;
 firstcharacterafterdata=' ';
+allowspaces=0;
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})
@@ -71,6 +72,8 @@ for ii=1:length(varargin)
                 lowercase=varargin{ii+1};
             case{'firstcharacterafterdata'}
                 firstcharacterafterdata=varargin{ii+1};
+            case{'allowspaces'}
+                allowspaces=varargin{ii+1};
         end
     end
 end
@@ -116,7 +119,15 @@ while 1
                 if isempty(v)
                     val=[];
                 else
-                    val = strread(v,'%s','delimiter',' ');
+                    if strcmpi(keyword,'waveforces')
+                        shite1=1
+                    end
+                    if allowspaces
+                        val=[];
+                        val{1}=v;
+                    else
+                        val = strread(v,'%s','delimiter',' ');
+                    end
                     if strcmpi(val{1}(1),'#')
                         % Check if there is only one #
                         ii=find(v=='#');
@@ -128,7 +139,11 @@ while 1
                             val=val{2};
                         end
                     else
-                        ish=find(v==firstcharacterafterdata, 1);
+                        if allowspaces
+                            ish=length(v)+1;
+                        else
+                            ish=find(v==firstcharacterafterdata, 1);
+                        end
                         if isempty(ish)
                             % No comments at end of line
                             val=deblank(v);

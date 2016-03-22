@@ -1,6 +1,6 @@
 function handles=ddb_readMDW(handles,filename)
 
-MDW = ddb_readDelft3D_keyWordFile(filename);
+MDW = ddb_readDelft3D_keyWordFile(filename,'allowspaces',1);
 
 handles.model.delft3dwave.domain.activedomain=1;
 

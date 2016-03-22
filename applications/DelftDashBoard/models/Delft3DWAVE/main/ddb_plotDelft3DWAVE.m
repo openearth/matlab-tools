@@ -50,7 +50,7 @@ end
 
 % Plot active grid on top
 try
-    uistack(handles.model.delft3dwave.domain.domains(awg).gridplot.plothandles,'top');
+    uistack(handles.model.delft3dwave.domain.domains(awg).grid.plotHandles,'top');
 end
 
 handles=ddb_Delft3DWAVE_plotBathy(handles,option,'visible',vis,'active',act);

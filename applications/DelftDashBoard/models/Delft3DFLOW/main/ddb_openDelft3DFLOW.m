@@ -99,28 +99,81 @@ switch opt
                 cd(pathname);
                 handles.workingDirectory=pathname;
             end
-            ddb_plotDelft3DFLOW('delete');
-            id=handles.activeDomain;
-            handles.model.delft3dflow.domain=clearStructure(handles.model.delft3dflow.domain,id);
-            runid=filename(1:end-4);
-            handles.model.delft3dflow.domains{id}=runid;
-            handles.model.delft3dflow.DDBoundaries=[];
-            handles=ddb_initializeFlowDomain(handles,'all',id,runid);
-            filename=[runid '.mdf'];
-            handles=ddb_readMDF(handles,filename,id);
-            handles=ddb_readAttributeFiles(handles,id);
-
-            xl(1)=min(min(handles.model.delft3dflow.domain(id).gridX));
-            xl(2)=max(max(handles.model.delft3dflow.domain(id).gridX));
-            yl(1)=min(min(handles.model.delft3dflow.domain(id).gridY));
-            yl(2)=max(max(handles.model.delft3dflow.domain(id).gridY));
-            handles=ddb_zoomTo(handles,xl,yl,0.1);
-            
-            setHandles(handles);
-            ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',ad);
-            ddb_updateDataInScreen;
-            gui_updateActiveTab;
+        else
+            return
         end
+        id=handles.activeDomain;
+        ddb_plotDelft3DFLOW('delete');
+        handles.model.delft3dflow.domain=clearStructure(handles.model.delft3dflow.domain,id);
+        runid=filename(1:end-4);
+        handles.model.delft3dflow.domains{id}=runid;
+        handles.model.delft3dflow.DDBoundaries=[];
+        handles=ddb_initializeFlowDomain(handles,'all',id,runid);
+        filename=[runid '.mdf'];
+        handles=ddb_readMDF(handles,filename,id);
+        handles=ddb_readAttributeFiles(handles,id);
+        
+        % Also read in wave model if necessary
+        waveok=1;
+        if handles.model.delft3dflow.domain(id).waves
+            [filename, pathnamewave, filterindex] = uigetfile('*.mdw', 'Select MDW file');
+            if pathname~=0
+                pathnamewave=pathnamewave(1:end-1); % Get rid of last file seperator
+            else
+                return
+            end
+            if ~strcmpi(pathname,pathnamewave)
+                ddb_giveWarning('txt','The WAVE model must be in the same directory as the FLOW model!');
+                waveok=0;
+            else
+                % Delete all domains
+                ddb_plotDelft3DWAVE('delete','domain',0);
+                handles.model.delft3dwave.domain = [];
+                handles.activeWaveGrid                      = 1;
+                handles  = ddb_initializeDelft3DWAVEInput(handles,runid);
+                filename =[runid '.mdw'];
+                handles  = ddb_readMDW(handles,filename);
+                handles  = ddb_Delft3DWAVE_readAttributeFiles(handles);
+                handles.model.delft3dwave.domain.referencedate=handles.model.delft3dflow.domain(1).itDate;
+                handles.model.delft3dwave.domain.mapwriteinterval=handles.model.delft3dflow.domain(1).mapInterval;
+                handles.model.delft3dwave.domain.comwriteinterval=handles.model.delft3dflow.domain(1).comInterval;
+                handles.model.delft3dwave.domain.writecom=1;
+                handles.model.delft3dwave.domain.coupling='ddbonline';
+                handles.model.delft3dwave.domain.mdffile=handles.model.delft3dflow.domain(1).mdfFile;
+                for id=1:handles.model.delft3dflow.nrDomains
+                    handles.model.delft3dflow.domain(id).waves=1;
+                    handles.model.delft3dflow.domain(id).onlineWave=1;
+                end
+                if handles.model.delft3dflow.domain(1).comInterval==0 || handles.model.delft3dflow.domain(1).comStartTime==handles.model.delft3dflow.domain(1).comStopTime
+                    ddb_giveWarning('text','Please make sure to set the communication file times in Delft3D-FLOW model!');
+                end
+                if ~handles.model.delft3dflow.domain(1).wind
+                    % Turn off wind
+                    for id=1:handles.model.delft3dwave.domain.nrgrids
+                        handles.model.delft3dwave.domain.domains(id).flowwind=0;
+                    end
+                end
+            end
+            
+        end
+        
+        xl(1)=min(min(handles.model.delft3dflow.domain(id).gridX));
+        xl(2)=max(max(handles.model.delft3dflow.domain(id).gridX));
+        yl(1)=min(min(handles.model.delft3dflow.domain(id).gridY));
+        yl(2)=max(max(handles.model.delft3dflow.domain(id).gridY));
+        handles=ddb_zoomTo(handles,xl,yl,0.1);
+        
+        setHandles(handles);
+                
+        if handles.model.delft3dflow.domain(id).waves && waveok
+            ddb_plotDelft3DWAVE('plot','active',0,'visible',1,'wavedomain',awg);
+        end
+        
+        ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',ad);
+        
+        ddb_updateDataInScreen;
+        gui_updateActiveTab;
+
     case {'opennew'}
         % One Domain
         [filename, pathname, filterindex] = uigetfile('*.mdf', 'Select MDF file');

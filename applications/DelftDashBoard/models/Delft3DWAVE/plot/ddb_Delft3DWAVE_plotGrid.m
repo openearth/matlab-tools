@@ -92,7 +92,7 @@ switch lower(opt)
         % Now plot new grid
         x=handles.model.delft3dwave.domain.domains(id).gridx;
         y=handles.model.delft3dwave.domain.domains(id).gridy;
-        handles.model.delft3dwave.domain.domains(id).grid.plotHandles=ddb_plotCurvilinearGrid(x,y,'color',col);
+        handles.model.delft3dwave.domain.domains(id).grid.plotHandles=ddb_plotCurvilinearGrid(x,y,'color',col,'tag','delft3dwavegrid');
         if vis
             set(handles.model.delft3dwave.domain.domains(id).grid.plotHandles,'Color',col,'Visible','on');
         else
@@ -113,14 +113,14 @@ switch lower(opt)
 %        end
         
     case{'update'}
-        if isfield(handles.model.delft3dwave.domain.domains(id).gridplot,'plothandles')
-            if ~isempty(handles.model.delft3dwave.domain.domains(id).gridplot.plothandles)
+        if isfield(handles.model.delft3dwave.domain.domains(id).grid,'plotHandles')
+            if ~isempty(handles.model.delft3dwave.domain.domains(id).grid.plotHandles)
                 try
-                    set(handles.model.delft3dwave.domain.domains(id).gridplot.plothandles,'Color',col);
+                    set(handles.model.delft3dwave.domain.domains(id).grid.plotHandles,'Color',col);
                     if vis
-                        set(handles.model.delft3dwave.domain.domains(id).gridplot.plothandles,'Color',col,'Visible','on');
+                        set(handles.model.delft3dwave.domain.domains(id).grid.plotHandles,'Color',col,'Visible','on');
                     else
-                        set(handles.model.delft3dwave.domain.domains(id).gridplot.plothandles,'Color',col,'Visible','off');
+                        set(handles.model.delft3dwave.domain.domains(id).grid.plotHandles,'Color',col,'Visible','off');
                     end
                 end
             end
