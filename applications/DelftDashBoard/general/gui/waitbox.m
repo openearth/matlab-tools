@@ -65,7 +65,7 @@ function fout = waitbox(name,varargin)
 global figureiconfile
 
 % Current axis
-hax=gca;
+% hax=gca;
 
 vertMargin = 0;
 
@@ -160,5 +160,8 @@ if nargout==1,
 end
 
 % Return to current axis
-axes(hax);
+% pause(1.0);
 
+% axes(hax);
+
+% drawnow;
