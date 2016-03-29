@@ -177,6 +177,15 @@ elseif numFields==8 && SCOdata.isTimeseries
     end
 end
 
+
+% read tide table (not yet implemented)
+%if ~SCOdata.isTimeseries
+%    for mm=1:length()
+%        SCOdata.Ptide 
+%    end
+%end
+
+
 if nargout==1
     varargout{1}=SCOdata;
 else
