@@ -110,24 +110,24 @@ end
 
 %%  Get coordinates of rectangular grid
 % -> different for rotated geographic grids
-if ~rot==0 &  ~rot==90  &  ~rot==180  &  ~rot==360 & strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+if rot~=0 &&  rot~=90  &&  rot~=180  &&  rot~=360 && strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
 
     % Determine UTM zone of the middle
-	[ans1,ans2, utmzone_total, utmzone_parts] = ddb_deg2utm(mean(y),mean(x))
+	[ans1,ans2, utmzone_total, utmzone_parts] = ddb_deg2utm(mean(y),mean(x));
     
     % Change coordinate system to UTM of the middle
     coord.name = 'WGS 84 / UTM zone ';
-    s           = {coord.name, '',num2str(utmzone_parts.number), utmzone_parts.lat}
-    coord.name  = [s{:}]
-    coord.type = 'Cartesian'
+    s           = {coord.name, '',num2str(utmzone_parts.number), utmzone_parts.lat};
+    coord.name  = [s{:}];
+    coord.type = 'Cartesian';
 
     % Convert the ori
     [xori_utm,yori_utm]             = ddb_coordConvert(xori,yori,dataCoord,coord);
 
     % Distance of the grid
     [x_utm,y_utm]             = ddb_coordConvert(x,y,dataCoord,coord);
-    sx                        = ((x_utm(1) - x_utm(2)).^2 + (y_utm(1) - y_utm(2)).^2).^0.5
-    sy                        = ((x_utm(2) - x_utm(3)).^2 + (y_utm(2) - y_utm(3)).^2).^0.5
+    sx                        = ((x_utm(1) - x_utm(2)).^2 + (y_utm(1) - y_utm(2)).^2).^0.5;
+    sy                        = ((x_utm(2) - x_utm(3)).^2 + (y_utm(2) - y_utm(3)).^2).^0.5;
 
     % Determine new dx and dy
     dx_utm = sx / nx;
