@@ -146,7 +146,7 @@ for i=1:n
     end
     
     if convc
-       [spec.x,spec.y]=ConvertCoordinates(spec.x,spec.y,'persistent','CS1.code',OPT.CS1.code,'CS2.code',OPT.CS2.code);
+       [spec.x,spec.y]=convertCoordinates(spec.x,spec.y,'persistent','CS1.code',OPT.CS1.code,'CS2.code',OPT.CS2.code);
     end
 
     f=fgetl(fid);

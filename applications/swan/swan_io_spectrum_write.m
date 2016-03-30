@@ -88,6 +88,10 @@ function varargout = swan_io_spectrum(varargin)
                          DAT.CDIR = [];
                          DAT.NDIR = [];
                      DAT.DSPRDEGR = [];
+                     
+                     DAT.directions = [];
+                     DAT.direction_convention = [];
+                     
 
 %% Input
    
@@ -99,9 +103,10 @@ function varargout = swan_io_spectrum(varargin)
    DAT = setproperty(DAT,varargin{2:end});
    end
    
-   DAT.filename = varargin{1}; % overwrite one in struct
-   [DAT.path DAT.name DAT.ext] = fileparts(DAT.filename);
-
+   DAT.filename = varargin{1,1}; % overwrite one in struct
+   DAT.filename = 'test.bnd'
+   %[DAT.path DAT.name DAT.ext] = fileparts(DAT);
+   
 %% Check for overwriting
    
    tmp       = dir(DAT.filename);
@@ -234,7 +239,7 @@ function varargout = swan_io_spectrum(varargin)
             
          end
          
-         if     strcmpi(DAT.frequency_type(1),'a');% absolute
+         if     strcmpi(DAT.frequency_type,'a');% absolute
 
             fprintf  (fid,'%s','AFREQ                                   absolute frequencies in Hz');
             fprinteol(fid,OPT.OS);
@@ -251,7 +256,7 @@ function varargout = swan_io_spectrum(varargin)
             fprinteol(fid,OPT.OS);
             end            
             
-         elseif strcmpi(DAT.frequency_type(1),'r');% relative
+         elseif strcmpi(DAT.frequency_type,'r');% relative
 
             fprintf  (fid,'%s','RFREQ                                   relative frequencies in Hz');
             fprinteol(fid,OPT.OS);
@@ -329,10 +334,10 @@ function varargout = swan_io_spectrum(varargin)
          
          DAT.number_of_directions    = length(DAT.directions);
          
-         if isempty(DAT.direction_convention) & ...
-            isfield(DAT,'directions')
-            error('field ''direction_convention'' required for 2D spectra.')
-         end
+%          if isempty(DAT.direction_convention) & ...
+%             isfield(DAT,'directions')
+%             error('field ''direction_convention'' required for 2D spectra.')
+%          end
 
          if isfield(DAT,'directions') & DAT.number_of_directions > 1 & ...
             ~(isvector(DAT.quantity_names{1}))
