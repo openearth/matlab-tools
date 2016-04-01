@@ -45,6 +45,7 @@ function [x,z,a,m]=dean_beach_profile(dx,zmin,zmax,beta_dry,varargin)
 % programming tools in an open source, version controlled environment.
 % Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
+
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
 % Created: 01 Apr 2016
 % Created with Matlab version: 2013b
