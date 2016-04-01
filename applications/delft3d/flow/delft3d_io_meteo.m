@@ -491,7 +491,7 @@ if length(DAT.datenum)==1
 end
 
 %write header
-fprintf(fid,'FileVersion      = %s\n',DAT.keywords.Fileversion); 
+fprintf(fid,'FileVersion      = %s\n',DAT.keywords.FileVersion); 
 fprintf(fid,'filetype         = %s\n',DAT.keywords.filetype); 
 fprintf(fid,'NODATA_value     = %.6f\n',DAT.keywords.NODATA_value); 
 fprintf(fid,'n_cols        = %.0f\n',DAT.keywords.n_cols); 

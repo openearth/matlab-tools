@@ -1,4 +1,4 @@
-function fid = delft3d_io_meteo_write(filehandle,time,data,varargin)
+function fid = delft3d_io_meteo_write(filehandle,time,X,Y, data,varargin)
 %DELFT3D_IO_METEO_WRITE   write meteo data file on curvilinear grid
 %
 %  <fid> = delft3d_io_meteo_write(file,time,data,x,y,<keyword,value>)
@@ -95,6 +95,7 @@ OPT.writegrd         = true;
 OPT.n_quantity       = 1;
 OPT.quantity         = 'x_wind';
 OPT.unit             = 'm s-1';
+OPT.gridunit         = 'degree'
 
 OPT.refdatenum       = datenum(1970,1,1); 
 OPT.timezone         = '+00:00';
@@ -106,11 +107,11 @@ OPT.fmt              = '%.6g'; % sufficient for pressure, for rest %.3g' is suff
 OPT.comment          = '';
 
 nextarg = 1;
-
+        x = X;
+        y = Y;
 if nargin > 3
     if isnumeric(varargin{1})
-        x = varargin{1};
-        y = varargin{2};
+
         nextarg = 3;
         OPT.newgrid = 1;
     end
@@ -163,7 +164,7 @@ if strcmpi(OPT.filetype,'meteo_on_equidistant_grid')
         fprinteol(fid,OPT.OS);
         fprintf  (fid,['n_rows           = ',num2str(n_rows)]);
         fprinteol(fid,OPT.OS);
-        fprintf  (fid,['grid_unit        = m']);
+        fprintf  (fid,['grid_unit        = ' OPT.gridunit]);
         fprinteol(fid,OPT.OS);
         fprintf  (fid,['x_llcorner       = ',num2str(min(min(x)))]);
         fprinteol(fid,OPT.OS);
@@ -176,9 +177,9 @@ if strcmpi(OPT.filetype,'meteo_on_equidistant_grid')
         fprintf  (fid,['n_quantity       = ',num2str(OPT.n_quantity)]);
         fprinteol(fid,OPT.OS);
         for q = 1:OPT.n_quantity
-            fprintf  (fid,['quantity' num2str(q) '        = ',OPT.quantity{q}]);
+            fprintf  (fid,['quantity' num2str(q) '        = ',OPT.quantity]);
             fprinteol(fid,OPT.OS);
-            fprintf  (fid,['unit' num2str(q) '            = ',OPT.unit{q}]);
+            fprintf  (fid,['unit' num2str(q) '            = ',OPT.unit]);
             fprinteol(fid,OPT.OS);
         end
         fprintf  (fid,['NODATA_value     = ',num2str(OPT.nodata_value)]);
