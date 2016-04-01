@@ -16,6 +16,44 @@ function [x,z,a,m]=dean_beach_profile(dx,zmin,zmax,beta_dry,varargin)
 % Example:
 % [x,z,a,m]=dean_beach_profile(1.0,-20,10,0.01,'d50',0.0002);
 
+%   --------------------------------------------------------------------
+%   Copyright (C) 2016 Deltares
+%       Maarten van Ormondt
+%
+%       <maarten.vanormondt@deltares.nl>;
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 01 Apr 2016
+% Created with Matlab version: 2013b
+% $Id: dean_beach_profile.m 12629 2016-03-21 05:51:10Z ormondt $
+% $Date: 2016-03-21 06:51:10 +0100 (Mon, 21 Mar 2016) $
+% $Author: ormondt $
+% $Revision: 12629 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/general/phys_fun/dean_beach_profile.m $
+% $Keywords: $
 
 m=2/3;
 a=[];
