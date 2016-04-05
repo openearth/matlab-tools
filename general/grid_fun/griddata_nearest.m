@@ -30,6 +30,9 @@ function varargout = griddata_nearest(X,Y,Z,XI,YI,varargin)
 %   (X,Y,Z) to retrieve the position (X(I),Y(I)) of the nearest
 %   pixel used to construct ZI.
 %
+%   For interpolation of lat-lon grids, make sure to convert both the X,Y
+%   and XI,YI to an X,Y coordinate system using convertCoordinates().
+%
 %   See also: GRIDDATA, GRIDDATA_AVERAGE, GRIDDATA_REMAP, INTERP2, BIN2
 
 %% Copyright notice
