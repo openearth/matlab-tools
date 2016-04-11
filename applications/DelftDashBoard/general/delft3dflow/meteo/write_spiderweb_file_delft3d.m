@@ -68,12 +68,14 @@ function write_spiderweb_file_delft3d(fname, tc, gridunit, reftime, radius, vara
 %%
 
 vsn='1.03';
-
+merge_frac=[];
 for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
             case{'version'}
                 vsn=varargin{ii+1};
+            case{'merge_frac'}
+                merge_frac=varargin{ii+1};
         end
     end
 end
@@ -91,6 +93,9 @@ fprintf(fid,'%s\n',['n_rows         =    ' num2str(nrows) '                     
 fprintf(fid,'%s\n',['grid_unit      =    ' gridunit]);
 fprintf(fid,'%s\n',['spw_radius     =   ' num2str(radius)]);
 fprintf(fid,'%s\n','spw_rad_unit   = m');
+if ~isempty(merge_frac)
+    fprintf(fid,'%s\n',['spw_merge_frac =   ' num2str(merge_frac)]);
+end
 fprintf(fid,'%s\n','n_quantity     = 3');
 fprintf(fid,'%s\n','quantity1      = wind_speed');
 fprintf(fid,'%s\n','quantity2      = wind_from_direction');
