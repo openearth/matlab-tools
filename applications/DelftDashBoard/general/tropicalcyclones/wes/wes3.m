@@ -111,7 +111,16 @@ for it=1:length(tc.track)
     
     for iphi=1:length(phi)
         wind_speed(iphi,:) = vr;
-        if tc.track(it).y>0.0
+        if strcmpi(tc.cs.type,'geographic')
+            lat=tc.track(it).y;
+        else
+            if isfield(tc,'latitude')
+                lat=tc.latitude;
+            else
+                lat=20;
+            end
+        end
+        if lat>=0.0
             % Northern hemisphere
             dr=90+phi(iphi)+spw.phi_spiral;
         else
@@ -136,6 +145,11 @@ for it=1:length(tc.track)
        
     tc.track(it).wind_speed=wind_speed;
     tc.track(it).wind_from_direction=wind_from_direction;
+    if isfield(spw,'include_pdrop')
+        if ~spw.include_pdrop
+            pressure_drop=zeros(size(pressure_drop));
+        end
+    end
     tc.track(it).pressure_drop=pressure_drop;
 
 %     %% 
@@ -208,6 +222,9 @@ end
 errs=errs(~isnan(errs));
 rmserr=sqrt(mean(errs.^2));
 
+if ~isfield(spw,'merge_frac')
+    spw.merge_frac=[];
+end
 if ~isempty(outputfile)
     switch lower(spw.cs.type(1:3))
         case{'geo'}
@@ -215,7 +232,7 @@ if ~isempty(outputfile)
         otherwise
             gridunit='m';
     end
-    write_spiderweb_file_delft3d(outputfile, tc, gridunit, spw.reference_time, spw.radius);
+    write_spiderweb_file_delft3d(outputfile, tc, gridunit, spw.reference_time, spw.radius, 'merge_frac',spw.merge_frac);
 end
 
 %%
@@ -226,30 +243,93 @@ switch lower(format)
         
         % First convert to wes structure        
         trackinput=tc.track;
-        tc=rmfield(tc,'track');        
+        tc=rmfield(tc,'track');
+        
+        % Set dummy values
+        for it=1:length(trackinput.time)
+            tc.track(it).time=0;
+            tc.track(it).x=0;
+            tc.track(it).y=0;
+            tc.track(it).vmax=0;
+            tc.track(it).pc=-999;
+            tc.track(it).rmax=-999;
+            tc.track(it).r35ne=-999;
+            tc.track(it).r35se=-999;
+            tc.track(it).r35sw=-999;
+            tc.track(it).r35nw=-999;
+            tc.track(it).r50ne=-999;
+            tc.track(it).r50se=-999;
+            tc.track(it).r50sw=-999;
+            tc.track(it).r50nw=-999;
+            tc.track(it).r65ne=-999;
+            tc.track(it).r65se=-999;
+            tc.track(it).r65sw=-999;
+            tc.track(it).r65nw=-999;
+            tc.track(it).r100ne=-999;
+            tc.track(it).r100se=-999;
+            tc.track(it).r100sw=-999;
+            tc.track(it).r100nw=-999;
+        end
+        
         for it=1:length(trackinput.time)
             tc.track(it).time=trackinput.time(it);
             tc.track(it).x=trackinput.x(it);
             tc.track(it).y=trackinput.y(it);
             tc.track(it).vmax=trackinput.vmax(it);
-            tc.track(it).pc=trackinput.pc(it);
-            tc.track(it).rmax=trackinput.rmax(it);
-            tc.track(it).quadrant(1).radius(1)=trackinput.r35ne(it);
-            tc.track(it).quadrant(2).radius(1)=trackinput.r35se(it);
-            tc.track(it).quadrant(3).radius(1)=trackinput.r35sw(it);
-            tc.track(it).quadrant(4).radius(1)=trackinput.r35nw(it);
-            tc.track(it).quadrant(1).radius(2)=trackinput.r50ne(it);
-            tc.track(it).quadrant(2).radius(2)=trackinput.r50se(it);
-            tc.track(it).quadrant(3).radius(2)=trackinput.r50sw(it);
-            tc.track(it).quadrant(4).radius(2)=trackinput.r50nw(it);
-            tc.track(it).quadrant(1).radius(3)=trackinput.r65ne(it);
-            tc.track(it).quadrant(2).radius(3)=trackinput.r65se(it);
-            tc.track(it).quadrant(3).radius(3)=trackinput.r65sw(it);
-            tc.track(it).quadrant(4).radius(3)=trackinput.r65nw(it);
-            tc.track(it).quadrant(1).radius(4)=trackinput.r100ne(it);
-            tc.track(it).quadrant(2).radius(4)=trackinput.r100se(it);
-            tc.track(it).quadrant(3).radius(4)=trackinput.r100sw(it);
-            tc.track(it).quadrant(4).radius(4)=trackinput.r100nw(it);            
+            if isfield(trackinput,'pc')
+                tc.track(it).pc=trackinput.pc(it);
+            end
+            if isfield(trackinput,'rmax')
+                tc.track(it).rmax=trackinput.rmax(it);
+            end
+            if isfield(trackinput,'r35ne')
+                tc.track(it).quadrant(1).radius(1)=trackinput.r35ne(it);
+            end
+            if isfield(trackinput,'r35se')
+                tc.track(it).quadrant(2).radius(1)=trackinput.r35se(it);
+            end
+            if isfield(trackinput,'r35sw')
+                tc.track(it).quadrant(3).radius(1)=trackinput.r35sw(it);
+            end
+            if isfield(trackinput,'r35nw')
+                tc.track(it).quadrant(4).radius(1)=trackinput.r35nw(it);
+            end
+            if isfield(trackinput,'r50ne')
+                tc.track(it).quadrant(1).radius(2)=trackinput.r50ne(it);
+            end
+            if isfield(trackinput,'r50se')
+                tc.track(it).quadrant(2).radius(2)=trackinput.r50se(it);
+            end
+            if isfield(trackinput,'r50sw')
+                tc.track(it).quadrant(3).radius(2)=trackinput.r50sw(it);
+            end
+            if isfield(trackinput,'r50nw')
+                tc.track(it).quadrant(4).radius(2)=trackinput.r50nw(it);
+            end
+            if isfield(trackinput,'r65ne')
+                tc.track(it).quadrant(1).radius(3)=trackinput.r65ne(it);
+            end
+            if isfield(trackinput,'r65se')
+                tc.track(it).quadrant(2).radius(3)=trackinput.r65se(it);
+            end
+            if isfield(trackinput,'r65sw')
+                tc.track(it).quadrant(3).radius(3)=trackinput.r65sw(it);
+            end
+            if isfield(trackinput,'r65nw')
+                tc.track(it).quadrant(4).radius(3)=trackinput.r65nw(it);
+            end
+            if isfield(trackinput,'r100ne')
+                tc.track(it).quadrant(1).radius(4)=trackinput.r100ne(it);
+            end
+            if isfield(trackinput,'r100se')
+                tc.track(it).quadrant(2).radius(4)=trackinput.r100se(it);
+            end
+            if isfield(trackinput,'r100sw')
+                tc.track(it).quadrant(3).radius(4)=trackinput.r100sw(it);
+            end
+            if isfield(trackinput,'r100nw')
+                tc.track(it).quadrant(4).radius(4)=trackinput.r100nw(it);
+            end
         end
         
         % Replace -999 with NaN
@@ -429,11 +509,16 @@ for it=1:nt
 end
 
 % tc.track(it).dpcdt=zeros(size(pc));
-for it2=2:length(tc.track)-1
-    tc.track(it2).dpcdt=(tc.track(it2+1).pc-tc.track(it2-1).pc)/(24*(tc.track(it2+1).time-tc.track(it2-1).time));
+if length(tc.track)>2
+    for it2=2:length(tc.track)-1
+        tc.track(it2).dpcdt=(tc.track(it2+1).pc-tc.track(it2-1).pc)/(24*(tc.track(it2+1).time-tc.track(it2-1).time));
+    end
+    tc.track(1).dpcdt=tc.track(2).dpcdt;
+    tc.track(end).dpcdt=tc.track(end-1).dpcdt;
+else
+    tc.track(1).dpcdt=(tc.track(2).pc-tc.track(1).pc)/(24*(tc.track(2).time-tc.track(1).time));
+    tc.track(2).dpcdt=(tc.track(2).pc-tc.track(1).pc)/(24*(tc.track(2).time-tc.track(1).time));
 end
-tc.track(1).dpcdt=tc.track(2).dpcdt;
-tc.track(end).dpcdt=tc.track(end-1).dpcdt;
 
 %%
 function tc=wes_estimate_missing_values(tc,spw)
@@ -482,7 +567,16 @@ for it=1:length(tc.track)
                     % estimate it first.
                     for it2=1:length(tc.track)
                         vt=sqrt(tc.track(it2).vtx^2+tc.track(it2).vty^2);
-                        pc(it2)=wpr_holland2008('vmax',tc.track(it2).vmax,'pn',spw.pn,'lat',tc.track(it2).y,'dpcdt',0,'vt',vt,'rhoa',spw.rhoa);
+                        if strcmpi(tc.cs.type,'geographic')
+                            lat=tc.track(it2).y;
+                        else
+                            if isfield(tc,'latitude')
+                                lat=tc.latitude;
+                            else
+                                lat=20;
+                            end
+                        end
+                        pc(it2)=wpr_holland2008('vmax',tc.track(it2).vmax,'pn',spw.pn,'lat',lat,'dpcdt',0,'vt',vt,'rhoa',spw.rhoa);
                     end
                     dpcdt=zeros(size(pc));
                     for it2=2:length(tc.track)-2
@@ -492,7 +586,16 @@ for it=1:length(tc.track)
                     dpcdt(end)=dpcdt(end-1);
                     % And now compute pc for real
                     vt=sqrt(tc.track(it).vtx^2+tc.track(it).vty^2);
-                    tc.track(it).pc=wpr_holland2008('vmax',tc.track(it).vmax,'pn',spw.pn,'lat',tc.track(it).y,'dpcdt',dpcdt(it),'vt',vt,'rhoa',spw.rhoa);
+                    if strcmpi(tc.cs.type,'geographic')
+                        lat=tc.track(it2).y;
+                    else
+                        if isfield(tc,'latitude')
+                            lat=tc.latitude;
+                        else
+                            lat=20;
+                        end
+                    end
+                    tc.track(it).pc=wpr_holland2008('vmax',tc.track(it).vmax,'pn',spw.pn,'lat',lat,'dpcdt',dpcdt(it),'vt',vt,'rhoa',spw.rhoa);
                 case{'vatvani'}
                     % pd=2*v^2
                     tc.track(it).pc=spw.pn-0.01*2*tc.track(it).vmax_rel^2;
