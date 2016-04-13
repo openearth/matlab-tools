@@ -1,0 +1,54 @@
+function nesthd_cmpfiles(files,varargin)
+
+opt.Filename = '';
+opt.Refdir   = '.';
+if ~isempty(varargin)
+    opt = setproperty(opt,varargin);
+end
+
+if ~isempty(opt.Filename)
+    fid = fopen(opt.Filename,'a');
+end
+
+% cmpfiles : compare file in cell array files with original fles (extension .org)
+
+for itest = 1:length(files)
+    if ~isempty(files{itest})
+        [~,name,ext] = fileparts(files{itest});
+        if exist([opt.Refdir filesep [name ext] '.org'],'file')
+
+           line_n = nesthd_reatxt( files{itest}                           );
+           line_o = nesthd_reatxt([opt.Refdir filesep [name ext] '.org']);
+
+           identical = true;
+           if length(line_n) == length(line_o);
+               for iline = 1: length(line_n)
+                   identical = strcmp(line_n{iline},line_o{iline});
+                   if ~identical;break;end;
+               end
+           else
+               identical = false;
+           end
+
+           if identical
+               string = ['Identical     : ' files{itest}];
+           else
+               string = ['NOT Identical : ' files{itest}];
+           end
+        else
+           string = ['New testcase  : ' files{itest}];
+           movefile(files{itest},[opt.Refdir filesep [name ext] '.org']);
+        end
+
+        if ~isempty(opt.Filename)
+            fprintf(fid,'%s \n',string);
+        else
+            disp(string);
+        end
+    end
+end
+
+if ~isempty(opt.Filename)
+    fclose (fid);
+end
+
