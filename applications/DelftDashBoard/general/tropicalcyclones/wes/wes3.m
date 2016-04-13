@@ -21,6 +21,9 @@ tc=wes_convert_units(tc,spw);
 %% Determine forward speed vtx and vty and relative speeds at the different radii in the quadrants
 tc=wes_compute_forward_speed(tc,spw);
 
+%% Land decay
+tc=wes_land_decay(tc,spw);
+
 %% Estimate missing values for Vmax, Pc and Rmax
 tc=wes_estimate_missing_values(tc,spw);
 
@@ -130,12 +133,45 @@ for it=1:length(tc.track)
         wind_to_direction_cart(iphi,:)=dr;
         pressure_drop(iphi,:) = pd*100;
     end
-                
-    efold=exp(-pi*r/500.0); % decrease with e-folding scale from eye
-    efold=repmat(efold,[spw.nr_directional_bins 1]);
 
-    vx=wind_speed.*cos(wind_to_direction_cart*pi/180)+tc.track(it).vtx*efold;
-    vy=wind_speed.*sin(wind_to_direction_cart*pi/180)+tc.track(it).vty*efold;
+    ux=tc.track(it).vtx;
+    uy=tc.track(it).vty;    
+    switch lower(spw.asymmetry_option)
+        case{'schwerdt1979'}
+            % Use Schwerdt (1979) to compute u_prop and v_prop
+            uabs=sqrt(ux^2+uy^2);
+            c=uabs*1.944; % Convert to kts
+            a=1.5*c^0.63; % Schwerdt (1979)
+            a=a/1.944;    % Convert to m/s
+            ux=a*ux/uabs;
+            uy=a*uy/uabs;
+        case{'jma'}
+            % Decrease with e-folding scale from eye
+            c2=0.57143;
+            efold=exp(-pi*r/500.0);
+            efold=repmat(efold,[spw.nr_directional_bins 1]);
+            ux=c2*ux*efold;
+            uy=c2*uy*efold;
+        case{'mvo'}
+            % Let factor increase from 0 to rmax, and then keep it constant
+            c2=0.6;
+            ff=[0 0.6 0.6];
+            rr=[0 rmax 5000];
+            f=interp1(rr,ff,r);
+            f=repmat(f,[spw.nr_directional_bins 1]);
+            ux=c2*ux*f;
+            uy=c2*uy*f;
+        case{'none'}
+            ux=0.0;
+            uy=0.0;
+    end
+    
+%    vx=wind_speed.*cos(wind_to_direction_cart*pi/180)+tc.track(it).vtx*efold;
+%    vy=wind_speed.*sin(wind_to_direction_cart*pi/180)+tc.track(it).vty*efold;
+%     vx=wind_speed.*cos(wind_to_direction_cart*pi/180)+tc.track(it).vtx;
+%     vy=wind_speed.*sin(wind_to_direction_cart*pi/180)+tc.track(it).vty;
+    vx=wind_speed.*cos(wind_to_direction_cart*pi/180)+ux;
+    vy=wind_speed.*sin(wind_to_direction_cart*pi/180)+uy;
 
     dr=atan2(vy,vx);
     dr=1.5*pi-dr;
@@ -385,7 +421,7 @@ end
 
 % Asymmetry (use Schwedt 1979 as default
 if ~isfield(spw,'asymmetry_option')
-    spw.asymmetry_option='schwerdt1979';
+    spw.asymmetry_option='mvo';
 end
 
 % switch lower(spw.asymmetry_option) % To be adjusted, this has nothing to do with asymmetry
@@ -480,32 +516,33 @@ for it=1:nt
     ux=dx/dt;
     uy=dy/dt;
     
-    if strcmpi(spw.rmax_relation,'pagasajma')
-        spw.asymmetry_option='jma';
-    end
+%     if strcmpi(spw.rmax_relation,'pagasajma')
+%         spw.asymmetry_option='jma';
+%     end
+%     
+%     switch lower(spw.asymmetry_option)
+%         case{'schwerdt1979'}
+%             % Use Schwerdt (1979) to compute u_prop and v_prop
+%             uabs=sqrt(ux^2+uy^2);
+%             c=uabs*1.944; % Convert to kts
+%             a=1.5*c^0.63; % Schwerdt (1979)
+%             a=a/1.944;    % Convert to m/s
+%             u_prop=a*ux/uabs;
+%             v_prop=a*uy/uabs;
+%             u_prop=ux;
+%             v_prop=uy;
+%         case{'jma'}
+%             c2=0.57143;
+%             u_prop=c2*ux;
+%             v_prop=c2*uy;
+%         case{'none'}
+%             u_prop=0.0;
+%             v_prop=0.0;
+%     end
     
-    switch lower(spw.asymmetry_option)
-        case{'schwerdt1979'}
-            % Use Schwerdt (1979) to compute u_prop and v_prop
-            uabs=sqrt(ux^2+uy^2);
-            c=uabs*1.944; % Convert to kts
-            a=1.5*c^0.63; % Schwerdt (1979)
-            a=a/1.944;    % Convert to m/s
-            u_prop=a*ux/uabs;
-            v_prop=a*uy/uabs;
-            u_prop=ux;
-            v_prop=uy;
-        case{'jma'}
-            c2=0.57143;
-            u_prop=c2*ux;
-            v_prop=c2*uy;
-        case{'none'}
-            u_prop=0.0;
-            v_prop=0.0;
-    end
-    
-    tc.track(it).vtx=u_prop;
-    tc.track(it).vty=v_prop;
+    tc.track(it).vtx=ux;
+    tc.track(it).vty=uy;
+
 end
 
 % tc.track(it).dpcdt=zeros(size(pc));
@@ -519,6 +556,110 @@ else
     tc.track(1).dpcdt=(tc.track(2).pc-tc.track(1).pc)/(24*(tc.track(2).time-tc.track(1).time));
     tc.track(2).dpcdt=(tc.track(2).pc-tc.track(1).pc)/(24*(tc.track(2).time-tc.track(1).time));
 end
+
+%%
+function tc=wes_land_decay(tc,spw)
+
+if ~isfield(spw,'xland')
+    return
+end
+if isempty(spw.xland)
+    return
+end
+xland=spw.xland; % Land polygon
+yland=spw.yland; % Land polygon
+
+rs=110000;
+
+vb=26.7;      % knots!
+alfa=0.095;   % 1/h
+kts2ms=0.514;
+
+% Convert structure to vector arrays
+fldnames=fieldnames(tc.track);
+for ifld=1:length(fldnames)
+    for it=1:length(tc.track)
+        fldname=fldnames{ifld};
+        if ~strcmpi(fldname,'quadrant')
+            track.(fldname)(it)=tc.track(it).(fldname);
+        end
+    end
+        if ~strcmpi(fldname,'quadrant')
+    track.(fldname)(track.(fldname)==-999)=NaN;
+        end
+end
+
+tt=track.time(1):1/24:track.time(end);
+xt=interp1(track.time,track.x,tt);
+yt=interp1(track.time,track.y,tt);
+
+ilandsea=zeros(1,length(tt));
+for it=1:length(tt)
+    xx=xt(it)-rs:5000:xt(it)+rs;
+    yy=yt(it)-rs:5000:yt(it)+rs;
+    [xg,yg]=meshgrid(xx,yy);
+    xg=reshape(xg,[1 size(xg,1)*size(xg,2)]);
+    yg=reshape(yg,[1 size(yg,1)*size(yg,2)]);
+    dst=sqrt((xg-xt(it)).^2 + (yg-yt(it)).^2);
+    xg=xg(dst<rs);
+    yg=yg(dst<rs);
+    ninp=sum(inpolygon(xg,yg,xland,yland));
+    if ninp==0
+        % Storm completely over water
+        F(it)=0.0;
+        ilandsea(it)=0;        
+    else    
+        F(it)=ninp/length(xg); % Percentage of storm over land
+        ilandsea(it)=1;        
+    end    
+end
+
+% Simplification!!! Assume just one landfall
+it1=find(ilandsea==0,1,'last'); % time index when storm was last over the sea
+it2=find(F==1,1,'first');       % time index when storm is completely over land
+
+itlast  = find(track.time<tt(it1)); % last index in original track when storm was completely over sea 
+itfirst = find(track.time>tt(it2)); % first index in original track when storm is completely over land
+
+% Now interpolate original storm properties to hourly data
+tt=tt(it1:it2);
+F=F(it1:it2);
+for ifld=1:length(fldnames)
+    fldname=fldnames{ifld};
+    if ~strcmpi(fldname,'quadrant')
+        track1.(fldname)=interp1(track.time,track.(fldname),tt);
+    end
+end
+track1.vmax=track1.vmax/kts2ms;   % convert to knots
+track1.vmax=track1.vmax/0.9;      % 1 min sustained winds
+vmax(1)=track1.vmax(1);
+for it=2:length(tt)
+    vmax(it) = vb + (vmax(it-1) - vb)*exp(-F(it)*alfa); 
+end
+track1.vmax=vmax*kts2ms*0.9;
+
+track.vmax(itfirst:end)=track1.vmax(end);
+for ifld=1:length(fldnames)
+    fldname=fldnames{ifld};
+    if ~strcmpi(fldname,'quadrant')
+        track.(fldname)=[track.(fldname)(1:itlast) track1.(fldname) track.(fldname)(itfirst:end)];
+    end
+end
+
+%shite=1
+
+% And store data back in original track structure
+for ifld=1:length(fldnames)
+    fldname=fldnames{ifld};
+    if ~strcmpi(fldname,'quadrant')
+%        track.(fldname)(isnan(track.(fldname)))=-999;
+        for it=1:length(track.time)
+            tc.track(it).(fldname)=track.(fldname)(it);
+        end
+    end
+end
+
+
 
 %%
 function tc=wes_estimate_missing_values(tc,spw)
@@ -628,9 +769,36 @@ nt=length(tc.track);
 for it=1:nt
     
     u_prop=tc.track(it).vtx;
-    v_prop=tc.track(it).vtx;
+    v_prop=tc.track(it).vty;
     
     % Compute max wind speed relative to propagation speed
+    
+    if strcmpi(spw.rmax_relation,'pagasajma')
+        spw.asymmetry_option='mvo';
+    end
+     
+    switch lower(spw.asymmetry_option)
+        case{'schwerdt1979'}
+            % Use Schwerdt (1979) to compute u_prop and v_prop
+            uabs=sqrt(ux^2+uy^2);
+            c=uabs*1.944; % Convert to kts
+            a=1.5*c^0.63; % Schwerdt (1979)
+            a=a/1.944;    % Convert to m/s
+            u_prop=a*ux/uabs;
+            v_prop=a*uy/uabs;
+        case{'jma'}
+            c2=0.57143;
+            u_prop=c2*ux;
+            v_prop=c2*uy;
+        case{'mvo'}
+            c2=0.6;
+            u_prop=c2*u_prop;
+            v_prop=c2*u_prop;
+        case{'none'}
+            u_prop=0.0;
+            v_prop=0.0;
+    end
+    
     tc.track(it).vmax_rel=tc.track(it).vmax-sqrt(u_prop^2+v_prop^2);
     
     % And now compute relative speed for radii
@@ -664,9 +832,12 @@ for it=1:nt
             if ~isnan(tc.track(it).quadrant(iq).radius(irad))
                 uabs=tc.radius_velocity(irad)*cos(angles(iq));
                 vabs=tc.radius_velocity(irad)*sin(angles(iq));
-                efold=exp(-pi*tc.track(it).quadrant(iq).radius(irad)/500.0);
-                urel=uabs-u_prop*efold;
-                vrel=vabs-v_prop*efold;
+%                 efold=exp(-pi*tc.track(it).quadrant(iq).radius(irad)/500.0);
+%                 urel=uabs-u_prop*efold;
+%                 vrel=vabs-v_prop*efold;
+%                efold=exp(-pi*tc.track(it).quadrant(iq).radius(irad)/500.0);
+                urel=uabs-u_prop;
+                vrel=vabs-v_prop;
                 tc.track(it).quadrant(iq).relative_speed(irad)=sqrt(urel^2+vrel^2);
             else
                 tc.track(it).quadrant(iq).relative_speed(irad)=NaN;
