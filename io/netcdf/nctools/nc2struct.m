@@ -163,7 +163,9 @@ end
             D.(fldname) = permute(D.(fldname),pm);
          end         
          if ischar(D.(fldname))
+            if length(size(D.destination)) <= 2
             D.(fldname) = cellstr(D.(fldname)); % always n x 1, can be wrong order if mat file was 1 x n
+            end
          end
       end % exclude/include
 

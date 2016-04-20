@@ -16,9 +16,13 @@ function varargout = jonswap2(f,varargin)
 %
 % Example: 1D spectrum
 %
-%    frq = linspace(0.03,.3,30);
-%    jn1 = jonswap2(frq,'Hm0',1,'Tp',10);
-%    plot(frq,jn1);
+%    for n=[10 30 100 300]
+%        frq = linspace(0.03,.3,n);
+%        jn1 = jonswap2(frq,'Hm0',1,'Tp',10);
+%        plot(frq,jn1,'-','displayname',num2str(n),'linewidth',n/200);
+%        hold on
+%    end
+%    legend show
 %    xlabel('frequency [Hz]');ylabel('Energy [m2/Hz]')
 %
 % Example: 2D spectrum
