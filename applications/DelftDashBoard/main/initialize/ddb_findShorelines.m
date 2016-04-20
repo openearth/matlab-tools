@@ -143,7 +143,11 @@ for i=1:handles.shorelines.nrShorelines
                 dx=nc_varget(fname,'tile_size_x');
                 dy=nc_varget(fname,'tile_size_y');
                 scale=nc_varget(fname,'scale');
+                try
                 zoomstrings=nc_varget(fname,'zoom_level_string');
+                catch
+                zoomstrings=['f';'h';'i';'l';'c'];
+                end
                 
                 for k=1:length(x0)
                     iav{k}=nc_varget(fname,['iavailable' num2str(k)]);
