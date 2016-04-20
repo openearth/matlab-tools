@@ -7,7 +7,7 @@ function varargout = getICESdata(varargin)
 % with arrays for easy plotting.
 %
 % Example:
-%  [D,A] = getICESdata('ParameterCode','CPCL','t0',datenum(2009,1,1),'t1',datenum(2010,1,1),...
+%  [D,A] = getICESdata('ParameterCode','PSAL','t0',datenum(2009,1,1),'t1',datenum(2010,1,1),...
 %              'lon',[-2  9],... % bounding box longitude 
 %              'lat',[49 57],... % bounding box latitude
 %              'p'  ,[0 1e5],... % bounding box depth (pressure)

@@ -1,7 +1,7 @@
 function [x2,y2,varargout]=convertCoordinates(x1,y1,varargin)
 %CONVERTCOORDINATES transformation between coordinate systems
 %
-% [x2,y2,<logs>] = convertCoordinatesNew(x1,y1,'keyword','value')
+% [x2,y2,<logs>] = convertCoordinates(x1,y1,'keyword','value')
 %
 % Note 1: Beware of the Lon-Lat order of in- and output arguments!
 % Note 2: (x1,y1) can be vectors or matrices.
@@ -23,7 +23,7 @@ function [x2,y2,varargout]=convertCoordinates(x1,y1,varargin)
 % components of the original vector field. The third and fourth output argument are
 % matrices of the u and v components of the corrected vector field.
 %
-% [x2,y2,u2,v2,<logs>] = convertCoordinatesNew(x1,y1,u1,v1,'keyword','value')
+% [x2,y2,u2,v2,<logs>] = convertCoordinates(x1,y1,u1,v1,'keyword','value')
 %
 % Optionally the data structure with EPSG codes can be pre-loaded
 % in the active memory, CONVERTCOORDINATES can be told to keep it
