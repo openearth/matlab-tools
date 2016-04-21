@@ -72,7 +72,7 @@ id=find(strcmp(d,'0'));
 id=id+1; %Object type will be in the next cell
 
 %Known objects
-knownObjects={'text','polyline','line','point','arc','circle'};
+knownObjects={'text','polyline','line','point','arc','circle','3dface'};
 
 objCount=0;
 
@@ -272,6 +272,32 @@ for ko=1:length(knownObjects)
                 objs(objCount).y=y;
                 objs(objCount).z=repmat(cz,1,length(x));
                 
+            case '3dface'
+                %Read until gValue = CONTINUOUS
+                [gCode,gValue,lineCount]=readDXFPair(d,id(co(fo)),lineCount);
+                while ~strcmpi(gValue,'CONTINUOUS')
+                    [gCode,gValue,lineCount]=readDXFPair(d,id(co(fo)),lineCount);
+                end
+                % read extra dummy row
+                [gCode,gValue,lineCount]=readDXFPair(d,id(co(fo)),lineCount);
+                
+                % now starts object
+                objCount=objCount+1;
+                gCode=999;
+                pointCount = 0;
+                
+                while gCode~=0
+                    [gCode,gValue,lineCount]=readDXFPair(d,id(co(fo)),lineCount);
+                    if gCode~=0
+                        pointCount = pointCount+1;
+                        objs(objCount).x(pointCount) = str2num(gValue);
+                        [gCode,gValue,lineCount]=readDXFPair(d,id(co(fo)),lineCount);
+                        objs(objCount).y(pointCount) = str2num(gValue);
+                        [gCode,gValue,lineCount]=readDXFPair(d,id(co(fo)),lineCount);
+                        objs(objCount).z(pointCount) = str2num(gValue);
+                    end
+                end
+                              
         end %end switch
     end %current object loop
     close(wH);
