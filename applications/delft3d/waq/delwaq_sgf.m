@@ -3,7 +3,7 @@ function Out = delwaq_sgf(cmd,varargin)
 %
 %   Struct = DELWAQ_SGF('read','FileName',NSegments,T0)
 %   reads the all substance and all segments at specified time step
-%   from the Delwaq *.RES binary file.
+%   from the Delwaq *.SGF binary file.
 %   <NSegments> is the total number of substances in the file. If the name
 %   of the file containing the substances ('substances.nam') is provided,
 %   then delwaq_res will read the file and find the number of sustances.
@@ -16,7 +16,7 @@ function Out = delwaq_sgf(cmd,varargin)
 %   if <Time> is not available then Time=0
 %
 %   Struct = DELWAQ_SGF('write','FileName',Struct)
-%   writes the data to a Delwaq RES file. 
+%   writes the data to a Delwaq SGF file. 
 %   Struct is the output of Struct = DELWAQ_SGF('read','...)
 
 %   Copyright 2011 Deltares, the Netherlands
