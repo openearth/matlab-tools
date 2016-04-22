@@ -38,19 +38,21 @@ function varargout = KMLfigure_tiler(h,lat,lon,z,varargin)
 %             1) tile generation in a file loop: save data or sub data to tiles
 %             2) tile joing: aggregate  all tiles to higher levels and generate
 %                mother kml that binds them all.
-%
+%             lowestLevel = 13;
 %             for =1:n
 %               [lon,lat,z]=load(files{i}))
 %               clf
-%               set(gca,'Color',[100 155 100]./255): % NOTE ORDER LON,LAT
+%               set(gca,'Color',[100 155 100]./255); % color not in jet()
 %               hold off
-%               h = pcolor(lon,lat,z)
+%               h = pcolor(lon,lat,z)                % NOTE ORDER LON,LAT
 %               axis off                             % do NOT use axis equal
+%               caxis([-20 0])                       % manual clim required !
 %               KMLfigure_tiler(h,lat,lon,z,...      % NOTE ORDER LAT,LON
 %                 'bgcolor'           ,[100 155 100],... % this color is made transparent in GE
-%                 'lowestLevel'       ,13,...    % +1 results in a x4 times larger dataset
+%                 'lowestLevel'       ,lowestLevel,...    % +1 results in a x4 times larger dataset
 %                 'printTiles'        ,true,...  % this loop prints all tiles
 %                 'joinTiles'         ,false,... % do not join untill all tiles are there
+%                 'makeKML'           ,false,... % do not do untill all tiles are there
 %                 'mergeExistingTiles',true);    % merge partially overlapping tiles
 %             end
 %
@@ -58,12 +60,13 @@ function varargout = KMLfigure_tiler(h,lat,lon,z,varargin)
 %             % joined (bounding box), and z does not matter
 %             KMLfigure_tiler([],[30 60],[-10 40],nan,...
 %                'highestLevel'      ,[],...    % is set to whole world when lat=nan
+%                'lowestLevel'       ,lowestLevel,...    % +1 results in a x4 times larger dataset
 %                'printTiles'        ,false,... % this was done in phase 1
 %                'joinTiles'         ,true,...  % this is what we do now
+%                'makeKML'           ,true,...  % this is what we do now
 %                'mergeExistingTiles',true);    % 1 ! irrelevant when printTiles==0
 %
-%
-% See also: GOOGLEPLOT, PCOLOR, KMLimage
+% See also: GOOGLEPLOT, PCOLOR, KMLimage, nc2kml
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -259,7 +262,7 @@ end
 
 % make a folder for the sub files
 if ~exist([OPT.basePath filesep OPT.Name],'dir')
-     mkpath(fullfile(OPT.basePath,OPT.Name));
+     mkdir(fullfile(OPT.basePath,OPT.Name));
 end
 
 %% preproces timespan

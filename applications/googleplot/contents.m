@@ -32,6 +32,7 @@
 %  KMLcontourf                    - Just like contourf (BETA!!!)
 %  KMLcontourf3                   - Wrapper for KMLtricontourf, to make it 3D
 %  KMLfigure_tiler                - makes a tiled png figure for google earth
+%  nc2kml                         - makes a tiled png figure for google earth, from netCDF grid collection
 %  KMLmesh                        - Just like mesh, writes open OGC KML LineStrings
 %  KMLpcolor                      - Just like pcolor, writes closed OGC KML LinearRing Polygons
 %  KMLsurf                        - Just like surf, writes closed OGC KML LinearRing Polygons
