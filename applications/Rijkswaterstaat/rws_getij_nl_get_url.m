@@ -90,7 +90,8 @@ OPT = setproperty(OPT,varargin{:});
 for i = 1:length(OPT.locations)
     mylocation = OPT.locations{i};
     disp(['Retrieving tidal predictions for ' mylocation]);
-    urlName = ['http://live.getij.nl/export.cfm?format=txt&from=',OPT.startdate,'&to=',OPT.stopdate,'&uitvoer=1&interval=10&lunarphase=yes&location=',mylocation,'&Timezone=MET_DST&refPlane=MSL&graphRefPlane=NAP&bottom=0&keel=0'];
+%     urlName = ['http://live.getij.nl/export.cfm?format=txt&from=',OPT.startdate,'&to=',OPT.stopdate,'&uitvoer=1&interval=10&lunarphase=yes&location=',mylocation,'&Timezone=MET_DST&refPlane=MSL&graphRefPlane=NAP&bottom=0&keel=0'];
+    urlName = ['http://getij.rws.nl/export.cfm?format=txt&from',OPT.startdate,'&to=',OPT.stopdate,'&uitvoer=1&interval=10&lunarphase=yes&location=',mylocation,'&Timezone=MET_DST&refPlane=NAP&graphRefPlane=NAP'];
     OutputName = [OPT.outputpath,num2str(i,'%03.0f'),'_tidal_predicition_',mylocation,'_',OPT.startdate,'_to_',OPT.stopdate,'.txt'];
     [s, status] = urlwrite([urlName],OutputName);
     
