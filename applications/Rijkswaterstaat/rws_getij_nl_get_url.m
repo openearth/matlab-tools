@@ -15,6 +15,7 @@ function [status,tide] = rws_getij_nl_get_url(varargin)
 %                default is the systems temp path
 %   startdate =  string with start date for tidal prediction, e.g. '09-02-2011'
 %   stopdate =   string with stop date for tidal prediction, e.g. '25-02-2011'
+%   interval =   string with interval in minutes, '10', '15', '20', '30' or '60'
 %   outputmatfilename = string with filename of output .mat file containing
 %                       time series from all stations
 %
@@ -78,6 +79,7 @@ OPT.outputpath = tempdir;
 OPT.outputmatfilename = 'tidal_predictions_from_rws_getij_nl';
 OPT.startdate = '09-02-2011';
 OPT.stopdate = '25-02-2011';
+OPT.interval = '10';
 
 OPT = setproperty(OPT,varargin{:});
 
@@ -91,7 +93,7 @@ for i = 1:length(OPT.locations)
     mylocation = OPT.locations{i};
     disp(['Retrieving tidal predictions for ' mylocation]);
 %     urlName = ['http://live.getij.nl/export.cfm?format=txt&from=',OPT.startdate,'&to=',OPT.stopdate,'&uitvoer=1&interval=10&lunarphase=yes&location=',mylocation,'&Timezone=MET_DST&refPlane=MSL&graphRefPlane=NAP&bottom=0&keel=0'];
-    urlName = ['http://getij.rws.nl/export.cfm?format=txt&from',OPT.startdate,'&to=',OPT.stopdate,'&uitvoer=1&interval=10&lunarphase=yes&location=',mylocation,'&Timezone=MET_DST&refPlane=NAP&graphRefPlane=NAP'];
+    urlName = ['http://getij.rws.nl/export.cfm?format=txt&from=',OPT.startdate,'&to=',OPT.stopdate,'&uitvoer=1&interval=',OPT.interval,'&lunarphase=yes&location=',mylocation,'&Timezone=MET_DST&refPlane=NAP&graphRefPlane=NAP'];
     OutputName = [OPT.outputpath,num2str(i,'%03.0f'),'_tidal_predicition_',mylocation,'_',OPT.startdate,'_to_',OPT.stopdate,'.txt'];
     [s, status] = urlwrite([urlName],OutputName);
     
