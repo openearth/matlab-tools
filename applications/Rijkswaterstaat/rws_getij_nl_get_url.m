@@ -1,8 +1,8 @@
 function [status,tide] = rws_getij_nl_get_url(varargin)
-%RWS_GETIJ_NL_GET_URL retrieves tidal predictions (time series) from www.getij.nl
+%RWS_GETIJ_NL_GET_URL retrieves tidal predictions (time series) from getij.rws.nl
 %
 %   rws_getij_nl retrieves tidal predictions (time series) from 
-%   www.getij.nl, writes the files to a user defined path and stores the
+%   getij.rws.nl, writes the files to a user defined path and stores the
 %   predictions also in a MATLAB struct named tide
 %
 %   Syntax:
@@ -95,7 +95,7 @@ for i = 1:length(OPT.locations)
     OutputName = [OPT.outputpath,num2str(i,'%03.0f'),'_tidal_predicition_',mylocation,'_',OPT.startdate,'_to_',OPT.stopdate,'.txt'];
     [s, status] = urlwrite([urlName],OutputName);
     
-    tide(i).description = 'tidal predictions from www.getij.nl';    
+    tide(i).description = 'tidal predictions from getij.rws.nl';    
     tide(i).stationname = mylocation;
     fid = fopen(OutputName);
     C = textscan(fid, '%s %s %f %s','headerlines',14);
