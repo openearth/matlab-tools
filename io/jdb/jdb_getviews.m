@@ -1,4 +1,4 @@
-function [tables, owners, types] = jdb_gettables(conn, varargin)
+function [tables, owners, types] = jdb_getviews(conn, varargin)
 %JDB_GETTABLES  List all tables in current database
 %
 %   List all views in current database. Return a list with view names in
@@ -42,6 +42,8 @@ if ismember('oracle',C)
     dbtype = 'oracle';
 elseif ismember('postgresql',C)
     dbtype = 'postgresql';    
+elseif ismember('ucanaccess',C)
+    dbtype = 'access';  
 else
     dbtype = 'unknown';
 end
@@ -62,6 +64,18 @@ switch dbtype
             sql = [sql, sprintf(' AND tablename = ''%s''',OPT.table)];
         end
         type = 'view';
+    case 'access'
+        %% TODO check  objtype 6 = Query
+%         sql = [ 'SELECT MSysObjects.Name AS table_name '    ,...
+%                 'FROM MSysObjects '                         ,...
+%                 'WHERE (((Left([Name],1))<>"~") '           ,...
+%                 '        AND ((Left([Name],4))<>"MSys") '   ,...
+%                 '        AND ((MSysObjects.Type) = 6)) '    ,...
+%                 'order by MSysObjects.Name '];
+            
+       %Get all info from tables and view objects
+        sql = 'SELECT * FROM information_schema.tables' ;
+       
     otherwise
         sql = '';
 end
@@ -76,6 +90,10 @@ elseif size(tables,2)==3
     owners = tables(:,1);
     types  = tables(:,3);
     tables = tables(:,2); % !
+elseif size(tables,2)==12  % From ucanaccess
+    owners = tables(:,2);
+    types  = tables(:,4);
+    tables = tables(:,3);
 else
     owners  = repmat({''},size(tables(:,1)));
     types   = repmat({type},size(tables(:,1)));
@@ -88,7 +106,21 @@ if ~OPT.all
             idx = ~ismember(owners(:,1),{'SYS' 'SYSTEM' 'MDSYS' 'XDB' 'OLAPSYS' 'APEX_030200' 'EXFSYS' 'CTXSYS'});
             tables = tables(idx,:);
             owners = owners(idx,:);
+        case 'access'
+            idx = ~ismember(owners(:,1),{'INFORMATION_SCHEMA' 'SYSTEM' 'SYSTEM_LOBS' 'UCA_METADATA'});
+            tables = tables(idx,:);
+            owners = owners(idx,:);   
+            types  = types(idx,:);
     end
+end
+
+% Filter only the views
+switch dbtype
+    case 'access'
+        idx = strcmpi(types(:,1),'VIEW');
+        tables = tables(idx,:);
+        owners = owners(idx,:);   
+        types  = types(idx,:);        
 end
 
 %% Copyright notice

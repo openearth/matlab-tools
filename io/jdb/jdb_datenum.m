@@ -32,7 +32,7 @@ end
 
 if ischar(t0)
     if isempty(t0)
-        t1 = [] ; 
+        t1 = '' ; 
     else
         if size(t0,2) > 19
             varargout = {t0(:,20:end)};
@@ -41,10 +41,23 @@ if ischar(t0)
         t1 = datenum(t0);
     end
 elseif isnumeric(t0)
-    t1 = datestr(t0,'yyyy-mm-dd HH:MM:SS');
+    if all(t0>1)
+        t1 = datestr(t0,'yyyy-mm-dd HH:MM:SS');
+    else
+        t1 = datestr(t0,'HH:MM:SS');
+    end
 elseif iscell(t0)
     if all(cellfun(@isnumeric,t0))
-        t1 = datestr(cell2mat(t0),'yyyy-mm-dd HH:MM:SS');
+        %Handle NaN's
+        idx = ~cellfun(@isnan,t0);
+        t1  = repmat({''},size(t0));
+        if any(idx)
+            if all(cellfun(@(x) x>1, t0(idx)))
+                t1(idx) = cellstr(datestr(cell2mat(t0(idx)),'yyyy-mm-dd HH:MM:SS'));
+            else
+                t1(idx) = cellstr(datestr(cell2mat(t0(idx)),'HH:MM:SS'));
+            end
+        end
     else
         disp('Error converting date')
         t1 = nan(size(t0));

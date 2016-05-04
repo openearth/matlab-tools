@@ -40,7 +40,18 @@ for i=1:length(nams) % 1-based column index
     elseif strcmp(typ,'timestamp without time zone'); D.(nam)     = jdb_datenum({R{:,i}});%';
     elseif strcmp(typ,'timestamp with time zone'   );[D.(nam),...
             D.timezone] = jdb_datenum({R{:,i}});
+
+    elseif strcmp(typ,'timestamp'                  )
+    % Access specials:
+        %   date/time field filled with date goes ok with jdb_datenum
+        %   date/time field filled with time only adds the date of now with a reference date of 30 December 1899
+        %   https://blogs.msdn.microsoft.com/ericlippert/2003/09/16/erics-complete-guide-to-vt_date/
         
+        %Remove the MS Access zero date
+          idx      = floor([R{:,i}]') == datenum(1899,12,30);
+          R(idx,i) = num2cell([R{idx,i}] - datenum(1899,12,30));
+          D.(nam)  = jdb_datenum(R(:,i));       
+
     elseif strcmp(typ,'serial'                     ); D.(nam)     =       int8([R{:,i}])'; %int4
     elseif strcmp(typ,'smallint'                   ); D.(nam)     =       int8([R{:,i}])'; %int2
     elseif strcmp(typ,'integer'                    ); D.(nam)     =       int8([R{:,i}])'; %int4

@@ -38,6 +38,8 @@ if ismember('oracle',C)
     dbtype = 'oracle';
 elseif ismember('postgresql',C)
     dbtype = 'postgresql';    
+elseif ismember('ucanaccess',C)
+    dbtype = 'access';  
 else
     dbtype = 'unknown';
 end
@@ -53,11 +55,28 @@ switch dbtype
         %  http://wiki.postgresql.org/wiki/Retrieve_primary_key_columns
         %  http://postgresql.1045698.n5.nabble.com/how-to-find-primary-key-field-name-td4893701.html
         strSQL = sprintf('SELECT pg_attribute.attname FROM pg_index, pg_class, pg_attribute WHERE pg_class.oid = ''%s''::regclass AND indrelid = pg_class.oid AND pg_attribute.attrelid = pg_class.oid AND pg_attribute.attnum = any(pg_index.indkey) AND indisprimary', jdb_quote(table));
+    case 'access'
+%         strSQL = 'SELECT * FROM information_schema.key_column_usage'; % Get all key usages
+        strSQL = ['SELECT * FROM information_schema.key_column_usage WHERE table_name = ''',table,''''] ;
     otherwise
         strSQL = '' ;
 end
 
 rs = jdb_fetch(conn, strSQL);
+
+% Postprocess
+switch dbtype
+    case 'access'
+        if ~isempty(rs)
+            %Filter on primairy keys
+            idx = ~cellfun(@isempty,strfind(rs(:,3),'SYS_PK'));
+            if any(idx)
+                rs = rs(idx,7);
+            else
+                rs = {''};
+            end
+        end
+end    
 
 varargout = {rs};
 

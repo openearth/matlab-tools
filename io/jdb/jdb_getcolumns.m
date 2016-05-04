@@ -58,6 +58,8 @@ if ismember('oracle',C)
     dbtype = 'oracle';
 elseif ismember('postgresql',C)
     dbtype = 'postgresql';    
+elseif ismember('ucanaccess',C)
+    dbtype = 'access';  
 else
     dbtype = 'unknown';
 end
@@ -68,6 +70,8 @@ switch dbtype
         strSQL = ['SELECT "COLUMN_NAME", "DATA_TYPE" FROM  ALL_TAB_COLS WHERE "TABLE_NAME"= ''',table,''''];
     case 'postgresql'
         strSQL = ['SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ''',table,''''];
+    case 'access'
+        strSQL = ['SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ''',upper(table),''''];
     otherwise
         strSQL = '' ;
 end
@@ -75,51 +79,71 @@ end
 rs     = jdb_fetch(conn, strSQL);
 
 if isempty(rs) && isnumeric(rs); % required for combi: empty tables & database_toolbox license
-    rs = {};
+%     rs = {};
+    column_name = {};
+    data_type   = {};
+    data_length = [];
+    return
 end
 
+% Postprocess data
 if nargin > 2+1
-   for i=1:length(column_name0)
-      tmp = strmatch(column_name0{i}, {rs{:,1}}, 'exact');
-      if isempty(tmp)
-         error(['column_name "','" not found in table ',table])
-      else
-         indices(i) = tmp;
-      end
-   end
+    indices = zeros(length(column_name0),1);
+    for n = 1:length(column_name0)
+%       tmp = strmatch(column_name0{2}, {rs{:,1}}, 'exact');
+        tmp = strcmpi(column_name0{n}, rs(:,1) );  %case incensitive thus NOT really EXACT anymore
+        
+        if ~any(tmp)
+%             error(['column_name "' column_name0{n} '" not found in table ',table])
+            warning(['column_name "' column_name0{n} '" not found in table ',table])
+        else
+            indices(n) = find(tmp,1);
+        end
+    end
 else
-   indices = size(rs,1):-1:1;
+    switch dbtype
+        case 'access'
+            % Apparently the colums info is returned in normal order
+            indices = 1:size(rs,1);
+        otherwise
+            indices = size(rs,1):-1:1; %Reverse
+    end
 end
 
-column_name = {rs{indices,1}}';
-if nargout > 1
-    data_type = {rs{indices,2}}';
-    if nargout > 2
-        % ?? why does '''' encapsulation not work here ??
-        switch dbtype
-            case 'oracle'
-                if isempty(owner)
-                    idx = true;
-                else
-                    idx = ismember(owner,{'SYS' 'SYSTEM' 'MDSYS' 'XDB' 'OLAPSYS' 'APEX_030200' 'EXFSYS' 'CTXSYS'});
-                end
-                if idx
-                    strSQL = ['SELECT count(*) FROM ',jdb_quote(table)];
-                else
-                    strSQL = ['SELECT count(*) FROM ',jdb_quote(owner) , '.' ,jdb_quote(table)];
-                end
-                
-            case 'postgresql'
+%Output
+[column_name, data_type] = deal( cell(numel(indices),1));
+idx                      = indices>0;
+column_name(idx)         = rs(indices(idx),1);
+data_type(idx)           = rs(indices(idx),2);
+column_name(~idx)        = {'Column not found'};
+data_type(~idx)          = {'Unknown'};
+
+if nargout > 2
+    switch dbtype
+        case 'oracle'
+            if isempty(owner)
+                idx = true;
+            else
+                idx = ismember(owner,{'SYS' 'SYSTEM' 'MDSYS' 'XDB' 'OLAPSYS' 'APEX_030200' 'EXFSYS' 'CTXSYS'});
+            end
+            if idx
                 strSQL = ['SELECT count(*) FROM ',jdb_quote(table)];
-            otherwise
-                strSQL = '' ;
-        end
-        try
-            data_length = jdb_fetch(conn, strSQL);
-            data_length = data_length{1};
-        catch
-            data_length = [];
-        end
+            else
+                strSQL = ['SELECT count(*) FROM ',jdb_quote(owner) , '.' ,jdb_quote(table)];
+            end
+
+        case 'postgresql' 
+            strSQL = ['SELECT count(*) FROM ',jdb_quote(table)];
+        case 'access'
+            strSQL = ['SELECT count(*) FROM ',table];
+        otherwise
+            strSQL = '' ;
+    end
+    try
+        data_length = jdb_fetch(conn, strSQL);
+        data_length = data_length{1};
+    catch
+        data_length = [];
     end
 end
 

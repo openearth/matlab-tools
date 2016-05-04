@@ -63,6 +63,10 @@ switch lower(OPT.dbtype) % lower(db)
         % http://razorsql.com/articles/oracle_jdbc_connect.html
         url    = ['jdbc:oracle:thin:@//' OPT.host ':' num2str(OPT.port) '/' db];        
         driver  = oracle.jdbc.driver.OracleDriver;
+    case 'access'
+        % "jdbc:ucanaccess://<mdb or accdb file path>",user, password)
+        url    = ['jdbc:ucanaccess://' db ]; %';memory=false;showschema=true;sysschema=true'];        
+        driver = net.ucanaccess.jdbc.UcanaccessDriver ; %net.ucanaccess.jdbc.UcanaccessDriver;
     otherwise
         error('Unknown dbtype: %s',OPT.dbtype)
 end

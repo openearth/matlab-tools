@@ -97,6 +97,41 @@ switch lower(OPT.dbtype)
                 OK = 1;
             end
         end
+        
+    case 'access'
+        for jarfile = {'hsqldb.jar' 'jackcess-2.1.3.jar' 'commons-lang-2.6.jar' 'commons-logging-1.1.1.jar' 'ucanaccess-3.0.4.jar'}
+            %CLASSPATH="%UCANACCESS_HOME%\lib\hsqldb.jar;%UCANACCESS_HOME%\lib\jackcess-2.1.3.jar;%UCANACCESS_HOME%\lib\commons-lang-2.6.jar;%UCANACCESS_HOME%\lib\commons-logging-1.1.1.jar;%UCANACCESS_HOME%\ucanaccess-3.0.4.jar"
+            java2add          = which(jarfile{:});
+            [~,jdbfile,jdbext]= fileparts(java2add);
+
+            indices           = strfind(alljavaclasspath,path2os(java2add)) ;%[jdbpath,filesep,jdbfile]));
+
+            if isempty(cell2mat(indices))
+                if OPT.check
+                    disp(['checked status ACCESS: JDBC NOT present: ',jdbfile, jdbext]);
+                    OK = -1;
+                else
+                    javaaddpath (path2os(java2add))
+                    if ~(OPT.quiet)
+                        disp(['ACCESS: JDBC driver added: ',java2add]);
+                    end
+
+                end
+            else            
+                if OPT.check
+                    if ~(OPT.quiet)
+                        disp(['checked status ACCESS: JDBC present: ',jdbfile]);
+                    end
+                    OK = 1;
+                else
+                    if ~(OPT.quiet)
+                        disp(['ACCESS: JDBC driver not added, already there: ',jdbfile]);
+                    end
+                    OK = 1;
+                end
+            end
+        end
+        
     otherwise
         disp(['Requested database: ' OPT.db ' not present.']);
         OK = -1;

@@ -41,7 +41,9 @@ C = C{:};
 if ismember('oracle',C)
     dbtype = 'oracle';
 elseif ismember('postgresql',C)
-    dbtype = 'postgresql';    
+    dbtype = 'postgresql';  
+elseif ismember('ucanaccess',C)
+    dbtype = 'access';  
 else
     dbtype = 'unknown';
 end
@@ -61,7 +63,29 @@ switch dbtype
         if ~isempty(OPT.table)
             sql = [sql, sprintf(' AND tablename = ''%s''',OPT.table)];
         end
-        type = 'table';        
+        type = 'table';  
+    case 'access'
+        %% TODO check
+%       sql = 'SELECT DISTINCT MSysObjects.Name FROM MSysObjects WHERE                           OBJECT_TYPE = ''TABLE'' ORDER BY "OBJECT_NAME"';
+%         sql = [ 'SELECT * AS table_name '        ,...
+%                 'FROM sys.MSysObjects '                             ,...
+%                 'WHERE (((Left([Name],1))<>"~") '               ,...
+%                 '        AND ((Left([Name],4))<>"MSys") '       ,...
+%                 '        AND ((MSysObjects.Type) In (1,4,6))) ' ,...
+%                 'order by MSysObjects.Name '];
+%             
+%         sql = 'SELECT * FROM sys.MSysObjects WHERE Type=1 AND Flags=0';  
+%         sql = 'SELECT * FROM sys.MSysObjects WHERE Type=1';  
+
+        %Returns (p 77)
+        %   AUTHORIZATIONS
+        %   ADMINSTRABLE_ROLE_AUTHORIZATIONS
+        % objects object_type   etc.. ?
+        % 
+            
+       %Get all info from tables and view objects
+        sql = 'SELECT * FROM information_schema.tables' ;
+        
     otherwise
         sql = '';
 end
@@ -76,6 +100,10 @@ elseif size(tables,2)==3
     owners = tables(:,1);
     types  = tables(:,3);
     tables = tables(:,2); % !
+elseif size(tables,2)==12  % From ucanaccess
+    owners = tables(:,2);
+    types  = tables(:,4);
+    tables = tables(:,3);  
 else
     owners  = repmat({''},size(tables(:,1)));
     types   = repmat({type},size(tables(:,1)));
@@ -88,7 +116,23 @@ if ~OPT.all
             idx = ~ismember(owners(:,1),{'SYS' 'SYSTEM' 'MDSYS' 'XDB' 'OLAPSYS' 'APEX_030200' 'EXFSYS' 'CTXSYS'});
             tables = tables(idx,:);
             owners = owners(idx,:);
+            types  = types(idx,:);
+            
+        case 'access'
+            idx = ~ismember(owners(:,1),{'INFORMATION_SCHEMA' 'SYSTEM' 'SYSTEM_LOBS' 'UCA_METADATA'});
+            tables = tables(idx,:);
+            owners = owners(idx,:);   
+            types  = types(idx,:);
     end
+end
+
+% Filter only the views
+switch dbtype
+    case 'access'
+        idx = ismember(types(:,1),{'TABLE' 'BASE TABLE'});
+        tables = tables(idx,:);
+        owners = owners(idx,:);   
+        types  = types(idx,:);        
 end
 
 %% Copyright notice
