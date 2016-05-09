@@ -48,7 +48,7 @@ else
     dx  = x(find(C~=1)+1)-x(C~=1);
     ddz = (Z-z(find(C~=1)+1))./dz;
     
-    D = x(find(C~=1)+1)+ddz.*dx;
+    D = x(find(C~=1)+1)+ddz'.*dx;
 end
     
     
