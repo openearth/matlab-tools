@@ -102,7 +102,7 @@ end
 
 fseek(fid,0,-1);
 
-for i = 1:S.NTimes+1;
+for i = 1:S.NTimes;
     fwrite(fid,S.Time(i),'uint32');
     fwrite(fid,S.data(i,:),'real*4');
 end
