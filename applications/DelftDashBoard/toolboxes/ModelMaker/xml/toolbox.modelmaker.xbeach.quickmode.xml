@@ -129,7 +129,7 @@
     <text>Wave dir</text>
     <textposition>left</textposition>
     <type>real</type>
-    <variable>handles.model.xbeach.domain.waveangle</variable>
+    <variable>handles.toolbox.modelmaker.waveangle</variable>
   </element>
   <element>
     <style>edit</style>
@@ -148,6 +148,13 @@
     <textposition>left</textposition>
     <type>real</type>
     <variable>handles.model.xbeach.domain.thetamax</variable>
+  </element>
+  <element>
+    <style>checkbox</style>
+    <position>350 10 50 20</position>
+    <text>Make a 1D model</text>
+    <variable>handles.toolbox.modelmaker.domain1d</variable>
+    <tooltipstring>Check to make a 1D (cross-shore) model</tooltipstring>
   </element>
   <element>
      <style>edit</style>

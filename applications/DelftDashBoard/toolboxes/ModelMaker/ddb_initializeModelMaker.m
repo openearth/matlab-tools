@@ -174,7 +174,8 @@ handles.toolbox.modelmaker.dymax = 50;
 handles.toolbox.modelmaker.SSL = 2;
 handles.toolbox.modelmaker.Hs = 5;
 handles.toolbox.modelmaker.Tp = 10;
-handles.model.xbeach.domain.waveangle = 180;
+handles.toolbox.modelmaker.waveangle = 180;
+handles.toolbox.modelmaker.domain1d = 0;
 handles.model.xbeach.domain.thetamin = 90;
 handles.model.xbeach.domain.thetamax = 270;
 

@@ -79,5 +79,11 @@
       <callback>ddb_ModelMakerToolbox_Delft3DFLOW_roughness</callback>
       <element>toolbox.modelmaker.delft3dflow.roughness.xml</element>
     </tab>
+    <tab>
+      <formodel>xbeach</formodel>
+      <tabstring>Transects</tabstring>
+      <callback>ddb_ModelMakerToolbox_XBeach_quickMode</callback>
+      <element>toolbox.modelmaker.xbeach.transects.xml</element>
+    </tab>
   </element>
 </root>
