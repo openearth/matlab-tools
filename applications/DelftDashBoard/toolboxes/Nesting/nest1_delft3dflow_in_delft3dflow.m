@@ -85,22 +85,28 @@ grd=ddb_wlgrid('read',detail.grdfile);
 
 % Convert detailed grid (if necessary)
 if ~isfield(detail,'cs')
+    if (~strfind(detail.cs.name, overall.cs.name) | ~strfind(detail.cs.type, overall.cs.type))
     detail.cs.name='unspecified';
+    end
 end
 
-if ~strcmpi(detail.cs.name,'unspecified')
-    [grd.X,grd.Y]=convertCoordinates(grd.X,grd.Y,'CS1.name',detail.cs.name,'CS1.type',detail.cs.type,'CS2.name',overall.cs.name,'CS2.type',overall.cs.type);
+if strcmpi(detail.cs.name,'unspecified')
+    grid = ddb_wlgrid('read',detail.grdfile);
+    [grd.X,grd.Y]=convertCoordinates(grid.X,grid.Y,'CS1.name',detail.cs.name,'CS1.type',detail.cs.type,'CS2.name',overall.cs.name,'CS2.type',overall.cs.type);
     switch lower(overall.cs.type)
         case{'geographic'}
             grd.CoordinateSystem='Spherical';
         otherwise
             grd.CoordinateSystem='Cartesian';
     end
+    cd(detail.path)
     ddb_wlgrid('write','TMP.grd',grd);
-    detail.grdfile='TMP.grd';
+    detail.grdfile= [detail.path, 'TMP.grd'];
+    cd(overall.path)
 end
 
 %% Run NestHD1
+cd(overall.path)
 fid=fopen('nesthd1.inp','wt');
 fprintf(fid,'%s\n',overall.grdfile);
 fprintf(fid,'%s\n',overall.encfile);
@@ -112,6 +118,16 @@ fprintf(fid,'%s\n','ddtemp.obs');
 fclose(fid);
 system(['"' exedir 'nesthd1" < nesthd1.inp']);
 
+% Check grids
+G1 = delft3d_io_grd('read',overall.grdfile);
+G2 = delft3d_io_grd('read',detail.grdfile);
+
+% figure; hold on
+% plot(G1.cor.x, G1.cor.y,'b');
+% plot(G1.cor.x', G1.cor.y','b');
+% plot(G2.cor.x, G2.cor.y,'r');
+% plot(G2.cor.x', G2.cor.y','r');
+
 %% Read obs file
 [name,m,n] = textread('ddtemp.obs','%21c%f%f');
 for iobs=1:length(m)
@@ -122,6 +138,9 @@ end
 
 %% Delete temporary files
 delete('nesthd1.inp');
+for ii = 1:2
+    if ii == 1;     cd(overall.path); end
+    if ii == 1;     cd(detail.path); end
 try
     delete('ddtemp.obs');
 end
@@ -134,4 +153,6 @@ end
 if exist('TMP.bnd','file')
     delete('TMP.bnd');
 end
+end
+cd(overall.path);
 

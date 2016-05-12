@@ -1,5 +1,5 @@
 function obspoints=nest1_xbeach_in_delft3dflow(varargin)
-%ddb_nesthd1_dflowfm_in_delft3dflow  Step 1 of nesting DFlow-FM model in Delft3D-FLOW model.
+%ddb_nesthd1_dflowfm_in_delft3dflow  Step 1 of nesting Delft3D-FLOW  in xbeach.
 %
 % Creates nesting administration file
 % Optionally returns structure with new observation points for Delft3D-FLOW model
@@ -80,54 +80,78 @@ end
 
 obspoints=[];
 
-% Assuming gridform=delft3d !
+% Assuming gridform=xbeach !
+% to do is delft3d
 
 %% Detail grid
-grd=ddb_wlgrid('read',detail.grdfile);
 % Convert detailed grid (if necessary)
 if ~strcmpi(detail.cs.name,'unspecified')
-    [grd.X,grd.Y]=convertCoordinates(grd.X,grd.Y,'CS1.name',detail.cs.name,'CS1.type',detail.cs.type,'CS2.name',overall.cs.name,'CS2.type',overall.cs.type);
-    switch lower(cs2.type)
-        case{'geographic'}
-            grd.CoordinateSystem='Spherical';
-        otherwise
-            grd.CoordinateSystem='Cartesian';
-    end
-    ddb_wlgrid('write','TMP.grd',grd);
-    detail.grdfile='TMP.grd';
+    [grd.X,grd.Y]= convertCoordinates(detail.x,detail.y, 'CS1.name',detail.cs.name,'CS1.type',detail.cs.type,'CS2.name',overall.cs.name,'CS2.type',overall.cs.type);
+    grd.CoordinateSystem='Cartesian'
+    filename = [detail.path, 'TMP.grd']
+    ddb_wlgrid('write',filename,grd, 'x', grd.X, 'y', grd.Y);
+    detail.grdfile=filename;
 end
 % And write enclosure file
 enc=enclosure('extract',grd.X,grd.Y);
-enclosure('write','TMP.enc',enc);
-detail.encfile='TMP.enc';
+filename = [detail.path, 'TMP.enc']
+enclosure('write',filename,enc);
+detail.encfile=filename;
 
 %% Create TMP.bnd file
-fi2=fopen('TMP.bnd','wt');
-fprintf(fi2,'%s\n',['sea                  Z T     2     1     ' num2str(size(grd.X,1)-1) '   1   0.0000000e+000']);
+filename = [detail.path, 'TMP.bnd']
+detail.bndfile=filename;
+fi2=fopen(filename,'wt');
+fprintf(fi2,'%s\n',['sea                  Z T     1     1     ' num2str(size(grd.X,1)-1) '   1   0.0000000e+000']);
 fclose(fi2);
 
 %% Run NestHD1
-fid=fopen('nesthd1.inp','wt');
-fprintf(fid,'%s\n',overall.grdfile);
-fprintf(fid,'%s\n',overall.encfile);
-fprintf(fid,'%s\n',detail.grdfile);
-fprintf(fid,'%s\n',detail.encfile);
-fprintf(fid,'%s\n','TMP.bnd');
-fprintf(fid,'%s\n',admfile);
-fprintf(fid,'%s\n','ddtemp.obs');
-fclose(fid);
-system(['"' exedir 'nesthd1" < nesthd1.inp']);
+cd(overall.path)
+[ny nx] = size(detail.x)
 
-%% Read obs file
-[name,m,n] = textread('ddtemp.obs','%21c%f%f');
-for iobs=1:length(m)
-    obspoints(iobs).name=name(iobs,:);
-    obspoints(iobs).m=m(iobs,:);
-    obspoints(iobs).n=n(iobs,:);
+if ny == 1;
+    
+    G1 = delft3d_io_grd('read' ,overall.grdfile);
+    distance_x = detail.x(1,1) - G1.cen.x; distance_y = detail.y(1,1) - G1.cen.y;
+    distance_tot = (distance_x.^2 + distance_y.^2).^0.5;
+    [idx idy] = find(distance_tot == min(min(distance_tot)))
+    obspoints.name = 'XBeach';
+    obspoints.m = idx
+    obspoints.n = idy
+    
+else
+    
+    % Run nesth1
+    fid=fopen('nesthd1.inp','wt');
+    fprintf(fid,'%s\n',overall.grdfile);
+    fprintf(fid,'%s\n',overall.encfile);
+    fprintf(fid,'%s\n',detail.grdfile);
+    fprintf(fid,'%s\n',detail.encfile);
+    fprintf(fid,'%s\n',detail.bndfile);
+    fprintf(fid,'%s\n',admfile);
+    fprintf(fid,'%s\n','ddtemp.obs');
+    fclose(fid);
+    system(['"' exedir 'nesthd1" < nesthd1.inp']);
+    
+    % Read obs file
+    [name,m,n] = textread('ddtemp.obs','%21c%f%f');
+    for iobs=1:length(m)
+        obspoints(iobs).name=name(iobs,:);
+        obspoints(iobs).m=m(iobs,:);
+        obspoints(iobs).n=n(iobs,:);
+    end
+
 end
 
 %% Delete temporary files
 delete('nesthd1.inp');
+for ii = 1:2
+    if ii == 1;
+        cd(overall.path)
+    end
+    if ii == 2;
+        cd(detail.path);
+    end
 try
     delete('ddtemp.obs');
 end
@@ -140,4 +164,7 @@ end
 if exist('TMP.bnd','file')
     delete('TMP.bnd');
 end
+end
+cd ..
+
 

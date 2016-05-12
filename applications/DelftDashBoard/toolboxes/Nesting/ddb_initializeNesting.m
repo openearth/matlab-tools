@@ -73,6 +73,13 @@ if nargin>1
     end
 end
 
+% Tree structure
+handles.toolbox.nesting.overallmodellist={''};
+handles.toolbox.nesting.detailmodellist={''};
+handles.toolbox.nesting.overallindex=1;
+handles.toolbox.nesting.detailindex=1;
+
+
 % Nest 1
 
 % Delft3D-FLOW
