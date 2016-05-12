@@ -116,7 +116,6 @@ switch lower(varargin{1}),
         ddb_refreshDomainMenu;
         
         handles=getHandles;
-        
         try
             set(handles.GUIHandles.mainWindow,'WindowScrollWheelFcn',@ddb_zoomScrollWheel);
         end

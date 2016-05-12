@@ -157,8 +157,6 @@ for i=1:nt
     end
 end
 
-
-
 % Read xml files
 models=fieldnames(handles.model);
 for i=1:length(models)
