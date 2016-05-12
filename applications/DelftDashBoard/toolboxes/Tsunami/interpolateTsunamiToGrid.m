@@ -59,7 +59,7 @@ else
     error('No grid coordinates specified!');
 end
 
-xz=xz-360;
+%xz=xz-360;
 
 % Tsunami
 if ~isempty(OPT.tsunamifile)

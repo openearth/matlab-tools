@@ -541,7 +541,6 @@ if ~isempty(pathname)
 
             adjustBathymetry=handles.toolbox.tsunami.adjustBathymetry;
             
-%            xz=xz-360;
             interpolateTsunamiToGrid('xgrid',xz,'ygrid',yz,'gridcs',oldSys,'tsunamics',newSys, ...
                 'xtsunami',xx,'ytsunami',yy,'ztsunami',zz,'inifile',filenames{id}, ...
                 'adjustbathymetry',adjustBathymetry,'depth',dp,'newdepfile',depfiles{id});
