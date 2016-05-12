@@ -84,3 +84,19 @@ handles.toolbox.tidedatabase.exportFile='';
 handles.toolbox.tidedatabase.constituentList={''};
 handles.toolbox.tidedatabase.activeConstituent=1;
 
+%% Get list
+ii=handles.toolbox.tidedatabase.activeModel;
+name=handles.tideModels.model(ii).name;
+    if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
+        tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
+    else
+        tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
+    end
+cnst=nc_varget(tidefile,'tidal_constituents');
+for ii=1:length(cnst)
+    cnstlist{ii}=deblank(upper(cnst(ii,:)));
+end
+handles.toolbox.tidedatabase.constituentList=cnstlist;
+handles.toolbox.tidedatabase.activeConstituent=1;
+
+setHandles(handles);

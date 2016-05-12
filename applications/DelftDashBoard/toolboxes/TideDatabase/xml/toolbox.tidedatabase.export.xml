@@ -81,6 +81,14 @@
   </element>
   <element>
     <style>pushbutton</style>
+    <position>800 100 150 20</position>
+    <text>Download selected database</text>
+    <callback>ddb_TideDatabaseToolbox_export</callback>
+    <option1>download</option1>
+    <tooltipstring>Download co-tidal chart</tooltipstring>
+  </element>
+  <element>
+    <style>pushbutton</style>
     <position>900 15 70 20</position>
     <text>View</text>
     <callback>ddb_TideDatabaseToolbox_export</callback>

@@ -238,7 +238,7 @@ function plotObservationStations
 
 handles=getHandles;
 
-iac=handles.toolbox.observationstations.activedatabase;
+iac=handles.toolbox.observationstations.activedatabase; 
 
 x=handles.toolbox.observationstations.database(iac).xlocal;
 y=handles.toolbox.observationstations.database(iac).ylocal;
@@ -362,8 +362,10 @@ setHandles(handles);
 %%
 function data=downloadObservations(iac,istation,ipar,iquiet)
 
+% Start
 handles=getHandles;
 
+% Get settings
 t0=handles.toolbox.observationstations.starttime;
 t1=handles.toolbox.observationstations.stoptime;
 idcode=handles.toolbox.observationstations.database(iac).stationids{istation};
@@ -371,8 +373,8 @@ datum=handles.toolbox.observationstations.database(iac).datum;
 subset=handles.toolbox.observationstations.database(iac).subset;
 timezone=handles.toolbox.observationstations.database(iac).timezone;
 
+% Download
 data=[];
-
 if ~isfield(handles.toolbox.observationstations,'downloadeddatasetnames')
     handles.toolbox.observationstations.downloadeddatasetnames=[];
 end
@@ -380,8 +382,11 @@ if ~isfield(handles.toolbox.observationstations,'downloadeddatasets')
     handles.toolbox.observationstations.downloadeddatasets=[];
 end
 
-try    
-
+%% Try to download
+if ~strcmpi(handles.toolbox.observationstations.database(iac).name, 'USGS')
+    
+    %% NON-USGS data
+    try    
     if ~iquiet
         wb = waitbox(['Downloading ' handles.toolbox.observationstations.database(iac).parameters(istation).name{ipar} ' from station ' handles.toolbox.observationstations.database(iac).stationnames{istation}]);
     end
@@ -416,10 +421,77 @@ try
     if ~iquiet
         close(wb);
     end
-    
-catch
+    catch
     if ~iquiet
         close(wb);    
+    end
+    end
+
+else
+    
+    try
+        
+    %% USGS data
+    if ~iquiet
+        wb = waitbox(['Downloading ' handles.toolbox.observationstations.database(iac).parameters(istation).name{ipar} ' from station ' handles.toolbox.observationstations.database(iac).stationnames{istation}]);
+    end
+    
+    usgs_data = load([handles.toolbox.observationstations.dataDir, '\usgs.mat']);
+    SiteNo    = usgs_data.s.stationids(istation); SiteNo = SiteNo{1,1}; SiteNo = SiteNo{1,1};
+    tstart    = datestr(t0, 'yyyy-mm-dd');
+    tend      = datestr(t1, 'yyyy-mm-dd');
+    Dir       = handles.toolbox.observationstations.dataDir;
+
+    % Load river data for Tijuana
+    if ipar == 1;
+    ParCode = {'00060'};                % Discharge
+    else
+    ParCode = {'00065'};                % Gauge height
+    end
+    data_usgs = nwi_usgs_read(SiteNo,tstart,tend,ParCode,Dir);
+    
+    % Finalize
+    data.stationid  = SiteNo;
+    data.stationname = usgs_data.s.stationnames(istation); data.stationname = data.stationname{1,1};
+    data.lat        = usgs_data.s.x(istation);
+    data.lon        = usgs_data.s.y(istation);
+    data.source     = data_usgs.agency_cd(1,:);
+    data.stationid  = SiteNo;
+    
+    if strcmpi(ParCode, '00065')
+        data.parameters.parameter.name     = 'Gage height';
+        data.parameters.parameter.dbname   = 'Gage height';
+        try
+        data.parameters.parameter.val =  data_usgs.par_01_00065_00003*0.3048; % feet to  meter
+        catch
+        data.parameters.parameter.val =  data_usgs.par_02_00065_00003*0.3048; % feet to  meter
+        end
+        data.parameters.parameter.unit      = 'meter';
+
+    else
+        data.parameters.parameter.name     = 'Discharge';
+        data.parameters.parameter.dbname   = 'Discharge';
+        try
+        data.parameters.parameter.val =  data_usgs.par_01_00060_00003*0.0283168466; % cubic feet to meter
+        catch
+        data.parameters.parameter.val =  data_usgs.par_02_00060_00003*0.0283168466; % cubic feet to meter
+        end
+        data.parameters.parameter.unit     = 'cubic meter per second';
+    end
+    data.parameters.parameter.time =  data_usgs.datenum;
+    data.parameters.parameter.size = zeros(1,5);
+    data.parameters.parameter.size(1) = length(data_usgs.datenum);
+    data.timezone = 'GMT';
+    
+    if ~iquiet
+        close(wb);
+    end
+  
+    catch
+    if ~iquiet
+        data = [];
+        close(wb);    
+    end
     end
 end
 

@@ -74,8 +74,6 @@ else
     switch opt
         case{'selectmodel'}
             selectModel;
-            %        case{'selectscale'}
-            %            selectScale;
         case{'drawrectangle'}
             setInstructions({'','','Use mouse to draw data outline on map'});
             UIRectangle(handles.GUIHandles.mapAxis,'draw','Tag','TideDatabaseBox','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',0,'callback',@changeTideDatabaseBox,'onstart',@deleteTideDatabaseBox);
@@ -87,6 +85,8 @@ else
             editOutline;
         case{'selectexportformat'}
             selectExportFormat;
+        case('download')
+            downloadData
     end
 end
 
@@ -105,6 +105,54 @@ setHandles(handles);
 gui_updateActiveTab;
 
 %%
+function downloadData
+
+% Get information about URL en tide database
+handles=getHandles;
+ii=handles.toolbox.tidedatabase.activeModel;
+name=handles.tideModels.model(ii).name;
+URL = 'http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/tidemodels/';
+if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
+    tidefile=[URL '/' name '.nc'];
+else
+    tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
+end
+    
+% Get location
+pathname = 'd:\projects\ddb\working\tidemodels\';
+[pathname] = uigetdir(handles.toolbox.tidedatabase.dataDir,'Select the desired data location')
+cd(pathname);
+
+
+% Download file
+if strcmp(handles.tideModels.model(ii).name,'tpxo80')
+    size = 'around 12 GB';
+else
+    size = 'less than 1 GB';
+end
+
+
+wb = waitbox(['Downloading tide database. Size: ', size]);
+if strcmp(handles.tideModels.model(ii).name,'tpxo80')
+    names = {'grid_tpxo8_atlas6.nc';'grid_tpxo8atlas_30.nc';'hf.k1_tpxo8.nc';'hf.k2_tpxo8.nc';'hf.m2_tpxo8.nc';'hf.m4_tpxo8.nc';'hf.mf_tpxo8.nc';'hf.mm_tpxo8.nc';'hf.mn4_tpxo8.nc';'hf.ms4_tpxo8.nc';'hf.n2_tpxo8.nc';'hf.o1_tpxo8.nc';'hf.p1_tpxo8.nc';'hf.q1_tpxo8.nc';'hf.s2_tpxo8.nc';'tpxo80.nc';'uv.k1_tpxo8.nc';'uv.k2_tpxo8.nc';'uv.m2_tpxo8.nc';'uv.m4_tpxo8.nc';'uv.mf_tpxo8.nc';'uv.mm_tpxo8.nc';'uv.mn4_tpxo8.nc';'uv.ms4_tpxo8.nc';'uv.n2_tpxo8.nc';'uv.o1_tpxo8.nc';'uv.p1_tpxo8.nc';'uv.q1_tpxo8.nc';'uv.s2_tpxo8.nc'};
+    tidefile2 = 'http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/tidemodels/tpxo80/';
+    for jj = 1:length(names);
+        file3 = [tidefile2, names{jj,:}];
+        urlwrite(file3,names{jj,:});
+    end
+else
+    urlwrite(tidefile,[name '.nc'])
+end
+close(wb);
+
+% Change XML
+cd(handles.tideDir);
+s=xml2struct('tidemodels.xml','structuretype','supershort');
+s.model(ii).URL = pathname
+struct2xml('tidemodels.xml', s,'structuretype','supershort')
+
+   
+%%
 function selectModel
 handles=getHandles;
 ii=handles.toolbox.tidedatabase.activeModel;
@@ -114,7 +162,6 @@ name=handles.tideModels.model(ii).name;
     else
         tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
     end
-%nc_dump(tidefile);
 cnst=nc_varget(tidefile,'tidal_constituents');
 for ii=1:length(cnst)
     cnstlist{ii}=deblank(upper(cnst(ii,:)));
@@ -158,10 +205,13 @@ if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
 end
 
 cnst=handles.toolbox.tidedatabase.constituentList{iac};
-[lon,lat,ampz,phasez,conList] = readTideModel(tidefile,'type','h','xlim',xx,'ylim',yy,'constituent',upper(cnst));
-ampz=squeeze(ampz(:,:,iac));
-phasez=squeeze(phasez(:,:,iac));
+lon1 = []; lat1 = []; ampz1 = []; phasez1 = [];
+lon2 = []; lat2 = []; ampz2 = []; phasez2 = [];
 
+[lon,lat, gt, depth, conList] =  readTideModel(tidefile,'type','h','xlim',xx,'ylim',yy,'constituent',upper(cnst));
+ampz = squeeze(gt(1).amp);  phasez = squeeze(gt(1).phi);
+
+% Figures
 figure(20)
 clf;
 subplot(2,1,1)
@@ -203,20 +253,18 @@ wb = waitbox('Exporting tide data ...');pause(0.1);
 
 try
     
+    %% Filename
     filename=handles.toolbox.tidedatabase.exportFile;
-    
     filename=filename(1:end-4);
-    
     ii=handles.toolbox.tidedatabase.activeModel;
     name=handles.tideModels.model(ii).name;
-    
     if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
         tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
     else
         tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
     end
 
-    % H
+    %% Export waterlevels: H
     if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
         xg=xx(1):(xx(2)-xx(1))/10:xx(2);
         yg=yy(1):(yy(2)-yy(1))/10:yy(2);
@@ -230,8 +278,10 @@ try
         yy(2)=max(max(yg))+1;
     end
     
-    [lon,lat,ampz,phasez,conList] = readTideModel(tidefile,'type','h','xlim',xx,'ylim',yy,'constituent','all');    
-    
+    % Get data
+    [lon,lat,gt, depth, conList] = readTideModel(tidefile,'type','h','xlim',xx,'ylim',yy,'constituent','all');    
+    ampz = gt.amp; phasez = gt.phi;
+
     for i=1:length(conList)
         if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
             xx=handles.toolbox.tidedatabase.xLim;
@@ -275,7 +325,7 @@ try
             ddb_saveAstroMapFile([filename '.tek'],xg,yg,conList,amp,phi);
     end
 
-    % U
+    %% Exporting transports: u
 
     xx=handles.toolbox.tidedatabase.xLim;
     yy=handles.toolbox.tidedatabase.yLim;
@@ -293,7 +343,8 @@ try
         yy(2)=max(max(yg))+1;
     end
         
-    [lon,lat,ampz,phasez,conList] = readTideModel(tidefile,'type','u','xlim',xx,'ylim',yy,'constituent','all');
+    [lon,lat,gt, depth, conList] = readTideModel(tidefile,'type','u','xlim',xx,'ylim',yy,'constituent','all');
+    ampz = gt.amp; phasez = gt.phi;
     
     for i=1:length(conList)
         if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
@@ -318,7 +369,7 @@ try
             ddb_saveAstroMapFile([filename '.u.tek'],xg,yg,conList,amp,phi);
     end
 
-    % V
+    %% Exporting transports: V
 
     xx=handles.toolbox.tidedatabase.xLim;
     yy=handles.toolbox.tidedatabase.yLim;
@@ -336,7 +387,8 @@ try
         yy(2)=max(max(yg))+1;
     end
     
-    [lon,lat,ampz,phasez,conList] = readTideModel(tidefile,'type','v','xlim',xx,'ylim',yy,'constituent','all');
+    [lon,lat,gt, depth, conList]  = readTideModel(tidefile,'type','v','xlim',xx,'ylim',yy,'constituent','all');
+    ampz = gt.amp; phasez = gt.phi;
     
     for i=1:length(conList)
         if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
@@ -358,7 +410,7 @@ try
     
     switch lower(handles.toolbox.tidedatabase.activeExportFormat)
         case{'tek'}
-            ddb_saveAstroMapFile([filename '.u.tek'],xg,yg,conList,amp,phi);
+            ddb_saveAstroMapFile([filename '.v.tek'],xg,yg,conList,amp,phi);
     end
     
     close(wb);
