@@ -1,5 +1,5 @@
-function varargout = readTideModel(fname, varargin)
-%READTIDEMODEL  One line description goes here.
+function [lon,lat, gt, depth, conList] = readTideModel(tidefile, varargin)
+%READTIDEMODEL  Wrapper for TPXO 8.0 and older
 %
 %   More detailed description goes here.
 %
@@ -60,14 +60,13 @@ function varargout = readTideModel(fname, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% Create output
+lon = [] ; lat = []; depth = []; conList = [];
+ampz = []; phasez = []; 
+ampu = []; phaseu = []; ampv = []; phasev = [];
+inptp = [];
 
-xp=[];
-yp=[];
-xl=[];
-yl=[];
-tp='h';
-getd=0;
+%% How many
 constituent='all';
 incldep=0;
 
@@ -113,333 +112,123 @@ for i=1:length(varargin)
     end
 end
 
-gt=[];
-switch lower(tp)
-    case{'h','z'}
-        gt(1).ampstr='tidal_amplitude_h';
-        gt(1).phistr='tidal_phase_h';
-    case{'vel'}
-        gt(1).ampstr='tidal_amplitude_u';
-        gt(1).phistr='tidal_phase_u';
-        gt(2).ampstr='tidal_amplitude_v';
-        gt(2).phistr='tidal_phase_v';
-    case{'q'}
-        gt(1).ampstr='tidal_amplitude_U';
-        gt(1).phistr='tidal_phase_U';
-        gt(2).ampstr='tidal_amplitude_V';
-        gt(2).phistr='tidal_phase_V';
-    case{'u'}
-        gt(1).ampstr='tidal_amplitude_u';
-        gt(1).phistr='tidal_phase_u';
-    case{'v'}
-        gt(1).ampstr='tidal_amplitude_v';
-        gt(1).phistr='tidal_phase_v';
-    case{'all'}
-        gt(1).ampstr='tidal_amplitude_h';
-        gt(1).phistr='tidal_phase_h';
-        gt(2).ampstr='tidal_amplitude_u';
-        gt(2).phistr='tidal_phase_u';
-        gt(3).ampstr='tidal_amplitude_v';
-        gt(3).phistr='tidal_phase_v';
-end
-
-% Get limits
-switch opt
-    case{'interp'}
-        xmin=min(min(xp));
-        ymin=min(min(yp));
-        xmax=max(max(xp));
-        ymax=max(max(yp));
-    case{'limits'}
-        xmin=xl(1);
-        ymin=yl(1);
-        xmax=xl(2);
-        ymax=yl(2);
-end
-
-% Get dimensions
-x=nc_varget(fname,'lon');
-y=nc_varget(fname,'lat');
-xu=nc_varget(fname,'lon_u');
-yu=nc_varget(fname,'lat_u');
-xv=nc_varget(fname,'lon_v');
-yv=nc_varget(fname,'lat_v');
-
-cl=nc_varget(fname,'tidal_constituents');
-
-for i=1:size(cl,1)
-    cons{i}=upper(deblank(cl(i,:)));
-end
-
-nrcons=length(cons);
-
-constituent=lower(constituent);
-if strcmpi(constituent,'all')
-    ic1=1;
-    ic2=nrcons;
+%% Consituents
+cnst=nc_varget(tidefile,'tidal_constituents');
+try
+if findstr(constituent, 'all')
+    constituent = cnst;
+    ncons = length(constituent);
 else
-    ic1=strmatch(constituent,lower(cons),'exact');
-    ic2=1;
+    ncons = 1;
+end
+catch
+    ncons = 1;
 end
 
-dy=(ymax-ymin)/10;
-dy=max(dy,0.5);
 
-iy1=find(y<=ymin-dy,1,'last');
-if isempty(iy1)
-    iy1=1;
-end
-iy2=find(y>=ymax+dy,1,'first');
-if isempty(iy2)
-    iy2=length(y);
-end
-
-dx=(xmax-xmin)/10;
-dx=max(dx,0.5);
-dx=x(2)-x(1);
-%dx=0;
-
-iok=0;
-
-iglob=0;
-if x(end)-x(1)>330
-    % Global dataset
-    iglob=1;
-end
-
-loncor=0;
-
-if iglob
+%% Only one time readtidemodel
+if ncons == 1;
     
-    % Assuming global dataset
-    % First check situation
-    if xmin>=x(1) && xmax<=x(end)
-        % No problems
-        iok=1;
-        ix1=find(x<=xmin-dx,1,'last');
-        ix2=find(x>=xmax+dx,1,'first');
-    elseif xmin<x(1) && xmax<x(1)
-        % Both to the left of the data
-        % Check if moving the data 360 deg to the left helps
-        xtmp=x-360;
-        xutmp=xu-360;
-        xvtmp=xv-360;
-    elseif xmin>x(1) && xmax>x(1)
-        % Both to the right of the data
-        % Check if moving the data 360 deg to the right helps
-        xtmp=x+360;
-        xutmp=xu+360;
-        xvtmp=xv+360;
-    else
-        % Possibly pasting necessary
-        xtmp=x;
-    end
-    
-    if ~iok
-        % Check again
-        if xmin>=xtmp(1) && xmax<=xtmp(end)
-            % No problems now, keep new x value
-            iok=1;
-            x=xtmp;
-            xu=xutmp;
-            xv=xvtmp;
-            ix1=find(x<=xmin-dx,1,'last');
-            ix2=find(x>=xmax+dx,1,'first');
-        end
-    end
-    
-    if ~iok
-        % Needs pasting
-        
-        % Left hand side
-        if xmin<x(1)
-            xtmp=x-360;
-        else
-            xtmp=x;
-        end
-        ix1left=find(xtmp<=xmin,1,'last');
-        ix2left=length(x);
-        
-        lonleft=xtmp(ix1left:ix2left);
-        
-        % Right hand side
-        if xmax>x(end)
-            xtmp=x+360;
-        else
-            xtmp=x;
-        end
-        ix1right=1;
-        ix2right=find(xtmp>=xmax,1,'first');
-        
-        lonright=xtmp(ix1right:ix2right);
-        
-    end
-    
+   %% TPXO 8.0
+   if ~isempty(findstr(tidefile, 'tpxo80'))
+   ind = find(strcmp('constituent', varargin));
+   C = cellstr(constituent(1,:));
+    str = ['Reading: TPXO 8.0 -', C, '- ', tp]; str = strjoin(str);
+    disp(str);
+   varargin{1, ind+1} = C{1,1};
+   [lon, lat, gt, depth] = readTideModel_TPXO8(tidefile,varargin);
+   conList = C;
+   
+   %% Other
+   else
+   iddot = strfind(tidefile, '\');
+   runname = tidefile((iddot(end)+1):end);
+        str = ['Reading: ', runname, ' - ', tp]; 
+        disp(str);
+   [lon, lat, gt, depth, conList] = readTideModel_other(tidefile,varargin);
+   
+   % Filter other results
+   ind = find(strcmp(constituent, conList));
+   for jj = 1:length(gt);
+   [nx ny ncons] = size(gt(jj).amp);
+   if ncons > 1;
+       gt(jj).amp = gt(jj).amp(:,:,ind);
+       gt(jj).phi = gt(jj).phi(:,:,ind);
+   else
+       gt(jj).amp = gt(jj).amp(:,ind);
+       gt(jj).phi = gt(jj).phi(:,ind);
+   end
+   end
+   end
+
+%% All constituents   
 else
-    % Not a global dataset
-    % First check situation
-    iok=1;
-    ix1=find(x<=xmin-dx,1,'last');
-    ix2=find(x>=xmax+dx,1,'first');
-    if ix1==length(x)
-        ix1=[];
-    end
-    if ix2==1
-        ix2=[];
-    end
-    if isempty(ix1) && isempty(ix2)
-        % Possibly using WL iso EL
-        if xmin<x(1) && xmax<x(end)
-            ix1=find(x<=xmin-dx+360,1,'last');
-            ix2=find(x>=xmax+dx+360,1,'first');
-            loncor=-360;
-        else
-            ix1=find(x<=xmin-dx-360,1,'last');
-            ix2=find(x>=xmax+dx-360,1,'first');
-            loncor=360;
-        end
-    end
-    % Using
-    if isempty(ix1)
-        ix1=1;
-    end
-    if isempty(ix2)
-        ix2=length(x);
-    end
-end
-
-for i=1:length(gt)
     
-    if ~iok
-        % Pasting needed
-        for icnst=1:nrcons
-            ampleft(:,:,icnst)   = nc_varget(fname,gt(i).ampstr,[ix1left-1 iy1-1 icnst-1],[ix2left-ix1left+1 iy2-iy1+1 1]);
-            phileft(:,:,icnst)   = nc_varget(fname,gt(i).phistr,[ix1left-1 iy1-1 icnst-1],[ix2left-ix1left+1 iy2-iy1+1 1]);
-        end
-%         ampleft  = nc_varget(fname,gt(i).ampstr,[ix1left-1 iy1-1 ic1-1],[ix2left-ix1left+1 iy2-iy1+1 ic2]);
-%         phileft  = nc_varget(fname,gt(i).phistr,[ix1left-1 iy1-1 ic1-1],[ix2left-ix1left+1 iy2-iy1+1 ic2]);
-        if getd
-            dpleft   = nc_varget(fname,'depth',[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
-        end
-        for icnst=1:nrcons
-            ampright(:,:,icnst)   = nc_varget(fname,gt(i).ampstr,[ix1right-1 iy1-1 icnst-1],[ix2right-ix1right+1 iy2-iy1+1 1]);
-            phiright(:,:,icnst)   = nc_varget(fname,gt(i).phistr,[ix1right-1 iy1-1 icnst-1],[ix2right-ix1right+1 iy2-iy1+1 1]);
-        end
-%         ampright = nc_varget(fname,gt(i).ampstr,[ix1right-1 iy1-1 ic1-1],[ix2right-ix1right+1 iy2-iy1+1 ic2]);
-%         phiright = nc_varget(fname,gt(i).phistr,[ix1right-1 iy1-1 ic1-1],[ix2right-ix1right+1 iy2-iy1+1 ic2]);
-        if getd
-            dpright  = nc_varget(fname,'depth',[ix1right-1 iy1-1],[ix2right-ix1right+1 iy2-iy1+1]);
-        end
+   %% TPXO 8.0 
+   if ~isempty(findstr(tidefile, 'tpxo80'))
+        for ii = 1:ncons
+        % Replace constituent
+        ind = find(strcmp('constituent', varargin));
+        C = cellstr(constituent(ii,:));
+        str = ['Reading: TPXO 8.0 -', C, '- ', tp]; str = strjoin(str);
+        disp(str);
+        varargin{1, ind+1} = C{1,1};
         
-        % Now paste
-        gt(i).amp   = permute([permute(ampleft,[2 1 3]) permute(ampright,[2 1 3])],[2 1 3]);
-        gt(i).phi   = permute([permute(phileft,[2 1 3]) permute(phiright,[2 1 3])],[2 1 3]);
-        if getd
-            depth = [dpleft' dpright'];
-        end
-        
-        % TODO This is still wrong!!! Make distinction between xu, xv and
-        % xz!
-        lonz = [lonleft;lonright];
-        lonu = [lonleft;lonright];
-        lonv = [lonleft;lonright];
-        
-        %         lonz=x(ix1:ix2);
-        %         lonu=xu(ix1:ix2);
-        %         lonv=xv(ix1:ix2);
-        
-        latz=y(iy1:iy2);
-        latu=yu(iy1:iy2);
-        latv=yv(iy1:iy2);
-        
-    else
-        for icnst=1:nrcons
-            gt(i).amp(:,:,icnst)   = nc_varget(fname,gt(i).ampstr,[ix1-1 iy1-1 icnst-1],[ix2-ix1+1 iy2-iy1+1 1]);
-            gt(i).phi(:,:,icnst)   = nc_varget(fname,gt(i).phistr,[ix1-1 iy1-1 icnst-1],[ix2-ix1+1 iy2-iy1+1 1]);
-        end
-%         gt(i).amp   = nc_varget(fname,gt(i).ampstr,[ix1-1 iy1-1 ic1-1],[ix2-ix1+1 iy2-iy1+1 ic2]);
-%         gt(i).phi   = nc_varget(fname,gt(i).phistr,[ix1-1 iy1-1 ic1-1],[ix2-ix1+1 iy2-iy1+1 ic2]);
-        if getd
-            depth = nc_varget(fname,'depth',[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
-            depth = depth';
-        end
-        lonz=x(ix1:ix2)+loncor;
-        latz=y(iy1:iy2);
-        lonu=xu(ix1:ix2)+loncor;
-        latu=yu(iy1:iy2);
-        lonv=xv(ix1:ix2)+loncor;
-        latv=yv(iy1:iy2);
-    end
-%    gt(i).amp(gt(i).amp>100)=NaN;
-    gt(i).amp=permute(gt(i).amp,[2 1 3]);
-    gt(i).phi=permute(gt(i).phi,[2 1 3]);
-    gt(i).phi(gt(i).amp==0)=NaN;
-    gt(i).amp(gt(i).amp==0)=NaN;
-end
+        % Determine
+        [lon_TMP,lat_TMP, gt_TMP, depth] = readTideModel_TPXO8(tidefile,varargin);
 
-switch opt
-    case{'interp'}
-        xp(isnan(xp))=1e9;
-        yp(isnan(yp))=1e9;
-        for i=1:length(gt)
-            a=[];
-            p=[];
-            switch gt(i).ampstr
-                case{'tidal_amplitude_h'}
-                    lon=lonz;
-                    lat=latz;
-                case{'tidal_amplitude_u','tidal_amplitude_U'}
-                    lon=lonu;
-                    lat=latu;
-                case{'tidal_amplitude_v','tidal_amplitude_V'}
-                    lon=lonv;
-                    lat=latv;
-            end
+        % Interpolate if needed
+        for jj = 1:length(gt_TMP)
+        values =  size(gt_TMP(jj).amp);
+        if values(1) ==1 
+            gt_TMP(jj).amp = gt_TMP(jj).amp';
+            gt_TMP(jj).phi = gt_TMP(jj).phi';
+        end
             
-            for k=1:size(gt(i).phi,3)
-                % Amplitude
-                %                a=internaldiffusion(squeeze(gt(i).amp(:,:,k)));
-                %                b=interp2(lon,lat,internaldiffusion(squeeze(gt(i).amp(:,:,k))),xp,yp);
-                if strcmpi(inptp,'matrix')
-                    a(k,:,:)=interp2(lon,lat,internaldiffusion(squeeze(gt(i).amp(:,:,k))),xp,yp);
-                else
-                    a(k,:)=interp2(lon,lat,internaldiffusion(squeeze(gt(i).amp(:,:,k))),xp,yp);
-                end
-                % Phase (bit more difficult)
-                sinp=sin(squeeze(gt(i).phi(:,:,k))*pi/180);
-                cosp=cos(squeeze(gt(i).phi(:,:,k))*pi/180);
-                sinp=internaldiffusion(sinp);
-                cosp=internaldiffusion(cosp);
-                sinpi=interp2(lon,lat,sinp,xp,yp);
-                cospi=interp2(lon,lat,cosp,xp,yp);
-                if strcmpi(inptp,'matrix')
-                    p(k,:,:)=mod(180*atan2(sinpi,cospi)/pi,360);
-                else
-                    p(k,:)=mod(180*atan2(sinpi,cospi)/pi,360);
-                end
-            end
-            varargout{2*i-1}=a;
-            varargout{2*i}=p;
-            if incldep
-                varargout{2*length(gt)+1}=interp2(lon,lat,depth,xp,yp);
-                varargout{2*length(gt)+2}=cons;
-            else
-                varargout{2*length(gt)+1}=cons;
-            end
+        if ~strcmp(opt, 'interp') & ii ~= 1
+            [Xtmp, Ytmp] = meshgrid(lon_TMP, lat_TMP);
+            gt_TMP(jj).amp = interp2(lon_TMP, lat_TMP, gt_TMP(jj).amp, X, Y);
+            gt_TMP(jj).phi = interp2(lon_TMP, lat_TMP, gt_TMP(jj).phi, X, Y);
         end
         
-    case{'limits'}
-        varargout{1}=lonz;
-        varargout{2}=latz;
-        for i=1:length(gt)
-            varargout{2*i+1}=gt(i).amp;
-            varargout{2*i+2}=gt(i).phi;
-        end
-        if incldep
-            varargout{2*length(gt)+3}=depth;
-            varargout{2*length(gt)+4}=cons;
+        if ii == 1;
+            gt(jj) = gt_TMP(jj);
+            lon = lon_TMP;
+            lat = lat_TMP;
+            [X, Y] = meshgrid(lon, lat);
+        elseif strcmp(inptp, 'vector')
+            amp = gt_TMP(jj).amp;
+            phi = gt_TMP(jj).phi;
+            gt(jj).amp(:,ii) = amp;
+            gt(jj).phi(:,ii) = phi;
         else
-            varargout{2*length(gt)+3}=cons;
+            amp = gt_TMP(jj).amp;
+            phi = gt_TMP(jj).phi;
+            gt(jj).amp(:,:,ii) = amp;
+            gt(jj).phi(:,:,ii) = phi;
         end
+        end
+        end
+        
+    % Get conlist
+    for i=1:size(cnst,1)
+    conList{i}=upper(deblank(cnst(i,:)));
+    end
+
+       
+   %% TPXO 7.2, 6.0 or other     
+   else
+        iddot = strfind(tidefile, '\');
+        runname = tidefile((iddot(end)+1):end);
+        str = ['Reading: ', runname, ' - ', tp]; 
+        disp(str);
+        [lon, lat, gt, depth, conList] = readTideModel_other(tidefile,varargin);
+   end
+   
 end
 
+%% Determine conlist
+cl = constituent;
+for i=1:size(cl,1)
+    conList2{i}=upper(deblank(cl(i,:)));
+end
