@@ -91,6 +91,10 @@ ddx=[];
 ddy=[];
 number=[];
 
+try
+setappdata(hg,'number',number)
+end
+
 tag='';
 
 % Not generic yet! DDB specific.
