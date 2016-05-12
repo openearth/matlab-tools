@@ -125,7 +125,7 @@ handles.toolbox.bathymetry.rectangledx=[];
 handles.toolbox.bathymetry.rectangledy=[];
 
 UIRectangle(handles.GUIHandles.mapAxis,'draw','Tag','bathymetryrectangle','Marker','o','MarkerEdgeColor','k', ...
-    'MarkerSize',6,'rotate',0,'callback',@changeRectangle);
+    'MarkerSize',6,'rotate',0,'callback',@changeRectangle, 'number', 1);
 
 setHandles(handles);
 
