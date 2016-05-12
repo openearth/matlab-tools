@@ -90,6 +90,7 @@ N1=openBoundary.N1;
 M2=openBoundary.M2;
 N2=openBoundary.N2;
 
+% Check
 if (N1>1 && kcs(M1,N1-1)==1 && kcs(M1,N1)==0) && (N2>1 && kcs(M2,N2-1)==1 && kcs(M2,N2)==0)
     % top
     if M2>=M1
@@ -171,13 +172,8 @@ end
 xb=x(m1:dm:m2,n1:dn:n2);
 yb=y(m1:dm:m2,n1:dn:n2);
 
-    
-
-
-
 % Find rotation
 % End A
-
 dx=xb(2)-xb(1);
 dy=yb(2)-yb(1);
 switch lower(cs)
@@ -221,6 +217,3 @@ switch lower(side)
         alphau(2)=atan2(dy,dx)+0.5*pi;
         alphav(2)=atan2(dy,dx);
 end
-
-
-

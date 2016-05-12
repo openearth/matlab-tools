@@ -139,13 +139,13 @@ n(end+1)=bnd(end).n2;
 
 %% Now find boundary sections along which the depth exceeds threshold value
 % Find first point after dry point
-%ifirstwet=[];
+% ifirstwet=[];
 ifirstwet=find(zb<thresh,1,'first');
 if isempty(ifirstwet)
-    ifirstwet=0;
+    ifirstwet=1;
 end
 if ifirstwet==length(xb)
-    ifirstwet=0;
+    ifirstwet=1;
 end
 
 % Now start looking for first wet point

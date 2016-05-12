@@ -1,4 +1,4 @@
-function openBoundaries=findBoundarySectionsOnStructuredGrid(openBoundaries,depth,zmax,d,varargin)
+function openBoundaries=find_boundary_sections_on_structured_grid(openBoundaries,depth,zmax,d,varargin)
 %FINDBOUNDARYSECTIONSONSTRUCTEDGRID  finds open boundaries  on a grid 
 %
 %   
