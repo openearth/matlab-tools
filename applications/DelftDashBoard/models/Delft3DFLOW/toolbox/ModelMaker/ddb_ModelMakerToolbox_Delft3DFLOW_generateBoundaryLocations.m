@@ -1,4 +1,4 @@
-function handles = ddb_generateBoundaryLocationsDelft3DFLOW(handles, id, filename)
+function handles = ddb_ModelMakerToolbox_Delft3DFLOW_generateBoundaryLocations(handles, id, filename)
 %DDB_GENERATEBOUNDARYLOCATIONSDELFT3DFLOW  makes open boundaries for FLOW
 %
 %   Steps of this function

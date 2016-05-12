@@ -92,7 +92,17 @@ switch lower(opt)
         % Now plot new grid
         x=handles.model.delft3dwave.domain.domains(id).gridx;
         y=handles.model.delft3dwave.domain.domains(id).gridy;
+        try
         handles.model.delft3dwave.domain.domains(id).grid.plotHandles=ddb_plotCurvilinearGrid(x,y,'color',col,'tag','delft3dwavegrid');
+        catch
+            gridname = handles.model.delft3dwave.domain.domains(id).grid;
+            iddot = strfind(gridname, '.grd');
+            gridname = gridname(1:iddot-1)
+            handles.model.delft3dwave.domain.domains(id).gridname = gridname;
+            handles.model.delft3dwave.domain.domains(id).grid = [];
+            handles.model.delft3dwave.domain.domains(id).grid.plotHandles=ddb_plotCurvilinearGrid(x,y,'color',col,'tag','delft3dwavegrid');
+        end
+
         if vis
             set(handles.model.delft3dwave.domain.domains(id).grid.plotHandles,'Color',col,'Visible','on');
         else

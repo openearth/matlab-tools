@@ -98,6 +98,8 @@ else
             automateTimestep;
         case{'changetimes'}
             changeTimes;
+        case{'generateflowwavemodel'}
+            generateFlowWaveModel;
     end
     
 end
@@ -296,7 +298,6 @@ else
     return
 end
 
-
 [filename, pathname, filterindex] = uiputfile('*.bnd', 'Boundary File Name',[handles.model.delft3dflow.domain(ad).attName '.bnd']);
 if pathname~=0    
     handles=ddb_ModelMakerToolbox_Delft3DFLOW_generateBoundaryLocations(handles,ad,filename);
@@ -332,3 +333,71 @@ else
     ddb_giveWarning('Warning','First generate or load a grid');
 end
 setHandles(handles);
+
+
+%% Make matching wave grid
+function generateFlowWaveModel
+
+% Start
+handles=getHandles;
+
+% Get popup
+h.waveinterval = 60;
+h.windspeed = 5;
+h.winddirection = 180;
+h.coarseratio = 2;
+
+xmldir=handles.model.delft3dflow.xmlDir;
+xmlfile='model.delft3dflow.modelmaker.flowwave.xml';
+[h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif'],'modal',1);
+
+if ok == 1
+    
+    % First save mdf
+    handles.model.delft3dflow.domain(1).waves = 1;
+    handles.model.delft3dflow.domain(1).onlineWave = 1;
+    handles.model.delft3dflow.domain(1).comStartTime = handles.model.delft3dflow.domain(1).mapStartTime;
+    handles.model.delft3dflow.domain(1).comStopTime = handles.model.delft3dflow.domain(1).mapStopTime;
+    handles.model.delft3dflow.domain(1).comInterval = h.waveinterval;
+    setHandles(handles);
+    ddb_saveDelft3DFLOW('saveall')
+
+    % Name
+    handles=getHandles;
+    namemodel=handles.model.delft3dflow.domain(ad).attName;
+    ratioFLOWWAVE = h.coarseratio;
+    dx_old=handles.toolbox.modelmaker.dX; handles.toolbox.modelmaker.dX = handles.toolbox.modelmaker.dX *ratioFLOWWAVE;
+    dy_old=handles.toolbox.modelmaker.dY; handles.toolbox.modelmaker.dY = handles.toolbox.modelmaker.dY *ratioFLOWWAVE;
+    nx_old=handles.toolbox.modelmaker.nX; handles.toolbox.modelmaker.nX = handles.toolbox.modelmaker.nX / ratioFLOWWAVE;
+    ny_old=handles.toolbox.modelmaker.nY;  handles.toolbox.modelmaker.nY = handles.toolbox.modelmaker.nY / ratioFLOWWAVE;
+
+    % Create a wave grid
+    filename = ([namemodel '_swn.grd']);
+    handles.model.delft3dwave.domain.gridnames = filename;
+    handles.model.delft3dwave.domain(1).gridname = filename;
+    handles = ddb_ModelMakerToolbox_Delft3DWAVE_generateGrid(handles,'option','new', 'filename', filename);
+
+    % Generate bathymetry
+    datasets(1).name=handles.screenParameters.backgroundBathymetry;
+    filename = ([namemodel '_swn.dep']); handles.model.delft3dwave.domain.domains(awg).bedlevel = filename;
+    handles=ddb_ModelMakerToolbox_Delft3DWAVE_generateBathymetry(handles,datasets,'filename', filename);
+
+    % Finalize
+    runid = handles.model.delft3dflow.domain(1).runid;
+
+    handles.model.delft3dwave.domain.projectname = 'Drawboxes';
+    handles.model.delft3dwave.domain.description = 'Made with Delft Dashboard';
+    handles.model.delft3dwave.domain.windspeed = h.windspeed;
+    handles.model.delft3dwave.domain.winddir = h.winddirection;
+    handles.model.delft3dwave.domain.mdffile = [runid, '.mdf'];
+    handles.model.delft3dwave.domain.mdwfile = [runid, '.mdw']; 
+    handles.model.delft3dwave.domain.writecom = 1
+    handles.model.delft3dwave.domain.comwriteinterval = handles.model.delft3dflow.domain(1).comInterval;
+    setHandles(handles);
+
+    % Save
+    ddb_saveMDW(handles);
+    ddb_saveDelft3DFLOW('saveall');
+else
+    return
+end

@@ -78,9 +78,35 @@ else
             generatemodel;
         case('updategui')
             updateGUI;
+        case('drawline')
+            drawPolyline;
     end
     
 end
+
+%%
+function drawPolyline
+
+%% Draw first setup
+[X,Y] = getline2
+
+%% Plotting lines
+hg1 = plot(X,Y, 'color', 'g', 'linewidth', 1.5)
+hg2 = plot(X,Y, 'o', 'color', 'k', 'linewidth', 1.5)
+
+%% Delete handles
+% delete(hg1)
+% delete(hg2)
+
+%% Save
+handles.toolbox.modelmaker.xb_trans.X=X;
+handles.toolbox.modelmaker.xb_trans.Y=Y;
+
+
+%%
+function updatePolyline
+%% Click in order to make point active (red color)
+% Click again to give new location
 
 %%
 function drawGridOutline
@@ -196,7 +222,7 @@ handles=ddb_initializeXBeach(handles,1,'xbeach1');% Check
 pathname = pwd; filename='\params.txt';
 handles.model.xbeach.domain(handles.activeDomain).params_file=[pathname filename];
 handles=ddb_readParams(handles,[pathname filename],1);
-handles=ddb_XBeach_readAttributeFiles(handles,[pathname,'\']); % need to add all files
+handles=ddb_readAttributeXBeachFiles(handles,[pathname,'\'],1); % need to add all files
 ddb_plotXBeach('plot','domain',ad); % make
 setHandles(handles);
 

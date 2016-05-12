@@ -1,4 +1,4 @@
-function handles=ddb_readParams(handles,filename,id)
+function handles=ddb_readParams(handles,filename,ad)
 
 xbs = xb_read_input(filename);
 
@@ -18,3 +18,18 @@ fieldNames = fieldnames(ddb_xbmi);
 for i = 1:size(fieldNames,1)
     handles.model.xbeach.domain(ad).(fieldNames{i}) = ddb_xbmi.(fieldNames{i});
 end
+
+% Save variables
+namesxb = [];
+for ii = 1:length(xbs.data)
+    namesxb{ii} = xbs.data(ii).name;
+end
+
+varsneeded = {'meanvars', 'globalvars'};
+for ii = 1:length(varsneeded)
+    nametesting = varsneeded{ii};
+    ids =find((strcmp(namesxb, nametesting))>0);
+    handles.model.xbeach.domain(ad).(varsneeded{ii}) = xbs.data(ids).value;
+end
+handles.model.xbeach.domain(ad).pwd = pwd;
+disp('Params red successfully')

@@ -1,4 +1,4 @@
-function ddb_ModelMakerToolbox_quickMode_Delft3DWAVE(varargin)
+function ddb_ModelMakerToolbox_Delft3DWAVE_quickMode(varargin)
 %DDB_MODELMAKERTOOLBOX_QUICKMODE_DELFT3DWAVE  One line description goes here.
 %
 %   More detailed description goes here.

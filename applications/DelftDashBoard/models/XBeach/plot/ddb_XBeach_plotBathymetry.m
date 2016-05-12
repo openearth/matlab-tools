@@ -99,7 +99,7 @@ switch lower(option)
         end
         end
         
-        if size(handles.model.xbeach.domain(id).depth,1)>0
+        if handles.model.xbeach.domain(id).ny > 0
             
             x=handles.model.xbeach.domain(id).grid.x;
             y=handles.model.xbeach.domain(id).grid.y;

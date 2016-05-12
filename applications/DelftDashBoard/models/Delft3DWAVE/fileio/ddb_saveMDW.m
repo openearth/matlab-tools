@@ -2,8 +2,13 @@ function ddb_saveMDW(handles)
 
 wave=handles.model.delft3dwave.domain;
 
-ndomains=length(wave.gridnames);
+% Get also the flowfile; if any
+try
+wave.mdffile = wave.flowfile;
+catch
+end
 
+ndomains=length(wave.domains);
 MDW.WaveFileInformation.FileVersion.value = '02.00';
 
 %% General

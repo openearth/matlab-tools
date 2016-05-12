@@ -33,14 +33,13 @@ if idomain==0 && ~act
     vis=0;
 end
 
-n1 = 1;
-n2 = 1;
-
 for id=n1:n2
     
     try
-        handles=ddb_XBeach_plotBathymetry(handles,option,'domain',id);
-        %handles=ddb_XBeach_plotGrid(handles,option,'domain',id);
+        handles=ddb_XBeach_plotBathymetry(handles,option,'domain',idomain);
+        if  handles.model.xbeach.domain(idomain).ny  == 0 
+            handles=ddb_XBeach_plotGrid(handles,option,'domain',idomain);
+        end
     end
     
 end

@@ -56,6 +56,11 @@
         <callback>ddb_openXBeach</callback>
         <option>open</option>
       </menuitem>
+      <menuitem>
+        <string>Open transects</string>
+        <callback>ddb_openXBeachTransects</callback>
+        <option>open</option>
+      </menuitem>
     </menuopenfile>
     <menusavefile>
       <menuitem>
@@ -69,14 +74,9 @@
         <option>saveas</option>
       </menuitem>
       <menuitem>
-        <string>Save All</string>
+        <string>Save transects</string>
         <callback>ddb_editXBeachDescription</callback>
-        <option>save</option>
-      </menuitem>
-      <menuitem>
-        <string>Save All As ...</string>
-        <callback>ddb_editXBeachDescription</callback>
-        <option>save</option>
+        <option>savetrans</option>
       </menuitem>
     </menusavefile>
   </menu>

@@ -43,7 +43,7 @@ handles.model.xbeach.domain(id).xori=0;
 handles.model.xbeach.domain(id).yori=0;
 handles.model.xbeach.domain(id).thetamin=-90;
 handles.model.xbeach.domain(id).thetamax=90;
-handles.model.xbeach.domain(id).dtheta=10;
+handles.model.xbeach.domain(id).dtheta=0;
 handles.model.xbeach.domain(id).thetanaut=0;
 handles.model.xbeach.domain(id).gridform= 'xbeach';
 handles.model.xbeach.domain(id).xyfile= 'file';
@@ -78,7 +78,7 @@ handles.model.xbeach.domain(id).oldnyq=0;
 handles.model.xbeach.domain(id).Tm01switch=0;
 handles.model.xbeach.domain(id).rt= 'file';
 handles.model.xbeach.domain(id).dtbc=1;
-handles.model.xbeach.domain(id).dthetaS_XB=0;
+handles.model.xbeach.domain(id).dtheta_s=0;
 handles.model.xbeach.domain(id).nspectrumloc=1;
 handles.model.xbeach.domain(id).wbcversion=2;
 handles.model.xbeach.domain(id).nonhspectrum= par.nonh;
@@ -256,7 +256,7 @@ handles.model.xbeach.domain(id).mpiboundary= 'auto';
 handles.model.xbeach.domain(id).mmpi=2;
 handles.model.xbeach.domain(id).nmpi=4;
 handles.model.xbeach.domain(id).bchwiz=0;
-
+handles.model.xbeach.domain(id).single_dir=0;
 
 function par=getdefaultpars
 % Pick up defaults of base variables, used for defaults of other variables

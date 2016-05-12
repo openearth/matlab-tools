@@ -1,6 +1,6 @@
-function handles=ddb_XBeach_readAttributeFiles(handles,pathname)
+function handles=ddb_readAttributeXBeachFiles(handles,pathname, ntransects)
             
-id=handles.activeDomain;
+id = ntransects;
 
 % Grid file % NEED TO INCLUDE DELFT3D-TYPE GRIDS
 if handles.model.xbeach.domain(id).vardx==1
@@ -16,6 +16,7 @@ if handles.model.xbeach.domain(id).vardx==1
     nans(nans==0)=NaN;
     handles.model.xbeach.domain(id).depth=nans;
 elseif handles.model.xbeach.domain(id).vardx==0
+    try
     % Regular grid
     dx = handles.model.xbeach.domain(id).dx;
     dy = handles.model.xbeach.domain(id).dy;
@@ -26,16 +27,17 @@ elseif handles.model.xbeach.domain(id).vardx==0
     [X,Y] = meshgrid(x,y);
     handles.model.xbeach.domain(id).grid.x=X;
     handles.model.xbeach.domain(id).grid.y=Y;
-    
     nans=zeros(size(handles.model.xbeach.domain(id).gridx));
     nans(nans==0)=NaN;
     handles.model.xbeach.domain(id).depth=nans;
+    catch
+    end
 end
 
 % % Depfile
 if ~strcmp(handles.model.xbeach.domain(id).depfile,'file')
     dp=load([pathname,handles.model.xbeach.domain(id).depfile]);
-    handles.model.xbeach.domain(id).Depth = -dp(1:ny+1,1:nx+1);
+    handles.model.xbeach.domain(id).depth = dp';
 end
 
 % % NE-file
@@ -49,11 +51,17 @@ end
 % Vegetation file % TODO
 
 % Water level boundary condition
+try
 if ~strcmp(handles.model.xbeach.domain(id).zs0file,'file')
+    try
     zsdat=load([pathname,handles.model.xbeach.domain(id).zs0file]);
-    
-    handles.model.xbeach.domain(id).zs0file.time = zsdat(:,1);
-    handles.model.xbeach.domain(id).zs0file.data = zsdat(:,2:end);
+    zsname = handles.model.xbeach.domain(id).zs0file;
+    handles.model.xbeach.domain(id).zs0file_info.name = zsname;
+    handles.model.xbeach.domain(id).zs0file_info.time = zsdat(:,1);
+    handles.model.xbeach.domain(id).zs0file_info.data = zsdat(:,2:end);
+    catch
+    end
+end
 end
 
 % Read boundarylist file and wave conditions...
@@ -76,3 +84,5 @@ fieldNames = fieldnames(ddb_xbmi);
 for i = 1:size(fieldNames,1)
     handles.mode.xbeach.domain(ad).(fieldNames{i}) = ddb_xbmi.(fieldNames{i});
 end
+
+disp('Attribute files red successfully')

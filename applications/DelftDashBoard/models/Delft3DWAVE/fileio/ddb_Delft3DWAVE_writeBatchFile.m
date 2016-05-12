@@ -46,7 +46,7 @@ function ddb_Delft3DWAVE_writeBatchFile(mdwfile)
 %%
 handles=getHandles;
 
-fid=fopen('batch_wave.bat','w');
+fid=fopen('batch_wave.bat','wt');
 
 % if ~isempty(getenv('D3D_HOME'))
 %     exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\'];
@@ -54,11 +54,15 @@ fid=fopen('batch_wave.bat','w');
 %     exedir='c:\delft3d\w32\wave\bin\';
 % end
 
-
-fprintf(fid,'%s\n',['set waveexedir="' handles.model.delft3dwave.exedir '"']);
-fprintf(fid,'%s\n',['%waveexedir%\wave.exe ' mdwfile ' 1']);
-
-
-% fprintf(fid,'%s\n','@ echo off');
+fprintf(fid, '%s\n',['set mdwfile=' mdwfile]);
+fprintf(fid, '%s\n',['set ARCH=win32']);
+fprintf(fid, '%s\n',['set D3D_HOME=' handles.model.delft3dwave.exedir]);
+fprintf(fid, '%s\n',['set waveexedir=%D3D_HOME%\%ARCH%\wave\bin']);
+fprintf(fid, '%s\n',['set swanexedir=%D3D_HOME%\%ARCH%\swan\bin']);
+fprintf(fid, '%s\n',['set swanbatdir=%D3D_HOME%\%ARCH%\swan\scripts']);
+fprintf(fid, '%s\n',['title Wave simulation']);
+fprintf(fid, '%s\n',['set PATH=%waveexedir%;%swanbatdir%;%swanexedir%;%PATH%']);
+fprintf(fid, '%s\n',['"%waveexedir%\wave.exe" %mdwfile% 0']);
+fprintf(fid, '%s\n',['title %CD%']);
 
 fclose(fid);

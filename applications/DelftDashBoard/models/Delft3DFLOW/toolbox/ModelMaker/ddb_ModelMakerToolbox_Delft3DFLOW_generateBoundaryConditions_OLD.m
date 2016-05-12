@@ -120,11 +120,7 @@ try
     
     if igetwl
         
-      % Get waterlevels
-      cnst=nc_varget(tidefile,'tidal_constituents');
-      handles.toolbox.tidedatabase.constituentList = cellstr(cnst);
-      [lon,lat, gt, depth, conList] = readTideModel(tidefile,'type','h','x',xx,'y',yy,'constituent','all');
-      ampz = squeeze(gt.amp)'; phasez = squeeze(gt.phi)';
+        [ampz,phasez,conList] = readTideModel(tidefile,'type','h','x',xx,'y',yy,'constituent','all');
 
         % Add A0 as first component
         a0=0.0;
@@ -133,8 +129,8 @@ try
         for ic=1:length(conList0)
             conList{ic+1}=conList0{ic};
         end
-        ampz(2:end+1,:,:)=ampz;
-        phasez(2:end+1,:,:)=phasez;
+        ampz(2:end+1,:)=ampz;
+        phasez(2:end+1,:)=phasez;
         ampz(1,:)=a0;
         phasez(1,:)=0;
                 
@@ -185,13 +181,9 @@ try
         
         % Riemann or current boundaries present
         if icor
-            [lon,lat, gt, depth, conList] = readTideModel(tidefile,'type','q','x',xx,'y',yy,'constituent','all','includedepth');            
-            ampv = squeeze(gt(1).amp)';             phasev =  squeeze(gt(1).phi)';   
-            ampu = squeeze(gt(2).amp)';             phaseu =  squeeze(gt(2).phi)'; 
+            [ampu,phaseu,ampv,phasev,depth,conList] = readTideModel(tidefile,'type','q','x',xx,'y',yy,'constituent','all','includedepth');
         else
-            [lon,lat, gt, depth, conList] = readTideModel(tidefile,'type','vel','x',xx,'y',yy,'constituent','all','includedepth');
-            ampv = squeeze(gt(1).amp)';             phasev =  squeeze(gt(1).phi)';   
-            ampu = squeeze(gt(2).amp)';             phaseu =  squeeze(gt(2).phi)'; 
+            [ampu,phaseu,ampv,phasev,depth,conList] = readTideModel(tidefile,'type','vel','x',xx,'y',yy,'constituent','all','includedepth');
         end
 
         % Add A0 as first component

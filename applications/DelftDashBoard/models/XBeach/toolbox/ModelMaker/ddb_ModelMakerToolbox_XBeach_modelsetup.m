@@ -63,7 +63,7 @@ function ddb_ModelMakerToolbox_XBeach_modelsetup(handles)
 
 x = handles.model.xbeach.domain(handles.activeDomain).grid.x;
 y = handles.model.xbeach.domain(handles.activeDomain).grid.y;
-zgrid = handles.model.xbeach.domain(handles.activeDomain).depth';
+zgrid = handles.model.xbeach.domain(handles.activeDomain).depth;
 
 % 
 crossshore = ((x(1,:) - x(1,1)).^2 + (y(1,:) - y(1,1)).^2.).^0.5;

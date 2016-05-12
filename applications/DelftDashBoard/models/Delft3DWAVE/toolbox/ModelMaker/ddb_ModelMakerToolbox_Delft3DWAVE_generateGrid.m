@@ -28,7 +28,7 @@ attname=filename(1:end-4);
 switch opt
     case{'new'}
         for ii=1:handles.model.delft3dwave.domain.nrgrids
-            if strcmpi(attname,handles.model.delft3dwave.domain(ii).gridname)
+            if strcmpi(attname,handles.model.delft3dwave.domain.domains(ii).gridname)
                 ddb_giveWarning('text','A wave domain with this name already exists. Try again.');
                 return
             end
@@ -44,16 +44,17 @@ switch opt
     case{'new'}
         handles.model.delft3dwave.domain.nrgrids=handles.model.delft3dwave.domain.nrgrids+1;
         nrgrids=handles.model.delft3dwave.domain.nrgrids;
-        handles.model.delft3dwave.domain.gridnames{nrgrids}=filename(1:end-4);
-        handles.model.delft3dwave.domain=ddb_initializeDelft3DWAVEDomain(handles.model.delft3dwave.domain,nrgrids);
+        domains = ddb_initializeDelft3DWAVEDomain(handles.model.delft3dwave.domain.domains,nrgrids);
+        handles.model.delft3dwave.domain.domains = domains;
+        handles.model.delft3dwave.domain.domains(nrgrids).gridnames=filename(1:end-4);
         handles.activeWaveGrid=nrgrids;
         if nrgrids>1
-            handles.model.delft3dwave.domain(nrgrids).nestgrid=handles.model.delft3dwave.domain(1).gridname;
-            for ii=1:handles.activeWaveGrid-1
-                handles.model.delft3dwave.domain.nestgrids{ii}=handles.model.delft3dwave.domain(ii).gridname;
-            end
+            handles.model.delft3dwave.domain.domains(nrgrids).nestgrid = filename;
+%             for ii=1:handles.activeWaveGrid-1
+%                 handles.model.delft3dwave.domain.nestgrids{ii}=handles.model.delft3dwave.domain(ii).gridname;
+%             end
         else
-            handles.model.delft3dwave.domain(nrgrids).nestgrid='';
+            handles.model.delft3dwave.domain.domains(nrgrids).nestgrid='';
         end
     case{'existing'}
         nrgrids=handles.model.delft3dwave.domain.nrgrids;
@@ -71,20 +72,20 @@ end
 
 ddb_wlgrid('write','FileName',[attName '.grd'],'X',x,'Y',y,'Enclosure',enc,'CoordinateSystem',coord);
 
-handles.model.delft3dwave.domain(nrgrids).coordsyst = coord;
-handles.model.delft3dwave.domain(nrgrids).grid      = [attname '.grd'];
-handles.model.delft3dwave.domain(nrgrids).grdFile   = [attName '.grd'];
-handles.model.delft3dwave.domain(nrgrids).encFile   = [attName '.enc'];
+handles.model.delft3dwave.domain.domains(nrgrids).coordsyst = coord;
+handles.model.delft3dwave.domain.domains(nrgrids).grid      = [attname '.grd'];
+handles.model.delft3dwave.domain.domains(nrgrids).grdFile   = [attName '.grd'];
+handles.model.delft3dwave.domain.domains(nrgrids).encFile   = [attName '.enc'];
 
-handles.model.delft3dwave.domain(nrgrids).gridname  = attname;
-handles.model.delft3dwave.domain(nrgrids).gridX     = x;
-handles.model.delft3dwave.domain(nrgrids).gridY     = y;
+handles.model.delft3dwave.domain.domains(nrgrids).gridname  = attname;
+handles.model.delft3dwave.domain.domains(nrgrids).gridx     = x;
+handles.model.delft3dwave.domain.domains(nrgrids).gridy     = y;
 
 nans=zeros(size(x));
 nans(nans==0)=NaN;
-handles.model.delft3dwave.domain(nrgrids).depth=nans;
-handles.model.delft3dwave.domain(nrgrids).mmax=size(x,1);
-handles.model.delft3dwave.domain(nrgrids).nmax=size(x,2);
+handles.model.delft3dwave.domain.domains(nrgrids).depth=nans;
+handles.model.delft3dwave.domain.domains(nrgrids).mmax=size(x,1);
+handles.model.delft3dwave.domain.domains(nrgrids).nmax=size(x,2);
 
 % Work around with domain.domains problem
 handles.model.delft3dwave.domain.domains(nrgrids).grid      = [attname '.grd'];

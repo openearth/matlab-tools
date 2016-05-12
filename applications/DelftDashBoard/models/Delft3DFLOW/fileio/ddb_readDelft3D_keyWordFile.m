@@ -119,6 +119,9 @@ while 1
                 if isempty(v)
                     val=[];
                 else
+                    if strcmpi(keyword,'waveforces')
+                        shite1=1
+                    end
                     if allowspaces
                         val=[];
                         val{1}=v;

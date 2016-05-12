@@ -129,15 +129,26 @@ if ispc,
             fprintf(fid,'%s\n','set argfile=config_d_hydro.xml');
             fprintf(fid,'%s\n',['set flowexedir=' flowexedir]);
             if ~isempty(mdwfile)
-                fprintf(fid,'%s\n',['set waveexedir=' waveexedir]);
-                fprintf(fid,'%s\n',['set swanexedir=' swandir filesep 'bin']);
-                fprintf(fid,'%s\n',['set swanlibdir=' swandir filesep 'lib']);
-                fprintf(fid,'%s\n',['set swanbatdir=' swandir filesep 'scripts']);
-                fprintf(fid,'%s\n','set PATH=%flowexedir%;%PATH%');
-                fprintf(fid,'%s\n','set PATH=%waveexedir%;%PATH%');
-                fprintf(fid,'%s\n','set PATH=%swanexedir%;%swanlibdir%;%swanbatdir%;%PATH%');
-                fprintf(fid,'%s\n','start "" "%flowexedir%\d_hydro.exe" %argfile%');
-                fprintf(fid,'%s\n',['"%waveexedir%\wave.exe" ' mdwfile ' 1']);
+                fprintf(fid, '%s\n',['set mdwfile=' mdwfile]);
+                fprintf(fid, '%s\n',['set ARCH=win32']);
+                fprintf(fid, '%s\n',['set D3D_HOME=' handles.model.delft3dwave.exedir]);
+                fprintf(fid, '%s\n',['set waveexedir=%D3D_HOME%\%ARCH%\wave\bin']);
+                fprintf(fid, '%s\n',['set swanexedir=%D3D_HOME%\%ARCH%\swan\bin']);
+                fprintf(fid, '%s\n',['set swanbatdir=%D3D_HOME%\%ARCH%\swan\scripts']);
+                
+                % Flow
+                fprintf(fid, '%s\n',['rem Start FLOW']);
+                fprintf(fid, '%s\n',['set PATH=%flowexedir%;%PATH%']);
+                fprintf(fid, '%s\n',['start "Hydrodynamic simulation" "%flowexedir%\d_hydro.exe" %argfile%']);
+                
+                % Wave
+                fprintf(fid, '%s\n',['title Wave simulation']);
+                fprintf(fid, '%s\n',['set PATH=%waveexedir%;%swanbatdir%;%swanexedir%;%PATH%']);
+                fprintf(fid, '%s\n',['"%waveexedir%\wave.exe" %mdwfile% 0']);
+                fprintf(fid, '%s\n',['title %CD%']);
+                
+                % End
+                fprintf(fid, '%s\n',[':end']);
             else
                 fprintf(fid,'%s\n','set PATH=%flowexedir%;%PATH%');
                 fprintf(fid,'%s\n','"%flowexedir%\d_hydro.exe" %argfile%');
