@@ -23,7 +23,7 @@ function varargout = findAllFiles(varargin)
 %
 %    OPT = findAllFiles()
 %
-%See also: DIR, OPENDAP_CATALOG, ADDPATHFAST, REGEXP, DIRLISTING
+%See also: DIR, DIR2, OPENDAP_CATALOG, ADDPATHFAST, REGEXP, DIRLISTING
 
 %% Copyright notice
 %   --------------------------------------------------------------------
