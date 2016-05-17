@@ -70,43 +70,58 @@ else
     switch opt
         case{'drawline'}
             drawPolyline;
-        case('drawtransects')
-            drawTransects;
+        case('drawtransectsxy')
+            drawTransectsXY;
+        case('drawtransectsz')
+            drawTransectsZ;
         case{'generategrid'}
             generatemodel;
         case('delete')
             deleteGridOutline
+        case('adddem')
+            addDEM
     end
     
 end
 
 %%
 function drawPolyline
+
+% Start
 handles=getHandles;
+
+% Make polyline and save handle
 h = UIPolyline(handles.GUIHandles.mapAxis,'draw','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline, 'onstart',@deleteGridOutline, ...
-    'Tag', 'XB')
+    'Tag', 'XB');
 handles.toolbox.modelmaker.xb_trans.handle1=h;
+
+% Close
 setHandles(handles);
 
 %%
 function updateGridOutline(x,y,h)
+
+% Start
 setInstructions({'Left-click and drag markers to change corner points','Right-click and drag YELLOW marker to move entire box', ...
     'Right-click and drag RED markers to rotate box'});
-
 handles=getHandles;
 
-% 
+% Settings 
 setappdata(h,'x',x);
 setappdata(h,'y',y);
 handles.toolbox.modelmaker.xb_trans.handle1=h;
 handles.toolbox.modelmaker.xb_trans.X=x;
 handles.toolbox.modelmaker.xb_trans.Y=y;
+
+% Finish
 setHandles(handles);
 gui_updateActiveTab;
 
 %%
 function deleteGridOutline
 handles=getHandles;
+
+% Vertices
 try
 if ~isempty(handles.toolbox.modelmaker.xb_trans.handle1)
     try
@@ -115,6 +130,8 @@ if ~isempty(handles.toolbox.modelmaker.xb_trans.handle1)
 end
 catch
 end
+
+% Transects
 try
 if ~isempty(handles.toolbox.modelmaker.xb_trans.handle2)
     try
@@ -123,113 +140,56 @@ if ~isempty(handles.toolbox.modelmaker.xb_trans.handle2)
 end
 catch
 end
+
+% Other windows
+for ii =1 :100
+    try
+    delete(handles.toolbox.modelmaker.hfigure(ii))
+    end
+end
+
 setHandles(handles);
 
 %%
-function drawTransects
+function addDEM
 
+% Start
+handles=getHandles;
+
+% Find DEM
+[filename, pathname, filterindex] = uigetfile('*', 'Select the DEM of LISFLOOD');
+handles.toolbox.modelmaker.xb_trans.DEM = [pathname, filename];
+
+
+% Close
+setHandles(handles);
+
+
+%%
+function drawTransectsXY
+
+% Start
 handles=getHandles;
 
 % Delete
 try
-if ~isempty(handles.toolbox.modelmaker.xb_trans.handle2)
-    try
-        delete(handles.toolbox.modelmaker.xb_trans.handle2);
-    end
-end
-catch
+    delete(handles.toolbox.modelmaker.xb_trans.handle2);
 end
 
 %% Get information
 hg = handles.toolbox.modelmaker.xb_trans.handle1;
-X=getappdata(hg,'x');
-Y=getappdata(hg,'y');
+handles.toolbox.modelmaker.xb_trans.X   = getappdata(hg,'x');
+handles.toolbox.modelmaker.xb_trans.Y   = getappdata(hg,'y');
 
-ntransects = length(X)-1;
+% Draw transects and save in handles based on settings
+[handles] = ddb_ModelMakerToolbox_XBeach_quickMode_drawtransects(handles);
 
-% Get locations of the model
-for ii = 1:ntransects;
-    dx = abs((X(ii+1)-X(ii)));     dy = abs((Y(ii+1)-Y(ii)));
-    coast(ii) = (atand( dy / dx));
-    
-    % Based on
-    dx_2(ii) = X(ii+1) - X(ii); dy_2(ii) = Y(ii+1) - Y(ii);
-
-    % Based on degrees
-    xorg(ii) = (X(ii+1) + X(ii))/2;
-    yorg(ii) = (Y(ii+1) + Y(ii))/2;
-    distances(ii) = ((X(ii+1) - X(ii)).^2 + (Y(ii+1) - Y(ii)).^2).^0.5;
-    dx = X(ii+1) - X(ii); dy = Y(ii+1) - Y(ii);
-   
-    if dx > 0 && dy < 0 
-    xback(ii) = xorg(ii) - sind(coast(ii)) * handles.toolbox.modelmaker.nY;
-    yback(ii) = yorg(ii) - cosd(coast(ii)) * handles.toolbox.modelmaker.nY;
-    xoff(ii) = xorg(ii) + sind(coast(ii)) * handles.toolbox.modelmaker.nX;
-    yoff(ii) = yorg(ii) + cosd(coast(ii)) * handles.toolbox.modelmaker.nX;
-    end
-    
-    if dx < 0 && dy < 0
-    xback(ii) = xorg(ii) + sind(360-coast(ii)) * handles.toolbox.modelmaker.nY;
-    yback(ii) = yorg(ii) + cosd(360-coast(ii)) * handles.toolbox.modelmaker.nY;
-    xoff(ii) = xorg(ii) - sind(360-coast(ii)) * handles.toolbox.modelmaker.nX;
-    yoff(ii) = yorg(ii) - cosd(360-coast(ii)) * handles.toolbox.modelmaker.nX;
-    end
-    
-    if dx >= 0 && dy >= 0
-    xback(ii) = xorg(ii) - sind(360-coast(ii)) * handles.toolbox.modelmaker.nY;
-    yback(ii) = yorg(ii) - cosd(360-coast(ii)) * handles.toolbox.modelmaker.nY;
-    xoff(ii) = xorg(ii) + sind(360-coast(ii)) * handles.toolbox.modelmaker.nX;
-    yoff(ii) = yorg(ii) + cosd(360-coast(ii)) * handles.toolbox.modelmaker.nX;
-    end
-    
-    if dx < 0 && dy > 0
-    xback(ii) = xorg(ii) + sind(coast(ii)) * handles.toolbox.modelmaker.nY;
-    yback(ii) = yorg(ii) + cosd(coast(ii)) * handles.toolbox.modelmaker.nY;
-    xoff(ii) = xorg(ii) - sind(coast(ii)) * handles.toolbox.modelmaker.nX;
-    yoff(ii) = yorg(ii) - cosd(coast(ii)) * handles.toolbox.modelmaker.nX;
-    end
-end
-
-% Keep coast, X, Y and distance
-for ii = 1:length(distances);
-    if ii == 1;
-    distances_cum(ii) = distances(ii);
-    else
-    distances_cum(ii) = distances_cum(ii-1) + distances(ii);
-    end
-end
-
-if handles.toolbox.modelmaker.transects ~= 0
-    distances_total = sum(distances);
-    ntransects = handles.toolbox.modelmaker.transects;
-    ndivide = handles.toolbox.modelmaker.transects + 1;
-    for jj = 1:ntransects
-        distances_wanted = max(distances_cum)/ndivide * jj;
-        xoff2(jj) = interp1(distances_cum,xoff,distances_wanted);
-        yoff2(jj) = interp1(distances_cum,yoff,distances_wanted);
-        xback2(jj) = interp1(distances_cum,xback,distances_wanted);
-        yback2(jj) = interp1(distances_cum,yback,distances_wanted);
-        coast2(jj) = interp1(distances_cum,coast,distances_wanted);
-        distances2(jj) = distances_wanted;
-    end
-    
-    id = (~isnan(xoff2) & ~isnan(xback2) & ~isnan(yoff2) & ~isnan(yback2));
-    xoff = xoff2(id); xback = xback2(id);
-    yoff = yoff2(id); yback = yback2(id);
-    coast = coast2(id); distances = distances2(id); ntransects = length(xoff);
-    
-    for jj = 1:length(distances);
-        if jj == 1;
-        distances0(jj) = distances(jj);
-        else
-        distances0(jj) = distances(jj)-distances(jj-1);
-        end
-    end
-    average_dx = round(nanmean(distances0(2:end)), 1);
-else
-    ntransects = length(X)-1;
-    average_dx = round(nanmean(distances), 1);
-end
+% Line sections
+xoff    = handles.toolbox.modelmaker.xb_trans.xoff;
+yoff    = handles.toolbox.modelmaker.xb_trans.yoff;
+xback   = handles.toolbox.modelmaker.xb_trans.xback;
+yback   = handles.toolbox.modelmaker.xb_trans.yback;
+ntransects = length(xoff);
 
 % Plotting
 for ii = 1:ntransects
@@ -237,150 +197,74 @@ for ii = 1:ntransects
 end
 handles.toolbox.modelmaker.xb_trans.handle2 = h2;
 
-% Determine average range
+% Close
+setHandles(handles);
+
+function drawTransectsZ
+
+% Start
+handles=getHandles;
 
 % Determine average depth
-% Find coordinates of corner points
-x = [xback xoff];
-y = [yback yoff];
+xoff    = handles.toolbox.modelmaker.xb_trans.xoff;
+ntransects = length(xoff);
 
-% Sizes
-xl(1)=min(x);
-xl(2)=max(x);
-yl(1)=min(y);
-yl(2)=max(y);
-dbuf=(xl(2)-xl(1))/20;
-xl(1)=xl(1)-dbuf;
-xl(2)=xl(2)+dbuf;
-yl(1)=yl(1)-dbuf;
-yl(2)=yl(2)+dbuf;
+error = 0;
+for ii = 1:ntransects
+    try
+    [handles] = ddb_ModelMakerToolbox_XBeach_quickMode_Ztransects(handles, ii, 1)
+    catch
+    error = 1;    
+    end
+end
 
-% Coordinate coversion
-coord=handles.screenParameters.coordinateSystem;
-iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
-dataCoord.name=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
-dataCoord.type=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
-[xlb,ylb]=ddb_coordConvert(xl,yl,coord,dataCoord);
+% Error
+if error == 1;
+        ddb_giveWarning('text',['Something went wrong with drawing the transects. Make sure the bathy has information in this area']);
+end
+handles.toolbox.modelmaker.average_z = round(nanmean(handles.toolbox.modelmaker.Zvalues,2),1);
 
-% Get bathymetry in box around model grid
-[xx,yy,zz,ok]=ddb_getBathymetry(handles.bathymetry,xlb,ylb,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',1000);  
-id = ~isnan(zz); [xx,yy]=ddb_coordConvert(xx,yy,dataCoord,coord);
-F1 = scatteredInterpolant(xx(id),yy(id),zz(id),'natural','none');
-zoff = F1(xoff, yoff); average_z = round(nanmean(zoff),1);
-
-% Set values
-handles.toolbox.modelmaker.average_z = average_z;
-handles.toolbox.modelmaker.average_dx = average_dx;
-
+% Close
 setHandles(handles);
+
 
 %%
 function generatemodel
+
+% Start
 handles=getHandles;
-X = handles.toolbox.modelmaker.xb_trans.X;
-Y = handles.toolbox.modelmaker.xb_trans.Y;
-ntransects = length(X)-1;
 
-% Get locations of the model
-for ii = 1:ntransects;
-    dx = abs((X(ii+1)-X(ii)));     dy = abs((Y(ii+1)-Y(ii)));
-    coast(ii) = (atand( dy / dx));
-    
-    % Based on
-    dx_2(ii) = X(ii+1) - X(ii); dy_2(ii) = Y(ii+1) - Y(ii);
-
-    % Based on degrees
-    xorg(ii) = (X(ii+1) + X(ii))/2;
-    yorg(ii) = (Y(ii+1) + Y(ii))/2;
-    distances(ii) = ((X(ii+1) - X(ii)).^2 + (Y(ii+1) - Y(ii)).^2).^0.5;
-    dx = X(ii+1) - X(ii); dy = Y(ii+1) - Y(ii);
-   
-    if dx > 0 && dy < 0 
-    xback(ii) = xorg(ii) - sind(coast(ii)) * handles.toolbox.modelmaker.nY;
-    yback(ii) = yorg(ii) - cosd(coast(ii)) * handles.toolbox.modelmaker.nY;
-    xoff(ii) = xorg(ii) + sind(coast(ii)) * handles.toolbox.modelmaker.nX;
-    yoff(ii) = yorg(ii) + cosd(coast(ii)) * handles.toolbox.modelmaker.nX;
-    end
-    
-    if dx < 0 && dy < 0
-    xback(ii) = xorg(ii) + sind(360-coast(ii)) * handles.toolbox.modelmaker.nY;
-    yback(ii) = yorg(ii) + cosd(360-coast(ii)) * handles.toolbox.modelmaker.nY;
-    xoff(ii) = xorg(ii) - sind(360-coast(ii)) * handles.toolbox.modelmaker.nX;
-    yoff(ii) = yorg(ii) - cosd(360-coast(ii)) * handles.toolbox.modelmaker.nX;
-    end
-    
-    if dx > 0 && dy > 0
-    xback(ii) = xorg(ii) - sind(360-coast(ii)) * handles.toolbox.modelmaker.nY;
-    yback(ii) = yorg(ii) - cosd(360-coast(ii)) * handles.toolbox.modelmaker.nY;
-    xoff(ii) = xorg(ii) + sind(360-coast(ii)) * handles.toolbox.modelmaker.nX;
-    yoff(ii) = yorg(ii) + cosd(360-coast(ii)) * handles.toolbox.modelmaker.nX;
-    end
-    
-    if dx < 0 && dy > 0
-    xback(ii) = xorg(ii) + sind(coast(ii)) * handles.toolbox.modelmaker.nY;
-    yback(ii) = yorg(ii) + cosd(coast(ii)) * handles.toolbox.modelmaker.nY;
-    xoff(ii) = xorg(ii) - sind(coast(ii)) * handles.toolbox.modelmaker.nX;
-    yoff(ii) = yorg(ii) - cosd(coast(ii)) * handles.toolbox.modelmaker.nX;
+% Draw transects and save in handles based on settings
+try
+if ~isempty(handles.toolbox.modelmaker.xb_trans.handle2)
+    try
+        delete(handles.toolbox.modelmaker.xb_trans.handle2);
     end
 end
-
-% Keep coast, X, Y and distance
-for ii = 1:length(distances);
-    if ii == 1;
-    distances_cum(ii) = distances(ii);
-    else
-    distances_cum(ii) = distances_cum(ii-1) + distances(ii);
-    end
+catch
 end
+[handles] = ddb_ModelMakerToolbox_XBeach_quickMode_drawtransects(handles)
 
-if handles.toolbox.modelmaker.transects ~= 0
-    distances_total = sum(distances);
-    ntransects = handles.toolbox.modelmaker.transects;
-    ndivide = handles.toolbox.modelmaker.transects + 1;
-    for jj = 1:ntransects
-        distances_wanted = max(distances_cum)/ndivide * jj;
-        xoff2(jj) = interp1(distances_cum,xoff,distances_wanted);
-        yoff2(jj) = interp1(distances_cum,yoff,distances_wanted);
-        xback2(jj) = interp1(distances_cum,xback,distances_wanted);
-        yback2(jj) = interp1(distances_cum,yback,distances_wanted);
-        coast2(jj) = interp1(distances_cum,coast,distances_wanted);
-        distances2(jj) = distances_wanted;
-    end
-    for jj = 1:ntransects+1;
-    
-    id = (~isnan(xoff2) & ~isnan(xback2) & ~isnan(yoff2) & ~isnan(yback2));
-    xoff = xoff2(id); xback = xback2(id);
-    yoff = yoff2(id); yback = yback2(id);
-    coast = coast2(id); distances = distances2(id); ntransects = length(xoff);
-    end
-    
-    for jj = 1:length(distances);
-        if jj == 1;
-        distances0(jj) = distances(jj);
-        else
-        distances0(jj) = distances(jj)-distances(jj-1);
-        end
-    end
-    average_dx = round(nanmean(distances0(2:end)), 1);
-else
-    ntransects = length(xoff);
-    average_dx = round(nanmean(distances), 1);
+% Line sections
+xoff    = handles.toolbox.modelmaker.xb_trans.xoff;
+yoff    = handles.toolbox.modelmaker.xb_trans.yoff;
+xback   = handles.toolbox.modelmaker.xb_trans.xback;
+yback   = handles.toolbox.modelmaker.xb_trans.yback;
+ntransects = length(xoff);
+
+% Plotting
+for ii = 1:ntransects
+    h2(ii) = plot([xoff(ii) xback(ii)], [yoff(ii), yback(ii)], 'k', 'linewidth', 2);
 end
-
-% Set values
-handles.toolbox.modelmaker.xb_trans.ntransects = ntransects;
-handles.toolbox.modelmaker.xb_trans.xoff = xoff;
-handles.toolbox.modelmaker.xb_trans.yoff = yoff;
-handles.toolbox.modelmaker.xb_trans.xback = xback;
-handles.toolbox.modelmaker.xb_trans.yback = yback;
-handles.toolbox.modelmaker.xb_trans.distances = distances;
-handles.toolbox.modelmaker.xb_trans.coast = coast;
+handles.toolbox.modelmaker.xb_trans.handle2 = h2;
 
 % Generating models
-wb = waitbox('Generating XBeach transect models')
+wb = waitbox('Generating XBeach transect models');
 handles=ddb_ModelMakerToolbox_XBeach_generateTransects(handles);
-close(wb)
+close(wb);
 cd ..
-save('distances.txt', 'distances','-ascii')
-A = [xoff; yoff; xback; yback; coast];
-save('settings.txt', 'A','-ascii')
+
+% Close
+settings = handles.toolbox.modelmaker.xb_trans;
+save('settings.mat','settings')
+setHandles(handles);

@@ -1,4 +1,4 @@
-function ddb_ModelMakerToolbox_quickMode_XBeach(varargin)
+function ddb_ModelMakerToolbox_XBeach_quickMode(varargin)
 %DDB_MODELMAKERTOOLBOX_QUICKMODE  One line description goes here.
 %
 %   More detailed description goes here.
@@ -215,6 +215,7 @@ ddb_refreshDomainMenu;
 
 function generatemodel
 handles=getHandles;
+wb =   waitbox('XBeach model is created');
 handles=ddb_ModelMakerToolbox_XBeach_generateModel(handles);
 
 % Plotting
@@ -223,6 +224,7 @@ pathname = pwd; filename='\params.txt';
 handles.model.xbeach.domain(handles.activeDomain).params_file=[pathname filename];
 handles=ddb_readParams(handles,[pathname filename],1);
 handles=ddb_readAttributeXBeachFiles(handles,[pathname,'\'],1); % need to add all files
+close(wb);
 ddb_plotXBeach('plot','domain',ad); % make
 setHandles(handles);
 

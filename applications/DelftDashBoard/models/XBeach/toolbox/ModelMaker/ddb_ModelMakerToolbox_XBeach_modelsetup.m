@@ -87,6 +87,12 @@ end
 [n,m2] = size(dval_C);
 res2 = repmat(dval_C,m1,1) .* repmat(dval_L,m2,1)';
 
+% Flip zgrid?
+[nx1 ny1] = size(zgrid); [nx2 ny2] = size(x);
+if nx1 ~= nx2 
+    zgrid = zgrid';
+end
+
 figure;
 subplot(2,2,1)
 pcolor(x,y,zgrid); shading flat; caxis([-10 +5]); colormap(jet);  xlabel('X [m]'); ylabel('Y [m]'); title('Model set-up');

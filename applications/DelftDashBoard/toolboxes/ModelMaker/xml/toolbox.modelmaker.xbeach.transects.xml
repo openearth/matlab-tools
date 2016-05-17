@@ -135,10 +135,18 @@
   <element>
     <style>pushbutton</style>
     <position>150 110 125 20</position>
-    <tooltipstring>Push to show transects</tooltipstring>
-    <text>Draw Transects</text>
+    <tooltipstring>Push to show transects on the map</tooltipstring>
+    <text>Draw Transects XY</text>
     <callback>ddb_ModelMakerToolbox_XBeach_quickMode_transects</callback>
-    <option1>drawtransects</option1>
+    <option1>drawtransectsxy</option1>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>600 85 125 20</position>
+    <tooltipstring>Push to show transects in seperate figures</tooltipstring>
+    <text>Draw Transects Z</text>
+    <callback>ddb_ModelMakerToolbox_XBeach_quickMode_transects</callback>
+    <option1>drawtransectsz</option1>
   </element>
   <element>
     <style>pushbutton</style>
@@ -163,6 +171,14 @@
     <text>Delete plot</text>
     <callback>ddb_ModelMakerToolbox_XBeach_quickMode_transects</callback>
     <option1>delete</option1>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>600 110 125 20</position>
+    <tooltipstring>Push to add a DEM</tooltipstring>
+    <text>Add DEM</text>
+    <callback>ddb_ModelMakerToolbox_XBeach_quickMode_transects</callback>
+    <option1>addDEM</option1>
   </element>
   <element>
     <style>checkbox</style>
