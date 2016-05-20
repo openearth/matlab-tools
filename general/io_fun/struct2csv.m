@@ -319,7 +319,7 @@ try
     T(idx) = cellfun(@num2str, M(idx),'UniformOutput',false);
     
     % Write
-    fileID = fopen(fname,'w');
+    fileID = fopen(fname,'w+');
     [nrows,ncols] = size(T);  
     for row = 1:nrows
         %Create a single text row
