@@ -1,0 +1,71 @@
+# Muppet v3.21 - File created by eelias-pr - 2010-07-06 10:50:23
+Dataset   "eld2006"
+FileType  "D3Ddepth"
+File     "c:\Waddenzee\paper\figures\create_inlet_figures\ETD\eld\eld2006.dep"
+GrdFile     "c:\Waddenzee\paper\figures\create_inlet_figures\ETD\eld\ELD.grd"
+EndDataset
+
+Dataset   "nedlijnp.ldb"
+FileType  "Polyline"
+File     "c:\Waddenzee\paper\figures\create_inlet_figures\polygons\nedlijnp.ldb"
+EndDataset
+
+Dataset   "Md_buiten_tot.ldb"
+FileType  "Polyline"
+File     "c:\Waddenzee\paper\figures\create_inlet_figures\polygons\Eld_buiten_tot.ldb"
+EndDataset
+
+Figure "1"
+
+Orientation p
+PaperSize   19.05 25.04
+Frame       none
+
+Subplot   "Subplot 1"
+Position   1.5 1.5 16.05 22.04
+PlotType   "2d"
+XAxis      103355.7552 125507.4158
+YAxis      563131.0585 593549.9121
+XTick      5000
+YTick      5000
+DecimalsX  -1
+DecimalsY  -1
+XTickMultiply 0.001
+YTickMultiply 0.001
+Scale     145461.455
+Title      "Eierlandse Gat 2006"
+XLabel     "X [km]"
+YLabel     "Y [km]"
+Colormap   "jet"
+ColorBar   yes
+ColorBarPosition 2.5           10          0.5           12.5
+ColorBarLabel "bed level [m to NAP]"
+BarDecim   -1
+Contours   -40 10 10
+Dataset "eld2006"
+PlotRoutine   "PlotShadesMap"
+EndDataset
+
+Dataset "nedlijnp.ldb"
+PlotRoutine   "PlotPolyline"
+LineStyle     "-" 
+LineWidth     0.5
+LineColor     "Black"
+FillPolygons  yes
+FillColor     "LightGreen"
+EndDataset
+
+Dataset "Md_buiten_tot.ldb"
+PlotRoutine   "PlotPolyline"
+LineStyle     "--" 
+LineWidth     0.5
+LineColor     "Black"
+EndDataset
+
+EndSubplot
+
+OutputFile "eld2006.png"
+Format     "png"
+Resolution 300
+Renderer   "zbuffer"
+EndFigure

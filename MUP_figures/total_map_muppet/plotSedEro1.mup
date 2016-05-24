@@ -1,0 +1,1902 @@
+# Muppet v3.21 - File created by eelias - 2010-11-09 10:17:13 
+ 
+Dataset   "se_1925_2009.dep" 
+   FileType    "D3DDepth" 
+   File        "se_1925_2009neg.dep" 
+   GrdFile     "C:\temp\waddenzee\paper\figures\create_inlet_figures\total_map_muppet\wadsea_250.grd" 
+EndDataset 
+ 
+Dataset   "nedlijnp.ldb" 
+   FileType    "Polyline" 
+   File        "C:\temp\waddenzee\paper\figures\create_inlet_figures\total_map_muppet\nedlijnp.ldb" 
+EndDataset 
+ 
+Dataset   "wadsea_192533_250.dep" 
+   FileType    "D3DDepth" 
+   File        "wadsea_192533_250.dep" 
+   GrdFile     "C:\temp\waddenzee\paper\figures\create_inlet_figures\total_map_muppet\wadsea_250.grd" 
+EndDataset 
+ 
+Dataset   "wadsea_20042009_250.dep" 
+   FileType    "D3DDepth" 
+   File        "wadsea_20042009_250.dep" 
+   GrdFile     "C:\temp\waddenzee\paper\figures\create_inlet_figures\total_map_muppet\250grid\wadsea_250.grd" 
+EndDataset 
+ 
+Dataset   "Text 1925" 
+   FileType    "FreeText" 
+   String       "1925" 
+   Position     110000  620000 
+   Rotation     0 
+   Curvature    0 
+EndDataset 
+ 
+Dataset   "Text 1990" 
+   FileType    "FreeText" 
+   String       "1990" 
+   Position     110000  620000 
+   Rotation     0 
+   Curvature    0 
+EndDataset 
+ 
+Dataset   "Text 2005" 
+   FileType    "FreeText" 
+   String       "2005" 
+   Position     110000  620000 
+   Rotation     0 
+   Curvature    0 
+EndDataset 
+ 
+Dataset   "Text 1925-1990" 
+   FileType    "FreeText" 
+   String       "1990 - 1925" 
+   Position     115000  620000 
+   Rotation     0 
+   Curvature    0 
+EndDataset 
+ 
+Dataset   "Text 1925-2005" 
+   FileType    "FreeText" 
+   String       "2005 - 1925" 
+   Position     115000  620000 
+   Rotation     0 
+   Curvature    0 
+EndDataset 
+ 
+Dataset   "Text 1990-2005" 
+   FileType    "FreeText" 
+   String       "2005 - 1990" 
+   Position     115000  620000 
+   Rotation     0 
+   Curvature    0 
+EndDataset 
+ 
+Dataset   "wadsea_1986994_250.dep" 
+   FileType    "D3DDepth" 
+   File        "wadsea_1986994_250.dep" 
+   GrdFile     "C:\temp\waddenzee\paper\figures\create_inlet_figures\total_map_muppet\wadsea_250.grd" 
+EndDataset 
+ 
+Dataset   "se_1925_1990neg.dep" 
+   FileType    "D3DDepth" 
+   File        "se_1925_1990neg.dep" 
+   GrdFile     "C:\temp\waddenzee\paper\figures\create_inlet_figures\total_map_muppet\wadsea_250.grd" 
+EndDataset 
+ 
+Dataset   "se_1990_2009neg.dep" 
+   FileType    "D3DDepth" 
+   File        "se_1990_2009neg.dep" 
+   GrdFile     "C:\temp\waddenzee\paper\figures\create_inlet_figures\total_map_muppet\wadsea_250.grd" 
+EndDataset 
+ 
+Dataset   "zsm_192533_250_incZZ.dep" 
+   FileType    "D3DDepth" 
+   File        "zsm_192533_250_incZZ.dep" 
+   GrdFile     "C:\temp\waddenzee\paper\figures\create_inlet_figures\total_map_muppet\zuiderzee250.grd" 
+EndDataset 
+ 
+Figure "1" 
+ 
+   Orientation p 
+   PaperSize   27.9 21.6 
+   Frame       nf4 
+ 
+   Subplot   "Subplot 1" 
+ 
+      Position   1.5          1.5         24.9         18.6 
+      PlotType   "2d" 
+      XAxis      95000 278000
+      YAxis      515000 651698.7952
+      XTick      10000
+      YTick      10000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      734939.759
+      XGrid      no
+      YGrid      no
+      Title      ""
+      XLabel     "X [km]"
+      YLabel     "Y [km]"
+      Colormap   "earthsurface"
+      ColorBar   yes
+      ColorBarPosition 10          2.5           15          0.5
+      ColorBarLabel "Sedimentation - Erosion [m]"
+      BarDecim   -1
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+      NorthArrow  3         18.6            1           90
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "Black" 
+         FillPolygons  yes 
+         FillColor     "LightGreen" 
+      EndDataset
+ 
+      Dataset "wadsea_20042009_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+   EndSubplot 
+ 
+   OutputFile "figure1.png" 
+   Format     "png" 
+   Resolution 300 
+   Renderer   "zbuffer" 
+ 
+EndFigure 
+ 
+Figure "1 1925-2005" 
+ 
+   Orientation p 
+   PaperSize   21.6 27.9 
+   Frame       nf3 
+ 
+   Subplot   "Subplot1" 
+ 
+      Position   1.5        18.43         18.6         7.97 
+      PlotType   "2d" 
+      XAxis      92000 294409.0086
+      YAxis      537500 624231.172
+      XTick      10000
+      YTick      10000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1088220.4763
+      XGrid      no
+      YGrid      no
+      Title      ""
+      YLabel     "Y [km]"
+      Colormap   "earthsurface"
+      ColorBar   yes
+      ColorBarPosition 18.1        18.95         0.25         6.97
+      ColorBarLabel "Sedimentation - Erosion [m]"
+      ColorBarTickIncrement 2
+      BarDecim   -1
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+      NorthArrow  2.5           25         0.75           90
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "wadsea_192533_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 1925"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      14 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot2" 
+ 
+      Position   1.5         9.97         18.6         7.97 
+      PlotType   "2d" 
+      XAxis      92000 294409.0086
+      YAxis      537500 624231.172
+      XTick      10000
+      YTick      10000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1088220.4763
+      XGrid      no
+      YGrid      no
+      Title      ""
+      YLabel     "Y [km]"
+      Colormap   "earthsurface"
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "wadsea_20042009_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 2005"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      14 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot3" 
+ 
+      Position   1.5          1.5         18.6         7.97 
+      PlotType   "2d" 
+      XAxis      92000 294409.0086
+      YAxis      537500 624231.172
+      XTick      10000
+      YTick      10000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1088220.4763
+      XGrid      no
+      YGrid      no
+      Title      ""
+      XLabel     "X [km]"
+      YLabel     "Y [km]"
+      Colormap   "erosed"
+      ColorBar   yes
+      ColorBarPosition 18.1          2.5         0.25         5.97
+      ColorBarLabel "Sedimentation - Erosion [m]"
+      ColorBarTickIncrement 2
+      BarDecim   -1
+      Contours   -5 0.5 5
+ 
+      Dataset "se_1925_2009.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "Text 1925-2005"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      14 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   OutputFile "wadsea_se_2005_1925.png" 
+   Format     "png" 
+   Resolution 300 
+   Renderer   "zbuffer" 
+ 
+EndFigure 
+ 
+Figure "1 1925-1990" 
+ 
+   Orientation p 
+   PaperSize   21.6 27.9 
+   Frame       nf3 
+ 
+   Subplot   "Subplot1" 
+ 
+      Position   1.5        18.43         18.6         7.97 
+      PlotType   "2d" 
+      XAxis      92000 294409.0086
+      YAxis      537500 624231.172
+      XTick      10000
+      YTick      10000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1088220.4763
+      XGrid      no
+      YGrid      no
+      Title      ""
+      YLabel     "Y [km]"
+      Colormap   "earthsurface"
+      ColorBar   yes
+      ColorBarPosition 18.1        18.95         0.25         6.97
+      ColorBarLabel "Sedimentation - Erosion [m]"
+      ColorBarTickIncrement 2
+      BarDecim   -1
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+      NorthArrow  2.5           25         0.75           90
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "wadsea_192533_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 1925"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      14 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot2" 
+ 
+      Position   1.5         9.97         18.6         7.97 
+      PlotType   "2d" 
+      XAxis      92000 294409.0086
+      YAxis      537500 624231.172
+      XTick      10000
+      YTick      10000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1088220.4763
+      XGrid      no
+      YGrid      no
+      Title      ""
+      YLabel     "Y [km]"
+      Colormap   "earthsurface"
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "wadsea_1986994_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 1990"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      14 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot3" 
+ 
+      Position   1.5          1.5         18.6         7.97 
+      PlotType   "2d" 
+      XAxis      92000 294409.0086
+      YAxis      537500 624231.172
+      XTick      10000
+      YTick      10000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1088220.4763
+      XGrid      no
+      YGrid      no
+      Title      ""
+      XLabel     "X [km]"
+      YLabel     "Y [km]"
+      Colormap   "erosed"
+      ColorBar   yes
+      ColorBarPosition 18.1          2.5         0.25         5.97
+      ColorBarLabel "Sedimentation - Erosion [m]"
+      ColorBarTickIncrement 2
+      BarDecim   -1
+      Contours   -5 0.5 5
+ 
+      Dataset "se_1925_1990neg.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "Text 1925-1990"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      14 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   OutputFile "wadsea_se_1990_1925.png" 
+   Format     "png" 
+   Resolution 300 
+   Renderer   "zbuffer" 
+ 
+EndFigure 
+ 
+Figure "1 1990-2005 " 
+ 
+   Orientation p 
+   PaperSize   21.6 27.9 
+   Frame       nf3 
+ 
+   Subplot   "Subplot1" 
+ 
+      Position   1.5        18.43         18.6         7.97 
+      PlotType   "2d" 
+      XAxis      92000 294409.0086
+      YAxis      537500 624231.172
+      XTick      10000
+      YTick      10000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1088220.4763
+      XGrid      no
+      YGrid      no
+      Title      ""
+      YLabel     "Y [km]"
+      Colormap   "earthsurface"
+      ColorBar   yes
+      ColorBarPosition 18.1        18.95         0.25         6.97
+      ColorBarLabel "Sedimentation - Erosion [m]"
+      ColorBarTickIncrement 2
+      BarDecim   -1
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+      NorthArrow  2.5           25         0.75           90
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "wadsea_1986994_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 1990"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      14 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot2" 
+ 
+      Position   1.5         9.97         18.6         7.97 
+      PlotType   "2d" 
+      XAxis      92000 294409.0086
+      YAxis      537500 624231.172
+      XTick      10000
+      YTick      10000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1088220.4763
+      XGrid      no
+      YGrid      no
+      Title      ""
+      YLabel     "Y [km]"
+      Colormap   "earthsurface"
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "wadsea_20042009_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 2005"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      14 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot3" 
+ 
+      Position   1.5          1.5         18.6         7.97 
+      PlotType   "2d" 
+      XAxis      92000 294409.0086
+      YAxis      537500 624231.172
+      XTick      10000
+      YTick      10000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1088220.4763
+      XGrid      no
+      YGrid      no
+      Title      ""
+      XLabel     "X [km]"
+      YLabel     "Y [km]"
+      Colormap   "erosed"
+      ColorBar   yes
+      ColorBarPosition 18.1          2.5         0.25         5.97
+      ColorBarLabel "Sedimentation - Erosion [m]"
+      ColorBarTickIncrement 2
+      BarDecim   -1
+      Contours   -5 0.5 5
+ 
+      Dataset "se_1990_2009neg.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "Text 1990-2005"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      8 
+         FontWeight    normal 
+         FontAngle     normal 
+         FontColor     black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   OutputFile "wadsea_se_2005_1990.png" 
+   Format     "png" 
+   Resolution 300 
+   Renderer   "zbuffer" 
+ 
+EndFigure 
+ 
+Figure "1" 
+ 
+   Orientation p 
+   PaperSize   27.9 21.6 
+   Frame       nf2 
+ 
+   Subplot   "Subplot1" 
+ 
+      Position   1.25      14.0833       12.625       6.2667 
+      PlotType   "2d" 
+      XAxis      97500 281000
+      YAxis      539000 630084.3129
+      XTick      10000000
+      YTick      25000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1453465.3465
+      XGrid      no
+      YGrid      no
+      Title      ""
+      YLabel     "Y [km]"
+      Colormap   "earthsurface"
+      ColorBar   yes
+      ColorBarPosition 18.1        18.95         0.25         6.97
+      ColorBarLabel "Sedimentation - Erosion [m]"
+      ColorBarTickIncrement 2
+      BarDecim   -1
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+      NorthArrow  12.65         9.25         0.75           90
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "wadsea_192533_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 1925"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      14 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot2" 
+ 
+      Position   14.025      14.0833       12.625       6.2667 
+      PlotType   "2d" 
+      XAxis      97500 281000
+      YAxis      539000 630084.3129
+      XTick      10000000
+      YTick      10000000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1453465.3465
+      XGrid      no
+      YGrid      no
+      Title      ""
+      Colormap   "erosed"
+      Contours   -5 0.5 5
+ 
+      Dataset "se_1925_1990neg.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "Text 1925-1990"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      14 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot3" 
+ 
+      Position   1.25       7.6667       12.625       6.2667 
+      PlotType   "2d" 
+      XAxis      97500 281000
+      YAxis      539000 630084.3129
+      XTick      25000
+      YTick      25000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1453465.3465
+      XGrid      no
+      YGrid      no
+      Title      ""
+      XLabel     "X [km]"
+      YLabel     "Y [km]"
+      Colormap   "earthsurface"
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "wadsea_1986994_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 1990"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      14 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot4" 
+ 
+      Position   14.025       7.6667       12.625       6.2667 
+      PlotType   "2d" 
+      XAxis      97500 281000
+      YAxis      539000 630084.3129
+      XTick      10000000
+      YTick      10000000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1453465.3465
+      XGrid      no
+      YGrid      no
+      Title      ""
+      Colormap   "erosed"
+      Contours   -5 0.5 5
+ 
+      Dataset "se_1925_1990neg.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "Text 1925-1990"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      14 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot5" 
+ 
+      Position   1.25         1.25       12.625       6.2667 
+      PlotType   "2d" 
+      XAxis      97500 281000
+      YAxis      539000 630084.3129
+      XTick      25000
+      YTick      25000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1453465.3465
+      XGrid      no
+      YGrid      no
+      Title      ""
+      XLabel     "X [km]"
+      YLabel     "Y [km]"
+      Colormap   "earthsurface"
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "wadsea_20042009_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 2005"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      14 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot6" 
+ 
+      Position   14.025         1.25       12.625       6.2667 
+      PlotType   "2d" 
+      XAxis      97500 281000
+      YAxis      539000 630084.3129
+      XTick      25000
+      YTick      10000000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1453465.3465
+      XGrid      no
+      YGrid      no
+      Title      ""
+      XLabel     "X [km]"
+      Colormap   "erosed"
+      ColorBar   yes
+      ColorBarPosition 25.15         1.75         0.25       5.2667
+      ColorBarLabel "Sedimentation - Erosion [m]"
+      ColorBarTickIncrement 2
+      BarDecim   -1
+      Contours   -5 0.5 5
+ 
+      Dataset "se_1925_2009.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "Text 1925-2005"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      14 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   OutputFile "figure1.png" 
+   Format     "png" 
+   Resolution 300 
+   Renderer   "zbuffer" 
+ 
+EndFigure 
+ 
+Figure "1 - 3plots depth staggered" 
+ 
+   Orientation p 
+   PaperSize   27.9 21.6 
+   Frame       nf4 
+ 
+   Subplot   "Subplot 1" 
+ 
+      Position   1.5         13.4           12            6 
+      PlotType   "2d" 
+      XAxis      98000 277500
+      YAxis      537549.2881 627299.2881
+      XTick      1000000
+      YTick      1000000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1495833.3333
+      XGrid      no
+      YGrid      no
+      Title      ""
+      Colormap   "earthsurface"
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+      NorthArrow  12         18.1         0.75           90
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "Black" 
+         FillPolygons  yes 
+         FillColor     "LightGreen" 
+      EndDataset
+ 
+      Dataset "wadsea_192533_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 1925"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      8 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot 2" 
+ 
+      Position   7  11  12   6 
+      PlotType   "2d" 
+      XAxis      98000 277500
+      YAxis      537549.2881 627299.2881
+      XTick      1000000
+      YTick      1000000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1495833.3333
+      XGrid      no
+      YGrid      no
+      Title      ""
+      Colormap   "earthsurface"
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "Black" 
+         FillPolygons  yes 
+         FillColor     "LightGreen" 
+      EndDataset
+ 
+      Dataset "wadsea_1986994_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 1990"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      8 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot 3" 
+ 
+      Position   12.5          8.1           12            6 
+      PlotType   "2d" 
+      XAxis      98000 277500
+      YAxis      537549.2881 627299.2881
+      XTick      25000
+      YTick      25000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      AxesFontSize   6
+      AxesFontWeight "bold"
+      Scale      1495833.3333
+      XGrid      no
+      YGrid      no
+      Title      ""
+      XLabel     "X [km]"
+      XLabelFontSize   6
+      XLabelFontWeight "bold"
+      YLabel     "Y [km]"
+      YLabelFontSize   6
+      YLabelFontWeight "bold"
+      Colormap   "earthsurface"
+      ColorBar   yes
+      ColorBarPosition 16.5         8.75         7.65         0.25
+      ColorBarLabel "Depth [m to NAP]"
+      ColorBarTickIncrement 2
+      ColorBarFontSize   6
+      ColorBarFontWeight "bold"
+      BarDecim   -1
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "Black" 
+         FillPolygons  yes 
+         FillColor     "LightGreen" 
+      EndDataset
+ 
+      Dataset "wadsea_20042009_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 2005"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      8 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   OutputFile "figure1.png" 
+   Format     "png" 
+   Resolution 300 
+   Renderer   "zbuffer" 
+ 
+EndFigure 
+ 
+Figure "1 - 3plots depth staggered - 2" 
+ 
+   Orientation p 
+   PaperSize   24 12.8 
+   Frame       nf4 
+ 
+   Subplot   "Subplot 1" 
+ 
+      Position   0.5          6.3           12            6 
+      PlotType   "2d" 
+      XAxis      98000 277500
+      YAxis      537549.2881 627299.2881
+      XTick      1000000
+      YTick      1000000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1495833.3333
+      XGrid      no
+      YGrid      no
+      Title      ""
+      Colormap   "earthsurface"
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+      NorthArrow  12         18.1         0.75           90
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "Black" 
+      EndDataset
+ 
+      Dataset "wadsea_192533_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 1925"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      8 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot 2" 
+ 
+      Position   6          3.9           12            6 
+      PlotType   "2d" 
+      XAxis      98000 277500
+      YAxis      537549.2881 627299.2881
+      XTick      1000000
+      YTick      1000000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1495833.3333
+      XGrid      no
+      YGrid      no
+      Title      ""
+      Colormap   "earthsurface"
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "Black" 
+      EndDataset
+ 
+      Dataset "wadsea_1986994_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 1990"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      8 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot 3" 
+ 
+      Position   11.5            1           12            6 
+      PlotType   "2d" 
+      XAxis      98000 277500
+      YAxis      537549.2881 627299.2881
+      XTick      25000
+      YTick      25000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      AxesFontSize   6
+      AxesFontWeight "bold"
+      Scale      1495833.3333
+      XGrid      no
+      YGrid      no
+      Title      ""
+      XLabel     "X [km]"
+      XLabelFontSize   6
+      XLabelFontWeight "bold"
+      YLabel     "Y [km]"
+      YLabelFontSize   6
+      YLabelFontWeight "bold"
+      Colormap   "earthsurface"
+      ColorBar   yes
+      ColorBarPosition 15.5         1.65         7.65         0.25
+      ColorBarLabel "Depth [m to NAP]"
+      ColorBarFontSize   6
+      ColorBarFontWeight "bold"
+      BarDecim   -1
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "Black" 
+      EndDataset
+ 
+      Dataset "wadsea_20042009_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 2005"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      8 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   OutputFile "Depth3_staggered.png" 
+   Format     "png" 
+   Resolution 300 
+   Renderer   "zbuffer" 
+ 
+EndFigure 
+ 
+Figure "2 - 3plots sedero staggered - 2" 
+ 
+   Orientation p 
+   PaperSize   24 12.8 
+   Frame       nf4 
+ 
+   Subplot   "Subplot 1" 
+ 
+      Position   0.5          6.3           12            6 
+      PlotType   "2d" 
+      XAxis      98000 277500
+      YAxis      537549.2881 627299.2881
+      XTick      1000000
+      YTick      1000000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1495833.3333
+      XGrid      no
+      YGrid      no
+      Title      ""
+      Colormap   "erosed"
+      ColorBar   yes
+      ColorBarPosition 18.1          2.5         0.25         5.97
+      ColorBarLabel "Sedimentation - Erosion [m]"
+      ColorBarTickIncrement 2
+      BarDecim   -1
+      Contours   -5 0.5 5
+ 
+      Dataset "se_1925_1990neg.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "Text 1925-1990"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      8 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot 2" 
+ 
+      Position   6          3.9           12            6 
+      PlotType   "2d" 
+      XAxis      98000 277500
+      YAxis      537549.2881 627299.2881
+      XTick      1000000
+      YTick      1000000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1495833.3333
+      XGrid      no
+      YGrid      no
+      Title      ""
+      Colormap   "erosed"
+      ColorBar   yes
+      ColorBarPosition 18.1          2.5         0.25         5.97
+      ColorBarLabel "Sedimentation - Erosion [m]"
+      ColorBarTickIncrement 2
+      BarDecim   -1
+      Contours   -5 0.5 5
+ 
+      Dataset "se_1990_2009neg.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "Text 1990-2005"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      8 
+         FontWeight    normal 
+         FontAngle     normal 
+         FontColor     black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot 3" 
+ 
+      Position   11.5            1           12            6 
+      PlotType   "2d" 
+      XAxis      98000 277500
+      YAxis      537549.2881 627299.2881
+      XTick      25000
+      YTick      25000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      AxesFontSize   6
+      AxesFontWeight "bold"
+      Scale      1495833.3333
+      XGrid      no
+      YGrid      no
+      Title      ""
+      XLabel     "X [km]"
+      XLabelFontSize   6
+      XLabelFontWeight "bold"
+      YLabel     "Y [km]"
+      YLabelFontSize   6
+      YLabelFontWeight "bold"
+      Colormap   "erosed"
+      ColorBar   yes
+      ColorBarPosition 15.5         1.65         7.65         0.25
+      ColorBarLabel "Sedimentation - Erosion [m]"
+      ColorBarTickIncrement 2
+      BarDecim   -1
+      Contours   -5 0.5 5
+ 
+      Dataset "se_1925_2009.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "black" 
+      EndDataset
+ 
+      Dataset "Text 1925-2005"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      8 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   OutputFile "sedero3_staggered.png" 
+   Format     "png" 
+   Resolution 300 
+   Renderer   "zbuffer" 
+ 
+EndFigure 
+ 
+Figure "1 - 3plots depth staggered - 2 - inc ZZ" 
+ 
+   Orientation p 
+   PaperSize   24 12.8 
+   Frame       nf4 
+ 
+   Subplot   "Subplot 1" 
+ 
+      Position   1            2           12         10.3 
+      PlotType   "2d" 
+      XAxis      98000 277500
+      YAxis      473228.5 627299.3333
+      XTick      25000
+      YTick      25000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      AxesFontSize   6
+      AxesFontWeight "bold"
+      Scale      1495833.3333
+      XGrid      no
+      YGrid      no
+      Title      ""
+      XLabel     "X [km]"
+      XLabelFontSize   6
+      XLabelFontWeight "bold"
+      YLabel     "Y [km]"
+      YLabelFontSize   6
+      YLabelFontWeight "bold"
+      Colormap   "earthsurface"
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+      NorthArrow  12         11.3         0.75           90
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "Black" 
+      EndDataset
+ 
+      Dataset "Text 1925"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      8 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+      Dataset "zsm_192533_250_incZZ.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot 2" 
+ 
+      Position   7          3.9           12            6 
+      PlotType   "2d" 
+      XAxis      98000 277500
+      YAxis      537549.2881 627299.2881
+      XTick      1000000
+      YTick      1000000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      Scale      1495833.3333
+      XGrid      no
+      YGrid      no
+      Title      ""
+      Colormap   "earthsurface"
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "Black" 
+      EndDataset
+ 
+      Dataset "wadsea_1986994_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 1990"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      8 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   Subplot   "Subplot 3" 
+ 
+      Position   11.5            1           12            6 
+      PlotType   "2d" 
+      XAxis      98000 277500
+      YAxis      537549.2881 627299.2881
+      XTick      25000
+      YTick      2500000
+      DecimalsX  -1
+      DecimalsY  -1
+      XTickMultiply 0.001
+      YTickMultiply 0.001
+      AxesFontSize   6
+      AxesFontWeight "bold"
+      Scale      1495833.3333
+      XGrid      no
+      YGrid      no
+      Title      ""
+      XLabel     "X [km]"
+      XLabelFontSize   6
+      XLabelFontWeight "bold"
+      YLabelFontSize   6
+      YLabelFontWeight "bold"
+      Colormap   "earthsurface"
+      ColorBar   yes
+      ColorBarPosition 15.5         1.65         7.65         0.25
+      ColorBarLabel "Depth [m to NAP]"
+      ColorBarFontSize   6
+      ColorBarFontWeight "bold"
+      BarDecim   -1
+      ContourType "custom"
+      StartContours
+          -25
+          -20
+          -15
+          -10
+          -7.5
+          -5
+          -4
+          -3
+          -2
+          -1
+          0
+          0.5
+          1
+          1.5
+          2
+          2.5
+      EndContours
+ 
+      Dataset "nedlijnp.ldb"
+         PlotRoutine   "PlotPolyline"
+         LineStyle     "-" 
+         LineWidth     0.5 
+         LineColor     "Black" 
+      EndDataset
+ 
+      Dataset "wadsea_20042009_250.dep"
+         PlotRoutine   "PlotContourMap"
+      EndDataset
+ 
+      Dataset "Text 2005"
+         PlotRoutine   "PlotText"
+         Font          "Helvetica" 
+         FontSize      8 
+         FontWeight    bold 
+         FontAngle     normal 
+         FontColor     Black 
+         HorAlignment  center 
+         VerAlignment  baseline 
+      EndDataset
+ 
+   EndSubplot 
+ 
+   OutputFile "Depth3_staggered_inclZZ.png" 
+   Format     "png" 
+   Resolution 300 
+   Renderer   "zbuffer" 
+ 
+EndFigure 
+ 
