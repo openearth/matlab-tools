@@ -122,7 +122,7 @@ dx=abs(diff(X(1,:)));
 dy=abs(diff(Y(:,1)));
 end
 
-maxDiff=0.01; %threshold for varying dx and dy.  increase or
+maxDiff=5; %threshold for varying dx and dy.  increase or
 %decrease this parameter if necessary.
 
 %check input dimensions and make sure x and y
