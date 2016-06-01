@@ -65,6 +65,7 @@ handles=getHandles;
 
 switch lower(opt)
     
+    %% Save MDU
     case{'save'}
         inp=handles.model.dflowfm.domain(ad);
         if ~isfield(handles.model.dflowfm.domain(ad),'mduFile')
@@ -72,7 +73,8 @@ switch lower(opt)
         end
         ddb_saveMDU(handles.model.dflowfm.domain(ad).mduFile,inp);
         ddb_DFlowFM_saveBatchFile(handles.model.dflowfm.exedir,'unstruc.exe',handles.model.dflowfm.domain(ad).mduFile);
-
+        
+    %% Save MDU with a different name    
     case{'saveas'}
         [filename, pathname, filterindex] = uiputfile('*.mdu', 'Select MDU File','');
         if pathname~=0
@@ -86,18 +88,20 @@ switch lower(opt)
             ddb_saveMDU(filename,handles.model.dflowfm.domain(ad));
             ddb_DFlowFM_saveBatchFile(handles.model.dflowfm.exedir,'unstruc.exe',handles.model.dflowfm.domain(ad).mduFile);
         end
-        
-    case{'saveall'}
     
+    %% Save all files 
+    case{'saveall'}
+
+        % Check on extforcefile
         if ddb_check_write_extfile(handles)
-            if isempty(handles.model.dflowfm.domain.extforcefile)
+            if isempty(handles.model.dflowfm.domain.extforcefilenew)
                 [filename, pathname, filterindex] = uiputfile('*.ext', 'Save external focing file','');
                 if ~isempty(pathname)
                     curdir=[lower(cd) '\'];
                     if ~strcmpi(curdir,pathname)
                         filename=[pathname filename];
                     end
-                    handles.model.dflowfm.domain.extforcefile=filename;
+                    handles.model.dflowfm.domain.extforcefilenew=filename;
                 else
                     return
                 end
@@ -105,32 +109,14 @@ switch lower(opt)
             ddb_DFlowFM_saveExtFile(handles);
 
             % And now for the boundaries
-            
-            for iac=1:handles.model.dflowfm.domain.nrboundaries
-                
-                % Save pli file
-                x=handles.model.dflowfm.domain.boundaries(iac).x;
-                y=handles.model.dflowfm.domain.boundaries(iac).y;
-                landboundary('write',handles.model.dflowfm.domain.boundaries(iac).filename,x,y);
-                
-                % Save component files
-                for jj=1:length(x)
-                    if handles.model.dflowfm.domain.boundaries(iac).nodes(jj).cmp
-                        ddb_DFlowFM_saveCmpFile(handles.model.dflowfm.domain.boundaries,iac,jj);
-                    end
-                    if handles.model.dflowfm.domain.boundaries(iac).nodes(jj).tim
-                        ddb_DFlowFM_saveTimFile(handles.model.dflowfm.domain.boundaries,iac,jj,handles.model.dflowfm.domain.refdate);
-                    end
-                end
-            end
-
-            
-            
+            boundaries = handles.model.dflowfm.domain(1).boundaries;
+            ddb_DFlowFM_saveBoundaryPolygons('.\',boundaries);
+            ddb_DFlowFM_saveBCfile(boundaries);
         end
         
-        % obs
+        % Observation points
         if handles.model.dflowfm.domain.nrobservationpoints>0
-            if isempty(handles.model.dflowfm.domain.obsfile)
+            if isempty(handles.model.dflowfm.domain.obsfile);
                 [filename, pathname, filterindex] = uiputfile('*.xyn', 'Save observation points file','');
                 if ~isempty(pathname)
                     curdir=[lower(cd) '\'];
@@ -145,7 +131,7 @@ switch lower(opt)
             ddb_DFlowFM_saveObsFile(handles,ad);
         end
 
-        % Crs
+        % Cross-sections
         if handles.model.dflowfm.domain.nrcrosssections>0
             if isempty(handles.model.dflowfm.domain.crsfile)
                 [filename, pathname, filterindex] = uiputfile('*.xyn', 'Save cross sections file','');
@@ -162,13 +148,17 @@ switch lower(opt)
             ddb_DFlowFM_saveCrsFile(handles.model.dflowfm.domain.crsfile,handles.model.dflowfm.domain.crosssections);
         end
         
+        % Grid 
+        netStruc2nc(handles.model.dflowfm.domain.netfile,handles.model.dflowfm.domain.netstruc,'cstype',handles.screenParameters.coordinateSystem.type);
+
+        % Finalize
         inp=handles.model.dflowfm.domain(ad);
         if ~isfield(handles.model.dflowfm.domain(ad),'mduFile')
             handles.model.dflowfm.domain(ad).mduFile=[handles.model.dflowfm.domain(ad).runid '.mdu'];
         end
         ddb_saveMDU(handles.model.dflowfm.domain(ad).mduFile,inp);
         ddb_DFlowFM_saveBatchFile(handles.model.dflowfm.exedir,'unstruc.exe',handles.model.dflowfm.domain(ad).mduFile);
-        
+        fclose('all'); 
 end
 
 setHandles(handles);

@@ -69,7 +69,7 @@ else
     return
 end
 
-if ~isempty(handles.model.dflowfm.domain.extforcefile)
+if ~isempty(handles.model.dflowfm.domain.extforcefilenew)
     handles=ddb_DFlowFM_readExternalForcing(handles);
 end
 
@@ -85,5 +85,4 @@ if ~isempty(handles.model.dflowfm.domain.crsfile)
         handles.model.dflowfm.domain.crosssectionnames{ic}=handles.model.dflowfm.domain.crosssections(ic).name;
     end
 end
-%handles.model.dflowfm.domain(id).netstruc = dflowfm.readNet(handles.model.dflowfm.domain(id).netfile,'peri2cell',1);
 

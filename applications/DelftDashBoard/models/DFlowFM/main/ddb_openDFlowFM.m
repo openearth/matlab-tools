@@ -85,4 +85,4 @@ switch opt
             ddb_plotDFlowFM('plot','active',1,'visible',1,'domain',0);
         end
 end
-
+ddb_updateDataInScreen;

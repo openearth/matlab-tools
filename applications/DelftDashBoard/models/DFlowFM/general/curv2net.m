@@ -54,8 +54,7 @@ for ii=1:size(xg,1)-1
 end
 
 %% Find boundary links
-
-bnd=find_boundary_sections_on_regular_grid(xg,yg);
+bnd=find_boundary_sections_on_regular_grid(xg,yg, z, 0);
 nbnd=length(bnd);
 for ibnd=1:nbnd
     ii1=bnd(ibnd).m1;

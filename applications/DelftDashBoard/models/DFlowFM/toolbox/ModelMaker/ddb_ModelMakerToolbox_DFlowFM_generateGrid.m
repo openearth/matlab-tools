@@ -73,17 +73,7 @@ end
 
 ddb_plotDFlowFM('delete','domain',id);
 handles=ddb_initializeDFlowFMdomain(handles,'griddependentinput',id,handles.model.dflowfm.domain(id).runid);
-
 set(gcf,'Pointer','arrow');
-
-% attName=handles.model.dflowfm.domain(id).attName;
-% 
-% if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-%     coord='Spherical';
-% else
-%     coord='Cartesian';
-% end
-% 
 netstruc=curv2net(x,y,z);
 handles.model.dflowfm.domain(id).netfile=[handles.model.dflowfm.domain(id).attName '_net.nc'];
 handles.model.dflowfm.domain(id).netstruc=netstruc;

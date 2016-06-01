@@ -1,8 +1,6 @@
 function iok=ddb_check_write_extfile(handles)
 
 iok=0;
-
-
 if handles.model.dflowfm.domain.nrboundaries>0
     iok=1;
     return

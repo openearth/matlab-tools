@@ -7,8 +7,10 @@ s.headerText{2} = ['# Date : ' datestr(now)];
 s.model.Program.value='D-Flow FM';
 s.model.Program.type='string';
 
-s.model.Version.value='1.1.33.21433';
+s.model.Version.value='1.1.154.42806';
 s.model.Version.type='string';
+
+s.model.MDUFormatVersion.value='1.02';
 
 s.model.AutoStart.value=inp.autostart;
 s.model.AutoStart.type='integer';
@@ -108,11 +110,7 @@ s.physics.Smagorinsky.comment        = '# Add Smagorinsky horizontal turbulence 
 
 s.physics.Elder.value                = inp.elder;
 s.physics.Elder.type                 = 'real';
-s.physics.Elder.comment              = '# Add Elder contribution                : vicu = vicu + Elder*kappa*ustar*H/6),   e.g. 1.0';               
-
-s.physics.irov.value                 = inp.irov;
-s.physics.irov.type                  = 'real';
-s.physics.irov.comment               = '# 0=free slip, 1 = partial slip using wall_ks';               
+s.physics.Elder.comment              = '# Add Elder contribution                : vicu = vicu + Elder*kappa*ustar*H/6),   e.g. 1.0';                   
 
 s.physics.wall_ks.value              = inp.wall_ks;
 s.physics.wall_ks.type               = 'real';
@@ -207,8 +205,11 @@ s.time.TStop.comment            = '# Stop  time w.r.t. RefDate (in TUnit)';
 %% External forcing
 
 s.external_forcing.fieldLongName='external forcing';
-s.external_forcing.ExtForceFile.value             = inp.extforcefile;
-s.external_forcing.ExtForceFile.comment           = '# *.ext';               
+s.external_forcing.ExtForceFile.value               = '';
+s.external_forcing.ExtForceFile.comment             = '# *.ext';               
+
+s.external_forcing.ExtForceFileNew.value             = inp.extforcefilenew;
+s.external_forcing.ExtForceFileNew.comment           = '# DDB uses new format';     
 
 %% Output
 

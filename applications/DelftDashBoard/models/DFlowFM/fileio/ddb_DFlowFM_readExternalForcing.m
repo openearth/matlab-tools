@@ -1,5 +1,5 @@
 function handles = ddb_DFlowFM_readExternalForcing(handles)
-%ddb_DFlowFM_readExternalForcing  One line description goes here.
+% ddb_DFlowFM_readExternalForcing  One line description goes here.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -44,12 +44,12 @@ function handles = ddb_DFlowFM_readExternalForcing(handles)
 % $Keywords: $
 
 %% Reads DFlow-FM external forcing
-
-fname=handles.model.dflowfm.domain.extforcefile;
+fname=handles.model.dflowfm.domain.extforcefilenew;
 
 s=[];
 n=0;
 fid=fopen(fname,'r');
+
 while 1
     str=fgetl(fid);
     if str==-1
@@ -72,8 +72,10 @@ while 1
                     s(n).filename=deblank2(str(nis+1:end));
                 case{'method'}
                     s(n).method=deblank2(str(nis+1:end));
-                case{'operan'}
-                    s(n).operand=deblank2(str(nis+1:end));
+                case{'locati'}
+                    s(n).locationfile=deblank2(str(nis+1:end));
+                case{'forcin'}
+                    s(n).forcingfile=deblank2(str(nis+1:end));
             end
             
         end
@@ -94,27 +96,31 @@ for ii=1:length(s)
     switch lower(s(ii).quantity)
         case{'waterlevelbnd'}
             nb=nb+1;
-            plifile=s(ii).filename;
+            plifile=s(ii).locationfile;
             name=plifile(1:end-4);
             [x,y]=landboundary('read',plifile);
             boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,nb,handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop);
             boundaries(nb).type=s(ii).quantity;
+            boundaries(nb).name=name;
+            boundaries(nb).forcingfilename=s(ii).forcingfile;
             handles.model.dflowfm.domain.boundarynames{nb}=name;            
         case{'riemannbnd'}
             nb=nb+1;
-            plifile=s(ii).filename;
+            plifile=s(ii).locationfile;
             name=plifile(1:end-4);
             [x,y]=landboundary('read',plifile);
             boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,nb,handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop);
             boundaries(nb).type=s(ii).quantity;
+            boundaries(nb).name=s(ii).forcingfile;
             handles.model.dflowfm.domain.boundarynames{nb}=name;            
         case{'dischargebnd'}
             nb=nb+1;
-            plifile=s(ii).filename;
+            plifile=s(ii).locationfile;
             name=plifile(1:end-4);
             [x,y]=landboundary('read',plifile);
             boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,nb,handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop);
             boundaries(nb).type=s(ii).quantity;
+            boundaries(nb).name=s(ii).forcingfile;
             handles.model.dflowfm.domain.boundarynames{nb}=name;            
         case{'spiderweb'}
             handles.model.dflowfm.domain.spiderwebfile=s(ii).filename;
@@ -134,40 +140,93 @@ for ii=1:length(s)
     end
 end
 
-% Now read time series / component files
-for ib=1:length(boundaries)
-    for inode=1:length(boundaries(ib).x)
-        % Component file
-        fname=[boundaries(ib).name '_' num2str(inode,'%0.4i') '.cmp'];
-        if exist(fname,'file')
-            components=dflowfm.readCmpFile(fname);
-            boundaries(ib).nodes(inode).cmp=1;
-            if ischar(components(1).component)
-                % Astronomic
-                boundaries(ib).nodes(inode).astronomiccomponents=components;
-                boundaries(ib).nodes(inode).cmptype='astro';
-            else
-                % Harmonic
-                boundaries(ib).nodes(inode).harmoniccomponents=components;
-                boundaries(ib).nodes(inode).cmptype='harmo';
+for ii = 1:length(boundaries)
+
+    % Now read time series / component files
+    [A] = textread(boundaries(ii).forcingfilename,'%s');
+    for jj = 1:length(boundaries(ii).cmpfile)
+        id = find(strcmpi(A, boundaries(ii).cmpfile(jj))); 
+        if ~isempty(id)
+            
+            % Reading time series
+            if strcmp(A{ (id+3) ,1}, 'timeseries')
+                
+                % Set the bc-file
+                id = find(strcmpi(A, boundaries(ii).cmpfile(jj))); 
+                boundaries(ii).nodes(jj).bc.Function   = A{id+3,1};
+                boundaries(ii).nodes(jj).bc.Timeinterpolation  = A{id+6,1};
+                boundaries(ii).nodes(jj).bc.Quantity1  = A{id+9,1};
+                boundaries(ii).nodes(jj).bc.Unit1      = [A{id+12,1},' ', A{id+13,1},' ', A{id+14,1},' ', A{id+15,1}];
+                boundaries(ii).nodes(jj).bc.Quantity2  = A{id+18,1};
+                boundaries(ii).nodes(jj).bc.Unit2      = A{id+21,1};
+                
+                % Get values
+                endvalue = 0; idvalue = id+22; count = 1;
+                while endvalue == 0
+                    try
+                    time(count) = str2num(A{idvalue,1}); idvalue = idvalue+1;
+                    value(count) = str2num(A{idvalue,1}); idvalue = idvalue+1; count = count+1;
+                    catch
+                    endvalue = 1;
+                    end
+                end
+
+                % Save value
+                boundaries(ii).nodes(jj).timeseries.time    = time;
+                boundaries(ii).nodes(jj).timeseries.value   = value;
+                boundaries(ii).nodes(jj).cmptype            = 'timeseries';
+                
+            % Reading harmonic  (TO DO)  
+            elseif strcmp(A{ (id+3) ,1}, 'harmonic')
+               
+                
+                % Save value
+                boundaries(ii).nodes(jj).cmptype            = 'harmonic';
+
+            % Reading harmonic    
+            elseif strcmp(A{ (id+3) ,1}, 'astronomic')
+                
+                % Set the bc-file
+                id = find(strcmpi(A, boundaries(ii).cmpfile(jj))); 
+                boundaries(ii).nodes(jj).bc.Function   = A{id+3,1};
+                boundaries(ii).nodes(jj).bc.Quantity1  = [A{id+6,1}, ' ', A{id+7,1}]
+                boundaries(ii).nodes(jj).bc.Unit1      = A{id+10,1};
+                boundaries(ii).nodes(jj).bc.Quantity2  = [A{id+13,1}, ' ', A{id+14,1}];
+                boundaries(ii).nodes(jj).bc.Unit2      = A{id+17,1};
+                boundaries(ii).nodes(jj).bc.Quantity3  = [A{id+13,1}, ' ', A{id+21,1}];
+                boundaries(ii).nodes(jj).bc.Unit3      = A{id+24,1};
+                
+                % Get value
+                endvalue = 0; idvalue = id+25; count = 1;
+                while endvalue == 0
+                    try
+                    values(count).con = A{idvalue,1}; idvalue = idvalue+1;
+                    values(count).amp = str2num(A{idvalue,1}); idvalue = idvalue+1; 
+                    values(count).phi = str2num(A{idvalue,1}); idvalue = idvalue+1; 
+                    
+                    if isempty(values(count).con) || isempty(values(count).amp) || isempty(values(count).phi)
+                        endvalue = 1;
+                    else
+                        count = count+1;
+                    end
+                    
+                    catch
+                    endvalue = 1;
+                    end
+                end
+                
+                % Save values
+                nnnn = length(values);
+                for xx = 1:nnnn-1
+                    boundaries(ii).nodes(jj).astronomiccomponents(xx).component = values(xx).con;
+                    boundaries(ii).nodes(jj).astronomiccomponents(xx).amplitude = values(xx).amp;
+                    boundaries(ii).nodes(jj).astronomiccomponents(xx).phase     = values(xx).phi;
+                end
             end
-        else
-            % Components have already been initialized in ddb_DFlowFM_initializeBoundary
-            boundaries(ib).nodes(inode).cmp=0;
-        end
-        % Time series file file
-        fname=[boundaries(ib).name '_' num2str(inode,'%0.4i') '.tim'];
-        if exist(fname,'file')
-            s=load(fname);
-            boundaries(ib).nodes(inode).timeseries.time=handles.model.dflowfm.domain.refdate+s(:,1)/1440;            
-            boundaries(ib).nodes(inode).timeseries.value=s(:,2);            
-            boundaries(ib).nodes(inode).tim=1;
-        else
-            % Time series have already been initialized in ddb_DFlowFM_initializeBoundary
-            boundaries(ib).nodes(inode).tim=0;
+            
         end
     end
 end
 
-handles.model.dflowfm.domain.nrboundaries=nb;
+handles.model.dflowfm.domain.nrboundaries=length(boundaries);
 handles.model.dflowfm.domain.boundaries=boundaries;

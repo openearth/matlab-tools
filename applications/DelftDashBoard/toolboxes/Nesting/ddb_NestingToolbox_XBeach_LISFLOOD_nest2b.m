@@ -5,7 +5,7 @@ succes = 0;
 try
     
 % Apply in LISFLOOD
-cd(model.path)
+cd(model.path);
 
 % Load model DEM
 [A] = textread(model.name,'%s');
@@ -41,7 +41,8 @@ for ii = 1:ntransects
     idxx = []; idyy = []; distancesaved = [];
     for jj = 1:100
         distance = ((Xlis - xlines(jj)).^2 + (Ylis - ylines(jj)).^2).^0.5;
-        [idx idy] = find(min(min(distance)) == distance);
+        [idx idy] = find(min(min(distance)) == distance); idx = idx(1); idy = idy(1);
+        a1 = []; b1 = []; a2 = []; b2 = [];
         [a1 b1]=find(idxx==idx); [a2 b2]=find(idyy==idy); 
         if isempty(a1) | isempty(a2) 
             if distance(idx, idy) < dem_dxdy*4;
@@ -124,7 +125,7 @@ for j = 1:ntransects
     end
 end
 end
-fclose('all')
+fclose('all');
 succes = 1;
 catch
     succes = 0;

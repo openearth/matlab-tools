@@ -66,7 +66,7 @@ for ipol=1:length(boundaries)
     fprintf(fid,'%s\n',boundaries(ipol).name);
     fprintf(fid,'%i %i\n',length(boundaries(ipol).x),2);
     for ip=1:length(boundaries(ipol).x)
-        fprintf(fid,'%14.6e %14.7e %s\n',boundaries(ipol).x(ip),boundaries(ipol).y(ip),[' ''' boundaries(ipol).cmpfile{ip} '''']);
+        fprintf(fid,'%14.6e %14.7e %s\n',boundaries(ipol).x(ip),boundaries(ipol).y(ip),[boundaries(ipol).cmpfile{ip}]);
     end
     fclose(fid);
 end

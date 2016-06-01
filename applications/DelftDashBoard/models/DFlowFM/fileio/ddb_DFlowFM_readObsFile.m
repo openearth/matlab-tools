@@ -43,9 +43,16 @@ function handles = ddb_DFlowFM_readObsFile(handles, id)
 % $HeadURL$
 % $Keywords: $
 
-%%
-[x,y,name] = textread(handles.model.dflowfm.domain(id).obsfile,'%f%f%s','delimiter','''"');
+%% Get values
+filename    = handles.model.dflowfm.domain(id).obsfile;
+fileID      = fopen(filename,'r');
+dataArray   = textscan(fileID, '%f%f%q%[^\n\r]', 'Delimiter', ' ', 'MultipleDelimsAsOne', true,  'ReturnOnError', false);
+fclose(fileID);
+x           = dataArray{:, 1};
+y           = dataArray{:, 2};
+name        = dataArray{:, 3};
 
+% Place values in handles
 handles.model.dflowfm.domain(id).observationpoints=[];
 
 for ip=1:length(x)

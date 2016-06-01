@@ -129,6 +129,29 @@
       </check>
     </dependency>
   </element>
+    <element>
+      <style>popupmenu</style>
+      <text>Type</text>
+      <position>340 85 80 20</position>
+      <tooltipstring>Select boundary type</tooltipstring>
+      <variable>handles.model.dflowfm.domain.boundaries(handles.model.dflowfm.domain.activeboundary).nodes(1).bc(1).Function</variable>
+      <type>string</type>
+      <listtext>Time series</listtext>
+      <listtext>Astronomic</listtext>
+      <listtext>Harmonic</listtext>
+      <listvalue>timeseries</listvalue>
+      <listvalue>astronomic</listvalue>
+      <listvalue>harmonic</listvalue>
+      <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <check>
+          <variable>handles.model.dflowfm.domain.nrboundaries</variable>
+          <value>0</value>
+          <operator>ne</operator>
+        </check>
+      </dependency>
+  </element>
   <element>
     <style>listbox</style>
     <position>440 10 50 110</position>

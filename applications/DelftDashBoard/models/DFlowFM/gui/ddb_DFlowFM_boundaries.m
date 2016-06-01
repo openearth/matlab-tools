@@ -273,7 +273,7 @@ handles=getHandles;
 [filename, pathname, filterindex] = uigetfile('*.ext', 'External Forcing File',handles.model.dflowfm.domain.extforcefile);
 if ~isempty(pathname)
     handles = ddb_DFlowFM_plotBoundaries(handles,'delete');
-    handles.model.dflowfm.domain.extforcefile=filename;
+    handles.model.dflowfm.domain.extforcefilenew=filename;
     handles=ddb_DFlowFM_readExternalForcing(handles);
     handles = ddb_DFlowFM_plotBoundaries(handles,'plot','active',1);
     setHandles(handles);

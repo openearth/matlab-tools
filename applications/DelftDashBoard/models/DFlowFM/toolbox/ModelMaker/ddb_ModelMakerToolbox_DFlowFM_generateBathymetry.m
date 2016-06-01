@@ -73,6 +73,7 @@ handles.model.dflowfm.domain(id).netstruc.nodeZ=zg;
 % Net file
 handles.model.dflowfm.domain(ad).netfile=filename;
 netStruc2nc(handles.model.dflowfm.domain(id).netfile,handles.model.dflowfm.domain(id).netstruc,'cstype',handles.screenParameters.coordinateSystem.type);
+
 % Plot
 % TODO handles=ddb_DFlowFM_plotBathymetry(handles,'plot');
 

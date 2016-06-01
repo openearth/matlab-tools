@@ -266,5 +266,16 @@ cd ..
 
 % Close
 settings = handles.toolbox.modelmaker.xb_trans;
+time = linspace(0,6000, 11); 
+for ii = 1:length(settings.xback)
+    transects{ii,1}   = ['Transect_00', num2str(ii)];
+    x(ii,:)           = settings.xback(ii);
+    y(ii,:)           = settings.yback(ii);
+    distances(ii,:)   = settings.distances(ii);
+    angles(ii,:)      = settings.coast(ii);
+    Q(ii,:)           = abs(cosd(fliplr(time)/60).^2);
+end
+
+[succes] = ddb_ModelMakerToolbox_XBeach_quickMode_transects_netcdf(x,y,distances, angles, time, Q)
 save('settings.mat','settings')
 setHandles(handles);

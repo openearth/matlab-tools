@@ -114,7 +114,7 @@ switch lower(rawdataformat)
         y00=s.y(1);
         nrows=length(s.y);
         dx=s.x(2)-s.x(1);
-        dy=s.x(2)-s.x(1);
+        dy=s.y(2)-s.y(1);
         ncols=length(s.x);
     case{'netcdf'}
         x=nc_varget(fname1,'x');

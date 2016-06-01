@@ -70,16 +70,19 @@ for ip=1:length(x)
 
     boundaries(ib).nodes(ip).cmp=1;
     boundaries(ib).nodes(ip).tim=0;
-    boundaries(ib).nodes(ip).cmptype='astro';
+    boundaries(ib).nodes(ip).cmptype='astronomic';
     
-    boundaries(ib).nodes(ip).cmpfile=[boundaries(ib).name '_' num2str(ip,'%0.4i') '.cmp'];
-    boundaries(ib).cmpfile{ip}=[boundaries(ib).name '_' num2str(ip,'%0.4i') '.cmp'];
-
-    boundaries(ib).nodes(ip).timfile=[boundaries(ib).name '_' num2str(ip,'%0.4i') '.tim'];
-    boundaries(ib).timfile{ip}=[boundaries(ib).name '_' num2str(ip,'%0.4i') '.tim'];
+    boundaries(ib).nodes(ip).cmpfile        = [boundaries(ib).name '_' num2str(ip,'%0.4i')];
+    boundaries(ib).nodes(ip).bc.function    = [boundaries(ib).name '_' num2str(ip,'%0.4i')];
+    boundaries(ib).nodes(ip).bc.Quantity1   = 'astronomic';
+    boundaries(ib).nodes(ip).bc.Unit1       = 'astronomic component';
+    boundaries(ib).nodes(ip).bc.Quantity2   = '-';
+    boundaries(ib).nodes(ip).bc.Unit2       = 'boundaries(ib).type';
+    boundaries(ib).nodes(ip).bc.Quantity3   = 'm';
+    boundaries(ib).nodes(ip).bc.Unit3       = '';
     
+    boundaries(ib).cmpfile{ip}=[boundaries(ib).name '_' num2str(ip,'%0.4i')];
     boundaries(ib).activenode=1;
-    
     boundaries(ib).nodenames{ip}=num2str(ip);
 
 end

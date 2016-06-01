@@ -8,6 +8,28 @@ if strcmp(type, 'berm')
     % Go to XBeach and read results
     cd(xbeach.path)
     
+    % Get values
+    try
+    qx_mean     = nc_varget ('xboutput.nc','qx_mean');
+    meantime    = nc_varget ('xboutput.nc','meantime');
+    x           = nc_varget ('xboutput.nc','globalx');
+    y           = nc_varget ('xboutput.nc','globaly');
+    nx          = size(x,1);
+    zb          = nc_varget ('xboutput.nc','zb');
+    sedero      = nc_varget ('xboutput.nc','sedero');
+    [berm]      = berm_location(zb,sedero,x,y);
+    Xq          = berm(1); idx = find(berm(1) == x);
+    Yq          = berm(2);
+    Qq          = squeeze(qx_mean(:,:,idx));
+    Qq1          = squeeze(qx_mean(:,:,nx-3));
+    tq          = meantime;
+    catch
+    Qq          = NaN;
+    tq          = NaN;
+    Xq          = NaN;
+    Yq          = NaN;
+    end
+
 %% Apply discharges from the back in XBeach in the model    
 else
     

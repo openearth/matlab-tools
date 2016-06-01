@@ -68,7 +68,6 @@ ii=strmatch(mdl,models,'exact');
 handles.activeModel.name=mdl;
 handles.activeModel.nr=ii;
 
-
 setHandles(handles);
 
 % Make new active model visible
