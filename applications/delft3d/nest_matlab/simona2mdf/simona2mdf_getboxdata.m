@@ -7,14 +7,20 @@ for ibox = 1: length(box)
     n1 = box(ibox).MNMN(2);
     m2 = box(ibox).MNMN(3);
     n2 = box(ibox).MNMN(4);
+    k  = 1;
+    if simona2mdf_fieldandvalue(box(ibox),'LAYER')
+        k = box(ibox).LAYER;
+        if k == 0; k = 1; end
+    end
+    
     if simona2mdf_fieldandvalue(box(ibox),'CONST_VALUES')
-        data(m1:m2,n1:n2) = box(ibox).CONST_VALUES;
+        data(m1:m2,n1:n2,k) = box(ibox).CONST_VALUES;
     end
     
     if simona2mdf_fieldandvalue(box(ibox),'VARIABLE_VAL')
         for m = m1:m2
             for n = n1:n2
-                data(m,n) = box(ibox).VARIABLE_VAL((m-m1)*(n2-n1+1) + n - n1 + 1);
+                data(m,n,k) = box(ibox).VARIABLE_VAL((m-m1)*(n2-n1+1) + n - n1 + 1);
             end
         end
     end
@@ -35,7 +41,7 @@ for ibox = 1: length(box)
                 
         data_n = interp2(X,Y,Z,XX,YY);
         
-        data(m1:m2,n1:n2) = data_n';
+        data(m1:m2,n1:n2,k) = data_n';
     end
     
 end

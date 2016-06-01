@@ -2,12 +2,13 @@ function mdf=simona2mdf_initial(S,mdf,name_mdf, varargin)
 
 % simona2mdf_initial : gets the initial conditions out of the siminp file (always write to inital condition file)
 
-mmax                 = mdf.mnkmax(1);
-nmax                 = mdf.mnkmax(2);
-zeta0(1:mmax,1:nmax) = 0.;
-u0   (1:mmax,1:nmax) = 0.;
-v0   (1:mmax,1:nmax) = 0.;
-s0                   = [];
+mmax                        = mdf.mnkmax(1);
+nmax                        = mdf.mnkmax(2);
+kmax                        = mdf.mnkmax(3);
+zeta0(1:mmax,1:nmax,1     ) = 0.;
+u0   (1:mmax,1:nmax,1:kmax) = 0.;
+v0   (1:mmax,1:nmax,1:kmax) = 0.;
+s0                          = [];
 
 %
 % get information out of struc
@@ -80,7 +81,7 @@ siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{
 
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT')
     if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM.SALINITY')
-        s0(1:mmax,1:nmax) = 0.;
+        s0(1:mmax,1:nmax,1:kmax) = 0.;
 
         constnr = siminp_struc.ParsedTree.TRANSPORT.PROBLEM.SALINITY.CO;
         initial = siminp_struc.ParsedTree.TRANSPORT.FORCINGS.INITIAL.CONSTITUENT.CO;
@@ -105,11 +106,13 @@ end
 % Finally write
 %
 
-ini(1).Data = zeta0;
-ini(2).Data = u0;
-ini(3).Data = v0;
-if ~isempty(s0)
-    ini(4).Data = s0;
+ini(1).Data                  = zeta0(:,:,1);
+for k = 1:kmax
+    ini(k+1     ).Data = u0(:,:,k);
+    ini(kmax+k+1).Data = v0(:,:,k);
+    if ~isempty(s0)
+        ini(2*kmax+k+1).Data = s0;
+    end
 end
 
 mdf.filic  = [name_mdf '.ini'];
