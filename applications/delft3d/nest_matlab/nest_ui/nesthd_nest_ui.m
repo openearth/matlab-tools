@@ -403,7 +403,7 @@ function get_hd1_grid_small_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uigetfile({'*.grd;*rgf*;*mdf*;siminp*;*map.nc'},'Select grid file nested model');
+[fin,pin] = uigetfile({'*.grd;*rgf*;*mdf*;siminp*;*map.nc;*net.nc'},'Select grid file nested model');
 cd (handles.progdir);
 
 if fin ~= 0

@@ -29,7 +29,12 @@ switch lower(cmd)
                         isempty(strfind(ext(i_ext).quantity,'salinity'   )) && ...
                         isempty(strfind(ext(i_ext).quantity,'temperature'))
                         i_file = i_file + 1;
-                        filelist{i_file} = [path filesep ext(i_ext).filename];
+                        if ~isempty(path)
+                            filelist{i_file} = [path filesep ext(i_ext).filename];
+                        else
+                            filelist{i_file} = [ext(i_ext).filename];
+                        end
+                        
                         if ~isempty(strfind(ext(i_ext).quantity,'waterlevel'))
                            bndtype{i_file} = 'z';
                         elseif ~isempty(strfind(ext(i_ext).quantity,'velocity')) && isempty(strfind(ext(i_ext).quantity,'normalvelocity'))
