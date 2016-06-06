@@ -226,8 +226,9 @@ end
 
 
 %% check and parse varargin
+assert(length(varargin) >= 0, 'Not enough input arguments.')
+assert(length(varargin) <= 4, 'Too many input arguments.')
 
-error(nargchk(0, 4, length(varargin), 'struct'))
 if odd(length(varargin))
      error('SETPROPERTY:varargin',...
                         'Set onClassChange and onExtraField with the varargin, as keyword value pairs');
