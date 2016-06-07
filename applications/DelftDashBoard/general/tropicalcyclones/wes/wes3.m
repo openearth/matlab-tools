@@ -36,7 +36,7 @@ dx=spw.radius/spw.nr_radial_bins;
 r=dx:dx:spw.radius;
 r=r/1000; % km
 dphi=360.0/spw.nr_directional_bins;
-phi=90:-dphi:-270+dphi;
+phi=90:-dphi:-270+dphi; % Cartesian
 
 errs=[];
 
@@ -46,6 +46,7 @@ for it=1:length(tc.track)
     % Initialize arrays
     wind_speed=zeros(length(phi),length(r));
     wind_to_direction_cart=zeros(length(phi),length(r));
+    wind_to_direction_cart_without_inflow=zeros(length(phi),length(r));
     pressure_drop=zeros(length(phi),length(r));
     
     % First compute wind speeds relative to forward motion of the cyclone
@@ -126,11 +127,14 @@ for it=1:length(tc.track)
         if lat>=0.0
             % Northern hemisphere
             dr=90+phi(iphi)+spw.phi_spiral;
+            dr0=90+phi(iphi);
         else
             % Southern hemisphere
             dr=-90+phi(iphi)-spw.phi_spiral;
+            dr0=-90+phi(iphi);
         end
         wind_to_direction_cart(iphi,:)=dr;
+        wind_to_direction_cart_without_inflow(iphi,:)=dr0;
         pressure_drop(iphi,:) = pd*100;
     end
 
@@ -153,23 +157,29 @@ for it=1:length(tc.track)
             ux=c2*ux*efold;
             uy=c2*uy*efold;
         case{'mvo'}
-            % Let factor increase from 0 to rmax, and then keep it constant
+            % Use a factor of 0.6 and scale it with relative wind speed
             c2=0.6;
-            ff=[0 0.6 0.6];
-            rr=[0 rmax 5000];
-            f=interp1(rr,ff,r);
+%             ff=[0 c2 c2];
+%             rr=[0 rmax 5000];
+%             f=interp1(rr,ff,r);
+            f=vr/vrel;
             f=repmat(f,[spw.nr_directional_bins 1]);
             ux=c2*ux*f;
             uy=c2*uy*f;
+        case{'mvo2'}
+            phi_prop=180*atan2(uy,ux)/pi; % Cartesian motion angle in degrees
+            vas=5; % wind speed asymmetry
+            pas=90; % wind angle asymmetry (typically varies between 0 and 90 degrees)
+            wind_speed_asym=vas*cos(pi*(phi-phi_prop+90-pas)/180);
+            f=vr/vrel;
+            wind_speed_asym=wind_speed_asym'*f;
+            ux=wind_speed_asym.*cos(wind_to_direction_cart_without_inflow*pi/180);
+            uy=wind_speed_asym.*sin(wind_to_direction_cart_without_inflow*pi/180);            
         case{'none'}
             ux=0.0;
             uy=0.0;
     end
     
-%    vx=wind_speed.*cos(wind_to_direction_cart*pi/180)+tc.track(it).vtx*efold;
-%    vy=wind_speed.*sin(wind_to_direction_cart*pi/180)+tc.track(it).vty*efold;
-%     vx=wind_speed.*cos(wind_to_direction_cart*pi/180)+tc.track(it).vtx;
-%     vy=wind_speed.*sin(wind_to_direction_cart*pi/180)+tc.track(it).vty;
     vx=wind_speed.*cos(wind_to_direction_cart*pi/180)+ux;
     vy=wind_speed.*sin(wind_to_direction_cart*pi/180)+uy;
 
@@ -424,13 +434,6 @@ if ~isfield(spw,'asymmetry_option')
     spw.asymmetry_option='mvo';
 end
 
-% switch lower(spw.asymmetry_option) % To be adjusted, this has nothing to do with asymmetry
-%     case{'schwerdt1979'}
-%         spw.phi_spiral=15;
-%     case{'jma'}
-%         spw.phi_spiral=30;
-% end
-
 if ~isfield(spw,'reference_time')
     spw.reference_time=tc.track(1).time;
 end
@@ -516,30 +519,6 @@ for it=1:nt
     ux=dx/dt;
     uy=dy/dt;
     
-%     if strcmpi(spw.rmax_relation,'pagasajma')
-%         spw.asymmetry_option='jma';
-%     end
-%     
-%     switch lower(spw.asymmetry_option)
-%         case{'schwerdt1979'}
-%             % Use Schwerdt (1979) to compute u_prop and v_prop
-%             uabs=sqrt(ux^2+uy^2);
-%             c=uabs*1.944; % Convert to kts
-%             a=1.5*c^0.63; % Schwerdt (1979)
-%             a=a/1.944;    % Convert to m/s
-%             u_prop=a*ux/uabs;
-%             v_prop=a*uy/uabs;
-%             u_prop=ux;
-%             v_prop=uy;
-%         case{'jma'}
-%             c2=0.57143;
-%             u_prop=c2*ux;
-%             v_prop=c2*uy;
-%         case{'none'}
-%             u_prop=0.0;
-%             v_prop=0.0;
-%     end
-    
     tc.track(it).vtx=ux;
     tc.track(it).vty=uy;
 
@@ -584,9 +563,9 @@ for ifld=1:length(fldnames)
             track.(fldname)(it)=tc.track(it).(fldname);
         end
     end
-        if ~strcmpi(fldname,'quadrant')
-    track.(fldname)(track.(fldname)==-999)=NaN;
-        end
+    if ~strcmpi(fldname,'quadrant')
+        track.(fldname)(track.(fldname)==-999)=NaN;
+    end
 end
 
 tt=track.time(1):1/24:track.time(end);
@@ -616,10 +595,12 @@ end
 
 % Simplification!!! Assume just one landfall
 it1=find(ilandsea==0,1,'last'); % time index when storm was last over the sea
-it2=find(F==1,1,'first');       % time index when storm is completely over land
+%it2=find(F==1,1,'first');       % time index when storm is completely over land
+it2=length(tt);
 
 itlast  = find(track.time<tt(it1)); % last index in original track when storm was completely over sea 
-itfirst = find(track.time>tt(it2)); % first index in original track when storm is completely over land
+%itfirst = find(track.time>tt(it2)); % first index in original track when storm is completely over land
+itfirst = length(track.time);
 
 % Now interpolate original storm properties to hourly data
 tt=tt(it1:it2);
@@ -638,11 +619,13 @@ for it=2:length(tt)
 end
 track1.vmax=vmax*kts2ms*0.9;
 
-track.vmax(itfirst:end)=track1.vmax(end);
+%track.vmax(itfirst:end)=track1.vmax(end);
 for ifld=1:length(fldnames)
     fldname=fldnames{ifld};
     if ~strcmpi(fldname,'quadrant')
-        track.(fldname)=[track.(fldname)(1:itlast) track1.(fldname) track.(fldname)(itfirst:end)];
+%        track.(fldname)=[track.(fldname)(1:itlast) track1.(fldname) track.(fldname)(itfirst:end)];
+%        track.(fldname)=[track.(fldname)(1:itlast) track1.(fldname) track.(fldname)(itfirst:end)];
+        track.(fldname)=[track.(fldname)(1:itlast) track1.(fldname)];
     end
 end
 
@@ -658,8 +641,6 @@ for ifld=1:length(fldnames)
         end
     end
 end
-
-
 
 %%
 function tc=wes_estimate_missing_values(tc,spw)
@@ -768,13 +749,13 @@ nt=length(tc.track);
 
 for it=1:nt
     
-    u_prop=tc.track(it).vtx;
-    v_prop=tc.track(it).vty;
+    ux=tc.track(it).vtx;
+    uy=tc.track(it).vty;
     
     % Compute max wind speed relative to propagation speed
     
     if strcmpi(spw.rmax_relation,'pagasajma')
-        spw.asymmetry_option='mvo';
+        spw.asymmetry_option='jma';
     end
      
     switch lower(spw.asymmetry_option)
@@ -792,8 +773,12 @@ for it=1:nt
             v_prop=c2*uy;
         case{'mvo'}
             c2=0.6;
-            u_prop=c2*u_prop;
-            v_prop=c2*u_prop;
+            u_prop=c2*ux;
+            v_prop=c2*uy;
+        case{'mvo2'}
+            c2=0.6;
+            u_prop=c2*ux;
+            v_prop=c2*uy;
         case{'none'}
             u_prop=0.0;
             v_prop=0.0;
@@ -832,10 +817,6 @@ for it=1:nt
             if ~isnan(tc.track(it).quadrant(iq).radius(irad))
                 uabs=tc.radius_velocity(irad)*cos(angles(iq));
                 vabs=tc.radius_velocity(irad)*sin(angles(iq));
-%                 efold=exp(-pi*tc.track(it).quadrant(iq).radius(irad)/500.0);
-%                 urel=uabs-u_prop*efold;
-%                 vrel=vabs-v_prop*efold;
-%                efold=exp(-pi*tc.track(it).quadrant(iq).radius(irad)/500.0);
                 urel=uabs-u_prop;
                 vrel=vabs-v_prop;
                 tc.track(it).quadrant(iq).relative_speed(irad)=sqrt(urel^2+vrel^2);

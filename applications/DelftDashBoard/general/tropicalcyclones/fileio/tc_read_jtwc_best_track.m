@@ -134,6 +134,7 @@ while 1
         end
     end
     
+    
     if ~isempty(s{18})
         tc.pressure_last_closed_isobar(it)=s{18};
     end
@@ -150,6 +151,27 @@ while 1
     end
 end
 fclose(fid);
+
+% Get rid of 0 radius
+tc.r35ne(tc.r35ne==0)=-999;
+tc.r35se(tc.r35se==0)=-999;
+tc.r35sw(tc.r35sw==0)=-999;
+tc.r35nw(tc.r35nw==0)=-999;
+
+tc.r50ne(tc.r50ne==0)=-999;
+tc.r50se(tc.r50se==0)=-999;
+tc.r50sw(tc.r50sw==0)=-999;
+tc.r50nw(tc.r50nw==0)=-999;
+
+tc.r65ne(tc.r65ne==0)=-999;
+tc.r65se(tc.r65se==0)=-999;
+tc.r65sw(tc.r65sw==0)=-999;
+tc.r65nw(tc.r65nw==0)=-999;
+
+tc.r100ne(tc.r100ne==0)=-999;
+tc.r100se(tc.r100se==0)=-999;
+tc.r100sw(tc.r100sw==0)=-999;
+tc.r100nw(tc.r100nw==0)=-999;
 
 %%
 function tc=set_default_values(tc,it)

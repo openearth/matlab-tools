@@ -89,11 +89,12 @@ for i=1:10000
         vel=str2double(v0{5});
         pr=v0{6};
         if isnan(str2double(pr))
-            pr=1012;
+%            pr=1012;
+            pr=-999;
         else
             pr=str2double(pr);
         end
-        pr=pr*100;
+%        pr=pr*100;
         mm=str2double(tstr(1:2));
         dd=str2double(tstr(4:5));
         hh=str2double(tstr(7:8));

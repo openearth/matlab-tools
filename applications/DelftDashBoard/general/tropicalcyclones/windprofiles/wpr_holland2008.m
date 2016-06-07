@@ -67,10 +67,12 @@ if isempty(vmax)
     output=vmax*0.9;
 else    
     % Pc to be determined
-    dpall = 1:5:201;
+    dpall = 1:5:151;
     x       = 0.6*(1+dpall/215);
     bs      = -4.4e-5*dpall.^2 + 0.01*dpall + 0.03*dpcdt - 0.014*phi + 0.15*vt.^x + 1.0;
     vmaxall = sqrt(100*bs.*dpall./(rhoa*e));
+    vmaxall=[vmaxall 200];
+    dpall=[dpall 156];
     dp      = interp1(vmaxall,dpall,vmax/0.9);
     output  = pn-dp;    
 end
