@@ -46,9 +46,11 @@ function varargout = KML_colorbar(OPT)
    OPT.template  = ~isempty(OPT.CBtemplateHor) | ~isempty(OPT.CBtemplateVer);
    OPT.halo      = 1; % when OPT.template
    
-%   if ~OPT.template & OPT.halo
-%   OPT.CBbgcolor = [255 255 255]; % halo should be white
-%   end
+   if ~OPT.template & OPT.halo
+   OPT.CBbgcolor  = [255 255 255]; % halo should be white
+   OPT.CBframergb = [1 1 1]; %[255 253 2]/255;% white
+   print('set CBframergb=[1 1 1] CBbgcolor  = [255 255 255]')
+   end
 
    h.fig = figure('Visible','off');
    if isnumeric(OPT.CBcolorMap)
@@ -127,15 +129,15 @@ function varargout = KML_colorbar(OPT)
 
    if OPT.template
         if     strcmpi(OPT.CBorientation      ,'vertical') 
-           text(-2.1,0.1,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation',90,'verticalalignment','middle','interpreter',OPT.CBinterpreter);
+           text(-2.1,0.1,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation',90,'verticalalignment','middle','interpreter',OPT.CBinterpreter,'fontsize',OPT.CBfontsize);
         elseif strcmpi(OPT.CBorientation      ,'horizontal')
-           text( 0.0,2.0,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation', 0,'verticalalignment','bottom','interpreter',OPT.CBinterpreter);
+           text( 0.0,2.0,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation', 0,'verticalalignment','bottom','interpreter',OPT.CBinterpreter,'fontsize',OPT.CBfontsize);
         end        
    else
       if     strcmpi(OPT.CBorientation      ,'vertical') 
-         text(0.5,0.0,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation',90,'verticalalignment','middle','interpreter',OPT.CBinterpreter);
+         text(0.5,0.0,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation',90,'verticalalignment','middle','interpreter',OPT.CBinterpreter,'fontsize',OPT.CBfontsize);
       elseif strcmpi(OPT.CBorientation      ,'horizontal')
-         text(0.0,0.5,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation', 0,'verticalalignment','middle','interpreter',OPT.CBinterpreter);
+         text(0.0,0.5,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation', 0,'verticalalignment','middle','interpreter',OPT.CBinterpreter,'fontsize',OPT.CBfontsize);
       end
       set   (h.c,'FontWeight'   ,'bold'); % we need bold for both halo and normal irregular background
    end
@@ -176,7 +178,12 @@ function varargout = KML_colorbar(OPT)
    set  (h.fig,'paperUnits','inch')
    set  (h.fig,'PaperSize',[4.6 5.8])
    set  (h.fig,'PaperPosition',[0 0 4.6 5.8])
-   print(h.fig,[OPT.CBfileName,'.png'],'-r100','-dpng'); % explicitly refer to h.fig, otherwise another figure (e.g. UCIT GUI) is printed.
+   if OPT.template
+       res = '-r100';
+   else
+       res = '-r150';
+   end
+   print(h.fig,[OPT.CBfileName,'.png'],res,'-dpng'); % explicitly refer to h.fig, otherwise another figure (e.g. UCIT GUI) is printed.
    im = imread([OPT.CBfileName,'.png']);
    
    if OPT.template

@@ -1,9 +1,9 @@
 function varargout = KMLcolorbar(varargin)
 %KMLCOLORBAR   make KML colorbar
 %
-%   kmlstring = kmlcolorbar(<keyword,value>) returns kml formatted string
-%               kmlcolorbar(<keyword,value>) saves to kml file
-%   [kmlstring,pngnames] = kmlcolorbar(...) alsoe returns names of png files for overlay
+%   kmlstring = KMLcolorbar(<keyword,value>) returns kml formatted string
+%               KMLcolorbar(<keyword,value>) saves to kml file
+%   [kmlstring,pngnames] = KMLcolorbar(...) also returns names of png files for overlay
 %
 % For the <keyword,value> pairs and their defaults call
 %
@@ -79,6 +79,7 @@ OPT.CBframergb           = [255 253 2]/255;% white
 OPT.CBalpha              = 0.8;            % transparency
 OPT.CBtemplateHor        = 'KML_colorbar_template_horizontal.png';
 OPT.CBtemplateVer        = 'KML_colorbar_template_vertical.png';
+OPT.CBfontsize           = 7;
 
 OPT.CBtipmargin          = [];
 OPT.CBalignmargin        = [];
