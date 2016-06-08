@@ -115,6 +115,7 @@ switch varargin{1}
                     end
                     % Exe dir
                     handles.model.(model).exedir=xml.model(ii).model.exedir;
+                    handles.model.(model).swandir=[];
                     if isfield(xml.model(ii).model,'swandir')
                         handles.model.(model).swandir=xml.model(ii).model.swandir;
                     end
