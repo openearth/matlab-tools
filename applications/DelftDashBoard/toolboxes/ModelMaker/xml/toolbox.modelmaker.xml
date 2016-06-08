@@ -43,10 +43,10 @@
       <element>toolbox.modelmaker.ww3.quickmode.xml</element>
     </tab>
     <tab>
-      <formodel>qflood</formodel>
+      <formodel>sfincs</formodel>
       <tabstring>Quick Mode</tabstring>
-      <callback>ddb_ModelMakerToolbox_qflood_quickMode</callback>
-      <element>toolbox.modelmaker.qflood.quickmode.xml</element>
+      <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
+      <element>toolbox.modelmaker.sfincs.quickmode.xml</element>
     </tab>
     <tab>
       <formodel>delft3dflow</formodel>

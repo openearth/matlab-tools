@@ -6,7 +6,7 @@
     <tooltipstring>Edit x coordinate or longitude of grid origin</tooltipstring>
     <text>X Origin</text>
     <textposition>left</textposition>
-    <onchange>ddb_ModelMakerToolbox_qflood_quickMode</onchange>
+    <onchange>ddb_ModelMakerToolbox_sfincs_quickMode</onchange>
     <option1>editgridoutline</option1>
     <type>real</type>
     <variable>handles.toolbox.modelmaker.xOri</variable>
@@ -17,7 +17,7 @@
     <tooltipstring>Edit number of grid cells in M direction</tooltipstring>
     <text>M Max</text>
     <textposition>left</textposition>
-    <onchange>ddb_ModelMakerToolbox_qflood_quickMode</onchange>
+    <onchange>ddb_ModelMakerToolbox_sfincs_quickMode</onchange>
     <option1>editgridoutline</option1>
     <type>integer</type>
     <variable>handles.toolbox.modelmaker.nX</variable>
@@ -28,7 +28,7 @@
     <tooltipstring>Edit grid size in m direction</tooltipstring>
     <text>Delta X</text>
     <textposition>left</textposition>
-    <onchange>ddb_ModelMakerToolbox_qflood_quickMode</onchange>
+    <onchange>ddb_ModelMakerToolbox_sfincs_quickMode</onchange>
     <option1>editresolution</option1>
     <type>real</type>
     <variable>handles.toolbox.modelmaker.dX</variable>
@@ -39,7 +39,7 @@
     <tooltipstring>Edit grid rotation in degrees</tooltipstring>
     <text>Rotation</text>
     <textposition>left</textposition>
-    <onchange>ddb_ModelMakerToolbox_qflood_quickMode</onchange>
+    <onchange>ddb_ModelMakerToolbox_sfincs_quickMode</onchange>
     <option1>editgridoutline</option1>
     <type>real</type>
     <variable>handles.toolbox.modelmaker.rotation</variable>
@@ -50,7 +50,7 @@
     <tooltipstring>Edit y coordinate or longitude of grid origin</tooltipstring>
     <text>Y Origin</text>
     <textposition>left</textposition>
-    <onchange>ddb_ModelMakerToolbox_qflood_quickMode</onchange>
+    <onchange>ddb_ModelMakerToolbox_sfincs_quickMode</onchange>
     <option1>editgridoutline</option1>
     <type>real</type>
     <variable>handles.toolbox.modelmaker.yOri</variable>
@@ -61,7 +61,7 @@
     <tooltipstring>Edit number of grid cells in N direction</tooltipstring>
     <text>N Max</text>
     <textposition>left</textposition>
-    <onchange>ddb_ModelMakerToolbox_qflood_quickMode</onchange>
+    <onchange>ddb_ModelMakerToolbox_sfincs_quickMode</onchange>
     <option1>editgridoutline</option1>
     <type>integer</type>
     <variable>handles.toolbox.modelmaker.nY</variable>
@@ -72,7 +72,7 @@
     <tooltipstring>Edit grid size in n direction</tooltipstring>
     <text>Delta Y</text>
     <textposition>left</textposition>
-    <onchange>ddb_ModelMakerToolbox_qflood_quickMode</onchange>
+    <onchange>ddb_ModelMakerToolbox_sfincs_quickMode</onchange>
     <option1>editresolution</option1>
     <type>real</type>
     <variable>handles.toolbox.modelmaker.dY</variable>
@@ -82,7 +82,7 @@
     <position>210 110 100 20</position>
     <tooltipstring>Push to draw grid outline</tooltipstring>
     <text>Draw Grid Outline</text>
-    <callback>ddb_ModelMakerToolbox_qflood_quickMode</callback>
+    <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
     <option1>drawgridoutline</option1>
   </element>
   <element>
@@ -90,7 +90,7 @@
     <position>320 110 140 20</position>
     <tooltipstring>Push to generate model grid</tooltipstring>
     <text>Make Rectangular Grid</text>
-    <callback>ddb_ModelMakerToolbox_qflood_quickMode</callback>
+    <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
     <option1>generategrid</option1>
   </element>
   <element>
@@ -98,7 +98,7 @@
     <position>320 85 140 20</position>
     <tooltipstring>Push to generate model bathymetry</tooltipstring>
     <text>Make Bathymetry</text>
-    <callback>ddb_ModelMakerToolbox_qflood_quickMode</callback>
+    <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
     <option1>generatebathymetry</option1>
     <enable>1</enable>
   </element>
@@ -107,7 +107,7 @@
     <position>320 60 140 20</position>
     <tooltipstring>Push to generate open boundary locations</tooltipstring>
     <text>Make Open Boundaries</text>
-    <callback>ddb_ModelMakerToolbox_qflood_quickMode</callback>
+    <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
     <option1>generateopenboundaries</option1>
   </element>
   <element>
@@ -115,7 +115,7 @@
     <position>320 35 140 20</position>
     <tooltipstring>Push to generate astronomical boundary conditions</tooltipstring>
     <text>Make Boundary Conditions</text>
-    <callback>ddb_ModelMakerToolbox_qflood_quickMode</callback>
+    <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
     <option1>generateboundaryconditions</option1>
   </element>
   <element>
