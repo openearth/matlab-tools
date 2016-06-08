@@ -96,6 +96,12 @@ convc = 0;
 if isfield(OPT.CS1,'code') && isfield(OPT.CS2,'code')
     convc =1;
 end
+if isfield(OPT.CS1,'name') && isfield(OPT.CS2,'name')
+    convc =1;
+end
+if isfield(OPT.CS1,'type') && isfield(OPT.CS2,'type')
+    convc =1;
+end
 
 % Add file separator to folder name
 if ~isempty(dr)
@@ -146,7 +152,12 @@ for i=1:n
     end
     
     if convc
-       [spec.x,spec.y]=convertCoordinates(spec.x,spec.y,'persistent','CS1.code',OPT.CS1.code,'CS2.code',OPT.CS2.code);
+        if isfield(OPT.CS1,'code') && isfield(OPT.CS2,'code')
+            [spec.x,spec.y]=convertCoordinates(spec.x,spec.y,'persistent','CS1.code',OPT.CS1.code,'CS2.code',OPT.CS2.code);
+        else
+            [spec.x,spec.y]=convertCoordinates(spec.x,spec.y,'persistent','CS1.name',OPT.CS1.name,'CS1.type',OPT.CS1.type, ...
+                'CS2.name',OPT.CS2.name,'CS2.type',OPT.CS2.type);
+        end
     end
 
     f=fgetl(fid);
