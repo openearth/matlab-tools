@@ -4,7 +4,7 @@
   <plottype>
     <name>xy</name>
     <plotroutine>
-      <name>Line</name>
+      <name>Samples</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>

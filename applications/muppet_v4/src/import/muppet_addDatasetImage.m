@@ -1,5 +1,8 @@
 function dataset=muppet_addDatasetImage(opt,dataset)
 
+x=[];
+y=[];
+
 switch lower(opt)
 
     case{'read'}
@@ -20,6 +23,8 @@ switch lower(opt)
                 [jpgcol,map,alpha]=imread(dataset.filename,'BackgroundColor','none');
             case{'gif'}
                 jpgcol=imread(dataset.filename,1);
+            case{'tif'}
+                [jpgcol,x,y,I]=geoimread(dataset.filename);
         end
         sz=size(jpgcol);
         step=1;
@@ -51,7 +56,9 @@ switch lower(opt)
                 x=x0:dx:x0+(sz(2)-1)*dx;
                 y=y0:dy:y0+(sz(1)-1)*dy;
             end
-            
+        end
+        
+        if ~isempty(x)        
             dataset.type = 'geoimage';
         else
             x=[];

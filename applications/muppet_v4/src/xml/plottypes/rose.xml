@@ -9,4 +9,22 @@
   <subplotoption>
     <name>drawbox</name>
   </subplotoption>
+  <subplotoption>
+    <name>titletext</name>
+  </subplotoption>
+  <subplotoption>
+    <name>titlefontname</name>
+  </subplotoption>
+  <subplotoption>
+    <name>titlefontsize</name>
+  </subplotoption>
+  <subplotoption>
+    <name>titlefontweight</name>
+  </subplotoption>
+  <subplotoption>
+    <name>titlefontangle</name>
+  </subplotoption>
+  <subplotoption>
+    <name>titlefontcolor</name>
+  </subplotoption>
 </root>

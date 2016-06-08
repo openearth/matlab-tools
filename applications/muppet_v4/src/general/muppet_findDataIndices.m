@@ -15,7 +15,13 @@ if isempty(dataset.time) && ~isempty(dataset.timestep)
     timestep=dataset.timestep;
 elseif ~isempty(dataset.time) && isempty(dataset.timestep)
     % time
-    timestep=find(abs(dataset.times-dataset.time)<1/864000);
+    % Find time step that is closest to requested time
+%    timestep=find(abs(dataset.times-dataset.time)<1/864000);
+    tmp = abs(dataset.times-dataset.time);
+    [dummy,timestep] = min(tmp);
+    if dummy*86400>0.1 % If time step is more
+        disp(['Time step ' datestr(dataset.time,'yyyymmdd HHMMSS') ' not found! Taking the closest value!']);
+    end
 elseif isempty(dataset.time) && isempty(dataset.timestep)
     % both empty
     if dataset.size(1)>0

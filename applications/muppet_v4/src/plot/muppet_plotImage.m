@@ -13,7 +13,7 @@ if isempty(data.alpha)
     data.alpha=zeros(size(data.c,1),size(data.c,2))+255;
 end
 
-if ~isempty(data.georeferencefile)
+if ~isempty(data.x)
     % Georeferenced image
 %      data.z=zeros(size(data.c,1),size(data.c,2))+opt.verticallevel;
 %      p=surf(data.x,data.y,data.z,double(data.c)/255);shading flat;
