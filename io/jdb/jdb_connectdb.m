@@ -80,7 +80,7 @@ end
        'org.postgresql.Driver', ...
        url);
        if ~OPT.quiet
-           disp(db,': database_toolbox license used.')
+           disp([db,': database_toolbox license used.'])
        end
        message = conn.message;
    else

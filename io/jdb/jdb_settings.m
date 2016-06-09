@@ -28,14 +28,14 @@ alljavaclasspath = path2os(javaclasspath('-all')); % can also be in static path 
 switch lower(OPT.dbtype)
     case 'postgresql'
         
-        if any(strfind(version('-java'),'Java 1.6')) || ...
-                any(strfind(version('-java'),'Java 1.7'))
+        if any(strfindi(version('-java'),'Java 1.6')) || ...
+                any(strfindi(version('-java'),'Java 1.7'))
             java2add = 'postgresql-9.3-1102.jdbc41.jar';
         else
             java2add = 'postgresql-9.3-1102.jdbc3.jar';
         end
         
-        indices     = strfind(alljavaclasspath,path2os([fileparts(mfilename('fullpath')),filesep,java2add]));
+        indices     = strfindi(alljavaclasspath,path2os([fileparts(mfilename('fullpath')),filesep,java2add]));
         
         if isempty(cell2mat(indices))           
             if OPT.check
@@ -65,7 +65,7 @@ switch lower(OPT.dbtype)
     case 'oracle'
         java2add          = which('ojdbc14.jar');
         [~,jdbfile,jdbext]= fileparts(java2add);
-        indices           = strfind(alljavaclasspath,path2os(java2add)) ;%[jdbpath,filesep,jdbfile]));
+        indices           = strfindi(alljavaclasspath,path2os(java2add)) ;%[jdbpath,filesep,jdbfile]));
         
         if isempty(cell2mat(indices))
             if OPT.check
@@ -104,7 +104,7 @@ switch lower(OPT.dbtype)
             java2add          = which(jarfile{:});
             [~,jdbfile,jdbext]= fileparts(java2add);
 
-            indices           = strfind(alljavaclasspath,path2os(java2add)) ;%[jdbpath,filesep,jdbfile]));
+            indices           = strfindi(alljavaclasspath,path2os(java2add)) ;%[jdbpath,filesep,jdbfile]));
 
             if isempty(cell2mat(indices))
                 if OPT.check
@@ -140,6 +140,13 @@ end
 if nargout==1
     varargout = {OK};
 end
+
+function K = strfindi(txt,txts)
+% strfindi  - case insensitive strfind
+% handles issue that alljavaclasspath() uses capital C: whereas which() returns c:\
+
+K = strfind(lower(txt),lower(txts));
+
 
 %% Copyright notice
 %   --------------------------------------------------------------------
