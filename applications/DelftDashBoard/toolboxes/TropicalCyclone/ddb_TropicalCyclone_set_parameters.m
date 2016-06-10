@@ -647,10 +647,16 @@ else
                 spw.wind_profile=inp.wind_profile;
                 spw.wind_pressure_relation=inp.wind_pressure_relation;
                 spw.rmax_relation=inp.rmax_relation;
-                spw.asymmetry_option='schwerdt1979';
                 spw.cut_off_speed=30/1.85;  
                 spw.pn=inp.pn;
-
+                
+                spw.asymmetry_magnitude='schwerdt1979';
+%                spw.asymmetry_magnitude='user_defined';
+                spw.asymmetry_factor=0.55;
+                spw.asymmetry_related_to_storm_motion=1;
+                spw.asymmetry_radial_distribution='v/vmax';
+%                spw.asymmetry_radial_distribution='constant';
+                
                 % And now the actual tropical cyclone data                
                 tc.radius_velocity=[34 50 64 100];
                 tc.wind_speed_unit='kts';
