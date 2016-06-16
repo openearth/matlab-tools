@@ -161,7 +161,7 @@ for ii=1:length(iopen)
             attstr = name(isp(1)+1:end);
             name   = name(1:isp(1)-1);
             % Name string includes attributes
-            a=textscan(attstr,'%q','delimiter');
+            a=textscan(attstr,'%q','delimiter',' ');
             for j=1:length(a{1})
                 ieq=find(a{1}{j}=='=');
                 attributes(j).Name  = a{1}{j}(1:ieq-1);
