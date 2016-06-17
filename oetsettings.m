@@ -95,7 +95,7 @@ function oetsettings(varargin)
 %% Collect warning and directory state
 
 %    state.warning = warning;
-   state.pwd     = cd;
+   state.pwd     = pwd;
 
 %% Add paths
 
