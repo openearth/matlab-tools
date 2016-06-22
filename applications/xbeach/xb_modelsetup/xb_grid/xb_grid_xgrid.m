@@ -208,8 +208,9 @@ elseif OPT.vardx == 1
         ii = ii+1;
         xgr(ii) = xgr(ii-1)+dx(ii-1);
         [xin2 index] = unique(xin);
+		xtemp   = min(xgr(ii),xend);
         hgr(ii) = interp1(xin2,hin(index),xtemp);
-        zgr(ii) = interp1(xin,zin(index),xtemp);
+        zgr(ii) = interp1(xin2,zin(index),xtemp);
         xlast=xgr(ii);
     end
     
