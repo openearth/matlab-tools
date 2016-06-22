@@ -206,8 +206,8 @@ function drawTransectsZ
 handles=getHandles;
 
 % Determine average depth
-xoff    = handles.toolbox.modelmaker.xb_trans.xoff;
-ntransects = length(xoff);
+xoff        = handles.toolbox.modelmaker.xb_trans.xoff;
+ntransects  = length(xoff);
 
 error = 0;
 for ii = 1:ntransects
@@ -222,7 +222,7 @@ end
 if error == 1;
         ddb_giveWarning('text',['Something went wrong with drawing the transects. Make sure the bathy has information in this area']);
 end
-handles.toolbox.modelmaker.average_z = round(nanmean(handles.toolbox.modelmaker.Zvalues,2),1);
+handles.toolbox.modelmaker.average_z = round(nanmean(handles.toolbox.modelmaker.Zvalues));
 
 % Close
 setHandles(handles);
@@ -276,6 +276,6 @@ for ii = 1:length(settings.xback)
     Q(ii,:)           = abs(cosd(fliplr(time)/60).^2);
 end
 
-[succes] = ddb_ModelMakerToolbox_XBeach_quickMode_transects_netcdf(x,y,distances, angles, time, Q)
+[succes] = ddb_ModelMakerToolbox_XBeach_quickMode_transects_netcdf(x,y,distances, angles, time, Q);
 save('settings.mat','settings')
 setHandles(handles);

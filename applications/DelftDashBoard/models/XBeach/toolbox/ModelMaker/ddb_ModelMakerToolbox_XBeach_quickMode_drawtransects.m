@@ -86,11 +86,11 @@ if handles.toolbox.modelmaker.transects ~= 0
         distances0(jj) = distances(jj)-distances(jj-1);
         end
     end
-    average_dx  = round(nanmean(distances0(2:end)), 1);
+    average_dx  = round(nanmean(distances0(2:end)));
     distances   = ones(1,length(distances)) * nanmean(distances0);
 else
     ntransects = length(xoff);
-    average_dx = round(nanmean(distances), 0);
+    average_dx = round(nanmean(distances));
 end
 
 % Set values

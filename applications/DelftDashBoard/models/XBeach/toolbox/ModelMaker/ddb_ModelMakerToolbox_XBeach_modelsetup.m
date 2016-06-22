@@ -72,7 +72,7 @@ longshore = ((x(:,1) - x(1,1)).^2 + (y(:,1) - y(1,1)).^2.).^0.5;
 [ny1 nx1] = size(XT);
 
 val = crossshore ;
-[nx ny] = size(val)
+[nx ny] = size(val);
 for i = 1:(ny-1)
 dval_C(i) = val(i+1) - val(i);
 end

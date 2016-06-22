@@ -77,7 +77,7 @@ if handles.toolbox.modelmaker.dean == 1
 
     % Apply if Dean
     id = find( zline > 0);
-    zline_TMP = zline(id(1):end)
+    zline_TMP = zline(id(1):end);
     X_TMP = crossshore(id(1):end); X_TMP = X_TMP - min(X_TMP);
     X_TMP2 = [xs X_TMP+max(xs)+0.01];
     Z_TMP2 = [fliplr(h) zline_TMP];
@@ -111,6 +111,7 @@ handles.toolbox.modelmaker.Zvalues(ii) = depth;
 end
 
 %% Draw a line
+% Delete all figures
 if plotting == 0
     for xxx =1 :100
         try
@@ -118,7 +119,7 @@ if plotting == 0
         end
     end
 else
-    hfigure(ii) = figure(ii+1);
+    hfigure(ii) = figure(ii+20); hold on;
     plot(crossshore, zline); title(['Transect ', num2str(ii)]);
     xlabel('cross-shore distance [m]'); ylabel('z_b [m]'); grid on; box on;
     handles.toolbox.modelmaker.hfigure(ii) = hfigure(ii) ;

@@ -6,7 +6,7 @@ dxmax = handles.toolbox.modelmaker.dxmax;
 Tmean = handles.toolbox.modelmaker.Tp/1.1;
 depthneeded  = handles.toolbox.modelmaker.depth;
 D50 = handles.toolbox.modelmaker.D50;
-tsimulation = handles.model.xbeach.domain.tstop;
+tsimulation = handles.model.xbeach.domain(1).tstop;
 ntransects = handles.toolbox.modelmaker.xb_trans.ntransects;
 mainfolder = pwd;
 
@@ -16,25 +16,44 @@ for ii = 1:ntransects
     %% Get zline
     error = 0;
     try
-    [handles] = ddb_ModelMakerToolbox_XBeach_quickMode_Ztransects(handles, ii, 0)
+    [handles] = ddb_ModelMakerToolbox_XBeach_quickMode_Ztransects(handles, ii, 0);
     catch
     error = 1;    
     end
     if error == 1;
-        ddb_giveWarning('text',['Something went wrong with drawing the transects. Make sure the bathy has information in this area']);
+        ddb_giveWarning('text',['Something went wrong with drawing the transects. Make sure the bathy has information in this area or bathy is above MSL']);
     end
     zline = handles.toolbox.modelmaker.xbeach(ii).zline;
     crossshore = handles.toolbox.modelmaker.xbeach(ii).crossshore;
 
     %% Optimalise grid
-    [xopt zopt] = xb_grid_xgrid(crossshore, zline, 'dxmin', dxmin, 'dxmax', dxmax, 'Tm', Tmean, 'CFL', 0.7);
-   
-    xori = handles.toolbox.modelmaker.xb_trans.xoff(ii); 
-    yori = handles.toolbox.modelmaker.xb_trans.yoff(ii);
+    [xopt zopt] = xb_grid_xgrid(crossshore, zline, 'dxmin', dxmin, 'dxmax', dxmax, 'Tm', Tmean, 'CFL', 0.7);   
+    xori = handles.toolbox.modelmaker.xb_trans.xoff(ii);  xback = handles.toolbox.modelmaker.xb_trans.xback(ii); 
+    yori = handles.toolbox.modelmaker.xb_trans.yoff(ii);  yback = handles.toolbox.modelmaker.xb_trans.yback(ii); 
     rotation_applied = handles.toolbox.modelmaker.xb_trans.coast(ii);
     yopt = zeros(1,length(xopt));
+    
+    % Determine orientation
+    dx = (xori-xback);     dy = (yori-yback);
+    if dx > 0 && dy < 0 
+    xr = xori- sind(rotation_applied)*xopt;
+    yr = yori+ cosd(rotation_applied)*xopt;
+    end
+    
+    if dx < 0 && dy < 0
     xr = xori- sind(360-rotation_applied)*xopt;
+    yr = yori+ cosd(360-rotation_applied)*xopt;
+    end
+    
+    if dx > 0 && dy > 0
+    xr = xori+ sind(360-rotation_applied)*xopt;
     yr = yori- cosd(360-rotation_applied)*xopt;
+    end
+    
+    if dx < 0 && dy > 0
+    xr = xori+ sind(rotation_applied)*xopt;
+    yr = yori- cosd(rotation_applied)*xopt;
+    end
     
     %% Make first and last three grids cells flat
     nx = length(zopt);
@@ -55,26 +74,26 @@ for ii = 1:ntransects
     'waves',...
             {'Hm0', [handles.toolbox.modelmaker.Hs], 'Tp', [handles.toolbox.modelmaker.Tp], 'duration', [tsimulation] 'mainang', handles.toolbox.modelmaker.waveangle}, ...
     'tide',... 
-            {'time', [0 tsimulation] 'front', [handles.toolbox.modelmaker.SSL handles.toolbox.modelmaker.SSL]},...
+            {'time', [0 tsimulation] 'front', [handles.toolbox.modelmaker.SSL handles.toolbox.modelmaker.SSL], 'back', 0},...
     'settings', ...
             {'outputformat','netcdf',... 
             'morfac', 1,...
             'morstart', 0, ...
             'break', 'roelvink_daly',...
             'bedfriction', 'manning', ...
-            'CFL', handles.model.xbeach.domain.CFL,...
+            'CFL', handles.model.xbeach.domain(1).CFL,...
             'front', 'abs_1d', ...
             'back', 'abs_1d', ...
-            'dtheta',abs(handles.model.xbeach.domain.thetamax - handles.model.xbeach.domain.thetamin),...
+            'dtheta',abs(handles.model.xbeach.domain(1).thetamax - handles.model.xbeach.domain(1).thetamin),...
             'thetanaut', 1, ...
+            'tideloc', 1,...
             'tstop', tsimulation, ...
             'tstart', 0,...
             'tintg', tsimulation/100,...
             'tintm', tsimulation/5,...
             'epsi',-1,...                   
             'meanvar',          {'zs', 'H','ue', 've', 'hh'} ,...
-            'globalvar',        {'zb', 'zs', 'H', 'ue', 've', 'sedero', 'hh'}});         
-
+            'globalvar',        {'zb', 'zs', 'H', 'ue', 've', 'sedero', 'hh'}});        
 
     % Create folder
     cd(mainfolder)
