@@ -2,7 +2,7 @@ function [handles] = ddb_ModelMakerToolbox_XBeach_quickMode_Ztransects(handles, 
 %UNTITLED4 Summary of this function goes here
 %   Detailed explanation goes here
 
-%% Get bathy dat
+%% Get bathy data
 % Find coordinates of corner points
 x = [handles.toolbox.modelmaker.xb_trans.xoff(ii) handles.toolbox.modelmaker.xb_trans.xback(ii)];
 y = [handles.toolbox.modelmaker.xb_trans.yoff(ii) handles.toolbox.modelmaker.xb_trans.yback(ii)];
@@ -18,6 +18,7 @@ xl(1)=xl(1)-dbuf;
 xl(2)=xl(2)+dbuf;
 yl(1)=yl(1)-dbuf;
 yl(2)=yl(2)+dbuf;
+
 
 % Coordinate coversion
 coord=handles.screenParameters.coordinateSystem;

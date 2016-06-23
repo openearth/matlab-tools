@@ -26,6 +26,10 @@ for ii = 1:ntransects
     zline = handles.toolbox.modelmaker.xbeach(ii).zline;
     crossshore = handles.toolbox.modelmaker.xbeach(ii).crossshore;
 
+    % Trow away Nans
+	id = isnan(zline);
+    zline(id) = []; crossshore(id) = [];    
+    
     %% Optimalise grid
     [xopt zopt] = xb_grid_xgrid(crossshore, zline, 'dxmin', dxmin, 'dxmax', dxmax, 'Tm', Tmean, 'CFL', 0.7);   
     xori = handles.toolbox.modelmaker.xb_trans.xoff(ii);  xback = handles.toolbox.modelmaker.xb_trans.xback(ii); 
