@@ -132,9 +132,6 @@ switch varargin{1}
                 xml.model(ii).model.name=models{ii};
                 xml.model(ii).model.version=handles.model.(models{ii}).version;
                 xml.model(ii).model.exedir=handles.model.(models{ii}).exedir;
-                if strcmpi(xml.model(ii).model.name,'delft3dwave')
-                    xml.model(ii).model.swandir=handles.model.(models{ii}).swandir;
-                end
             end
             struct2xml(filename,xml,'structuretype','short');
             
