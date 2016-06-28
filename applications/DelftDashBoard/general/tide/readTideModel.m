@@ -219,6 +219,9 @@ else
    %% TPXO 7.2, 6.0 or other     
    else
         iddot = strfind(tidefile, '\');
+        if isempty(iddot)
+        iddot = strfind(tidefile, '/');
+        end
         runname = tidefile((iddot(end)+1):end);
         str = ['Reading: ', runname, ' - ', tp]; 
         disp(str);
