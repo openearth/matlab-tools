@@ -17,6 +17,9 @@ OPT.kmax          =  1;
 OPT.type          = 'initial';
 OPT               = setproperty(OPT,varargin{4:end});
 
+% Freek Scheel: This is bug, the kmax of the mdf should be used here (this script only works for 2D ini data in Delft3D-FM, 3D input from Delft3D is averaged over the vertical!) 
+OPT.kmax  = mdf.mnkmax(3);
+
 filgrd    = varargin{1};
 filic     = varargin{2};
 filic_wl  = varargin{3};

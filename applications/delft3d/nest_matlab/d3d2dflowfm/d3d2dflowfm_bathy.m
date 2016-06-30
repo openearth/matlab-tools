@@ -24,7 +24,7 @@ zh            = -zh;
 tmp(:,1)      = reshape(xh,mmax*nmax,1);
 tmp(:,2)      = reshape(yh,mmax*nmax,1);
 tmp(:,3)      = reshape(zh,mmax*nmax,1);
-nonan         = ~isnan(tmp(:,1));
+nonan         = ~isnan(tmp(:,3));
 tmp           = d3d2dflowfm_addsquare(tmp(nonan,:));
 LINE.DATA     = num2cell(tmp);
 
