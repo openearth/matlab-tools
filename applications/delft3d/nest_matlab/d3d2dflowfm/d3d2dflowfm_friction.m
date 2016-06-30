@@ -14,7 +14,7 @@ if strcmpi(mdf.roumet,'z') mdu.physics.UnifFrictType = 3;end
 %% Reads roughness values from file
 
 if simona2mdf_fieldandvalue(mdf,'filrgh')
-    mdu.physics.UnifFrictCoef = -999.999;
+    mdu.physics.UnifFrictCoef = 0; % Freek Scheel: Must be set within the range 0 to Inf, else DS will not run
     mdu.Filrgh               = [nameshort '_rgh.xyz'];
     
     filgrd = [mdf.pathd3d filesep mdf.filcco];

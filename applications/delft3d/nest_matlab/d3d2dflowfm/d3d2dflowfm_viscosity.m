@@ -9,8 +9,8 @@ mdu.Fildico     = '';
 
 %% If space varying:
 if simona2mdf_fieldandvalue(mdf,'filedy')
-    mdu.physics.Vicouv       = -999.999;
-    mdu.physics.Dicouv       = -999.999;
+    mdu.physics.Vicouv       = 0; % Freek Scheel: Must be set within the range 0 to Inf, else DS will not run
+    mdu.physics.Dicouv       = 0; % Freek Scheel: Must be set within the range 0 to Inf, else DS will not run
     mdu.Filvico              = [nameshort '_vico.xyz'];
     filgrd                   = [mdf.pathd3d filesep mdf.filcco];
     filedy                   = [mdf.pathd3d filesep mdf.filedy];
@@ -39,4 +39,4 @@ end
 mdu.physics.Smagorinsky = 0.0;
 mdu.physics.Elder       = 0;
 mdu.physics.irov        = 0;
-mdu.physics.wall_ks     = -999.999; % not used so make clear in the input
+mdu.physics.wall_ks     = 0; % not used so make clear in the input --> Freek Scheel: Must be set within the range 0 to Inf, else DS will not run
