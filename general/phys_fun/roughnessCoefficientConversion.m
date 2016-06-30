@@ -7,7 +7,7 @@ function C_out = roughnessCoefficientConversion(C_in,waterdepth,formulation_in,f
 %   Chezy coefficient, Manning coefficient or coefficient of Nikuradse.  
 %
 %   Syntax:
-%   C_out = roughnessCoefficientConversion(C_in,formulation_in,formulation_out)
+%   C_out = roughnessCoefficientConversion(C_in,waterdepth,formulation_in,formulation_out)
 %
 %   Input:
 %   C_in		= [mxn double] input roughness coefficient 
@@ -17,7 +17,7 @@ function C_out = roughnessCoefficientConversion(C_in,waterdepth,formulation_in,f
 %   formulation_in and formulation_out must be either 'chezy','manning' or 'white-colebrook'
 %
 %   Output:
-%   C_our		= [mxn double] output roughness coefficient
+%   C_out		= [mxn double] output roughness coefficient
 %
 %   Example
 %   %Convert Manning coefficient into Chezy coefficient for water with a depth of 10m
