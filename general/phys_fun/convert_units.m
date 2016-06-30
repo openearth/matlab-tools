@@ -223,6 +223,7 @@ debug = 0;
    
    bar             = 1e5;                     % bar
    mbar            = 100;                     % millibar
+   mwk             = 9.80665 * 1e3;           % meter water kolom
 
    %% Force units 
    dyn             = 1e-5;                    % dyne
