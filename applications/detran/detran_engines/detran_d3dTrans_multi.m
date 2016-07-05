@@ -153,7 +153,7 @@ weightFac=tek.Field.Data(:,2)';
 weightFac = weightFac / sum (weightFac);
 
 cd(p3);
-hW = waitbar(0,'Please wait...');
+hW = waitbar(0,'Please wait while loading data...');
 
 for ii = 1 : length(pat)
     cd(char(pat{ii}));
