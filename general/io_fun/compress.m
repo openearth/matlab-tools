@@ -112,7 +112,9 @@ OPT.quiet       = false;    % do not surpress output
 OPT.gui         = false;    % do not show 7zip gui
 OPT.type        = '-t7z';
 OPT.password    = '';       % if not empty, use to specify a password to protect the archive
-OPT.args        = '-mx5'; 
+OPT.args        = '-mx5';
+OPT.url_zipExe  = '' ;      % Path where the zip executeables reside when deployed
+
 % overrule default settings by property pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
 
@@ -137,7 +139,11 @@ else
 end
 
 if isdeployed
-    basepath = ''; %Thus the 7za.exe and 7zG.exe must reside on the location of the deployed product ! Add these exe's to the package.
+    if isempty(OPT.url_zipExe)
+        basepath = ''; %Thus the 7za.exe and 7zG.exe must reside on the location of the deployed product ! Add these exe's to the package.
+    else
+        basepath = OPT.url_zipExe;
+    end
 else
     basepath = fullfile(fileparts(mfilename('fullpath')),'private','7z');
 end
