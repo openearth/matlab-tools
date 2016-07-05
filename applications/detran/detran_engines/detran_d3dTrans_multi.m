@@ -177,6 +177,7 @@ for ii = 1 : length(pat)
                 lastTimeStep = timeStep;
             end
         end
+        disp(pat{ii})
         sbuua = weightFac(ii) * vs_get(N,series,{lastTimeStep},['SBUU' postfix],'quiet');
         sbvva = weightFac(ii) * vs_get(N,series,{lastTimeStep},['SBVV' postfix],'quiet');
         ssuua = weightFac(ii) * vs_get(N,series,{lastTimeStep},['SSUU' postfix],'quiet');
