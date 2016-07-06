@@ -366,6 +366,9 @@ if ok == 1
     handles=getHandles;
     namemodel=handles.model.delft3dflow.domain(ad).attName;
     ratioFLOWWAVE = h.coarseratio;
+    
+    %% If true than normal model maker from scratch
+    if ~(handles.toolbox.modelmaker.xOri == 0 & handles.toolbox.modelmaker.yOri == 0)
     dx_old=handles.toolbox.modelmaker.dX; handles.toolbox.modelmaker.dX = handles.toolbox.modelmaker.dX *ratioFLOWWAVE;
     dy_old=handles.toolbox.modelmaker.dY; handles.toolbox.modelmaker.dY = handles.toolbox.modelmaker.dY *ratioFLOWWAVE;
     nx_old=handles.toolbox.modelmaker.nX; handles.toolbox.modelmaker.nX = handles.toolbox.modelmaker.nX / ratioFLOWWAVE;
@@ -381,23 +384,85 @@ if ok == 1
     datasets(1).name=handles.screenParameters.backgroundBathymetry;
     filename = ([namemodel '_swn.dep']); handles.model.delft3dwave.domain.domains(awg).bedlevel = filename;
     handles=ddb_ModelMakerToolbox_Delft3DWAVE_generateBathymetry(handles,datasets,'filename', filename);
+    
+    %% Otherwise use previous grid
+    else 
+    wb = waitbox('Generating grid based on FLOW model');        
+    % FLOW grid
+    xgrid = handles.model.delft3dflow.domain(ad).gridX;
+    ygrid = handles.model.delft3dflow.domain(ad).gridY;
+    zgrid = handles.model.delft3dflow.domain(ad).depth;
+    [nx ny] = size(xgrid);
+
+    % WAVE grid
+    xgrid_wave = xgrid((1:ratioFLOWWAVE:end),(1:ratioFLOWWAVE:end));
+    ygrid_wave = ygrid((1:ratioFLOWWAVE:end),(1:ratioFLOWWAVE:end));
+    zgrid_wave = zgrid((1:ratioFLOWWAVE:end),(1:ratioFLOWWAVE:end));
+
+    % Make it slighly larger
+
+
+    % 1. Grid
+    filename = ([namemodel '_swn.grd']);
+    handles.model.delft3dwave.domain.nrgrids=handles.model.delft3dwave.domain.nrgrids+1;
+    nrgrids= 1
+    domains = ddb_initializeDelft3DWAVEDomain(handles.model.delft3dwave.domain.domains,nrgrids);
+    handles.model.delft3dwave.domain.domains = domains;
+    handles.model.delft3dwave.domain.domains(nrgrids).gridnames=filename(1:end-4);
+    handles.activeWaveGrid=nrgrids;
+    enc=ddb_enclosure('extract',xgrid_wave,ygrid_wave);
+    attName=filename(1:end-4);
+    if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+        coord='Spherical';
+    else
+        coord='Cartesian';
+    end
+    ddb_wlgrid('write','FileName',[attName '.grd'],'X',xgrid_wave,'Y',ygrid_wave,'Enclosure',enc,'CoordinateSystem',coord);
+    handles.model.delft3dwave.domain.domains(nrgrids).coordsyst = coord;
+    handles.model.delft3dwave.domain.domains(nrgrids).grid      = [filename '.grd'];
+    handles.model.delft3dwave.domain.domains(nrgrids).grdFile   = [filename '.grd'];
+    handles.model.delft3dwave.domain.domains(nrgrids).encFile   = [filename '.enc'];
+    handles.model.delft3dwave.domain.domains(nrgrids).gridname  = filename;
+    handles.model.delft3dwave.domain.domains(nrgrids).gridx     = xgrid_wave;
+    handles.model.delft3dwave.domain.domains(nrgrids).gridy     = ygrid_wave;
+    nans=zeros(size(xgrid_wave));
+    nans(nans==0)=NaN;
+    handles.model.delft3dwave.domain.domains(nrgrids).depth=nans;
+    handles.model.delft3dwave.domain.domains(nrgrids).mmax=size(xgrid_wave,1);
+    handles.model.delft3dwave.domain.domains(nrgrids).nmax=size(xgrid_wave,2);
+    handles.model.delft3dwave.domain.domains(nrgrids).grid      = [filename '.grd'];
+
+    % 2. Bathy
+    id = 1;
+    filename = ([namemodel '_swn.dep']);
+    handles.model.delft3dwave.domain.domains(id).depth=zgrid_wave;
+    handles.model.delft3dwave.domain.domains(id).bedlevel=filename;
+    handles.model.delft3dwave.domain.domains(id).depthsource='file';
+    ddb_wldep('write',filename,handles.model.delft3dwave.domain.domains(id).depth);
+    handles.model.delft3dwave.domain.domains(id).bedlevel=filename;
+    handles.model.delft3dwave.domain.domains(id).depthsource='file';
+
+    % Put info back
+    setHandles(handles);
+    end
 
     % Finalize
     runid = handles.model.delft3dflow.domain(1).runid;
-
+    handles.model.delft3dwave.domain.referencedate = handles.model.delft3dflow.domain(1).itDate; % same reference time
     handles.model.delft3dwave.domain.projectname = 'Drawboxes';
     handles.model.delft3dwave.domain.description = 'Made with Delft Dashboard';
     handles.model.delft3dwave.domain.windspeed = h.windspeed;
     handles.model.delft3dwave.domain.winddir = h.winddirection;
     handles.model.delft3dwave.domain.mdffile = [runid, '.mdf'];
     handles.model.delft3dwave.domain.mdwfile = [runid, '.mdw']; 
-    handles.model.delft3dwave.domain.writecom = 1
+    handles.model.delft3dwave.domain.writecom = 1;
     handles.model.delft3dwave.domain.comwriteinterval = handles.model.delft3dflow.domain(1).comInterval;
     setHandles(handles);
 
     % Save
     ddb_saveMDW(handles);
     ddb_saveDelft3DFLOW('saveall');
+    close(wb);
 else
     return
 end

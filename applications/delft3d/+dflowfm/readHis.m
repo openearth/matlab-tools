@@ -38,6 +38,9 @@ if isempty(statname)
     hisdata.y_velocity      = nc_varget(filename, 'y_velocity');
     if salinity
         hisdata.salinity        = nc_varget(filename, 'salinity');
+        hisdata.temp            = nc_varget(filename, 'temperature');
+        hisdata.crest            = nc_varget(filename, 'Weir crest level (via general structure)');
+
     end    
     
     hisdata.cross_section_name  = cross_section_name;

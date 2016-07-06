@@ -199,6 +199,48 @@ switch lower(opt)
         setappdata(h,'windowbuttonupdownfcn',windowbuttonupdownfcn);
         setappdata(h,'windowbuttonmotionfcn',windowbuttonmotionfcn);
         h=drawPolyline(h,'nocallback');
+       
+    case{'continudraw'}
+        
+        % Plot first (invisible) point
+        h=plot3(0,0,9000);
+        set(h,'Visible','off');
+        
+        set(h,'Tag',tag);
+        set(h,'Color',lineColor);
+        set(h,'LineWidth',lineWidth);
+        
+        if ~isempty(marker)
+            set(h,'Marker',marker);
+            set(h,'MarkerEdgeColor',markerEdgeColor);
+            set(h,'MarkerFaceColor',markerFaceColor);
+            set(h,'MarkerSize',markerSize);
+        end
+        
+        setappdata(h,'x',x);
+        setappdata(h,'y',y);
+        setappdata(h,'axes',ax);
+        setappdata(h,'closed',closed);
+        setappdata(h,'callback',callback);
+        setappdata(h,'argin',argin);
+        setappdata(h,'doubleclickcallback',doubleclickcallback);
+        setappdata(h,'tag',tag);
+        setappdata(h,'color',lineColor);
+        setappdata(h,'width',lineWidth);
+        setappdata(h,'marker',marker);
+        setappdata(h,'markeredgecolor',markerEdgeColor);
+        setappdata(h,'markerfacecolor',markerFaceColor);
+        setappdata(h,'markersize',markerSize);
+        setappdata(h,'maxpoints',maxPoints);
+        setappdata(h,'text',txt);
+        setappdata(h,'closed',closed);
+        setappdata(h,'windowbuttonupdownfcn',windowbuttonupdownfcn);
+        setappdata(h,'windowbuttonmotionfcn',windowbuttonmotionfcn);
+        set(h,'UserData',userdata);
+        
+        set(gcf, 'windowbuttondownfcn',   {@clickNextPoint,h});
+        set(gcf, 'windowbuttonmotionfcn', {@moveMouse,h});
+
         
     case{'delete'}
         try

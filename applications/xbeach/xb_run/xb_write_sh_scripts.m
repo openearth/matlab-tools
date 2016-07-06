@@ -127,6 +127,7 @@ switch upper(OPT.mpitype)
                 xb_write_sh_scripts_xbversions(fid, 'version', OPT.version)
                 fprintf(fid,'mpirun -report-bindings -np %d -map-by core -hostfile $hostFile xbeach\n\n', (OPT.nodes*4+1));
                 fprintf(fid,'rm -f $hostFile\n');
+                fprintf(fid,'%s\n', 'echo finished >> finished.txt');
             case 'h6'
                 fprintf(fid,'hostFile="$JOB_NAME.h$JOB_ID"\n\n');
                 fprintf(fid,'cat $PE_HOSTFILE | while read line; do\n');
@@ -135,7 +136,9 @@ switch upper(OPT.mpitype)
                 xb_write_sh_scripts_xbversions(fid, 'version', OPT.version)
                 fprintf(fid,'mpirun -report-bindings -np %d -map-by core -hostfile $hostFile xbeach\n\n', (OPT.nodes*4+1));
                 fprintf(fid,'rm -f $hostFile\n');
+                fprintf(fid,'%s\n', 'echo finished >> finished.txt');
         end
+        
 otherwise
         error(['Unknown MPI type [' OPT.mpitype ']']);
 end

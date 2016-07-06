@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <root>
   <title>Nesting options</title>
-  <width>500</width>
-  <height>300</height>
+  <width>400</width>
+  <height>200</height>
   <element>
     <style>popupmenu</style>
-    <position>125 50 100 20</position>
+    <position>125 100 100 20</position>
     <variable>xb_nesting_type</variable>
     <type>string</type>
     <text>XB-LISFLOOD nesting</text>
@@ -14,14 +14,6 @@
     <listvalue>normal</listvalue>
     <listvalue>berm</listvalue>
     <tooltipstring>Normal means at the end of the transect. Berm means at berm location</tooltipstring>
-  </element>
-  <element>
-    <style>edit</style>
-    <position>125 100 200 20</position>
-    <variable>loc_XB</variable>
-    <type>string</type>
-    <text>Location XBeach</text>
-    <tooltipstring>Full path of xbeach.exe</tooltipstring>
   </element>
   <element>
     <style>edit</style>
@@ -37,7 +29,7 @@
     <variable>nesting_time</variable>
     <type>string</type>
     <text>Time step for nesting</text>
-    <tooltipstring>Fill here your time step in seconds</tooltipstring>
+    <tooltipstring>Fill here your time step in seconds. This is needed for Delft3D-FLOW nesting. </tooltipstring>
   </element>
   <element>
     <style>edit</style>
@@ -45,7 +37,7 @@
     <variable>nesting_distance</variable>
     <type>string</type>
     <text>Distance for nesting</text>
-    <tooltipstring>Fill here your distance in meters</tooltipstring>
+    <tooltipstring>Fill here your distance in meters. This is needed for Delft3D-WAVE nesting.</tooltipstring>
   </element>
   <element>
     <style>pushok</style>

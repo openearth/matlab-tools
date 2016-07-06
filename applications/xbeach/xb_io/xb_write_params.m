@@ -134,6 +134,7 @@ for i = 1:length(upartype)
         ivar = strcmpi(pars{j}, {xb.data.name});
         
         if any(ivar)
+            xb.data(ivar).name;
             if iscell(xb.data(ivar).value)
                 varname = ['n' xb.data(ivar).name];
                 varname = regexprep(varname, '^n+', 'n');

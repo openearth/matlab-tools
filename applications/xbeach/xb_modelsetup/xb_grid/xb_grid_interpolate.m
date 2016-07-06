@@ -113,5 +113,5 @@ else
     yir = round(yir*OPT.precision)/OPT.precision;
 
     % now interpolate
-    zi = interp2(xr, yr, z, xir, yir);
+    zi = interp2(xr, yr, z, xir, yir);   
 end

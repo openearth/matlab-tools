@@ -21,7 +21,7 @@ for ii = 1:ntransects;
     distances(ii) = ((X(ii+1) - X(ii)).^2 + (Y(ii+1) - Y(ii)).^2).^0.5;
     dx = X(ii+1) - X(ii); dy = Y(ii+1) - Y(ii);
    
-    if dx > 0 && dy < 0 
+    if dx >= 0 && dy <= 0 
     xback(ii) = xorg(ii) - sind(coast(ii)) * handles.toolbox.modelmaker.nY;
     yback(ii) = yorg(ii) - cosd(coast(ii)) * handles.toolbox.modelmaker.nY;
     xoff(ii) = xorg(ii) + sind(coast(ii)) * handles.toolbox.modelmaker.nX;
@@ -102,6 +102,7 @@ handles.toolbox.modelmaker.xb_trans.yback = yback;
 handles.toolbox.modelmaker.xb_trans.distances = distances;
 handles.toolbox.modelmaker.xb_trans.coast = coast;
 handles.toolbox.modelmaker.average_dx = average_dx;
+setHandles(handles);
 
 end
 

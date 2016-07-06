@@ -2,6 +2,14 @@ function [x,y,z,col] = georefence_image(filename)
 % v1.0 ??????? Ormondt
 % v1.1 June-16 Nederhoff
 
+% Example: how to use?
+% figure; hold on;
+% [xgeo, ygeo, zgeo, cgeo] = georefence_image('srilanka');
+% surf(xgeo, ygeo, zgeo, cgeo); shading flat;
+% freezeColors
+% hpcolor = pcolor(X, Y, squeeze(u10(1,:,:))); shading flat;
+% alpha(hpcolor,0.75);
+
 % Get full filename
 filename1 = [filename, '.jpg'];
 filename2 = [filename, '.jgw'];

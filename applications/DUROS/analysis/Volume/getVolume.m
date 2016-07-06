@@ -252,7 +252,7 @@ if ~SameProfile
     if ~isempty(x2)
         [x2, z2] = removeDoublePoints(x2, z2);
         id(1) = find(x2<=LandwardBoundary, 1, 'last' );
-        id(2) = find(x2>=SeawardBoundary, 1 );
+        id(2) = find(x2>=SeawardBoundary, 1);
         z2_new = interp1(x2(id(1):id(2)), z2(id(1):id(2)), [LandwardBoundary SeawardBoundary]);
         z2 = [z2_new(1); z2(x2>LandwardBoundary & x2<SeawardBoundary); z2_new(2)];
         x2 = [LandwardBoundary; x2(x2>LandwardBoundary & x2<SeawardBoundary); SeawardBoundary];

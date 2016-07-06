@@ -41,7 +41,7 @@ result = getBoundaryProfile(WL_t, Tp_t, Hsig_t, x0max);
 BoundaryProfileAboveProfile = sum(interp1(xInitial, zInitial, result.xActive) < result.z2Active) > 0;
 % NoCrossingsWithProfile = ~isempty(findCrossings(xInitial, zInitial, result.xActive, result.z2Active));
 if BoundaryProfileAboveProfile
-    TargetVolume  = -result.Volumes.Volume; % Attention, TargetVolume represents an additional amount of erosion, which is a negative number (!)
+    TargetVolume  = -result.Volumes.Volume*0.75; % Attention, TargetVolume represents an additional amount of erosion, which is a negative number (!)
     [x3, z3] = deal([0; max(xInitial)-min(xInitial)], [WL_t; WL_t]);
     result = getDuneErosion_volumetricboundaryprofile(x2, z2, x3, z3, WL_t, x0min, x0max, x0except, TargetVolume, []);
     result.info.ID = 'Volumetric Boundary Profile';

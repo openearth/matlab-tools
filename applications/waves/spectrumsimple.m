@@ -25,7 +25,7 @@ OPT.detrend     = 1;
 OPT.overlap     = 0.5;
 OPT.figures     = 1;
 OPT.strict      = 0;
-OPT.filter      = 'Hann';
+OPT.filter      = 'Hamming';
 OPT.tolerance   = 1E-3;
 OPT.correctvar  = true;
 

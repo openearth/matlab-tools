@@ -276,5 +276,4 @@ end
 if nargout==0 & ischar(filehandle)
     fclose(fid);
 end
-
-%% EOF
+fclose('all');

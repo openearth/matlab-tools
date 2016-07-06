@@ -18,6 +18,7 @@ if nargin <4
 end
 
 ii_cutoff = min(size(wav,1)-1,round(f_cutoff/df)); % calculates integer for cut off frequency
+ii_cutoff = min(size(wav,1)-1,round(df/f_cutoff)); % calculates integer for cut off frequency
 
 A_wav = fft(wav);
 
@@ -35,3 +36,15 @@ end
 
 wav_high = 2*real(ifft(A_high)); % 2 compensates for the missing 'mirror' fourier coefficients
 wav_low = 2*real(ifft(A_low));
+
+
+%
+% See probabilty
+Fs = df ;
+L = length(wav);      % Signal length
+n = 2^nextpow2(L);
+Y = fft(wav,n);
+f = Fs*(0:(n/2))/n;
+P = abs(Y/n);
+figure;
+plot(f,P(1:n/2+1))

@@ -70,6 +70,8 @@ else
     switch opt
         case{'drawline'}
             drawPolyline;
+        case('drawmorelines');
+            continudrawing;
         case('drawtransectsxy')
             drawTransectsXY;
         case('drawtransectsz')
@@ -90,6 +92,27 @@ function drawPolyline
 % Start
 handles=getHandles;
 
+% Delete previous
+try
+% Get previous points
+h = handles.toolbox.modelmaker.xb_trans.handle1;
+x=getappdata(h,'x');
+y=getappdata(h,'y');
+
+% Delete
+% Vertices
+try
+if ~isempty(handles.toolbox.modelmaker.xb_trans.handle1)
+    try
+        ch=getappdata(h,'children');
+        delete(h); delete(ch); handles.toolbox.modelmaker.xb_trans.handle1 = [];
+    end
+end
+catch
+end
+catch
+end
+
 % Make polyline and save handle
 h = UIPolyline(handles.GUIHandles.mapAxis,'draw','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline, 'onstart',@deleteGridOutline, ...
     'Tag', 'XB');
@@ -97,6 +120,42 @@ handles.toolbox.modelmaker.xb_trans.handle1=h;
 
 % Close
 setHandles(handles);
+
+%% 
+function continudrawing
+% Start
+handles=getHandles;
+
+% Get previous points
+h = handles.toolbox.modelmaker.xb_trans.handle1;
+x=getappdata(h,'x');
+y=getappdata(h,'y');
+
+% Delete vertices
+try
+if ~isempty(handles.toolbox.modelmaker.xb_trans.handle1)
+    try
+        ch=getappdata(h,'children');
+        delete(h); delete(ch); handles.toolbox.modelmaker.xb_trans.handle1 = [];
+    end
+end
+catch
+end
+
+height = ones(length(x))*9000;
+gtmp1 = plot3(x,y,height,'g', 'linewidth', 1.5);
+gtmp2 = plot3(x,y,height,'ro', 'linewidth', 1);
+
+% Make polyline and save handle
+h = UIPolyline(handles.GUIHandles.mapAxis,'continudraw','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline, 'onstart',@deleteGridOutline, ...
+    'Tag', 'XB', 'x', x, 'y', y);
+
+handles.toolbox.modelmaker.xb_trans.handle1=h;
+
+% Close
+setHandles(handles);
+delete(gtmp1); delete(gtmp2);
+
 
 %%
 function updateGridOutline(x,y,h)
@@ -125,7 +184,9 @@ handles=getHandles;
 try
 if ~isempty(handles.toolbox.modelmaker.xb_trans.handle1)
     try
-        delete(handles.toolbox.modelmaker.xb_trans.handle1);
+        h = handles.toolbox.modelmaker.xb_trans.handle1;
+        ch=getappdata(h,'children');
+        delete(h); delete(ch); handles.toolbox.modelmaker.xb_trans.handle1 = [];
     end
 end
 catch
@@ -193,7 +254,7 @@ ntransects = length(xoff);
 
 % Plotting
 for ii = 1:ntransects
-    h2(ii) = plot([xoff(ii) xback(ii)], [yoff(ii), yback(ii)], 'k', 'linewidth', 2);
+    h2(ii) = plot3([xoff(ii) xback(ii)], [yoff(ii), yback(ii)], [9000 9000], 'k', 'linewidth', 2);
 end
 handles.toolbox.modelmaker.xb_trans.handle2 = h2;
 

@@ -198,6 +198,7 @@ for i = 1:length(mapurls)
     idsLargeGrid = ismember(X,x) & ismember(Y,y);
     idsSmallGrid = ismember(x,X) & ismember(y,Y);
     
+    
     % clear unused variables to save memory
     clear x y
     

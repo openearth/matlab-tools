@@ -93,7 +93,7 @@ OPT = setproperty(OPT, varargin{:});
 [n m] = size(ts);
 
 % required number of samples
-nr    = ceil(OPT.sfreq/OPT.df);
+nr    = ceil(OPT.sfreq/OPT.df) * 10;
 
 % restrict sample length to powers of 2
 if OPT.strict

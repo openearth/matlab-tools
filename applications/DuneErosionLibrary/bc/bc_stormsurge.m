@@ -110,6 +110,8 @@ dt = .5; t = 0:dt:OPT.Tsim; to = ceil(t*3600);                                  
 
 h = OPT.h0+OPT.ha*cos(2.*pi.*(t-OPT.Tpeak)./OPT.Ttide)+OPT.hs*cos(pi.*(t-OPT.Tpeak)./OPT.Tsurge).^2;            % // surge level  
 
+htide = OPT.ha*cos(2.*pi.*(t-OPT.Tpeak)./OPT.Ttide);
+
 H = OPT.Hm0_max.*cos(pi.*(t-OPT.Tpeak)./(3*OPT.Tsurge)).^2;                                                     % // wave height  
 
 T = OPT.Tp_max*cos(pi*(t-OPT.Tpeak)./(3*OPT.Tsurge));                                                           % // wave period  
@@ -141,7 +143,9 @@ if OPT.plot == 1
     Top(Top == max(Top)) = OPT.Tp_max;
 
     figure;
-    subplot(311); plot(t,h,'b'); ylabel('\eta [m]'); axis([t(1) t(end) 0.9*min(h) 1.1*max(h)]);
+    load p:\1209601-grandbassam\4.ModelSimulation\5_xbeach\1001_Animatie_Dano\tide.txt
+    subplot(311); hold on; plot(t,h,'b'); plot(t,htide,'--k'); ylabel('\eta [m]'); axis([t(1) t(end) 1.1*min(htide) 1.1*max(h)]); legend('SSL', 'tide', 'orientation', 'horizontal'); box on;
+    %subplot(311); hold on; plot(tide(:,1)/3600,tide(:,2),'b'); axis([t(1) t(end) 1.1*min(tide(:,2)) 1.1*max(tide(:,2))]); box on; ylabel('\eta [m]');
     subplot(312); plot(t,H,'b'); hold on; plot(twp,Hop,'r-'); ylabel('H_{m0} [m]'); axis([t(1) t(end) 0.9*min(H) 1.1*max(H)]);
-    subplot(313); plot(t,T,'b'); hold on; plot(twp,Top,'r-'); xlabel('time [hours]'); ylabel('T_p [s]'); axis([t(1) t(end) 0.9*min(T) 1.1*max(T)]);
+    subplot(313); plot(t,T,'b'); hold on; plot(twp,Top,'r-'); xlabel('Time [h]'); ylabel('T_p [s]'); axis([t(1) t(end) 0.9*min(T) 1.1*max(T)]);
 end

@@ -134,17 +134,17 @@
   </element>
   <element>
     <style>pushbutton</style>
-    <position>150 110 125 20</position>
+    <position>600 75 125 20</position>
     <tooltipstring>Push to show transects on the map</tooltipstring>
-    <text>Draw Transects XY</text>
+    <text>1. Draw Transects XY</text>
     <callback>ddb_ModelMakerToolbox_XBeach_quickMode_transects</callback>
     <option1>drawtransectsxy</option1>
   </element>
   <element>
     <style>pushbutton</style>
-    <position>600 85 125 20</position>
+    <position>600 50 125 20</position>
     <tooltipstring>Push to show transects in seperate figures</tooltipstring>
-    <text>Draw Transects Z</text>
+    <text>2. Draw Transects Z</text>
     <callback>ddb_ModelMakerToolbox_XBeach_quickMode_transects</callback>
     <option1>drawtransectsz</option1>
   </element>
@@ -158,15 +158,15 @@
   </element>
   <element>
     <style>pushbutton</style>
-    <position>275 110 125 20</position>
-    <tooltipstring>Push to generate model grid</tooltipstring>
-    <text>Make grid and model</text>
+    <position>150 110 125 20</position>
+    <tooltipstring>Push to continu polyline</tooltipstring>
+    <text>Continu Vertices</text>
     <callback>ddb_ModelMakerToolbox_XBeach_quickMode_transects</callback>
-    <option1>generategrid</option1>
+    <option1>drawmorelines</option1>
   </element>
   <element>
     <style>pushbutton</style>
-    <position>450 110 125 20</position>
+    <position>275 110 125 20</position>
     <tooltipstring>Push to delete plot handles</tooltipstring>
     <text>Delete plot</text>
     <callback>ddb_ModelMakerToolbox_XBeach_quickMode_transects</callback>
@@ -174,7 +174,15 @@
   </element>
   <element>
     <style>pushbutton</style>
-    <position>600 110 125 20</position>
+    <position>600 25 125 20</position>
+    <tooltipstring>Push to generate model grid</tooltipstring>
+    <text>3. Make grid and model</text>
+    <callback>ddb_ModelMakerToolbox_XBeach_quickMode_transects</callback>
+    <option1>generategrid</option1>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>800 110 125 20</position>
     <tooltipstring>Push to add a DEM</tooltipstring>
     <text>Add DEM</text>
     <callback>ddb_ModelMakerToolbox_XBeach_quickMode_transects</callback>
