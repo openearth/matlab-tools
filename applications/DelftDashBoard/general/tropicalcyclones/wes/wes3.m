@@ -333,7 +333,7 @@ switch lower(format)
                 tc.track(it).pc=trackinput.pc(it);
             end
             if isfield(trackinput,'rmax')
-%                tc.track(it).rmax=trackinput.rmax(it);
+                tc.track(it).rmax=trackinput.rmax(it);
             end
             if isfield(trackinput,'r35ne')
                 tc.track(it).quadrant(1).radius(1)=trackinput.r35ne(it);
