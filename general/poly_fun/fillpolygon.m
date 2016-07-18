@@ -106,7 +106,7 @@ else
         c{i,3}= repmat(zLevel,size([a(i): b(i)]'));
     end
 
-    fh = cellfun(@patch, c(:,1), c(:,2), c(:,3), edgeColor1, edgeColor2, faceColor1, faceColor2);
+    outH = cellfun(@patch, c(:,1), c(:,2), c(:,3), edgeColor1, edgeColor2, faceColor1, faceColor2,'UniformOutput',false);
 
 end
 
