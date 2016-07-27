@@ -180,8 +180,8 @@ handles.toolbox.tropicalcyclone.wind_pressure_relation_options={'holland2008','v
 handles.toolbox.tropicalcyclone.wind_pressure_relation_options_names={'Holland (2008)','Vatvani'};
 
 handles.toolbox.tropicalcyclone.rmax_relation='gross2004';
-handles.toolbox.tropicalcyclone.rmax_relation_options={'gross2004','25nm','pagasajma'};
-handles.toolbox.tropicalcyclone.rmax_relation_option_names={'Gross (2004)','25NM','Pagasa-JMA'};
+handles.toolbox.tropicalcyclone.rmax_relation_options={'gross2004','25nm','pagasajma','vickerywadhera2008'};
+handles.toolbox.tropicalcyclone.rmax_relation_option_names={'Gross (2004)','25NM','Pagasa-JMA','Vickery and Wadhera (2008)'};
 
 %% Ensemble
 handles.toolbox.tropicalcyclone.ensemble.t0=datenum(2008,9,11,0,0,0);
