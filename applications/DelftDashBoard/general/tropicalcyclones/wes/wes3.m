@@ -670,11 +670,15 @@ if use_vmax && isnan(tc.track(1).vmax) && strcmpi(spw.wind_pressure_relation,'ho
     % In the (unlikely) event that Holland 2008 WPR is used and Vmax is not
     % given, compute central pressure change
     if length(tc.track)>2
-        for it2=2:length(tc.track)-1
-            tc.track(it2).dpcdt=(tc.track(it2+1).pc-tc.track(it2-1).pc)/(24*(tc.track(it2+1).time-tc.track(it2-1).time));
+%         for it2=2:length(tc.track)-1
+%             tc.track(it2).dpcdt=(tc.track(it2+1).pc-tc.track(it2-1).pc)/(24*(tc.track(it2+1).time-tc.track(it2-1).time));
+%         end
+%         tc.track(1).dpcdt=tc.track(2).dpcdt;
+%         tc.track(end).dpcdt=tc.track(end-1).dpcdt;
+        for it2=2:length(tc.track)
+            tc.track(it2).dpcdt=(tc.track(it2).pc-tc.track(it2-1).pc)/(24*(tc.track(it2).time-tc.track(it2-1).time));
         end
-        tc.track(1).dpcdt=tc.track(2).dpcdt;
-        tc.track(end).dpcdt=tc.track(end-1).dpcdt;
+        tc.track(1).dpcdt=0;
     else
         tc.track(1).dpcdt=(tc.track(2).pc-tc.track(1).pc)/(24*(tc.track(2).time-tc.track(1).time));
         tc.track(2).dpcdt=(tc.track(2).pc-tc.track(1).pc)/(24*(tc.track(2).time-tc.track(1).time));
@@ -695,14 +699,18 @@ if use_pc && isnan(tc.track(1).pc) && strcmpi(spw.wind_pressure_relation,'hollan
                 lat=20;
             end
         end
-        pc(it2)=wpr_holland2008('vmax',tc.track(it2).vmax,'pn',spw.pn,'lat',lat,'dpcdt',0,'vt',vt,'rhoa',spw.rhoa);
+        pc(it2)=wpr_holland2008('vmax',tc.track(it2).vmax/0.88,'pn',spw.pn,'lat',lat,'dpcdt',0,'vt',vt,'rhoa',spw.rhoa);
     end
     dpcdt=zeros(size(pc));
-    for it2=2:length(tc.track)-2
-        dpcdt(it2)=(pc(it2+1)-pc(it2-1))/(24*(tc.track(it2+1).time-tc.track(it2-1).time));
+%     for it2=2:length(tc.track)-2
+%         dpcdt(it2)=(pc(it2+1)-pc(it2-1))/(24*(tc.track(it2+1).time-tc.track(it2-1).time));
+%     end
+%     dpcdt(1)=dpcdt(2);
+%     dpcdt(end)=dpcdt(end-1);
+    for it2=2:length(tc.track)
+        dpcdt(it2)=(pc(it2)-pc(it2-1))/(24*(tc.track(it2).time-tc.track(it2-1).time));
     end
-    dpcdt(1)=dpcdt(2);
-    dpcdt(end)=dpcdt(end-1);
+    dpcdt(1)=0;
 end
 
 for it=1:length(tc.track)
@@ -713,7 +721,7 @@ for it=1:length(tc.track)
             switch lower(spw.wind_pressure_relation)
                 case{'holland2008'}
                     vt=sqrt(tc.track(it).vtx^2+tc.track(it).vty^2);
-                    tc.track(it).vmax=wpr_holland2008('pc',tc.track(it).pc,'pn',spw.pn,'lat',tc.track(it).y,'dpcdt',tc.track(it).dpcdt,'vt',vt,'rhoa',spw.rhoa);
+                    tc.track(it).vmax=0.88*wpr_holland2008('pc',tc.track(it).pc,'pn',spw.pn,'lat',tc.track(it).y,'dpcdt',tc.track(it).dpcdt,'vt',vt,'rhoa',spw.rhoa);
                 case{'kz2007'}
                     % TODO
                 case{'vatvani'}
@@ -722,7 +730,7 @@ for it=1:length(tc.track)
             end
         end
     end
-    
+
     % Pc
     if use_pc
         if isnan(tc.track(it).pc)
@@ -739,14 +747,13 @@ for it=1:length(tc.track)
                             lat=20;
                         end
                     end
-                    tc.track(it).pc=wpr_holland2008('vmax',tc.track(it).vmax,'pn',spw.pn,'lat',lat,'dpcdt',dpcdt(it),'vt',vt,'rhoa',spw.rhoa);
+                    tc.track(it).pc=wpr_holland2008('vmax',tc.track(it).vmax/0.88,'pn',spw.pn,'lat',lat,'dpcdt',dpcdt(it),'vt',vt,'rhoa',spw.rhoa);
                 case{'vatvani'}
                     tc.track(it).pc=spw.pn-0.01*2*tc.track(it).vmax_rel^2;
             end
         end
     end
 
-    % Rmax
     if use_rmax
         if isnan(tc.track(it).rmax)
             switch lower(spw.rmax_relation)
@@ -756,6 +763,8 @@ for it=1:length(tc.track)
                     tc.track(it).rmax=25*1.852;
                 case{'pagasajma'}
                     tc.track(it).rmax=rmax_jma_pagasa(tc.track(it).pc);
+                case{'vickerywadhera2008'}
+                    tc.track(it).rmax=rmax_vickery_and_wadhera_2008(spw.pn,tc.track(it).pc,tc.track(it).y);
             end
         end
     end

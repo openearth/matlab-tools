@@ -92,22 +92,22 @@ while 1
     end
     
     tc.vmax(it)=str2double(v0{7});
-    tc.pc(it)=100*str2double(v0{8});
+    tc.pc(it)=str2double(v0{8});
     
-    tc.r34ne(it)=str2double(v0{9});
-    tc.r34se(it)=str2double(v0{10});
-    tc.r34sw(it)=str2double(v0{11});
-    tc.r34nw(it)=str2double(v0{12});
+    tc.r35ne(it)=str2double(v0{9});
+    tc.r35se(it)=str2double(v0{10});
+    tc.r35sw(it)=str2double(v0{11});
+    tc.r35nw(it)=str2double(v0{12});
 
     tc.r50ne(it)=str2double(v0{13});
     tc.r50se(it)=str2double(v0{14});
     tc.r50sw(it)=str2double(v0{15});
     tc.r50nw(it)=str2double(v0{16});
 
-    tc.r64ne(it)=str2double(v0{17});
-    tc.r64se(it)=str2double(v0{18});
-    tc.r64sw(it)=str2double(v0{19});
-    tc.r64nw(it)=str2double(v0{20});
+    tc.r65ne(it)=str2double(v0{17});
+    tc.r65se(it)=str2double(v0{18});
+    tc.r65sw(it)=str2double(v0{19});
+    tc.r65nw(it)=str2double(v0{20});
 
     tc.r100ne(it)=-999;
     tc.r100se(it)=-999;
@@ -115,5 +115,26 @@ while 1
     tc.r100nw(it)=-999;
     
 end
+
+% Get rid of 0 radius
+tc.r35ne(tc.r35ne==0)=-999;
+tc.r35se(tc.r35se==0)=-999;
+tc.r35sw(tc.r35sw==0)=-999;
+tc.r35nw(tc.r35nw==0)=-999;
+
+tc.r50ne(tc.r50ne==0)=-999;
+tc.r50se(tc.r50se==0)=-999;
+tc.r50sw(tc.r50sw==0)=-999;
+tc.r50nw(tc.r50nw==0)=-999;
+
+tc.r65ne(tc.r65ne==0)=-999;
+tc.r65se(tc.r65se==0)=-999;
+tc.r65sw(tc.r65sw==0)=-999;
+tc.r65nw(tc.r65nw==0)=-999;
+
+tc.r100ne(tc.r100ne==0)=-999;
+tc.r100se(tc.r100se==0)=-999;
+tc.r100sw(tc.r100sw==0)=-999;
+tc.r100nw(tc.r100nw==0)=-999;
 
 fclose(fid);

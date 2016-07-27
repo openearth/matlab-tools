@@ -2,7 +2,7 @@ function output=wpr_holland2008(varargin)
 % Holland 2008 Wind-Pressure relation
 % Returns either Vmax or Pc
 
-vmax=[];    % Maximum winds (m/s) - 10-minutes averaged
+vmax=[];    % Maximum winds (m/s) - 1-minute averaged
 pc=[];      % Central pressure (hPa)
 pn=1015;    % Environment pressure (hPa)
 phi=20;     % Latitude (degrees)
@@ -40,7 +40,7 @@ e=exp(1);  % Base of natural logarithms
 if isempty(rhoa)
     % Used when Pc needs to be determined
     if ~isempty(vmax)
-        dp1=1:150;
+        dp1=1:5:151;
         pc1=pn-dp1;
     else
         dp1=pn-pc;
@@ -61,19 +61,19 @@ end
 if isempty(vmax)
     % Vmax to be determined
     dp=pn-pc;  % Pressure drop (in hPa)
-    x=0.6*(1+dp/215);
+    x=0.6*(1-dp/215);
     bs = -4.4e-5*dp.^2 + 0.01*dp + 0.03*dpcdt - 0.014*phi + 0.15*vt^x + 1.0;
     vmax=sqrt(100*bs.*dp./(rhoa*e));
-    output=vmax*0.9;
+    output=vmax;
 else    
     % Pc to be determined
     dpall = 1:5:151;
-    x       = 0.6*(1+dpall/215);
+    x       = 0.6*(1-dpall/215);
     bs      = -4.4e-5*dpall.^2 + 0.01*dpall + 0.03*dpcdt - 0.014*phi + 0.15*vt.^x + 1.0;
     vmaxall = sqrt(100*bs.*dpall./(rhoa*e));
     vmaxall=[vmaxall 200];
     dpall=[dpall 156];
-    dp      = interp1(vmaxall,dpall,vmax/0.9);
+    dp      = interp1(vmaxall,dpall,vmax);
     output  = pn-dp;    
 end
 
