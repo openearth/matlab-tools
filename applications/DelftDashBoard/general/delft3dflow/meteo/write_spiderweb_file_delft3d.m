@@ -124,7 +124,7 @@ for it=1:length(tc.track)
     fprintf(fid,'%s\n',['TIME           =   ' num2str(tim,'%10.2f') '   minutes since ' datestr(reftime,'yyyy-mm-dd HH:MM:SS') ' +00:00']);
     fprintf(fid,'%s\n',['x_spw_eye      =     ' num2str(tc.track(it).x) ]);
     fprintf(fid,'%s\n',['y_spw_eye      =     ' num2str(tc.track(it).y) ]);
-    fprintf(fid,'%s\n',['pdrop_spw_eye  =     ' num2str(max(max(tc.track(it).pressure_drop))) ]);
+    fprintf(fid,'%s\n',['p_drop_spw_eye  =     ' num2str(max(max(tc.track(it).pressure_drop))) ]);
     fprintf(fid,fmt1,tc.track(it).wind_speed);
     fprintf(fid,fmt2,tc.track(it).wind_from_direction);
     fprintf(fid,fmt3,tc.track(it).pressure_drop);
