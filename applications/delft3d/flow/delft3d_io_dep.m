@@ -252,6 +252,7 @@ else strcmpi(cmd,'write');
     OPT.positive    = 'down';
     OPT.mfilename   = 'unknown mfilename';
     OPT.meta        = 0;
+    OPT.dummy       = 1;
     
     OPT = setproperty(OPT,varargin{4:end});
     
@@ -272,7 +273,11 @@ else strcmpi(cmd,'write');
         end
         
         D3Dmatrix          = G.cen.dep;
-        D3Dmatrix          = addrowcol(D3Dmatrix,[-1 1],[-1 1],nan)';
+        if OPT.dummy
+            D3Dmatrix          = addrowcol(D3Dmatrix,[-1 1],[-1 1],nan);
+            disp('Dummy values are added around the depth matrix')
+        end
+        disp(num2str(size(D3Dmatrix)))
         position           = 'center';
         positiondummyvalue = 'first and last';
         
