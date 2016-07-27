@@ -277,7 +277,6 @@ else strcmpi(cmd,'write');
             D3Dmatrix          = addrowcol(D3Dmatrix,[-1 1],[-1 1],nan);
             disp('Dummy values are added around the depth matrix')
         end
-        disp(num2str(size(D3Dmatrix)))
         position           = 'center';
         positiondummyvalue = 'first and last';
         
