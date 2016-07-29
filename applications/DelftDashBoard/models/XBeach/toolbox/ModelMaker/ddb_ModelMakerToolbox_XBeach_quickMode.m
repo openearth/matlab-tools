@@ -111,7 +111,7 @@ function updatePolyline
 %%
 function drawGridOutline
 handles=getHandles;
-setInstructions({'','','Use mouse to draw grid outline on map'});
+setInstructions({'','Use mouse to draw grid outline on map', 'Make sure the origin is offshore and the coastline is at the right'});
 UIRectangle(handles.GUIHandles.mapAxis,'draw','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline,'onstart',@deleteGridOutline, ...
     'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY,'number', 1);
 
@@ -215,23 +215,34 @@ ddb_refreshDomainMenu;
 
 function generatemodel
 handles=getHandles;
-wb =   waitbox('XBeach model is created');
-handles=ddb_ModelMakerToolbox_XBeach_generateModel(handles);
 
-% Plotting
-handles=ddb_initializeXBeach(handles,1,'xbeach1');% Check
-pathname = pwd; filename='\params.txt';
-handles.model.xbeach.domain(handles.activeDomain).params_file=[pathname filename];
-handles=ddb_readParams(handles,[pathname filename],1);
-handles=ddb_readAttributeXBeachFiles(handles,[pathname,'\'],1); % need to add all files
-close(wb);
-ddb_plotXBeach('plot','domain',ad); % make
-setHandles(handles);
+%% Check: no geographic coordinate systems
+coord=handles.screenParameters.coordinateSystem;
+iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
+dataCoord.name=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
+dataCoord.type=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
+if ~strcmpi(lower(dataCoord.type), 'geographic')
+    
+    %% Make XBeach
+    wb =   waitbox('XBeach model is created');
+    handles=ddb_ModelMakerToolbox_XBeach_generateModel(handles);
 
-ddb_updateDataInScreen;
-gui_updateActiveTab;
-ddb_refreshDomainMenu; 
+    % Plotting
+    handles=ddb_initializeXBeach(handles,1,'xbeach1');% Check
+    pathname = pwd; filename='\params.txt';
+    handles.model.xbeach.domain(handles.activeDomain).params_file=[pathname filename];
+    handles=ddb_readParams(handles,[pathname filename],1);
+    handles=ddb_readAttributeXBeachFiles(handles,[pathname,'\'],1); % need to add all files
+    close(wb);
+    ddb_plotXBeach('plot','domain',ad); % make
+    setHandles(handles);
 
-% Overview
-ddb_ModelMakerToolbox_XBeach_modelsetup(handles)
+    ddb_updateDataInScreen;
+    gui_updateActiveTab;
+    ddb_refreshDomainMenu; 
 
+    % Overview
+    ddb_ModelMakerToolbox_XBeach_modelsetup(handles)
+else
+	ddb_giveWarning('text',['XBeach models are ALWAYS in cartesian coordinate systems. Change your coordinate system to make a XBeach model']);
+end

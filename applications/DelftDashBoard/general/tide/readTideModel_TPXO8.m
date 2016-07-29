@@ -115,6 +115,8 @@ for i=1:length(variables)
     end
 end
 
+constituent = lower(constituent);
+
 gt=[];
 idpath = strfind(fname, 'tpxo80.nc');
 fnamereduced = fname(1:idpath-1);

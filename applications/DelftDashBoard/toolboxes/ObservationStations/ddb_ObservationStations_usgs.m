@@ -57,5 +57,8 @@ end
 
 %%
 function database=readDatabase(xl,yl)
-load ('d:\projects\ddb\working\toolboxes\ObservationStations\usgs.mat')
+handles = getHandles;
+dr=handles.toolbox.observationstations.dataDir;
+path = [dr 'usgs.mat']
+load (path)
 database = s;

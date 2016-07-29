@@ -133,8 +133,8 @@ if ncons == 1;
    if ~isempty(findstr(tidefile, 'tpxo80'))
    ind = find(strcmp('constituent', varargin));
    C = cellstr(constituent(1,:));
-    str = ['Reading: TPXO 8.0 -', C, '- ', tp]; str = strjoin(str);
-    disp(str);
+   str = ['Reading: TPXO 8.0 -', C, '- ', tp]; str = strjoin(str);
+   disp(str);
    varargin{1, ind+1} = C{1,1};
    [lon, lat, gt, depth] = readTideModel_TPXO8(tidefile,varargin);
    conList = C;
@@ -142,6 +142,9 @@ if ncons == 1;
    %% Other
    else
    iddot = strfind(tidefile, '\');
+   if isempty(iddot)
+        iddot = strfind(tidefile, '/');
+   end
    runname = tidefile((iddot(end)+1):end);
         str = ['Reading: ', runname, ' - ', tp]; 
         disp(str);

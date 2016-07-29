@@ -60,13 +60,13 @@ function ddb_compile
 % $Keywords: $
 
 %%
-
-matlabfolder='c:\Program Files\MATLAB\MATLAB2013b_64\';
+warning 'off';
+matlabfolder='c:\Program Files\Matlab\MATLAB2013b_64\';
 compilefolder='d:\delftdashboardsetup\';
 ddbsettingsdir='d:\ddbsettings\';
-
 include_additional_toolboxes=0;
-
+ddb_path = 'd:\OpenEarthTools\matlab\applications\DelftDashBoard';
+netcdf_path = 'd:\OpenEarthTools\matlab\io\netcdf\netcdfAll-4.2.jar';
 
 % Throw away compilefolder
 if exist(compilefolder,'dir')
@@ -227,9 +227,9 @@ ddb_copyAllFilesToDataFolder(inipath,compiledatadir,additionalToolboxDir);
 %mcc -m -v -d exe2 DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\netcdfAll-4.2.jar -M earthicon.res
 %mcc('-m','-v','-d',exedir,'DelftDashBoard.m','-B','complist','-a',ddbsettingsdir,'-a','..\..\io\netcdf\netcdfAll-4.2.jar','-M','earthicon.res');
 
+cd(ddb_path)
 disp('Start compiling ...');
-
-mcc('-m','-v','-d',exedir,'DelftDashBoard.m','-B','complist','-a',ddbsettingsdir,'-a','../../io/netcdf/netcdfAll-4.2.jar');
+mcc('-m','-v','-d',exedir,'DelftDashBoard.m','-B','complist','-a',ddbsettingsdir,'-a',netcdf_path);
 
 % copyfile('exe2\delftdashboard.exe',exedir);
 % rmdir('exe','s');
@@ -241,8 +241,7 @@ eval([strrep(Revision(Revision~='$'),':','=') ';']);
 dos(['copy ' fileparts(which('ddsettings')) filesep 'main' filesep 'menu' filesep 'ddb_aboutDelftDashBoard.txt ' fileparts(which('ddsettings')) filesep 'exe']);
 strrep(fullfile(fileparts(which('ddsettings')),'exe','ddb_aboutDelftDashBoard.txt'),'$revision',num2str(Revision));
 
-delete('complist');
+delete('complist'); delete('exe');
 % delete('earthicon.rc');
 % delete('earthicon.res');
-
 rmdir(ddbsettingsdir,'s');

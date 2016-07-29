@@ -1,4 +1,4 @@
-function [x,y,z,col] = georefence_image(filename)
+function [x,y,z,col] = georeference_image(filename)
 % v1.0 ??????? Ormondt
 % v1.1 June-16 Nederhoff
 

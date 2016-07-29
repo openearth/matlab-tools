@@ -142,10 +142,6 @@ end
 catch
 end
 
-height = ones(length(x))*9000;
-gtmp1 = plot3(x,y,height,'g', 'linewidth', 1.5);
-gtmp2 = plot3(x,y,height,'ro', 'linewidth', 1);
-
 % Make polyline and save handle
 h = UIPolyline(handles.GUIHandles.mapAxis,'continudraw','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline, 'onstart',@deleteGridOutline, ...
     'Tag', 'XB', 'x', x, 'y', y);
@@ -154,7 +150,11 @@ handles.toolbox.modelmaker.xb_trans.handle1=h;
 
 % Close
 setHandles(handles);
-delete(gtmp1); delete(gtmp2);
+try
+    delete(gtmp1); 
+    delete(gtmp2);
+catch
+end
 
 
 %%
@@ -164,6 +164,7 @@ function updateGridOutline(x,y,h)
 setInstructions({'Left-click and drag markers to change corner points','Right-click and drag YELLOW marker to move entire box', ...
     'Right-click and drag RED markers to rotate box'});
 handles=getHandles;
+
 
 % Settings 
 setappdata(h,'x',x);
