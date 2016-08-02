@@ -19,7 +19,7 @@ if isempty(filedir);filedir = pwd; end
 
 fid = fopen([filedir filesep filename],'r');
 if fid<0
-   error('Cannot open the file: %s',filename)
+   error('Cannot open the file: %s',[filedir filesep filename])
 end
 while ~feof(fid)
    Line = fgetl(fid);
