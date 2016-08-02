@@ -16,10 +16,10 @@ S.FileDir  = filedir;
 S.File = {};
 %
 if isempty(filedir);filedir = pwd; end
-
-fid = fopen([filedir filesep filename],'r');
+filepath=fullfile([filedir filesep filename]);
+fid = fopen(filepath,'r');
 if fid<0
-   error('Cannot open the file: %s',[filedir filesep filename])
+   error('Cannot open the file: %s',filepath)
 end
 while ~feof(fid)
    Line = fgetl(fid);
