@@ -95,7 +95,7 @@ for i=1:length(date_indices)
     disp(['Getting ' datestr(dates(date_indices(i)))])
     newZ             = nc_varget(fname, 'z', [date_indices(i)-1, 0, 0], [1, length(y), length(x)]);
     newZ(newZ==-9999)= nan;
-    d.Z(:,:,i)       = newZ';
+    d.Z(:,:,i)       = squeeze(newZ)';
     d.t(i,:)         = dates(i);
 end
 d.X         = repmat(x, [1, length(y)]);
