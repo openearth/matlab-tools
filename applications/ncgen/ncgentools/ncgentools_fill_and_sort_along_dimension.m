@@ -99,7 +99,7 @@ end
 
 if directory_mode && ~overwrite
     if ~exist(destination,'dir')
-        mkpath(destination)
+        mkdir(destination) %mkpath(destination)
         delete2(dir2(destination,'no_dirs',1,'file_incl','\.nc$'));
     end
 end

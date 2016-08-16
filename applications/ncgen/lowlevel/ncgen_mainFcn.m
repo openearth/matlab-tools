@@ -328,7 +328,9 @@ if ~outdated && ~OPT.main.merge_data
     % check hashes
     source_file_hash = unique(source_file_hash,'rows');
     % all hashes in nc structure must be in files.
-    outdated = ~all(ismember(source_file_hash,vertcat(fns1.hash),'rows'));
+    if ~isempty(source_file_hash)
+        outdated = ~all(ismember(source_file_hash,vertcat(fns1.hash),'rows'));
+    end
     if outdated
         reason = 'Difference found in hashes of source files';
     end
@@ -343,7 +345,10 @@ end
 % remove files already in nc from file name stucture  as they are
 % already in the nc file
 a = length(fns1);
-fns1(ismember(vertcat(fns1.hash),source_file_hash,'rows')) = [];
+
+if ~isempty(source_file_hash)
+    fns1(ismember(vertcat(fns1.hash),source_file_hash,'rows')) = [];
+end
 b = length(fns1);
 fprintf(OPT.main.log,'%d of %d source files were skipped as they were already processed.\n',a-b,a);
 

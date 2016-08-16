@@ -80,6 +80,8 @@ OPT.highestLevel    = 1;
 OPT.lowestLevel     = 15;
 OPT.z_scale_factor  = 1;
 OPT.lighting_effects = true;
+%Added
+OPT.renew            = true; %default was always remove old directories
 
 if nargin==0
     varargout = {OPT};
@@ -101,11 +103,17 @@ OPT = setproperty(OPT,varargin,'onExtraField',  'silentAppend'); %In order to pa
 %     end
 
 %% create kml directory if it does not yet exist
-if exist(OPT.path_kml,'dir')
-    rmdir(OPT.path_kml,'s')
-    pause(5)
+if OPT.renew
+    if exist(OPT.path_kml,'dir')
+        rmdir(OPT.path_kml,'s')
+        pause(5)
+    end
+    mkdir(OPT.path_kml); %mkpath(OPT.path_kml);
+else
+    if ~exist(OPT.path_kml,'dir')
+        mkdir(OPT.path_kml); %mkpath(OPT.path_kml);
+    end        
 end
-mkpath(OPT.path_kml);
 
 %% run functions
 [minlat,maxlat,minlon,maxlon] = print_tiles(OPT);
@@ -307,7 +315,7 @@ multiWaitbar('merge_all_tiles',1,'label','Merging tiles')
 function write_kml(OPT,minlat,maxlat,minlon,maxlon)
 
 % multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML - Getting unique png file names...','color',[0.9 0.4 0.1])
-mkpath(fullfile(OPT.path_kml,'KML'));
+mkdir(fullfile(OPT.path_kml,'KML'));
 
 % make general
 sourcePath = OPT.path_kml;

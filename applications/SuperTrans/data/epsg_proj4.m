@@ -80,7 +80,8 @@ else
 end   
 
 if ~exist(epsg_tempdir,'dir')
-    mkpath(epsg_tempdir);
+%     mkpath(epsg_tempdir);
+    mkdir(epsg_tempdir);
 end
 
 epsg_proj4_filename = sprintf('%d.txt',epsg_code);

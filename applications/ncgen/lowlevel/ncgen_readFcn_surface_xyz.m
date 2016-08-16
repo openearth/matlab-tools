@@ -70,8 +70,8 @@ while ~feof(fid)
     % grid_spacing, grid_tilesize and grid_offset can be either scalars or
     % 2-element vectors indicating equal respectively seperately specified x
     % and y direction values.
-    [grid_spacingx  grid_spacingy ] = deal(OPT.schema.grid_cellsize(1), OPT.schema.grid_cellsize(end));
-    [grid_tilesizex grid_tilesizey] = deal(OPT.schema.grid_tilesize(1), OPT.schema.grid_tilesize(end));
+    [grid_spacingx  ,grid_spacingy ] = deal(OPT.schema.grid_cellsize(1), OPT.schema.grid_cellsize(end));
+    [grid_tilesizex ,grid_tilesizey] = deal(OPT.schema.grid_tilesize(1), OPT.schema.grid_tilesize(end));
     mapsizex = grid_spacingx * grid_tilesizex;
     mapsizey = grid_spacingy * grid_tilesizey;
     minx    = floor(minx/mapsizex)*mapsizex + OPT.schema.grid_offset(1);
