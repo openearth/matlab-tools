@@ -134,7 +134,8 @@ elseif nargin == 1
         tline = fgetl(fid1);tline = fgetl(fid1);
         DATA  = strread(tline);
         jj=1;
-
+        R(ii).QSoffset = [];
+        R(ii).hass     = [];
         if length(DATA)==14
             %% timeseries ray + QSoffset
             while ~feof(fid1)
