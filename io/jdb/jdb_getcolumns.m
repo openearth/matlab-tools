@@ -1,13 +1,13 @@
 function [column_name, data_type,data_length] = jdb_getcolumns(conn, table, owner, column_name0)
 % List all column_names, their data_types and length from a given table
 %
-%   List all columns in a given table or view in the current database. Returns a
+%   List all columns in a given table in the current database. Returns a
 %   cellstr list with column names with the following SQL statements:
 %      SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ''table''
 %      SELECT count(*)               FROM "table"
 %
 %   Syntax:
-%   [column_name,<data_type>,<data_length>] = jdb_getcolumns(conn, table, owner, <column_name0>)
+%   [column_name,<data_type>,<data_length>] = jdb_getcolumns(conn, table,<column_name0>)
 %
 %   Input:
 %   conn         = Database connection object
@@ -35,7 +35,7 @@ function [column_name, data_type,data_length] = jdb_getcolumns(conn, table, owne
 %     [nams,typs] = jdb_getcolumns(conn,table,columns);
 %     D           = jdb_fetch2struct(R,nams,typs);
 %
-%   See also jdb_connectdb, jdb_gettables, jdb_getviews, jdb_fetch2struct, jdb_table2struct
+%   See also jdb_connectdb, jdb_gettables, jdb_fetch2struct, jdb_table2struct
 
 %% Copyright notice: see below
 
@@ -58,8 +58,6 @@ if ismember('oracle',C)
     dbtype = 'oracle';
 elseif ismember('postgresql',C)
     dbtype = 'postgresql';    
-elseif ismember('ucanaccess',C)
-    dbtype = 'access';  
 else
     dbtype = 'unknown';
 end
@@ -67,11 +65,9 @@ end
 switch dbtype
     case 'oracle' 
         table  = upper(table);
-        strSQL = ['SELECT "COLUMN_NAME", "DATA_TYPE" FROM  ALL_TAB_COLS WHERE "TABLE_NAME"= ''',table,''''];
+        strSQL = ['SELECT "COLUMN_NAME", "DATA_TYPE" FROM  ALL_TAB_COLS WHERE "TABLE_NAME"= ''',table,''' ORDER BY "COLUMN_ID"'];
     case 'postgresql'
         strSQL = ['SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ''',table,''''];
-    case 'access'
-        strSQL = ['SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ''',upper(table),''''];
     otherwise
         strSQL = '' ;
 end
@@ -79,71 +75,53 @@ end
 rs     = jdb_fetch(conn, strSQL);
 
 if isempty(rs) && isnumeric(rs); % required for combi: empty tables & database_toolbox license
-%     rs = {};
-    column_name = {};
-    data_type   = {};
-    data_length = [];
-    return
+    rs = {};
 end
 
-% Postprocess data
 if nargin > 2+1
-    indices = zeros(length(column_name0),1);
-    for n = 1:length(column_name0)
-%       tmp = strmatch(column_name0{2}, {rs{:,1}}, 'exact');
-        tmp = strcmpi(column_name0{n}, rs(:,1) );  %case incensitive thus NOT really EXACT anymore
-        
-        if ~any(tmp)
-%             error(['column_name "' column_name0{n} '" not found in table ',table])
-            warning(['column_name "' column_name0{n} '" not found in table ',table])
-        else
-            indices(n) = find(tmp,1);
-        end
-    end
+   for i=1:length(column_name0)
+      tmp = strmatch(column_name0{i}, {rs{:,1}}, 'exact');
+      if isempty(tmp)
+         error(['column_name "','" not found in table ',table])
+      else
+          
+         indices(i) = tmp;
+      end
+   end
 else
     switch dbtype
-        case 'access'
-            % Apparently the colums info is returned in normal order
-            indices = 1:size(rs,1);
-        otherwise
-            indices = size(rs,1):-1:1; %Reverse
+    case 'oracle' 
+        indices = 1:size(rs,1);
+    otherwise
+        indices = size(rs,1):-1:1;
     end
 end
 
-%Output
-[column_name, data_type] = deal( cell(numel(indices),1));
-idx                      = indices>0;
-column_name(idx)         = rs(indices(idx),1);
-data_type(idx)           = rs(indices(idx),2);
-column_name(~idx)        = {'Column not found'};
-data_type(~idx)          = {'Unknown'};
-
-if nargout > 2
-    switch dbtype
-        case 'oracle'
-            if isempty(owner)
-                idx = true;
-            else
+column_name = {rs{indices,1}}';
+if nargout > 1
+    data_type = {rs{indices,2}}';
+    if nargout > 2
+        % ?? why does '''' encapsulation not work here ??
+        switch dbtype
+            case 'oracle'
                 idx = ismember(owner,{'SYS' 'SYSTEM' 'MDSYS' 'XDB' 'OLAPSYS' 'APEX_030200' 'EXFSYS' 'CTXSYS'});
-            end
-            if idx
+                if idx
+                    strSQL = ['SELECT count(*) FROM ',jdb_quote(table)];
+                else
+                    strSQL = ['SELECT count(*) FROM ',jdb_quote(owner) , '.' ,jdb_quote(table)];
+                end
+                
+            case 'postgresql'
                 strSQL = ['SELECT count(*) FROM ',jdb_quote(table)];
-            else
-                strSQL = ['SELECT count(*) FROM ',jdb_quote(owner) , '.' ,jdb_quote(table)];
-            end
-
-        case 'postgresql' 
-            strSQL = ['SELECT count(*) FROM ',jdb_quote(table)];
-        case 'access'
-            strSQL = ['SELECT count(*) FROM ',table];
-        otherwise
-            strSQL = '' ;
-    end
-    try
-        data_length = jdb_fetch(conn, strSQL);
-        data_length = data_length{1};
-    catch
-        data_length = [];
+            otherwise
+                strSQL = '' ;
+        end
+        try
+            data_length = jdb_fetch(conn, strSQL);
+            data_length = data_length{1};
+        catch
+            data_length = [];
+        end
     end
 end
 
