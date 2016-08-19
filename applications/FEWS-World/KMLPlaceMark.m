@@ -65,6 +65,7 @@ OPT.name          = {''};
 OPT.description   = {''};
 OPT.Z             = zeros(size(lat));
 OPT.icon          = 'http://maps.google.com/mapfiles/kml/paddle/blu-stars.png';
+OPT.iconScale     = 1.4;
 [OPT, Set, Default] = setproperty(OPT, varargin{:});
 if nargin<3
     disp('Minimal number of arguments is 3 (lat, lon, filename)');
@@ -91,7 +92,7 @@ fprintf(fid,'%s\n','<Document>');
 	fprintf(fid,'%s\n','  </ListStyle>');
     fprintf(fid,'%s\n','</Style>');
     fprintf(fid,'%s\n','<Style id="sn_caution">');
-    fprintf(fid,'%s\n','<IconStyle><scale>1.4</scale><Icon>');
+    fprintf(fid,'%s\n','<IconStyle><scale>',num2str(OPT.iconScale,'%.1f'),'</scale><Icon>');
     fprintf(fid,'%s\n',['  <href>' OPT.icon]);
     fprintf(fid,'%s\n','  </href></Icon></IconStyle>');
     fprintf(fid,'%s\n','  <ListStyle>');
