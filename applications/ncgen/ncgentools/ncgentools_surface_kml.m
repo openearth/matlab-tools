@@ -36,6 +36,8 @@ OPT.bgcolor          = [100 155 100]; % this is only used as a placeholder
 OPT.debug            = 1;
 OPT.timerange        = [-inf inf];% example: [now-7 now];
 OPT.continue_from_last = true;
+OPT.useSurf    = true; % false = use pcolor
+OPT.shade      = 'interp'; % or flat
 
 if nargin==0
     return
@@ -67,7 +69,7 @@ write_kml(OPT,dataBounds);
 function generate_tiles(OPT,netcdf_index)
 % create output directory if it doesn't exist yet
 if ~exist(OPT.path_kml,'dir')
-    mkpath(OPT.path_kml)
+    mkdir(OPT.path_kml)
 end
 
 %% get all unique times
@@ -100,7 +102,7 @@ time_str = datestr(unique_times,OPT.dateStrStyle);
 for ii = 1:length(unique_times)
     dirname = fullfile(OPT.path_kml,time_str(ii,:));
     if ~exist(dirname,'dir')
-        mkpath(dirname)
+        mkdir(dirname)
     end
 end
 
@@ -139,7 +141,9 @@ fig = make_figure(...
     OPT.dim,...
     OPT.dimExt,...
     OPT.bgcolor,...
-    OPT.lightingLevel);
+    OPT.lightingLevel,...
+    OPT.useSurf,...
+    OPT.shade);
 
 % determine ranges of figures
 delta = 360 / 2^(OPT.lowestLevel-1) / OPT.dim * OPT.dimExt; % the delta is needed to make sure there are no ugly edge effects
@@ -186,6 +190,9 @@ for ii = 1:length(tiles)
     data.lat = data.lat - tiles(ii).S;
     data.lon = data.lon - tiles(ii).W;
     set(fig.ha,'YLim',[0 tiles(ii).N-tiles(ii).S]+delta,'XLim',[0 tiles(ii).E-tiles(ii).W]+delta,'zlim',[min(data.z(:))-1 max(data.z(:))+1])
+    if ~OPT.useSurf 
+        set(fig.ha,'zlim',[-1 1]) % Because pcolor plot on z = 0    
+    end
     
     % look for a the newest previously made tile with that name. Load
     % this tile and use this to fill the data gaps where possible.
@@ -200,7 +207,11 @@ for ii = 1:length(tiles)
     end
     
     for iTime = find(~squeeze(all(all(isnan(data.z),1))))'
-        set(fig.hp,'ZData',data.z(:,:,iTime),'XData',data.lon,'YData',data.lat)
+        if OPT.useSurf
+            set(fig.hp,'ZData',data.z(:,:,iTime),'XData',data.lon,'YData',data.lat,'CData',data.z(:,:,iTime))
+        else
+            set(fig.hp,'XData',data.lon,'YData',data.lat,'Zdata',zeros(size(data.lat)),'CData',data.z(:,:,iTime))
+        end
         % print tile
         [im,mask] = print_tile(...
             fig,...
@@ -241,6 +252,7 @@ for ii = 1:length(tile_folders)
     tiles_this_level = [tiles_this_level; tiles_this_level_tmp];
 end
 
+% if isempty( tiles_this_level); return; end
 
 while length(tiles_this_level(1).name) > 5
     tiles_next_level = struct('name',{},'date',{},'bytes',{},'isdir',{},'datenum',{},'pathname',{},'folderdate',{});
@@ -394,7 +406,7 @@ for addCode = ['0','1','2','3']
     end
 end
 
-function fig = make_figure(cLim,cMap,lighting_effects,dim,dimExt,bgcolor,level)
+function fig = make_figure(cLim,cMap,lighting_effects,dim,dimExt,bgcolor,level,useSurf,shade)
 % level = 20;
 fig.hf = figure('visible','off');
 fig.ha = axes('parent',fig.hf,'position',[0 0 1 1]);
@@ -405,13 +417,20 @@ z = peaks(90) +cos(peaks(90))+cos(magic(90))/5;
 % scale z to color limits
 z = (z - min(z(:))) / (max(z(:))-min(z(:))) * (cLim(2)-cLim(1)) + cLim(1);
 
-fig.hp  = surf(fig.ha,x,x,z);
+if useSurf
+    fig.hp  = surf(fig.ha,x,x,z);
+else
+    fig.hp  = pcolor(fig.ha,x,x,z);
+end
 set(fig.ha,'CLim',cLim)
 set(fig.hf,'PaperUnits', 'inches','PaperPosition',...
     [0 0 dim+2*dimExt dim+2*dimExt],...
     'color',bgcolor/255,'InvertHardcopy','off');
 
-shading interp;axis off;
+% shading interp;
+shading(fig.ha, shade)
+
+axis off;
 axis tight;view(0,90);
 set(fig.ha,'DataAspectRatioMode','manual')
 if lighting_effects
