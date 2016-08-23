@@ -151,6 +151,10 @@ end
        altitudeMode = sprintf([...
            '<altitudeMode>clampToGround</altitudeMode>\n']);
        z = zeros(size(lon));
+   elseif strcmpi(z,'relativeToGround')
+       altitudeMode = sprintf([...
+           '<altitudeMode>relativeToGround</altitudeMode>\n']);
+       z = zeros(size(lon))+0.1;
    else
        altitudeMode = sprintf([...
            '%s'...extrude
