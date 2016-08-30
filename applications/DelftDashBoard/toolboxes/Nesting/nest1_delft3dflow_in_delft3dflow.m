@@ -90,7 +90,7 @@ if ~isfield(detail,'cs')
     end
 end
 
-if strcmpi(detail.cs.name,'unspecified')
+if ~strcmpi(detail.cs.name,'unspecified')
     grid = ddb_wlgrid('read',detail.grdfile);
     [grd.X,grd.Y]=convertCoordinates(grid.X,grid.Y,'CS1.name',detail.cs.name,'CS1.type',detail.cs.type,'CS2.name',overall.cs.name,'CS2.type',overall.cs.type);
     switch lower(overall.cs.type)
@@ -106,7 +106,7 @@ if strcmpi(detail.cs.name,'unspecified')
 end
 
 %% Run NestHD1
-cd(overall.path)
+%cd(overall.path)
 fid=fopen('nesthd1.inp','wt');
 fprintf(fid,'%s\n',overall.grdfile);
 fprintf(fid,'%s\n',overall.encfile);
@@ -139,8 +139,8 @@ end
 %% Delete temporary files
 delete('nesthd1.inp');
 for ii = 1:2
-    if ii == 1;     cd(overall.path); end
-    if ii == 1;     cd(detail.path); end
+%     if ii == 1;     cd(overall.path); end
+%     if ii == 1;     cd(detail.path); end
 try
     delete('ddtemp.obs');
 end
@@ -154,5 +154,5 @@ if exist('TMP.bnd','file')
     delete('TMP.bnd');
 end
 end
-cd(overall.path);
+% cd(overall.path);
 

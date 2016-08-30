@@ -88,7 +88,8 @@ handles=getHandles;
 if exist([handles.model.delft3dflow.exedir,'nesthd1.exe'],'file'),
     exedir=handles.model.delft3dflow.exedir;
 else
-    exedir=handles.toolbox.nesting.delft3dflow.dataDir;
+%    exedir=handles.toolbox.nesting.delft3dflow.dataDir;
+    exedir=handles.toolbox.nesting.dataDir;
 end
 
 %% Overall model is Delft3D-FLOW
