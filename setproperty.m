@@ -226,8 +226,7 @@ end
 
 
 %% check and parse varargin
-assert(length(varargin) >= 0, 'Not enough input arguments.')
-assert(length(varargin) <= 4, 'Too many input arguments.')
+narginchk(2, Inf);
 
 if odd(length(varargin))
      error('SETPROPERTY:varargin',...

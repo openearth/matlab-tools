@@ -39,7 +39,7 @@ function varargout = wms(varargin)
 %
 % Example: World DEM
 %
-%   [url,OPT] = wms('server','http://geoport.whoi.edu/thredds/wms/bathy/smith_sandwell_v11?','colorscalerange',[-2e3 2e3]);
+%   [url,OPT] = ogc.wms('server','http://geoport.whoi.edu/thredds/wms/bathy/smith_sandwell_v11?','colorscalerange',[-2e3 2e3]);
 %   urlwrite(url,['tmp',OPT.ext]);
 %   [A,map,alpha] = imread(['tmp',OPT.ext]);
 %  %[A,map,OPT] = imread(url); or read direct from www, but better keep local cache
@@ -89,6 +89,8 @@ function varargout = wms(varargin)
 
 % http://geoport.whoi.edu/thredds/wms/bathy...';
 
+import ogc.*
+
 lim.service = 'WMS';
 lim.version = {''}; % union of those offered by server and those implemented here
 
@@ -124,7 +126,7 @@ OPT.cachedir        = [tempdir,'matlab.ows',filesep]; % store cache of xml (and 
 
 %% get_capabilities
 
-   xml = wxs_url_cache(OPT.server,['service=',lim.service,'&version=',OPT.version,'&request=GetCapabilities'],OPT.cachedir);
+   xml = ogc.wxs_url_cache(OPT.server,['service=',lim.service,'&version=',OPT.version,'&request=GetCapabilities'],OPT.cachedir);
 
 %% check available version
 
@@ -164,7 +166,9 @@ OPT.cachedir        = [tempdir,'matlab.ows',filesep]; % store cache of xml (and 
          end
       else
          if strcmpi(OPT.layers,xml.Capability.Layer.Layer(ilayer).Name)
-            Layer = xml.Capability.Layer.Layer(ilayer);
+            %Layer = xml.Capability.Layer.Layer(ilayer);
+            %copy properties from parent
+            Layer = mergestructs('overwrite',xml.Capability.Layer,xml.Capability.Layer.Layer(ilayer))
             Layer.index = [ilayer];
             continue
          end

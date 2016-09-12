@@ -67,6 +67,8 @@ function varargout = wcs(varargin)
 
 % http://geoport.whoi.edu/thredds/wcs/bathy/srtm30plus_v6?request=GetCoverage&version=1.0.0&service=WCS&format=netcdf3&coverage=topo&BBOX=0,50,10,55
 
+import ogc.*
+
 lim.service = 'WCS';
 lim.version = {''}; % union of those offered by server and those implemented here
 
@@ -168,7 +170,7 @@ else
       warning('No DescribeCoverage, guessed file a format')
       OPT.format = 'GeoTIFF';
    end
-   
+   OPT
    [OPT.format] = wxs_keyword_match('a format',OPT.format,lim.format,OPT);
    
 %% check crs

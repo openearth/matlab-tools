@@ -22,6 +22,7 @@
 
 SET.plot = 1; % 0 for catalogue only, 1 to download wms (SLOW)
 clc
+import ogc.*
 %% THREDDS MyOcean (bit slow)
 %  test: need to use color range
 %  test: 2 dimenions: elevation + time
@@ -112,7 +113,7 @@ if SET.plot;wms_image_plot(url,OPT);end
 %  test: BoundingBox is a layer property per coordinate system (incl. one 4326 system), and not global 4326 property 
 %  test: version=1.1.1 only
 
-server = 'http://gdsc.nlr.nl/wms/lufo2005?';
+server = 'https://geodata1.nationaalgeoregister.nl/luchtfoto/wms?';
 [url,OPT,lims] = wms('server',server,'layers','Ortho','styles','default');
 disp(['wms_test:version: ',num2str(OPT.version),' crs: ',num2str(OPT.crs), ' ',url])
 if SET.plot;wms_image_plot(url,OPT);end
@@ -129,7 +130,7 @@ if SET.plot;wms_image_plot(url,OPT);end
 %  test: no style
 
 server = 'http://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv?';
-[url,OPT,lims] = wms('server',server);
+[url,OPT,lims] = wms('server',server,'layers','GEBCO_08_GRID'); % issues with GEBCO_LATEST
 disp(['wms_test:version: ',num2str(OPT.version),' crs: ',num2str(OPT.crs), ' ',url])
 if SET.plot;wms_image_plot(url,OPT);end
   
@@ -151,9 +152,7 @@ if SET.plot;wms_image_plot(url,OPT);end
 %  test: layer.layer (no 3rd layer level)
 
 server = 'http://geodata.nationaalgeoregister.nl/ahn25m/wms?';
-[url,OPT,lims] = wms('server',server,'layers','ahn25m',...
-         'crs','epsg:28992',...    
-        'axis',[94000 466000 96000 468000]);
+[url,OPT,lims] = wms('server',server,'layers','ahn25m');
 disp(['wms_test:version: ',num2str(OPT.version),' crs: ',num2str(OPT.crs), ' ',url])
 if SET.plot;wms_image_plot(url,OPT);end
 

@@ -4,7 +4,13 @@ function varargout = wms_image_plot(url,OPT)
 % [url,OPT,lims] = wms('server',server,'layers','Ortho');
 % wms_image_plot(url,OPT)
 %
+% Only plots CRS EPSG%3A4326.
+%
 %See also: wms, imread, urlwrite
+
+if ~strcmp(OPT.crs,'EPSG%3A4326')
+    error('only plots WGS 84 code EPSG%3A4326')
+end
 
 %% download cache of image
 

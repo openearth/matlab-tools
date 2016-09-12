@@ -65,6 +65,8 @@ function varargout = wfs(varargin)
 
 % http://geoport.whoi.edu/thredds/wcs/bathy/srtm30plus_v6?request=GetCoverage&version=1.0.0&service=WCS&format=netcdf3&coverage=topo&BBOX=0,50,10,55
 
+import ogc.*
+
 lim.service = 'WFS';
 lim.version = {''}; % union of those offered by server and those implemented here
 

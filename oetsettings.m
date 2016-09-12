@@ -1,22 +1,24 @@
 function oetsettings(varargin)
-%OETSETTINGS   enable the openearthtools matlab tools by adding all relevant matlab paths.
+%OETSETTINGS   add openearthtools matlab tools to matlab and java paths
 %
-% openearthtools is a collection of open source tools intended to be licensed under the (<a href="http://www.gnu.org/licenses/licenses.html">GNU (Lesser) Public License</a>).
-%
-% In order to suppress this information, run the function with input argument quiet:
-% "oetsettings('quiet');" or "oetsettings quiet"
-%
-% By default oetsettings generates a tutorial search database (only if no current database 
-% or current database is outdated). Suppressed generation: "oetsettings(...,'searchdb',false);"
+% openearthtools is a collection of open source tools intended for license 
+% under http://www.gnu.org/licenses/licenses.html, but licensing may vary 
+% per file. In order to suppress this information, run the function with 
+% input argument quiet: "oetsettings('quiet');" or "oetsettings quiet"
+% By default oetsettings generates a tutorial search database (only if no 
+% current database or current database is outdated). Suppressed generation:
+% "oetsettings(...,'searchdb',false);"
 % 
 % For more information on openearthtools refer to the following sources:
-% * wiki:                 <a href="http://OpenEarth.nl">OpenEarth.nl</a>, <a href="http://OpenEarth.nl">OpenEarth.eu</a>
-% * 1. Subversion, data   <a href="https://svn.oss.deltares.nl/repos/openearthrawdata/trunk/">https://svn.oss.deltares.nl/repos/openearthrawdata/trunk/matlab</a>
-% *    ,,        models   <a href="https://svn.oss.deltares.nl/repos/openearthmodels/trunk/">https://svn.oss.deltares.nl/repos/openearthmodels/trunk/matlab</a>
-% *    ,,         tools   <a href="https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab">https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab</a>
-% * 2. OPeNDAP/netCDF     <a href="http://opendap.deltares.nl">http://opendap.deltares.nl</a>
-% *    PostgreSQL/PostGIS ...
-% * 3. Google Earth       <a href="http://kml.deltares.nl">http://kml.deltares.nl</a>, opendap
+% * wiki:                   <a href="http://OpenEarth.nl">OpenEarth.nl</a>, <a href="http://OpenEarth.nl">OpenEarth.eu</a>
+% * community:              <a href="https://www.linkedin.com/groups/3746269">OpenEarth group</a>
+% * 1. svn data             <a href="https://svn.oss.deltares.nl/repos/openearthrawdata/trunk/">https://svn.oss.deltares.nl/repos/openearthrawdata/trunk/matlab</a>
+%      svn models           <a href="https://svn.oss.deltares.nl/repos/openearthmodels/trunk/">https://svn.oss.deltares.nl/repos/openearthmodels/trunk/matlab</a>
+%      svn tools            <a href="https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab">https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab</a>
+%      git tools            <a href="https://github.com/openearth">https://github.com/openearth</a>
+% * 2. OPeNDAP/netCDF       <a href="http://opendap.deltares.nl">http://opendap.deltares.nl</a>
+%      Postgres/PostGIS/WxS <a href="http://marineprojects.openearth.eu">http://marineprojects.openearth.eu</a>
+% * 3. Google Earth         <a href="http://kml.deltares.nl">http://kml.deltares.nl</a>
 % * Matlab: + Scroll through the openearthtools directories 
 %           + use help     : help netcdf, help general, help applications
 %           + use lookfor  : lookfor google, lookfor 

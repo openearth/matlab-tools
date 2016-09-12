@@ -7,6 +7,9 @@ function [val,i] = wxs_keyword_match(txt,val,set,OPT)
 %  manner. [csw 2.0.2 p 128]
 %
 %See also: strcmpi
+
+import ogc.*
+
    if ischar(set)
        set = cellstr(set);
    end
@@ -33,7 +36,7 @@ function [val,i] = wxs_keyword_match(txt,val,set,OPT)
        val = set{i};
        end
    else
-      i = strmatch(val,set,'exact');
+      i = strmatch(lower(val),lower(set),'exact'); % EPSG or epsg is same
       if isempty(i)
           dprintf(2,['wxs:not valid: ',txt,'="',val,'", choose from valid options:'])
           % throw menu to show options that are available

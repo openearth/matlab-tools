@@ -14,11 +14,6 @@ function swan_io_spectrum2nc(S,ncfile,varargin)
 %   Copyright (C) 2014 Van Oord
 %       Gerben de Boer, <gerben.deboer@vanoord.com>
 %
-%       Watermanweg 64
-%       3067 GG
-%       Rotterdam
-%       Netherlands
-%
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
 %   the Free Software Foundation, either version 3 of the License, or
@@ -49,6 +44,17 @@ function swan_io_spectrum2nc(S,ncfile,varargin)
 % $Revision: 10097 $
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/general/signal_fun/running_median_filter.m $
 % $Keywords: $
+
+%% TO DO for SWAN?
+% - use standard_name for x/y: projection_x_coordinate/projection_y_coordinate
+% - double x/y instead of float
+% - global attribute Convention with small c
+% - global attribute History small h
+% - please include an extra variable to store the point names
+% - add attribute coordinates
+% - add standard name for theta_1d
+% - theta_1d:standard_name = "sea_surface_wave_from_direction" ;
+
 
 %% keywords
 

@@ -8,7 +8,7 @@
 %  see also: http://disc.sci.gsfc.nasa.gov/services/ogc_wms
 
 warning('WIP')
-
+import ogc.*
 %% get url and data
 % http://www.nationaalgeoregister.nl/geonetwork/srv/dut/search#|94e5b115-bece-4140-99ed-93b8f363948e
 
