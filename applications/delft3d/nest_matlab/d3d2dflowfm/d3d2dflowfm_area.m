@@ -25,7 +25,6 @@ if mdf.mnkmax(3) > 1
     if simona2mdf_fieldandvalue(mdf,'zmodel')
         if strcmp(lower(mdf.zmodel),'y')
             mdu.geometry.Layertype      = 2;
-            mdu.geometry.Floorlevtoplay = mdf.ztop; 
         end
     end
 end
