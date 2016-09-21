@@ -130,7 +130,7 @@ function varargout = csv2struct(fname,varargin)
       if OPT.units
       rec      = fgetl_no_comment_line(fid,OPT.commentstyle);
       units    = textscan(rec,fmt,'Delimiter',OPT.delimiter,'commentstyle',OPT.commentstyle);
-      UNITS    = cellfun(@(x) x([2:end-1]),units{1},'UniformOutput',0);
+      UNITS    = cellfun(@(x) x{1}([2:end-1]),units,'UniformOutput',0);
       else
       UNITS    = [];
       end
@@ -189,7 +189,7 @@ function varargout = csv2struct(fname,varargin)
 function mat = col2mat(col)
         
    mat = str2double(col);
-   if any(isnan(mat) & cellfun(@(x) ~isempty(x),col))
+   if any(isnan(mat) & cellfun(@(x) ~isempty(x),col) & ~strcmpi(col,'nan'))
       mat = col; % revert entire col
    end        
    
