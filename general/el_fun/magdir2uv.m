@@ -24,7 +24,7 @@ end;
 for ii = 1:size(dir,1)
     for jj=1:size(dir,2)
         
-        if dir(ii,jj) > 0 && dir(ii,jj) < 90 % qu(ii,jj)adrant 1, 0-90 degrees
+        if dir(ii,jj) > 0 && dir(ii,jj) < 90 % quadrant 1, 0-90 degrees
             if strcmp(convention,'cartesian')
                 u(ii,jj) = sind(dir(ii,jj)).*mag(ii,jj);
                 v(ii,jj) = cosd(dir(ii,jj)).*mag(ii,jj);
@@ -33,7 +33,7 @@ for ii = 1:size(dir,1)
                 v(ii,jj) = cosd(dir(ii,jj)).*mag(ii,jj).*-1;
             end
             
-        elseif dir(ii,jj) > 90 && dir(ii,jj) < 180 % qu(ii,jj)adrant 2, 90-180 degrees
+        elseif dir(ii,jj) > 90 && dir(ii,jj) < 180 % quadrant 2, 90-180 degrees
             if strcmp(convention,'cartesian')
                 u(ii,jj) = cosd(dir(ii,jj)-90).*mag(ii,jj);
                 v(ii,jj) = sind(dir(ii,jj)-90).*mag(ii,jj).*-1;
@@ -42,7 +42,7 @@ for ii = 1:size(dir,1)
                 v(ii,jj) = sind(dir(ii,jj)-90).*mag(ii,jj);
             end
             
-        elseif dir(ii,jj) > 180 && dir(ii,jj) < 270 % qu(ii,jj)adrant 3, 180-270 degrees
+        elseif dir(ii,jj) > 180 && dir(ii,jj) < 270 % quadrant 3, 180-270 degrees
             if strcmp(convention,'cartesian')
                 u(ii,jj) = sind(dir(ii,jj)-180).*mag(ii,jj).*-1;
                 v(ii,jj) = cosd(dir(ii,jj)-180).*mag(ii,jj).*-1;
@@ -51,7 +51,7 @@ for ii = 1:size(dir,1)
                 v(ii,jj) = cosd(dir(ii,jj)-180).*mag(ii,jj);
             end
             
-        elseif dir(ii,jj) > 270 && dir(ii,jj) < 360 % qu(ii,jj)adrant 4, 270-360 degrees
+        elseif dir(ii,jj) > 270 && dir(ii,jj) < 360 % quadrant 4, 270-360 degrees
             if strcmp(convention,'cartesian')
                 u(ii,jj) = cosd(dir(ii,jj)-270).*mag(ii,jj).*-1;
                 v(ii,jj) = sind(dir(ii,jj)-270).*mag(ii,jj);
