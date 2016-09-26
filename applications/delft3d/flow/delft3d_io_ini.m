@@ -150,11 +150,12 @@ end
       if ~(isempty(strfind (char(MDF.keywords.sub1(1)),'S'       )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'salinity'     ;end
       if ~(isempty(strfind (char(MDF.keywords.sub1(2)),'T'       )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'temperature'  ;end
       if ~(isempty(strfind (char(MDF.keywords.sub2(2)),'C'       )))
-          if sum(strcmp(fieldnames(MDF.keywords),'namc1'))>0        ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent1' ;end
-          if sum(strcmp(fieldnames(MDF.keywords),'namc2'))>0        ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent2' ;end
-          if sum(strcmp(fieldnames(MDF.keywords),'namc3'))>0        ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent3' ;end
-          if sum(strcmp(fieldnames(MDF.keywords),'namc4'))>0        ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent4' ;end
-          if sum(strcmp(fieldnames(MDF.keywords),'namc5'))>0        ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent5' ;end
+          nconsts= sum(~cellfun('isempty',regexp(fieldnames(MDF.keywords),'namc*')));
+          for constituent = 1:nconsts
+              j = j+1;
+              PAR.nlayers(j)= [D.kmax  ];
+              PAR.names{j} = sprintf('constituent%i',constituent);
+          end
       end
       if ~(isempty(strfind (char(MDF.keywords.sub1(4)),'I'       )));j=j+1;PAR.nlayers(j)= [       1];PAR.names{j} = 'secondaryflow';end
       if ~(isempty(strfind (char(MDF.keywords.sub1(4)),'I'       )));disp('Not tested for secondary flow yet .......');end
