@@ -79,9 +79,17 @@ xlsallign(filename,sheetname,range,'horizontal',4);
 xlsfont  (filename,sheetname,range,'size',12,'fontstyle','bold' );
 
 % set format interior
-
-range            = det_excel_range(2 + no_com,2,size(cell_arr,1),size(cell_arr,2),'rowcol');
-set_format_excel (filename,sheetname,range,OPT.format);
+if ~iscell(OPT.format)
+    range            = det_excel_range(2 + no_com,2,size(cell_arr,1),size(cell_arr,2),'rowcol');
+    set_format_excel (filename,sheetname,range,OPT.format);
+else
+    no_row = size(cell_arr,2) - 1;
+    for i_row = 1: no_row
+        range            = det_excel_range(2 + no_com,1 + i_row,size(cell_arr,1),1 + i_row,'rowcol');
+        set_format_excel (filename,sheetname,range,OPT.format{i_row});
+    end
+end
+    
 
 % set borders
 range            = det_excel_range(1         ,1,size(cell_arr,1),size(cell_arr,2),'rowcol');
