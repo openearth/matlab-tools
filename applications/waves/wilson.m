@@ -1,9 +1,9 @@
-function [Hs,T] = bretschneider(u,h,fetch)
+function [Hs] = wilson(u,h,fetch)
 %Computes the wave height and wave period  based on the formulation by
-% Bretchneider (1958)
+% Wilson (1965)
 %
 %   Syntax:
-%   [Hs,T] = bretschneider(u,h,fetch)
+%   [Hs] = wilson(u,h,fetch)
 %
 %   Input:
 %   u = wind speed in m/s at 10 m height
@@ -12,13 +12,14 @@ function [Hs,T] = bretschneider(u,h,fetch)
 %
 %   Output:
 %   Hs = significant wave height (m)
-%   T = wave spectrum peak period (s)
 %
 %   Example
-%   [Hs,T] = breugem_holthuijsen(u,h,fetch)
+%   [Hs] = wilson(u,h,fetch)
 %
-%   See also breugem_holthuijsen
+%   See also wilson
 
+%% Copyright notice
+%   --------------------------------------------------------------------
 %   Copyright (C) 2016 Arcadis
 %       grasmeijerb
 %
@@ -53,11 +54,11 @@ function [Hs,T] = bretschneider(u,h,fetch)
 % Created: 12 Sep 2016
 % Created with Matlab version: 9.0.0.341360 (R2016a)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: bretschneider.m 12909 2016-10-06 12:25:35Z bartgrasmeijer.x $
+% $Date: 2016-10-06 14:25:35 +0200 (Thu, 06 Oct 2016) $
+% $Author: bartgrasmeijer.x $
+% $Revision: 12909 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/waves/bretschneider.m $
 % $Keywords: $
 
 %%
@@ -76,7 +77,5 @@ function [Hs,T] = bretschneider(u,h,fetch)
 % fetch = 1000; %m
 g = 9.82;     %m/s^2
 
-Hs = (((0.283.*(tanh(0.530.*(g.*h./u.^2).^0.750))).*tanh((0.0125.*((g.*fetch./u.^2).^0.42))/(tanh(0.530.*((g.*h./u.^2).^0.750))))).*u.^2)./g;
-
-T = ((((2.*pi.*1.2).*(tanh(0.833.*(g.*h./u.^2).^0.375))).*tanh((0.077.*((g.*fetch./u.^2).^0.25))/(tanh(0.833.*((g.*h./u.^2).^0.375))))).*u)./g;
-
+Hstilde = 0.30.*(1-(1+0.004.*(g.*fetch/(u.^2)).^0.5).^-2);
+Hs = (Hstilde.*u.^2)./g;
