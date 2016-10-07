@@ -68,8 +68,8 @@ disp(' ');
 disp('Initializing script...');
 disp(' ');
 
-mdf_folder   = mdf_file(1,1:(max(strfind(mdf_file,filesep))-1));
-mdf_filename = mdf_file(1,(max(strfind(mdf_file,filesep))+1):end);
+[mdf_folder,mdf_filename,mdfExt] = fileparts(mdf_file);
+mdf_filename = [mdf_filename,mdfExt];
 
 mdf_data = delft3d_io_mdf('read',mdf_file);
 
@@ -83,7 +83,7 @@ disp(' ');
 grd = delft3d_io_grd('read',[mdf_folder filesep mdf_data.keywords.filcco]);
 
 % only select tri-diag files for chosen mdf
-tri_diag_files = dir([mdf_folder filesep 'tri-diag.' ft_1(1:end-4)]);
+tri_diag_files = dir([mdf_folder filesep 'tri-diag.' ft_1(1:end-4),'*']);
 
 if length(tri_diag_files)>0
     for tri_file_ind = 1:size(tri_diag_files,1)
@@ -93,6 +93,13 @@ else
     error(['No tri-diag file(s) found in the folder, did the model (started to) run in same the folder of the ' mdf_filename ' yet?']);
 end
 
+% if more than 1 tri-diag file is found, the simulation is run in parallel mode (in that case this function should cater for the local M,N reference used for each partition)
+if length(tri_diag_files)>1
+    parallelMode = 1;
+else
+    parallelMode = 0;
+end
+    
 size_of_file_s = sortrows(size_of_file,1);
 
 tri_files_text = {};
@@ -116,7 +123,9 @@ disp(' ');
 
 MN_courant   = zeros(size(tri_files_text,1),2);
 MN_vel_chan  = zeros(size(tri_files_text,1),2);
+MN_wl_chan  = zeros(size(tri_files_text,1),2);
 vel_chan_tel = 0;
+wl_chan_tel = 0;
 courant_tel  = 0;
 
 tic;
@@ -128,7 +137,22 @@ set(findobj(get(dialog_h,'children'),'type','uicontrol'),'string','Cancel','enab
 button_enabled = 0;
 
 vel_chan = 0;
+wl_chan = 0;
+MLocalRef = 1;
+NLocalRef = 1;
 for ii=1:size(tri_files_text,1)
+    % update local reference for each partition (if Delft3D has run in parallel mode)
+    if parallelMode
+        if ~isempty(strfind(tri_files_text{ii,1},'mfg                  :'))
+            [~,line2] = strtok(tri_files_text{ii,1},':');
+            MLocalRef = str2num(line2(2:end));            
+        end
+        if ~isempty(strfind(tri_files_text{ii,1},'nfg                  :'))
+            [~,line2] = strtok(tri_files_text{ii,1},':');
+            NLocalRef = str2num(line2(2:end));            
+        end
+    end
+    
     if (round(ii/max([1 floor(size(tri_files_text,1)/100)]))*max([1 floor(size(tri_files_text,1)/100)])) == ii
         if ishandle(dialog_h)==0
             break
@@ -138,22 +162,44 @@ for ii=1:size(tri_files_text,1)
         end
         set(findobj(dialog_h,'type','text'),'string',{['Progress = ' num2str(round(100*ii/size(tri_files_text,1))) '% (E.T.A. = ' num2str(ceil((1-(ii/size(tri_files_text,1))) .* (toc / (ii/size(tri_files_text,1)))),'%9.0f') ' sec.)'];' ';['To only continue with the current'];['progress, press Cancel below']}); drawnow;
     end
+    
+    % store location where velocity change was too high (as reported in previous line)
     if vel_chan == 1
         if ~isempty(strfind(tri_files_text{ii,1},'(m,n,k) = (')) && ~isempty(strfind(tri_files_text{ii,1},', abs')) && isempty(strfind(tri_files_text{ii,1},'***'))
             comma_inds   = strfind(tri_files_text{ii,1},',');
             vel_chan_tel = vel_chan_tel + 1;
-            MN_vel_chan(vel_chan_tel,:) = eval(['[' tri_files_text{ii,1}(1,12:comma_inds(4)-1) ']']);
+            MN_vel_chan(vel_chan_tel,:) = eval(['[' tri_files_text{ii,1}(1,12:comma_inds(4)-1) ']+[MLocalRef-1 NLocalRef-1]']);
         else
             vel_chan = 0;
         end
     end
+    
+    % store location where water level change was too high (as reported in previous line)
+    if wl_chan == 1
+        if ~isempty(strfind(tri_files_text{ii,1},'(m,n) = (')) && ~isempty(strfind(tri_files_text{ii,1},', abs')) && isempty(strfind(tri_files_text{ii,1},'***'))
+            comma_inds   = strfind(tri_files_text{ii,1},',');
+            wl_chan_tel = wl_chan_tel + 1;
+            MN_wl_chan(wl_chan_tel,:) = eval(['[' tri_files_text{ii,1}(1,10:comma_inds(3)-2) ']+[MLocalRef-1 NLocalRef-1]']);
+        else
+            wl_chan = 0;
+        end
+    end
+    
+    % If Velocity change too high is reported, check on next line for the M,N location
     if ~isempty(strfind(tri_files_text{ii,1},'*** WARNING Velocity change too high'))
         vel_chan = 1;
     end
+    
+    % If waterlevel change too high is reported, check on next line for the M,N location
+    if ~isempty(strfind(tri_files_text{ii,1},'*** ERROR Water level change too high'))
+        wl_chan = 1;
+    end
+    
+    % check if Courant number warning is reported and get the M,N location
     if ~isempty(strfind(tri_files_text{ii,1},'*** MESSAGE Courant number for'))
         comma_inds  = strfind(tri_files_text{ii,1},',');
         courant_tel = courant_tel + 1;
-        MN_courant(courant_tel,:) = eval(['[' tri_files_text{ii,1}(1,strfind(tri_files_text{ii,1},'(m,n,k) = (')+11:comma_inds(4)-1) ']']);
+        MN_courant(courant_tel,:) = eval(['[' tri_files_text{ii,1}(1,strfind(tri_files_text{ii,1},'(m,n,k) = (')+11:comma_inds(4)-1) ']+[MLocalRef-1 NLocalRef-1]']);
     end
 end
 
@@ -165,58 +211,39 @@ disp(' ');
 disp('Processing all obtained data to unique grid-points...');
 
 % remove trailing zeros:
-
 MN_courant  = MN_courant(find(MN_courant(:,1) ~= 0),:);
 MN_vel_chan = MN_vel_chan(find(MN_vel_chan(:,1) ~= 0),:);
+MN_wl_chan = MN_wl_chan(find(MN_wl_chan(:,1) ~= 0),:);
 
 % Only get the unique m,n indices:
+MN_vel_chan = unique(MN_vel_chan,'rows');
+MN_courant = unique(MN_courant,'rows');
+MN_wl_chan = unique(MN_wl_chan,'rows');
 
-if ~isempty(MN_vel_chan)
-    % sort first row:
-    MN_vel_chan = sortrows(MN_vel_chan,1);
-    tel = 1;
-    while tel < size(MN_vel_chan,1)
-        MN_vel_chan(find(MN_vel_chan(:,1) == MN_vel_chan(tel,1)),:) = sortrows(MN_vel_chan(find(MN_vel_chan(:,1) == MN_vel_chan(tel,1)),:),2);
-        tel = max(find(MN_vel_chan(:,1) == MN_vel_chan(tel,1)))+1;
-    end
-    tel_end   = size(MN_vel_chan,1);
-    tel_start = size(MN_vel_chan,1)-1;
-    while tel_start > 0
-        while tel_start > 0 && (MN_vel_chan(tel_end,1) == MN_vel_chan(tel_start,1)) && (MN_vel_chan(tel_end,2) == MN_vel_chan(tel_start,2))
-            tel_start = tel_start - 1;
-        end
-        if length(tel_start+1:tel_end)>1
-            MN_vel_chan(tel_start+1:tel_end-1,:)=[];
-        end
-        tel_end = tel_start;
+%% get overview of partitioned grid for visualisation
+if  parallelMode
+    try        
+       trim = qpfopen([mdf_folder filesep 'trim-' mdf_filename(1:end-4) '.dat']); 
+       partitions = qpread(trim,'parallel partition numbers','griddata');
+       partitions.Val = partitions.Val+1; % to match the partitions numbers with the numbers in the tri-diag filenames
+       NrPartitions = nanmax(nanmax(partitions.Val));
+       colormap = repmat([0.9 0.9 0.9; 0.7 0.7 0.7],100,1);
+       colormap = colormap(1:NrPartitions,:);
     end
 end
 
-if ~isempty(MN_courant)
-    % sort first row:
-    MN_courant = sortrows(MN_courant,1);
-    tel = 1;
-    while tel < size(MN_courant,1)
-        MN_courant(find(MN_courant(:,1) == MN_courant(tel,1)),:) = sortrows(MN_courant(find(MN_courant(:,1) == MN_courant(tel,1)),:),2);
-        tel = max(find(MN_courant(:,1) == MN_courant(tel,1)))+1;
-    end
-    tel_end   = size(MN_courant,1);
-    tel_start = size(MN_courant,1)-1;
-    while tel_start > 0
-        while tel_start > 0 && (MN_courant(tel_end,1) == MN_courant(tel_start,1)) && (MN_courant(tel_end,2) == MN_courant(tel_start,2))
-            tel_start = tel_start - 1;
-        end
-        if length(tel_start+1:tel_end)>1
-            MN_courant(tel_start+1:tel_end-1,:)=[];
-        end
-        tel_end = tel_start;
-    end
-end
-
+%% plotting
 disp(' ');
 if ~isempty(MN_courant)
     disp('Plotting image with Courant criteria warnings');
     fig = figure; set(fig,'color','w','inverthardcopy','off','name','Courant criteria warning locations')
+    hold on
+    if exist('partitions','var')        
+        pcolorcorcen(partitions.X,partitions.Y,partitions.Val); hold on;
+        set(gcf,'Colormap',colormap);
+        caxis([1 nanmax(nanmax(partitions.Val))])
+        shading interp
+    end
     pcolor(grd.cor.x,grd.cor.y,nan(size(grd.cor.x))); hold on;
     for ii=1:size(MN_courant,1)
         % grd.cen.x & grd.cen.y - 1
@@ -231,6 +258,13 @@ end
 if ~isempty(MN_vel_chan)
     disp('Plotting image with velocity change warnings');
     fig = figure; set(fig,'color','w','inverthardcopy','off','name','Velocity change warning locations')
+    hold on
+    if exist('partitions','var')        
+        pcolorcorcen(partitions.X,partitions.Y,partitions.Val); hold on;
+        set(gcf,'Colormap',colormap);
+        caxis([1 nanmax(nanmax(partitions.Val))])
+        shading interp
+    end
     pcolor(grd.cor.x,grd.cor.y,nan(size(grd.cor.x))); hold on;
     for ii=1:size(MN_vel_chan,1)
         % grd.cen.x & grd.cen.y - 2
@@ -240,6 +274,27 @@ if ~isempty(MN_vel_chan)
     xlabel(['X-direction [' grd.CoordinateSystem ' Coordinates]']);
     ylabel(['Y-direction [' grd.CoordinateSystem ' Coordinates]']);
     title(['Locations where velocity changes > 5 m/s after 0.5 timesteps have occured']);
+end
+
+if ~isempty(MN_wl_chan)
+    disp('Plotting image with water level change errors');
+    fig = figure; set(fig,'color','w','inverthardcopy','off','name','Water level error locations')
+    hold on
+    if exist('partitions','var')        
+        pcolorcorcen(partitions.X,partitions.Y,partitions.Val); hold on;
+        set(gcf,'Colormap',colormap);
+        caxis([1 nanmax(nanmax(partitions.Val))])
+        shading interp
+    end
+    pcolor(grd.cor.x,grd.cor.y,nan(size(grd.cor.x))); hold on;
+    for ii=1:size(MN_wl_chan,1)
+        % grd.cen.x & grd.cen.y - 1
+        plot(grd.cen.x(MN_wl_chan(ii,2),MN_wl_chan(ii,1)-2),grd.cen.y(MN_wl_chan(ii,2),MN_wl_chan(ii,1)-2),'r.','markersize',20);
+    end
+    axis equal; grid on; box on; set(gca,'layer','top','color',[191 239 255]/255);
+    xlabel(['X-direction [' grd.CoordinateSystem ' Coordinates]']);
+    ylabel(['Y-direction [' grd.CoordinateSystem ' Coordinates]']);
+    title(['Locations where water level changes > 20 m have occured']);
 end
 
 if isempty(MN_courant) && isempty(MN_vel_chan)
