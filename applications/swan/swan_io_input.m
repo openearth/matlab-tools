@@ -197,7 +197,7 @@ end
             end
 
 %% Read PROJECT (required)
-            if strcmp(strtok(upper(rec(1:4))),'PROJ')
+            if strcmp(strtok1(upper(rec(1:4))),'PROJ')
                quotes             = strfind(rec,'''');
                if ~isempty(quotes)
                   DAT.project.name   = rec(quotes(1)+1:quotes(2)-1);
@@ -244,9 +244,9 @@ end
             
 %% Read SET (optional)
 %  NOTE that SET can be called on several consecutive lines
-            if strcmp(strtok(upper(rec)),'SET')
+            if strcmp(strtok1(upper(rec)),'SET')
             
-               [keyword,rest_of_rec] = strtok(strtrim(rec));
+               [keyword,rest_of_rec] = strtok1(strtrim(rec));
                
                ind1 = strfind(rest_of_rec,'NAUT');
                ind2 = strfind(rest_of_rec,'CART');
@@ -278,7 +278,7 @@ end
                    end
 
                   %% keywords after CART/NAUT
-                  [nautcart,rest_of_rec] = strtok(rest_of_rec(ind:end));
+                  [nautcart,rest_of_rec] = strtok1(rest_of_rec(ind:end));
                    %if any(findstr(rest_of_rec,'='))
                    %OUT = expressionsfromstring(lower(rest_of_rec),...
                    %                 {'pwtail','froudmax','printf',...
@@ -302,17 +302,17 @@ end
             
 %% Read MODE (optional)
 
-            if strcmp(strtok(upper(rec(1:4))),'MODE')
+            if strcmp(strtok1(upper(rec(1:4))),'MODE')
                DAT.mode.stationary = 1; % default
                DAT.mode.dim        = 2; % default
-              [keyword,rec] = strtok(rec);
-              [keyword,rec] = strtok(rec);
+              [keyword,rec] = strtok1(rec);
+              [keyword,rec] = strtok1(rec);
                if     strcmp(keyword(1:3),'STA')
                DAT.mode.stationary = 1;
                elseif strcmp(keyword(1:5),'NONST')
                DAT.mode.stationary = 0;
                end
-              [keyword,rec] = strtok(rec);
+              [keyword,rec] = strtok1(rec);
                if ~isempty(keyword)
                 if     strcmp(keyword(1:4),'ONED')
                 DAT.mode.dim        = 2;
@@ -326,7 +326,7 @@ end
             
             %  Read COORDinates (optional ? )
             %  ------------------------------------------
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                keyword1         = upper(pad(keyword1,5,' '));
             if    strfind(keyword1(1:5),'COORD')==1
                %rec            = fgetlines_no_comment_line(fid)
@@ -338,16 +338,16 @@ end
             end   
 
 %% Read CGRID (required)  (overwrites previous)
-            if strcmp(strtok(upper(rec)),'CGRID')
+            if strcmp(strtok1(upper(rec)),'CGRID')
                if OPT.debug
                   disp('CGRID processing:')
                end              
-              [keyword,rec]      = strtok(rec); % cgrid
+              [keyword,rec]      = strtok1(rec); % cgrid
 
                %% REGular or CURVilinear
                %  ------------------------------------------
 
-              [keyword1,rec1] = strtok(rec);
+              [keyword1,rec1] = strtok1(rec);
                keyword1      = upper(pad(keyword1,6,' '));
                
                if ~isempty(str2num(keyword1))
@@ -364,21 +364,21 @@ end
                
                   DAT.cgrid.type       = 'curvilinear';
                   
-                 [DAT.cgrid.mxc  ,rec] = strtok(rec);  DAT.cgrid.mxc   = str2num(DAT.cgrid.mxc  );
-                 [DAT.cgrid.myc  ,rec] = strtok(rec);  DAT.cgrid.myc   = str2num(DAT.cgrid.myc  );
+                 [DAT.cgrid.mxc  ,rec] = strtok1(rec);  DAT.cgrid.mxc   = str2num(DAT.cgrid.mxc  );
+                 [DAT.cgrid.myc  ,rec] = strtok1(rec);  DAT.cgrid.myc   = str2num(DAT.cgrid.myc  );
                  
-                  keyword = strtok(rec); % extract EXC
+                  keyword = strtok1(rec); % extract EXC
                   if strcmp(upper(keyword(1:3)),'EXC')
-                  [keyword,rec]=strtok(rec); % remove EXC
-                  [DAT.cgrid.xexc ,rec] = strtok(rec);  DAT.cgrid.xexc  = str2num(DAT.cgrid.xexc );
+                  [keyword,rec]=strtok1(rec); % remove EXC
+                  [DAT.cgrid.xexc ,rec] = strtok1(rec);  DAT.cgrid.xexc  = str2num(DAT.cgrid.xexc );
 
-                     keyword = strtok(rec);
-                     if      strcmp(strtok(keyword(1:3)),'CIR')
+                     keyword = strtok1(rec);
+                     if      strcmp(strtok1(keyword(1:3)),'CIR')
                      DAT.cgrid.yexc = DAT.cgrid.xexc;
-                     elseif  strcmp(strtok(keyword(1:3)),'SEC')                 
+                     elseif  strcmp(strtok1(keyword(1:3)),'SEC')                 
                      DAT.cgrid.yexc = DAT.cgrid.xexc;
                      else
-                     [DAT.cgrid.yexc ,rec] = strtok(rec);  DAT.cgrid.yexc  = str2num(DAT.cgrid.yexc );
+                     [DAT.cgrid.yexc ,rec] = strtok1(rec);  DAT.cgrid.yexc  = str2num(DAT.cgrid.yexc );
                      end
 
                   end
@@ -390,17 +390,17 @@ end
 
                   DAT.cgrid.type       = 'regular';
 
-                  if strcmp(strtok(upper(rec)),'REG')
-                     [keyword,rec]=strtok(rec);
+                  if strfind('REGULAR',upper(strtok1(rec)))
+                     [keyword,rec]=strtok1(rec);
                   end
                   
-                 [DAT.cgrid.xpc  ,rec] = strtok(rec);  DAT.cgrid.xpc   = str2num(DAT.cgrid.xpc  );
-                 [DAT.cgrid.ypc  ,rec] = strtok(rec);  DAT.cgrid.ypc   = str2num(DAT.cgrid.ypc  );
-                 [DAT.cgrid.alcp ,rec] = strtok(rec);  DAT.cgrid.alcp  = str2num(DAT.cgrid.alcp );
-                 [DAT.cgrid.xlenc,rec] = strtok(rec);  DAT.cgrid.xlenc = str2num(DAT.cgrid.xlenc);
-                 [DAT.cgrid.ylenc,rec] = strtok(rec);  DAT.cgrid.ylenc = str2num(DAT.cgrid.ylenc);
-                 [DAT.cgrid.mxc  ,rec] = strtok(rec);  DAT.cgrid.mxc   = str2num(DAT.cgrid.mxc  );
-                 [DAT.cgrid.myc  ,rec] = strtok(rec);  DAT.cgrid.myc   = str2num(DAT.cgrid.myc  );
+                 [DAT.cgrid.xpc  ,rec] = strtok1(rec);  DAT.cgrid.xpc   = str2num(DAT.cgrid.xpc  );
+                 [DAT.cgrid.ypc  ,rec] = strtok1(rec);  DAT.cgrid.ypc   = str2num(DAT.cgrid.ypc  );
+                 [DAT.cgrid.alcp ,rec] = strtok1(rec);  DAT.cgrid.alcp  = str2num(DAT.cgrid.alcp );
+                 [DAT.cgrid.xlenc,rec] = strtok1(rec);  DAT.cgrid.xlenc = str2num(DAT.cgrid.xlenc);
+                 [DAT.cgrid.ylenc,rec] = strtok1(rec);  DAT.cgrid.ylenc = str2num(DAT.cgrid.ylenc);
+                 [DAT.cgrid.mxc  ,rec] = strtok1(rec);  DAT.cgrid.mxc   = str2num(DAT.cgrid.mxc  );
+                 [DAT.cgrid.myc  ,rec] = strtok1(rec);  DAT.cgrid.myc   = str2num(DAT.cgrid.myc  );
                  
                   DAT.cgrid.x = linspace(DAT.cgrid.xpc,DAT.cgrid.xpc+DAT.cgrid.xlenc,DAT.cgrid.mxc+1);
                   DAT.cgrid.y = linspace(DAT.cgrid.ypc,DAT.cgrid.ypc+DAT.cgrid.ylenc,DAT.cgrid.myc+1);
@@ -419,35 +419,35 @@ end
 
                elseif strcmp(keyword1(1:7),'UNSTRUC') % sub-keyword REGular or no sub-keyword
                   DAT.cgrid.type       = 'unstructured';
-                  [keyword,rec]=strtok(rec);
+                  [keyword,rec]=strtok1(rec);
                end
                
                %  CIRCle or SECTtor
                %  ------------------------------------------
 
-               keyword = strtok(rec); % extract CIRC
-               if     strcmp(strtok(keyword(1:3)),'CIR')
-                  [keyword,rec]      = strtok(rec); % remove CIRC
+               keyword = strtok1(rec); % extract CIRC
+               if     strcmp(strtok1(keyword(1:3)),'CIR')
+                  [keyword,rec]      = strtok1(rec); % remove CIRC
                   DAT.cgrid.circle   = 1;
                   DAT.cgrid.sector   = 0;
                   keyword            = 'circle';
                   DAT.cgrid.dir1     = 0;
                   DAT.cgrid.dir2     = 360;
-               elseif  strcmp(strtok(keyword(1:3)),'SEC')
-                  [keyword,rec]      = strtok(rec); % SECT
+               elseif  strcmp(strtok1(keyword(1:3)),'SEC')
+                  [keyword,rec]      = strtok1(rec); % SECT
                   DAT.cgrid.circle   = 0;
                   DAT.cgrid.sector   = 1;
                   keyword            = 'sector';
-                 %[DAT.cgrid.sector.dir1,rec] = strtok(rec);  DAT.cgrid.sector.dir1  = str2num(DAT.cgrid.sector.dir1);
-                 %[DAT.cgrid.sector.dir2,rec] = strtok(rec);  DAT.cgrid.sector.dir2  = str2num(DAT.cgrid.sector.dir2);
-                  [DAT.cgrid.dir1,rec] = strtok(rec);  DAT.cgrid.dir1  = str2num(DAT.cgrid.dir1);
-                  [DAT.cgrid.dir2,rec] = strtok(rec);  DAT.cgrid.dir2  = str2num(DAT.cgrid.dir2);
+                 %[DAT.cgrid.sector.dir1,rec] = strtok1(rec);  DAT.cgrid.sector.dir1  = str2num(DAT.cgrid.sector.dir1);
+                 %[DAT.cgrid.sector.dir2,rec] = strtok1(rec);  DAT.cgrid.sector.dir2  = str2num(DAT.cgrid.sector.dir2);
+                  [DAT.cgrid.dir1,rec] = strtok1(rec);  DAT.cgrid.dir1  = str2num(DAT.cgrid.dir1);
+                  [DAT.cgrid.dir2,rec] = strtok1(rec);  DAT.cgrid.dir2  = str2num(DAT.cgrid.dir2);
                end
-               [DAT.cgrid.mdc  ,rec] = strtok(rec);  DAT.cgrid.mdc   = str2num(DAT.cgrid.mdc  );
-               [DAT.cgrid.flow ,rec] = strtok(rec);  DAT.cgrid.flow  = str2num(DAT.cgrid.flow );
-               [DAT.cgrid.fhigh,rec] = strtok(rec);  DAT.cgrid.fhigh = str2num(DAT.cgrid.fhigh);
+               [DAT.cgrid.mdc  ,rec] = strtok1(rec);  DAT.cgrid.mdc   = str2num(DAT.cgrid.mdc  );
+               [DAT.cgrid.flow ,rec] = strtok1(rec);  DAT.cgrid.flow  = str2num(DAT.cgrid.flow );
+               [DAT.cgrid.fhigh,rec] = strtok1(rec);  DAT.cgrid.fhigh = str2num(DAT.cgrid.fhigh);
                if ~isempty(rec)
-               [DAT.cgrid.msc  ,rec] = strtok(rec);  DAT.cgrid.msc   = str2num(DAT.cgrid.msc  );
+               [DAT.cgrid.msc  ,rec] = strtok1(rec);  DAT.cgrid.msc   = str2num(DAT.cgrid.msc  );
                DAT.cgrid.gamma       = 1 + (-1 + (DAT.cgrid.fhigh./DAT.cgrid.flow).^(1/DAT.cgrid.msc)); % resolution in sigma space
                else
                DAT.cgrid.gamma       = 1.1; % resolution in sigma space
@@ -473,7 +473,7 @@ end
             if isfield(DAT,'cgrid')
                if strcmp(DAT.cgrid.type,'curvilinear') | ...
                   strcmp(DAT.cgrid.type,'unstructured')
-                  keyword = pad(strtok(upper(rec)),4,' ');
+                  keyword = pad(strtok1(upper(rec)),4,' ');
 
                   if strcmp(keyword(1:4),'READ')
                       DAT.readcoor = rec;
@@ -488,53 +488,53 @@ end
             
 %% Read INPgrid (required)
             j = 0;
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                keyword1         = upper(pad(keyword1,3,' '));
             while strfind(keyword1(1:3),'INP')==1 % read all input grids
                j               = j+1;
                
 % TO DO absence of quantity: indeitcla grid for all quantities
                
-              [quantity,rec1]   = strtok(rec1);
-               keyword1         = strtok(rec1);
+              [quantity,rec1]   = strtok1(rec1);
+               keyword1         = strtok1(rec1);
                keyword1 = pad(keyword1,7,' ');
                if     strcmpi(keyword1(1:3),'REG')
                gridtype = 'REG';
-              [keyword1,rec1]   = strtok(rec1);
+              [keyword1,rec1]   = strtok1(rec1);
                elseif strcmpi(keyword1(1:4),'CURV')
                gridtype = 'CURV';
-              [keyword1,rec1]   = strtok(rec1);
+              [keyword1,rec1]   = strtok1(rec1);
                elseif strcmpi(keyword1(1:7),'UNSTRUC')
                gridtype = 'UNSTRUC';
-              [keyword1,rec1]   = strtok(rec1);
+              [keyword1,rec1]   = strtok1(rec1);
                else
                gridtype = 'REG';
                end
 
                if strcmpi(gridtype,'REG')
-              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.xpinp  = str2num(keyword1);
-              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.ypinp  = str2num(keyword1);
-              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.alpinp = str2num(keyword1);
-              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.mxinp  = str2num(keyword1);
-              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.myinp  = str2num(keyword1);
-              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.dxinp  = str2num(keyword1);
-              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.dyinp  = str2num(keyword1);
+              [keyword1,rec1]   = strtok1(rec1);DAT.inpgrid{j}.xpinp  = str2num(keyword1);
+              [keyword1,rec1]   = strtok1(rec1);DAT.inpgrid{j}.ypinp  = str2num(keyword1);
+              [keyword1,rec1]   = strtok1(rec1);DAT.inpgrid{j}.alpinp = str2num(keyword1);
+              [keyword1,rec1]   = strtok1(rec1);DAT.inpgrid{j}.mxinp  = str2num(keyword1);
+              [keyword1,rec1]   = strtok1(rec1);DAT.inpgrid{j}.myinp  = str2num(keyword1);
+              [keyword1,rec1]   = strtok1(rec1);DAT.inpgrid{j}.dxinp  = str2num(keyword1);
+              [keyword1,rec1]   = strtok1(rec1);DAT.inpgrid{j}.dyinp  = str2num(keyword1);
                elseif strcmpi(gridtype,'CURV')
-              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.stagrx  = str2num(keyword1);
-              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.stagry  = str2num(keyword1);
-              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.mxinp   = str2num(keyword1);
-              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.myinp   = str2num(keyword1);
+              [keyword1,rec1]   = strtok1(rec1);DAT.inpgrid{j}.stagrx  = str2num(keyword1);
+              [keyword1,rec1]   = strtok1(rec1);DAT.inpgrid{j}.stagry  = str2num(keyword1);
+              [keyword1,rec1]   = strtok1(rec1);DAT.inpgrid{j}.mxinp   = str2num(keyword1);
+              [keyword1,rec1]   = strtok1(rec1);DAT.inpgrid{j}.myinp   = str2num(keyword1);
                end
                
               %% EXC is optional               
               if ~isempty(strtrim(rec1))
-              [keyword1,rec1]   = strtok(rec1);
+              [keyword1,rec1]   = strtok1(rec1);
                if strcmpi(keyword1(1:3),'EXC')
-              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.exception = str2num(keyword1);
+              [keyword1,rec1]   = strtok1(rec1);DAT.inpgrid{j}.exception = str2num(keyword1);
                end
                end
               
-              [keyword1,rec1]   = strtok(rec1);
+              [keyword1,rec1]   = strtok1(rec1);
                if isempty(keyword1)
                DAT.inpgrid{j}.nonstationary  = 0;
                elseif strcmpi(keyword1(1:7),'NONSTAT')
@@ -544,34 +544,34 @@ end
 
 %% Read READinp (required)
                rec             = fgetlines_no_comment_line(fid);
-              [keyword1,rec1]  = strtok(rec);
+              [keyword1,rec1]  = strtok1(rec);
                keyword1        = upper(pad(keyword1,3,' '));
                READINP         = true;           % in case or more input on same grid
                INPGRID         = DAT.inpgrid{j}; % in case or more input on same grid
                
                while READINP
-                  if strfind(strtok(upper(rec)),'READ')==1
+                  if strfind(strtok1(upper(rec)),'READ')==1
                      DAT.inpgrid{j}.quantity = quantity;
                      DAT.inpgrid{j}.gridtype = gridtype;
 
-                    [DAT.inpgrid{j}.quantity,rec1]   = strtok(rec1);
+                    [DAT.inpgrid{j}.quantity,rec1]   = strtok1(rec1);
                      if ~strcmpi(DAT.inpgrid{j}.quantity,quantity)
                        disp('possible READinp parameter mismatch')
                      end
-                    [DAT.inpgrid{j}.fac      ,rec1]   = strtok(rec1);
-                    [val1                    ,rec1]   = strtok(rec1);
+                    [DAT.inpgrid{j}.fac      ,rec1]   = strtok1(rec1);
+                    [val1                    ,rec1]   = strtok1(rec1);
                     if strcmpi(val1(1:4),'SERI')
-                    [val1                    ,rec1]   = strtok(rec1);
+                    [val1                    ,rec1]   = strtok1(rec1);
                     DAT.inpgrid{j}.fname2 = val1(2:end-1); % remove '
                     else
                     DAT.inpgrid{j}.fname1 = val1(2:end-1); % remove '
                     end
-                    [val1                    ,rec1]   = strtok(rec1);
+                    [val1                    ,rec1]   = strtok1(rec1);
                     DAT.inpgrid{j}.idla  = str2num(val1);
-                    [val1                    ,rec1]   = strtok(rec1);
+                    [val1                    ,rec1]   = strtok1(rec1);
                     DAT.inpgrid{j}.nhedf = str2num(val1);
 
-                    [val1                    ,rec1]   = strtok(rec1);
+                    [val1                    ,rec1]   = strtok1(rec1);
                     while ~isempty(val1)
                         val1 = pad(val1,3,' ');
                         if     strcmpi(val1(1:3),'FRE')
@@ -587,7 +587,7 @@ end
                             DAT.inpgrid{j}.nhedt   = str2num(val1);
                             end
                         end
-                        [val1                    ,rec1]   = strtok(rec1);
+                        [val1                    ,rec1]   = strtok1(rec1);
                     end
                     if strcmpi(DAT.inpgrid{j}.format(1:3),'FOR')
                     warning('READinp ... format not fully implemented')
@@ -600,10 +600,10 @@ end
                   end                  
                   rec              = fgetlines_no_comment_line(fid);
 
-                 [keyword1,rec1]  = strtok(rec);
+                 [keyword1,rec1]  = strtok1(rec);
                   keyword1        = upper(pad(keyword1,3,' '));
                   
-                  if strfind(strtok(upper(rec)),'READ')==1
+                  if strfind(strtok1(upper(rec)),'READ')==1
                     j               = j+1;
                     DAT.inpgrid{j}  = INPGRID;
                   else
@@ -612,19 +612,19 @@ end
                end
                
                foundkeyword     = true;
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                keyword1         = upper(pad(keyword1,3,' '));
             end
             
 %% Read WIND
-            if   strfind(strtok(upper(rec)),'WIND')==1
+            if   strfind(strtok1(upper(rec)),'WIND')==1
                if OPT.debug
                   disp('WIND')
                end
-              [keyword,rec]    = strtok(rec);
-              [value,rec]      = strtok(rec);
+              [keyword,rec]    = strtok1(rec);
+              [value,rec]      = strtok1(rec);
                DAT.wind.vel    = str2num(value);
-              [value,rec]      = strtok(rec);
+              [value,rec]      = strtok1(rec);
                DAT.wind.dir    = str2num(value);
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
@@ -633,7 +633,7 @@ end
 %%  Read BOUndspec (required ?)
             
             j = 0;
-            %keyword = strtok(upper(rec));
+            %keyword = strtok1(upper(rec));
 % GIVES PROBLEMS WHEN BOUNDary IS NOT PRESENT IN swn FILE
 % use previous rec or check whetehr rec is empty next time
             rec3 = rec(1:3); % BOUndspec
@@ -647,15 +647,15 @@ end
                   disp('BOUN')
                end 
                
-              [keyword,rec] = strtok(rec); % remove BOUndspec
-              [keyword,rec] = strtok(rec); % get next one
+              [keyword,rec] = strtok1(rec); % remove BOUndspec
+              [keyword,rec] = strtok1(rec); % get next one
 
               %  SHAPe
               %  NOTE: can be reused
               %  ------------------------------------------
                if strcmp(keyword(1:4),'SHAP')
 
-                [val,rec] = strtok(rec);
+                [val,rec] = strtok1(rec);
                  SHAPESPEC.spectrum = lower(val); % JONswap, PM, GAUSs, BIN
 
                  keyword1 = upper(pad(val,4,' '));
@@ -663,7 +663,7 @@ end
                  if     strcmpi(keyword1(1:3),'JON' )
 
                     SHAPESPEC.gamma   = 3.3; % default;
-                   [val,rec] = strtok(rec);
+                   [val,rec] = strtok1(rec);
                     keyword2     = upper(pad(val,3,' '));
                     if    ~strcmpi(keyword2(1:3),'PEAK' ) | ...
                           ~strcmpi(keyword2(1:3),'MEAN' )
@@ -672,7 +672,7 @@ end
                  elseif strcmpi(keyword1(1:4),'GAUS')
                     
                     SHAPESPEC.sigfr   = []; % No default in manual;
-                   [val,rec] = strtok(rec);
+                   [val,rec] = strtok1(rec);
                     keyword2     = upper(pad(val,3,' '));
                     if    ~strcmpi(keyword2(1:3),'PEAK' ) | ...
                           ~strcmpi(keyword2(1:3),'MEAN' )
@@ -683,8 +683,8 @@ end
                   
                  SHAPESPEC.period   = lower(keyword);  % PEAK, MEAN
 
-                %[keyword,rec] = strtok(rec); % remove DSPR
-                %[keyword,rec] = strtok(rec);
+                %[keyword,rec] = strtok1(rec); % remove DSPR
+                %[keyword,rec] = strtok1(rec);
 
                  SHAPESPEC.directional_distribution = lower(keyword); % POWER or DEGRees
                  
@@ -699,16 +699,16 @@ end
                   end
                   DAT.boundspec(j).specification = 'side';
                   
-                  [winddir ,rec] = strtok(rec);DAT.boundspec(j).side  = winddir;
+                  [winddir ,rec] = strtok1(rec);DAT.boundspec(j).side  = winddir;
                   if strcmpi(DAT.cgrid.type,'unstructured')
                       DAT.boundspec(j).side = str2num(DAT.boundspec(j).side);
                   end
                   
                   % optional
-                  [tmpkeyword,~] = strtok(rec);
+                  [tmpkeyword,~] = strtok1(rec);
                   if strcmpi(tmpkeyword,'CLOCKW') || strcmpi(tmpkeyword,'CCW')
                   DAT.boundspec(j).orientation = tmpkeyword;
-                  [~,rec] = strtok(rec);
+                  [~,rec] = strtok1(rec);
                   else
                   DAT.boundspec(j).orientation = '';
                   end
@@ -721,18 +721,18 @@ end
                   DAT.boundspec(j)               = DAT.boundspec(j-1);
                   end
                   DAT.boundspec(j).specification = 'segment';
-                  [xy_ij,rec] = strtok(rec);
+                  [xy_ij,rec] = strtok1(rec);
                   DAT.boundspec(j).segm.XYIJ = xy_ij;
                   if     strcmp(upper(xy_ij),'XY')
-                     [x,rec]    = strtok(rec);DAT.boundspec(j).segm.x(1) = str2num(x);
-                     [y,rec]    = strtok(rec);DAT.boundspec(j).segm.y(1) = str2num(y);
-                     [x,rec]    = strtok(rec);DAT.boundspec(j).segm.x(2) = str2num(x);
-                     [y,rec]    = strtok(rec);DAT.boundspec(j).segm.y(2) = str2num(y);
+                     [x,rec]    = strtok1(rec);DAT.boundspec(j).segm.x(1) = str2num(x);
+                     [y,rec]    = strtok1(rec);DAT.boundspec(j).segm.y(1) = str2num(y);
+                     [x,rec]    = strtok1(rec);DAT.boundspec(j).segm.x(2) = str2num(x);
+                     [y,rec]    = strtok1(rec);DAT.boundspec(j).segm.y(2) = str2num(y);
                   elseif strcmp(upper(xy_ij),'IJ')
-                     [itxt,rec] = strtok(rec);DAT.boundspec(j).segm.i(1) = str2num(itxt);
-                     [jtxt,rec] = strtok(rec);DAT.boundspec(j).segm.j(1) = str2num(jtxt);
-                     [itxt,rec] = strtok(rec);DAT.boundspec(j).segm.i(2) = str2num(itxt);
-                     [jtxt,rec] = strtok(rec);DAT.boundspec(j).segm.j(2) = str2num(jtxt);
+                     [itxt,rec] = strtok1(rec);DAT.boundspec(j).segm.i(1) = str2num(itxt);
+                     [jtxt,rec] = strtok1(rec);DAT.boundspec(j).segm.j(1) = str2num(jtxt);
+                     [itxt,rec] = strtok1(rec);DAT.boundspec(j).segm.i(2) = str2num(itxt);
+                     [jtxt,rec] = strtok1(rec);DAT.boundspec(j).segm.j(2) = str2num(jtxt);
                   end
                   
                end
@@ -741,22 +741,22 @@ end
                %  ------------------------------------------
                if     strcmpi(keyword(1:4),'SIDE') | ...
                       strcmpi(keyword(1:4),'SEGM')
-                  [keyword,rec] = strtok(rec);
+                  [keyword,rec] = strtok1(rec);
                   if     strcmp(keyword(1:3),'CON')
                      DAT.boundspec(j).constant_vs_variable = 'constant';
-                     [keyword,rec] = strtok(rec);
+                     [keyword,rec] = strtok1(rec);
                      if     strcmp(keyword(1:3),'PAR')
                         DAT.boundspec(j).parameter_vs_file = 'parameter';
-                        [hs ,rec] = strtok(rec);hs  = str2num(hs );DAT.boundspec(j).hs  = hs ;
-                        [per,rec] = strtok(rec);per = str2num(per);DAT.boundspec(j).per = per;
-                        [ang,rec] = strtok(rec);ang = str2num(ang);DAT.boundspec(j).dir = ang;
-                        [dd ,rec] = strtok(rec);dd  = str2num(dd );DAT.boundspec(j).dd  = dd ;
+                        [hs ,rec] = strtok1(rec);hs  = str2num(hs );DAT.boundspec(j).hs  = hs ;
+                        [per,rec] = strtok1(rec);per = str2num(per);DAT.boundspec(j).per = per;
+                        [ang,rec] = strtok1(rec);ang = str2num(ang);DAT.boundspec(j).dir = ang;
+                        [dd ,rec] = strtok1(rec);dd  = str2num(dd );DAT.boundspec(j).dd  = dd ;
                      elseif strcmp(keyword(1:3),'FIL')
                         DAT.boundspec(j).parameter_vs_file = 'file';
                      end
                   elseif strcmp(keyword(1:3),'VAR')
                      DAT.boundspec(j).constant_vs_variable = 'variable';
-                     [keyword,rec] = strtok(rec);
+                     [keyword,rec] = strtok1(rec);
                      if     strcmp(keyword(1:3),'PAR')
                         DAT.boundspec(j).parameter_vs_file = 'parameter';
                      elseif strcmp(keyword(1:3),'FIL')
@@ -766,14 +766,14 @@ end
                end
 
                rec             = fgetlines_no_comment_line(fid);
-               keyword         = strtok(upper(rec));
+               keyword         = strtok1(upper(rec));
                foundkeyword    = true;
                rec3            = rec(1:3);
                
             end % while
             
 %% Read INITial
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                keyword1         = upper(pad(keyword1,4,' '));
             if   strfind(keyword1(1:4),'INIT')==1
                DAT.initial     = rec;
@@ -782,27 +782,27 @@ end
             end   
             
 %% Read GEN1
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
                keyword1         = upper(pad(keyword1,4,' '));
             if strfind(keyword1(1:4),'GEN1')==1
-              [val,rec]        = strtok(rec1);            
+              [val,rec]        = strtok1(rec1);            
                DAT.gen1.cf10   = str2num(val);  
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen1.cf20   = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen1.cf30   = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen1.cf40   = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen1.edmlpm = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen1.cdrag  = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen1.umin   = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen1.cfpm   = str2num(val);               
 
                rec             = fgetlines_no_comment_line(fid);
@@ -813,31 +813,31 @@ end
                
                
 %% Read GEN2
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
                keyword1         = upper(pad(keyword1,4,' '));
             if strfind(keyword1(1:4),'GEN1')==1
-              [val,rec]        = strtok(rec1);            
+              [val,rec]        = strtok1(rec1);            
                DAT.gen1.cf10   = str2num(val);  
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen1.cf20   = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen1.cf30   = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen1.cf40   = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen1.cf50   = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen1.cf60   = str2num(val);               
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen1.edmlpm = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen1.cdrag  = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen1.umin   = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen1.cfpm   = str2num(val);               
 
                rec             = fgetlines_no_comment_line(fid);
@@ -846,33 +846,33 @@ end
                DAT.set.pwtail   = 5;
             end        
 %% Read GEN3
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                keyword1         = upper(pad(keyword1,4,' '));
             if   strfind(keyword1(1:4),'GEN3')==1
                DAT.gen3         = rec;
               
               %% Adapt default settings pwtail
-              [keyword1,rec1]   = strtok(rec1);
+              [keyword1,rec1]   = strtok1(rec1);
                if isempty(keyword1);keyword1 = ' ';end
                keyword1         = upper(pad(keyword1,5,' '));
                DAT.gen3.method  = keyword1;
                if   strcmpi(DAT.gen3.method(1:4),'JANS')==1
                DAT.gen3.pwtail   = 5;
-              [val,rec]        = strtok(rec1);
+              [val,rec]        = strtok1(rec1);
                DAT.gen3.cds1   = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen3.delta  = str2num(val);
                elseif   strcmpi(DAT.gen3.method(1:3),'KOM')==1
-              [val,rec]        = strtok(rec1);
+              [val,rec]        = strtok1(rec1);
                DAT.gen3.cds2   = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.gen3.stpm   = str2num(val);
                elseif   strcmpi(DAT.gen3.method(1:5),'WESTH')==1
                end
                
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                if strcmpi(val,'AGROW')==1
-              [val,rec]        = strtok(rec);                   
+              [val,rec]        = strtok1(rec);                   
                DAT.gen3.a     = str2num(val);           
                end
                
@@ -881,23 +881,23 @@ end
             end             
             
 %% Read WCAP
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
                keyword1         = upper(pad(keyword1,8,' '));
             if strfind(keyword1(1:4),'WCAP')==1
-              [val,rec]        = strtok(rec1);
+              [val,rec]        = strtok1(rec1);
               if strcmpi(val(1:3),'KOM')
-              [val,rec]        = strtok(rec);            
+              [val,rec]        = strtok1(rec);            
                DAT.wcap.cds2   = str2num(val);  
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.wcap.stpm   = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.wcap.powst  = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.wcap.delta  = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.wcap.powk   = str2num(val);
               end
 
@@ -906,24 +906,24 @@ end
             end          
          
 %% Read QUADrupl
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
                keyword1         = upper(pad(keyword1,8,' '));
             if strfind(keyword1(1:4),'QUAD')==1
                 
-              [val,rec]          = strtok(rec1);
+              [val,rec]          = strtok1(rec1);
                DAT.quad.iquad    = str2num(val);  
-              [val,rec]          = strtok(rec);
+              [val,rec]          = strtok1(rec);
                DAT.quad.lambda   = str2num(val);
-              [val,rec]          = strtok(rec);
+              [val,rec]          = strtok1(rec);
                DAT.quad.Cnl4     = str2num(val);
-              [val,rec]          = strtok(rec);
+              [val,rec]          = strtok1(rec);
                DAT.quad.Csh1     = str2num(val);
-              [val,rec]          = strtok(rec);
+              [val,rec]          = strtok1(rec);
                DAT.quad.Csh2     = str2num(val);
-              [val,rec]          = strtok(rec);
+              [val,rec]          = strtok1(rec);
                DAT.quad.Csh3     = str2num(val);
 
                rec             = fgetlines_no_comment_line(fid);
@@ -931,7 +931,7 @@ end
             end             
 
 %% Read MDIA LAMbda
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                keyword1         = upper(pad(keyword1,4,' '));
             if strfind(keyword1(1:4),'MDIA')==1
                DAT.mdia        = rec;
@@ -940,25 +940,25 @@ end
             end 
             
 %% Read BREaking
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                keyword1         = upper(pad(keyword1,3,' '));
             if   strfind(keyword1(1:3),'BRE')==1
-              [val,rec] = strtok(rec1);
+              [val,rec] = strtok1(rec1);
                DAT.breaking.type   = val(1:3);
-              [val,rec] = strtok(rec);
+              [val,rec] = strtok1(rec);
                DAT.breaking.alpha  = str2num(val);               
 
                if    strmatch(DAT.breaking.type,'CON')
-              [val,rec] = strtok(rec);
+              [val,rec] = strtok1(rec);
                DAT.breaking.gamma  = str2num(val);
                elseif strmatch(DAT.breaking.type,'BKD')
-              [val,rec] = strtok(rec);
+              [val,rec] = strtok1(rec);
                DAT.breaking.gamma0 = str2num(val);
-              [val,rec] = strtok(rec);
+              [val,rec] = strtok1(rec);
                DAT.breaking.a1     = str2num(val);
-              [val,rec] = strtok(rec);
+              [val,rec] = strtok1(rec);
                DAT.breaking.a2     = str2num(val);
-              [val,rec] = strtok(rec);
+              [val,rec] = strtok1(rec);
                DAT.breaking.a3     = str2num(val);               
                end
                
@@ -967,7 +967,7 @@ end
             end               
 
 %% Read FRICtion
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
@@ -977,23 +977,23 @@ end
                DAT.friction.expression  = 'JONSWAP';
                DAT.friction.coefficient = 'CONSTANT';
 
-               keyword         = lower(strtok(upper(rec)));
-              [val,rec] = strtok(rec);
-              [val,rec] = strtok(rec);
+               keyword         = lower(strtok1(upper(rec)));
+              [val,rec] = strtok1(rec);
+              [val,rec] = strtok1(rec);
                if length(val) > 3 % in case empty
                DAT.friction.expression = val;
                if     strcmpi(val(1:3),'JON')
-                [DAT.friction.cfjon      ,rec] = strtok(rec);
+                [DAT.friction.cfjon      ,rec] = strtok1(rec);
                  DAT.friction.cfjon            = str2num(DAT.friction.cfjon);
-                [DAT.friction.coefficient,rec] = strtok(rec);
+                [DAT.friction.coefficient,rec] = strtok1(rec);
                elseif strcmpi(val(1:3),'COL')
-                 DAT.friction.cfw   = str2num(strtok(rec));
+                 DAT.friction.cfw   = str2num(strtok1(rec));
                elseif strcmpi(val(1:3),'MAD')
-                 DAT.friction.kn    = str2num(strtok(rec));
+                 DAT.friction.kn    = str2num(strtok1(rec));
                elseif strcmpi(val(1:3),'RIP')
-                 DAT.friction.S      = str2num(strtok(rec));                 
-                 [val,rec] = strtok(rec);
-                 DAT.friction.D      = str2num(strtok(rec));                 
+                 DAT.friction.S      = str2num(strtok1(rec));                 
+                 [val,rec] = strtok1(rec);
+                 DAT.friction.D      = str2num(strtok1(rec));                 
                else
                end
                end
@@ -1003,26 +1003,26 @@ end
             
 %% Read TRIAD: insert defaults from swan_defaults.m?
 
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
                keyword1         = upper(pad(keyword1,8,' '));
             if strfind(keyword1(1:3),'TRI')==1
                 
-              [val,rec]          = strtok(rec1);
+              [val,rec]          = strtok1(rec1);
                DAT.triad.itriad  = str2num(val);  
-              [val,rec]          = strtok(rec);
+              [val,rec]          = strtok1(rec);
                DAT.triad.trfac   = str2num(val);
-              [val,rec]          = strtok(rec);
+              [val,rec]          = strtok1(rec);
                DAT.triad.cutfr   = str2num(val);
-              [val,rec]          = strtok(rec);
+              [val,rec]          = strtok1(rec);
                DAT.triad.a       = str2num(val);
-              [val,rec]          = strtok(rec);
+              [val,rec]          = strtok1(rec);
                DAT.triad.b       = str2num(val);
-              [val,rec]          = strtok(rec);
+              [val,rec]          = strtok1(rec);
                DAT.triad.urcrit  = str2num(val);
-              [val,rec]          = strtok(rec);
+              [val,rec]          = strtok1(rec);
                DAT.triad.urslim  = str2num(val);               
 
                rec             = fgetlines_no_comment_line(fid);
@@ -1031,7 +1031,7 @@ end
             
 %% Read VEGegation
 
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
@@ -1044,13 +1044,13 @@ end
                DAT.vegetation.drag   = [];                
                 
                 while ~isempty(strtrim(rec1))
-              [val,rec]                     = strtok(rec1);
+              [val,rec]                     = strtok1(rec1);
                DAT.vegetation.height(end+1) = str2num(val);  
-              [val,rec]                     = strtok(rec);
+              [val,rec]                     = strtok1(rec);
                DAT.vegetation.diamtr(end+1) = str2num(val);
-              [val,rec]                     = strtok(rec);
+              [val,rec]                     = strtok1(rec);
                DAT.vegetation.nstems(end+1) = str2num(val);
-              [val,rec1]                    = strtok(rec);
+              [val,rec1]                    = strtok1(rec);
                DAT.vegetation.drag(end+1)   = str2num(val);
                 end
              
@@ -1059,16 +1059,16 @@ end
             end             
             
 %% Read LIMiter
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
                keyword1         = upper(pad(keyword1,8,' '));
             if strfind(keyword1(1:3),'LIM')==1
                 
-              [val,rec]          = strtok(rec1);
+              [val,rec]          = strtok1(rec1);
                DAT.lim.ursell    = str2num(val);  
-              [val,rec]          = strtok(rec);
+              [val,rec]          = strtok1(rec);
                DAT.lim.qb        = str2num(val);
 
                rec             = fgetlines_no_comment_line(fid);
@@ -1076,7 +1076,7 @@ end
             end 
             
 %% Read OBSTacle
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
@@ -1088,14 +1088,14 @@ end
             end  
             
 %% Read SETUP
-            if strfind(strtok(upper(rec)),'SETUP')==1
+            if strfind(strtok1(upper(rec)),'SETUP')==1
                DAT.setup       = rec;
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end  
             
 %% Read DIFFRac
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
@@ -1107,14 +1107,14 @@ end
             end  
             
 %% Read OFF
-            if strfind(strtok(upper(rec)),'OFF')==1
+            if strfind(strtok1(upper(rec)),'OFF')==1
                DAT.off         = rec;
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end     
 
 %% Read PROP
-            if strfind(strtok(upper(rec)),'PROP')==1
+            if strfind(strtok1(upper(rec)),'PROP')==1
                DAT.prop        = rec;
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
@@ -1122,7 +1122,7 @@ end
             
 %% Read MUD
 % special SWANmud
-%             if strfind(strtok(upper(rec)),'MUD')==1
+%             if strfind(strtok1(upper(rec)),'MUD')==1
 %                if OPT.debug
 %                   disp('MUD')
 %                end             
@@ -1130,7 +1130,7 @@ end
 %                DAT.mud.disperi = 0;
 %                DAT.mud.source  = 0;
 %                DAT.mud.cg      = 0;
-%                [~,rec] = strtok(rec);
+%                [~,rec] = strtok1(rec);
 %                DAT.mud         = swan_keyword(rec,... % expressionsfromstring
 %                                 {'alpha','rhom','rho0','nu','layer','disperr','disperi','source','cg','power'});
 %                rec             = fgetlines_no_comment_line(fid);
@@ -1141,18 +1141,18 @@ end
 %                foundkeyword    = true;
 %             end    
 
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
                keyword1         = upper(pad(keyword1,8,' '));
             if strfind(keyword1(1:3),'MUD')==1
                 
-              [val,rec]        = strtok(rec1);
+              [val,rec]        = strtok1(rec1);
                DAT.mud.layer   = str2num(val);  
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.mud.rhom    = str2num(val);
-              [val,rec]        = strtok(rec);
+              [val,rec]        = strtok1(rec);
                DAT.mud.viscm   = str2num(val);
 
                rec             = fgetlines_no_comment_line(fid);
@@ -1161,30 +1161,30 @@ end
 
 %% Read NUMeric
             j=0;
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
                keyword1         = upper(pad(keyword1,3,' '));
             while strfind(keyword1(1:3),'NUM')==1
                j               = j+1;
-               keyword         = lower(strtok(upper(rec1)));
+               keyword         = lower(strtok1(upper(rec1)));
                DAT.(keyword){j}= rec1;
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                keyword1         = upper(pad(keyword1,3,' '));
             end 
             
 %% Read FRAME (overwrites previous)
-            if strfind(strtok(upper(rec)),'FRAME')==1
+            if strfind(strtok1(upper(rec)),'FRAME')==1
                DAT.frame       = rec;
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end  
             
 %% Read GROUP (overwrites previous)
-            if strfind(strtok(upper(rec)),'GROUP')==1
+            if strfind(strtok1(upper(rec)),'GROUP')==1
                if OPT.debug
                   disp('GROUP')
                end             
@@ -1194,20 +1194,20 @@ end
                   N.groups = 1;
                end
 
-               [keyword                      ,rec] = strtok(rec);
-               [DAT.group(N.groups).sname    ,rec] = strtok(rec);
-               [keyword            ,rec]          = strtok(rec);
+               [keyword                      ,rec] = strtok1(rec);
+               [DAT.group(N.groups).sname    ,rec] = strtok1(rec);
+               [keyword            ,rec]          = strtok1(rec);
                if ~isempty(strfind(keyword,'SUBG'))
                 DAT.group(N.groups).subgrid        = 1;
-               [DAT.group(N.groups).ix1      ,rec] = strtok(rec);
+               [DAT.group(N.groups).ix1      ,rec] = strtok1(rec);
                else
                DAT.group(N.groups).subgrid         = 0;
                DAT.group(N.groups).ix1             = keyword;
                end
                
-               [DAT.group(N.groups).ix2      ,rec] = strtok(rec);
-               [DAT.group(N.groups).iy1      ,rec] = strtok(rec);
-               [DAT.group(N.groups).iy2      ,rec] = strtok(rec);
+               [DAT.group(N.groups).ix2      ,rec] = strtok1(rec);
+               [DAT.group(N.groups).iy1      ,rec] = strtok1(rec);
+               [DAT.group(N.groups).iy2      ,rec] = strtok1(rec);
                
                DAT.group(N.groups).ix1 = str2num(DAT.group(N.groups).ix1);
                DAT.group(N.groups).ix2 = str2num(DAT.group(N.groups).ix2);
@@ -1220,7 +1220,7 @@ end
             end  
             
 %% Read CURVE (overwrites previous)
-            if strfind(strtok(upper(rec)),'CURVE')==1
+            if strfind(strtok1(upper(rec)),'CURVE')==1
                if OPT.debug
                   disp('CURVE')
                end 
@@ -1229,20 +1229,20 @@ end
                else                  
                   N.ncurves = 1;
                end               
-               [keyword            ,rec] = strtok(rec);
+               [keyword            ,rec] = strtok1(rec);
                
-              [DAT.curve(N.ncurves).sname    ,rec] = strtok(rec);
+              [DAT.curve(N.ncurves).sname    ,rec] = strtok1(rec);
                quotes = strfind(DAT.curve(N.ncurves).sname,'''');
                DAT.curve(N.ncurves).sname = DAT.curve(N.ncurves).sname(quotes(1)+1:quotes(end)-1); % remove quote, as looks for match in quote-less names
-              [DAT.curve(N.ncurves).xp1       ,rec] = strtok(rec);
-              [DAT.curve(N.ncurves).yp1       ,rec] = strtok(rec);
+              [DAT.curve(N.ncurves).xp1       ,rec] = strtok1(rec);
+              [DAT.curve(N.ncurves).yp1       ,rec] = strtok1(rec);
                DAT.curve(N.ncurves).int      = [];
                DAT.curve(N.ncurves).xp2      = [];
                DAT.curve(N.ncurves).yp2      = [];
               while ~isempty(rec)
-              [DAT.curve(N.ncurves).int{end+1},rec] = strtok(rec);
-              [DAT.curve(N.ncurves).xp2{end+1},rec] = strtok(rec);
-              [DAT.curve(N.ncurves).yp2{end+1},rec] = strtok(rec);
+              [DAT.curve(N.ncurves).int{end+1},rec] = strtok1(rec);
+              [DAT.curve(N.ncurves).xp2{end+1},rec] = strtok1(rec);
+              [DAT.curve(N.ncurves).yp2{end+1},rec] = strtok1(rec);
               end
 
                DAT.curve(N.ncurves).xp1 =        str2num(DAT.curve(N.ncurves).xp1);
@@ -1257,21 +1257,21 @@ end
             end            
 
 %% Read RAY (overwrites previous)
-            if strfind(strtok(upper(rec)),'RAY')==1
+            if strfind(strtok1(upper(rec)),'RAY')==1
                DAT.ray         = rec;
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end            
 
 %% Read ISOLINE (overwrites previous)
-            if strfind(strtok(upper(rec)),'ISOLINE')==1
+            if strfind(strtok1(upper(rec)),'ISOLINE')==1
                DAT.isoline     = rec;
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end
             
 %% Read POINTS (overwrites previous)
-            if strfind(strtok(upper(rec)),'POINTS')==1
+            if strfind(strtok1(upper(rec)),'POINTS')==1
                if OPT.debug
                   disp('POINTS')
                end
@@ -1281,13 +1281,13 @@ end
                   N.points = 1;
                end
 
-               [keyword            ,rec]     = strtok(rec);
-               [keyword            ,rec]     = strtok(rec);
+               [keyword            ,rec]     = strtok1(rec);
+               [keyword            ,rec]     = strtok1(rec);
                quotes                        = findstr(keyword, '''');
                DAT.points(N.points).sname    = keyword(quotes(1)+1:quotes(2)-1);
-               [keyword            ,rec]     = strtok(rec);
+               [keyword            ,rec]     = strtok1(rec);
                if strcmpi(keyword,'FILE')
-                  [keyword            ,rec]  = strtok(rec);
+                  [keyword            ,rec]  = strtok1(rec);
                   quotes                     = findstr(keyword, '''');
                   DAT.points(N.points).fname = keyword(quotes(1)+1:quotes(end)-1);
                   
@@ -1334,9 +1334,9 @@ end
                   end
                   
                else
-                  [keyword            ,rec] = strtok(rec);
+                  [keyword            ,rec] = strtok1(rec);
                   DAT.points(N.points).xp   = str2num(keyword);
-                  [keyword            ,rec] = strtok(rec);
+                  [keyword            ,rec] = strtok1(rec);
                   DAT.points(N.points).yp   = str2num(keyword);
                end
                
@@ -1345,7 +1345,7 @@ end
             end
             
 %% Read NGRID (overwrites previous)
-            if strfind(strtok(upper(rec)),'NGRID')==1
+            if strfind(strtok1(upper(rec)),'NGRID')==1
                if OPT.debug
                   disp('NGRID')
                end
@@ -1355,7 +1355,7 @@ end
             end
             
 %% Read QUANTity
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
@@ -1370,14 +1370,14 @@ end
             end
             
 %% Read OUTPut OPTIons
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
                keyword1         = upper(pad(keyword1,4,' '));
             if strfind(keyword1(1:4),'OUTP')==1
-            %keyword = pad(strtok(rec),6,' ');
- 	    %    if strcmp(strtok(keyword(1:4)),'OUTP')
+            %keyword = pad(strtok1(rec),6,' ');
+ 	    %    if strcmp(strtok1(keyword(1:4)),'OUTP')
                if OPT.debug
                   disp('OUTP')
                end
@@ -1387,7 +1387,7 @@ end
             end 
             
 %% Read BLOCK (overwrites previous)
-            if strfind(strtok(upper(rec)),'BLOCK')==1
+            if strfind(strtok1(upper(rec)),'BLOCK')==1
                if OPT.debug
                   disp('BLOCK')
                end
@@ -1403,7 +1403,7 @@ end
             end
 
 %% TABLE  
-            if strfind(strtok(upper(rec)),'TABLE')==1
+            if strfind(strtok1(upper(rec)),'TABLE')==1
                if OPT.debug
                   disp('TABLE')
                end
@@ -1414,13 +1414,13 @@ end
                   N.tables = 1;
                end
                
-               [keyword                      ,rec] = strtok(rec);
-               [keyword                      ,rec] = strtok(rec);
+               [keyword                      ,rec] = strtok1(rec);
+               [keyword                      ,rec] = strtok1(rec);
                 quotes                             = strfind(keyword,'''');
                 DAT.table(N.tables).sname          = keyword(quotes(1)+1:quotes(end)-1);
                 
-               [DAT.table(N.tables).header   ,rec] = strtok(rec);
-               [keyword                      ,rec] = strtok(rec);
+               [DAT.table(N.tables).header   ,rec] = strtok1(rec);
+               [keyword                      ,rec] = strtok1(rec);
                 quotes                             = strfind(keyword,'''');
                 
                 if isempty(quotes) 
@@ -1457,7 +1457,7 @@ end
                DAT.table(N.tables).parameters  = strtrim(rec);
                else
                DAT.table(N.tables).parameters   = strtrim(rec(1:output-1));
-              [~                          ,rec] = strtok(rec(output:end));
+              [~                          ,rec] = strtok1(rec(output:end));
               
               [DAT.table(N.tables).tbegtbl,...
                DAT.table(N.tables).delttbl,...
@@ -1603,7 +1603,7 @@ end
             end               
 
 %% Read SPECout
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
@@ -1619,25 +1619,25 @@ end
                   N.specs  = 1;
                end
                
-              [keyword                                ,rec] = strtok(rec);
-              [DAT.spec(N.specs).sname                 ,rec] = strtok(rec);
+              [keyword                                ,rec] = strtok1(rec);
+              [DAT.spec(N.specs).sname                 ,rec] = strtok1(rec);
                quotes = strfind(DAT.spec(N.specs).sname, '''');
                DAT.spec(N.specs).sname = DAT.spec(N.specs).sname(quotes(1)+1:quotes(end)-1);
                
-              [keyword                                ,rec] = strtok(rec);
+              [keyword                                ,rec] = strtok1(rec);
                if     strcmpi(keyword,'spec1d')
                DAT.spec(N.specs).dimension_of_spectrum       = 1;
                elseif strcmpi(keyword,'spec2d')
                DAT.spec(N.specs).dimension_of_spectrum       = 2;
                end
               
-              [keyword                                ,rec] = strtok(rec);
+              [keyword                                ,rec] = strtok1(rec);
                if     strcmpi(keyword(1:3),'abs')
                DAT.spec(N.specs).frequency_type              = 'relative';
-              [keyword                 ,rec] = strtok(rec);
+              [keyword                 ,rec] = strtok1(rec);
                elseif strcmpi(keyword(1:3),'rel')
                DAT.spec(N.specs).frequency_type              = 'absolute';
-              [keyword                 ,rec] = strtok(rec);
+              [keyword                 ,rec] = strtok1(rec);
                else
                DAT.spec(N.specs).frequency_type              = 'absolute'; % default
                end
@@ -1655,7 +1655,7 @@ end
 
                output = strfind(rec,'OUT');
                if ~isempty(output)
-              [~                        ,rec] = strtok(rec(output:end));
+              [~                        ,rec] = strtok1(rec(output:end));
               [DAT.spec(N.specs).tbeg   ,...
                DAT.spec(N.specs).delt   ,...
                DAT.spec(N.specs).tunits ] = swan_time(rec);
@@ -1667,50 +1667,51 @@ end
             end
             
 %% Read NESTout
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
                keyword1         = upper(pad(keyword1,4,' '));
                
             if strfind(keyword1(1:4),'NEST')==1
-               [keyword,rec]   = strtok(rec);
-               [keyword,rec]   = strtok(rec);
+               [keyword,rec]   = strtok1(rec);
+               [keyword,rec]   = strtok1(rec);
                 quotes         = strfind(keyword,'''');
                 DAT.nest.sname = keyword(quotes(1)+1:quotes(end)-1);
-               [keyword,rec]   = strtok(rec);
+               [keyword,rec]   = strtok1(rec);
                 quotes         = strfind(keyword,'''');
                 DAT.nest.fname = keyword(quotes(1)+1:quotes(end)-1);
-               [keyword,rec]   = strtok(rec);
+                if strfind(keyword,'OUT')
+               [keyword,rec]   = strtok1(rec);
                [DAT.nest.tbeg,...
                 DAT.nest.delt,...
                 DAT.nest.units] = swan_time(rec);
-               
+                end
                
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end
 
 %% Read TEST
-            if strfind(strtok(upper(rec)),'TEST')==1
+            if strfind(strtok1(upper(rec)),'TEST')==1
               %DAT.test        = rec;
                raw             = rec;
 
-              [keyword,rec] = strtok(raw); % TEST
-              [keyword,rec] = strtok(rec); % POINTS ?
+              [keyword,rec] = strtok1(raw); % TEST
+              [keyword,rec] = strtok1(rec); % POINTS ?
               
                if ~strcmpi(keyword,'points')
                
                DAT.test.itest  = str2num(keyword);
-               [keyword,rec]   = strtok(rec);
+               [keyword,rec]   = strtok1(rec);
                DAT.test.itrace = str2num(keyword);
-               [keyword,rec]   = strtok(rec); % POINTS ?
+               [keyword,rec]   = strtok1(rec); % POINTS ?
                
                end
                             
                if strcmpi(keyword,'points')
 
-                  [keyword,rec]   = strtok(rec); % IJ, XY ?
+                  [keyword,rec]   = strtok1(rec); % IJ, XY ?
                
                   %  Read the list with test points
                   %  ------------------------------
@@ -1721,7 +1722,7 @@ end
                      partype = 'xy';
                   end
                   
-              [   keyword,rec]   = strtok(rec);
+              [   keyword,rec]   = strtok1(rec);
                   
                   ntestpoints = 0;
                   
@@ -1730,14 +1731,14 @@ end
                         ~strcmpi(keyword,'S2D')
                      
                     coordinates           = str2num(keyword);
-                    [keyword,rec]         = strtok(rec);
+                    [keyword,rec]         = strtok1(rec);
                     coordinates(2)        = str2num(keyword);
                     
                     ntestpoints = ntestpoints + 1;
                     
                     DAT.test.(partype)(:,ntestpoints)  = coordinates;
                   
-                     [keyword,rec]        = strtok(rec); % IJ, XY ?               
+                     [keyword,rec]        = strtok1(rec); % IJ, XY ?               
                   
                   end
                
@@ -1747,24 +1748,24 @@ end
                %  ------------------------------    
                
                if strcmpi(keyword,'PAR')
-                 [keyword,rec]       = strtok(rec);
+                 [keyword,rec]       = strtok1(rec);
                   quotes             = findstr(keyword, '''');
                   DAT.test.par.fname = keyword(quotes(1)+1:quotes(2)-1);
-                 [keyword,rec]       = strtok(rec);
+                 [keyword,rec]       = strtok1(rec);
                end
                
                if strcmpi(keyword,'S1D')
-                 [keyword,rec]       = strtok(rec);
+                 [keyword,rec]       = strtok1(rec);
                   quotes             = findstr(keyword, '''');
                   DAT.test.s1d.fname = keyword(quotes(1)+1:quotes(2)-1);
-                 [keyword,rec]       = strtok(rec);
+                 [keyword,rec]       = strtok1(rec);
                end
                
                if strcmpi(keyword,'S2D')
-                 [keyword,rec]       = strtok(rec);
+                 [keyword,rec]       = strtok1(rec);
                   quotes             = findstr(keyword, '''');
                   DAT.test.s2d.fname = keyword(quotes(1)+1:quotes(2)-1);
-                 [keyword,rec]       = strtok(rec);
+                 [keyword,rec]       = strtok1(rec);
                end               
                
                rec          = fgetlines_no_comment_line(fid);
@@ -1774,17 +1775,17 @@ end
 	  
 %% Read COMPUTE
 
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
                keyword1         = upper(pad(keyword1,4,' '));
             if strfind(keyword1(1:4),'COMP')==1
-                [keyword,rec] = strtok(rec);
-                [keyword,rec] = strtok(rec);
+                [keyword,rec] = strtok1(rec);
+                [keyword,rec] = strtok1(rec);
                 keyword = pad(keyword,5,' ');
                  if     strcmp(keyword(1:4),'STAT')
-                 [keyword,rec] = strtok(rec);
+                 [keyword,rec] = strtok1(rec);
                   DAT.compute.time    = keyword;
                   timeformat = 'yyyymmdd.HHMMSS'; % Was missing here - Freek
                   DAT.compute.datenum = datenum(keyword,timeformat);
@@ -1802,7 +1803,7 @@ end
             end  
             
 %% Read HOTFile
-              [keyword1,rec1]   = strtok(rec);
+              [keyword1,rec1]   = strtok1(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
@@ -1893,6 +1894,7 @@ end
       end
       % strcat removes blanks
       multilinerec = [multilinerec,rec];
+      multilinerec = strtrim(multilinerec );
    end % function fgetlines_no_comment_line
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1924,16 +1926,63 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    function [tbeg,delt,units,tend] = swan_time(rec);
       timeformat = 'yyyymmdd.HHMMSS';
-     [tbeg ,rec] = strtok(rec);tbeg = datenum(tbeg,timeformat);
-     [delt ,rec] = strtok(rec);delt = str2num(delt);
-     [units,rec] = strtok(rec);delt = delt*convert_units(units,'day');
+     [tbeg ,rec] = strtok1(rec);tbeg = datenum(tbeg,timeformat);
+     [delt ,rec] = strtok1(rec);delt = str2num(delt);
+     [units,rec] = strtok1(rec);delt = delt*convert_units(units,'day');
      if ~isempty(rec)
-     [tend ,rec] = strtok(rec);tend = datenum(tend,timeformat);
+     [tend ,rec] = strtok1(rec);tend = datenum(tend,timeformat);
      else
          tend = [];
      end
        
    end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   function [tok,rec] = strtok1(rec0);
+% handle case 'flow=0.02' instead of implicit '0.02'
+%    tst = {  '3'  ,  'a=3'  ,  'a= 3'  ,  'a =3'  ,  'a = 3',... % bare
+%         ' 3'  , ' a=3'  , ' a= 3'  , ' a =3'  , ' a = 3',... % prepadded
+%        '  3 4','  a=3 4','  a= 3 4','  a =3 4','  a = 3 4'}; % post padded
+%    
+%     ok = {};   
+%     for i=1:length(tst)
+%        ok{i} = str2num(strtokkeyword(tst{i}));
+%     end       
+       
+       rec0 = strtrim(rec0);
+      
+       [tok,rec] = strtok(rec0);
+       
+       %% a=3
+       % a= 3
+       i = strfind(tok,'=');
+       if ~isempty(i)
+           
+           %% a=3
+           if ~isempty(tok(i+1:end))
+               tok = tok(i+1:end);
+           else
+           %% a= 3
+               [tok,rec] = strtok(rec);
+           end
+           
+       %% a =3
+       % a = 3
+       else
+           rec = strtrim(rec);
+           if length(rec) > 1
+           if rec(1)=='='
+            [tok,rec] = strtok(rec(2:end));
+           end
+           end
+       end
+       
+   end
+
+
+
+
 
    end % function, so all variables above are global within the scope of this file (part bewteen 'function' and this 'end')
 
