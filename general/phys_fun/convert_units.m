@@ -231,6 +231,7 @@ debug = 0;
    dynes           = 1e-5;                    % dyne
    	      
    N               = 1;                       % Newton
+   kN              = 1e3;                     % Newton (VO)
    newton          = N;                       % Newton
    Newton          = N;                       % Newton
    
