@@ -173,8 +173,10 @@ else
                 ndim=2;
             else
                 switch quantity
-                    case{'location','scalar'}
+%                    case{'location','scalar'}
+                    case{'location'}
                         plane='xy';
+%                        plane='xv';
                         ndim=1;
                     otherwise
                         plane='xv';

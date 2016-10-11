@@ -137,6 +137,8 @@ switch lower(plt.datasets(id).dataset.plotroutine)
         h=muppet_plotHistogram(handles,ifig,isub,id);
     case {'stacked area'}
         h=muppet_plotStackedArea(handles,ifig,isub,id);
+    case {'time bars'}
+        h=muppet_plotTimeSeriesBars(handles,ifig,isub,id);
     case {'contour map','contour map and lines','patches','contour lines','shades map'}
         muppet_plot2DSurface(handles,ifig,isub,id);
     case {'unstructured patches'}
@@ -167,6 +169,7 @@ switch lower(plt.datasets(id).dataset.plotroutine)
 %         handles=PlotVectorMagnitude(handles,ifig,isub,id,mode);
     case {'polyline'}
         h=muppet_plotPolygon(handles,ifig,isub,id);
+%        h=muppet_plotScatterBin(handles,ifig,isub,id);
     case {'kubint'}
         h=muppet_plotKub(handles,ifig,isub,id);
     case {'lint'}

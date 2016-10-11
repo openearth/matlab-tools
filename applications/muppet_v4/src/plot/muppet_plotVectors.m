@@ -29,6 +29,15 @@ if strcmpi(plt.coordinatesystem.type,'geographic')
     opt.unitvector=opt.unitvector/111111;
 end
 
+% % Logarithmic vector scaling
+% mag=sqrt(u.^2+v.^2);
+% logv=log10(mag);
+% logv=logv+8;
+% logv=max(logv,0);
+% u=u.*logv./mag;
+% v=v.*logv./mag;
+
+
 if strcmpi(opt.plotroutine,'vectors')
     % Regular vectors
     qv=quiver(x,multiy*y,opt.unitvector*u,multiv*opt.unitvector*v,0);hold on;

@@ -20,7 +20,12 @@ end
 % Date formats
 dat=datenum(2005,04,28,14,38,25);
 for ii=1:length(handles.dateformats)
-    handles.dateformattexts{ii}=datestr(dat,handles.dateformats{ii});
+    switch lower(handles.dateformats{ii})
+        case{'none'}
+            handles.dateformattexts{ii}='None';
+        otherwise
+            handles.dateformattexts{ii}=datestr(dat,handles.dateformats{ii});
+    end
 end
 
 handles.datasettext1='';

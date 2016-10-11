@@ -31,6 +31,12 @@
     <name>ydecimals</name>
   </subplotoption>
   <subplotoption>
+    <name>ytickmultiply</name>
+  </subplotoption>
+  <subplotoption>
+    <name>ytickadd</name>
+  </subplotoption>
+  <subplotoption>
     <name>timegrid</name>
   </subplotoption>
   <subplotoption>

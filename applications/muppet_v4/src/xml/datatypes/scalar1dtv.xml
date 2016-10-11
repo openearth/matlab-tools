@@ -243,5 +243,29 @@
       <elementgroup>timebar</elementgroup>
       <elementgroup>legendtext</elementgroup>
     </plotroutine>
+    <plotroutine>
+      <name>Time Bars</name>
+      <plotoption>
+        <name>plotroutine</name>
+      </plotoption>
+      <plotoption>
+        <name>facecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>linecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <plotoption>
+        <name>legendtext</name>
+      </plotoption>
+      <elementgroup>facecolor</elementgroup>
+      <elementgroup>line</elementgroup>
+      <elementgroup>legendtext</elementgroup>
+    </plotroutine>
   </plottype>
 </root>
