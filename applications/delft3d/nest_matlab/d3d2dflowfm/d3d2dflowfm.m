@@ -29,10 +29,16 @@ OPT = setproperty(OPT,varargin{3:end});
 
 %% Check if nesthd_path is set
 
-if isempty (getenv('nesthd_path'))
-   h = warndlg({'Please set the environment variable "nesthd_path"';'See the Release Notes ("Release Notes.chm")'},'NestHD Warning');
-   PutInCentre (h);
-   uiwait(h);
+% Let's set the env-variable automatically instead
+if 0
+    if isempty (getenv('nesthd_path'))
+       h = warndlg({'Please set the environment variable "nesthd_path"';'See the Release Notes ("Release Notes.chm")'},'NestHD Warning');
+       PutInCentre (h);
+       uiwait(h);
+    end
+else
+    complete_path = which('d3d2dflowfm');
+    setenv('nesthd_path',complete_path(1,1:findstr(complete_path,['nest_matlab' filesep'])+11));
 end
 
 %% Dynamically get filenames (or specify in script), split into name and path
