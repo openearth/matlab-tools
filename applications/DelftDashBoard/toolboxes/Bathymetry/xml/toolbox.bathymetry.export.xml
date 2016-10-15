@@ -105,6 +105,7 @@
     <showfilename>no</showfilename>
     <extension>*.xyz</extension>
     <extension>*.asc</extension>
+    <extension>*.mat</extension>
     <selectiontext>Save bathymetry file</selectiontext>
     <tooltipstring>Export bathymetry</tooltipstring>
     <dependency>
