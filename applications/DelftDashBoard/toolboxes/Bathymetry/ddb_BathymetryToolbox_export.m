@@ -188,9 +188,26 @@ if handles.bathymetry.dataset(handles.toolbox.bathymetry.activeDataset).isAvaila
             
         case{'asc'}
 
+%            z(z<0.2)=NaN;
             arcgridwrite(filename,x,y,z);
 
-    
+        case{'mat'}
+
+            [x,y]=ddb_coordConvert(x,y,cs,handles.screenParameters.coordinateSystem);
+
+            if strcmpi(handles.toolbox.bathymetry.activeDirection,'down')
+                z=z*-1;
+            end
+            
+            s.parameters(1).parameter.name='bed level';
+            s.parameters(1).parameter.x=x;
+            s.parameters(1).parameter.y=y;
+            s.parameters(1).parameter.val=z;
+            s.parameters(1).parameter.size=[0 0 size(x,1) size(x,2) 0];
+            s.parameters(1).parameter.quantity='scalar';
+            
+            save(fname,'-struct','s');
+            
     end
 
     close(wb);
