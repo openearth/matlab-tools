@@ -183,11 +183,10 @@ if Flow.wind
             if ~isempty(Flow.wndFile)
                 MDF.Filwnd=Flow.wndFile;
             end
-        case{'spiderweb'}
-            if ~isempty(Flow.spwFile)
-                MDF.Filweb=Flow.spwFile;
-            end
     end
+end
+if ~isempty(Flow.spwFile)
+    MDF.Filweb=Flow.spwFile;
 end
 
 switch Flow.initialConditions,
