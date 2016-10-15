@@ -74,10 +74,12 @@ for k=1:length(s.database)
 
     handles.toolbox.observationstations.database(k).callback=f;
 
-    database=feval(f,'readdatabase','inputfile',[dr s.database(k).file]);
-    fld=fieldnames(database);
-    for j=1:length(fld)
-        handles.toolbox.observationstations.database(k).(fld{j})=database.(fld{j});
+    if ~isempty(s.database(k).file)
+        database=feval(f,'readdatabase','inputfile',[dr s.database(k).file]);
+        fld=fieldnames(database);
+        for j=1:length(fld)
+            handles.toolbox.observationstations.database(k).(fld{j})=database.(fld{j});
+        end
     end
     handles.toolbox.observationstations.databaselongnames{k}=s.database(k).longname;
     handles.toolbox.observationstations.database(k).activeobservationstation=1;
