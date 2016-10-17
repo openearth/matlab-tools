@@ -38,6 +38,13 @@ Header = struct1.Header;
 T0 = struct1.T0;
 refTime =  [T0 1];
 
+if nargin<5
+    subs = 0;
+end
+if nargin<6
+    Type = 'nearest';
+end
+
 % Find substance
 if subs==0
    substances = 1:length(struct1.SubsName);
