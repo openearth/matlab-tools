@@ -102,7 +102,6 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 %                 - user defined handling of extra fields 
 %                 - class change warning/error message
 %
-%   2016-05-19: update of code to remove nargchk error
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -229,11 +228,6 @@ end
 %% check and parse varargin
 narginchk(2, Inf);
 
-<<<<<<< .mine
-check_inputs(length(varargin))
-%error(nargchk(0, 4, length(varargin), 'struct'))
-=======
->>>>>>> .r12923
 if odd(length(varargin))
      error('SETPROPERTY:varargin',...
                         'Set onClassChange and onExtraField with the varargin, as keyword value pairs');
@@ -482,11 +476,4 @@ end
 function out = odd(in)
 %ODD   test whether number if odd 
 out = mod(in,2)==1;
-
-function check_inputs(varargin)
-minargs=0; maxargs=4;
-
-% number of inputs must be >= minargs and <=maxargs
-narginchk(minargs, maxargs)
-
 %% EOF
