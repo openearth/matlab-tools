@@ -105,11 +105,12 @@ j = Rc./Hs>1.2;
 Ct_cc(j) = 0.1;
 
 %% Van der Meer et al. (2004): smooth low crested structures
+% valid for 1<B/Hs<4
 s0 = 2.*pi.*Hs./(g.*Tp.^2);
 chip = OPT.slope./sqrt(s0);
 Ct_vdm = (-0.3*Rc./Hs+0.75.*(1-exp(-0.5.*chip))).*(cosd(OPT.betai)).^(2/3);
 Ct_vdm(Ct_vdm<0.075) = 0.075;
-Ct_vmd(Ct_vdm>0.8) = 0.8;
+Ct_vdm(Ct_vdm>0.8) = 0.8;
 
 %% Briganti et al. (2004): rubble mount low crested structures
 Ct_b_narrow = -0.4.*Rc./Hs + (0.64.*(OPT.Bnarrow./Hs).^-0.31).*(1-exp(-0.5.*chip));
