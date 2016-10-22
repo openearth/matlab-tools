@@ -748,6 +748,38 @@
     </dependency>
   </element>
   <element>
+    <style>pushbutton</style>
+    <position>800 410 90 20</position>
+    <text>Text ...</text>
+    <tooltipstring>Push to edit subplot text</tooltipstring>
+    <callback>muppet_gui</callback>
+    <option1>pushsubplottext</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>map</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>xy</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>timeseries</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>timestack</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
     <tag>axespanel</tag>
     <style>panel</style>
     <position>20 220 880 175</position>

@@ -219,3 +219,13 @@ opt.coordinatesystem.type='projected';
 opt.coordinatesystem.text='unspecified - projected';
 opt.projection='equirectangular';
 
+% Subplot Text
+opt.subplottext.string='';
+opt.subplottext.position='upper-left';
+opt.subplottext.font.name='Helvetica';
+opt.subplottext.font.size=10;
+opt.subplottext.font.angle='normal';
+opt.subplottext.font.weight='normal';
+opt.subplottext.font.color='black';
+opt.subplottext.horizontalmargin=0.2;
+opt.subplottext.verticalmargin=0.3;

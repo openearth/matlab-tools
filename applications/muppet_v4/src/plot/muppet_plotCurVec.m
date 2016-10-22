@@ -93,8 +93,8 @@ if ~isempty(handles.animationsettings.timestep)
 end
 
 %plt.coordinatesystem.type='projected';
-
-[polx,poly,xax,yax,len,pos]=curvec(x1,y1,u,v,'dx',dx,'length',opt.curveclength,'nrvertices',nt,'nhead',4, ...
+nhead=round(nt/5);
+[polx,poly,xax,yax,len,pos]=curvec(x1,y1,u,v,'dx',dx,'length',opt.curveclength,'nrvertices',nt,'nhead',nhead, ...
     'xlim',[xmin xmax],'ylim',[ymin ymax],'position',pos,'lifespan',lifespan,'timestep',timestep, ...
     'headthickness',hdthck,'arrowthickness',arthck,'cs',plt.coordinatesystem.type,'relativespeed',opt.curvecrelativespeed);
 

@@ -162,4 +162,31 @@
   <subplotoption>
     <name>customcontours</name>
   </subplotoption>
+  <subplotoption>
+    <name>subplottextstring</name>
+  </subplotoption>
+  <subplotoption>
+    <name>subplottextposition</name>
+  </subplotoption>
+  <subplotoption>
+    <name>subplottextfontname</name>
+  </subplotoption>
+  <subplotoption>
+    <name>subplottextfontsize</name>
+  </subplotoption>
+  <subplotoption>
+    <name>subplottextfontweight</name>
+  </subplotoption>
+  <subplotoption>
+    <name>subplottextfontangle</name>
+  </subplotoption>
+  <subplotoption>
+    <name>subplottextfontcolor</name>
+  </subplotoption>
+  <subplotoption>
+    <name>subplottexthorizontalmargin</name>
+  </subplotoption>
+  <subplotoption>
+    <name>subplottextverticalmargin</name>
+  </subplotoption>
 </root>

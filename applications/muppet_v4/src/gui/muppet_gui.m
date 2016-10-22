@@ -124,6 +124,8 @@ else
             muppet_editCustomContours;
         case{'selectframe'}
             selectFrame;
+        case{'pushsubplottext'}
+            editSubplotText;
         case{'editframetext'}
             editFrameText;
         case{'selectformat'}
@@ -799,6 +801,16 @@ for id=1:plt.nrdatasets
 end
 handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=plt;
 setHandles(handles);
+
+%%
+function editSubplotText
+handles=getHandles;
+s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'subplottextoptions.xml','iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
+if ok
+    handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=s;
+    setHandles(handles);
+end
 
 %%
 function editLegend

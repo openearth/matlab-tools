@@ -65,3 +65,8 @@ end
 %% Set background color of axis
 set(leftaxis,'Color',colorlist('getrgb','color',handles.figures(ifig).figure.subplots(j).subplot.backgroundcolor));
 set(leftaxis,'Tag','axis','UserData',[ifig,j]);
+
+%% Add text
+if ~isempty(handles.figures(ifig).figure.subplots(j).subplot.subplottext.string)
+    muppet_addSubplotText(handles.figures(ifig).figure,ifig,j,leftaxis);
+end
