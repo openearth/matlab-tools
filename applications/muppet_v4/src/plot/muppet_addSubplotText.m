@@ -4,6 +4,7 @@ plt=fig.subplots(isub).subplot;
 
 switch lower(plt.type)
     case{'map'}
+        xmin=plt.xmin;
         dstx=plt.subplottext.horizontalmargin*(plt.xmax-plt.xmin)/plt.position(3);
         if strcmpi(plt.coordinatesystem.type,'geographic')
             fac=cos(plt.ymax*pi/180);
@@ -38,6 +39,7 @@ switch lower(plt.type)
             end
         end
     case{'xy'}
+        xmin=plt.xmin;
         dstx=plt.subplottext.horizontalmargin*(plt.xmax-plt.xmin)/plt.position(3);
         dsty=plt.subplottext.verticalmargin*(plt.ymax-plt.ymin)/plt.position(4);
         switch lower(plt.subplottext.position),
@@ -83,7 +85,18 @@ switch lower(plt.type)
         end
 end
 
-axes(leftaxis);
+%axes(leftaxis);
+
+if strcmpi(fig.renderer,'opengl');
+%     xback=plt.xmin;
+%     xmin=plt.xmin-xback;
+%     xmax=plt.xmax-xback;
+%    x=x-xback;
+xpos=xpos-xmin;
+% else
+%     xback=0;
+end
+
 
 tx=text(xpos,ypos,plt.subplottext.string);
 set(tx,'HorizontalAlignment',horal);

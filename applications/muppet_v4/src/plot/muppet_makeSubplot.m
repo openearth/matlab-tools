@@ -22,6 +22,11 @@ for k=1:handles.figures(ifig).figure.subplots(j).subplot.nrdatasets
     handles.figures(ifig).figure.subplots(j).subplot.datasets(k).dataset.handle=h;
 end
 
+%% Add text
+if ~isempty(handles.figures(ifig).figure.subplots(j).subplot.subplottext.string)
+    muppet_addSubplotText(handles.figures(ifig).figure,ifig,j,leftaxis);
+end
+
 %% 3D Box
 switch lower(handles.figures(ifig).figure.subplots(j).subplot.type)
     case {'3d'},
@@ -66,7 +71,3 @@ end
 set(leftaxis,'Color',colorlist('getrgb','color',handles.figures(ifig).figure.subplots(j).subplot.backgroundcolor));
 set(leftaxis,'Tag','axis','UserData',[ifig,j]);
 
-%% Add text
-if ~isempty(handles.figures(ifig).figure.subplots(j).subplot.subplottext.string)
-    muppet_addSubplotText(handles.figures(ifig).figure,ifig,j,leftaxis);
-end
