@@ -12,6 +12,7 @@ handles.model.xbeach.attname='xbeach';
 % handles.GUIData.nrXBeachOpenBoundaries=1;
 
 handles=ddb_initializeXBeachInput(handles,1,runid);
-
+handles.model.xbeach.domain(1).ParamsFile=[lower(cd) '\\'];
+cd(handles.model.xbeach.domain(1).ParamsFile)
 handles.model.xbeach.menuview.grid=1;
 handles.model.xbeach.menuview.bathymetry=1;

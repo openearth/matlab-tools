@@ -59,6 +59,6 @@ end
 function database=readDatabase(xl,yl)
 handles = getHandles;
 dr=handles.toolbox.observationstations.dataDir;
-path = [dr 'usgs.mat']
+path = [dr 'usgs.mat'];
 load (path)
 database = s;

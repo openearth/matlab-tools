@@ -34,6 +34,7 @@ switch lower(opt)
             handles.model.xbeach.domain(jj).yfile = handles.model.xbeach.domain_TMP.yfile;
             handles.model.xbeach.domain(jj).yori = handles.model.xbeach.domain_TMP.yori;
             handles.model.xbeach.domain(jj).bed = handles.model.xbeach.domain_TMP.bed;
+            handles.model.xbeach.domain(jj).pwd = handles.model.xbeach.domain_TMP.pwd;
             setHandles(handles);
             
             % Save params

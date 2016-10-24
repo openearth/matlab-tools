@@ -44,7 +44,7 @@ end
 
 xline = linspace(x(1), x(2),1000); yline =  linspace(y(1), y(2),1000);
 id = ~isnan(zz);    F1 = scatteredInterpolant(xg(id), yg(id), zz(id),'natural', 'none');
-zline = F1(xline, yline); 
+zline = F1(xline, yline); zline = naninterp_simple(zline, 1,'cubic');
 
 %% Apply DEM is possible
 try

@@ -31,5 +31,9 @@ for ii = 1:length(varsneeded)
     ids =find((strcmp(namesxb, nametesting))>0);
     handles.model.xbeach.domain(ad).(varsneeded{ii}) = xbs.data(ids).value;
 end
-handles.model.xbeach.domain(ad).pwd = pwd;
+
+% Change path
+index = findstr(filename, '\');    
+handles.model.xbeach.domain(ad).pwd=filename(1:(index(end)-1));
+handles.model.xbeach.domain(ad).params_file=filename;
 disp('Params red successfully')

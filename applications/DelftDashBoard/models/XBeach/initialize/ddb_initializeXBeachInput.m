@@ -15,7 +15,6 @@ handles.model.xbeach.domain(id).ItDate=floor(now);
 handles.model.xbeach.domain(id).StartTime=floor(now);
 handles.model.xbeach.domain(id).StopTime=floor(now)+2;
 handles.model.xbeach.domain(id).TimeStep=1;
-handles.model.xbeach.domain(id).ParamsFile=[lower(cd) '\\'];
 handles.model.xbeach.domain(id).swave=1;
 handles.model.xbeach.domain(id).lwave=1;
 handles.model.xbeach.domain(id).flow=1;
@@ -257,6 +256,7 @@ handles.model.xbeach.domain(id).mmpi=2;
 handles.model.xbeach.domain(id).nmpi=4;
 handles.model.xbeach.domain(id).bchwiz=0;
 handles.model.xbeach.domain(id).single_dir=0;
+handles.model.xbeach.domain(id).cyclic=0;
 
 function par=getdefaultpars
 % Pick up defaults of base variables, used for defaults of other variables

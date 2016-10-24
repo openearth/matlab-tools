@@ -462,7 +462,10 @@ if ok == 1
     % Save
     ddb_saveMDW(handles);
     ddb_saveDelft3DFLOW('saveall');
+    try
     close(wb);
+    catch
+    end
 else
     return
 end

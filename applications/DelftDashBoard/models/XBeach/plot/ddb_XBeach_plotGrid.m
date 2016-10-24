@@ -111,9 +111,9 @@ switch lower(opt)
         handle =ddb_plotCurvilinearGrid(x',y','color',col);
         handles.model.xbeach.domain(id).grid.plothandles = handle;
         if vis
-            set(handles.model.xbeach.domain(id).grid.plothandles,'Color',col,'Visible','on');
+            set(handles.model.xbeach.domain(id).grid.plothandles,'Color',col,'Visible','on', 'Linewidth', 2);
         else
-            set(handles.model.xbeach.domain(id).grid.plothandles,'Color',col,'Visible','of');
+            set(handles.model.xbeach.domain(id).grid.plothandles,'Color',col,'Visible','of', 'Linewidth', 2);
         end
         
     case{'delete'}
@@ -133,9 +133,9 @@ switch lower(opt)
                 try
                     set(handles.model.xbeach.domain(id).grid.plothandles,'Color',col);
                     if vis
-                        set(handles.model.xbeach.domain(id).grid.plothandles,'Color',col,'Visible','on');
+                        set(handles.model.xbeach.domain(id).grid.plothandles,'Color',col,'Visible','on', 'Linewidth', 2);
                     else
-                        set(handles.model.xbeach.domain(id).grid.plothandles,'Color',col,'Visible','off');
+                        set(handles.model.xbeach.domain(id).grid.plothandles,'Color',col,'Visible','off', 'Linewidth', 2);
                     end
                 end
             end

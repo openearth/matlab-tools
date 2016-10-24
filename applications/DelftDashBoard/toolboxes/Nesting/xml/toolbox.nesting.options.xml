@@ -13,7 +13,7 @@
     <listtext>berm</listtext>
     <listvalue>normal</listvalue>
     <listvalue>berm</listvalue>
-    <tooltipstring>Normal means at the end of the transect. Berm means at berm location</tooltipstring>
+    <tooltipstring>XBeach - LISFLOODD: normal means at the end of the transect. Berm means at berm location</tooltipstring>
   </element>
   <element>
     <style>edit</style>
@@ -29,7 +29,7 @@
     <variable>nesting_time</variable>
     <type>string</type>
     <text>Time step for nesting</text>
-    <tooltipstring>Fill here your time step in seconds. This is needed for Delft3D-FLOW nesting. </tooltipstring>
+    <tooltipstring>Fill here your time step in seconds. This is needed for Delft3D-FLOW & XBeach nesting. </tooltipstring>
   </element>
   <element>
     <style>edit</style>

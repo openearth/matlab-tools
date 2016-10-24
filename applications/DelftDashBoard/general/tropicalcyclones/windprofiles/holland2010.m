@@ -8,7 +8,6 @@ rn=150;
 robs=[];
 vobs=[];
 estimate_rmax=0;
-
 e=exp(1);
 
 for ii=1:length(varargin)
@@ -31,14 +30,12 @@ for ii=1:length(varargin)
 end
 
 dp=pn-pc;
-
 bs=vms^2*rhoa*e/(100*(pn-pc));
-
 a=[];
 
-if ~isempty(robs)    
-    % Try to fit data
+if ~isempty(robs)   
     
+    % Try to fit data
     if estimate_rmax
         rrange=0.5*rvms:1:2.0*rvms;
     else
@@ -46,17 +43,17 @@ if ~isempty(robs)
     end
 
     xnmin=0;
-    xnmax=0.49;
-    xnrange=xnmin:0.01:xnmax;
+    xnmax=0.50;
+    xnrange=xnmin:0.0001:xnmax;
     
-    esqmin=1e9;
+    esqmin=1e12;
     for ii=1:length(xnrange)
         xn=xnrange(ii);
         jj=1;
         for jj=1:length(rrange)
             rtst=rrange(jj);
             [vest,pest]=h2010(robs,pc,dp,rtst,bs,rhoa,xn,rn,a);
-            esq=sum((vest-vobs).^2);
+            esq=sum((vest-vobs).^2); esq_save(jj) = esq;
             if esq<esqmin
                 esqmin=esq;
                 iamin=ii;

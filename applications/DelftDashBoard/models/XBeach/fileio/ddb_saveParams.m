@@ -62,16 +62,48 @@ for jj = 1:length(xbeach_writing.data)
 end
 ids =find((strcmp(vars, 'zs0file'))>0);
 if isempty(ids);
-    ids = length(xbeach_writing.data)+1
+    ids = length(xbeach_writing.data)+1;
 else
 end
+try
 zs0file = xbeach_writing.data(ids).value;
 xbeach_writing.data(ids).value = [];
 xbeach_writing.data(ids).value = xbeach_ddb.zs0file_info.name;
+catch
+end
 
-xbeach_writing.data(count).name = 'tidelen';
-xbeach_writing.data(count).value = length(xbeach_ddb.zs0file_info.time);
+%% Also have vegetation
+for jj = 1:length(xbeach_writing.data)
+    vars{jj} = xbeach_writing.data(jj).name;
+end
+ids =find((strcmp(vars, 'veggiefile'))>0);
+if isempty(ids);
+    ids = length(xbeach_writing.data)+1;
+else
+end
+try
+tst = xbeach_ddb.veggiefile;
+xbeach_writing.data(ids).value = [];
+xbeach_writing.data(ids).name =     'veggiefile';
+xbeach_writing.data(ids).value =    xbeach_ddb.veggiefile;
+catch
+end
 
+for jj = 1:length(xbeach_writing.data)
+    vars{jj} = xbeach_writing.data(jj).name;
+end
+ids =find((strcmp(vars, 'veggiemapfile'))>0);
+if isempty(ids);
+    ids = length(xbeach_writing.data)+1;
+else
+end
+try
+tst = xbeach_ddb.veggiemapfile;
+xbeach_writing.data(ids).value = [];
+xbeach_writing.data(ids).name       = 'veggiemapfile';
+xbeach_writing.data(ids).value      = xbeach_ddb.veggiemapfile;
+catch
+end
 
 %% Always delete
 varsdelete = {'runid', 'attname', 'ParamsFile'};
@@ -98,9 +130,6 @@ for jj = 1:ndatathings
     ndatathings = length(length(xbeach_writing.data));
 end
 
-
 %% Writing
-pathname = xbeach_ddb.params_file;
-iddot = strfind(pathname, 'params.txt');
-pathname = pathname(1:(iddot-1)); cd(pathname);
-xb_write_params('params.txt', xbeach_writing);
+pathname = handles.model.xbeach.domain(ndomain).pwd;
+cd(pathname);xb_write_params('params.txt', xbeach_writing);

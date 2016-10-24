@@ -21,6 +21,7 @@ if pathname~=0
     
     % Plotting
     ddb_plotXBeach('plot','domain',ad); % make
+    cd(handles.model.xbeach.domain(ad).pwd)
     
     % Finalize
     ddb_updateDataInScreen;

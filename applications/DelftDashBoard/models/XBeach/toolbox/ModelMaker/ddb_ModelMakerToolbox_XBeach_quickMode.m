@@ -221,10 +221,10 @@ coord=handles.screenParameters.coordinateSystem;
 iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
 dataCoord.name=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
 dataCoord.type=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
-if ~strcmpi(lower(dataCoord.type), 'geographic')
+%if ~strcmpi(lower(dataCoord.type), 'geographic')
     
     %% Make XBeach
-    wb =   waitbox('XBeach model is created');
+    wb =   waitbox('XBeach model is being created');
     handles=ddb_ModelMakerToolbox_XBeach_generateModel(handles);
 
     % Plotting
@@ -243,6 +243,6 @@ if ~strcmpi(lower(dataCoord.type), 'geographic')
 
     % Overview
     ddb_ModelMakerToolbox_XBeach_modelsetup(handles)
-else
-	ddb_giveWarning('text',['XBeach models are ALWAYS in cartesian coordinate systems. Change your coordinate system to make a XBeach model']);
-end
+%else
+%	ddb_giveWarning('text',['XBeach models are ALWAYS in cartesian coordinate systems. Change your coordinate system to make a XBeach model']);
+%end

@@ -8,7 +8,7 @@ opt = 0;
 % Find more info about the folders
 iddot = strfind(pathname, '\'); 
 maindirectory = pathname(1:(iddot(length(iddot)-1)));
-listing = dir(maindirectory)
+listing = dir(maindirectory);
 ntransects_expected = length(listing)-2;
 ntransects = 0;
 
@@ -19,12 +19,16 @@ if pathname~=0
     handles.activeDomain=1;
     for jj = 1:ntransects_expected
         pathname2 = [maindirectory, '\', listing(jj+2).name, '\'];
+        try
         cd(pathname2);
         files = dir; check = 0;
         for xx = 1:length(files);
             if strcmp(files(xx).name, 'params.txt')
                 check = 1;
             end
+        end
+        catch
+            check = 0;
         end
         
         if check == 1;

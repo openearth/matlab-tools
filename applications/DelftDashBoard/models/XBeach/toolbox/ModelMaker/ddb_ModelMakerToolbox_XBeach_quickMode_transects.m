@@ -305,7 +305,7 @@ if ~isempty(handles.toolbox.modelmaker.xb_trans.handle2)
 end
 catch
 end
-[handles] = ddb_ModelMakerToolbox_XBeach_quickMode_drawtransects(handles)
+[handles] = ddb_ModelMakerToolbox_XBeach_quickMode_drawtransects(handles);
 
 % Line sections
 xoff    = handles.toolbox.modelmaker.xb_trans.xoff;

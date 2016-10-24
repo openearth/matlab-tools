@@ -296,7 +296,7 @@ for it=1:nt
         tyear=round(t(it)*par.morfac/86400/365);
                 
         subplot(2,2,1)        
-        pcolor(grd.xg,grd.yg,dps2-dps0);shading flat;axis equal;clim([-mxthick mxthick]);colorbar;
+        pcolor(grd.xg,grd.yg,dps2-dps0);shading flat;axis equal; clim([-mxthick-0.1 mxthick+0.1]);colorbar;
         hold on;
         quiver(grd.xg(1:2:end,1:2:end),grd.yg(1:2:end,1:2:end),ug(1:2:end,1:2:end),vg(1:2:end,1:2:end),'k');
         for ipol=1:handles.toolbox.nourishments.nrNourishments

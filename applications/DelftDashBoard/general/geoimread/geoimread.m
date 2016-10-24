@@ -265,7 +265,7 @@ x=x(cols(1):cols(end));
 y=y(rows(1):rows(end));
 
 A=imread(filename,'PixelRegion',{rows cols});
-
+A = double(A); id = A > 100; A(id) = NaN;
 
 %% Update info structure to more accurately reflect the new image: 
 
@@ -364,10 +364,15 @@ function [x,y]=robustpixcenters(I)
 if license('test','map_toolbox')
     [x,y]=pixcenters(I);
 else
+    try
     %I have not read documentation... but this only works for rectilinear systems.
     assert(I.ModelPixelScaleTag(3)==0,'unexpected ModelPixelScaleTag format.');
     assert(all(I.ModelTiepointTag(1:3)==0),'unexpected ModelTiepointTag format.');
     x=((0:I.Width-1)-I.ModelTiepointTag(1))*I.ModelPixelScaleTag(1)+I.ModelTiepointTag(4);
     y=((0:I.Height-1)-I.ModelTiepointTag(2))*-I.ModelPixelScaleTag(2)+I.ModelTiepointTag(5);
+    catch
+    x=((0:I.Width-1)*I.ModelTransformationTag(1))+I.ModelTransformationTag(4);
+    y=((0:I.Height-1)*I.ModelTransformationTag(6))+I.ModelTransformationTag(8);
+    end
 end
 
