@@ -359,6 +359,9 @@ handles=getHandles;
 iflag=0;
 
 switch lower(handles.toolbox.tropicalcyclone.importFormat)
+    case('noaa')
+        [fname] = ddb_selectNOAAstormm;  
+        iflag = 1; filename= fname; pathname = pwd;
     case{'unisysbesttrack'}
         ext='dat';
         prefix = '';
@@ -553,7 +556,21 @@ try
             tc=read_pagasa_cyclone_track([pathname filename]);
             handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
             handles.toolbox.tropicalcyclone.wind_profile='holland2010';
-            handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';
+            handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';       
+        case('noaa')
+            load([handles.toolbox.tropicalcyclone.dataDir 'hurricanes.mat']);
+            for ii = 1:length(tc);
+                years    = year(tc(ii).time(1));
+                basin    = tc(ii).basin;
+                storm    = tc(ii).storm_number(1);
+                hurricane_names{ii} = [num2str(years), '_', basin,num2str(storm),'_', tc(ii).name];
+                hurricane_numbers(ii) = ii;
+            end
+            it = find(strcmp(hurricane_names, fname));
+            tc = tc(it(1));
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
+            handles.toolbox.tropicalcyclone.wind_profile='holland2010';
+            handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';     
         otherwise
             giveWarning('text','Sorry, present import format not supported!');
             return

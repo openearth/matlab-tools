@@ -161,9 +161,9 @@ handles.toolbox.tropicalcyclone.tcBasinsFiles = dir([handles.toolbox.tropicalcyc
 
 handles.toolbox.tropicalcyclone.importFormat='JTWCCurrentTrack';
 % handles.toolbox.tropicalcyclone.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30','hurdat2besttrack','pagasa'};
-% handles.toolbox.tropicalcyclone.importFormatNames={'JTWC Current Track','NHC Current Track','JTWC Best Track','Unisys Best Track','JMV 3.0','HURDAT2','PAGASA'};
-handles.toolbox.tropicalcyclone.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30','hurdat2besttrack'};
-handles.toolbox.tropicalcyclone.importFormatNames={'JTWC Current Track','NHC Current Track','JTWC Best Track','Unisys Best Track','JMV 3.0','HURDAT2'};
+% handles.toolbox.tropicalcyclone.importFormatNames={'JTWC Current Track','NHC Current Track','JTWC Best Track','Unisys Best Track','JMV 3.0','HURDAT2','PAGASA', 'noaa'};
+handles.toolbox.tropicalcyclone.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30','hurdat2besttrack', 'noaa'};
+handles.toolbox.tropicalcyclone.importFormatNames={'JTWC Current Track','NHC Current Track','JTWC Best Track','Unisys Best Track','JMV 3.0','HURDAT2', 'NOAA archive'};
 
 handles.toolbox.tropicalcyclone.downloadLocation='JTWCCurrentTracks';
 handles.toolbox.tropicalcyclone.downloadLocations={'JTWCCurrentTracks','NHCCurrentTracks','UnisysBestTracks','JTWCBestTracks','JTWCCurrentCyclones'};
