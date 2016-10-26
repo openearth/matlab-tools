@@ -33,20 +33,7 @@ OPT.table = '';
 OPT = setproperty(OPT,varargin{:});
 
 %% list tables
-% dbtype = class(conn);
-% C      = textscan(dbtype, '%s', 'delimiter','.');
-% dbtype = C{:}{1};
-C = textscan(class(conn), '%s', 'delimiter','.');
-C = C{:};
-if ismember('oracle',C)
-    dbtype = 'oracle';
-elseif ismember('postgresql',C)
-    dbtype = 'postgresql';  
-elseif ismember('ucanaccess',C)
-    dbtype = 'access';  
-else
-    dbtype = 'unknown';
-end
+dbtype = jdb_dbtype(conn);
 
 switch dbtype
     case 'oracle'        

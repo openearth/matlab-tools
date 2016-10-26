@@ -18,6 +18,7 @@ function conn = jdb_connectdb(db, varargin)
 %               user    - Username for database server
 %               pass    - Password for database server
 %               schema  - Default schema for current session
+%      database_toolbox - use Matlab database toolbox if license (default) or JDBC
 %
 %   Output:
 %   conn      = Database connection object

@@ -21,6 +21,7 @@ function T = jdb_table2struct(conn, table, owner, column_names, varargin)
 %% Copyright notice: see below
 
 limit = 2e6; % SQL keyword
+dbtype = jdb_dbtype(conn);
 
 if nargin  > 3
     if ~isempty(column_names)
@@ -28,8 +29,10 @@ if nargin  > 3
     else
         [nams, typs, siz] = jdb_getcolumns(conn,table,owner);
     end
-else
+elseif nargin > 2
     [nams, typs, siz] = jdb_getcolumns(conn,table,owner);
+else
+    [nams, typs, siz] = jdb_getcolumns(conn,table);    
 end
 
 if nargin > 4
@@ -38,8 +41,12 @@ end
 
 if siz <= limit
 %    R = jdb_select_struct(conn,table,struct([]),nams);
-   R = jdb_select_struct(conn,jdb_table_owner(table,owner),struct([]),nams);
-   T = jdb_fetch2struct(R,nams,typs);
+    if strcmp(dbtype,'oracle')
+	R = jdb_select_struct(conn,jdb_table_owner(table,owner),struct([]),nams);
+    else
+	R = jdb_select_struct(conn,table,struct([]),nams);
+    end
+	T = jdb_fetch2struct(R,nams,typs);
 else
    T = [];
    disp(['table not loaded, table length exceeds limit: ',num2str(limit)])
