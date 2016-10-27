@@ -63,7 +63,10 @@ function ddb_findModels
 handles=getHandles;
 
 if isdeployed
-    dr=[ctfroot filesep 'models'];
+%     dr=[ctfroot filesep 'models'];
+    [status, result] = system('path');
+    exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
+    dr = [fileparts(exeDir) filesep 'ddbsettings' filesep 'models']; % by Bart Grasmeijer    
 else
     ddb_root = fileparts(which('delftdashboard.ini'));
     dr=[ddb_root filesep 'models'];

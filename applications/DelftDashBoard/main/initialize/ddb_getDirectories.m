@@ -71,11 +71,14 @@ handles.workingDirectory=pwd;
 
 if isdeployed
     
-    handles.settingsDir=[ctfroot filesep 'ddbsettings' filesep];
+%     handles.settingsDir=[ctfroot filesep 'ddbsettings' filesep];
     
     [status, result] = system('path');
     exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
     datadir=[fileparts(exeDir) filesep 'data' filesep];
+
+    handles.settingsDir=[fileparts(exeDir) filesep 'ddbsettings' filesep]; % by Bart Grasmeijer
+    
     additionalToolboxDir=[];
     additionalModelsDir=[];
 %     maindir=[fileparts(exeDir) filesep];
