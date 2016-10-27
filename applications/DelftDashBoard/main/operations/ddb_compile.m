@@ -1,21 +1,10 @@
 function ddb_compile
-%DDCOMPILE3  One line description goes here.
-%
-%   More detailed description goes here.
-%
-%   Syntax:
-%   ddcompile3
-%
-%   Input:
-%   varargin =
-%
-%
-%
+%DDCOMPILE Compiles DelftDashboard
 %
 %   Example
-%   ddcompile3
+%   ddb_compile
 %
-%   See also
+%   See also mcc
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -61,23 +50,24 @@ function ddb_compile
 
 %%
 warning 'off';
-matlabfolder='c:\Program Files\Matlab\MATLAB2013b_64\';
-compilefolder='d:\delftdashboardsetup\';
-ddbsettingsdir='d:\ddbsettings\';
+matlabfolder='c:\Program Files\MATLAB\R2016b\';
+compilefolder='c:\Users\grasmeijerb\Documents\delftdashboardsetup\';
+ddbsettingsdir='c:\Users\grasmeijerb\Documents\delftdashboardsetup\ddbsettings\';
 include_additional_toolboxes=0;
-ddb_path = 'd:\OpenEarthTools\matlab\applications\DelftDashBoard';
-netcdf_path = 'd:\OpenEarthTools\matlab\io\netcdf\netcdfAll-4.2.jar';
+ddb_path = 'c:\SVN_Projects\OpenEarthTools\matlab\applications\DelftDashBoard\';
+netcdf_path = 'c:\SVN_Projects\OpenEarthTools\matlab\io\netcdf\netcdfAll-4.2.jar';
 
-% Throw away compilefolder
-if exist(compilefolder,'dir')
-   rmdir(compilefolder,'s');
-end
-
-if exist(ddbsettingsdir,'dir')
-   rmdir(ddbsettingsdir,'s');
-end
+% % Throw away compilefolder
+% if exist(compilefolder,'dir')
+%    rmdir(compilefolder,'s');
+% end
+% 
+% if exist(ddbsettingsdir,'dir')
+%    rmdir(ddbsettingsdir,'s');
+% end
 
 % Make new compile folder
+disp('Making compile folder...')
 mkdir(compilefolder);
 mkdir([compilefolder 'data']);
 mkdir([compilefolder 'bin']);
@@ -89,14 +79,14 @@ mkdir(ddbsettingsdir);
 inipath=[fileparts(fileparts(fileparts(which('DelftDashBoard')))) filesep];
 
 %% Remove statistics toolbox paths
-statspath=[matlabfolder 'toolbox' filesep 'stats'];
-rmpath(statspath);
-statspath=[matlabfolder 'toolbox' filesep 'stats' filesep 'stats'];
-rmpath(statspath);
-statspath=[matlabfolder 'toolbox' filesep 'stats' filesep 'classreg'];
-rmpath(statspath);
-statspath=[matlabfolder 'toolbox' filesep 'stats' filesep 'statsdemos'];
-rmpath(statspath);
+% statspath=[matlabfolder 'toolbox' filesep 'stats'];
+% rmpath(statspath);
+% statspath=[matlabfolder 'toolbox' filesep 'stats' filesep 'stats'];
+% rmpath(statspath);
+% statspath=[matlabfolder 'toolbox' filesep 'stats' filesep 'classreg'];
+% rmpath(statspath);
+% statspath=[matlabfolder 'toolbox' filesep 'stats' filesep 'statsdemos'];
+% rmpath(statspath);
 
 fid=fopen([inipath 'complist'],'wt');
 
@@ -105,6 +95,7 @@ fprintf(fid,'%s\n','-a');
 fprintf(fid,'%s\n','DelftDashBoard.m');
 
 % Make directory for compiled settings
+disp('Making directory for compiled settings...')
 flist=dir([inipath 'settings']);
 for i=1:length(flist)
     switch flist(i).name
@@ -116,6 +107,7 @@ for i=1:length(flist)
 end
 
 % Add models
+disp('Adding models...')
 flist=dir([inipath 'models']);
 for j=1:length(flist)
     if flist(j).isdir
@@ -143,6 +135,7 @@ for j=1:length(flist)
 end
 
 % Add toolboxes
+disp('Adding toolboxes...')
 flist=dir([inipath 'toolboxes']);
 for j=1:length(flist)
     if flist(j).isdir
@@ -219,6 +212,7 @@ fclose(fid);
 % end
 
 %% Generate data folder in exe folder
+disp('Generating data folder...')
 ddb_copyAllFilesToDataFolder(inipath,compiledatadir,additionalToolboxDir);
 
 %mcc -m -v -d exe\bin DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
@@ -244,4 +238,4 @@ strrep(fullfile(fileparts(which('ddsettings')),'exe','ddb_aboutDelftDashBoard.tx
 delete('complist'); delete('exe');
 % delete('earthicon.rc');
 % delete('earthicon.res');
-rmdir(ddbsettingsdir,'s');
+% rmdir(ddbsettingsdir,'s');
