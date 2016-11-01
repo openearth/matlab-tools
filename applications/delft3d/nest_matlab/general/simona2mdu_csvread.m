@@ -26,7 +26,13 @@ while ~feof(fid)
         % Find comma's and quotes within the string
         %
         index_quote = strfind(line,'"');
-        index_comma = strfind(line,opt.delimiter);
+        
+        index_comma = [];
+        for i_del = 1: length(opt.delimiter);
+            index_comma = [index_comma strfind(line,opt.delimiter(i_del))];
+        end
+        index_comma = sort(index_comma);
+        
         if ~isempty(index_quote)
             %
             % remove comma's between quotes (belong with a string)
@@ -51,9 +57,6 @@ while ~feof(fid)
         %
         % Fill output cell
         %
-        if irow == 69
-            iiii = 1;
-        end
         for icol = 1:length(index_comma) - 1
             csv{irow,icol} = line(index_comma(icol) + 1:index_comma(icol + 1) - 1);
             if opt.convert
