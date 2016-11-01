@@ -89,7 +89,7 @@ OPT=setproperty(OPT,varargin);
 %% Open files
 
 %set working directory (=directory with mdffile)
-[fPath fName fExt]=fileparts(mdffile); 
+[fPath fName fExt]=fileparts(mdffile)
 cd(fPath);
 
 data=struct(); 

@@ -1,4 +1,4 @@
-function varargout=delft3d_io_ini(cmd,varargin),
+function varargout=delft3d_io_ini(cmd,varargin)
 %DELFT3D_IO_INI   read/write Delft3D initial fields file
 %
 %     DATA = delft3d_io_ini('read',filename,mdffilename);
@@ -298,8 +298,9 @@ end
 
 function iostat=Local_write_ini(filename,varargin),
 
-   OPT.fillvalue = 0; % -999
-
+   %OPT.fillvalue = 0; % -999
+   OPT.fillvalue =  -999;
+   
    iostat        = 1;
    fid           = fopen(filename,'w');
    if isstr(varargin{1})

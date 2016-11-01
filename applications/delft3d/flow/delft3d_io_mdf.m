@@ -1,4 +1,4 @@
-function varargout=delft3d_io_mdf(cmd,varargin),
+function varargout=delft3d_io_mdf(cmd,varargin)
 %DELFT3D_IO_MDF   x read/write Delft3D ASCII Master Definition File (*.mdf) <<beta version!>>
 %
 %   DATA         = delft3d_io_mdf('read' ,<filename>,<keyword,value>);
@@ -212,7 +212,7 @@ end;
 % --READ------------------------------
 % ------------------------------------
 
-function varargout=Local_read(fname,varargin),
+function varargout=Local_read(fname,varargin)
 
 %% Input
 
