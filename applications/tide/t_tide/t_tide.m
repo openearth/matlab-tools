@@ -101,19 +101,22 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin)
 %                         (useful for testing). Note: case-sensitive, use UPPER case.
 %  
 %   Calculation of confidence limits (Boostrap not possible with non-equidistant time)
-%       'error'          'wboot'  - Boostrapped confidence intervals 
+%                        NB (1) the 2 *boot methods do not work with
+%                        non-equidistant time vectors.
+%                        NB (2) cboot/linear need a COMMERCIAL SIGNAL 
+%                        PROCESSING TOOLBOX LICENSE
+%       'error'           'wboot' - (1) Boostrapped confidence intervals 
 %                                   based on a correlated bivariate 
 %                                   white-noise model.
-%                METHODS THAT NEED SIGNAL PROCESSING TOOLBOX LICENSE:
-%                        'cboot'  - Boostrapped confidence intervals 
+%                         'cboot' - (1,2) Boostrapped confidence intervals 
 %                                   based on an uncorrelated bivariate 
 %                                   coloured-noise model (default).
-%                        'linear' - Linearized error analysis that 
+%                        'linear' - (2) Linearized error analysis that 
 %                                   assumes an uncorrelated bivariate 
 %                                   coloured noise model. 
 %                                   
-%   Computation of "predicted" tide (passed to t_predic, but note that
-%                                    the default value is different).
+%   Computation of "predicted" tide is passed to t_predic, but note that the
+%                                    default for nodal factor usage differs.
 %       'synthesis'      0 - use all selected constituents
 %                        scalar>0 - use only those constituents with a 
 %                                   SNR greater than that given (1 or 2 
@@ -143,7 +146,7 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin)
 %    nameu=list of constituents used
 %    fu=frequency of tidal constituents (cycles/hr)
 %    tidecon=[fmaj,emaj,fmin,emin,finc,einc,pha,epha] for vector xin
-%           =[fmaj,emaj,pha,epha] for scalar (real) xin
+%           =[fmaj,emaj,pha ,epha] for scalar (real) xin
 %       fmaj,fmin - constituent major and minor axes (same units as xin)       
 %       emaj,emin - 95% confidence intervals for fmaj,fmin
 %       finc - ellipse orientations (degrees)
@@ -160,10 +163,13 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin)
 %       series length.
 %
 % Example: irregular interval from DART buoy off the coast of Seattle from NOAA OPeNDAP server
-%      Since R2012a Matlab works with OPeNDAP urls, otherwise download netCDF file locally.
+%      Since R2012a Matlab handles OPeNDAP urls, otherwise download netCDF file locally.
 %
-%      url   = 'http://dods.ndbc.noaa.gov/thredds/dodsC/data/dart/46419/46419t2012.nc'
-%      D.h   = ncread(url,'height',[1 1 1],[1 1 1e4]) % total water column height, so huge A0
+%      url   = 'http://dods.ndbc.noaa.gov/thredds/dodsC/data/dart/46419/46419t2016.nc'
+%      %% or download and read local cache
+%      % urlwrite(url,fullfile(tempdir,filenameext(url)))
+%      % url = fullfile(tempdir,filenameext(url));
+%      D.h   = ncread(url,'height',[1 1 1],[1 1 1e4]); % total water column height, so huge A0
 %      D.day = double(ncread(url,'time',1,1e4))/3600/24; % sec since 1970
 %      D.t   = datenum(1970,1,D.day); % irregular: 15, 30, 60,... 900 sec
 %      D.lat = ncread(url,'latitude');
@@ -208,6 +214,7 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin)
 %                Jul/12 - added support for non-equidistant time vector (Gerben J. de Boer)
 %                Feb/13 - added option to sort screen/txt output for rapid assessment (Gerben J. de Boer)
 %                Feb/13 - added option return z0 (different than regular mean) (Gerben J. de Boer)
+%                Nov/16 - fetch issue non-equidistant dt wiith error estimate
 
 % Version 1.3+
 % $Id$
@@ -343,10 +350,6 @@ end;
 [inn,inm]=size(xin);
 if ~(inn==1 || inm==1), error('Input time series is not a vector'); end;
 
-if any(strmatch(errcalc(2:end),'boot')) && exist('dt0','var')
-   % non-equidistant time series do not allow for fft
-   error(['When ''dt'' is a non-equidistant vector, error estimate with ''',errcalc,''' not possible, only ''lin''.'])
-end
 %%
 xin=xin(:); % makes xin a column vector
 nobs=length(xin);
@@ -645,7 +648,9 @@ xr=fixgaps(xres); % Fill in "internal" NaNs with linearly interpolated
 nreal=1;
 if any(strmatch(errcalc(2:end),'boot')) && exist('dt0','var')
    % non-equidistant time series do not allow for fft
-   error(['When ''dt'' is a non-equidistant vector, error estimate with ''',errcalc,''' not possible, only ''lin''.'])
+   warning(['When ''dt'' is a non-equidistant vector, error estimate with ''',errcalc,''' not possible, only ''lin'': all errors 0.'])
+   epsp = zeros(1,nreal);
+   epsm = zeros(1,nreal);
 elseif any(strmatch(errcalc(2:end),'boot')) && ~exist('dt0','var')
     if ~diar==0
     fprintf(diar,'   Using nonlinear bootstrapped error estimates\n');
