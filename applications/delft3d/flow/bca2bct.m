@@ -9,7 +9,7 @@ function varargout = bca2bct(varargin);
 % using the *.bnd file (boundary definition file) and using T_TIDE prediction.
 % Thw following <keyword,value> pairs are required.
 %
-%    *  'bcafile', 'bndname' and 'bctfile' are file names (including directory).
+%    *  'bcafile', 'bndfile' and 'bctfile' are file names (including directory).
 %
 %    *  'period' is a time array in matlab datenumbers
 %       E.g. a 10-minute ( 10 minutes is 1 day / 24 hours /6) time series:
@@ -79,12 +79,12 @@ function varargout = bca2bct(varargin);
 
 %% Defaults
 
-OPT.latitude    = [];
 OPT.bcafile     = '';
 OPT.bctfile     = '';
 OPT.bndfile     = '';
 OPT.period      = [];
 OPT.refdate     = [];
+OPT.latitude    = []; % optional
 
 %% Return defaults
 
@@ -100,6 +100,8 @@ OPT = setproperty(OPT,varargin{:});
 %% Check input
 
 if isempty(OPT.latitude);warning('No latitude passed, performing simple harmonic analysis, not tidal analysis!');end
+if isempty(OPT.period  );errror('No period passed.' );end
+if isempty(OPT.refdate );errror('No refdate passed.');end
 
 %% Load (ancillary) data
 
@@ -179,6 +181,8 @@ for ibnd=1:length(BND.DATA)
             %% of components per boundary yet (ncomponents),
             %% bca2bct can already (ncomp).
             %% Should be same for the two boundary end points though.
+
+             %% TO DO handle case where 2 sides use same data node
             
             if isize == 1
                 id = (ibnd*isize)+(ibnd-1);              
