@@ -19,7 +19,6 @@ else
     statname = [];
 end
 
-salinity = nc_isvar(filename,'salinity');
 
 hisdata=struct();
 hisdata.time       = nc_cf_time(filename, 'time');
@@ -36,19 +35,19 @@ if isempty(statname)
     hisdata.waterlevel      = nc_varget(filename, 'waterlevel');
     hisdata.x_velocity      = nc_varget(filename, 'x_velocity');
     hisdata.y_velocity      = nc_varget(filename, 'y_velocity');
-    if salinity
-        hisdata.salinity        = nc_varget(filename, 'salinity');
-        hisdata.temp            = nc_varget(filename, 'temperature');
-        hisdata.crest            = nc_varget(filename, 'Weir crest level (via general structure)');
-
-    end    
     
     hisdata.cross_section_name  = cross_section_name;
     hisdata.cross_section_discharge = nc_varget(filename, 'cross_section_discharge');
-    hisdata.cross_section_discharge_int = nc_varget(filename, 'cross_section_discharge_int');
-    hisdata.cross_section_discharge_avg = nc_varget(filename, 'cross_section_discharge_avg');
+    hisdata.cross_section_discharge_int = nc_varget(filename, 'cross_section_cumulative_discharge');
     hisdata.cross_section_area      = nc_varget(filename, 'cross_section_area');
     hisdata.cross_section_velocity  = nc_varget(filename, 'cross_section_velocity');
+    
+    extras={'salinity','temperature','Weir crest level (via general structure)','cross_section_discharge_avg'};
+    for extra=extras
+        if nc_isvar(filename, extra{1})
+            hisdata.(extra{1})=nc_varget(filename, extra{1});
+        end
+    end
     
 else
     idx = [];
@@ -72,7 +71,7 @@ else
         waterlevel      = nc_varget(filename, 'waterlevel');
         x_velocity      = nc_varget(filename, 'x_velocity');
         y_velocity      = nc_varget(filename, 'y_velocity');
-        if salinity
+        if nc_isvar(filename, 'salinity')
             salinity        = nc_varget(filename, 'salinity');
         end        
         hisdata.station_name    = deblank(station_name(idx,:));
