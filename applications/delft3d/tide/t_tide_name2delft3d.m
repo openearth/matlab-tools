@@ -11,7 +11,7 @@ function delft3d_names = t_tide_name2delft3d(t_tide_names)
 % * vectorized
 %
 % See web:  T_TIDE (http://www.eos.ubc.ca/~rich/) 
-% See also: DELFT3D_NAME2T_TIDE, BCT2BCA, BCA2BCT, NC_T_TIDE, unstruc.analyseHis
+% See also: DELFT3D_NAME2T_TIDE, BCT2BCA, BCA2BCT, NC_T_TIDE, dflowfm.analyseHis
 
 % 2008 Jul 22: added A0/Z0
 
