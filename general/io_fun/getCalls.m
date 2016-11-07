@@ -3,6 +3,8 @@ function IsCalls = getCalls(fun, directory, varargin)
 %
 %   Routine uses depfun to find all functions that are called. List is
 %   filtered for functions that are subs of directory.
+%   After Matlab2015a, throws the warning: DEPFUN will be removed in a future release. 
+%   Use matlab.codetools.requiredFilesAndProducts instead. 
 %
 %   syntax:
 %   IsCalls = getCalls(fun, directory)
@@ -85,7 +87,9 @@ if ~isempty(FileDir)
 end    
 
 try
-    list = depfun(FunName, '-quiet', '-toponly');
+    %list = depfun(FunName, '-quiet', '-toponly');
+    [fList, pList] = matlab.codetools.requiredFilesAndProducts(FunName,'toponly');
+    list = fList;
 catch
     fprintf(2, 'Error in getCalls(%s); related calls are ommitted.\n', fun);
     list = {};
