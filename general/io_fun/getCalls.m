@@ -89,7 +89,7 @@ end
 try
     %list = depfun(FunName, '-quiet', '-toponly');
     [fList, pList] = matlab.codetools.requiredFilesAndProducts(FunName,'toponly');
-    list = fList;
+    list = fList';
 catch
     fprintf(2, 'Error in getCalls(%s); related calls are ommitted.\n', fun);
     list = {};
