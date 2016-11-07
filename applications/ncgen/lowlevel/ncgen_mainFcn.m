@@ -138,7 +138,7 @@ end
 multiWaitbar('Generating netcdf from source files...',          'reset', 'Color', [0.2 0.6 0.2])     % green
 % initialise cache dir and locate source files
 if OPT.main.zip
-    if ~exist(OPT.main.path_unzip_tmp,'dir'); mkpath(OPT.main.path_unzip_tmp); end
+    if ~exist(OPT.main.path_unzip_tmp,'dir'); mkdir(OPT.main.path_unzip_tmp); end
     fns1 = dir2(OPT.main.path_source,'file_incl',OPT.main.zip_file_incl,'dir_incl',OPT.main.dir_incl,'dir_excl',OPT.main.dir_excl,'no_dirs',true,'depth',OPT.main.dir_depth,'case_sensitive',OPT.main.case_sensitive);
 else
     fns1 = dir2(OPT.main.path_source,'file_incl',OPT.main.file_incl,'dir_incl',OPT.main.dir_incl,'dir_excl',OPT.main.dir_excl,'no_dirs',true,'depth',OPT.main.dir_depth,'case_sensitive',OPT.main.case_sensitive);
@@ -165,7 +165,7 @@ end
 if exist(OPT.main.path_netcdf,'dir');
     fns1 = check_existing_nc_files(OPT,fns1);
 else
-    mkpath(OPT.main.path_netcdf);
+    mkdir(OPT.main.path_netcdf);
 end
 
 % lock the output directory
