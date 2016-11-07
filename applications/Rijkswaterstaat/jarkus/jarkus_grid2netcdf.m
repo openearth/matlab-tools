@@ -236,14 +236,14 @@ STRINGSIZE = 100;
     s.Datatype    = 'int32';
     s.Dimensions = [alongshore_dim, time_dim];
     s.Attributes = struct('Name' ,{'long_name'                            , 'comment'                                       , '_FillValue'},...
-                         'Value',{'Maximum cross shore measurement index', 'Index of the cross shore measurement (0 based)',        -9999});
+                         'Value',{'Maximum cross shore measurement index', 'Index of the cross shore measurement (0 based)',        int32(-9999)});
     Variables = [Variables, s];
 
     s.Name      = 'min_cross_shore_measurement';
     s.Datatype    = 'int32';
     s.Dimensions = [alongshore_dim, time_dim];
     s.Attributes = struct('Name' ,{'long_name'                            , 'comment'                                       , '_FillValue'},...
-                         'Value',{'Minimum cross shore measurement index', 'Index of the cross shore measurement (0 based)',        -9999});
+                         'Value',{'Minimum cross shore measurement index', 'Index of the cross shore measurement (0 based)',        int32(-9999)});
     Variables = [Variables, s];
     
 %     s.Name      = 'has_data';
@@ -403,7 +403,8 @@ STRINGSIZE = 100;
 %     disp('Will try to run ncdump, no problem if command is not found')
 %     system(['ncdump -vyear,id,cross_shore_distance ' filename]); % system will not be catched by try in this way, RPN 22-11-2012
 
-      nc_dump(strrep(filename, '.nc', 'test.nc'))
+      %nc_dump(strrep(filename, '.nc', 'test.nc'))
+      nc_dump(filename, '.nc')
 
 %     catch
 %         disp('can not find the ncdump command, not a problem');
