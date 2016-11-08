@@ -226,7 +226,12 @@ end
 
 
 %% check and parse varargin
-narginchk(2, Inf);
+if verLessThan('matlab', '7.13')
+    error(nargchk(0, 4, length(varargin), 'struct'))
+else
+    narginchk(nargin-length(varargin), 4+nargin-length(varargin))
+end
+
 
 if odd(length(varargin))
      error('SETPROPERTY:varargin',...
