@@ -39,6 +39,7 @@ for i_bnd=1:no_bnd
 end
 
 %% Type of bc (and determine signd for current and discharge bc)
+
 first          = true;
 kcs            = [];
 for i_bnd      = 1: no_bnd
