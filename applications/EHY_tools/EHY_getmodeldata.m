@@ -62,7 +62,7 @@ for i_stat = 1: length(stat_name)
         case 'wl'
 
             %% Waterlevels, times and values for station nr nr_stat
-            nr_stat  = find(strcmp(Data.stationNames,stat_name{i_stat}) ~= 0);
+            nr_stat  = find(strcmp(Data.stationNames,stat_name{i_stat}) ~= 0,1);
 
             %% Read Sobek3 data
             if strcmpi(modelType,'sobek3')
