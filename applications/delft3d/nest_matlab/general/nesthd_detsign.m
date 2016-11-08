@@ -19,6 +19,8 @@ elseif ma ~= mb && na == nb
    end
 %% ambigous boundary definition, unable to determine in or outflow
 else
-
+    if kcs(max(ma - 1,1),na) == 1 || kcs(ma,max(na-1,1)) == 1
+        sign = -1.0;
+    end
 end
 
