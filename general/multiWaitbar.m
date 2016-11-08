@@ -79,7 +79,12 @@ function multiWaitbar( label, varargin )
 persistent figh;
 
 % Check basic inputs
-narginchk( 1, inf);
+if verLessThan('matlab', '7.13')
+    error( nargchk( 1, inf, nargin ) );
+else
+    narginchk(1, inf)
+end
+
 if ~ischar( label )
     error( 'multiWaitbar:BadArg', 'LABEL must be the name of the progress entry (i.e. a string)' );
 end
