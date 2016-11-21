@@ -363,7 +363,9 @@ result.info.time = toc;
 %     lh(4) = plot([LandwardBoundary LandwardBoundary],get(gca,'YLim'),'y');
 %     try
 %         lh(5) = plot(x,z,'-xk');
-%         lh(6) = plot(x2,z2,':k');
+%         lh(6) = plot(x2,z2,':+k');
+%         lh(7) = plot(OPT.x,OPT.z,'-pk');
+%         lh(8) = plot(OPT.x2,OPT.z2,':hk');
 %     end
 %     hold on
 %     color = {'b'};
@@ -373,7 +375,7 @@ result.info.time = toc;
 %             hp(i) = patch(volumepatch(:,1), volumepatch(:,2), ones(size(volumepatch(:,2)))*-(length(result)-i),color{i});
 %         end
 %     end
-%     legendtxt = {'Upperboundary','Lowerboundary','Seawardboundary','Landwardboundary','Profile'};
+%     legendtxt = {'Upperboundary','Lowerboundary','Seawardboundary','Landwardboundary','Profile','Profile 2'};
 %     l = legend(lh,legendtxt,'location','northwest');
 %     set(l,'fontsize',8,'fontweight','bold');
 %     legend  boxoff;

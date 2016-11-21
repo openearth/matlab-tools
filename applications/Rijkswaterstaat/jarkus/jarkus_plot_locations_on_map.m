@@ -131,9 +131,9 @@ ph = plot(x, y, xytr{:},...
     'parent', parent);
 
 %% set displaynames and markers
-lh = findobj(ph, 'XData', x, 'YData', y);
-set(lh, 'DisplayName', 'Coastline')
-th = ph(ph~=lh);
+%lh = findobj(ph, 'XData', x, 'YData', y);
+set(ph(1), 'DisplayName', 'Coastline')
+th = ph(2:end);
 set(th,...
     'marker', OPT.marker,...
     'linestyle', 'none');
@@ -148,3 +148,6 @@ labels = {'Latitude [degrees north]' 'Longitude [degrees east]' 'x-coordinate [m
 
 xlabel(labels(ismember(projections, projectionx)))
 ylabel(labels(ismember(projections, projectiony)))
+if strncmpi(OPT.projection,'xy',2); %Set axis to equal to keep aspect ratio of the Rijksdriehoek (XY) projection.
+    axis equal
+end

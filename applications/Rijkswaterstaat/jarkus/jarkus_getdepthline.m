@@ -41,6 +41,24 @@ function DL = jarkus_getdepthline(b,e,depth,year,varargin)
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 31 Oct 2016
+% Created with Matlab version: 8.6.0.267246 (R2015b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
 %%
 %load data from nc-file
 url = jarkus_url;
@@ -50,15 +68,16 @@ ei  = find(id==e);
 
 as  = nc_varget(url,'alongshore',bi-1,ei-bi+1);
 X   = nc_varget(url,'cross_shore');
-[y, m, d, h, mn, s] = datevec(nc_cf_time(url,'time'));
+[y, ~] = datevec(nc_cf_time(url,'time'));
 
 n  = find(y==year);
 z  = squeeze(nc_varget(url,'altitude',[n-1,bi-1,0],[1,ei-bi+1,-1]));
-DL = repmat(NaN,size(as));
+DL = nan(size(as));
 
 %calculate distance (from beach pole) for each transect
 for i=1:length(z(:,1))
-    DL(i)=jarkus_distancetoZ(depth,z(i,:),X);
+    temp=jarkus_distancetoZ(depth,z(i,:),X);
+    DL(i)=temp(end);
 end
 
 if nargin>4 %make figure to visually see the calculated depthline
@@ -69,16 +88,17 @@ if nargin>4 %make figure to visually see the calculated depthline
 
     scrs=get(0,'ScreenSize');
     figure('position',[5 35 (scrs(3)-5)/2 scrs(4)-105]) % left half of screen
-    plot(xRD,yRD,'k','linewidth',2)
-    hold on
     pcolor(x,y,z)
+    hold on
+    p=plot(xRD,yRD,'k','linewidth',2);
     shading flat
     A=axis;
-    plotLandboundary('Kaartblad Vaklodingen',1,0)
+    %plotLandboundary('Kaartblad Vaklodingen',1,0) %Script does not exist!
+    nc_plot_coastline('plot',true);
     axis equal
     axis(A)
     xlabel('x-coordinate')
     ylabel('y-coordinate')
     colorbar
-    legend(['Depthline, Z=' num2str(depth)])
+    legend(p,['Depthline, Z=' num2str(depth)])
 end

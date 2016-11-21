@@ -1,5 +1,9 @@
-function D = jarkus_depthatX(X,z,x)
-% jarkus_depthatX calculates the depth at a certain distance
+function depth = jarkus_depthatX(X,z,x)
+% jarkus_depthatX calculates the depth at a certain distance X
+%
+%   Syntax:
+%     depth=jarkus_depthatX(X,altitude,distance)
+%
 %
 %   Input:
 %     X = specified distance
@@ -7,7 +11,7 @@ function D = jarkus_depthatX(X,z,x)
 %     x = vector with distances (for example distance from RSP)
 %
 %   Output:
-%     D = depth at distance X
+%     depth = depth at distance X
 %
 % See also: JARKUS, snctools
 
@@ -35,16 +39,37 @@ function D = jarkus_depthatX(X,z,x)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-x = x(~isnan(z));
-z = z(~isnan(z));
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
 
-if find(x==X)
-    D=z(x==X);
-elseif ~isempty(x) && max(x)>X && min(x)<X
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 31 Oct 2016
+% Created with Matlab version: 8.6.0.267246 (R2015b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
+
+x = x(~isnan(z)); %cross-shore distance
+z = z(~isnan(z)); %altitude at x
+
+if find(x==X) %if X is entry of x
+    depth=z(x==X);
+elseif ~isempty(x) && max(x)>X && min(x)<X %X not entry of x, but between min(x) and max(x)
     b=find(x<X, 1, 'last' );
-    e=find(x>X, 1 );
+    e=find(x>X, 1, 'first');
     
-    D = z(b) - ( ((z(b)-z(e))/(x(b)-x(e))) * (x(b)-X) );
-else
-    D=NaN;
+    depth = z(b) - ( ((z(b)-z(e))/(x(b)-x(e))) * (x(b)-X) ); %Interpolate depth.
+else %X outside x
+    depth=NaN;
 end
+end
+%EOF

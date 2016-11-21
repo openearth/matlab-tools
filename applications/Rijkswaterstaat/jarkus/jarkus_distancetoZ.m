@@ -1,7 +1,10 @@
-function D = jarkus_distancetoZ(Z,z,x)
-% jarkus_distancetoZ calculates the distance to a certain depth 
+function dist = jarkus_distancetoZ(Z,z,x)
+% jarkus_distancetoZ calculates the distance to a certain depth Z
 % if profile crosses depth multiple times all crossings are given
 % this function is used by jarkus_getdepthline
+%
+%   Syntax:
+%     distance=jarkus_distancetoZ(Z,altitude,distance)
 %
 %   Input:
 %     Z = specified depth
@@ -9,7 +12,7 @@ function D = jarkus_distancetoZ(Z,z,x)
 %     x = vector with distances (for example distance from RSP)
 %
 %   Output:
-%     D = distance(s) to Z or NaN if profile is not crossed
+%     dist = distance(s) to Z or NaN if profile is not crossed
 %
 % See also: JARKUS, snctools
 
@@ -36,37 +39,42 @@ function D = jarkus_distancetoZ(Z,z,x)
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
-x = x(~isnan(z));
-z = z(~isnan(z));
 
-A=z>=Z; B=z<Z;
-C=A(1:end-1)+B(2:end);
-if sum(C~=1)==0
-    D = NaN;
-else
-    dz  = z(find(C~=1)+1)-z(C~=1);
-    dx  = x(find(C~=1)+1)-x(C~=1);
-    ddz = (Z-z(find(C~=1)+1))./dz;
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 31 Oct 2016
+% Created with Matlab version: 8.6.0.267246 (R2015b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
+x = x(~isnan(z)); %cross-shore distance
+if ~iscolumn(x); x=x'; end
+z = z(~isnan(z)); %altitude at x
+if ~iscolumn(z); z=z'; end
+
+up=z>=Z; %indices of z>=Z
+low=z<Z;  %indices of z<=Z
+cr_index=up(1:end-1)+low(2:end); %up- and downcrossing indices
+cr_index=find(cr_index~=1);
+if sum(cr_index~=1)==0 %if no crossings
+    dist = NaN;
+else %if crossings
+    dz  = z(cr_index+1)-z(cr_index);
+    dx  = x(cr_index+1)-x(cr_index);
+    ddz = (Z-z(cr_index+1))./dz;
     
-    D = x(find(C~=1)+1)+ddz'.*dx;
+    dist = x(cr_index+1)+ddz.*dx;
 end
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+end
+%EOF
