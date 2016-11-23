@@ -162,12 +162,12 @@ handles.toolbox.tropicalcyclone.tcBasinsFiles = dir([handles.toolbox.tropicalcyc
 handles.toolbox.tropicalcyclone.importFormat='JTWCCurrentTrack';
 % handles.toolbox.tropicalcyclone.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30','hurdat2besttrack','pagasa'};
 % handles.toolbox.tropicalcyclone.importFormatNames={'JTWC Current Track','NHC Current Track','JTWC Best Track','Unisys Best Track','JMV 3.0','HURDAT2','PAGASA', 'noaa'};
-handles.toolbox.tropicalcyclone.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30','hurdat2besttrack', 'noaa'};
-handles.toolbox.tropicalcyclone.importFormatNames={'JTWC Current Track','NHC Current Track','JTWC Best Track','Unisys Best Track','JMV 3.0','HURDAT2', 'NOAA archive'};
+handles.toolbox.tropicalcyclone.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30','noaa','recent'};
+handles.toolbox.tropicalcyclone.importFormatNames={'JTWC Current Track','NHC Current Track','JTWC Best Track','Unisys Best Track','JMV 3.0','HURDAT2', 'Recent Hurricanes'};
 
 handles.toolbox.tropicalcyclone.downloadLocation='JTWCCurrentTracks';
-handles.toolbox.tropicalcyclone.downloadLocations={'JTWCCurrentTracks','NHCCurrentTracks','UnisysBestTracks','JTWCBestTracks','JTWCCurrentCyclones'};
-handles.toolbox.tropicalcyclone.downloadLocationNames={'JTWC Current Cyclones','NHC Current Hurricanes','UNISYS Track Archive','JTWC Track Archive','JTWC Current Cyclones (Web)'};
+handles.toolbox.tropicalcyclone.downloadLocations={'JTWCCurrentTracks','NHCCurrentTracks','UnisysBestTracks','JTWCBestTracks','JTWCCurrentCyclones', 'recent'};
+handles.toolbox.tropicalcyclone.downloadLocationNames={'JTWC Current Cyclones','NHC Current Hurricanes','UNISYS Track Archive','JTWC Track Archive','JTWC Current Cyclones (Web)', 'Recent Hurricanes'};
 
 handles.toolbox.tropicalcyclone.wind_profile='holland2010';
 handles.toolbox.tropicalcyclone.wind_profile_options={'holland1980','holland2010','fujita1952'};

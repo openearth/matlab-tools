@@ -234,6 +234,14 @@ function downloadTrackData
 handles=getHandles;
 
 switch lower(handles.toolbox.tropicalcyclone.downloadLocation)
+    case('recent')
+        wb = waitbox('Recent hurricanes are being downloaded');
+        succes = ddb_read_FTP_NHC(handles.toolbox.tropicalcyclone.dataDir)
+        if succes == 0
+            close(wb);
+            db_giveWarning('text',['Something went wrong downloading recent hurricanes']);
+        end
+        close(wb);
     case{'unisysbesttracks'}
         web http://weather.unisys.com/hurricane -browser
     case{'jtwcbesttracks'}
@@ -359,9 +367,16 @@ handles=getHandles;
 iflag=0;
 
 switch lower(handles.toolbox.tropicalcyclone.importFormat)
-    case('noaa')
-        [fname] = ddb_selectNOAAstormm;  
+    case('recent');
+        wb = waitbox('Recent hurricanes are being imported');
+        [fname] = ddb_read_recent_hurricanes(handles.toolbox.tropicalcyclone.dataDir);
         iflag = 1; filename= fname; pathname = pwd;
+        close(wb);
+    case('noaa')
+        wb = waitbox('HUDRAT2 hurricanes are being imported');
+        [fname] = ddb_selectNOAAstorm;  
+        iflag = 1; filename= fname; pathname = pwd;
+        close(wb);
     case{'unisysbesttrack'}
         ext='dat';
         prefix = '';
@@ -570,7 +585,21 @@ try
             tc = tc(it(1));
             handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
             handles.toolbox.tropicalcyclone.wind_profile='holland2010';
-            handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';     
+            handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';   
+        case('recent')
+            load([handles.toolbox.tropicalcyclone.dataDir 'atcf/btk/hurricanes.mat']);
+            for ii = 1:length(tc);
+                years    = year(tc(ii).time(1));
+                basin    = tc(ii).basin;
+                storm    = tc(ii).storm_number(1);
+                hurricane_names{ii} = [num2str(years), '_', basin,num2str(storm),'_', tc(ii).name];
+                hurricane_numbers(ii) = ii;
+            end
+            it = find(strcmp(hurricane_names, fname));
+            tc = tc(it(1));
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
+            handles.toolbox.tropicalcyclone.wind_profile='holland2010';
+            handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';   
         otherwise
             giveWarning('text','Sorry, present import format not supported!');
             return
