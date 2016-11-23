@@ -76,8 +76,14 @@ while 1
     tc.basin=s{1}{1};
     tc.storm_number=s{2};
     % Read time
-    tstr=s{3};tstr=num2str(tstr);    
-    newtime=datenum(tstr,'yyyymmddHH');
+    tstr=s{3};tstr=num2str(tstr);
+    try
+        newtime=datenum(tstr,'yyyymmddHH');
+    catch
+        tstr = tstr(1,:);    
+        newtime=datenum(tstr,'yyyymmddHH');
+    end
+    
     if newtime>lasttime+1/86400
         % New time point found
         it=it+1;
@@ -85,7 +91,7 @@ while 1
         tc=set_default_values(tc,it);
     end
     if it==11
-        datestr(newtime)
+        datestr(newtime);
     end
     tc.time(it)=newtime;
     % Latitude
