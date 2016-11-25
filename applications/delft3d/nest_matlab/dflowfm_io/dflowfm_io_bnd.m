@@ -30,9 +30,17 @@ switch lower(cmd)
                         isempty(strfind(ext(i_ext).quantity,'temperature'))
                         i_file = i_file + 1;
                         if ~isempty(path)
-                            filelist{i_file} = [path filesep ext(i_ext).filename];
+                            try
+                                filelist{i_file} = [path filesep ext(i_ext).filename];
+                            catch
+                                filelist{i_file} = [path filesep ext(i_ext).locationfile];
+                            end
                         else
-                            filelist{i_file} = [ext(i_ext).filename];
+                            try
+                                filelist{i_file} = [ext(i_ext).filename];
+                            catch
+                                filelist{i_file} = [ext(i_ext).locationfile];
+                            end
                         end
                         
                         if ~isempty(strfind(ext(i_ext).quantity,'waterlevel'))

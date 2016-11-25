@@ -12,7 +12,7 @@ case 'read'
    fid     = fopen(fname  );
    line = strtrim(fgetl(fid));
    while ~feof(fid)
-       if ~isempty(line) && ~(line(1) == '*')
+       if ~isempty(line) && ~(line(1) == '*') && ~(line(1)== '[')
            if ~isempty(strfind(lower(line),'quantity'))
                i_forcing = i_forcing + 1;
                index = strfind(line,'=');
