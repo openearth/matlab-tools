@@ -27,11 +27,10 @@ switch lower(cmd)
                 end
 
                 ext     = dflowfm_io_extfile('read',fname);
+                allowedVars = {'waterlevel','normalvelocity','velocity','neumann','uxuyadvectionvelocitybnd'};
                 i_file  = 0;
-                for i_ext = 1: length(ext)
-                    if ~isempty(strfind(ext(i_ext).quantity,'bnd'        )) && ...
-                        isempty(strfind(ext(i_ext).quantity,'salinity'   )) && ...
-                        isempty(strfind(ext(i_ext).quantity,'temperature'))
+                for i_ext = 1: length(ext)  
+                    if ~isempty(strfind(ext(i_ext).quantity,'bnd'        )) && ~isempty(find(~cellfun('isempty',regexp(ext(i_ext).quantity,allowedVars))))
                         i_file = i_file + 1;
                         if ~isempty(path)
                             try
@@ -74,6 +73,7 @@ switch lower(cmd)
                out.DATA(no_bnd).bndtype  = bndtype{i_file};
                out.DATA(no_bnd).datatype = 't';
                out.Name{no_bnd}          = [name '_' num2str(i_pnt,'%4.4i')];
+               out.FileName{no_bnd} = name;
             end
         end
 
