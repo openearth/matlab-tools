@@ -16,21 +16,21 @@ if ~isempty(strfind(filename,'sds'   )) || ~isempty(strfind(filename,'timeser'))
     filetype = 'SIMONA';
 end
 
-if ~isempty(strfind(filename,'trih'  )) || ~isempty(strfind(filename,'bct'    )) || ...
-   ~isempty(strfind(filename,'bcc'   )) || ~isempty(strfind(filename,'obs'    )) || ...
-   ~isempty(strfind(filename,'bnd'   ))
+if ~isempty(strfind(filename,'trih-'  )) || ~isempty(strfind(extension,'bct'    )) || ...
+   ~isempty(strfind(extension,'bcc'   )) || ~isempty(strfind(extension,'obs'    )) || ...
+   ~isempty(strfind(extension,'bnd'   ))
     filetype = 'Delft3D';
 end
 
-if ~isempty(strfind(filename,'mdf'  ))
+if ~isempty(strfind(extension,'mdf'  ))
     filetype = 'mdf';
 end
 
-if ~isempty(strfind(filename,'mdu'  ))
+if ~isempty(strfind(extension,'mdu'  ))
     filetype = 'mdu';
 end
 
-if ~isempty(strfind(filename,'ext'  ))
+if ~isempty(strfind(extension,'ext'  ))
     filetype = 'ext';
 end
 
@@ -38,7 +38,7 @@ if ~isempty(strfind(filename,'siminp'))
     filetype = 'siminp';
 end
 
-if ~isempty(strfind(filename,'grd')) || ~isempty(strfind(filename,'rgf'))
+if ~isempty(strfind(extension,'grd')) || ~isempty(strfind(extension,'rgf'))
      filetype = 'grd';
 end
 
@@ -51,11 +51,11 @@ if ~isempty(strfind(ext,'pli'))
     filetype = 'pli';
 end
 
-if ~isempty(strfind(filename,'.tim'))
+if ~isempty(strfind(extension,'.tim'))
     filetype = 'DFLOWFM';
 end
 
-if ~isempty(strfind(filename,'.xyn'))
+if ~isempty(strfind(extension,'.xyn'))
     filetype = 'DFLOWFM';
 end
 

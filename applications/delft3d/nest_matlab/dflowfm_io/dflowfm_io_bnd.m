@@ -19,7 +19,11 @@ switch lower(cmd)
                 switch type_bnd
                     case 'mdu'
                         mdu = dflowfm_io_mdu(fname);
-                        fname = [path filesep mdu.external_forcing.ExtForceFile];
+                        if isfield(mdu.external_forcing,'ExtForceFileNew') & ~isempty(mdu.external_forcing.ExtForceFileNew)
+                            fname = [path filesep mdu.external_forcing.ExtForceFileNew];
+                        else
+                            fname = [path filesep mdu.external_forcing.ExtForceFile];
+                        end
                 end
 
                 ext     = dflowfm_io_extfile('read',fname);
