@@ -13,17 +13,19 @@ muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
 k=muppet_findIndex(handles.figureoption,'figureoption','name','backgroundcolor');
 muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
 
-if fig.useframe
-    k=muppet_findIndex(handles.figureoption,'figureoption','name','frame');
-    muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
-    k=muppet_findIndex(handles.figureoption,'figureoption','name','orientation');
-    muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
-    % Frame texts
-    if ~ilayout
-        kfr=strmatch(lower(fig.frame),lower(handles.frames.names),'exact');
-        for ii=1:length(handles.frames.frame(kfr).frame.text)
-            k=muppet_findIndex(handles.figureoption,'figureoption','name',['frametext' num2str(ii)]);
-            muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
+if ~strcmpi(fig.frame,'none')
+    if fig.useframe
+        k=muppet_findIndex(handles.figureoption,'figureoption','name','frame');
+        muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
+        k=muppet_findIndex(handles.figureoption,'figureoption','name','orientation');
+        muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
+        % Frame texts
+        if ~ilayout
+            kfr=strmatch(lower(fig.frame),lower(handles.frames.names),'exact');
+            for ii=1:length(handles.frames.frame(kfr).frame.text)
+                k=muppet_findIndex(handles.figureoption,'figureoption','name',['frametext' num2str(ii)]);
+                muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
+            end
         end
     end
 end
