@@ -82,7 +82,9 @@ end
 
  if nc_isvar(ncfile, 'mesh2d_node_x') && OPT.edge  % not for *_flowgeom.nc
      G.edge.NetLink          = nc_varget(ncfile, 'mesh2d_edge_nodes')';     % link between two netnodes
+    try
      G.edge.NetLinkType      = nc_varget(ncfile, 'mesh2d_edge_type')'; % link between two netnodes
+    end
 %     G.edge.NetLinkSize         = size(G.edge.NetLink      ,2);
 %     
 %     %% NOTE: Verify if flag_values and flag_meanings need to be nested
@@ -128,7 +130,9 @@ end % OPT.peri2cell
 if nc_isvar(ncfile, 'mesh2d_face_nodes') && OPT.edge
     
     G.edge.FlowLink          = nc_varget(ncfile, 'mesh2d_face_nodes')';     % link between two flownodes
+    try
     G.edge.FlowLinkType      = nc_varget(ncfile, 'mesh2d_edge_type')'; % link between two flownodes
+    end
     G.edge.FlowLinkSize         = size(G.edge.FlowLink      ,2);
     
     %% NOTE: Verify if flag_values and flag_meanings need to be nested
