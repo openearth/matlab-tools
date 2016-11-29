@@ -85,9 +85,9 @@ if nc_isvar(ncfile, 'NetNode_x') && OPT.edge  % not for *_flowgeom.nc
     G.edge.NetLinkSize         = size(G.edge.NetLink      ,2);
     
     %% NOTE: Verify if flag_values and flag_meanings need to be nested
-    G.edge.NetLinkType.flag_values   = nc_attget(ncfile, 'NetLinkType','flag_values');
-    G.edge.NetLinkType.flag_meanings = nc_attget(ncfile, 'NetLinkType','flag_meanings');
-    G.edge.NetLinkType.flag_meanings = textscan(G.edge.NetLinkType.flag_meanings,'%s');
+    G.edge.NetLinkTypeFlag.flag_values   = nc_attget(ncfile, 'NetLinkType','flag_values');
+    G.edge.NetLinkTypeFlag.flag_meanings = nc_attget(ncfile, 'NetLinkType','flag_meanings');
+    G.edge.NetLinkTypeFlag.flag_meanings = textscan(G.edge.NetLinkTypeFlag.flag_meanings,'%s');
 end
 
 %% < read network: centers too: output file >
