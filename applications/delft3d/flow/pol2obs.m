@@ -174,13 +174,22 @@ elseif strcmpi(fext,'.pol') | strcmpi(fext,'.ldb')
 			z=pol(k).Data(1,3);
 		else
 			z=[]; 
-		end
-	
-		if ~isnan(m) & ~isnan(n)
+        end
+        m=m(:);n=n(:);z=z(:); % All columns
+        
+		if ~isnan(m) & ~isnan(n) & isempty(z)
 		%Write grid indices to file if nearby gridpoint has been found
 			line=pol(k).Comments; line=cell2mat(line); line=line(2:end);
-			formatOut=['%-',num2str(max(20,length(line))),'s %d\t%d\t%d\n'];
-			fprintf(fid,formatOut,line,m,n,z);
+			formatOut=['%-',num2str(max(20,length(line))),'s\n'];
+			fprintf(fid,formatOut,line);
+			formatOut='%d\t%d\t\r\n';
+			fprintf(fid,formatOut,[m';n']);
+        elseif ~isnan(m) & ~isnan(n) & ~isempty(z)
+            line=pol(k).Comments; line=cell2mat(line); line=line(2:end);
+            formatOut=['%-',num2str(max(20,length(line))),'s\n'];
+            fprintf(fid,formatOut,line);
+            formatOut='%d\t%d\t%d\n';
+            fprintf(fid,formatOut,[m';n';z']);
 		end %end if
 	end %end for k
 	fclose(fid); 
