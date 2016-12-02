@@ -24,8 +24,8 @@
 %%        Get velocity data and rotate to obtain north and south velocities
 
          data_all  = ncread(runid,'x_velocity');
-         uuu       = data_all(istat,:);
+         uu       = data_all(istat,:);
          data_all  = ncread(runid,'y_velocity');
-         vvv       = data_all(istat,:);
+         vv       = data_all(istat,:);
          
       end
