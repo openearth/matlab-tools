@@ -4,7 +4,7 @@
 
       times          = ncread(filename,'time');
       sds_ini.notims = length(times);
-      sds_ini.time   = times/60.;
+      sds_ini.time   = times;
       sds_ini.dtmin  = (times(2) - times(1))/60.;
       sds_ini.tstart = times (1)  /60.;
       sds_ini.tend   = times (end)/60.;
