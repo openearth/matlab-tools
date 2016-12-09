@@ -495,6 +495,7 @@ switch lower(tc.wind_speed_unit)
         tc.radius_velocity=tc.radius_velocity*kts2ms*spw.wind_conversion_factor; % Convert to m/s
         for it=1:nt
             tc.track(it).vmax=tc.track(it).vmax*kts2ms*spw.wind_conversion_factor; % Convert to m/s
+            tc.track(it).asymmetry_speed=tc.track(it).asymmetry_speed*kts2ms; % Convert to m/s
         end
 end
 
