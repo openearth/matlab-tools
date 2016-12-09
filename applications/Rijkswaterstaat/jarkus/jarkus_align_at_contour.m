@@ -1,10 +1,10 @@
-function [xshift1 xshift2 xcr1 xcr2] = jarkus_align_at_contour(x1, z1, x2, z2, varargin)
-%JARKUS_ALIGN_AT_CONTOUR  One line description goes here.
+function [xshift1, xshift2, xcr1, xcr2] = jarkus_align_at_contour(x1, z1, x2, z2, varargin)
+%JARKUS_ALIGN_AT_CONTOUR  Aligns 2 transects at the crossing of given altitude.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = jarkus_align_at_contour(varargin)
+%   varargout = jarkus_align_at_contour(x1,z1,x2,z2,varargin)
 %
 %   Input:
 %   varargin  = propertyname-propertyvalue pairs
@@ -14,11 +14,15 @@ function [xshift1 xshift2 xcr1 xcr2] = jarkus_align_at_contour(x1, z1, x2, z2, v
 %
 %   Output:
 %   varargout =
+%     xshift1 : shift of profile 1, positive seaward.
+%     xshift2 : shift of profile 2, xshift2=-xshift1.
+%     xcr1    : positions of crossing in profile 1.
+%     xcr2    : positions of crossing in profile 2.
 %
 %   Example
 %   jarkus_align_at_contour
 %
-%   See also
+%   See also: jarkus_distancetoZ, jarkus_depthatX, jarkus_findCrossings.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -71,17 +75,17 @@ OPT = struct(...
 OPT = setproperty(OPT, varargin{:});
 
 %%
-xc1 = x1([1 end]);
-zc1 = repmat(OPT.contour, size(xc1));
-xcr1 = findCrossings(x1, z1, xc1, zc1);
+xc1 = x1([1 end]);                          %x_contour
+zc1 = repmat(OPT.contour, size(xc1));       %z_contour
+xcr1 = findCrossings(x1, z1, xc1, zc1);     %x_crossings
 if isempty(xcr1)
     xcr1 = NaN;
-elseif isnumeric(OPT.index)
+elseif isnumeric(OPT.index)                 %if n-th crossing
     xcr1 = xcr1(OPT.index);
-elseif strcmp(OPT.index, 'first')
+elseif strcmp(OPT.index, 'first')           %if first crossing
     xcr1 = xcr1(1);
-elseif strcmp(OPT.index, 'last')
-    xcr1 = xc1(end);
+elseif strcmp(OPT.index, 'last')            %if last crossing
+    xcr1 = xcr1(end);
 end
 
 xc2 = x2([1 end]);
@@ -94,7 +98,7 @@ elseif isnumeric(OPT.index)
 elseif strcmp(OPT.index, 'first')
     xcr2 = xcr2(1);
 elseif strcmp(OPT.index, 'last')
-    xcr2 = xc2(end);
+    xcr2 = xcr2(end);
 end
 
 %%

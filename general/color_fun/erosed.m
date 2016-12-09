@@ -1,9 +1,9 @@
 function col = erosed(m)
-%EROSED
+%EROSED Sets colormap to erosed with m values, 16 is default.
 %  
-%See also: 
+%See also: colormap.
 
-col(:,1)=[  
+r=[  
 45  
 75  
 105 
@@ -22,7 +22,7 @@ col(:,1)=[
 255 
 ];
 
-col(:,2)=[ 
+g=[ 
 45 
 75 
 105
@@ -41,7 +41,7 @@ col(:,2)=[
  45
 ];
 
-col(:,3)=[
+b=[
 255
 255
  255
@@ -59,4 +59,15 @@ col(:,3)=[
   75
   75
 ];
+
+if nargin < 1
+    col=[r g b];
+else
+    x=1:1:length(r);
+    r=interp1(x,r,linspace(1,length(r),m));
+    g=interp1(x,g,linspace(1,length(g),m));
+    b=interp1(x,b,linspace(1,length(b),m));
+    col=[r' g' b'];
+end
 col=col/255;
+end
