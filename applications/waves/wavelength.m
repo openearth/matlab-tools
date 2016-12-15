@@ -114,7 +114,7 @@ else
                                               .*U.*cos(delta-alpha).*T)./...
                                             (-L+U.*cos(delta-alpha).*T)./L.^2 ...
                                         ./(-(-L+U.*cos(delta-alpha).*T)./L).^(1/2)./cosh(k.*d).^2;
-        L2 = L - a/b;
+        L2 = L - a./b;
         e  = abs(L2-L);
         L  = L2;
     end
