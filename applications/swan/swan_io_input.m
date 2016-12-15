@@ -88,7 +88,8 @@ function varargout = swan_io_input(varargin)
 %% No file name specified if odd number of arguments
 
    elseif mod(nargin,2) == 1 % i.e. 3 or 5 input parameters
-      DAT.fullfilename  = varargin{1};
+     %DAT.fullfilename  = which(varargin{1}); % needed for external relative references
+      DAT.fullfilename  = varargin{1}; % sometimes does not work
       iostat            = 1;
    end
    
@@ -525,6 +526,9 @@ end
               [keyword1,rec1]   = strtok1(rec1);DAT.inpgrid{j}.mxinp   = str2num(keyword1);
               [keyword1,rec1]   = strtok1(rec1);DAT.inpgrid{j}.myinp   = str2num(keyword1);
                end
+               
+              DAT.inpgrid{j}.x = DAT.inpgrid{j}.xpinp+[0:DAT.inpgrid{j}.mxinp-1]*DAT.inpgrid{j}.dxinp;
+              DAT.inpgrid{j}.y = DAT.inpgrid{j}.ypinp+[0:DAT.inpgrid{j}.myinp-1]*DAT.inpgrid{j}.dyinp;
                
               %% EXC is optional               
               if ~isempty(strtrim(rec1))

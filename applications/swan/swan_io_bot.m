@@ -76,16 +76,22 @@ function varargout = swan_io_bot(cmd,varargin)
    nhedf       = 0;
    vector      = 0;
    
+   fname = varargin{1};
+   
 if     strcmp(cmd,'read') | ...
        strcmp(cmd,'load')
        
 %% Input
 
-   if isstruct(varargin{1})
+   if isstruct(varargin{2})
    
-      S = varargin{1};
+      S = varargin{2};
    
-      fname  = S.fname1;
+      if isfield(S,'fname')
+      fname  = S.fname; % outp
+      else
+      fname  = S.fname1; % inp
+      end
       mxc    = S.mxinp;
       myc    = S.myinp;
       idla   = S.idla;
@@ -97,23 +103,23 @@ if     strcmp(cmd,'read') | ...
          vector=1;
       end
    
-   elseif ischar(varargin{1})
-   fname = varargin{1};
-   varargin = {varargin{2:end}}
-   if isstruct(varargin{1})
-      cgrid = varargin{1};
-      mxc   = cgrid.mxc ;
-      myc   = cgrid.myc ;
-      if nargin>3
-       IDLA = varargin{2};
-      end
-   else
-      mxc   = varargin{1}(1);
-      myc   = varargin{1}(2);
-      if nargin>4
-       IDLA = varargin{2};
-      end
-   end
+   elseif ischar(varargin{2})
+       
+       varargin = {varargin{2:end}};
+       if isstruct(varargin{1})
+          cgrid = varargin{1};
+          mxc   = cgrid.mxc ;
+          myc   = cgrid.myc ;
+          if nargin>3
+           IDLA = varargin{2};
+          end
+       else
+          mxc   = varargin{1}(1);
+          myc   = varargin{1}(2);
+          if nargin>4
+           IDLA = varargin{2};
+          end
+       end
    end
 
    mmax = mxc + 1; % mxc is number of meshes, we want number of nodes mmax
