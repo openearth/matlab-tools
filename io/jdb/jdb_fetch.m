@@ -35,6 +35,7 @@ function varargout = jdb_fetch(conn, sql, varargin)
 % the licensed database toolbox or the JDCB driver directly.
 OPT.database_toolbox = 0;
 OPT.format = 'array';
+
 try %#ok<TRYNC>
     if any(strfind(char(conn.Constructor),'mathworks'))
         OPT.database_toolbox = 1;
@@ -64,6 +65,7 @@ else
     row = 0;
     data = {};
     jtypes = cell(numberOfColumns,1);
+    nrow = 0;
     while 1
         try
             if ~rs.next()
@@ -106,9 +108,16 @@ else
                         jt = rs.getTimestamp(col);
                         mils_since_epoch = jt.getTime() - (jt.getTimezoneOffset * 60 * 1000);
                         data{row,col} = mils_since_epoch * datenum(0,0,0,0,0,1/1000);
+                    case {'java.lang.Object'} % e.g. hexadecimal PostGIS object
+                        data{row,col} = rs.getString(col);
                     otherwise
-                        warning('JDB:DATA_FETCH_ERROR:TYPE_NOT_IMPLEMENTED:datatype %s implemented',jtype)
+                        warning('JDB:DATA_FETCH_ERROR:TYPE_NOT_IMPLEMENTED:datatype %s implemented',jtypes{col} )
                 end
+                nrow = nrow +1;
+                if mod(nrow,100000)==0
+                    disp(num2str(nrow))
+                end
+                
             end
         catch ME
             warning('JDB:DATA_FETCH_ERROR',ME.getReport())
