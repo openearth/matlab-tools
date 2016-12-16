@@ -38,7 +38,7 @@ if betas(2)>betas(1)
     betas=flipud(betas);
     alphas=flipud(alphas);
 end
-pf=1-normcdf(betas(1));
+pf=normcdf(-betas(1));
 
 % correlation between the two Z-functions
 rho = sum(alphas(1,:).*alphas(2,:).*rhos);

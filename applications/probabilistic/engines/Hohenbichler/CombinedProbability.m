@@ -59,14 +59,14 @@ alphasA=zeros(N,3);
 Results(1,1)=betasIn(1);
 Results(2,1)=betasIn(2);
 
-Results(1,2)=1-normcdf(betasIn(1),0,1);
-Results(2,2)=1-normcdf(betasIn(2),0,1);
+Results(1,2)=normcdf(-betasIn(1),0,1);
+Results(2,2)=normcdf(-betasIn(2),0,1);
 
 Results(3,1)=betasAND; 
 Results(4,1)=betasOR;
 
-Results(3,2)=1-normcdf(betasAND,0,1);
-Results(4,2)=1-normcdf(betasOR,0,1);
+Results(3,2)=normcdf(-betasAND,0,1);
+Results(4,2)=normcdf(-betasOR,0,1);
 
 %-----------------------------------------
 

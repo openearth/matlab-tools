@@ -103,9 +103,9 @@ else
 
     % compute P(Z1<0 AND PZ2<0)
     PfAND = PZcond*pf;
-    betaAND = norminv(1-PfAND);
+    betaAND = -norminv(PfAND);
 
     % compute P(Z1<0 OR PZ2<0)
     PfOR = normcdf(-beta)+pf-PfAND;
-    betaOR = norminv(1-PfOR);
+    betaOR = -norminv(PfOR);
 end
