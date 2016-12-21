@@ -51,6 +51,9 @@ function varargout = wind_rose(D,F,varargin)
 %                   [{true} false]
 %       - nan       'keep' (default) or 'remove', affects radial tick
 %                   scaling ['keep']
+%       - coastline Plot a line to indicate (e.g.) a coastline. Orientation
+%                   in degree N (0..360) perpendicular to line. 270 is N-S 
+%                   line, default: ['none']
 %
 %   Output:
 %      HANDLES   Handles of all lines, fills, texts
@@ -152,29 +155,30 @@ handles=[];
 
 %% varargin options:
 OPT.dtype       = 'standard';
-OPT.nAngles     = 36;
+OPT.nAngles     = 36; % number of angles; binwidth=360/OPT.nangles [36]
 OPT.ri          = 1/30; % empty internal radius, relative to size of higher percentage [1/30]
-OPT.quad        = 'auto';
+OPT.quad        = 'auto'; % quadrant to plot legend
 OPT.legType     = 2;
 OPT.percBg      = 'w';
-OPT.titStr      = '';
-OPT.legStr      = '';
-OPT.cmap        = jet;
+OPT.titStr      = ''; % Title string
+OPT.legStr      = ''; % Legend title string
+OPT.cmap        = jet; %Colormap for entries and legend
 OPT.colors      = [];
 OPT.Ag          = []; % intensity subdivs.
 OPT.ci          = []; % percentage circles
 OPT.lineColors  = 'k';
 OPT.borderColor = 'none';
 OPT.bgcolor     = 'w';
-OPT.onAxes      = false;
-OPT.iflip       = 0;
+OPT.onAxes      = false; % Axes to plot on; false plots on gca
+OPT.iflip       = 0; 
 OPT.inorm       = 0;
 OPT.parent      = 0;
 OPT.IncHiLow    = 1; % include values higher and lower than the limits of OPT.Ag.
 OPT.directionLabels = true; % labels North South etc..
 OPT.centersectors   = true; % Center sectors around 0 .. 360 or not
-OPT.units           = '';
+OPT.units           = ''; % Units string for legend
 OPT.nan             = 'keep'; % default, and backwards consistent
+OPT.coastline       = 'none'; % Plot a line through the compass or not.
 OPT = setproperty(OPT, varargin{:});
 
 if nargin==0
@@ -467,6 +471,11 @@ for i=1:length(labs)
 end
 set(wrAx,'children',ch);
 
+%% COASTLINE
+if isnumeric(OPT.coastline);
+    %plots line of coastline orientation (=direction perpendicular to shoreline)
+    plot([-(g+OPT.ri)*cosd(OPT.coastline) (g+OPT.ri)*cosd(OPT.coastline)],[(g+OPT.ri)*sind(OPT.coastline) (g+OPT.ri)*-sind(OPT.coastline)],'-k','LineWidth',2);
+end
 
 %% N S E W labels:
 if OPT.directionLabels
