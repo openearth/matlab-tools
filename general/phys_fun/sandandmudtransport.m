@@ -163,13 +163,13 @@ for i=1:size(optvals,2),
         case 'wsmudmin'
             wsmudmin = optvals{2,i};
             OptionUsed(i)=1;
-        case 'D50'
+        case 'd50'
             D50 = optvals{2,i};
             OptionUsed(i)=1;
-        case 'Hs'
+        case 'hs'
             Hs = optvals{2,i};
             OptionUsed(i)=1;
-        case 'Tp'
+        case 'tp'
             Tp = optvals{2,i};
             OptionUsed(i)=1;
         case 'rhos'
@@ -352,7 +352,18 @@ for i = 1:length(h),                                                            
         end
         if epsilon(i,j) > 0,
             cmudvol(i,j) = max(cmudvol(i,j-1)*(1-dz(i,j)*wsmud(i,j)/(gammad(i,j-1)*epsilon(i,j))),cmudvol(i,1)*0.00001);
-            dcdz = sedimentdcdz(gammad(i,j-1)*epsilon(i,j), wssand, c1);
+            %dcdz = sedimentdcdz(gammad(i,j-1)*epsilon(i,j), wssand, c1);
+            %-- not found in openearthtools ----
+            %But see equation 2 of VanRijn et al. 2007 - Part II suspended transport
+            %C*ws+epsilon*(dC/dz)=0
+            %dC/dz=-(ws/epsilon)*C
+            % to be solved numerically so C=c1 at the start/bottom of
+            % profile
+            
+            dcdz=-(wssand./[gammad(i,j-1)*epsilon(i,j)]).*c1;
+            
+            %then work out the concentration profile upwards
+            
             c2 = c1 + dcdz * dz(i,j);
             if(c2<0),
                 c2=0;
