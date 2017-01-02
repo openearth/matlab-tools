@@ -11,7 +11,7 @@ OPT                   = setproperty(OPT,varargin);
 [path_pli,name_pli,~] = fileparts(filpli);
 
 %% Read the grid: OET-style
-G           = delft3d_io_grd('read',filgrd);
+G           = delft3d_io_grd('read',filgrd,'nodatavalue',-999);
 xc          = G.cend.x';
 yc          = G.cend.y';
 mmax        = size(xc,1);
