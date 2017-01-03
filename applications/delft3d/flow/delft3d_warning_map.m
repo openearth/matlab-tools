@@ -247,12 +247,15 @@ if ~isempty(MN_courant)
     pcolor(grd.cor.x,grd.cor.y,nan(size(grd.cor.x))); hold on;
     for ii=1:size(MN_courant,1)
         % grd.cen.x & grd.cen.y - 1
-        plot(grd.cen.x(MN_courant(ii,2),MN_courant(ii,1)-2),grd.cen.y(MN_courant(ii,2),MN_courant(ii,1)-2),'r.','markersize',20);
+        plot(grd.cen.x(MN_courant(ii,2)-1,MN_courant(ii,1)-1),grd.cen.y(MN_courant(ii,2)-1,MN_courant(ii,1)-1),'r.','markersize',20);
     end
     axis equal; grid on; box on; set(gca,'layer','top','color',[191 239 255]/255);
     xlabel(['X-direction [' grd.CoordinateSystem ' Coordinates]']);
     ylabel(['Y-direction [' grd.CoordinateSystem ' Coordinates]']);
     title(['Locations where Courant criteria > 1 have occured']);
+    makedir([mdf_folder,filesep,'Warning_locations'])
+    print(gcf,'-dpng','-r300',[mdf_folder,filesep,'Warning_locations',filesep,'Courant_criteria_warnings.png'])
+    saveas(gcf,[mdf_folder,filesep,'Warning_locations',filesep,'Courant_criteria_warnings.fig'],'fig')
 end
 
 if ~isempty(MN_vel_chan)
@@ -268,12 +271,15 @@ if ~isempty(MN_vel_chan)
     pcolor(grd.cor.x,grd.cor.y,nan(size(grd.cor.x))); hold on;
     for ii=1:size(MN_vel_chan,1)
         % grd.cen.x & grd.cen.y - 2
-        plot(grd.cen.x(MN_vel_chan(ii,2),MN_vel_chan(ii,1)-2),grd.cen.y(MN_vel_chan(ii,2),MN_vel_chan(ii,1)-2),'r.','markersize',20);
+        plot(grd.cen.x(MN_vel_chan(ii,2)-1,MN_vel_chan(ii,1)-1),grd.cen.y(MN_vel_chan(ii,2)-1,MN_vel_chan(ii,1)-1),'r.','markersize',20);
     end
     axis equal; grid on; box on; set(gca,'layer','top','color',[191 239 255]/255);
     xlabel(['X-direction [' grd.CoordinateSystem ' Coordinates]']);
     ylabel(['Y-direction [' grd.CoordinateSystem ' Coordinates]']);
     title(['Locations where velocity changes > 5 m/s after 0.5 timesteps have occured']);
+    makedir([mdf_folder,filesep,'Warning_locations'])
+    print(gcf,'-dpng','-r300',[mdf_folder,filesep,'Warning_locations',filesep,'velocity_change_warnings.png'])
+    saveas(gcf,[mdf_folder,filesep,'Warning_locations',filesep,'velocity_change_warnings.fig'],'fig')
 end
 
 if ~isempty(MN_wl_chan)
@@ -289,12 +295,15 @@ if ~isempty(MN_wl_chan)
     pcolor(grd.cor.x,grd.cor.y,nan(size(grd.cor.x))); hold on;
     for ii=1:size(MN_wl_chan,1)
         % grd.cen.x & grd.cen.y - 1
-        plot(grd.cen.x(MN_wl_chan(ii,2),MN_wl_chan(ii,1)-2),grd.cen.y(MN_wl_chan(ii,2),MN_wl_chan(ii,1)-2),'r.','markersize',20);
+        plot(grd.cen.x(MN_wl_chan(ii,2)-1,MN_wl_chan(ii,1)-1),grd.cen.y(MN_wl_chan(ii,2)-1,MN_wl_chan(ii,1)-1),'r.','markersize',20);
     end
     axis equal; grid on; box on; set(gca,'layer','top','color',[191 239 255]/255);
     xlabel(['X-direction [' grd.CoordinateSystem ' Coordinates]']);
     ylabel(['Y-direction [' grd.CoordinateSystem ' Coordinates]']);
     title(['Locations where water level changes > 20 m have occured']);
+    makedir([mdf_folder,filesep,'Warning_locations'])
+    print(gcf,'-dpng','-r300',[mdf_folder,filesep,'Warning_locations',filesep,'water_level_change_warnings.png'])
+    saveas(gcf,[mdf_folder,filesep,'Warning_locations',filesep,'water_level_change_warnings.fig'],'fig')
 end
 
 if isempty(MN_courant) && isempty(MN_vel_chan)
