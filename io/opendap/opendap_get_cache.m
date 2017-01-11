@@ -5,8 +5,8 @@ function varargout = opendap_get_cache(varargin)
 %
 % Example:
 %
-% opendap_get_cache('server','http://opendap.deltares.nl/thredds/',...
-%                    'local','e:\opendap\',...
+% opendap_get_cache('server_root','http://opendap.deltares.nl/thredds/',...
+%                    'local_root','e:\opendap\',...
 %                  'dataset','/rijkswaterstaat/grainsize/',... % will be appended to both 'server' and 'local' directory
 %                    'pause',1); % first time try with pause on
 %
@@ -38,7 +38,7 @@ function varargout = opendap_get_cache(varargin)
    base_url = path2os([OPT.server_root,'/fileServer/opendap/',OPT.dataset],'h');
    base_loc = path2os([OPT.local_root,                        OPT.dataset]);
    
-   mkpath(base_loc)
+   mkdir(base_loc)
 
 %% find ncfiles
 
