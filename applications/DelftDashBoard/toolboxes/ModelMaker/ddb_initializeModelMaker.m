@@ -184,3 +184,11 @@ handles.toolbox.modelmaker.delft3d.boundary_type='Z';
 handles.toolbox.modelmaker.delft3d.boundary_forcing='A';
 handles.toolbox.modelmaker.delft3d.boundary_minimum_depth=5;
 handles.toolbox.modelmaker.delft3d.boundary_auto_section_length=1;
+
+%% GridGen
+handles.toolbox.modelmaker.gridgen.nrlines=0;
+handles.toolbox.modelmaker.gridgen.lines=[];
+handles.toolbox.modelmaker.gridgen.lines(1).refinement_level=[];
+handles.toolbox.modelmaker.gridgen.activeline=1;
+handles.toolbox.modelmaker.gridgen.linenames={''};
+

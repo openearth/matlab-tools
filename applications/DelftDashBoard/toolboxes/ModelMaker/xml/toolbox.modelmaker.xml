@@ -49,6 +49,12 @@
       <element>toolbox.modelmaker.sfincs.quickmode.xml</element>
     </tab>
     <tab>
+      <formodel>modflowusg</formodel>
+      <tabstring>Grid</tabstring>
+      <callback>ddb_ModelMakerToolbox_modflowusg_grid</callback>
+      <element>toolbox.modelmaker.modflowusg.grid.xml</element>
+    </tab>
+    <tab>
       <formodel>delft3dflow</formodel>
       <formodel>dflowfm</formodel>
       <formodel>fast</formodel>
@@ -84,6 +90,12 @@
       <tabstring>Transects</tabstring>
       <callback>ddb_ModelMakerToolbox_XBeach_quickMode</callback>
       <element>toolbox.modelmaker.xbeach.transects.xml</element>
+    </tab>
+    <tab>
+      <formodel>modflowusg</formodel>
+      <tabstring>Refinement</tabstring>
+      <callback>ddb_ModelMakerToolbox_modflowusg_lines</callback>
+      <element>toolbox.modelmaker.modflowusg.lines.xml</element>
     </tab>
   </element>
 </root>

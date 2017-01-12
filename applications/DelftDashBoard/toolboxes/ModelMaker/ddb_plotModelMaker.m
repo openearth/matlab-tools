@@ -79,6 +79,10 @@ switch lower(option)
         if ~isempty(h)
             delete(h);
         end
+        h=findobj(gca,'Tag','gridgenline');
+        if ~isempty(h)
+            delete(h);
+        end
     case{'activate'}
         h=findobj(gca,'Tag','GridOutline');
         if ~isempty(h)
@@ -100,6 +104,11 @@ switch lower(option)
             set(h,'Visible','on');
             uistack(h,'top');
         end
+        h=findobj(gca,'Tag','gridgenline');
+        if ~isempty(h)
+            set(h,'Visible','on');
+            uistack(h,'top');
+        end
     case{'deactivate'}
         h=findobj(gca,'Tag','GridOutline');
         if ~isempty(h)
@@ -117,6 +126,11 @@ switch lower(option)
             uistack(h,'bottom');
         end
         h=findobj(gca,'Tag','modelmakerdemoutline');
+        if ~isempty(h)
+            set(h,'Visible','off');
+            uistack(h,'bottom');
+        end
+        h=findobj(gca,'Tag','gridgenline');
         if ~isempty(h)
             set(h,'Visible','off');
             uistack(h,'bottom');
