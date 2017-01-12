@@ -60,6 +60,8 @@ function handles = ddb_initializeModelMaker(handles, varargin)
 
 %%
 
+ddb_getToolboxData(handles.toolbox.modelmaker.dataDir,'modelmaker','ModelMaker');
+
 if nargin>1
     switch varargin{1}
         case{'test'}
