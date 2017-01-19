@@ -31,7 +31,7 @@
     <onchange>ddb_ModelMakerToolbox_Delft3DWAVE_quickMode</onchange>
     <option1>editresolution</option1>
     <type>real</type>
-    <variable>handles.toolbox.modelmaker.wavedX</variable>
+    <variable>handles.toolbox.modelmaker.dX</variable>
   </element>
   <element>
     <style>edit</style>
@@ -75,7 +75,7 @@
     <onchange>ddb_ModelMakerToolbox_Delft3DWAVE_quickMode</onchange>
     <option1>editresolution</option1>
     <type>real</type>
-    <variable>handles.toolbox.modelmaker.wavedY</variable>
+    <variable>handles.toolbox.modelmaker.dY</variable>
   </element>
   <element>
     <style>pushbutton</style>
