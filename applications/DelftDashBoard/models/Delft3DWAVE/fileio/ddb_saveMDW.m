@@ -309,7 +309,7 @@ for i=1:wave.nrboundaries
                     
                 otherwise
                     MDW.Boundary(i).SpectrumSpec.value      = 'from file';
-                    MDW.Boundary(i).Spectrum.value          = wave.boundaries(i).spectrumfile;
+                    MDW.Boundary(i).Spectrum.value          = wave.boundaries(i).spectrum;
             end
     end
     

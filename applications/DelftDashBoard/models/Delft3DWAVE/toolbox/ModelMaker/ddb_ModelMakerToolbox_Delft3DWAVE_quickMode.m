@@ -105,8 +105,8 @@ handles.toolbox.modelmaker.gridOutlineHandle=h;
 handles.toolbox.modelmaker.xOri=x0;
 handles.toolbox.modelmaker.yOri=y0;
 handles.toolbox.modelmaker.rotation=rotation;
-handles.toolbox.modelmaker.nX=round(dx/handles.toolbox.modelmaker.wavedX);
-handles.toolbox.modelmaker.nY=round(dy/handles.toolbox.modelmaker.wavedY);
+handles.toolbox.modelmaker.nX=round(dx/handles.toolbox.modelmaker.dX);
+handles.toolbox.modelmaker.nY=round(dy/handles.toolbox.modelmaker.dY);
 handles.toolbox.modelmaker.lengthX=dx;
 handles.toolbox.modelmaker.lengthY=dy;
 
@@ -134,14 +134,14 @@ if ~isempty(handles.toolbox.modelmaker.gridOutlineHandle)
     end
 end
 
-handles.toolbox.modelmaker.lengthX=handles.toolbox.modelmaker.wavedX*handles.toolbox.modelmaker.nX;
-handles.toolbox.modelmaker.lengthY=handles.toolbox.modelmaker.wavedY*handles.toolbox.modelmaker.nY;
+handles.toolbox.modelmaker.lengthX=handles.toolbox.modelmaker.dX*handles.toolbox.modelmaker.nX;
+handles.toolbox.modelmaker.lengthY=handles.toolbox.modelmaker.dY*handles.toolbox.modelmaker.nY;
 
-lenx=handles.toolbox.modelmaker.wavedX*handles.toolbox.modelmaker.nX;
-leny=handles.toolbox.modelmaker.wavedY*handles.toolbox.modelmaker.nY;
+lenx=handles.toolbox.modelmaker.dX*handles.toolbox.modelmaker.nX;
+leny=handles.toolbox.modelmaker.dY*handles.toolbox.modelmaker.nY;
 h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline, ...
     'x0',handles.toolbox.modelmaker.xOri,'y0',handles.toolbox.modelmaker.yOri,'dx',lenx,'dy',leny,'rotation',handles.toolbox.modelmaker.rotation, ...
-    'ddx',handles.toolbox.modelmaker.wavedX,'ddy',handles.toolbox.modelmaker.wavedY);
+    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY);
 handles.toolbox.modelmaker.gridOutlineHandle=h;
 
 setHandles(handles);
@@ -154,8 +154,8 @@ handles=getHandles;
 lenx=handles.toolbox.modelmaker.lengthX;
 leny=handles.toolbox.modelmaker.lengthY;
 
-dx=handles.toolbox.modelmaker.wavedX;
-dy=handles.toolbox.modelmaker.wavedY;
+dx=handles.toolbox.modelmaker.dX;
+dy=handles.toolbox.modelmaker.dY;
 
 nx=round(lenx/max(dx,1e-9));
 ny=round(leny/max(dy,1e-9));
@@ -175,7 +175,7 @@ end
 h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline, ...
     'x0',handles.toolbox.modelmaker.xOri,'y0',handles.toolbox.modelmaker.yOri,'dx',handles.toolbox.modelmaker.lengthX,'dy',handles.toolbox.modelmaker.lengthY, ...
     'rotation',handles.toolbox.modelmaker.rotation, ...
-    'ddx',handles.toolbox.modelmaker.wavedX,'ddy',handles.toolbox.modelmaker.wavedY);
+    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY);
 handles.toolbox.modelmaker.gridOutlineHandle=h;
 
 setHandles(handles);

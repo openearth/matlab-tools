@@ -13,6 +13,9 @@ for ii=1:length(fldnames)
 end
 handles.model.delft3dwave.domain.referencedate=datenum(handles.model.delft3dwave.domain.referencedate);
 handles.model.delft3dwave.domain.timepoint=handles.model.delft3dwave.domain.referencedate+handles.model.delft3dwave.domain.timepoint/1440.0;
+handles.model.delft3dwave.domain.selectedtime = handles.model.delft3dwave.domain.timepoint;
+handles.model.delft3dwave.domain.listtimes={datestr(handles.model.delft3dwave.domain.timepoint,'yyyy mm dd HH MM SS')};
+handles.model.delft3dwave.domain.listflowtimes={''}; 
 
 %% Constants
 fldnames=fieldnames(MDW.constants);

@@ -515,7 +515,7 @@
     <text>From file</text>
     <type>string</type>
     <variable>handles.model.delft3dwave.domain.boundaries(handles.model.delft3dwave.domain.activeboundary).spectrumspec</variable>
-    <value>fromfile</value>
+    <value>from file</value>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>

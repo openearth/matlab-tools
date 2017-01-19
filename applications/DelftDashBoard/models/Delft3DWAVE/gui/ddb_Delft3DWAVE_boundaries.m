@@ -90,29 +90,37 @@ handles=getHandles;
 h=handles;
 
 iac=handles.model.delft3dwave.domain.activeboundary;
-switch lower(handles.model.delft3dwave.domain.boundaries(iac).periodtype)
-    case{'peak'}
-        h.model.delft3dwave.domain.periodtext='Wave Period Tp (s)';
-    case{'mean'}
-        h.model.delft3dwave.domain.periodtext='Wave Period Tm (s)';
-end
-switch lower(handles.model.delft3dwave.domain.boundaries(iac).dirspreadtype)
-    case{'power'}
-        h.model.delft3dwave.domain.dirspreadtext='Directional Spreading (-)';
-    case{'degrees'}
-        h.model.delft3dwave.domain.dirspreadtext='Directional Spreading (degrees)';
-end
-
 xmldir=handles.model.delft3dwave.xmlDir;
-switch lower(handles.model.delft3dwave.domain.boundaries(iac).alongboundary)
-    case{'uniform'}
-        xmlfile='model.delft3dwave.editboundaryconditionsuniform.xml';
-        [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
-    case{'varying'}
-        xmlfile='model.delft3dwave.editboundaryconditionsvarying.xml';
-        [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif'],'modal',0);
-end
 
+if strcmpi(handles.model.delft3dwave.domain.boundaries(iac).spectrumspec,'parametric')
+    
+    switch lower(handles.model.delft3dwave.domain.boundaries(iac).periodtype)
+        case{'peak'}
+            h.model.delft3dwave.domain.periodtext='Wave Period Tp (s)';
+        case{'mean'}
+            h.model.delft3dwave.domain.periodtext='Wave Period Tm (s)';
+    end
+    
+    switch lower(handles.model.delft3dwave.domain.boundaries(iac).dirspreadtype)
+        case{'power'}
+            h.model.delft3dwave.domain.dirspreadtext='Directional Spreading (-)';
+        case{'degrees'}
+            h.model.delft3dwave.domain.dirspreadtext='Directional Spreading (degrees)';
+    end
+    
+    switch lower(handles.model.delft3dwave.domain.boundaries(iac).alongboundary)
+        case{'uniform'}
+            xmlfile='model.delft3dwave.editboundaryconditionsuniform.xml';
+            [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
+        case{'varying'}
+            xmlfile='model.delft3dwave.editboundaryconditionsvarying.xml';
+            [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif'],'modal',0);
+    end
+    
+else
+    xmlfile='model.delft3dwave.editboundaryconditionsspectrum.xml';
+    [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
+end
 
 if ok
     handles=h;
