@@ -224,7 +224,7 @@ switch lower(opt)
         setappdata(hg,'x',x);
         setappdata(hg,'y',y);
 
-        h=plotPolyline(hg,'nocallback');
+        hg=plotPolyline(hg,'nocallback');
         
     case{'delete'}
 
@@ -284,13 +284,22 @@ switch lower(opt)
         end
 end
 
+% if nargout==1
+%     varargout{1}=h;
+% elseif nargout==2
+%     varargout{1}=x;
+%     varargout{2}=y;
+% else
+%     varargout{1}=h;
+% end
+
 if nargout==1
-    varargout{1}=h;
+    varargout{1}=hg;
 elseif nargout==2
     varargout{1}=x;
     varargout{2}=y;
 else
-    varargout{1}=h;
+    varargout{1}=hg;
 end
 
 %%
