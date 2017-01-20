@@ -88,6 +88,7 @@ end
 if OPT.write_files
     
     for i = 1:length(xb.data)
+        xb.data(i)
         if isstruct(xb.data(i).value)
             sub = xb.data(i).value;
             

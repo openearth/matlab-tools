@@ -4,7 +4,7 @@ function [Hs, Hs1, Hs2, Station1, Station2] = getHs_2Stations(dHs, lambda, water
 %
 %   More detailed description goes here.
 %
-%   Syntax:
+%   Syntax: 
 %   varargout = getHs_2Stations(varargin)
 %
 %   Input: For <keyword,value> pairs call getHs_2Stations() without arguments.
@@ -115,11 +115,11 @@ end
 % itself an interpolation between Eierlandse Gat (Lambda = 0.57) and Borkum
 % (Lambda = 0.43)
 if strcmpi(Station1, 'Steunpunt Waddenzee')
-    [Hs1, ~, ~] = getHs_2Stations(dHs, 0.57, OPT.WlELD, OPT.WlBorkum, 'Eierlandse Gat', 'Borkum');
+    [Hs1, ~, ~] = getHs_2Stations(dHs, 0.57, waterLevel1, waterLevel2, 'Eierlandse Gat', 'Borkum');
     Hs2         = dHs + getHsig_t(waterLevel2, a2, b2, c2, d2, e2);
 elseif strcmpi(Station2, 'Steunpunt Waddenzee')
     Hs1         = dHs + getHsig_t(waterLevel1, a1, b1, c1, d1, e1);
-    [Hs2, ~, ~] = getHs_2Stations(dHs, 0.57, OPT.WlELD, OPT.WlBorkum, 'Eierlandse Gat', 'Borkum');
+    [Hs2, ~, ~] = getHs_2Stations(dHs, 0.57, waterLevel1, waterLevel2, 'Eierlandse Gat', 'Borkum');
 else
     Hs1         = dHs + getHsig_t(waterLevel1, a1, b1, c1, d1, e1);
     Hs2         = dHs + getHsig_t(waterLevel2, a2, b2, c2, d2, e2);

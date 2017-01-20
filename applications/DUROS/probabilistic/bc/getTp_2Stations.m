@@ -113,11 +113,11 @@ end
 % itself an interpolation between Eierlandse Gat (Lambda = 0.57) and Borkum
 % (Lambda = 0.43)
 if strcmpi(Station1, 'Steunpunt Waddenzee')
-    [Tp1, ~, ~] = getTp_2Stations(dTp, 0.57, OPT.HsELD, OPT.HsBorkum, 'Eierlandse Gat', 'Borkum');
+    [Tp1, ~, ~] = getTp_2Stations(dTp, 0.57, waveHeight1, waveHeight2, 'Eierlandse Gat', 'Borkum');
     Tp2         = dTp + getTp_t(waveHeight2, a2, b2);
 elseif strcmpi(Station2, 'Steunpunt Waddenzee')
     Tp1         = dTp + getTp_t(waveHeight1, a1, b1);
-    [Tp2, ~, ~] = getTp_2Stations(dTp, 0.57, OPT.HsELD, OPT.HsBorkum, 'Eierlandse Gat', 'Borkum');
+    [Tp2, ~, ~] = getTp_2Stations(dTp, 0.57, waveHeight1, waveHeight2, 'Eierlandse Gat', 'Borkum');
 else
     Tp1         = dTp + getTp_t(waveHeight1, a1, b1);
     Tp2         = dTp + getTp_t(waveHeight2, a2, b2);

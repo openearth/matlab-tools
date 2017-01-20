@@ -92,7 +92,7 @@ for i = 1:length(f)
         data = xs_get(xb, f{i});
         fname = fullfile(OPT.path, OPT.(f{i}));
         if isnumeric(data)
-            save(fname, '-ascii', 'data');
+           save(fname, '-ascii', 'data');
         elseif isstruct(data)
             % We have struct in a struct....
             d = xs_get(data, f{i});

@@ -123,6 +123,8 @@ if size(OPT.z,1) == length(OPT.x) && ...
    size(OPT.z,1) ~= size(OPT.z,2)
 
     OPT.z = OPT.z';
+    OPT.x = OPT.x';
+    OPT.y = OPT.y';
     
     xb_verbose(0,'Swap grid dimensions to be y,x');
 end

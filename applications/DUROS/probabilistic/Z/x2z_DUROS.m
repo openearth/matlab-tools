@@ -112,16 +112,17 @@ for i = 1:length(OPT.D50)
         end
 
         %% carry out DUROS+ computation
-        [result messages] = DUROS(xInitial, zInitial, OPT.D50(i), OPT.WL_t(i), OPT.Hsig_t(i), OPT.Tp_t(i));
+        [resultTemp messages] = DUROS(xInitial, zInitial, OPT.D50(i), OPT.WL_t(i), OPT.Hsig_t(i), OPT.Tp_t(i));
+        result{i} = resultTemp;
 
         %% derive z-value
 
-        [RD(i) ErosionVolume(i)] = getRetreatDistance(result, messages, xRef);
+        [RD(i) ErosionVolume(i)] = getRetreatDistance(resultTemp, messages, xRef);
 
-        if length(result) > 1
-            OPT.Duration(i) = -result(2).Volumes.Volume*OPT.Duration(i);
-            OPT.Accuracy(i) = -result(2).Volumes.Volume*OPT.Accuracy(i);
-            OPT.Angle(i) = -result(2).Volumes.Volume*OPT.Angle(i);
+        if length(resultTemp) > 1
+            OPT.Duration(i) = -resultTemp(2).Volumes.Volume*OPT.Duration(i);
+            OPT.Accuracy(i) = -resultTemp(2).Volumes.Volume*OPT.Accuracy(i);
+            OPT.Angle(i) = -resultTemp(2).Volumes.Volume*OPT.Angle(i);
         end
 
         z(i,:) = OPT.Resistance - RD(i);

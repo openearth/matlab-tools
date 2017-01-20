@@ -134,7 +134,7 @@ if h ~= 0
     % for each handle
     for n=length(h):-1:1
         % create the temporary window name
-        windowname = ['maximize_',num2str(h(n))];
+        windowname = ['maximize_',num2str(n)];
 
         % save current window name
         numTitle = get(h(n),'NumberTitle');
@@ -146,7 +146,7 @@ if h ~= 0
         % draw figure now
         drawnow;
         % maximize the window with the C function
-        windowMaximize(windowname,get(h(n),'Resize'));
+        windowMaximize(windowname,h(n)); %  get(h(n),'Resize')
 
         % reset the window name
         set(h(n),'Name',figName,'NumberTitle',numTitle);

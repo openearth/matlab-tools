@@ -80,7 +80,7 @@ OPT.iconnormalState     = 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-wh
 OPT.iconhighlightState  = 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
 OPT.iconnormalState     = 'http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png';
 OPT.iconhighlightState  = 'http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png';
-OPT.scalenormalState    =  0.25;
+OPT.scalenormalState    =  1.0;
 OPT.scalehighlightState =  1.0;
 
 OPT.CBcolorMap          =  @(m) jet(m);
