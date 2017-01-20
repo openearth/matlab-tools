@@ -82,11 +82,11 @@ function paramsnew = get_distparam(fhandle,params,P,xP,param_idx)
 % Created: 15 Aug 2013
 % Created with Matlab version: 8.1.0.604 (R2013a)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
 % $Keywords: $
 
 %%

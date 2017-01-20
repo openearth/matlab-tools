@@ -57,11 +57,11 @@ function [P P_corr] = prob_is_truncnormal(P, varargin)
 % Created: 1 July 2014
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: prob_is_truncnormal.m 4587 2011-05-23 16:13:21Z klerk_wj $
+% $Date: 2011-05-23 18:13:21 +0200 (Mon, 23 May 2011) $
+% $Author: klerk_wj $
+% $Revision: 4587 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/probabilistic/engines/MonteCarlo/ImportanceSampling/prob_is_truncnormal.m $
 % $Keywords: $
 
 %% read options

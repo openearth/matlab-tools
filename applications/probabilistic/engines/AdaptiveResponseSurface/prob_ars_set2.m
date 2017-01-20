@@ -52,11 +52,11 @@ function ARS = prob_ars_set2(u, z, varargin)
 % Created: 24 Aug 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: prob_ars_set.m 5129 2011-08-29 16:55:35Z hoonhout $
+% $Date: 2011-08-29 18:55:35 +0200 (Mon, 29 Aug 2011) $
+% $Author: hoonhout $
+% $Revision: 5129 $
+% $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/applications/probabilistic/engines/AdaptiveResponseSurface/prob_ars_set.m $
 % $Keywords: $
 
 %% settings
