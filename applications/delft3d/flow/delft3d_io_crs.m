@@ -118,6 +118,11 @@ else
       [S.DATA(i).m,... % turn the endpoint-description along gridlines into vectors
        S.DATA(i).n]=meshgrid(S.DATA(i).mn(1):m_step:S.DATA(i).mn(3),...
                                   S.DATA(i).mn(2):n_step:S.DATA(i).mn(4));
+       S.DATA(i).m(1) = S.DATA(i).mn(1);
+       S.DATA(i).m(2) = S.DATA(i).mn(3);
+       S.DATA(i).n(1) = S.DATA(i).mn(2);
+       S.DATA(i).n(2) = S.DATA(i).mn(4);
+                              
 %      fgetl(fid); % read rest of line
     end
    
