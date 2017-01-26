@@ -64,7 +64,7 @@ function num = timezone_code2iso(varargin)
    for icode=1:length(codes)
       code       = codes(icode);
       i          = strmatch(upper(code),upper(DAT.civilian_code));
-      num{icode} = num2str(DAT.offset(i),'%+0.2d:00');
+      num{icode} = num2str(DAT.offset{i},'%+0.2d:00');
    end
    
    
