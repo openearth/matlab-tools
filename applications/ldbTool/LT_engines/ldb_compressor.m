@@ -1,6 +1,7 @@
 function varargout = ldb_compressor(varargin)
+%LDB_COMPRESSOR
 %
-%ldb_compressor takes all landboundary segements, checks for identical
+%This function takes all landboundary segements, checks for identical
 %start and/or end points, and connects them accordingly. It does so in an
 %iterative fashion, and will thus automatically stop upon completion.
 %
@@ -30,9 +31,40 @@ function varargout = ldb_compressor(varargin)
 %   ldb_new = ldb_compressor('ldb_old');
 %   ldb_compressor(ldb_data,'ouput_file.ldb');
 %
+%   % Manual example:
+%   ldb = [10 10; 11 11; 12 12; NaN NaN; 15 15; 14 13; 13 15; 12 12];
+%   ldb_new = ldb_compressor(ldb);
+%   % ldb_new will be: [10 10; 11 11; 12 12; 13 15; 14 13; 15 15];
+%
 %Note that ldb_data should be loaded using the function landboundary
 %
 %See also: landboundary, ldbTool, filledLDB, tekal
+
+%   --------------------------------------------------------------------
+%       Freek Scheel 2017
+%       +31(0)88 335 8241
+%       <freek.scheel@deltares.nl>;
+%
+%       Please contact me if errors occur.
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
 
 write_to_file = false;
 if nargin == 0
@@ -47,7 +79,7 @@ if nargin == 0
     end
 else
     if iscell(varargin{1})
-        varargin{1} = varargin{1};
+        varargin(1) = varargin{1};
     end
     
     if ischar(varargin{1})
@@ -77,7 +109,7 @@ else
     if nargin > 1
         
         if iscell(varargin{2})
-            varargin{2} = varargin{2};
+            varargin(2) = varargin{2};
         end
         
         if ischar(varargin{2})
@@ -97,7 +129,7 @@ else
         end
         
         if nargin > 2
-            disp(['A total of ' num2str(nargin) ' input variables supplied, dcript is only using the first 2!']);
+            disp(['A total of ' num2str(nargin) ' input variables supplied, script is only using the first 2!']);
         end
         
     end
