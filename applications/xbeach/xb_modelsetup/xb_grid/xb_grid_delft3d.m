@@ -102,17 +102,23 @@ if ~isempty(varargin)
             end
         else
             [x y z ne]  = xb_input2bathy(xb);
-            [xori yori] = xs_get(xb, 'xori', 'yori');
+            [xori yori alfa] = xs_get(xb, 'xori', 'yori', 'alfa');
             
             xb = xs_del(xb, 'xfile', 'yfile', 'xori', 'yori');
             xb = xs_set(xb, 'gridform', 'delft3d');
             
-            if ~isempty(xori) && ~isempty(yori)
-                x_d3d = x+xori;
-                y_d3d = y+yori;
+            if ~isempty(alfa)
+               alfa = alfa*pi/180.;
             else
-                x_d3d = x;
-                y_d3d = y;
+               alfa = 0.0;
+            end
+            
+            if ~isempty(xori) && ~isempty(yori)
+                x_d3d = cos(alfa)*(x-xori)-sin(alfa)*(y-yori)+xori;
+                y_d3d = sin(alfa)*(x-xori)+cos(alfa)*(y-yori)+yori;
+            else
+                x_d3d = cos(alfa)*x-sin(alfa)*y;
+                y_d3d = sin(alfa)*x+cos(alfa)*y;
             end
             
             xb = xs_set(xb, 'xyfile', xs_set([], 'data', xb_delft3d_xb2wlgrid(x_d3d,y_d3d)));
