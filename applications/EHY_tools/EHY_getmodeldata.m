@@ -31,11 +31,20 @@ if strcmpi(modelType,'sobek3')
     D=read_sobeknc([sim_dir filesep runid '.dsproj_data' filesep sobekFile.name]);
 
     Data.stationNames=strtrim(D.feature_name.Val);
+
+%% Dflow-FM
+elseif strncmpi(modelType,'dflow',4)
+    files              = dir([ sim_dir filesep 'DFM_OUTPUT_' runid filesep '*his*.nc*']);
+    dfmFile            = ([sim_dir filesep 'DFM_OUTPUT_' runid filesep files.name]);
+    dfm                = qpfopen(dfmFile);
+    Data.stationNames  = strtrim(qpread(dfm,1,'water level (points)','stations'));
+    
 %% Waqua
 elseif strcmpi(modelType,'waqua')
     sds= qpfopen([sim_dir filesep 'SDS-' runid]);
 
     Data.stationNames  = strtrim(qpread(sds,1,'water level (station)','stations'));
+
 %% Implic
 elseif strcmpi(modelType,'implic')
     if exist([sim_dir filesep 'implic.mat'],'file')
@@ -68,11 +77,16 @@ for i_stat = 1: length(stat_name)
             if strcmpi(modelType,'sobek3')
                 Data.times                 =D.water_level.Time;
                 Data.val(:,i_stat)         =D.water_level.Val(:,nr_stat);
-                %% Read Waqua data
+            %% Read Dflow-FM data
+            elseif strncmpi(modelType,'dflow',4)
+                tmp                = qpread(dfm,1,'water level (points)','data',0,nr_stat);
+                Data.times         = tmp.Time;
+                Data.val(:,i_stat) = tmp.Val;
+            %% Read Waqua data
             elseif strcmpi(modelType,'waqua')
                 Data.times         = qpread(sds,1,'water level (station)','times');
                 Data.val(:,i_stat) = waquaio(sds,[],'wlstat',0,nr_stat);
-                %% Read Implic data (write to mat file for future fast pssing
+            %% Read Implic data (write to mat file for future fast pssing
             elseif strcmpi(modelType,'implic')
                 if ~exist([sim_dir filesep 'implic.mat'],'file')
                     months = {'jan' 'feb' 'mrt' 'apr' 'mei' 'jun' 'jul' 'aug' 'sep' 'okt' 'nov' 'dec'};
