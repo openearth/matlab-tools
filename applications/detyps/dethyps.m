@@ -8,7 +8,7 @@ OPT.grd    = 'cropped_ref2.grd';
 OPT.dep    = 'frank_2005.dep';
 OPT.out    = '2005_n.hyps';
 OPT.new    = true;
-OPT.dps    = 'DP';
+OPT.dpsopt = 'DP';
 OPT.filpol = '';
 
 OPT.maxdep = NaN;
@@ -31,23 +31,29 @@ grid.Y(nmax,:) = grid.MissingValue;
 grid.Y(:,mmax) = grid.MissingValue;
 
 %% put geographical data in structure geo
-geo.x   = grid.X;
-geo.y   = grid.Y;
+geo.xz(1:nmax,1:mmax) = NaN;
+geo.yz(1:nmax,1:mmax) = NaN;
+for n = 2:nmax
+    for m = 2: mmax
+        geo.xz(n,m) = 0.25*(grid.X(n-1,m  ) + grid.X(n  ,m  ) + ...
+                            grid.X(n  ,m-1) + grid.X(n-1,m-1) ); 
+        geo.yz(n,m) = 0.25*(grid.Y(n-1,m  ) + grid.Y(n  ,m  ) + ...
+                            grid.Y(n  ,m-1) + grid.Y(n-1,m-1) );
+    end
+end
+geo.x    = grid.X;
+geo.y    = grid.Y;
 geo.gsqs = detare(geo.x,geo.y,OPT.new);
 geo.kcs  = detkcs(geo.x,geo.y,grid.MissingValue);
 
 %% Determine depths at cell centres
-if strcmpi(OPT.dps,'DP')
+if ~strcmpi(OPT.dpsopt,'DP')
     for n = 2: nmax
         for m = 2: mmax
              hlp (n,m) = 0.25*(cmp.dps(n,m) + cmp.dps(n-1,m) + cmp.dps(n,m-1) + cmp.dps(n-1,m-1));
         end
     end
     cmp.dps = hlp;
-elseif ~strcmpi(OPT.dps,'DPS')
-    
-    % Moet nog maar worden toch nauwelijks gebruikt
-
 end
 
 
@@ -57,7 +63,7 @@ ypol                     = [];
 no_pol                   =  1;
 if ~isempty(OPT.filpol)
     %% Read the polygon data file
-    Fileinfo                 = tekal ('open',polfil);
+    Fileinfo                 = tekal ('open',OPT.filpol,'loaddata');
     [xpol,ypol,noval,no_pol] = detpol (Fileinfo);
     clear Fileinfo;
 end
@@ -65,9 +71,9 @@ end
 for i_pol = 1: no_pol
     %% Determine inside polygon
     if ~isempty(xpol)
-        kcss       = inpolygon (geo.xz,geo.yz,            ...
-                                xpol(ipol,1:noval(ipol)), ...
-                                ypol(ipol,1:noval(ipol)));
+        kcss       = inpolygon (geo.xz,geo.yz,              ...
+                                xpol(i_pol,1:noval(i_pol)), ...
+                                ypol(i_pol,1:noval(i_pol)));
         kcss       = double(kcss);
     else
         kcss(1:nmax,1:mmax) = 1;
@@ -75,11 +81,10 @@ for i_pol = 1: no_pol
     kcss       = kcss.*geo.kcs;
     
     %% Now determine hypsometric curves
-    dps = kcss.*cmp.dps;
     if isnan(OPT.maxdep) OPT.maxdep = max(max(dps,[],2)); end
     if isnan(OPT.mindep) OPT.mindep = min(min(dps,[],2)); end
     
-    [rvol,rare,rdep] = hyps(geo.kcs,dps,geo.gsqs,OPT.maxdep,OPT.mindep);
+    [rvol,rare,rdep] = hyps(kcss,cmp.dps,geo.gsqs,OPT.maxdep,OPT.mindep);
     Data(1,1:size(rdep,2),1) = squeeze(rdep);
     Data(1,1:size(rdep,2),2) = squeeze(rvol);
     Data(1,1:size(rdep,2),3) = squeeze(rare);
