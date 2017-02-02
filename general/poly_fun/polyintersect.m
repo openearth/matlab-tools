@@ -132,8 +132,8 @@ function  varargout = polyintersect(varargin)
    %% preallocate with a certain arbitrary size
    %% ---------------------
    
-   crosspoint.x = repmat(nan,[max(line(1).n_meshes,line(2).n_meshes) 1]);
-   crosspoint.y = repmat(nan,[max(line(1).n_meshes,line(2).n_meshes) 1]);
+   crosspoint.x = nan([max(line(1).n_meshes,line(2).n_meshes) 1]);
+   crosspoint.y = nan([max(line(1).n_meshes,line(2).n_meshes) 1]);
    crosspoint.n = 0;
    
    %-% NOTE: stroring antire matrix of (all pieces line1) x (all pieces line2) NOT POSSIBLE
@@ -178,12 +178,12 @@ function  varargout = polyintersect(varargin)
          %% Calculate crossings if one line segment is vertical
          %% ---------------------
 	    
-            if isinf(local.x) | isnan(local.x)
+            if isinf(local.x) || isnan(local.x)
             
             %% Deal with two vertical lines that do not yield a crossing (both they don't overlap and when they don't overlap)
             %% ---------------------
 	    
-               if  isinf(line(1).cen.a(imesh1)) & ...
+               if  isinf(line(1).cen.a(imesh1)) && ...
                    isinf(line(2).cen.a(imesh2))
                
                         if OPT.disp==1
