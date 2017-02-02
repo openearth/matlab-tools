@@ -11,7 +11,7 @@ siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{
 % positive upward or downward
 %
 
-sign = -1.0;
+sign = 1.0;
 
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.DEPTH_CONTROL.ORIENTATION')
     upward = strfind(siminp_struc.ParsedTree.DEPTH_CONTROL.ORIENTATION,'upwards');
