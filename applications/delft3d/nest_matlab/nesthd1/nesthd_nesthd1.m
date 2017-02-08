@@ -54,16 +54,6 @@
           case 'grd'
               grid_fine = wlgrid   ('read',files{2});
               icom_fine = nesthd_det_icom (grid_fine.X,grid_fine.MissingValue,files{6});
-          case 'DFLOWFM'
-              G=dflowfm.readNet(files{2}); % read faces or nodes, whatever is available
-              try
-                  grid_fine.X = G.face.FlowElem_x;
-                  grid_fine.Y = G.face.FlowElem_y;
-              end
-              try
-                  grid_fine.X = G.node.x;
-                  grid_fine.Y = G.node.y;
-              end     
       end
 
       %% Read the boundary data
@@ -110,7 +100,10 @@
                       angles                 = nesthd_detang (help_X,help_Y,icom_fine,bnd);
                       angles                 = reshape([angles;angles],size(bnd.Name,1)*2,1);
                   case {'ext','pli','mdu'}
-                      angles = nesthd_detang_dflowfm(grid_fine,bnd);
+                      % todo, detrmine orientation of the boundary such
+                      % that inflow is positive
+                      angles(1:length(X_bnd)) = 90.;
+
               end
           end
 
