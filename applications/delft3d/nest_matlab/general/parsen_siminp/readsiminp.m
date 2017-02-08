@@ -16,7 +16,12 @@ S.FileDir  = filedir;
 S.File = {};
 %
 if isempty(filedir);filedir = pwd; end
-filepath=fullfile([filedir filesep filename]);
+if strcmp(filename(2:2),':')
+    % if include file contains full (windows) path 
+    filepath=filename;
+else    
+    filepath=fullfile([filedir filesep filename]);
+end
 fid = fopen(filepath,'r');
 if fid<0
    error('Cannot open the file: %s',filepath)
@@ -26,7 +31,7 @@ while ~feof(fid)
    if length(Line)>258
       Line = Line(1:258);
    end
-   if ischar(Line) 
+   if ischar(Line)
        Line = strtrim(parseline(Line,separators));
        if ~isempty(Line)
           S.File{end+1} = Line;
