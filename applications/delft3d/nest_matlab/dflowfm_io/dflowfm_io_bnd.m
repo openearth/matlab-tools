@@ -32,6 +32,9 @@ switch lower(cmd)
                 for i_ext = 1: length(ext)  
                     if ~isempty(strfind(ext(i_ext).quantity,'bnd'        )) && ~isempty(find(~cellfun('isempty',regexp(ext(i_ext).quantity,allowedVars))))
                         i_file = i_file + 1;
+<<<<<<< .mine
+                        filelist{i_file} = relativeToabsolutePath(ext(i_ext).filename);
+=======
                         if ~isempty(path)
                             try
                                 filelist{i_file} = [path filesep ext(i_ext).filename];
@@ -45,14 +48,16 @@ switch lower(cmd)
                                 filelist{i_file} = [ext(i_ext).locationfile];
                             end
                         end
+>>>>>>> .r13146
                         
                         if ~isempty(strfind(ext(i_ext).quantity,'waterlevel'))
                            bndtype{i_file} = 'z';
-                        elseif ~isempty(strfind(ext(i_ext).quantity,'velocity')) && isempty(strfind(ext(i_ext).quantity,'normalvelocity'))
+                        elseif ~isempty(strfind(ext(i_ext).quantity,'velocity')) && isempty(strfind(ext(i_ext).quantity,'normalvelocity')) ...
+                                                                                 && isempty(strfind(ext(i_ext).quantity,'uxuyadvectionvelocitybnd'))
                            bndtype{i_file} = 'c';
                         elseif ~isempty(strfind(ext(i_ext).quantity,'neumann'))
                            bndtype{i_file} = 'n';
-                        elseif ~isempty(strfind(ext(i_ext).quantity,'uxuyadvectionvelocitybnd '))
+                        elseif ~isempty(strfind(ext(i_ext).quantity,'uxuyadvectionvelocitybnd'))
                            bndtype{i_file} = 'p';
                         end
                     end
