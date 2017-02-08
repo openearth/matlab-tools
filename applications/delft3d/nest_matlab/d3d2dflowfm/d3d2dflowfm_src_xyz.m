@@ -54,6 +54,8 @@ location = {dis.Table.Location};
 dep   = wldep('read',fildep,[mmax nmax]);
 
 for i_src = 1: length(m_src)
+    i_table = strmatch(strtrim(names{i_src}),location,'exact');
+
     %% Depthaveraged discharge?
     dav = true; if kmax > 1 && k_src(i_src) > 0 dav = false; end
 
@@ -93,7 +95,7 @@ for i_src = 1: length(m_src)
     dflowfm_io_xydata('write',filsrc{i_src},LINE);
     
     %% Generate the series (for now always including salinity and temperature, not sure if that is allowed)
-    i_table = strmatch(strtrim(names{i_src}),location,'exact');
+%    i_table = strmatch(strtrim(names{i_src}),location,'exact');
     SERIES.Values(:,1)   = dis.Table(i_table).Data(:,1); % times
     SERIES.Values(:,2)   = dis.Table(i_table).Data(:,2); % Flux/discharge rate
 
