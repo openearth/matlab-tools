@@ -57,7 +57,7 @@ for ipnt = 1: nopnt
             [mnnes,weight,angle,ori,x,y] = nesthd_getwgh2 (fid_adm,mnbcsp,'n');
     end
 
-    if isempty(mnnes)
+     if isempty(mnnes)
         error = true;
         close(h);
         simona2mdf_message({'Inconsistancy between boundary definition and' 'administration file'},'Window','Nesthd2 Error','Close',true,'n_sec',10);
@@ -167,19 +167,31 @@ for ipnt = 1: nopnt
     %
     switch type
         case {'x' 'p'}
-            [mnes,nnes,weight,angle] = nesthd_getwgh(fid_adm,mcbsp,ncbsp,type);
-            for iwght = 1:4
+            [mnnes,weight,angle]         = nesthd_getwgh2 (fid_adm,mnbcsp,'c');
+            
+            % !!!! Temporarely, for testing porposes only, remove all spavce from nfs_inf.names && mnnes
+            mnnes         = simona2mdu_replacechar(mnnes        ,' ','');
+            mnnes         = simona2mdu_replacechar(mnnes        ,'(M,N)=','');
+            nfs_inf.names = simona2mdu_replacechar(nfs_inf.names,' ','');
+            nfs_inf.names = simona2mdu_replacechar(nfs_inf.names,'(M,N)=','');
+            
+            
+            %
+            % Get station numbers needed; store in ines
+            %
+            
+            for iwght = 1: 4
                 ines(iwght) = 0;
-                if mnes(iwght) ~= 0
-                    istat        = find(mnstat(1,:) == mnes(iwght) & mnstat(2,:) == nnes(iwght),1);
+                if ~isempty(mnnes)
+                    istat       =  find(strcmp(nfs_inf.names,mnnes{iwght}) == 1,1,'first');
                     if ~isempty(istat)
-                        ines (iwght) = nfs_inf.list_stations(istat);
+                        ines(iwght) = nfs_inf.list_stations(istat);
                     else
                         weight(iwght) = 0;
                     end
                 end
             end
-
+            
             %
             % Normalise weights (stations not found on history file)
             %
@@ -191,7 +203,7 @@ for ipnt = 1: nopnt
                 if ines(iwght) ~=0
                     [~,uu,vv] = nesthd_getdata_hyd(filename,ines(iwght),nfs_inf,'c');
                     [~,vv]     = nesthd_rotate_vector(uu,vv,pi/2. - angle);
-                    vv = -vv;
+%                    vv = -vv;
                     for itim = 1: notims
                         bndval(itim).value(ipnt,kmax+1:2*kmax,1) = bndval(itim).value(ipnt,kmax+1:2*kmax,1) + vv(itim,:)*weight(iwght);
                     end
