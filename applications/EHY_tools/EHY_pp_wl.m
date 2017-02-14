@@ -158,7 +158,7 @@ for i_per = 1: size(Periods,1)
         fclose (fid);
         
         %% Do statistics
-        Statistics(i_stat) = EHY_statistics(wlev_cmp_interp, wlev_meas_interp);
+        Statistics(i_stat) = EHY_statistics(wlev_cmp_interp, wlev_meas_interp,'times',dattim_interp);
         
         str_biasrmse  = ['Bias = '   num2str(Statistics(i_stat).bias,'%6.3f') ' [m]'...
             ', Rmse = ' num2str(Statistics(i_stat).rmse,'%6.3f') ' [m]'];
@@ -198,7 +198,9 @@ for i_per = 1: size(Periods,1)
     cell_arr{1,3} = 'RMSE [m]';
     cell_arr{1,4} = 'Std  [m]';
     cell_arr{1,5} = 'difHW [m]';
-    cell_arr{1,6} = 'difLW [m]';
+    cell_arr{1,6} = 'timHW [min]';
+    cell_arr{1,7} = 'difLW [m]';
+    cell_arr{1,8} = 'timLW [min]';
     for i_stat = 1: no_stat
         i_row              = i_stat + 1;
         cell_arr {i_row,1} = stations_fullname{i_stat};
@@ -206,7 +208,9 @@ for i_per = 1: size(Periods,1)
         cell_arr {i_row,3} = Statistics(i_stat).rmse;
         cell_arr {i_row,4} = Statistics(i_stat).std;
         cell_arr {i_row,5} = Statistics(i_stat).difmax;
-        cell_arr {i_row,6} = Statistics(i_stat).difmin;
+        cell_arr {i_row,6} = Statistics(i_stat).difmax_time;
+        cell_arr {i_row,7} = Statistics(i_stat).difmin;
+        cell_arr {i_row,8} = Statistics(i_stat).difmin_time;
     end
     i_row             = i_row + 1;
     cell_arr{i_row,1} = 'Gemiddeld';
@@ -214,7 +218,9 @@ for i_per = 1: size(Periods,1)
     cell_arr{i_row,3} = mean(cell2mat({Statistics.rmse}  ));
     cell_arr{i_row,4} = mean(cell2mat({Statistics.std}   ));
     cell_arr{i_row,5} = mean(cell2mat({Statistics.difmax}));
-    cell_arr{i_row,6} = mean(cell2mat({Statistics.difmin}));
+    cell_arr{i_row,6} = mean(cell2mat({Statistics.difmax_time}));
+    cell_arr{i_row,7} = mean(cell2mat({Statistics.difmin}));
+    cell_arr{i_row,8} = mean(cell2mat({Statistics.difmin_time}));
     xlswrite_report([fig_dir filesep runid '.xls'],cell_arr,[Periods{i_per,1}(1:8) ' - ' Periods{i_per,2}(1:8)]);
 end
 
