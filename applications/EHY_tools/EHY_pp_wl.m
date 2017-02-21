@@ -1,3 +1,4 @@
+
 function EHY_pp_wl(varargin)
 
 clearvars -except varargin;
@@ -158,7 +159,10 @@ for i_per = 1: size(Periods,1)
         fclose (fid);
         
         %% Do statistics
-        Statistics(i_stat) = EHY_statistics(wlev_cmp_interp, wlev_meas_interp,'times',dattim_interp,'tide',true);
+        Statistics(i_stat) = EHY_statistics(wlev_cmp_interp, wlev_meas_interp, ...
+                                            'times'        , dattim_interp   , ...
+                                            'tide'         , true            , ...
+                                            'extremes'     , 2               ) ;
         
         str_biasrmse  = ['Bias = '   num2str(Statistics(i_stat).bias,'%6.3f') ' [m]'...
             ', Rmse = ' num2str(Statistics(i_stat).rmse,'%6.3f') ' [m]'];
@@ -192,24 +196,14 @@ for i_per = 1: size(Periods,1)
     end
     
     
-    %% Write statistics to xls file
+    %% Write statistics to xls files
+    
+    clear cell_arr
     %  Definition
     cell_arr{1,1}  = ['Simulation : ' runid];
     cell_arr{1,2}  = 'Bias [m]';
     cell_arr{1,3}  = 'RMSE [m]';
     cell_arr{1,4}  = 'Std  [m]';
-    cell_arr{1,5}  = 'HW Bias [m]';
-    cell_arr{1,6}  = 'HW RMSE [m]';
-    cell_arr{1,7}  = 'timHW Bias [min]';
-    cell_arr{1,8}  = 'timHW RMSE [min]';
-    cell_arr{1,9}  = 'LW Bias  [m]';
-    cell_arr{1,10} = 'LW RMSE  [m]';
-    cell_arr{1,11} = 'timLW Bias [min]';
-    cell_arr{1,12} = 'timLW RMSE [min]';
-    cell_arr{1,13} = 'difHW [m]';
-    cell_arr{1,14} = 'timHW [min]';
-    cell_arr{1,15} = 'difLW [m]';
-    cell_arr{1,16} = 'timLW [min]';
     
     % values
     for i_stat = 1: no_stat
@@ -218,18 +212,6 @@ for i_per = 1: size(Periods,1)
         cell_arr {i_row,2}  = Statistics(i_stat).bias;
         cell_arr {i_row,3}  = Statistics(i_stat).rmse;
         cell_arr {i_row,4}  = Statistics(i_stat).std;
-        cell_arr {i_row,5}  = Statistics(i_stat).hwlw(1).series_bias;
-        cell_arr {i_row,6}  = Statistics(i_stat).hwlw(1).series_rmse;
-        cell_arr {i_row,7}  = Statistics(i_stat).hwlw(1).time_series_bias;
-        cell_arr {i_row,8}  = Statistics(i_stat).hwlw(1).time_series_rmse;
-        cell_arr {i_row,9}  = Statistics(i_stat).hwlw(2).series_bias;
-        cell_arr {i_row,10} = Statistics(i_stat).hwlw(2).series_rmse;
-        cell_arr {i_row,11} = Statistics(i_stat).hwlw(2).time_series_bias;
-        cell_arr {i_row,12} = Statistics(i_stat).hwlw(2).time_series_rmse;
-        cell_arr {i_row,13} = Statistics(i_stat).hwlw(1).diff;
-        cell_arr {i_row,14} = Statistics(i_stat).hwlw(1).time_diff;
-        cell_arr {i_row,15} = Statistics(i_stat).hwlw(2).diff;
-        cell_arr {i_row,16} = Statistics(i_stat).hwlw(2).time_diff;
     end
     
     % Averages
@@ -241,18 +223,69 @@ for i_per = 1: size(Periods,1)
     
     % Write to excel file
     colwidth      = [28 repmat(17,1,size(cell_arr,2) - 1)];
-    format(1:5)   = {'.000'};
-    format(6:7)   = {'0'};
-    format(8:9)   = {'.000'};
-    format(10:11) = {'0'};
-    format(12)    = {'.000'};
-    format(13)    = {'0'};
-    format(14)    = {'.000'};
-    format(15)    = {'0'};
+    format(1:4)   = {'.000'};
         
     xlswrite_report([fig_dir filesep runid '.xls'],cell_arr,[Periods{i_per,1}(1:8) ' - ' Periods{i_per,2}(1:8)], ...
                      'colwidth'                   ,colwidth, ...
                      'format'                     ,format  );
+                 
+    % High and low water statistics
+    clear cell_arr
+    
+    % Definition
+    cell_arr{1,1}  = ['Simulation : ' runid];
+    cell_arr{1,2}  = 'HW Bias [m]';
+    cell_arr{1,3}  = 'HW RMSE [m]';
+    cell_arr{1,4}  = 'timHW Bias [min]';
+    cell_arr{1,5}  = 'timHW RMSE [min]';
+    cell_arr{1,6}  = 'LW Bias  [m]';
+    cell_arr{1,7}  = 'LW RMSE  [m]';
+    cell_arr{1,8}  = 'timLW Bias [min]';
+    cell_arr{1,9}  = 'timLW RMSE [min]';
+    cell_arr{1,10} = 'difHW [m]';
+    cell_arr{1,11} = 'timHW [min]';
+    cell_arr{1,12} = 'difLW [m]';
+    cell_arr{1,13} = 'timLW [min]';
+    
+    % values
+    for i_stat = 1: no_stat
+        i_row               = i_stat + 1;
+        cell_arr {i_row,1}  = stations_fullname{i_stat};
+        cell_arr {i_row,2}  = Statistics(i_stat).hwlw(1).series_bias;
+        cell_arr {i_row,3}  = Statistics(i_stat).hwlw(1).series_rmse;
+        cell_arr {i_row,4}  = Statistics(i_stat).hwlw(1).time_series_bias;
+        cell_arr {i_row,5}  = Statistics(i_stat).hwlw(1).time_series_rmse;
+        cell_arr {i_row,6}  = Statistics(i_stat).hwlw(2).series_bias;
+        cell_arr {i_row,7}  = Statistics(i_stat).hwlw(2).series_rmse;
+        cell_arr {i_row,8}  = Statistics(i_stat).hwlw(2).time_series_bias;
+        cell_arr {i_row,9}  = Statistics(i_stat).hwlw(2).time_series_rmse;
+        cell_arr {i_row,10} = Statistics(i_stat).hwlw(1).diff;
+        cell_arr {i_row,11} = Statistics(i_stat).hwlw(1).time_diff;
+        cell_arr {i_row,12} = Statistics(i_stat).hwlw(2).diff;
+        cell_arr {i_row,13} = Statistics(i_stat).hwlw(2).time_diff;
+    end
+    
+    % Averages
+    i_row             = i_row + 1;
+    cell_arr{i_row,1}  = 'Gemiddeld';
+    for i_col = 2: size(cell_arr,2)
+        cell_arr{i_row,i_col}  = mean(cell2mat(cell_arr(2:end-1,i_col)));
+    end
+    
+    % Write to excel file
+    colwidth      = [28 repmat(17,1,size(cell_arr,2) - 1)];
+    format(1:2)   = {'.000'};
+    format(3:4)   = {'0'};
+    format(5:6)   = {'.000'};
+    format(7:8)   = {'0'};
+    format(9)     = {'.000'};
+    format(10)    = {'0'};
+    format(11)    = {'.000'};
+    format(12)    = {'0'};
+        
+    xlswrite_report([fig_dir filesep runid '_hwlw.xls'],cell_arr,[Periods{i_per,1}(1:8) ' - ' Periods{i_per,2}(1:8)], ...
+                     'colwidth'                        ,colwidth, ...
+                     'format'                          ,format  );
 end
 
 %% Tidal analyses

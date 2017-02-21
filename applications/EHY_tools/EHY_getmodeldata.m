@@ -27,10 +27,16 @@ end
 %% Get station names
 %% Sobek3
 if strcmpi(modelType,'sobek3')
+    
     sobekFile=dir([ sim_dir filesep runid '.dsproj_data\Water level (op)*.nc*']);
     D=read_sobeknc([sim_dir filesep runid '.dsproj_data' filesep sobekFile.name]);
-
+    
     Data.stationNames=strtrim(D.feature_name.Val);
+elseif strcmpi(modelType,'sobek3_new')
+        sobekFile=[ sim_dir filesep runid '.dsproj_data\Integrated_Model\dflow1d\output\observations.nc'];
+        D=read_sobeknc(sobekFile);
+        
+         Data.stationNames=strtrim(D.observation_Id.Val);
 
 %% Dflow-FM
 elseif strncmpi(modelType,'dflow',4)
@@ -77,6 +83,9 @@ for i_stat = 1: length(stat_name)
             if strcmpi(modelType,'sobek3')
                 Data.times                 =D.water_level.Time;
                 Data.val(:,i_stat)         =D.water_level.Val(:,nr_stat);
+            elseif strcmpi(modelType,'sobek3_new')
+                Data.times                 =D.Observedwaterlevel.Time;
+                Data.val(:,i_stat)         =D.Observedwaterlevel.Val(:,nr_stat);
             %% Read Dflow-FM data
             elseif strncmpi(modelType,'dflow',4)
                 tmp                = qpread(dfm,1,'water level (points)','data',0,nr_stat);

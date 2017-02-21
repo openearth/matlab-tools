@@ -1,9 +1,10 @@
 function Statistics = EHY_statistics(computed,observed,varargin)
 
 %% Check if belonging times are given and if it is tidal simulation or not
-OPT.times = [];
-OPT.tide  = false;
-OPT       = setproperty(OPT,varargin);
+OPT.times    = [];
+OPT.tide     = false;
+OPT.extremes = 0;
+OPT          = setproperty(OPT,varargin);
 
 %% Do statistics (from Firmijn's scripts)
 error            = computed - observed;
@@ -40,12 +41,23 @@ if ~isempty(error(nonan))
                 Statistics.hwlw(i_hwlw).series_rmse      = Statistics_tide.serieshwlw_rmse;
                 Statistics.hwlw(i_hwlw).time_series_bias = Statistics_tide.serieshwlw_time_bias;
                 Statistics.hwlw(i_hwlw).time_series_rmse = Statistics_tide.serieshwlw_time_rmse;
+                if OPT.extremes > 0
+                    Statistics_tide                            = det_stat_tide(OPT.times,computed,observed,sign,'extremes',OPT.extremes);
+                    Statistics.hwlw(i_hwlw+2).series_bias      = Statistics_tide.serieshwlw_bias;
+                    Statistics.hwlw(i_hwlw+2).series_rmse      = Statistics_tide.serieshwlw_rmse;
+                    Statistics.hwlw(i_hwlw+2).time_series_bias = Statistics_tide.serieshwlw_time_bias;
+                    Statistics.hwlw(i_hwlw+2).time_series_rmse = Statistics_tide.serieshwlw_time_rmse;
+                end
             end
         end
     end
 end
 
-function Statistics_tide = det_stat_tide(times,computed,observed,sign)
+function Statistics_tide = det_stat_tide(times,computed,observed,sign,varargin)
+
+%% Sttings for statistics on extremes (or whole series if OPT.extremes = 0)
+OPT.extremes = 0;
+OPT = setproperty(OPT,varargin);
 
 %% Determine high or low water statistics of a tidal signal, sign = 1 hw, sign = -1 lw
 period = (12.*60 + 25.)/1440.; %period M2
@@ -65,12 +77,21 @@ if time_hwlw_cmp(1) - time_hwlw_obs(1) < -1.*period/2
     time_hwlw_obs(1:end-1) = time_hwlw_obs(2:end);
 end
 
+%% Restrict the series to the to extremes
+index  = 1:1:length(hwlw_cmp);
+no_val = length(hwlw_cmp);
+if OPT.extremes > 0
+    no_nan    = ~isnan(hwlw_obs);
+    [~,index] = sort(hwlw_obs(no_nan),2,'descend');
+    no_val    = min(OPT.extremes,length(index));
+end
+
 %% Statistics on values
-tmp                                  = EHY_statistics (sign.*hwlw_cmp,sign.*hwlw_obs);
+tmp                                  = EHY_statistics (sign.*hwlw_cmp(index(1:no_val)),sign.*hwlw_obs(index(1:no_val)));
 Statistics_tide.serieshwlw_bias      = tmp.bias;
 Statistics_tide.serieshwlw_rmse      = tmp.rmse;
 
 %% Statistics on times
-tmp                                  = EHY_statistics(time_hwlw_cmp,time_hwlw_obs);
+tmp                                  = EHY_statistics(time_hwlw_cmp(index(1:no_val)),time_hwlw_obs(index(1:no_val)));
 Statistics_tide.serieshwlw_time_bias = tmp.bias*1440.; % from days to minutes
 Statistics_tide.serieshwlw_time_rmse = tmp.rmse*1440.; % from days to minutes
