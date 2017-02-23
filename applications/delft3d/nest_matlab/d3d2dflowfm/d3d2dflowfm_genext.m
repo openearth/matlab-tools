@@ -125,7 +125,7 @@ end
 %% Write initial conditions for temperature
 if ~isempty(OPT.Filini_tem)
     i_force = i_force + 1;
-    ext_force(i_force).quantity = 'initiatemperature';
+    ext_force(i_force).quantity = 'initialtemperature';
     ext_force(i_force).filename = OPT.Filini_tem;
     ext_force(i_force).filetype = 7;
     ext_force(i_force).method   = 6;
@@ -197,7 +197,7 @@ end
 %% write rain/evaporation
 if ~isempty(OPT.Fileva)
     i_force = i_force + 1;
-    ext_force(i_force).quantity = 'rainfall_mmperday';
+    ext_force(i_force).quantity = 'rainfall';
     ext_force(i_force).filename = OPT.Fileva;
     ext_force(i_force).filetype = 1;
     ext_force(i_force).method   = 1;
