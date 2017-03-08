@@ -29,7 +29,7 @@ function varargout = delft3d2nc(ncfile,varargin)
    OPT.epsg           = [];
    OPT.type           = 'float'; %'double'; % even NEFIS file is by default single precision
    OPT.debug          = 0;
-   OPT.location       = 's;
+   OPT.location       = '';
    OPT.dpsopt         = '';
    OPT.mdf            = '';
    
