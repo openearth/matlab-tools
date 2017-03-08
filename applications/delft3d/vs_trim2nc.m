@@ -99,7 +99,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
    OPT.type           = 'single'; %'double'; % the nefis file is by default single precision, se better isn't useful
    OPT.debug          = 0;
    OPT.time           = 0; % subset of time indices in NEFIS file, 1-based
-   OPT.empty          = 0  % to create structure with empty time-dependenmt data matrices (spatio-temporal matrices are always added). Useful for creating template for statistics.
+   OPT.empty          = 0;  % to create structure with empty time-dependenmt data matrices (spatio-temporal matrices are always added). Useful for creating template for statistics.
    OPT.dump           = 1;
 
    OPT.var_cf         = {'time','m','n','Layer','LayerInterf','longitude','latitude'};
