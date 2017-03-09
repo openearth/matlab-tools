@@ -236,7 +236,7 @@ function varargout = rws_waterbase_get_url(varargin);
           [s status] = urlwrite([urlName],OutputName);
 
           if (status == 0)
-            fprintf(2,[OPT.baseurl,': Online source not available. Trying again to get ',Substance.FullName,' at ',Substance.Code,'\n']);
+            disp([OPT.baseurl,': Online source not available. Trying again to get ',Substance.FullName{indSub},' at ',Substance.Code(indSub)]);
             pause(5)
           else
             fidurl = fopen(OutputNameUrl, 'w+');
@@ -263,7 +263,7 @@ function varargout = rws_waterbase_get_url(varargin);
             
             [s status] = urlread([urlName]);
             if (status == 0)
-              fprintf(2,[OPT.baseurl,' may be offline or you are not connected to the internet','Online source not available','\n']);
+              disp([OPT.baseurl,' may be offline or you are not connected to the internet','Online source not available']);
               close(h);
               return;
             end
