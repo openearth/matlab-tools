@@ -99,8 +99,12 @@ end
 for ivar=[OPT.donar_wnsnum]
     
     %% extract meta-data standards (DONAR, CF, UM Aquo, SeaDataNet)
-    
-    index     = find(DONAR.donar_wnsnum==ivar);
+    try
+        index     = find(DONAR.donar_wnsnum==ivar);
+    catch
+        index     = find(cell2mat(DONAR.donar_wnsnum(2:end))==ivar);
+        index = index + 1;
+    end
     OPT.name  = DONAR.name{index}; %(1:min(63,length(OPT.standard_name))); % matlab names have a max length of 63 characters
     OPT.units = DONAR.units{index};
     
