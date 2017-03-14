@@ -42,8 +42,8 @@ if ~isempty(robs)
         rrange=rvms;
     end
 
-    xnmin=0;
-    xnmax=0.50;
+    xnmin=0.0001;
+    xnmax=1.00;
     xnrange=xnmin:0.0001:xnmax;
     
     esqmin=1e12;
@@ -67,6 +67,10 @@ if ~isempty(robs)
     rvms=rrange(irmin);
 end
 [vr,pr]=h2010(r,pc,dp,rvms,bs,rhoa,xn,rn,a);
+if length(r)> 1 && vr(end) > vms
+    [vr,pr]=h2010(r,pc,dp,rvms,bs,rhoa,0.5,rn,a);
+end
+
 
 function [vr,pr]=h2010(r,pc,dp,rvms,bs,rhoa,xn,rn,a)
 if isempty(a)
