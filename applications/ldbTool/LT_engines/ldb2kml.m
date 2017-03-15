@@ -71,9 +71,9 @@ if nargin<1
 else
     % ldb specified
     if ischar(ldb)
+        [fPat fName]=fileparts(ldb);
         ldb=landboundary('read',ldb);
         ldb=ldb(:,1:2);
-        [fPat fName]=fileparts(ldb);
     end
 end
 if nargin < 2
