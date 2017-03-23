@@ -1,7 +1,7 @@
 function varargout = bct2bca(varargin)
 %BCT2BCA          performs tidal analysis to generate *.bca from *.bct <<beta version!>>
 %
-%       bct2bca(<keyword,value>)
+%       bct2bca(keyword_struct)
 % BCA = bct2bca(<keyword,value>)
 %
 % Analyses a Delft3D FLOW *.bct file (time series boundary condition)
@@ -15,9 +15,9 @@ function varargout = bct2bca(varargin)
 %
 % The following <keyword,value> pairs are implemented (not case sensitive):
 %
-%    * bctfile:     bct file.
-%    * bcafile:     bca file.
-%    * bndfile:     bnd file.
+%    * bctfile:     bct file. --> Required
+%    * bcafile:     bca file. --> Required
+%    * bndfile:     bnd file. --> Required
 %
 %    * timezone:    hours to be SUBTRACTED from to the timeseries to get UTC times.
 %                   E.G. for CET set timeshift to + 1 (default 0).
@@ -89,7 +89,7 @@ function varargout = bct2bca(varargin)
 %  It is also to possible to call with all the <keyword,value> pairs as struct fields:
 %  bct2bca(bctfile,bcafile,bndfile,struct)
 % 
-% Example:
+% Example 1 (keyword structure):
 %
 % H.components  = {'K1','P1','O1','M2','N2','S2','K2','M4','MS4'};
 % H.infername   = {'P1'   ;'K2'};
@@ -103,13 +103,22 @@ function varargout = bct2bca(varargin)
 % H.residue     = [];
 % H.prediction  = [];
 % H.A0          = 1;
-% bct2bca('test.bct', 'test.bca','bca.bnd', H);
+% H.bctfile     = 'test.bct'; % --> Required
+% H.bcafile     = 'test.bca'; % --> Required
+% H.bndfile     = 'test.bnd'; % --> Required
+%
+% bct2bca(H);
+%
+%
+% Example 2 (<keyword,value> pairs):
+%
+% bca_data = bct2bca('bctfile','test.bct','bcafile','test.bca','bndfile','test.bnd');
+% % Note that the *.bct, *.bca and *.bnd files are required input)
 %
 % See also: BCT2BCA, DELFT3D_NAME2T_TIDE, T_TIDE_NAME2DELFT3D,
 %           TIME2DATENUM, BCT2BCH,
 %           BCT_IO, DELFT3D_IO_BCA, DELFT3D_IO_BND,
 %           T_TIDE (http://www.eos.ubc.ca/~rich/)
-
 
 % 2008 Feb 14  * updated to include latitude as extra parameter as suggested by Arjan Mol and Anton de Fockert
 % 2008 Jul 11: * changed name of t_tide output (to prevent error due to ':' in current column name) [Anton de Fockert]
@@ -142,6 +151,12 @@ function varargout = bct2bca(varargin)
 %       PO Box 5048
 %       2600 GA Delft
 %       The Netherlands
+%
+%   Update 2017:
+%   Copyright (C) 2017 Deltares
+%       Freek Scheel
+%       freek.scheel@deltares.nl
+%
 %
 %   This library is free software; you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -449,6 +464,7 @@ BCA.DATA = [];
             else
                 BND.DATA(itable).labelB = BCA.DATA(end).label;
             end
+            BND.DATA(itable).datatype = 'A';
          end
 
          %% Make sure there are no transitions across the 360 boundary inside one boundary segment
@@ -484,8 +500,17 @@ BCA.DATA = [];
 %% Output
 
    delft3d_io_bca('write',[OPT.bcafile],BCA)
-   delft3d_io_bnd('write',[filepathstr(OPT.bndfile),filesep,filename(OPT.bndfile),'_from_bct2bca.bnd'],BND)
-
+   if length(OPT.bndfile) < 5
+       OPT.bndfile = [OPT.bndfile '.bnd'];
+   elseif ~strcmp(OPT.bndfile(1,end-3:end),'.bnd')
+       OPT.bndfile = [OPT.bndfile '.bnd'];
+   end
+   if isempty(strfind(OPT.bndfile,filesep))
+       delft3d_io_bnd('write',[filename(OPT.bndfile),'_from_bct2bca.bnd'],BND);
+   else
+       delft3d_io_bnd('write',[filepathstr(OPT.bndfile),filesep,filename(OPT.bndfile),'_from_bct2bca.bnd'],BND);
+   end
+   
    if nargout==1
       varargout = {BCA};
    end
