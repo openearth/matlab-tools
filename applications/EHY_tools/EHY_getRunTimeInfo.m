@@ -1,9 +1,9 @@
 function runTimeInfo=EHY_getRunTimeInfo(mdFile)
 % runTimeInfo=EHY_getRunTimeInfo(mdFile)
 % mdFile should be a .mdf or .mdu file of a finished simulation
-% 
+%
 % Example: EHY_getRunTimeInfo('D:\Noordzee.mdu')
-% 
+%
 % created by Julien Groenenboom, March 2017
 modelType=EHY_getModelType(mdFile);
 [pathstr,name,ext]=fileparts(mdFile);
@@ -42,15 +42,15 @@ switch modelType
         end
         line2=strsplit(line);
         runTimeInfo.realTime_S=str2double(line2{end});
-
+        
     case 'd3d'
         mdf=delft3d_io_mdf('read',mdFile);
         
         % diag - runtime
-          if exist([pathstr filesep 'tri-diag.' name ],'file') % first check if run was done in parallel
+        if exist([pathstr filesep 'tri-diag.' name ],'file') % first check if run was done in parallel
             diaFile=[pathstr filesep 'tri-diag.' name ];
-        else %  not in parallel - use out.txt file
-            error('tri-diag not found')
+        else %  not in parallel
+            diaFile=[pathstr filesep 'tri-diag.' name '-001'];
         end
         fid=fopen(diaFile,'r');
         line=fgetl(fid);
