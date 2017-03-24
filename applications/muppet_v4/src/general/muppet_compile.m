@@ -78,7 +78,8 @@ end
 
 fclose(fid);
 
-mcc('-m','-d',exedir,'muppet4.m','-B','complist','-a','xml');
+% mcc('-m','-d',exedir,'muppet4.m','-B','complist','-a','xml');
+mcc('-m','-d',exedir,'muppet4.m','-B','complist');
 
 delete('complist');
 
