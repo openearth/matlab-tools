@@ -186,12 +186,16 @@ try
         % Riemann or current boundaries present
         if icor
             [lon,lat, gt, depth, conList] = readTideModel(tidefile,'type','q','x',xx,'y',yy,'constituent','all','includedepth');            
-            ampv = squeeze(gt(1).amp)';             phasev =  squeeze(gt(1).phi)';   
-            ampu = squeeze(gt(2).amp)';             phaseu =  squeeze(gt(2).phi)'; 
+%            ampv = squeeze(gt(1).amp)';             phasev =  squeeze(gt(1).phi)';   
+%            ampu = squeeze(gt(2).amp)';             phaseu =  squeeze(gt(2).phi)'; 
+            ampu = squeeze(gt(1).amp)';             phaseu =  squeeze(gt(1).phi)';   
+            ampv = squeeze(gt(2).amp)';             phasev =  squeeze(gt(2).phi)'; 
         else
             [lon,lat, gt, depth, conList] = readTideModel(tidefile,'type','vel','x',xx,'y',yy,'constituent','all','includedepth');
-            ampv = squeeze(gt(1).amp)';             phasev =  squeeze(gt(1).phi)';   
-            ampu = squeeze(gt(2).amp)';             phaseu =  squeeze(gt(2).phi)'; 
+%             ampv = squeeze(gt(1).amp)';             phasev =  squeeze(gt(1).phi)';   
+%             ampu = squeeze(gt(2).amp)';             phaseu =  squeeze(gt(2).phi)'; 
+            ampu = squeeze(gt(1).amp)';             phaseu =  squeeze(gt(1).phi)';   
+            ampv = squeeze(gt(2).amp)';             phasev =  squeeze(gt(2).phi)'; 
         end
 
         % Add A0 as first component
