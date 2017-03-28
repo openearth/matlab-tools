@@ -322,20 +322,17 @@ end
 for i=1:length(gt)
     
     %% Get real and complex: TPXO 8.0 special
-    if ~isempty(findstr(gt(1).ampstr,'tidal_amplitude_h'));
-        real_name = 'hRe'; complex_name = 'hIm';
-    end
-    if ~isempty(findstr(gt(1).ampstr,'tidal_amplitude_U'));
-        real_name = 'uRe'; complex_name = 'uIm';
-    end
-    if ~isempty(findstr(gt(1).ampstr,'tidal_amplitude_V'));
-        real_name = 'vRe'; complex_name = 'vIm';
-    end
-    if ~isempty(findstr(gt(1).ampstr,'tidal_amplitude_u'));
-        real_name = 'uRe'; complex_name = 'uIm';
-    end
-    if ~isempty(findstr(gt(1).ampstr,'tidal_amplitude_v'));
-        real_name = 'vRe'; complex_name = 'vIm';
+    switch gt(i).ampstr
+        case{'tidal_amplitude_h'}
+            real_name = 'hRe'; complex_name = 'hIm';correction_factor=0.001;
+        case{'tidal_amplitude_U'}
+            real_name = 'uRe'; complex_name = 'uIm';correction_factor=1e-4;
+        case{'tidal_amplitude_V'}
+            real_name = 'vRe'; complex_name = 'vIm';correction_factor=1e-4;
+%         case{'tidal_amplitude_u'}
+%             real_name = 'uRe'; complex_name = 'uIm';correction_factor=1;
+%         case{'tidal_amplitude_v'}
+%             real_name = 'vRe'; complex_name = 'vIm';correction_factor=1;
     end
     
     %% If not OK: pasting needed
@@ -343,7 +340,7 @@ for i=1:length(gt)
         % pasting - left
         real    =  nc_varget(fnameneeded,real_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
         complex =  nc_varget(fnameneeded,complex_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
-        ampleft(:,:)   = abs(real+i*complex);
+        ampleft(:,:)   = abs(real+1i*complex);
         val   = mod(180*atan2(real,complex)/pi,360) - 90;
         id = val < 270; val(id) = val(id)+360;
         id = val > 360; val(id) = val(id)-360;
@@ -355,7 +352,7 @@ for i=1:length(gt)
         % pasting - right
         real    =  nc_varget(fnameneeded,real_name,[ix1right-1 iy1-1],[ix2right-ix1right+1 iy2-iy1+1]);
         complex =  nc_varget(fnameneeded,complex_name,[ix1right-1 iy1-1],[ix2right-ix1right+1 iy2-iy1+1]);
-        ampright(:,:)   = abs(real+i*complex);
+        ampright(:,:)   = abs(real+1i*complex);
         val   = mod(180*atan2(real,complex)/pi,360) - 90;
         id = val < 270; val(id) = val(id)+360;
         id = val > 360; val(id) = val(id)-360;
@@ -385,7 +382,7 @@ for i=1:length(gt)
         % Get values
         real    =  nc_varget(fnameneeded,real_name,[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
         complex =  nc_varget(fnameneeded,complex_name,[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
-        gt(i).amp   = abs(real+i*complex);
+        gt(i).amp   = abs(real+1i*complex);
         val   = mod(180*atan2(real,complex)/pi,360) - 90;
         id = val < 270; val(id) = val(id)+360;
         id = val > 360; val(id) = val(id)-360;
@@ -406,7 +403,7 @@ for i=1:length(gt)
     end
     
     % Save in structure
-    gt(i).amp = gt(i).amp*10^-3;
+    gt(i).amp = gt(i).amp*correction_factor;
     gt(i).amp=permute(gt(i).amp,[2 1]);
     gt(i).phi=permute(gt(i).phi,[2 1]);
     gt(i).phi(gt(i).amp==0)=NaN;
