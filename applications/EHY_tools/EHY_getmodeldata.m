@@ -126,7 +126,7 @@ for i_stat = 1: length(stat_name)
                 end
             else
                 exist_stat(i_stat) = false;
-                display (['Station : ' stat_name{i_stat} 'does not exist']); 
+                display (['Station : ' stat_name{i_stat} ' does not exist']); 
             end
                         
         case 'uv'

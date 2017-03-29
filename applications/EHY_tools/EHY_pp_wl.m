@@ -1,4 +1,4 @@
-
+%% EHY_pp_wl kul
 function EHY_pp_wl(varargin)
 
 clearvars -except varargin;
@@ -106,92 +106,111 @@ Data=EHY_getmodeldata(sim_dir,runid,stations_sim, modelType);
 
 % Cycle over the periods
 for i_per = 1: size(Periods,1)
-    %% Create directory for the Fifures for each seperate period
+    %% Initialise the statistics
+    for i_stat = 1: no_stat
+        Statistics(i_stat) = EHY_statistics([]             ,[]               , ...
+                                            'times'        ,[]               , ...
+                                            'tide'         , true            , ...
+                                            'extremes'     , 2               ) ;
+    end
+    
+    %% Create directory for the Figures for each seperate period
     %         num2str(i_per,'%3.3i')
     per_dir   = [fig_dir filesep 'Period_' num2str(i_per,'%3.3i')];
     if ~exist(per_dir,'dir') mkdir (per_dir);end
     
     %% Cycle over the requested stations
     for i_stat = 1: no_stat
-        display(stations_sim{i_stat});
-                
-        %% Get water level data for i_stat
-        dattim_cmp = Data.times;
-        wlev_cmp   = Data.val(:,i_stat);
-        
-        %% Read the measurement Data
-        INFO        = tekal('open',stations_tek{i_stat},'loaddata');
-        dates_meas  = num2str(INFO.Field.Data(:,1),'%8.8i');
-        times_meas  = num2str(INFO.Field.Data(:,2),'%6.6i');
-        dattim_meas = datenum([dates_meas(:,1:8) times_meas(:,1:6)],'yyyymmddHHMMSS');
-        wlev_meas   = INFO.Field.Data(:,3);
-        
-        %% Determine shortest overlaping time span
-        time_start    = max(dattim_cmp(1)  ,dattim_meas(1)  );
-        time_start    = max(time_start,datenum(Periods{i_per,1},'yyyymmdd HHMMSS'));
-        time_stop     = min(dattim_cmp(end),dattim_meas(end));
-        time_stop    = min(time_stop,datenum(Periods{i_per,2},'yyyymmdd HHMMSS'));
-        dattim_interp = time_start:10/1440:time_stop;
-        
-        %% Intepolate both measurement as simulation data to 10 min time interval
-        wlev_cmp_interp     = interp1(dattim_cmp ,wlev_cmp        ,dattim_interp);
-        [dattim_meas,index] = unique(dattim_meas);
-        wlev_meas_interp    = interp1(dattim_meas,wlev_meas(index),dattim_interp);
-        
-        %% Write the simulation and measurement data to TEKAL TEK file
-        file_tek = [per_dir filesep stations_shortname{i_stat} '_' runid '_' num2str(i_per,'%3.3i') '.tek'];
-        fid      = fopen(file_tek,'w+');
-        fprintf(fid,'* Simulation : %s \n',runid);
-        fprintf(fid,'* Station    : %s \n',stations_shortname{i_stat});
-        fprintf(fid,'* Column    1: Date \n');
-        fprintf(fid,'* Column    2: Time \n');
-        fprintf(fid,'* Column    3: Water level Computed\n');
-        fprintf(fid,'* Column    4: Water level Measured\n');
-        fprintf(fid,'* Column    5: Difference (Computed - Measured) \n');
-        fprintf(fid,'WaterLevel \n');
-        fprintf(fid,'%5i %5i \n',length(dattim_interp),5);
-        for i_time = 1: length(dattim_interp)
-            fprintf(fid,'%16s  %12.6f %12.6f %12.6f \n',datestr(dattim_interp(i_time),'yyyymmdd  HHMMSS'),             ...
-                wlev_cmp_interp (i_time), ...
-                wlev_meas_interp(i_time), ...
-                wlev_cmp_interp (i_time) - wlev_meas_interp(i_time) );
-        end
-        fclose (fid);
-        
-        %% Do statistics
-        Statistics(i_stat) = EHY_statistics(wlev_cmp_interp, wlev_meas_interp, ...
-                                            'times'        , dattim_interp   , ...
-                                            'tide'         , true            , ...
-                                            'extremes'     , 2               ) ;
-        
-        str_biasrmse  = ['Bias = '   num2str(Statistics(i_stat).bias,'%6.3f') ' [m]'...
-            ', Rmse = ' num2str(Statistics(i_stat).rmse,'%6.3f') ' [m]'];
-        
-        %% Plot simulation results
-        if plot_per(i_per)
-            copyfile      (mup_temp,[per_dir filesep 'temporary.mup']);
-            substitute    ('**runid**'           ,runid                    ,[per_dir filesep 'temporary.mup']);
-            substitute    ('**runid_name**'      ,simona2mdu_replacechar(runid,'_','-'),                ...
-                                                  [per_dir filesep 'temporary.mup']);
-            substitute    ('**station**'         ,stations_shortname{i_stat}     ,[per_dir filesep 'temporary.mup']);
-            substitute    ('**station_nr**'      ,num2str(i_stat,'%2.2i')  ,[per_dir filesep 'temporary.mup']);
-            substitute    ('**station_fullname**',stations_fullname{i_stat},[per_dir filesep 'temporary.mup']);
-            substitute    ('**meting**'          ,stations_tek{i_stat}     ,[per_dir filesep 'temporary.mup']);
-            substitute    ('**biasrmse**'        ,str_biasrmse             ,[per_dir filesep 'temporary.mup']);
-            substitute    ('**Tstart**'          ,Periods{i_per,1}         ,[per_dir filesep 'temporary.mup']);
-            substitute    ('**Tstop**'           ,Periods{i_per,2}         ,[per_dir filesep 'temporary.mup']);
-            substitute    ('**Tstart2**'         ,Periods{i_per,1}(1:8)    ,[per_dir filesep 'temporary.mup']);
-            substitute    ('**Tstop2**'          ,Periods{i_per,2}(1:8)    ,[per_dir filesep 'temporary.mup']);
-            substitute    ('**Tper**'            ,num2str(i_per,'%3.3i')   ,[per_dir filesep 'temporary.mup']);
+        if ~isnan(Data.val(1,i_stat))
+            display(stations_sim{i_stat});
             
-            orgdir = pwd;
-            cd (per_dir);
-%             command = '"n:\Deltabox\Bulletin\ormondt\Muppet_v4.03\win64\muppet\bin\muppet4.exe" temporary.mup';
-%             system (command);
-            muppet4('temporary.mup')
-            copyfile('temporary.mup',[num2str(i_stat,'%2.2i') '_' stations_shortname{i_stat} '.mup']);
-            delete ('temporary.mup');
-            cd (orgdir);
+            %% Get water level data for i_stat
+            dattim_cmp = Data.times;
+            wlev_cmp   = Data.val(:,i_stat);
+            
+            %% Read the measurement Data
+            INFO        = tekal('open',stations_tek{i_stat},'loaddata');
+            dates_meas  = num2str(INFO.Field.Data(:,1),'%8.8i');
+            times_meas  = num2str(INFO.Field.Data(:,2),'%6.6i');
+            dattim_meas = datenum([dates_meas(:,1:8) times_meas(:,1:6)],'yyyymmddHHMMSS');
+            wlev_meas   = INFO.Field.Data(:,3);
+            
+            %% Determine shortest overlaping time span
+            time_start    = max(dattim_cmp(1)  ,dattim_meas(1)  );
+            time_start    = max(time_start,datenum(Periods{i_per,1},'yyyymmdd HHMMSS'));
+            time_stop     = min(dattim_cmp(end),dattim_meas(end));
+            time_stop    = min(time_stop,datenum(Periods{i_per,2},'yyyymmdd HHMMSS'));
+            dattim_interp = time_start:10/1440:time_stop;
+            
+            %% Intepolate both measurement as simulation data to 10 min time interval
+            wlev_cmp_interp     = interp1(dattim_cmp ,wlev_cmp        ,dattim_interp);
+            [dattim_meas,index] = unique(dattim_meas);
+            wlev_meas_interp    = interp1(dattim_meas,wlev_meas(index),dattim_interp);
+            
+            %% Write the simulation and measurement data to TEKAL TEK file
+            file_tek = [per_dir filesep stations_shortname{i_stat} '_' runid '_' num2str(i_per,'%3.3i') '.tek'];
+            fid      = fopen(file_tek,'w+');
+            fprintf(fid,'* Simulation : %s \n',runid);
+            fprintf(fid,'* Station    : %s \n',stations_shortname{i_stat});
+            fprintf(fid,'* Column    1: Date \n');
+            fprintf(fid,'* Column    2: Time \n');
+            fprintf(fid,'* Column    3: Water level Computed\n');
+            fprintf(fid,'* Column    4: Water level Measured\n');
+            fprintf(fid,'* Column    5: Difference (Computed - Measured) \n');
+            fprintf(fid,'WaterLevel \n');
+            
+            if length(dattim_interp) == 0
+                fprintf(fid,'%5i %5i \n',1,5);
+                fprintf(fid,'%16s  %12.6f %12.6f %12.6f \n',datestr(datenum(1900,0,0),'yyyymmdd  HHMMSS'),             ...
+                    NaN, ...
+                    NaN, ...
+                    NaN    );
+            else
+                fprintf(fid,'%5i %5i \n',length(dattim_interp),5);
+                for i_time = 1: length(dattim_interp)
+                    fprintf(fid,'%16s  %12.6f %12.6f %12.6f \n',datestr(dattim_interp(i_time),'yyyymmdd  HHMMSS'),             ...
+                        wlev_cmp_interp (i_time), ...
+                        wlev_meas_interp(i_time), ...
+                        wlev_cmp_interp (i_time) - wlev_meas_interp(i_time) );
+                end
+            end
+            fclose (fid);
+            
+            %% Do statistics
+            Statistics(i_stat) = EHY_statistics(wlev_cmp_interp, wlev_meas_interp, ...
+                'times'        , dattim_interp   , ...
+                'tide'         , true            , ...
+                'extremes'     , 2               ) ;
+            
+            str_biasrmse  = ['Bias = '   num2str(Statistics(i_stat).bias,'%6.3f') ' [m]'...
+                ', Rmse = ' num2str(Statistics(i_stat).rmse,'%6.3f') ' [m]'];
+            
+            %% Plot simulation results
+            if plot_per(i_per)
+                copyfile      (mup_temp,[per_dir filesep 'temporary.mup']);
+                substitute    ('**runid**'           ,runid                    ,[per_dir filesep 'temporary.mup']);
+                substitute    ('**runid_name**'      ,simona2mdu_replacechar(runid,'_','-'),                ...
+                    [per_dir filesep 'temporary.mup']);
+                substitute    ('**station**'         ,stations_shortname{i_stat}     ,[per_dir filesep 'temporary.mup']);
+                substitute    ('**station_nr**'      ,num2str(i_stat,'%2.2i')  ,[per_dir filesep 'temporary.mup']);
+                substitute    ('**station_fullname**',stations_fullname{i_stat},[per_dir filesep 'temporary.mup']);
+                substitute    ('**meting**'          ,stations_tek{i_stat}     ,[per_dir filesep 'temporary.mup']);
+                substitute    ('**biasrmse**'        ,str_biasrmse             ,[per_dir filesep 'temporary.mup']);
+                substitute    ('**Tstart**'          ,Periods{i_per,1}         ,[per_dir filesep 'temporary.mup']);
+                substitute    ('**Tstop**'           ,Periods{i_per,2}         ,[per_dir filesep 'temporary.mup']);
+                substitute    ('**Tstart2**'         ,Periods{i_per,1}(1:8)    ,[per_dir filesep 'temporary.mup']);
+                substitute    ('**Tstop2**'          ,Periods{i_per,2}(1:8)    ,[per_dir filesep 'temporary.mup']);
+                substitute    ('**Tper**'            ,num2str(i_per,'%3.3i')   ,[per_dir filesep 'temporary.mup']);
+                
+                orgdir = pwd;
+                cd (per_dir);
+                %             command = '"n:\Deltabox\Bulletin\ormondt\Muppet_v4.03\win64\muppet\bin\muppet4.exe" temporary.mup';
+                %             system (command);
+                muppet4('temporary.mup')
+                copyfile('temporary.mup',[num2str(i_stat,'%2.2i') '_' stations_shortname{i_stat} '.mup']);
+                delete ('temporary.mup');
+                cd (orgdir);
+            end
         end
     end
     
@@ -206,12 +225,15 @@ for i_per = 1: size(Periods,1)
     cell_arr{1,4}  = 'Std  [m]';
     
     % values
+    i_row = 1;
     for i_stat = 1: no_stat
-        i_row               = i_stat + 1;
-        cell_arr {i_row,1}  = stations_fullname{i_stat};
-        cell_arr {i_row,2}  = Statistics(i_stat).bias;
-        cell_arr {i_row,3}  = Statistics(i_stat).rmse;
-        cell_arr {i_row,4}  = Statistics(i_stat).std;
+        if ~isnan(Statistics(i_stat).bias)
+            i_row               = i_row + 1;
+            cell_arr {i_row,1}  = stations_fullname{i_stat};
+            cell_arr {i_row,2}  = Statistics(i_stat).bias;
+            cell_arr {i_row,3}  = Statistics(i_stat).rmse;
+            cell_arr {i_row,4}  = Statistics(i_stat).std;
+        end
     end
     
     % Averages
@@ -248,21 +270,24 @@ for i_per = 1: size(Periods,1)
     cell_arr{1,13} = 'timLW [min]';
     
     % values
+    i_row = 1;
     for i_stat = 1: no_stat
-        i_row               = i_stat + 1;
-        cell_arr {i_row,1}  = stations_fullname{i_stat};
-        cell_arr {i_row,2}  = Statistics(i_stat).hwlw(1).series_bias;
-        cell_arr {i_row,3}  = Statistics(i_stat).hwlw(1).series_rmse;
-        cell_arr {i_row,4}  = Statistics(i_stat).hwlw(1).time_series_bias;
-        cell_arr {i_row,5}  = Statistics(i_stat).hwlw(1).time_series_rmse;
-        cell_arr {i_row,6}  = Statistics(i_stat).hwlw(2).series_bias;
-        cell_arr {i_row,7}  = Statistics(i_stat).hwlw(2).series_rmse;
-        cell_arr {i_row,8}  = Statistics(i_stat).hwlw(2).time_series_bias;
-        cell_arr {i_row,9}  = Statistics(i_stat).hwlw(2).time_series_rmse;
-        cell_arr {i_row,10} = Statistics(i_stat).hwlw(1).diff;
-        cell_arr {i_row,11} = Statistics(i_stat).hwlw(1).time_diff;
-        cell_arr {i_row,12} = Statistics(i_stat).hwlw(2).diff;
-        cell_arr {i_row,13} = Statistics(i_stat).hwlw(2).time_diff;
+        if ~isnan(Statistics(i_stat).bias)
+            i_row               = i_stat + 1;
+            cell_arr {i_row,1}  = stations_fullname{i_stat};
+            cell_arr {i_row,2}  = Statistics(i_stat).hwlw(1).series_bias;
+            cell_arr {i_row,3}  = Statistics(i_stat).hwlw(1).series_rmse;
+            cell_arr {i_row,4}  = Statistics(i_stat).hwlw(1).time_series_bias;
+            cell_arr {i_row,5}  = Statistics(i_stat).hwlw(1).time_series_rmse;
+            cell_arr {i_row,6}  = Statistics(i_stat).hwlw(2).series_bias;
+            cell_arr {i_row,7}  = Statistics(i_stat).hwlw(2).series_rmse;
+            cell_arr {i_row,8}  = Statistics(i_stat).hwlw(2).time_series_bias;
+            cell_arr {i_row,9}  = Statistics(i_stat).hwlw(2).time_series_rmse;
+            cell_arr {i_row,10} = Statistics(i_stat).hwlw(1).diff;
+            cell_arr {i_row,11} = Statistics(i_stat).hwlw(1).time_diff;
+            cell_arr {i_row,12} = Statistics(i_stat).hwlw(2).diff;
+            cell_arr {i_row,13} = Statistics(i_stat).hwlw(2).time_diff;
+        end
     end
     
     % Averages
