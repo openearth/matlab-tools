@@ -95,11 +95,10 @@ else
     tide = false;
 end
 
-
 %% Start postprocessing, first create output directories
 fig_dir           = [sim_dir filesep runid '_figs'];
-if ~exist(fig_dir,'dir') mkdir (fig_dir);end
-if exist([fig_dir filesep runid '.xls'],'file') delete([fig_dir filesep runid '.xls']); end
+if exist(fig_dir,'dir') rmdir(fig_dir,'s'); end
+mkdir (fig_dir);
 
 %% Read computational data for requested stations
 Data=EHY_getmodeldata(sim_dir,runid,stations_sim, modelType);
@@ -115,9 +114,8 @@ for i_per = 1: size(Periods,1)
     end
     
     %% Create directory for the Figures for each seperate period
-    %         num2str(i_per,'%3.3i')
     per_dir   = [fig_dir filesep 'Period_' num2str(i_per,'%3.3i')];
-    if ~exist(per_dir,'dir') mkdir (per_dir);end
+    mkdir (per_dir)
     
     %% Cycle over the requested stations
     for i_stat = 1: no_stat
@@ -208,7 +206,8 @@ for i_per = 1: size(Periods,1)
                 %             system (command);
                 muppet4('temporary.mup')
                 copyfile('temporary.mup',[num2str(i_stat,'%2.2i') '_' stations_shortname{i_stat} '.mup']);
-                delete ('temporary.mup');
+                delete  ([num2str(i_stat,'%2.2i') '_' stations_shortname{i_stat} '_' runid '_' Periods{i_per,1}(1:8) '-' Periods{i_per,2}(1:8)]);   
+                delete  ('temporary.mup');
                 cd (orgdir);
             end
         end
@@ -273,7 +272,7 @@ for i_per = 1: size(Periods,1)
     i_row = 1;
     for i_stat = 1: no_stat
         if Data.exist_stat(i_stat)
-            i_row               = i_stat + 1;
+            i_row               = i_row + 1;
             cell_arr {i_row,1}  = stations_fullname{i_stat};
             cell_arr {i_row,2}  = Statistics(i_stat).hwlw(1).series_bias;
             cell_arr {i_row,3}  = Statistics(i_stat).hwlw(1).series_rmse;
@@ -355,8 +354,8 @@ if tide
     end
     
     %% Write to output (xls) file
-    EHY_tba(tba_file,runid,stations_fullname,Tide_cmp,Tide_meas);
-    EHY_tbb(tbb_file,runid,stations_fullname,Tide_cmp,Tide_meas);
+    EHY_tba(tba_file,runid,stations_fullname(Data.exist_stat),Tide_cmp,Tide_meas);
+    EHY_tbb(tbb_file,runid,stations_fullname(Data.exist_stat),Tide_cmp,Tide_meas);
 end
 
 
