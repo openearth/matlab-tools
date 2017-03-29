@@ -1,5 +1,29 @@
 function Statistics = EHY_statistics(computed,observed,varargin)
 
+%% Initialiasation
+Statistics.bias             = NaN;
+Statistics.std              = NaN;
+Statistics.rmse             = NaN;
+Statistics.cost             = NaN;
+Statistics.tide             = NaN;
+for i_hwlw = 1: 2
+     Statistics.hwlw(i_hwlw).cmp   = NaN;
+     Statistics.hwlw(i_hwlw).obs   = NaN;
+     Statistics.hwlw(i_hwlw).diff  = NaN;
+     Statistics.hwlw(i_hwlw).series_bias        = NaN;
+     Statistics.hwlw(i_hwlw).series_rmse        = NaN;
+     Statistics.hwlw(i_hwlw).time_series_bias   = NaN;
+     Statistics.hwlw(i_hwlw).time_series_rmse   = NaN;
+     Statistics.hwlw(i_hwlw).time_cmp           = NaN;
+     Statistics.hwlw(i_hwlw).time_obs           = NaN;
+     Statistics.hwlw(i_hwlw).time_diff          = NaN;
+     
+     Statistics.hwlw(i_hwlw+2).series_bias      = NaN;
+     Statistics.hwlw(i_hwlw+2).series_rmse      = NaN;
+     Statistics.hwlw(i_hwlw+2).time_series_bias = NaN;
+     Statistics.hwlw(i_hwlw+2).time_series_rmse = NaN;
+end
+
 %% Check if belonging times are given and if it is tidal simulation or not
 OPT.times    = [];
 OPT.tide     = false;
