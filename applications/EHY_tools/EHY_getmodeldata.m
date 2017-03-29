@@ -78,52 +78,57 @@ for i_stat = 1: length(stat_name)
 
             %% Waterlevels, times and values for station nr nr_stat
             nr_stat  = find(strcmp(Data.stationNames,stat_name{i_stat}) ~= 0,1);
-
-            %% Read Sobek3 data
-            if strcmpi(modelType,'sobek3')
-                Data.times                 =D.water_level.Time;
-                Data.val(:,i_stat)         =D.water_level.Val(:,nr_stat);
-            elseif strcmpi(modelType,'sobek3_new')
-                Data.times                 =D.Observedwaterlevel.Time;
-                Data.val(:,i_stat)         =D.Observedwaterlevel.Val(:,nr_stat);
-            %% Read Dflow-FM data
-            elseif strncmpi(modelType,'dflow',4)
-                tmp                = qpread(dfm,1,'water level (points)','data',0,nr_stat);
-                Data.times         = tmp.Time;
-                Data.val(:,i_stat) = tmp.Val;
-            %% Read Waqua data
-            elseif strcmpi(modelType,'waqua')
-                Data.times         = qpread(sds,1,'water level (station)','times');
-                Data.val(:,i_stat) = waquaio(sds,[],'wlstat',0,nr_stat);
-            %% Read Implic data (write to mat file for future fast pssing
-            elseif strcmpi(modelType,'implic')
-                if ~exist([sim_dir filesep 'implic.mat'],'file')
-                    months = {'jan' 'feb' 'mrt' 'apr' 'mei' 'jun' 'jul' 'aug' 'sep' 'okt' 'nov' 'dec'};
-                    for ii_stat = 1: length(filenames)
-                        fid   = fopen([sim_dir filesep filenames{i_stat}],'r');
-                        line  = fgetl(fid);
-                        line  = fgetl(fid);
-                        line  = fgetl(fid);
-                        i_time = 0;
-                        while ~feof(fid)
-                            i_time  = i_time + 1;
-                            line    = fgetl(fid);
-                            i_day   = str2num(line(1:2));
-                            i_month = find(~cellfun(@isempty,strfind(months,line(4:6))));
-                            i_year  = str2num(line( 8:11));
-                            i_hour  = str2num(line(13:14));
-                            i_min   = str2num(line(16:17));
-                            r_val   = str2num(line(18:end))/100.;
-                            Data.times(i_time) = datenum(i_year,i_month,i_day,i_hour,i_min,0);
-                            Data.val_tmp(i_time,ii_stat)  = r_val;
+            if ~isempty(nr_stat)
+                exist_stat(i_stat) = true;
+                %% Read Sobek3 data
+                if strcmpi(modelType,'sobek3')
+                    Data.times                 =D.water_level.Time;
+                    Data.val(:,i_stat)         =D.water_level.Val(:,nr_stat);
+                elseif strcmpi(modelType,'sobek3_new')
+                    Data.times                 =D.Observedwaterlevel.Time;
+                    Data.val(:,i_stat)         =D.Observedwaterlevel.Val(:,nr_stat);
+                    %% Read Dflow-FM data
+                elseif strncmpi(modelType,'dflow',4)
+                    tmp                = qpread(dfm,1,'water level (points)','data',0,nr_stat);
+                    Data.times         = tmp.Time;
+                    Data.val(:,i_stat) = tmp.Val;
+                    %% Read Waqua data
+                elseif strcmpi(modelType,'waqua')
+                    Data.times         = qpread(sds,1,'water level (station)','times');
+                    Data.val(:,i_stat) = waquaio(sds,[],'wlstat',0,nr_stat);
+                    %% Read Implic data (write to mat file for future fast pssing
+                elseif strcmpi(modelType,'implic')
+                    if ~exist([sim_dir filesep 'implic.mat'],'file')
+                        months = {'jan' 'feb' 'mrt' 'apr' 'mei' 'jun' 'jul' 'aug' 'sep' 'okt' 'nov' 'dec'};
+                        for ii_stat = 1: length(filenames)
+                            fid   = fopen([sim_dir filesep filenames{i_stat}],'r');
+                            line  = fgetl(fid);
+                            line  = fgetl(fid);
+                            line  = fgetl(fid);
+                            i_time = 0;
+                            while ~feof(fid)
+                                i_time  = i_time + 1;
+                                line    = fgetl(fid);
+                                i_day   = str2num(line(1:2));
+                                i_month = find(~cellfun(@isempty,strfind(months,line(4:6))));
+                                i_year  = str2num(line( 8:11));
+                                i_hour  = str2num(line(13:14));
+                                i_min   = str2num(line(16:17));
+                                r_val   = str2num(line(18:end))/100.;
+                                Data.times(i_time) = datenum(i_year,i_month,i_day,i_hour,i_min,0);
+                                Data.val_tmp(i_time,ii_stat)  = r_val;
+                            end
+                            fclose(fid);
                         end
-                        fclose(fid);
+                        save([sim_dir filesep 'implic.mat'],'Data');
                     end
-                    save([sim_dir filesep 'implic.mat'],'Data');
+                    Data.val(:,i_stat) = Data.val_tmp(:,nr_stat);
                 end
-                Data.val(:,i_stat) = Data.val_tmp(:,nr_stat);
+            else
+                exist_stat(i_stat) = false;
+                display (['Station : ' stat_name{i_stat} 'does not exist']); 
             end
-
+                        
         case 'uv'
 
             % To be implemented
@@ -131,5 +136,12 @@ for i_stat = 1: length(stat_name)
         case 'sal'
 
             % To be implemented
+    end
+end
+
+%% Fill values with NaN if station does not exist
+for i_stat = 1: length(stat_name)
+    if ~exist_stat(i_stat)
+        Data.val(:,i_stat) = NaN;
     end
 end
