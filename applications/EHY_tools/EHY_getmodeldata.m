@@ -79,7 +79,7 @@ for i_stat = 1: length(stat_name)
             %% Waterlevels, times and values for station nr nr_stat
             nr_stat  = find(strcmp(Data.stationNames,stat_name{i_stat}) ~= 0,1);
             if ~isempty(nr_stat)
-                exist_stat(i_stat) = true;
+                Data.exist_stat(i_stat) = true;
                 %% Read Sobek3 data
                 if strcmpi(modelType,'sobek3')
                     Data.times                 =D.water_level.Time;
@@ -125,7 +125,7 @@ for i_stat = 1: length(stat_name)
                     Data.val(:,i_stat) = Data.val_tmp(:,nr_stat);
                 end
             else
-                exist_stat(i_stat) = false;
+                Data.exist_stat(i_stat) = false;
                 display (['Station : ' stat_name{i_stat} ' does not exist']); 
             end
                         
@@ -139,9 +139,3 @@ for i_stat = 1: length(stat_name)
     end
 end
 
-%% Fill values with NaN if station does not exist
-for i_stat = 1: length(stat_name)
-    if ~exist_stat(i_stat)
-        Data.val(:,i_stat) = NaN;
-    end
-end

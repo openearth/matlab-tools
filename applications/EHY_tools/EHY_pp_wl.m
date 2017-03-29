@@ -121,7 +121,7 @@ for i_per = 1: size(Periods,1)
     
     %% Cycle over the requested stations
     for i_stat = 1: no_stat
-        if ~isnan(Data.val(1,i_stat))
+        if Data.exist_stat(i_stat)
             display(stations_sim{i_stat});
             
             %% Get water level data for i_stat
@@ -227,7 +227,7 @@ for i_per = 1: size(Periods,1)
     % values
     i_row = 1;
     for i_stat = 1: no_stat
-        if ~isnan(Statistics(i_stat).bias)
+        if Data.exist_stat(i_stat)
             i_row               = i_row + 1;
             cell_arr {i_row,1}  = stations_fullname{i_stat};
             cell_arr {i_row,2}  = Statistics(i_stat).bias;
@@ -272,7 +272,7 @@ for i_per = 1: size(Periods,1)
     % values
     i_row = 1;
     for i_stat = 1: no_stat
-        if ~isnan(Statistics(i_stat).bias)
+        if Data.exist_stat(i_stat)
             i_row               = i_stat + 1;
             cell_arr {i_row,1}  = stations_fullname{i_stat};
             cell_arr {i_row,2}  = Statistics(i_stat).hwlw(1).series_bias;
@@ -317,40 +317,46 @@ end
 if tide
     tba_file = [fig_dir filesep runid '_tba.xls'];
     tbb_file = [fig_dir filesep runid '_tbb.xls'];
+    
+    i_tide = 0;
     for i_stat = 1: no_stat
-        dattim_cmp = Data.times;
-        wlev_cmp   = Data.val(:,i_stat);
-        
-        %% Read the measurement Data
-        INFO        = tekal('open',stations_tek{i_stat},'loaddata');
-        dates_meas  = num2str(INFO.Field.Data(:,1),'%8.8i');
-        times_meas  = num2str(INFO.Field.Data(:,2),'%6.6i');
-        dattim_meas = datenum([dates_meas(:,1:8) times_meas(:,1:6)],'yyyymmddHHMMSS');
-        wlev_meas   = INFO.Field.Data(:,3);
-        
-        %% Determine shortest overlaping time span
-        time_start    = max(dattim_cmp(1)  ,dattim_meas(1)  );
-        time_start    = max(time_start,datenum(tide_start,'yyyymmdd HHMMSS'));
-        time_stop     = min(dattim_cmp(end),dattim_meas(end));
-        time_stop     = min(time_stop,datenum(tide_stop,'yyyymmdd HHMMSS'));
-        dattim_interp = time_start:10/1440:time_stop;
-        
-        %% Intepolate both measurement as simulation data to 10 min time interval
-        wlev_cmp_interp  = interp1(dattim_cmp ,wlev_cmp ,dattim_interp);
-        wlev_meas_interp = interp1(dattim_meas,wlev_meas,dattim_interp);
-        
-        %% Analyse the computational results
-        Tide_cmp(i_stat) = t_tide(wlev_cmp_interp , 'interval', 10./60.    , 'latitude'  , latitude    , ...
-                                                    'rayleigh', Constituents, 'start time', time_start  , ...
-                                                    'synthesis',0           , 'error'     ,'wboot'      );
-        %% Analyse the measurements
-        Tide_meas(i_stat)= t_tide(wlev_meas_interp, 'interval', 10./60.     , 'latitude'  , latitude    , ...
-                                                    'rayleigh', Constituents, 'start time', time_start  , ...
-                                                    'synthesis',0           , 'error'     ,'wboot'      );
+        if Data.exist_stat(i_stat)
+            i_tide = i_tide + 1;
+            dattim_cmp = Data.times;
+            wlev_cmp   = Data.val(:,i_stat);
+            
+            %% Read the measurement Data
+            INFO        = tekal('open',stations_tek{i_stat},'loaddata');
+            dates_meas  = num2str(INFO.Field.Data(:,1),'%8.8i');
+            times_meas  = num2str(INFO.Field.Data(:,2),'%6.6i');
+            dattim_meas = datenum([dates_meas(:,1:8) times_meas(:,1:6)],'yyyymmddHHMMSS');
+            wlev_meas   = INFO.Field.Data(:,3);
+            
+            %% Determine shortest overlaping time span
+            time_start    = max(dattim_cmp(1)  ,dattim_meas(1)  );
+            time_start    = max(time_start,datenum(tide_start,'yyyymmdd HHMMSS'));
+            time_stop     = min(dattim_cmp(end),dattim_meas(end));
+            time_stop     = min(time_stop,datenum(tide_stop,'yyyymmdd HHMMSS'));
+            dattim_interp = time_start:10/1440:time_stop;
+            
+            %% Intepolate both measurement as simulation data to 10 min time interval
+            wlev_cmp_interp  = interp1(dattim_cmp ,wlev_cmp ,dattim_interp);
+            wlev_meas_interp = interp1(dattim_meas,wlev_meas,dattim_interp);
+            
+            %% Analyse the computational results
+            Tide_cmp(i_tide) = t_tide(wlev_cmp_interp , 'interval', 10./60.    , 'latitude'  , latitude    , ...
+                    'rayleigh' ,Constituents, 'start time', time_start  , ...
+                    'synthesis',0           , 'error'     ,'wboot'      );
+            %% Analyse the measurements
+            Tide_meas(i_tide)= t_tide(wlev_meas_interp, 'interval', 10./60.     , 'latitude'  , latitude    , ...
+                    'rayleigh' ,Constituents, 'start time', time_start  , ...
+                    'synthesis',0           , 'error'     ,'wboot'      );
+        end
     end
+    
     %% Write to output (xls) file
     EHY_tba(tba_file,runid,stations_fullname,Tide_cmp,Tide_meas);
     EHY_tbb(tbb_file,runid,stations_fullname,Tide_cmp,Tide_meas);
 end
-       
+
 
