@@ -132,6 +132,7 @@ for i_per = 1: size(Periods,1)
             times_meas  = num2str(INFO.Field.Data(:,2),'%6.6i');
             dattim_meas = datenum([dates_meas(:,1:8) times_meas(:,1:6)],'yyyymmddHHMMSS');
             wlev_meas   = INFO.Field.Data(:,3);
+            [dattim_meas,wlev_meas] = FillGaps(dattim_meas,wlev_meas,'interval',120./1440.); % Fill with NaNs if interval between consequetive measurements is more than 2 hours
             
             %% Determine shortest overlaping time span
             time_start    = max(dattim_cmp(1)  ,dattim_meas(1)  );
@@ -330,7 +331,8 @@ if tide
             times_meas  = num2str(INFO.Field.Data(:,2),'%6.6i');
             dattim_meas = datenum([dates_meas(:,1:8) times_meas(:,1:6)],'yyyymmddHHMMSS');
             wlev_meas   = INFO.Field.Data(:,3);
-            
+            [dattim_meas,wlev_meas] = FillGaps(dattim_meas,wlev_meas,'interval',120./1440.); % Fill with NaNs if interval between consequetive measurements is more than 2 hours
+                       
             %% Determine shortest overlaping time span
             time_start    = max(dattim_cmp(1)  ,dattim_meas(1)  );
             time_start    = max(time_start,datenum(tide_start,'yyyymmdd HHMMSS'));

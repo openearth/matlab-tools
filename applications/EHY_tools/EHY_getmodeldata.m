@@ -40,7 +40,7 @@ elseif strcmpi(modelType,'sobek3_new')
 
 %% Dflow-FM
 elseif strncmpi(modelType,'dflow',4)
-    files              = dir([ sim_dir filesep 'DFM_OUTPUT_' runid filesep '*his*.nc*']);
+    files              = dir([ sim_dir filesep 'DFM_OUTPUT_' runid filesep '*his.nc*']);
     dfmFile            = ([sim_dir filesep 'DFM_OUTPUT_' runid filesep files.name]);
     dfm                = qpfopen(dfmFile);
     Data.stationNames  = strtrim(qpread(dfm,1,'water level (points)','stations'));
