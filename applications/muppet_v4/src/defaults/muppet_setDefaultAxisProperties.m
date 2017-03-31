@@ -229,3 +229,29 @@ opt.subplottext.font.weight='normal';
 opt.subplottext.font.color='black';
 opt.subplottext.horizontalmargin=0.2;
 opt.subplottext.verticalmargin=0.3;
+
+%% Now overwrite with defaults from xml file
+h=getHandles;
+n=length(h.subplotoption);
+for ii=1:n
+    name=h.subplotoption(ii).subplotoption.name;
+    if isfield(h.subplotoption(ii).subplotoption,'variable')
+        var=h.subplotoption(ii).subplotoption.variable;
+    else
+        var=name;
+    end
+    if isfield(h.subplotoption(ii).subplotoption,'default')
+        default=h.subplotoption(ii).subplotoption.default;
+        tp='string';
+        if isfield(h.subplotoption(ii).subplotoption,'type')
+            tp=h.subplotoption(ii).subplotoption.type;
+        end
+        switch tp
+            case{'real','int','boolean','booleanorreal'}
+                default=str2num(default);
+        end
+        evalstr=['opt.' var '=default;'];
+        eval(evalstr);
+        opt.changed=0;        
+    end
+end
