@@ -5,10 +5,10 @@ function runTimeInfo=EHY_getRunTimeInfo(mdFile)
 % Example: EHY_getRunTimeInfo('D:\Noordzee.mdu')
 %
 % created by Julien Groenenboom, March 2017
-modelType=EHY_getModelType(mdFile);
+modelType=nesthd_det_filetype(mdFile);
 [pathstr,name,ext]=fileparts(mdFile);
 switch modelType
-    case 'dfm'
+    case 'mdu'
         mdu=dflowfm_io_mdu('read',mdFile);
         runTimeInfo.mduInfo=mdu.time;
         
@@ -43,7 +43,7 @@ switch modelType
         line2=strsplit(line);
         runTimeInfo.realTime_S=str2double(line2{end});
         
-    case 'd3d'
+    case 'mdf'
         mdf=delft3d_io_mdf('read',mdFile);
         
         % diag - runtime
