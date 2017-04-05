@@ -28,7 +28,6 @@ switch modelType
         line2=strsplit(line);
         runTimeInfo.simPeriod_S=str2double(line2{end});
         
-        
         % average timestep
         while isempty(strfind(line,'** INFO   : average timestep      (s)  :')   )
             line=fgetl(fid);
