@@ -19,26 +19,19 @@ switch modelType
             diaFile=[pathstr filesep 'out.txt'];
         end
         fid=fopen(diaFile,'r');
-        line=fgetl(fid);
         
         % simulation period
-        while isempty(strfind(line,'** INFO   : simulation period     (s)  :')   )
-            line=fgetl(fid);
-        end
+        line=findLineOrQuit(fid,'** INFO   : simulation period     (s)  :')
         line2=strsplit(line);
         runTimeInfo.simPeriod_S=str2double(line2{end});
         
         % average timestep
-        while isempty(strfind(line,'** INFO   : average timestep      (s)  :')   )
-            line=fgetl(fid);
-        end
+        line=findLineOrQuit(fid,'** INFO   : average timestep      (s)  :')
         line2=strsplit(line);
         runTimeInfo.aveTimeStep_S=str2double(line2{end});
         
         % time steps
-        while isempty(strfind(line,'** INFO   : time steps            (s)  :')   )
-            line=fgetl(fid);
-        end
+        line=findLineOrQuit(fid,'** INFO   : time steps            (s)  :')
         line2=strsplit(line);
         runTimeInfo.realTime_S=str2double(line2{end});
         
@@ -54,9 +47,7 @@ switch modelType
         fid=fopen(diaFile,'r');
         line=fgetl(fid);
         
-        while isempty(strfind(line,'|Total                |')   )
-            line=fgetl(fid);
-        end
+        line=findLineOrQuit(fid,'|Total                |')
         line2=strsplit(line);
         runTimeInfo.realTime_S=str2double(line2{3});
         
@@ -80,3 +71,15 @@ runTimeInfo.realTime_D=runTimeInfo.realTime_H/24;
 % computational time
 runTimeInfo.compTime_minPerDay=(runTimeInfo.realTime_S/60)/(runTimeInfo.simPeriod_S/3600/24);
 runTimeInfo.compTime_dayPerYear=runTimeInfo.compTime_minPerDay/60/24*365;
+end
+
+function line=findLineOrQuit(fid,wantedLine)
+line=fgetl(fid);
+while isempty(strfind(line,wantedLine)) && ischar(line)
+    line=fgetl(fid);
+end
+
+if ~ischar(line) && line==-1
+    error('Run has probably not finished yet or crashed')
+end
+end
