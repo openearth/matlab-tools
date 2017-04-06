@@ -21,17 +21,17 @@ switch modelType
         fid=fopen(diaFile,'r');
         
         % simulation period
-        line=findLineOrQuit(fid,'** INFO   : simulation period     (s)  :')
+        line=findLineOrQuit(fid,'** INFO   : simulation period     (s)  :');
         line2=strsplit(line);
         runTimeInfo.simPeriod_S=str2double(line2{end});
         
         % average timestep
-        line=findLineOrQuit(fid,'** INFO   : average timestep      (s)  :')
+        line=findLineOrQuit(fid,'** INFO   : average timestep      (s)  :');
         line2=strsplit(line);
         runTimeInfo.aveTimeStep_S=str2double(line2{end});
         
         % time steps
-        line=findLineOrQuit(fid,'** INFO   : time steps            (s)  :')
+        line=findLineOrQuit(fid,'** INFO   : time steps            (s)  :');
         line2=strsplit(line);
         runTimeInfo.realTime_S=str2double(line2{end});
         
@@ -44,10 +44,9 @@ switch modelType
         else %  not in parallel
             diaFile=[pathstr filesep 'tri-diag.' name '-001'];
         end
-        fid=fopen(diaFile,'r');
-        line=fgetl(fid);
         
-        line=findLineOrQuit(fid,'|Total                |')
+        fid=fopen(diaFile,'r');      
+        line=findLineOrQuit(fid,'|Total                |');
         line2=strsplit(line);
         runTimeInfo.realTime_S=str2double(line2{3});
         
