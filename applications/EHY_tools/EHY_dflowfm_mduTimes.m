@@ -27,7 +27,7 @@ end
 
 % TStart
 try % TStart was given as a date
-    datenum(TStart,format2)
+    datenum(TStart,format2);
     TStartNum=datenum(TStart,format2);
     TStart_unit=(TStartNum-RefDateNum)*factor;
 catch % TStart was given w.r.t. RefDate (in TUnit)
@@ -36,7 +36,7 @@ catch % TStart was given w.r.t. RefDate (in TUnit)
 end
 % TStop
 try % TStop was given as a date
-        datenum(TStop)
+        datenum(TStop,format2);
     TStopNum=datenum(TStop,format2);
     TStop_unit=(TStopNum-RefDateNum)*factor;
 catch % TStop was given w.r.t. RefDate (in TUnit)
