@@ -45,7 +45,7 @@ switch modelType
             diaFile=[pathstr filesep 'tri-diag.' name '-001'];
         end
         
-        fid=fopen(diaFile,'r');      
+        fid=fopen(diaFile,'r');
         line=findLineOrQuit(fid,'|Total                |');
         line2=strsplit(line);
         runTimeInfo.realTime_S=str2double(line2{3});
