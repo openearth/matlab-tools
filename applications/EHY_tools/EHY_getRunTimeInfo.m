@@ -62,9 +62,11 @@ switch modelType
 end
 
 % runtime
+runTimeInfo.simPeriod_M=runTimeInfo.simPeriod_S/60;
 runTimeInfo.simPeriod_H=runTimeInfo.simPeriod_S/3600;
 runTimeInfo.simPeriod_D=runTimeInfo.simPeriod_H/24;
 % simulation period
+runTimeInfo.realTime_M=runTimeInfo.realTime_S/60;
 runTimeInfo.realTime_H=runTimeInfo.realTime_S/3600;
 runTimeInfo.realTime_D=runTimeInfo.realTime_H/24;
 % computational time
