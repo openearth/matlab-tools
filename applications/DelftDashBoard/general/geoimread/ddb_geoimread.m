@@ -1,4 +1,4 @@
-function [A,x,y,I]=geoimread(filename,varargin)
+function [A,x,y,I]=ddb_geoimread(filename,varargin)
 %GEOIMREAD reads a sub region of a geotiff or geojp2 image.  
 % 
 % 
@@ -101,6 +101,7 @@ function [A,x,y,I]=geoimread(filename,varargin)
 % 
 % 
 
+
 %TODO: support downsampling (ReductionLevel parameter in imread)
 %TODO: use map2pix and latlon2pix instead of projfwd and pixcenters. more robust if it is a rotational coordinate system.
 
@@ -128,42 +129,6 @@ switch upper(ext)
     otherwise
         error('Unrecognized image file type. Must be tif, tiff, gtif, gtiff, jp2, jpeg2000, or geojp2.')
 end
-
-for ii=1:length(varargin)
-    if ischar(varargin{ii})
-        switch lower(varargin{ii})
-            case{'info'}
-                if license('test','map_toolbox')
-                    x0=I.TiePoints.WorldPoints.X;
-                    y0=I.TiePoints.WorldPoints.Y;
-                    dx=I.PixelScale(1);
-                    dy=-I.PixelScale(2);
-                    nx=I.Width;
-                    ny=I.Height;
-                    x=x0:dx:x0+(nx-1)*dx;
-                    y=y0:dy:y0+(ny-1)*dy;
-                    A=[];
-                else
-                    x0=I.ModelTiepointTag(4);
-                    y0=I.ModelTiepointTag(5);
-                    dx=I.ModelPixelScaleTag(1);
-                    dy=-I.ModelPixelScaleTag(2);
-                    nx=I.Width;
-                    ny=I.Height;
-                    x=x0:dx:x0+(nx-1)*dx;
-                    y=y0:dy:y0+(ny-1)*dy;
-                    A=[];
-                end
-                return
-        end
-    end
-end
-%                 xmin=min(I.CornerCoords.X);
-%                 xmax=max(I.CornerCoords.X);
-%                 ymin=min(I.CornerCoords.Y);
-%                 ymax=max(I.CornerCoords.Y);
-%                 ny=I.SpatialRef.RasterSize(1);
-%                 nx=I.SpatialRef.RasterSize(2);
 
 
 % Parse optional inputs: 
@@ -209,15 +174,30 @@ end
 [x,y]=robustpixcenters(I);
 
 % Set xlim and ylim depending on user inputs: 
-xlimOrLatlim = x(:); 
-ylimOrLonlim = y(:); 
+if returnNONsubsetImage
+    xlimOrLatlim = x(:); 
+    ylimOrLonlim = y(:); 
+end
 
-xlim = [min(xlimOrLatlim) max(xlimOrLatlim)]; 
-ylim = [min(ylimOrLonlim) max(ylimOrLonlim)]; 
+if usegeocoordinates
+    % lat/lon limits switch to x/y limits here: 
+    if ~strcmp(I.ModelType,'ModelTypeGeographic')
+        assert(license('test','map_toolbox')==1,'Mapping toolbox needed to project between lat/lon limits and x,y limits. Specify limits in x,y coordinates.')
+        [xlimOrLatlim,ylimOrLonlim]=projfwd(I,xlimOrLatlim,ylimOrLonlim);
+    end
+end
+
+
+xlim = [min(xlimOrLatlim)-buffer_x max(xlimOrLatlim)+buffer_x]; 
+ylim = [min(ylimOrLonlim)-buffer_y max(ylimOrLonlim)+buffer_y]; 
+
 
 % Rows and columns of pixels to read: 
 rows=find((y>=ylim(1))&(y<=ylim(2)));
 cols=find((x>=xlim(1))&(x<=xlim(2)));
+
+
+
 
 %% Display messages if region of interest is partly or wholly outside the image region:
 
@@ -325,39 +305,19 @@ while ~feof(fid)
 end
 fclose(fid);
 
-%--- BELOW is to make it more robust if no mapping toolbox ---
-
+%%
 function I = robustgeotiffinfo(fname)
-if license('test','map_toolbox')
-    I=geotiffinfo(fname);
-else
-    I=imfinfo(fname);
-%     %TODO: generate home-made refmatrix(?)....
-%     if isfield(tags, 'ModelTransformationTag') && numel(tags.ModelTransformationTag) >= 8
-%         geoimread does not work for rotated systems
-%         
-%     else %use ModelPixelScaleTag instead
-%         dx =  I.ModelPixelScaleTag(1); dy = -I.ModelPixelScaleTag(2);
-%         x0 = I.ModelTiepointTag(4) - dx * I.ModelTiepointTag(1);
-%         y0 = I.ModelTiepointTag(5) - dy * I.ModelTiepointTag(2);
-%         J = [dx 0; 0 dy];
-%     end
-%     I.RefMatrix=[flipud(J); x0-J(1,1)-J(1,2)];
-end
+I=imfinfo(fname);
 
+%%
 function [x,y]=robustpixcenters(I)
-if license('test','map_toolbox')
-    [x,y]=pixcenters(I);
-else
-    try
-    %I have not read documentation... but this only works for rectilinear systems.
-    assert(I.ModelPixelScaleTag(3)==0,'unexpected ModelPixelScaleTag format.');
-    assert(all(I.ModelTiepointTag(1:3)==0),'unexpected ModelTiepointTag format.');
-    x=((0:I.Width-1)-I.ModelTiepointTag(1))*I.ModelPixelScaleTag(1)+I.ModelTiepointTag(4);
-    y=((0:I.Height-1)-I.ModelTiepointTag(2))*-I.ModelPixelScaleTag(2)+I.ModelTiepointTag(5);
-    catch
-    x=((0:I.Width-1)*I.ModelTransformationTag(1))+I.ModelTransformationTag(4);
-    y=((0:I.Height-1)*I.ModelTransformationTag(6))+I.ModelTransformationTag(8);
-    end
+try
+x=((0:I.Width-1)-I.ModelTiepointTag(1))*I.ModelPixelScaleTag(1)+I.ModelTiepointTag(4);
+y=((0:I.Height-1)-I.ModelTiepointTag(2))*-I.ModelPixelScaleTag(2)+I.ModelTiepointTag(5);
+%I have not read documentation... but this only works for rectilinear systems.
+assert(I.ModelPixelScaleTag(3)==0,'unexpected ModelPixelScaleTag format.');
+assert(all(I.ModelTiepointTag(1:3)==0),'unexpected ModelTiepointTag format.');
+catch
+x= ((0:I.Width-1)*I.ModelTransformationTag(1))+I.ModelTransformationTag(4);
+y= ((0:I.Height-1)*-abs(I.ModelTransformationTag(6)))+I.ModelTransformationTag(8);
 end
-
