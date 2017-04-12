@@ -13,10 +13,10 @@
     <text>X</text>
     <tooltipstring>Select X coordinate</tooltipstring>
     <dependency>
-      <action>visible</action>
+      <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>selectcoordinates</variable>
+        <variable>selectxcoordinate</variable>
         <value>1</value>
         <operator>eq</operator>
       </check>

@@ -13,10 +13,10 @@
     <text>Y</text>
     <tooltipstring>Select Y coordinate</tooltipstring>
     <dependency>
-      <action>visible</action>
+      <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>selectcoordinates</variable>
+        <variable>selectycoordinate</variable>
         <value>1</value>
         <operator>eq</operator>
       </check>
