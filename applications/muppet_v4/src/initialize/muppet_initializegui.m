@@ -35,6 +35,7 @@ handles.datasettext4='';
 handles.datasettext5='';
 
 handles.lastfiletype='delft3d';
+handles.lastfolder='';
 
 handles.newlayout.numberhorizontal=3;
 handles.newlayout.sizehorizontal=4;

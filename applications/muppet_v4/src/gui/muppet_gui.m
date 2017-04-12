@@ -483,10 +483,11 @@ for ii=1:length(handles.filetype)
     end
 end
 
-[filename, pathname, filterindex] = uigetfile(filterspec);
+[filename, pathname, filterindex] = uigetfile(filterspec,'Select file to open',handles.lastfolder);
 
 if pathname~=0
     handles.lastfiletype=filetypes{filterindex};
+    handles.lastfolder=pathname;
     setHandles(handles);
     muppet_datasetGUI('makewindow','filename',[pathname filename],'filetype',filetypes{filterindex});
     muppet_selectDataset;

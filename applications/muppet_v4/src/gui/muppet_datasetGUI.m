@@ -19,7 +19,7 @@ for ii=1:length(varargin)
             case{'selectucomponent'}
                 selectParameter('u');
             case{'selectvcomponent'}
-%                selectParameter('v');
+                selectParameter('v');
             case{'selectcomponent'}
                 refreshDatasetName;
             case{'selectxcoordinate'}
@@ -36,7 +36,7 @@ for ii=1:length(varargin)
                 editK(varargin{ii+1});
             case{'selectblock'}
                 refreshDatasetName;
-            case{'selectquantity','selectucomponent','selectvcomponent'}
+            case{'selectquantity'}
                 refreshDatasetName;                
             case{'selecttidestation'}
                 selectTideStation(varargin{ii+1});
@@ -94,10 +94,15 @@ for j=1:length(dataset.parameters)
     dataset.parameternames{j}=dataset.parameters(j).parameter.name;
 end
 
-dataset.parameter=dataset.parameters(1).parameter.name;
-if isempty(dataset.activeparameter)
-    dataset.activeparameter=1;
+if isempty(dataset.parameter)
+    dataset.parameter=dataset.parameters(1).parameter.name;
+    if isempty(dataset.activeparameter)
+        dataset.activeparameter=1;
+    end
+else
+    dataset.activeparameter=strmatch(dataset.parameter,dataset.parameternames,'exact');
 end
+
 dataset.size=[0 0 0 0 0];
 dataset.quantity='scalar';
 

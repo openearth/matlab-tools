@@ -75,6 +75,15 @@ switch plt.type
         dx=dataxmax-dataxmin;
         dy=dataymax-dataymin;
         dz=datazmax-datazmin;
+        if dx==0
+            dx=20;
+        end
+        if dy==0
+            dy=20;
+        end
+        if dz==0
+            dz=20;
+        end
         dataxmin=dataxmin-dx*marg;
         dataxmax=dataxmax+dx*marg;
         dataymin=dataymin-dy*marg;

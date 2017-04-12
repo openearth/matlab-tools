@@ -65,7 +65,8 @@ dataset.nrquantities=1;
 dataset.quantities={'scalar','vector2d','vector3d'};
 dataset.selectedquantity='scalar';
 
-dataset.selectcoordinates=0;
+dataset.selectxcoordinate=0;
+dataset.selectycoordinate=0;
 dataset.selectparameter=1;
 
 dataset.activeparameter=[];

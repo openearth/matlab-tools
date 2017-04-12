@@ -151,7 +151,8 @@ switch tp
         % x and y in columns 1 and 2
         dataset.xcoordinate=columnlabels{1};
         dataset.ycoordinate=columnlabels{2};        
-        dataset.selectcoordinates=1;        
+        dataset.selectxcoordinate=1;        
+        dataset.selectycoordinate=1;
         npar=ncols;
         for ipar=1:npar
             par=[];
@@ -163,10 +164,9 @@ switch tp
     case{'xy'}
         % x and y
         npar=ncols;
-        dataset.selectcoordinates=1;        
-        dataset.selectparameter=0;        
-%         dataset.xcoordinate=columnlabels{1};
-%         dataset.ycoordinate=columnlabels{2};        
+        dataset.selectxcoordinate=1;        
+        dataset.xcoordinate=columnlabels{1};
+        dataset.parameter=columnlabels{2};
         for ipar=1:npar
             par=[];
             par=muppet_setDefaultParameterProperties(par);
@@ -177,7 +177,6 @@ switch tp
     case{'histogram'}
         % x and y
         npar=ncols-1;
-        dataset.selectcoordinates=0;        
         for ipar=1:npar
             par=[];
             par=muppet_setDefaultParameterProperties(par);
@@ -286,7 +285,7 @@ switch dataset.tekaltype
     case{'xy'}
         icolx=strmatch(lower(dataset.xcoordinate),lower(dataset.columnlabels),'exact');
 %        icolx=1;
-        icoly=strmatch(lower(dataset.ycoordinate),lower(dataset.columnlabels),'exact');
+        icoly=strmatch(lower(dataset.parameter),lower(dataset.columnlabels),'exact');
         parameter.x=fid.Field(iblock).Data(:,icolx);
         parameter.y=fid.Field(iblock).Data(:,icoly);
         dataset.type='xy1dxy';
