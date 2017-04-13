@@ -141,9 +141,7 @@ if OPT.read_paths
                             value = xs_meta(value, mfilename, 'grid', fpath);
                         catch
                             % cannot load file, read it as text
-                            fid = fopen(fpath, 'r');
-                            data = fread(fid, '*char')';
-                            fclose(fid);
+                            data =     fpath;
 
                             value = xs_set(value, 'data', data);
                             value = xs_meta(value, mfilename, 'data', fpath);

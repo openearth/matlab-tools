@@ -88,6 +88,7 @@ xb_verbose(0,'---');
 xb_verbose(0,'Generating wave timeseries');
 
 type = 'jonswap';
+type = 'jons_table';
 
 idx = strcmpi('type', varargin(1:2:end));
 if any(idx)
@@ -120,6 +121,21 @@ switch type
         instat = 'vardens';
         
         xb_verbose(1,'Type','Variance density');
+        
+    case 'jons_table'
+        OPT = struct( ...
+            'type', type, ...
+            'Hm0', 7.6, ...
+            'Tp', 12, ...
+            'mainang', 270, ...
+            'gammajsp', 3.3, ...
+            's', 20, ...
+            'fnyq', 1 ...
+        );
+    
+        instat = 'jons';
+        
+        xb_verbose(1,'Type','JONSWAP');
 end
 
 OPT.type = type;

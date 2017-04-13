@@ -133,6 +133,8 @@ try
             wb = waitbox('Reading data file ...');
             x=nc_varget(handles.toolbox.bathymetry.import.dataFile,'x');
             y=nc_varget(handles.toolbox.bathymetry.import.dataFile,'y');
+%             x=nc_varget(handles.toolbox.bathymetry.import.dataFile,'COLUMNS');
+%             y=nc_varget(handles.toolbox.bathymetry.import.dataFile,'LINES');
             x0=x(1);
             y0=y(1);
             dx=x(2)-x(1);

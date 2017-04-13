@@ -120,6 +120,9 @@ switch lower(rawdataformat)
         x=nc_varget(fname1,'x');
         y=nc_varget(fname1,'y');
         z=nc_varget(fname1,'z');
+%         x=nc_varget(fname1,'COLUMNS');
+%         y=nc_varget(fname1,'LINES');
+%         z=nc_varget(fname1,'DEPTH');
         x00=x(1);
         y00=y(1);
         nrows=length(y);

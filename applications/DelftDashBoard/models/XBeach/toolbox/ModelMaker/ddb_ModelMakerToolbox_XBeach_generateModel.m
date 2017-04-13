@@ -1,4 +1,4 @@
-function handles=ddb_ModelMakerToolbox_XBeach_generateModel(handles)
+function handles=ddb_ModelMakerToolbox_XBeach_generateModel(handles, datasets)
 
 % Settings
 xori=handles.toolbox.modelmaker.xOri;
@@ -35,24 +35,95 @@ coord=handles.screenParameters.coordinateSystem;
 iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
 dataCoord.name=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
 dataCoord.type=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
-
 [xlb,ylb]=ddb_coordConvert(xl,yl,coord,dataCoord);
 
 % Get bathymetry in box around model grid
-[xx,yy,zz,ok]=ddb_getBathymetry(handles.bathymetry,xlb,ylb,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
+%% Option 1: use only the active bathy
+if isempty(datasets)
+    
+    % Extract
+    [xx,yy,zz,ok]=ddb_getBathymetry(handles.bathymetry,xlb,ylb,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
 
-% xx and yy are in coordinate system of bathymetry (usually WGS 84)
-% convert bathy grid to active coordinate system
-if ~strcmpi(dataCoord.name,coord.name) || ~strcmpi(dataCoord.type,coord.type)
-    dmin=min(dx,dy);
-    [xg,yg]=meshgrid(xl(1):dmin:xl(2),yl(1):dmin:yl(2));
-    [xgb,ygb]=ddb_coordConvert(xg,yg,coord,dataCoord);
-    zz=interp2(xx,yy,zz,xgb,ygb);
+    % xx and yy are in coordinate system of bathymetry (usually WGS 84)
+    % convert bathy grid to active coordinate system
+    if ~strcmpi(dataCoord.name,coord.name) || ~strcmpi(dataCoord.type,coord.type)
+        dmin=min(dx,dy);
+        [xg,yg]=meshgrid(xl(1):dmin:xl(2),yl(1):dmin:yl(2));
+        [xgb,ygb]=ddb_coordConvert(xg,yg,coord,dataCoord);
+        zz=interp2(xx,yy,zz,xgb,ygb);
+    else
+        xg=xx;
+        yg=yy;
+    end
+    % Make grid
+    [x,y,z]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,100,xg,yg,zz);
 else
-    xg=xx;
-    yg=yy;
+    
+    %% Option 2: use multiple datasets
+    % Grid coordinates and type
+    [x0,y0]=meshgrid(0:dx:nx*dx,0:dy:ny*dy);
+    if rot~=0
+        r=[cos(rot) -sin(rot) ; sin(rot) cos(rot)];
+        for i=1:size(x0,1)
+            for j=1:size(x0,2)
+                v0=[x0(i,j) y0(i,j)]';
+                v=r*v0;
+                x(i,j)=v(1);
+                y(i,j)=v(2);
+            end
+        end
+    else
+        x=x0;
+        y=y0;
+    end
+    x=x+xori;
+    y=y+yori;
+    z = ones(size(x));
+    gridtype='structured';
+
+    % Generate bathymetry
+    [x,y,z]=ddb_ModelMakerToolbox_generateBathymetry(handles,x,y,z,datasets,'filename','tst','overwrite',1,'gridtype',gridtype,'modeloffset',0);
+
+    % Retrieve FAST bathy
+    if handles.toolbox.modelmaker.bathymetry.intertidalbathy == 1
+        
+        % Get data
+        try
+        [x,y,zFAST] = ddb_FAST_bathy(x,y,handles.screenParameters.coordinateSystem);
+
+        % Show data
+        figure(20)
+        pcolor(x,y,z); title('Bathymetry without FAST'); shading flat;
+        xlabel('x [m]'); ylabel('y [m]'); grid on; box on; colorbar; 
+        
+        figure(21)
+        pcolor(x,y,zFAST); title('Intertidal bathymetry map FAST'); shading flat;
+        xlabel('x [m]'); ylabel('y [m]'); grid on; box on; colorbar; 
+        
+        % Combine
+        znew = zFAST;
+        id = isnan(znew);
+        znew(id) = z(id);
+        
+        % Smooth
+        [ny, nx] = size(z);
+        for ii = 1:ny
+            znew1(ii,:) = fastsmooth(znew(ii,:), round(nx/20), 1,1);
+        end
+        for ii = 1:nx
+            znew2(:,ii) = fastsmooth(znew(:,ii), round(ny/20), 1,1);
+        end
+        znew = znew1*0.5 + znew2*0.5;
+        
+        figure(22)
+        pcolor(x,y,znew); title('Combined bathymetry'); shading flat;
+        xlabel('x [m]'); ylabel('y [m]'); grid on; box on; colorbar; 
+        z = znew;
+        catch
+        ddb_giveWarning('text',['Something went wrong with retrieving the FAST data. DDB will continu with the available data']);
+        end
+    end
 end
-[x,y,z]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,100,xg,yg,zz);
 
 
 %% 3. Closure
@@ -69,14 +140,20 @@ rotation_model = rotation;
 
 % Simulation
 tsimulation = handles.model.xbeach.domain.tstop;
-depthneeded = round((handles.toolbox.modelmaker.Hs*2.5))*-1;
+depthneeded1 = round((handles.toolbox.modelmaker.Hs*3))*-1;
+for ii = 1:100
+	[c cg n(ii) k] = wavevelocity(handles.toolbox.modelmaker.Tp, ii);
+end
+id = find(n < 0.8);
+depthneeded2 = id(1);
+depthneeded = max(depthneeded1, depthneeded2)*-1;
 
 if handles.toolbox.modelmaker.domain1d == 1;
     xtmp = x; ytmp = y; ztmp = z;
-    [nx ny] = size(z);
-    x = x (:, round(ny/2));
-    y = y (:, round(ny/2));
-    z = z (:, round(ny/2));
+    [ny nx] = size(z);
+    x = x (round(ny/2),:);
+    y = y (round(ny/2),:);
+    z = z (round(ny/2),:);
 end
 
 if handles.toolbox.modelmaker.domain1d == 1
@@ -86,16 +163,18 @@ if handles.toolbox.modelmaker.domain1d == 1
     ytmp = y;
     ztmp = z;
     
-    %
+    % Grid
     crossshore = ((x - x(1,1)).^2 + (y - y(1,1)).^2.).^0.5;
     [xopt zopt] = xb_grid_xgrid(crossshore, z);
     
     xori = x(1); yori = y(1);
     rotation_applied = rotation_model 
     yopt = zeros(1,length(xopt));
-    xr = xori+ cosd(rotation_applied)*xopt
-    yr = yori+ sind(rotation_applied)*xopt
+    xr = xori+ cosd(rotation_applied)*xopt;
+    yr = yori+ sind(rotation_applied)*xopt;
     
+    plotting = 0;
+    if plotting == 1;
     figure; hold on;
     plot(x,y)
     plot(xr,yr,'r--')
@@ -103,7 +182,7 @@ if handles.toolbox.modelmaker.domain1d == 1
     plot(x(end),y(end),'bo')
     plot(xr(1),yr(1),'bo')
     legend('org', 'opt')
-    
+    end
     
     % Make structure
     xbm = xb_generate_model(...
@@ -112,34 +191,29 @@ if handles.toolbox.modelmaker.domain1d == 1
             'world_coordinates',true,...
             'optimize', false}, ...
     'waves',...
-            {'Hm0', [handles.toolbox.modelmaker.Hs], 'Tp', [handles.toolbox.modelmaker.Tp], 'duration', [tsimulation] 'mainang', handles.toolbox.modelmaker.waveangle}, ...
+            {'Hm0', [handles.toolbox.modelmaker.Hs], 'Tp', [handles.toolbox.modelmaker.Tp], 'duration', [tsimulation+1] 'mainang', handles.toolbox.modelmaker.waveangle}, ...
     'tide',... 
-            {'time', [0 tsimulation] 'front', [handles.toolbox.modelmaker.SSL handles.toolbox.modelmaker.SSL], 'back', [handles.toolbox.modelmaker.SSL handles.toolbox.modelmaker.SSL]},...
+            {'time', [0 tsimulation+1] 'front', [handles.toolbox.modelmaker.SSL handles.toolbox.modelmaker.SSL], 'back', [handles.toolbox.modelmaker.SSL handles.toolbox.modelmaker.SSL]},...
     'settings', ...
             {'outputformat','netcdf',... 
             'morfac', 1,...
-            'morstart', 0, ...
             'bedfriction', 'manning', ...
-            'CFL', handles.model.xbeach.domain.CFL,...
             'outputformat', 'netcdf',...
             'front', 'abs_1d', ...
             'back', 'abs_1d', ...
             'dtheta',abs(handles.model.xbeach.domain.thetamax - handles.model.xbeach.domain.thetamin),...
             'thetanaut', 1, ...
-            'tstop', tsimulation, ...
+            'tstop', tsimulation+1, ...
             'tstart', 0,...
             'tintg', tsimulation/10,...
             'tintm', tsimulation/1,...
-            'epsi',-1,...                   
-            'meanvar',          {'zs', 'H','ue', 've'} ,...
-            'globalvar',        {'zb', 'zs', 'H', 'ue', 've', 'sedero', 'hh'}});         
+            'globalvar',      {'zb', 'zs', 'H', 'u', 'v'} ,...
+            'meanvar',        {'zb', 'zs', 'H', 'u', 'v', 'sedero', 'qx', 'hh'}});             
         
         
         % Change grid
-        xbm.data(1).value = length(xr)-1;
-        xbm.data(2).value = 0;
-        xbm.data(7).value.data.value = xr;
-        xbm.data(8).value.data.value = yr;
+        xbm = xs_del(xbm, 'xori'); xbm = xs_del(xbm, 'yori');   xbm = xs_del(xbm, 'dx');
+        xbm = xb_bathy2input(xbm, xr, yr, zopt); xbm = xs_set(xbm, 'vardx', 1)
 else
     xbm = xb_generate_model(...
     'bathy',...
@@ -151,40 +225,26 @@ else
             'world_coordinates',true,...
             'finalise', {'actions', {'seaward_flatten', 'seaward_extend'},'zmin',depthneeded}}, ...
     'waves',...
-            {'Hm0', [handles.toolbox.modelmaker.Hs], 'Tp', [handles.toolbox.modelmaker.Tp], 'duration', [tsimulation] 'mainang', handles.toolbox.modelmaker.waveangle}, ...
+            {'Hm0', [handles.toolbox.modelmaker.Hs], 'Tp', [handles.toolbox.modelmaker.Tp], 'duration', [tsimulation+1] 'mainang', handles.toolbox.modelmaker.waveangle}, ...
     'tide',... 
-            {'time', [0 tsimulation] 'front', [handles.toolbox.modelmaker.SSL handles.toolbox.modelmaker.SSL], 'back', [handles.toolbox.modelmaker.SSL handles.toolbox.modelmaker.SSL]},...
+            {'time', [0 tsimulation+1] 'front', [handles.toolbox.modelmaker.SSL handles.toolbox.modelmaker.SSL], 'back', [handles.toolbox.modelmaker.SSL handles.toolbox.modelmaker.SSL]},...
     'settings', ...
             {'outputformat','netcdf',... 
             'morfac', 1,...
-            'morstart', 0, ...
             'bedfriction', 'manning', ...
-            'CFL', handles.model.xbeach.domain(1).CFL,...
             'front', 'abs_2d', ...
             'back', 'abs_2d', ...
-            'dtheta',abs(handles.model.xbeach.domain(1).thetamax - handles.model.xbeach.domain(1).thetamin),...
-            'dtheta_s', 10,...
-            'single_dir', 1,...
+            'dtheta',10,...
             'thetanaut', 1, ...
-            'tstop', tsimulation, ...
+            'tstop', tsimulation+1, ...
             'outputformat', 'netcdf',...
             'tstart', 0,...
             'tintg', tsimulation/10,...
             'tintm', tsimulation/1,...
-            'epsi',-1,...                   
-            'swave',handles.model.xbeach.domain(1).swave,...
-            'lwave',handles.model.xbeach.domain(1).lwave,...
-            'flow',handles.model.xbeach.domain(1).flow,...
-            'sedtrans',handles.model.xbeach.domain(1).sedtrans,...
-            'morphology',handles.model.xbeach.domain(1).morphology,...
-            'avalanching',handles.model.xbeach.domain(1).morphology,...
-            'g',handles.model.xbeach.domain(1).g,...
-            'rho',handles.model.xbeach.domain(1).rho,...
-            'meanvar',          {'zs', 'H','ue', 've'} ,...
-            'globalvar',        {'zb', 'zs', 'H', 'ue', 've', 'sedero'}});         
+            'globalvar',      {'zb', 'zs', 'H', 'u', 'v'} ,...
+            'meanvar',        {'zb', 'zs', 'H', 'u', 'v', 'sedero', 'qx', 'hh'}});         
 end
 xbm = xs_del(xbm, 'tidelen');
-save('xbm') 
 
 % Fix
 xgrid                   = xs_get(xbm,'xfile.xfile');
@@ -197,11 +257,12 @@ id = zgrid > max(max(z)); zgrid(id) = max(max(z)); % nothing higher than org.
 
 % Fix theta
 xbm = xs_set(xbm, 'thetamin', handles.model.xbeach.domain(1).thetamin);
-xbm = xs_set(xbm, 'thetamax', handles.model.xbeach.domain(1).thetamax)
-xbm = xs_set(xbm, 'dtheta',abs(handles.model.xbeach.domain(1).thetamax - handles.model.xbeach.domain(1).thetamin));
+xbm = xs_set(xbm, 'thetamax', handles.model.xbeach.domain(1).thetamax);
+xbm = xs_set(xbm, 'dtheta',10);
+xbm = xs_set(xbm, 'gridform', 'xbeach');
 
 % Lateral
-gridcelss = 3;
+gridcelss = 5;
 if handles.toolbox.modelmaker.domain1d ~= 1
     [nx ny] = size(zgrid);
     for i = 1:gridcelss-1
@@ -217,11 +278,19 @@ for i = 1:gridcelss-1
 end
 
 % Write
-xbm.data(9).value.data.value = zgrid;
-    
+result = xs_search(xbm,'depfile');
+xbm.data(result.indices).value.data.value = zgrid;
+
 % G. Write the params
 xb_write_input('params.txt', xbm)  
 
+% Write also the grid and bathy as Delft3D
+try
+enc=ddb_enclosure('extract',xgrid',ygrid');
+ddb_wlgrid('write','FileName',['grid_D3D.grd'],'X',xgrid','Y',ygrid','Enclosure',enc,'CoordinateSystem','Cartesian');
+ddb_wldep('write','bed_D3D.dep',zgrid'*-1);
+catch
+end
 
 %% Update model data
 handles.model.xbeach.domain(1).depth       = zgrid;

@@ -86,7 +86,7 @@ function filename = xb_write_waves(xb, varargin)
 
 %% read options
 
-if ~xs_check(xb); error('Invalid XBeach structure'); end;
+% if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'path', pwd, ...
@@ -153,115 +153,135 @@ switch type
 
         % determine length of time series
         tlength = get_time_length(xb, vars);
+    case{'jons_table'}
+
+        fid = fopen('jonswap.txt','wt');
+        nconditions = length(xb.data(2).value);
+        for ii = 1:nconditions
+        fprintf(fid, '%.1f ',   [xb.data(2).value(ii)]); % Hm0
+        fprintf(fid, '%.1f ',   [xb.data(3).value(ii)]); % Tp
+        fprintf(fid, '%.0f ',   [xb.data(4).value(ii)]); % main angle
+        fprintf(fid, '%.1f ',   [xb.data(5).value]);     % gamma
+        fprintf(fid, '%.0f ',   [xb.data(6).value(ii)]);     % s
+        fprintf(fid, '%.0f ',   [xb.data(8).value(ii)]); % duration
+        fprintf(fid, '1  \n');                          % dbtc
+        end
+        fclose('all');
+        
     otherwise
         error(['Unknown wave definition type [' type ']']);
 end
 
 % set variable alternatives
-if xs_exist(xb, 'Tp') && ~xs_exist(xb, 'fp')
-    xb = xs_set(xb, 'fp', 1./xs_get(xb, 'Tp'));
-end
-
-if xs_exist(xb, 'fp') && ~xs_exist(xb, 'Tp')
-    xb = xs_set(xb, 'Tp', 1./xs_get(xb, 'fp'));
-end
-
-if xs_exist(xb, 'mainang') && ~xs_exist(xb, 'dir')
-    xb = xs_set(xb, 'dir', xs_get(xb, 'mainang'));
-end
-
-if xs_exist(xb, 'dir') && ~xs_exist(xb, 'mainang')
-    xb = xs_set(xb, 'mainang', xs_get(xb, 'dir'));
-end
-
-% extend constant parameters to length of time series
-for i = 1:length(vars)
-    if strcmpi(vars{i}, 'contents'); continue; end;
-
-    var = xs_get(xb, vars{i});
-    switch length(var)
-        case 0
-            xb = xs_set(xb, vars{i}, nan*ones(1,tlength));
-        case 1
-            xb = xs_set(xb, vars{i}, var*ones(1,tlength));
+switch type
+    case{'jons_table'}
+        filename = 'jonswap.txt';
+    otherwise
+    if xs_exist(xb, 'Tp') && ~xs_exist(xb, 'fp')
+        xb = xs_set(xb, 'fp', 1./xs_get(xb, 'Tp'));
     end
-end
 
-%% set maximum duration
-
-[duration timestep] = xs_get(xb, 'duration', 'timestep');
-
-if isnan(duration); duration = OPT.maxduration; end;
-if size(duration,1) == max(size(duration)); duration = duration'; end;
-
-duration = roundoff(duration, 4);
-
-while any(duration>OPT.maxduration)
-    i           = find(duration>OPT.maxduration,1,'first');
-    n           = floor(duration(i)/OPT.maxduration);
-    d           = [repmat(OPT.maxduration,1,n) mod(duration(i), OPT.maxduration)];
-    n           = n-sum(d==0);
-    d(d==0)     = [];
-    idx         = [1:i-1 repmat(i,1,length(d)) i+1:length(duration)];
-    duration    = [duration(1:i-1) d duration(i+1:end)];
-    for j = 1:length(vars)
-        if strcmpi(vars{j}, 'duration'); continue; end;
-
-        data    = xs_get(xb, vars{j});
-        xb      = xs_set(xb, vars{j}, data(idx));
+    if xs_exist(xb, 'fp') && ~xs_exist(xb, 'Tp')
+        xb = xs_set(xb, 'Tp', 1./xs_get(xb, 'fp'));
     end
-    tlength     = tlength+n;
-end
 
-xb = xs_set(xb, 'duration', ceil(duration));
-
-%% create file list
-
-% create file list file, if necessary
-[duration timestep] = xs_get(xb, 'duration', 'timestep');
-if length(duration) > 1 && ~(strcmpi(type, 'jonswap') && OPT.omit_filelist) && ~strcmpi(type, 'jonswap_mtx')
-    filename = [OPT.filelist_file '.txt'];
-    fid = fopen(fullfile(OPT.path, filename), 'w');
-    fprintf(fid, 'FILELIST\n');
-    for i = 1:length(duration)
-        fprintf(fid, '%10i%10.4f%50s\n', duration(i), timestep(i), [fname '_' num2str(i) '.txt']);
+    if xs_exist(xb, 'mainang') && ~xs_exist(xb, 'dir')
+        xb = xs_set(xb, 'dir', xs_get(xb, 'mainang'));
     end
-    fclose(fid);
-end
 
-%% create wave files
+    if xs_exist(xb, 'dir') && ~xs_exist(xb, 'mainang')
+        xb = xs_set(xb, 'mainang', xs_get(xb, 'dir'));
+    end
 
-% determine whether single matrix formatted jonswap file should be
-% created, otherwise write single or multiple wave files
-if strcmpi(type, 'jonswap_mtx') || (length(duration) > 1 && strcmpi(type, 'jonswap') && OPT.omit_filelist)
-    filename = [fname '.txt'];
-    write_jonswap_mtx_file(fullfile(OPT.path, filename), tlength, xb)
-else
-    % loop through time series and write wave files
-    for i = 1:length(duration)
-        if length(duration) == 1
-            if isempty(regexp(fname, '\.\w+$', 'once'))
-                filename = [fname '.txt'];
+    % extend constant parameters to length of time series
+    for i = 1:length(vars)
+        if strcmpi(vars{i}, 'contents'); continue; end;
+
+        var = xs_get(xb, vars{i});
+        switch length(var)
+            case 0
+                xb = xs_set(xb, vars{i}, nan*ones(1,tlength));
+            case 1
+                xb = xs_set(xb, vars{i}, var*ones(1,tlength));
+        end
+    end
+
+    %% set maximum duration
+
+    [duration timestep] = xs_get(xb, 'duration', 'timestep');
+
+    if isnan(duration); duration = OPT.maxduration; end;
+    if size(duration,1) == max(size(duration)); duration = duration'; end;
+
+    duration = roundoff(duration, 4);
+
+    while any(duration>OPT.maxduration)
+        i           = find(duration>OPT.maxduration,1,'first');
+        n           = floor(duration(i)/OPT.maxduration);
+        d           = [repmat(OPT.maxduration,1,n) mod(duration(i), OPT.maxduration)];
+        n           = n-sum(d==0);
+        d(d==0)     = [];
+        idx         = [1:i-1 repmat(i,1,length(d)) i+1:length(duration)];
+        duration    = [duration(1:i-1) d duration(i+1:end)];
+        for j = 1:length(vars)
+            if strcmpi(vars{j}, 'duration'); continue; end;
+
+            data    = xs_get(xb, vars{j});
+            xb      = xs_set(xb, vars{j}, data(idx));
+        end
+        tlength     = tlength+n;
+    end
+
+    xb = xs_set(xb, 'duration', ceil(duration));
+
+    %% create file list
+
+    % create file list file, if necessary
+    [duration timestep] = xs_get(xb, 'duration', 'timestep');
+    if length(duration) > 1 && ~(strcmpi(type, 'jonswap') && OPT.omit_filelist) && ~strcmpi(type, 'jonswap_mtx')
+        filename = [OPT.filelist_file '.txt'];
+        fid = fopen(fullfile(OPT.path, filename), 'w');
+        fprintf(fid, 'FILELIST\n');
+        for i = 1:length(duration)
+            fprintf(fid, '%10i%10.4f%50s\n', duration(i), timestep(i), [fname '_' num2str(i) '.txt']);
+        end
+        fclose(fid);
+    end
+
+    %% create wave files
+
+    % determine whether single matrix formatted jonswap file should be
+    % created, otherwise write single or multiple wave files
+    if strcmpi(type, 'jonswap_mtx') || (length(duration) > 1 && strcmpi(type, 'jonswap') && OPT.omit_filelist)
+        filename = [fname '.txt'];
+        write_jonswap_mtx_file(fullfile(OPT.path, filename), tlength, xb)
+    else
+        % loop through time series and write wave files
+        for i = 1:length(duration)
+            if length(duration) == 1
+                if isempty(regexp(fname, '\.\w+$', 'once'))
+                    filename = [fname '.txt'];
+                else
+                    filename = fname;
+                end
+
+                fname_i = filename;
             else
-                filename = fname;
+                fname_i = [fname '_' num2str(i) '.txt'];
             end
 
-            fname_i = filename;
-        else
-            fname_i = [fname '_' num2str(i) '.txt'];
-        end
+            fname_i = fullfile(OPT.path, fname_i);
 
-        fname_i = fullfile(OPT.path, fname_i);
-
-        switch type
-            case 'jonswap'
-                write_jonswap_file(fname_i, i, xb)
-            case 'vardens'
-                write_vardens_file(fname_i, i, xb)
-            case 'ezs'
-                write_unknown_file(fname_i, i, xb)
-            case 'unknown'
-                write_unknown_file(fname_i, i, xb)
+            switch type
+                case 'jonswap'
+                    write_jonswap_file(fname_i, i, xb)
+                case 'vardens'
+                    write_vardens_file(fname_i, i, xb)
+                case 'ezs'
+                    write_unknown_file(fname_i, i, xb)
+                case 'unknown'
+                    write_unknown_file(fname_i, i, xb)
+            end
         end
     end
 end

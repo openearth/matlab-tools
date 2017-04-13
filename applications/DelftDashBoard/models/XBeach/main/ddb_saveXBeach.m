@@ -36,11 +36,18 @@ switch lower(opt)
             handles.model.xbeach.domain(jj).bed = handles.model.xbeach.domain_TMP.bed;
             handles.model.xbeach.domain(jj).pwd = handles.model.xbeach.domain_TMP.pwd;
             setHandles(handles);
+            id = findstr(handles.model.xbeach.domain_TMP.params_file, '\')
+            modeldirs{jj} = handles.model.xbeach.domain_TMP.params_file(1:id(end))
+
             
             % Save params
             ddb_saveParams(handles,jj);
         
         end
+       
+        % Save multi-processes run
+        cd ..
+        generate_multiprocess_xbeach_runs([handles.model.xbeach.exedir,modeldirs, 'xbeach.exe'],4,'_run_XBeach_batch.bat')
 end
 setHandles(handles);
 

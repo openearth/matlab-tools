@@ -217,6 +217,7 @@ function DISout = dispack(DISin,varargin)
             
             DISout.Table(itable).Parameter(column).Name = H.tablename;
             DISout.Table(itable).Parameter(column).Unit = H.parameterunit;
+            disp (H.parametername)
             DISout.Table(itable).Data   (:,column)      = DISin.data(itable).(H.parametername)(mask);
              
             end

@@ -82,9 +82,70 @@ else
             deleteGridOutline
         case('adddem')
             addDEM
+        case('fastboundaries')
+            fastBoundaries;
     end
     
 end
+
+function fastBoundaries
+
+%% First get coordinate to 
+% Location
+handles=getHandles;
+
+try
+    % Use the handle to get location
+    h = handles.toolbox.modelmaker.xb_trans.handle1;
+    x0= nanmean(getappdata(h,'x'));
+    y0= nanmean(getappdata(h,'y'));
+catch
+    try
+        % Use the saved x and y grid
+        domains = length( handles.model.xbeach.domain);
+        for jj = 1:domains
+        x0s(jj) = handles.model.xbeach.domain(jj).grid.x(1,1);
+        y0s(jj) = handles.model.xbeach.domain(jj).grid.y(1,1);
+        end
+        x0 = nanmean(x0s); y0 = nanmean(y0s);
+    catch
+            % Use the xori and yori (always has a value)
+            x0 = handles.toolbox.modelmaker.xOri;
+            y0 = handles.toolbox.modelmaker.yOri;
+    end
+end
+
+% Coordinate system
+coord=handles.screenParameters.coordinateSystem;
+iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
+dataCoord.name=handles.screenParameters.coordinateSystem.name;
+dataCoord.type=handles.screenParameters.coordinateSystem.type;
+NewSys.name = 'WGS 84';
+NewSys.type = 'geo';
+[x1 y1] = ddb_coordConvert(x0, y0, dataCoord, NewSys);
+
+%% Second retrieve values for waves 
+fname1 = [handles.toolBoxDir, '\TropicalCyclone\FAST_Hs.mat'];
+load (fname1);
+distance = ((ReturnValues.location.values(:,1) - x1).^2 + (ReturnValues.location.values(:,2) - y1).^2).^0.5;
+id       = find(distance  == min(distance));
+Hsvalue  = ReturnValues.Hs.values(id,7);    Tpvalue  = ReturnValues.Tp.values(id,7);
+
+%% Third retrieve values for tide+surge 
+fname2 = [handles.toolBoxDir, '\TropicalCyclone\FAST_SSL.mat'];
+GTSM = load (fname2);
+distance = ((GTSM.lon - x1).^2 + (GTSM.lat - y1).^2).^0.5;
+id       = find(distance  == min(distance));
+SSL      = GTSM.RP100(id);
+
+%% Save values
+handles.toolbox.modelmaker.Hs   = round(Hsvalue(1)*10)/10;		
+handles.toolbox.modelmaker.Tp   = round(Tpvalue(1)*10)/10;	
+handles.toolbox.modelmaker.SSL  = round(SSL(1)*10)/10;	
+setHandles(handles);
+
+gui_updateActiveTab;
+
 
 %%
 function drawPolyline
@@ -123,6 +184,7 @@ setHandles(handles);
 
 %% 
 function continudrawing
+
 % Start
 handles=getHandles;
 
@@ -268,23 +330,28 @@ function drawTransectsZ
 handles=getHandles;
 
 % Determine average depth
-xoff        = handles.toolbox.modelmaker.xb_trans.xoff;
-ntransects  = length(xoff);
+dataCoord.type=handles.screenParameters.coordinateSystem.type;
+if ~strcmpi(lower(dataCoord.type), 'geographic')
+    xoff        = handles.toolbox.modelmaker.xb_trans.xoff;
+    ntransects  = length(xoff);
 
-error = 0;
-for ii = 1:ntransects
-    try
-    [handles] = ddb_ModelMakerToolbox_XBeach_quickMode_Ztransects(handles, ii, 1)
-    catch
-    error = 1;    
+    error = 0;
+    for ii = 1:ntransects
+        try
+        [handles] = ddb_ModelMakerToolbox_XBeach_quickMode_Ztransects(handles, ii, 1)
+        catch
+        error = 1;    
+        end
     end
-end
 
-% Error
-if error == 1;
-        ddb_giveWarning('text',['Something went wrong with drawing the transects. Make sure the bathy has information in this area']);
+    % Error
+    if error == 1;
+            ddb_giveWarning('text',['Something went wrong with drawing the transects. Make sure the bathy has information in this area']);
+    end
+    handles.toolbox.modelmaker.average_z = round(nanmean(handles.toolbox.modelmaker.Zvalues));
+else
+	ddb_giveWarning('text',['XBeach models are ALWAYS in cartesian coordinate systems. Change your coordinate system to make a XBeach model']);
 end
-handles.toolbox.modelmaker.average_z = round(nanmean(handles.toolbox.modelmaker.Zvalues));
 
 % Close
 setHandles(handles);
@@ -295,49 +362,56 @@ function generatemodel
 
 % Start
 handles=getHandles;
-
-% Draw transects and save in handles based on settings
-try
-if ~isempty(handles.toolbox.modelmaker.xb_trans.handle2)
+dataCoord.type=handles.screenParameters.coordinateSystem.type;
+if ~strcmpi(lower(dataCoord.type), 'geographic')
+    
+    % Draw transects and save in handles based on settings
     try
-        delete(handles.toolbox.modelmaker.xb_trans.handle2);
+    if ~isempty(handles.toolbox.modelmaker.xb_trans.handle2)
+        try
+            delete(handles.toolbox.modelmaker.xb_trans.handle2);
+        end
     end
-end
-catch
-end
-[handles] = ddb_ModelMakerToolbox_XBeach_quickMode_drawtransects(handles);
+    catch
+    end
+    [handles] = ddb_ModelMakerToolbox_XBeach_quickMode_drawtransects(handles);
 
-% Line sections
-xoff    = handles.toolbox.modelmaker.xb_trans.xoff;
-yoff    = handles.toolbox.modelmaker.xb_trans.yoff;
-xback   = handles.toolbox.modelmaker.xb_trans.xback;
-yback   = handles.toolbox.modelmaker.xb_trans.yback;
-ntransects = length(xoff);
+    % Line sections
+    xoff    = handles.toolbox.modelmaker.xb_trans.xoff;
+    yoff    = handles.toolbox.modelmaker.xb_trans.yoff;
+    xback   = handles.toolbox.modelmaker.xb_trans.xback;
+    yback   = handles.toolbox.modelmaker.xb_trans.yback;
+    ntransects = length(xoff);
 
-% Plotting
-for ii = 1:ntransects
-    h2(ii) = plot([xoff(ii) xback(ii)], [yoff(ii), yback(ii)], 'k', 'linewidth', 2);
+    % Plotting
+    for ii = 1:ntransects
+        h2(ii) = plot([xoff(ii) xback(ii)], [yoff(ii), yback(ii)], 'k', 'linewidth', 2);
+    end
+    handles.toolbox.modelmaker.xb_trans.handle2 = h2;
+
+    % Generating models
+    wb = waitbox('Generating XBeach transect models');
+    handles=ddb_ModelMakerToolbox_XBeach_generateTransects(handles);
+    close(wb);
+    cd ..
+
+    % Close
+    settings = handles.toolbox.modelmaker.xb_trans;
+    time = linspace(0,6000, 11); 
+    for ii = 1:length(settings.xback)
+        transects{ii,1}   = ['Transect_00', num2str(ii)];
+        x(ii,:)           = settings.xback(ii);
+        y(ii,:)           = settings.yback(ii);
+        distances(ii,:)   = settings.distances(ii);
+        angles(ii,:)      = settings.coast(ii);
+        Q(ii,:)           = abs(cosd(fliplr(time)/60).^2);
+    end
+
+    [succes] = ddb_ModelMakerToolbox_XBeach_quickMode_transects_netcdf(x,y,distances, angles, time, Q);
+    save('settings.mat','settings')
+else
+	ddb_giveWarning('text',['XBeach models are ALWAYS in cartesian coordinate systems. Change your coordinate system to make a XBeach model']);
 end
-handles.toolbox.modelmaker.xb_trans.handle2 = h2;
-
-% Generating models
-wb = waitbox('Generating XBeach transect models');
-handles=ddb_ModelMakerToolbox_XBeach_generateTransects(handles);
-close(wb);
-cd ..
 
 % Close
-settings = handles.toolbox.modelmaker.xb_trans;
-time = linspace(0,6000, 11); 
-for ii = 1:length(settings.xback)
-    transects{ii,1}   = ['Transect_00', num2str(ii)];
-    x(ii,:)           = settings.xback(ii);
-    y(ii,:)           = settings.yback(ii);
-    distances(ii,:)   = settings.distances(ii);
-    angles(ii,:)      = settings.coast(ii);
-    Q(ii,:)           = abs(cosd(fliplr(time)/60).^2);
-end
-
-[succes] = ddb_ModelMakerToolbox_XBeach_quickMode_transects_netcdf(x,y,distances, angles, time, Q);
-save('settings.mat','settings')
 setHandles(handles);

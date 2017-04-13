@@ -190,4 +190,12 @@
     <callback>ddb_ModelMakerToolbox_XBeach_quickMode</callback>
     <option1>generategrid</option1>
   </element>
+  <element>
+    <style>pushbutton</style>
+    <position>600 110 140 20</position>
+    <tooltipstring>Push to retrieve 1/100 year FAST boundary conditions</tooltipstring>
+    <text>Retrieve FAST boundaries</text>
+    <callback>ddb_ModelMakerToolbox_XBeach_quickMode</callback>
+    <option1>fastboundaries</option1>
+  </element>
 </root>

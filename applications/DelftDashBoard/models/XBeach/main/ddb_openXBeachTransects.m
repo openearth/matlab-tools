@@ -3,7 +3,7 @@ handles=getHandles;
 
 %% Multiple domains
 opt = 0;
-[filename, pathname, filterindex] = uigetfile('*.txt', 'Select Params file');
+[filename, pathname, filterindex] = uigetfile('params.txt', 'Select Params file');
 
 % Find more info about the folders
 iddot = strfind(pathname, '\'); 
@@ -11,7 +11,9 @@ maindirectory = pathname(1:(iddot(length(iddot)-1)));
 listing = dir(maindirectory);
 ntransects_expected = length(listing)-2;
 ntransects = 0;
-
+if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+   ddb_giveWarning('text', 'XBeach is always in a Cartesian coordinate system!. Change your coordinate system.')
+else
 if pathname~=0  
     
     % Setting
@@ -60,9 +62,5 @@ if pathname~=0
     gui_updateActiveTab;
     ddb_refreshDomainMenu;
 end
-    
-    
-    
-
-
-end        
+end
+end

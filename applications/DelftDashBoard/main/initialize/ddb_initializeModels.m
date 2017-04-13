@@ -84,6 +84,7 @@ handles.toolbox.modelmaker.transects = 0;
 handles.toolbox.modelmaker.average_z = 0;
 handles.toolbox.modelmaker.average_dx = 0;
 handles.toolbox.modelmaker.average_z = 0;
+handles.toolbox.modelmaker.bathymetry.intertidalbathy = 0;
 handles.modelmaker.activeinterpolationtype = 3;
 handles.modelmaker.interpolationtypes = {'spline', 'linear', 'pchip'};
 setHandles(handles);

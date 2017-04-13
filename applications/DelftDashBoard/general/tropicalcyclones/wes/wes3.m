@@ -189,7 +189,11 @@ for it=1:length(tc.track)
     wind_speed=sqrt(vx.^2 + vy.^2);
 
     % Compute wind directions
-    dr=atan2(vy,vx);
+    try
+        dr=atan2(vy,vx);
+    catch
+        'do something'
+    end
     dr=1.5*pi-dr;
     wind_from_direction=180*dr/pi;
     wind_from_direction=mod(wind_from_direction,360);

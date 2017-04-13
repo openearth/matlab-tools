@@ -2,6 +2,16 @@ function handles=ddb_readParams(handles,filename,ad)
 
 xbs = xb_read_input(filename);
 
+
+% Fix for D3D grids
+nx = xs_get(xbs, 'nx'); ny = xs_get(xbs, 'ny');
+gridform = xs_get(xbs, 'gridform');
+if strfind(gridform, 'delft3d')
+    xbs = xs_set(xbs, 'nx', ny-1);
+    xbs = xs_set(xbs, 'ny', nx-1);
+end
+
+% Place in DDB
 for is = 1:length(xbs.data)
     if isnumeric(xbs.data(is).value)
         ddb_xbmi.(xbs.data(is).name) = xbs.data(is).value;
@@ -25,6 +35,7 @@ for ii = 1:length(xbs.data)
     namesxb{ii} = xbs.data(ii).name;
 end
 
+% Always needed
 varsneeded = {'meanvars', 'globalvars'};
 for ii = 1:length(varsneeded)
     nametesting = varsneeded{ii};

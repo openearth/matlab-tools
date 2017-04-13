@@ -107,7 +107,7 @@ settings = xb_generate_settings(OPT.settings{:});
 
 %% create boundary conditions
 
-waves = xb_generate_waves(OPT.waves{:});
+waves = xb_generate_waves(OPT.waves{:}); waves.data(1).value = 'jons_table';
 tide = xb_generate_tide(OPT.tide{:});
 
 %% create grid
@@ -153,6 +153,10 @@ xb = xs_join(xb, bathy, waves, tide, settings, wavegrid);
 
 % add meta data
 xb = xs_meta(xb, mfilename, 'input');
+if strcmp(xs_get(xb, 'instat'),'jons_table')
+    xb = xs_del(xb, 'rt');
+    xb = xs_del(xb, 'dtbc');
+end
 
 %% write model
 

@@ -28,12 +28,12 @@ for i=1:length(IDs)
    ID{i}            = X.Seq.Seq.li.li.Location.Location.code.code.value;
    description{i}   = X.Seq.Seq.li.li.Location.Location.description.description.value;
    srsName          = X.Seq.Seq.li.li.Location.Location.geometry.geometry.x_Features.x_Features.Featuremember.Featuremember.Point.Point.ATTRIBUTES.srsName.value;
+   [nx ny] = size(srsName); srsName = srsName(1:(ny-1));
    epsg(i)          = str2num(srsName(6:end));
    xy               = X.Seq.Seq.li.li.Location.Location.geometry.geometry.x_Features.x_Features.Featuremember.Featuremember.Point.Point.Coordinates.Coordinates.value;
    ind              = strfind(xy,',');
    x                = str2num(xy(1:ind-1));
    y                = str2num(xy(ind+1:end));
-   
    [lon(i),lat(i)]  = convertCoordinates(x,y,'CS1.code',epsg(i),'CS2.code',4326);
    
 end

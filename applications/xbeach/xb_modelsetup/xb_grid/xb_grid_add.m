@@ -136,6 +136,7 @@ dx = unique(diff(xgrid,1,2));
 dy = unique(diff(ygrid,1,1));
 
 vardx = ~isscalar(dx)||(~isempty(dy)&&~isscalar(dy));
+vardx = 1;
 
 %% create xbeach structures
 

@@ -80,9 +80,51 @@ else
             updateGUI;
         case('drawline')
             drawPolyline;
+        case('fastboundaries')
+            fastBoundaries;
     end
     
 end
+
+function fastBoundaries
+
+%% First get coordinate to 
+% Location
+handles=getHandles;
+x0 = handles.toolbox.modelmaker.xOri;
+y0 = handles.toolbox.modelmaker.yOri;
+
+% Coordinate system
+coord=handles.screenParameters.coordinateSystem;
+iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
+dataCoord.name=handles.screenParameters.coordinateSystem.name;
+dataCoord.type=handles.screenParameters.coordinateSystem.type;
+NewSys.name = 'WGS 84';
+NewSys.type = 'geo';
+[x1 y1] = ddb_coordConvert(x0, y0, dataCoord, NewSys);
+
+%% Second retrieve values for waves 
+fname1 = [handles.toolBoxDir, '\TropicalCyclone\FAST_Hs.mat'];
+load (fname1);
+distance = ((ReturnValues.location.values(:,1) - x1).^2 + (ReturnValues.location.values(:,2) - y1).^2).^0.5;
+id       = find(distance  == min(distance));
+Hsvalue  = ReturnValues.Hs.values(id,7);    Tpvalue  = ReturnValues.Tp.values(id,7);
+
+%% Third retrieve values for tide+surge 
+fname2 = [handles.toolBoxDir, '\TropicalCyclone\FAST_SSL.mat'];
+GTSM = load (fname2);
+distance = ((GTSM.lon - x1).^2 + (GTSM.lat - y1).^2).^0.5;
+id       = find(distance  == min(distance));
+SSL      = GTSM.RP100(id);
+
+%% Save values
+handles.toolbox.modelmaker.Hs   = round(Hsvalue(1)*10)/10;		
+handles.toolbox.modelmaker.Tp   = round(Tpvalue(1)*10)/10;	
+handles.toolbox.modelmaker.SSL  = round(SSL(1)*10)/10;	
+setHandles(handles);
+
+gui_updateActiveTab;
+
 
 %%
 function drawPolyline
@@ -132,9 +174,16 @@ handles.toolbox.modelmaker.nX=round(dx/handles.toolbox.modelmaker.dX);
 handles.toolbox.modelmaker.nY=round(dy/handles.toolbox.modelmaker.dY);
 handles.toolbox.modelmaker.lengthX=dx;
 handles.toolbox.modelmaker.lengthY=dy;
-
+handles.toolbox.modelmaker.waveangle = round(270-handles.toolbox.modelmaker.rotation);
+if handles.toolbox.modelmaker.waveangle > 360
+    handles.toolbox.modelmaker.waveangle = handles.toolbox.modelmaker.waveangle - 360;
+end
+if handles.toolbox.modelmaker.waveangle < 0
+    handles.toolbox.modelmaker.waveangle = handles.toolbox.modelmaker.waveangle + 360;
+end
+handles.model.xbeach.domain.thetamin = round(handles.toolbox.modelmaker.waveangle - 90);
+handles.model.xbeach.domain.thetamax = round(handles.toolbox.modelmaker.waveangle + 90);
 setHandles(handles);
-
 gui_updateActiveTab;
 
 %%
@@ -166,6 +215,15 @@ h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','GridOutline','Marker','o'
     'x0',handles.toolbox.modelmaker.xOri,'y0',handles.toolbox.modelmaker.yOri,'dx',lenx,'dy',leny,'rotation',handles.toolbox.modelmaker.rotation, ...
     'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY,'number',1);
 handles.toolbox.modelmaker.gridOutlineHandle=h;
+handles.toolbox.modelmaker.waveangle = round(270-handles.toolbox.modelmaker.rotation);
+if handles.toolbox.modelmaker.waveangle > 360
+    handles.toolbox.modelmaker.waveangle = handles.toolbox.modelmaker.waveangle - 360;
+end
+if handles.toolbox.modelmaker.waveangle < 0
+    handles.toolbox.modelmaker.waveangle = handles.toolbox.modelmaker.waveangle + 360;
+end
+handles.model.xbeach.domain.thetamin = round(handles.toolbox.modelmaker.waveangle - 90);
+handles.model.xbeach.domain.thetamax = round(handles.toolbox.modelmaker.waveangle + 90);
 
 setHandles(handles);
 
@@ -203,7 +261,15 @@ h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','GridOutline','Marker','o'
     'rotation',handles.toolbox.modelmaker.rotation, ...
     'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY, 'number',1);
 handles.toolbox.modelmaker.gridOutlineHandle=h;
-
+handles.toolbox.modelmaker.waveangle = round(270-handles.toolbox.modelmaker.rotation);
+if handles.toolbox.modelmaker.waveangle > 360
+    handles.toolbox.modelmaker.waveangle = handles.toolbox.modelmaker.waveangle - 360;
+end
+if handles.toolbox.modelmaker.waveangle < 0
+    handles.toolbox.modelmaker.waveangle = handles.toolbox.modelmaker.waveangle + 360;
+end
+handles.model.xbeach.domain.thetamin = round(handles.toolbox.modelmaker.waveangle - 90);
+handles.model.xbeach.domain.thetamax = round(handles.toolbox.modelmaker.waveangle + 90);
 setHandles(handles);
 
 %%
@@ -219,13 +285,13 @@ handles=getHandles;
 %% Check: no geographic coordinate systems
 coord=handles.screenParameters.coordinateSystem;
 iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
-dataCoord.name=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
-dataCoord.type=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
-%if ~strcmpi(lower(dataCoord.type), 'geographic')
+dataCoord.name=handles.screenParameters.coordinateSystem.name;
+dataCoord.type=handles.screenParameters.coordinateSystem.type;
+if ~strcmpi(lower(dataCoord.type), 'geographic')
     
     %% Make XBeach
     wb =   waitbox('XBeach model is being created');
-    handles=ddb_ModelMakerToolbox_XBeach_generateModel(handles);
+    handles=ddb_ModelMakerToolbox_XBeach_generateModel(handles, []);
 
     % Plotting
     handles=ddb_initializeXBeach(handles,1,'xbeach1');% Check
@@ -243,6 +309,6 @@ dataCoord.type=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
 
     % Overview
     ddb_ModelMakerToolbox_XBeach_modelsetup(handles)
-%else
-%	ddb_giveWarning('text',['XBeach models are ALWAYS in cartesian coordinate systems. Change your coordinate system to make a XBeach model']);
-%end
+else
+	ddb_giveWarning('text',['XBeach models are ALWAYS in cartesian coordinate systems. Change your coordinate system to make a XBeach model']);
+end

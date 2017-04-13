@@ -130,6 +130,23 @@ for jj = 1:ndatathings
     ndatathings = length(length(xbeach_writing.data));
 end
 
+%% Check grid type
+gridform = xs_get(xbeach_writing, 'gridform');
+if strfind(gridform, 'delft3d')
+    xbeach_writing = xs_del(xbeach_writing, 'xfile');
+    xbeach_writing = xs_del(xbeach_writing, 'yfile');
+end
+
 %% Writing
 pathname = handles.model.xbeach.domain(ndomain).pwd;
 cd(pathname);xb_write_params('params.txt', xbeach_writing);
+
+%% Write batch file
+fname = '_run_XBeach.bat';
+fileID = fopen(fname,'wt');
+fprintf(fileID,'call ');
+fprintf(fileID,'%s',handles.model.xbeach.exedir);
+fprintf(fileID,'xbeach.exe');
+fclose(fileID);
+fclose('all')
+

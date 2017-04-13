@@ -4,7 +4,7 @@ function [x,y,z,col] = georeference_image(filename)
 
 % Example: how to use?
 % figure; hold on;
-% [xgeo, ygeo, zgeo, cgeo] = georefence_image('srilanka');
+% [xgeo, ygeo, zgeo, cgeo] = georeference_image('srilanka');
 % surf(xgeo, ygeo, zgeo, cgeo); shading flat;
 % freezeColors
 % hpcolor = pcolor(X, Y, squeeze(u10(1,:,:))); shading flat;

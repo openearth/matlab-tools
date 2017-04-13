@@ -118,6 +118,7 @@ fprintf(fid,'%s\n','ddtemp.obs');
 fclose(fid);
 system(['"' exedir 'nesthd1" < nesthd1.inp']);
 
+
 % Check grids
 G1 = delft3d_io_grd('read',overall.grdfile);
 G2 = delft3d_io_grd('read',detail.grdfile);

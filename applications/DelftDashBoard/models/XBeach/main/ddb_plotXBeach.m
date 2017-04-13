@@ -1,4 +1,4 @@
-function ddb_plotXBeach(option, varargin)
+function handles = ddb_plotXBeach(option, varargin)
 
 handles=getHandles;
 
@@ -53,5 +53,3 @@ yl(2)=max(max(handles.model.xbeach.domain(id).grid.y));
 handles=ddb_zoomTo(handles,xl,yl,0.1);
 catch
 end
-
-setHandles(handles);

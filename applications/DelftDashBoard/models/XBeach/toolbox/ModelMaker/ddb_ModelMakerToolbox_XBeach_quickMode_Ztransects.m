@@ -44,7 +44,7 @@ end
 
 xline = linspace(x(1), x(2),1000); yline =  linspace(y(1), y(2),1000);
 id = ~isnan(zz);    F1 = scatteredInterpolant(xg(id), yg(id), zz(id),'natural', 'none');
-zline = F1(xline, yline); zline = naninterp_simple(zline, 1,'cubic');
+zline = F1(xline, yline); zline = naninterp_simple(zline, 1,'nearest');
 
 %% Apply DEM is possible
 try
@@ -56,7 +56,7 @@ end
 if applydem == 1;
     [X,Y,Z] = arcgridread(handles.toolbox.modelmaker.xb_trans.DEM);
     id = ~isnan(X);
-    F1 = scatteredInterpolant(X(id), Y(id), Z(id), 'natural', 'none'); 
+    F1 = scatteredInterpolant(X(id), Y(id), Z(id), 'natural', 'nearest'); 
     zline2 = F1(xline, yline);
     id1 = zline > 0; id2 = isnan(zline); zline(id1 | id2) = zline2(id1 | id2);
 end

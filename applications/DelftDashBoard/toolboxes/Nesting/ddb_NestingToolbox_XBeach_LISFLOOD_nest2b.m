@@ -15,9 +15,34 @@ id = find(strcmpi(A, 'DEMfile')); namedep = A{id+1};
 % Grid size
 dem_dxdy = abs((Ylis(1,1) - Ylis(2,1)));
     
-%% Distribute locations: ik ben hier
+%% Distribute locations: 
+Qqsum = sum(Qq');
+id = find( Qqsum ~=0);
 ntransects = length(distances);
-for ii = 1:ntransects
+count1 = 1;
+Qtotal2 = [];
+for ii = 1:length(distances)
+    Qtotal2(ii,:) = Qq(ii,:) * distances(ii);          % m3/s total from transect
+end
+Qtotal2 = sum(Qtotal2');
+
+% Distances
+resolutionwanted = 10;
+meandistances = mean(distances);
+steps = round(meandistances/resolutionwanted);
+
+% Check amount of steps
+id = find(Qtotal2 > 0.00001);
+lengthtotal = length(id)*2;
+if lengthtotal > 950
+    possible = 950/2;
+    Qtotal2sorted = sort(Qtotal2);
+    ny = length(Qtotal2sorted);
+    Qthreshold = Qtotal2sorted((ny-possible));
+    id = find(Qtotal2 > Qthreshold);
+end
+
+for ii = id
 
     % Determine line
     if ii == 1;
@@ -60,9 +85,9 @@ for ii = 1:ntransects
 end
 
 % Distribute water over discharges
-for ii = 1:ntransects
+for ii = id
     Qtotal = Qq(ii,:) * distances(ii);      % m3/s total from transect
-    id = Qtotal < 0; Qtotal(id) = 0;        % only water IN LISFLOOD
+    idtmp = Qtotal < 0; Qtotal(idtmp) = 0;        % only water IN LISFLOOD
     npoints = length(discharges(ii).x);     
     Qtotalpoint = Qtotal / npoints;         % distribute over # points
     qtotalpoints = Qtotalpoint / dem_dxdy;  % divide by DEM grid size (m2/s is required)
@@ -71,7 +96,6 @@ for ii = 1:ntransects
 end
     
 % Loop
-
 ymin = num2str(min(min(Ylis))-100); ymax = num2str(max(max(Ylis))+100);
 xmin = num2str(min(min(Xlis))-100); xmax = num2str(max(max(Xlis))+100);
 
@@ -85,7 +109,7 @@ fprintf (f_ID,'%s','W', xmin, ' ', xmax, ' FREE');  fprintf (f_ID,'\n');
 fprintf (f_ID,'%s','E', xmin, ' ', xmax, ' FREE');   fprintf (f_ID,'\n');
     
 xcount = 0;
-for j = 1:ntransects
+for j = id
     nlocations = length(discharges(j).x);
     for i = 1:nlocations
 
@@ -102,7 +126,7 @@ for j = 1:ntransects
         end
         fprintf(f_ID,'\n');
 
-    %discharges
+    % discharges
     discharge   = discharges(j).q;
     timestep    = discharges(j).t;
     heading     = strcat('DISCH_',num2str(xcount));

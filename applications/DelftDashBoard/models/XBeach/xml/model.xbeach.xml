@@ -75,8 +75,13 @@
       </menuitem>
       <menuitem>
         <string>Save transects</string>
-        <callback>ddb_editXBeachDescription</callback>
+        <callback>ddb_saveXBeach</callback>
         <option>savetrans</option>
+      </menuitem>
+      <menuitem>
+        <string>XBeach version ...</string>
+        <callback>ddb_setModelSettings</callback>
+        <option>selectversion</option>
       </menuitem>
     </menusavefile>
   </menu>

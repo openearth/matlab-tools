@@ -135,6 +135,7 @@ for i = 1:length(upartype)
         
         if any(ivar)
             xb.data(ivar).name;
+            try
             if iscell(xb.data(ivar).value)
                 varname = ['n' xb.data(ivar).name];
                 varname = regexprep(varname, '^n+', 'n');
@@ -156,6 +157,8 @@ for i = 1:length(upartype)
             else
                 % create ordinary parameter line
                 fprintf(fid, '%s\n', var2params(xb.data(ivar).name, xb.data(ivar).value, maxStringLength));
+            end
+            catch
             end
         end
     end

@@ -84,6 +84,13 @@ switch varargin{1}
                         handles.model.(model).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin'];
                         handles.model.(model).swandir=[getenv('D3D_HOME') '\' getenv('ARCH') '\swan'];
                     end
+                    
+                    
+                case{'xbeach'}
+                    if exist([getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\wave.exe'],'file')
+                        handles.model.(model).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin'];
+                        handles.model.(model).swandir=[getenv('D3D_HOME') '\' getenv('ARCH') '\swan'];
+                    end
 
 %                 case{'ww3'}
 %                     handles.model.(model).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\'];

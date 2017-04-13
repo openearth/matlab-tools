@@ -57,9 +57,9 @@
     <tab>
       <formodel>delft3dflow</formodel>
       <formodel>dflowfm</formodel>
-      <formodel>fast</formodel>
       <formodel>delft3dwave</formodel>
       <formodel>ww3</formodel>
+      <formodel>xbeach</formodel>
       <tabstring>Bathymetry</tabstring>
       <callback>ddb_ModelMakerToolbox_bathymetry</callback>
       <enable>1</enable>

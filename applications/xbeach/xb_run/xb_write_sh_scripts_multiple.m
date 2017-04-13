@@ -91,7 +91,7 @@ fprintf(fid,'echo $HOSTNAME \n\n');
 
 xb_write_sh_scripts_xbversions(fid, 'version', OPT.version)
 
-fprintf(fid,'rundir="%s"\n',OPT.rundir);
+fprintf(fid,'rundir=%s\n',OPT.rundir);
 strs = '%s %s %s %s ';
 subdirsstr = ['subdirs="' strs(1:(3*numel(OPT.subdirs))) '"\n\n'];
 fprintf(fid,subdirsstr,OPT.subdirs{:});

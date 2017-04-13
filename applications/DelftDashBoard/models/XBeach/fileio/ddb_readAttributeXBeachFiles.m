@@ -3,6 +3,13 @@ function handles=ddb_readAttributeXBeachFiles(handles,pathname, ntransects)
 id = ntransects;
 
 % Grid file % NEED TO INCLUDE DELFT3D-TYPE GRIDS
+if strcmpi(handles.model.xbeach.domain(id).gridform, 'delft3d')
+    cd(handles.model.xbeach.domain.pwd)
+    G = delft3d_io_grd('read', handles.model.xbeach.domain(id).xyfile);
+    handles.model.xbeach.domain(id).grid.x = G.cor.x;        handles.model.xbeach.domain(id).grid.y = G.cor.y;
+    [ny nx] = size(G.cor.x)
+    handles.model.xbeach.domain(id).ny = ny-1;     handles.model.xbeach.domain(id).nx = nx-1; 
+else
 if handles.model.xbeach.domain(id).vardx==1
     % Irregular grid
     X=load([pathname,handles.model.xbeach.domain(id).xfile]);
@@ -33,22 +40,35 @@ elseif handles.model.xbeach.domain(id).vardx==0
     catch
     end
 end
+end
 
 % % Depfile
+if strcmpi(handles.model.xbeach.domain(id).gridform, 'delft3d')
+    D = delft3d_io_dep('read', handles.model.xbeach.domain(id).depfile, G, 'location', 'cor');
+    handles.model.xbeach.domain(id).depth = D.cor.dep;
+else
 if ~strcmp(handles.model.xbeach.domain(id).depfile,'file')
     dp=load([pathname,handles.model.xbeach.domain(id).depfile]);
-    handles.model.xbeach.domain(id).depth = dp';
+    handles.model.xbeach.domain(id).depth = dp;
+end
 end
 
 % % NE-file
-if ~strcmp(handles.model.xbeach.domain(id).ne_layer,'file')
+if handles.model.xbeach.domain(id).struct == 1
+if strcmpi(handles.model.xbeach.domain.gridform, 'delft3d')
+    D2 = delft3d_io_dep('read', handles.model.xbeach.domain(id).ne_layer, G, 'location', 'cor');
+    handles.model.xbeach.domain(id).SedThick = D2.cor.dep;
+else
     ne=load([pathname,handles.model.xbeach.domain(id).ne_layer]);
     handles.model.xbeach.domain(id).SedThick = ne(1:ny+1,1:nx+1);
+end
 end
 
 % Friction file % TODO
 
+
 % Vegetation file % TODO
+
 
 % Water level boundary condition
 try

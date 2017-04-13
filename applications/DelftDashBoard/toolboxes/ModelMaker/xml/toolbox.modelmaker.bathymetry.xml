@@ -186,6 +186,14 @@
     <tooltipstring>Apply internal diffusion to fill missing data points after generating bathymetry</tooltipstring>
   </element>
   <element>
+    <style>checkbox</style>
+    <position>580 25 50 20</position>
+    <text>Apply FAST intertidal bathymetry</text>
+    <type>integer</type>
+    <variable>handles.toolbox.modelmaker.bathymetry.intertidalbathy</variable>
+    <tooltipstring>Apply the FAST intertidal bathymetry data</tooltipstring>
+  </element>
+  <element>
     <style>edit</style>
     <position>870 90 50 20</position>
     <text>Minimum Elevation</text>

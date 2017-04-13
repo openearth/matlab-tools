@@ -16,6 +16,9 @@ function y = rms(x,dim)
 % $HeadURL$
 % $Keywords$
 
+id = isnan(x);
+x(id) = [];
+
 if nargin==1
  y = sqrt(mean(x.^2));
 else

@@ -150,6 +150,14 @@
   </element>
   <element>
     <style>pushbutton</style>
+    <position>800 50 125 20</position>
+    <tooltipstring>Push to retrieve 1/100 year FAST boundary conditions</tooltipstring>
+    <text>Retrieve FAST boundaries</text>
+    <callback>ddb_ModelMakerToolbox_XBeach_quickMode_transects</callback>
+    <option1>fastboundaries</option1>
+  </element>
+  <element>
+    <style>pushbutton</style>
     <position>25 110 125 20</position>
     <tooltipstring>Push to draw polyline</tooltipstring>
     <text>Draw Grid Vertices</text>
@@ -168,7 +176,7 @@
     <style>pushbutton</style>
     <position>275 110 125 20</position>
     <tooltipstring>Push to delete plot handles</tooltipstring>
-    <text>Delete plot</text>
+    <text>Delete plot(s)</text>
     <callback>ddb_ModelMakerToolbox_XBeach_quickMode_transects</callback>
     <option1>delete</option1>
   </element>

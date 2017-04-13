@@ -15,7 +15,7 @@ function varargout = delft3d_io_sed(fname,varargin)
 % Also works for *.mor files that have the same *.ini structure.
 %
 %See also: delft3d, inivalue
-
+% 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
 %       Gerben de Boer

@@ -110,6 +110,7 @@ for ii = 1:ntransects
         filename = ['Transect_00', num2str(ii)];
     end
     mkdir(filename); cd(filename);
+    modeldirs{ii} = [mainfolder, '\', filename];
         
     % Change grid
     xbm.data(1).value = length(xr)-1;
@@ -117,7 +118,6 @@ for ii = 1:ntransects
     xbm.data(3).value = 0;  xbm.data(4).value = 0; 
     xbm.data(7).value.data.value = xr;
     xbm.data(8).value.data.value = yr;
-    save('xbm') 
 
     % Fix
     xgrid                   = xs_get(xbm,'xfile.xfile');
@@ -135,6 +135,11 @@ for ii = 1:ntransects
     % G. Write the params
     xb_write_input('params.txt', xbm);  
 end
+
+% Save multi-processes run
+cd ..
+generate_multiprocess_xbeach_runs([handles.model.xbeach.exedir, 'xbeach.exe'],modeldirs, 4,'_run_XBeach_batch.bat')
+
 catch
     ddb_giveWarning('text',['Something went wrong. Try again with different vertices']);
 end

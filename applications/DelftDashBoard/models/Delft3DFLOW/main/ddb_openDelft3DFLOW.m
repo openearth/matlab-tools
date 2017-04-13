@@ -156,7 +156,6 @@ switch opt
             end
             
         end
-        
         xl(1)=min(min(handles.model.delft3dflow.domain(id).gridX));
         xl(2)=max(max(handles.model.delft3dflow.domain(id).gridX));
         yl(1)=min(min(handles.model.delft3dflow.domain(id).gridY));

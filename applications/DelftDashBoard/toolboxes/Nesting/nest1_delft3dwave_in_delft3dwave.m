@@ -105,7 +105,7 @@ switch method
                         dst=sqrt((xp-lastxp)^2 + (yp-lastyp)^2);
                 end
                 % Check if this point is more than max_dist away from last point that was found
-                if dst>len || ip==length(sections(isec).x)
+                if dst>str2double(len) || ip==length(sections(isec).x)
                     % New point found
                     np=np+1;
                     xx(np)=xp;

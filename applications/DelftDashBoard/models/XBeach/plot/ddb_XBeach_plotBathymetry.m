@@ -90,10 +90,10 @@ switch lower(option)
         
         % First delete old bathy
         try
-        if isfield(handles.model.xbeach.domain(id).bathymetry,'plothandles')
-            if ~isempty(handles.model.xbeach.domain(id).bathymetry.plothandles)
+        if isfield(handles.model.xbeach.bathymetry,'plothandles')
+            if ~isempty(handles.model.xbeach.bathymetry.plothandles)
                 try
-                    delete(handles.model.xbeach.domain(id).bathymetry.plothandles);
+                    delete(handles.model.xbeach.bathymetry.plothandles);
                 end
             end
         end
@@ -103,34 +103,34 @@ switch lower(option)
             
             x=handles.model.xbeach.domain(id).grid.x;
             y=handles.model.xbeach.domain(id).grid.y;
-            z=handles.model.xbeach.domain(id).depth';
+            z=handles.model.xbeach.domain(id).depth;
             
             bathyhandle = ddb_plotBathy(x,y,z);
-            handles.model.xbeach.domain(id).bathymetry.plothandles=bathyhandle;
+            handles.model.xbeach.bathymetry.plothandles=bathyhandle;
             
             if vis
-                set(handles.model.xbeach.domain(id).bathymetry.plothandles,'Visible','on');
+                set(handles.model.xbeach.bathymetry.plothandles,'Visible','on');
             else
-                set(handles.model.xbeach.domain(id).bathymetry.plothandles,'Visible','off');
+                set(handles.model.xbeach.bathymetry.plothandles,'Visible','off');
             end
             
         end
         
     case{'delete'}
-            if ~isempty(handles.model.xbeach.domain(id).bathymetry.plothandles)
+            if ~isempty(handles.model.xbeach.bathymetry.plothandles)
                 try
-                    delete(handles.model.xbeach.domain(id).bathymetry.plothandles);
+                    delete(handles.model.xbeach.bathymetry.plothandles);
                 end
         end
         
     case{'update'}
-        if isfield(handles.model.xbeach.domain(id).bathymetry,'plothandles')
-            if ~isempty(handles.model.xbeach.domain(id).bathymetry.plothandles)
+        if isfield(handles.model.xbeach.bathymetry,'plothandles')
+            if ~isempty(handles.model.xbeach.bathymetry.plothandles)
                 try
                     if vis
-                        set(handles.model.xbeach.domain(id).bathymetry.plothandles,'Visible','on');
+                        set(handles.model.xbeach.bathymetry.plothandles,'Visible','on');
                     else
-                        set(handles.model.xbeach.domain(id).bathymetry.plothandles,'Visible','off');
+                        set(handles.model.xbeach.bathymetry.plothandles,'Visible','off');
                     end
                 end
             end
