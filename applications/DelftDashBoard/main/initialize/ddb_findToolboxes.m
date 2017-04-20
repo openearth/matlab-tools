@@ -161,6 +161,7 @@ for it=1:nt
     handles.toolbox.(nm).iniFcn=str2func(['ddb_initialize' name{it}]);
     handles.toolbox.(nm).plotFcn=str2func(['ddb_plot' name{it}]);
     handles.toolbox.(nm).coordConvertFcn=str2func(['ddb_coordConvert' name{it}]);
+    handles.toolbox.(nm).toolbox_type=tp{it}; % Standard or advanced
     if isdeployed
         % Executable
         handles.toolbox.(nm).dir=[dr filesep name{it} filesep];

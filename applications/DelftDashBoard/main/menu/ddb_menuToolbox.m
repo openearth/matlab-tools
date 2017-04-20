@@ -80,6 +80,7 @@ if isempty(varargin)
     
     p=findobj(gcf,'Tag','menutoolbox');
 
+    firstadditional=1;
     for k=1:length(toolboxes)
         
         name=toolboxes{k};
@@ -92,6 +93,9 @@ if isempty(varargin)
         
         % Separator below ModelMaker toolbox
         if k==2
+            sep='on';
+        elseif (strcmpi(handles.toolbox.(name).toolbox_type,'additional') && firstadditional)
+            firstadditional=0;
             sep='on';
         else
             sep='off';
