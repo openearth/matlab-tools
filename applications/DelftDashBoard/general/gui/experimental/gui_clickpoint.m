@@ -65,6 +65,7 @@ function gui_clickpoint(opt, varargin)
 xg=[];
 yg=[];
 callback=[];
+cancelcallback=[];
 multi=0;
 
 if ~isempty(varargin)
@@ -76,6 +77,8 @@ if ~isempty(varargin)
                     yg=varargin{i+2};
                 case{'callback'}
                     callback=varargin{i+1};
+                case{'cancelcallback'}
+                    cancelcallback=varargin{i+1};
                 case{'multiple'}
                     multi=1;
                 case{'single'}
@@ -93,16 +96,16 @@ set(gcf,'windowbuttonupfcn',[]);
 %%
 function moveMouse(src,eventdata)
 
-pos = get(gca, 'CurrentPoint');
-x0=pos(1,1);
-y0=pos(1,2);
-xlim=get(gca,'xlim');
-ylim=get(gca,'ylim');
-if x0<=xlim(1) || x0>=xlim(2) || y0<=ylim(1) || y0>=ylim(2)
-    ddb_updateCoordinateText('arrow');
-else
+% pos = get(gca, 'CurrentPoint');
+% x0=pos(1,1);
+% y0=pos(1,2);
+% xlim=get(gca,'xlim');
+% ylim=get(gca,'ylim');
+% if x0<=xlim(1) || x0>=xlim(2) || y0<=ylim(1) || y0>=ylim(2)
+%     ddb_updateCoordinateText('arrow');
+% else
     ddb_updateCoordinateText('crosshair');
-end
+% end
 
 %%
 function click(src,eventdata,opt,xg,yg,callback,multi)
