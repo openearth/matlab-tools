@@ -6,5 +6,5 @@ function rmax=rmax_vickery_and_wadhera_2008(pn,pc,psi)
 %psi=29;
 % e.g.
 dp=pn-pc;
-rmax=exp(3.015-6.291e-5*dp^2+0.0337*abs(psi));
+rmax=exp(3.015-6.291e-5*dp.^2+0.0337*abs(psi));
 %ln(rmax)=3.015-6.291e-5*dp^2+0.0337*psi
