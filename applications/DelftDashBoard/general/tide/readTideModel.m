@@ -129,41 +129,41 @@ end
 %% Only one time readtidemodel
 if ncons == 1;
     
-   %% TPXO 8.0
-   if ~isempty(findstr(tidefile, 'tpxo80'))
-   ind = find(strcmp('constituent', varargin));
-   C = cellstr(constituent(1,:));
-   str = ['Reading: TPXO 8.0 -', C, '- ', tp]; str = strjoin(str);
-   disp(str);
-   varargin{1, ind+1} = C{1,1};
-   [lon, lat, gt, depth] = readTideModel_TPXO8(tidefile,varargin);
-   conList = C;
-   
-   %% Other
-   else
-   iddot = strfind(tidefile, '\');
-   if isempty(iddot)
-        iddot = strfind(tidefile, '/');
-   end
-   runname = tidefile((iddot(end)+1):end);
-        str = ['Reading: ', runname, ' - ', tp]; 
+    %% TPXO 8.0
+    if ~isempty(findstr(tidefile, 'tpxo80'))
+        ind = find(strcmp('constituent', varargin));
+        C = cellstr(constituent(1,:));
+        str = ['Reading: TPXO 8.0 -', C, '- ', tp]; str = strjoin(str);
         disp(str);
-   [lon, lat, gt, depth, conList] = readTideModel_other(tidefile,varargin);
-   
-   % Filter other results
-   ind = find(strcmp(constituent, conList));
-   for jj = 1:length(gt);
-   [nx ny ncons] = size(gt(jj).amp);
-   if ncons > 1;
-       gt(jj).amp = gt(jj).amp(:,:,ind);
-       gt(jj).phi = gt(jj).phi(:,:,ind);
-   else
-       gt(jj).amp = gt(jj).amp(:,ind);
-       gt(jj).phi = gt(jj).phi(:,ind);
-   end
-   end
-   end
-
+        varargin{1, ind+1} = C{1,1};
+        [lon, lat, gt, depth] = readTideModel_TPXO8(tidefile,varargin);
+        conList = C;
+        
+        %% Other
+    else
+        iddot = strfind(tidefile, '\');
+        if isempty(iddot)
+            iddot = strfind(tidefile, '/');
+        end
+        runname = tidefile((iddot(end)+1):end);
+        str = ['Reading: ', runname, ' - ', tp];
+        disp(str);
+        [lon, lat, gt, depth, conList] = readTideModel_other(tidefile,varargin);
+        
+        % Filter other results
+        ind = find(strcmp(constituent, conList));
+        for jj = 1:length(gt);
+            [nx ny ncons] = size(gt(jj).amp);
+            if ncons > 1;
+                gt(jj).amp = gt(jj).amp(:,:,ind);
+                gt(jj).phi = gt(jj).phi(:,:,ind);
+            else
+                gt(jj).amp = gt(jj).amp(:,ind);
+                gt(jj).phi = gt(jj).phi(:,ind);
+            end
+        end
+    end
+    
 %% All constituents   
 else
     
