@@ -13,15 +13,16 @@ end
 duration1 = (handles.model.delft3dflow.domain(id).comStartTime - handles.model.delft3dflow.domain(id).startTime)*24*60;
 duration2 = (handles.model.delft3dflow.domain(id).comStopTime - handles.model.delft3dflow.domain(id).startTime)*24*60;
 duration3 = (handles.model.delft3dflow.domain(id).comInterval);
-if rem(duration1,dt)~=0 || rem(duration2,dt)~=0 || rem(duration3,dt)~=0 
-    ddb_giveWarning('text','Communication output times do not conincide with the model time step!');
+if abs(rem(duration1,dt))>1e-6 || abs(rem(duration2,dt))>1e-6 || rem(duration3,dt)~=0 
+    ddb_giveWarning('text','Communication output times do not coincide with the model time step!');
 end
 
 % Map times
 duration1 = (handles.model.delft3dflow.domain(id).mapStartTime - handles.model.delft3dflow.domain(id).startTime)*24*60;
 duration2 = (handles.model.delft3dflow.domain(id).mapStopTime - handles.model.delft3dflow.domain(id).startTime)*24*60;
 duration3 = (handles.model.delft3dflow.domain(id).mapInterval);
-if rem(duration1,dt)~=0 || rem(duration2,dt)~=0 || rem(duration3,dt)~=0 
+if abs(rem(duration1,dt))>1e-6 || abs(rem(duration2,dt))>1e-6 || rem(duration3,dt)~=0 
+%if rem(duration1,dt)~=0 || rem(duration2,dt)~=0 || rem(duration3,dt)~=0 
     ddb_giveWarning('text','Map output times do not coincide with the model time step!');
 end
 
