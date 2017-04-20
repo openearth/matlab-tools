@@ -164,7 +164,8 @@ for j=1:2
             openBoundaries(nb).N2=n2(j);            
             openBoundaries(nb).name=[dir{j} num2str(nd)];
         end
-        if m==mmax
+%        if m==mmax
+        if m>mmax
             break
         end
     end    
@@ -197,7 +198,7 @@ for j=1:2
             % Find start point
             switch dpsopt
                 case{'dp'}
-                    if ~isnan(depth(m(j),n)) && ~isnan(depth(m(j),n-1)) && ...
+                    if ~isnan(depth(m(j),n)) && ...
                             depth(m(j),n)<zmax
                         nstart=n;
                         break
@@ -251,10 +252,11 @@ for j=1:2
             openBoundaries(nb).N2=nend;            
             openBoundaries(nb).name=[dir{j} num2str(nd)];
         end
-        if nend==0
-            n=n+1;
-        end
-        if n==nmax
+%         if nend==0
+%             n=n+1;
+%         end
+%        if n==nmax
+        if n>nmax
             break
         end
     end
