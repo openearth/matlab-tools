@@ -33,7 +33,7 @@ if strcmpi(modelType,'sobek3')
     
     Data.stationNames=strtrim(D.feature_name.Val);
 elseif strcmpi(modelType,'sobek3_new')
-        sobekFile=[ sim_dir filesep runid '.dsproj_data\Integrated_Model\dflow1d\output\observations.nc'];
+        sobekFile=[ sim_dir filesep runid '.dsproj_data\Integrated_Model_output\dflow1d\output\observations.nc'];
         D=read_sobeknc(sobekFile);
         
          Data.stationNames=strtrim(D.observation_Id.Val);
