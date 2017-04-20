@@ -100,8 +100,8 @@ if isa(filename, 'org.apache.xerces.dom.DeferredDocumentImpl') || isa(filename, 
 else
     % Input is a file or url    
     % Read entire file into one string
-    switch filename(1:4)
-        case{'http'}
+    switch filename(1:3)
+        case{'htt','ftp'}
             str=urlread(filename);
         otherwise
             str=fileread(filename);
