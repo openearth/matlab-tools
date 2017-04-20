@@ -282,6 +282,7 @@ for k=1:1000
                 firstactivation=1;
                 activated=1;
             end
+            % Activate neighbors
             if iac2(i,j)
                 if iac(i-1,j) && ~iac2(i-1,j)
                     iac2(i-1,j)=1;
@@ -302,43 +303,45 @@ for k=1:1000
             end
         end
     end
-    for i=mmax-1:-1:2
-        for j=nmax-1:-1:2
-            if iac2(i,j)
-                if iac(i-1,j) && ~iac2(i-1,j)
-                    iac2(i-1,j)=1;
-                    activated=1;
-                end
-                if iac(i+1,j) && ~iac2(i+1,j)
-                    iac2(i+1,j)=1;
-                    activated=1;
-                end
-                if iac(i,j-1) && ~iac2(i,j-1)
-                    iac2(i,j-1)=1;
-                    activated=1;
-                end
-                if iac(i,j+1) && ~iac2(i,j+1)
-                    iac2(i,j+1)=1;
-                    activated=1;
-                end
-            end
-        end
-    end
+%     for i=mmax-1:-1:2
+%         for j=nmax-1:-1:2
+%             if iac2(i,j)
+%                 if iac(i-1,j) && ~iac2(i-1,j)
+%                     iac2(i-1,j)=1;
+%                     activated=1;
+%                 end
+%                 if iac(i+1,j) && ~iac2(i+1,j)
+%                     iac2(i+1,j)=1;
+%                     activated=1;
+%                 end
+%                 if iac(i,j-1) && ~iac2(i,j-1)
+%                     iac2(i,j-1)=1;
+%                     activated=1;
+%                 end
+%                 if iac(i,j+1) && ~iac2(i,j+1)
+%                     iac2(i,j+1)=1;
+%                     activated=1;
+%                 end
+%             end
+%         end
+%     end
     if activated==0
         break
     end
 end
 
-if iac(1,1)
+% Four corner points of the grid were left inactive. Let's see if they need
+% to be activated
+if iac(1,1) && (iac2(2,1) || iac2(1,2))
     iac2(1,1)=1;
 end
-if iac(mmax,1)
+if iac(mmax,1) && (iac2(mmax-1,1) || iac2(mmax,2))
     iac2(mmax,1)=1;
 end
-if iac(1,nmax)
+if iac(1,nmax) && (iac2(1,nmax-1) || iac2(2,nmax))
     iac2(1,nmax)=1;
 end
-if iac(mmax,nmax)
+if iac(mmax,nmax) && (iac2(mmax-1,nmax) || iac2(mmax,nmax-1))
     iac2(mmax,nmax)=1;
 end
 
