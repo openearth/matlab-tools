@@ -6,51 +6,53 @@ function EHY_dflowfm_mduTimes
 %
 % created by Julien Groenenboom, April 2017
 format1='yyyymmdd';
-format2='yyyymmddHHMMSS';
+format2='yyyymmdd HHMMSS';
 
-RefDateStr = input(['RefDate (' format1 '): '],'s');
-Tunit =      input('Tunit (H, M or S): ','s');
-TStart =     input(['TStart: Start time w.r.t. RefDate (in TUnit) OR date (' format2 '), : '],'s');
-TStop =      input(['TStop: Stop time w.r.t. RefDate (in TUnit) OR date (' format2 '), : '],'s');
+prompt={['RefDate (' format1 '): '],'Tunit (H, M or S): ',...
+    'TStart: Start time w.r.t. RefDate (in TUnit)',['TStart: Start time as date (' format2 ')'],...
+    'TStop: Stop time w.r.t. RefDate (in TUnit)',['TStop: Stop time as date (' format2 ')']};
+input=inputdlg(prompt,'Input',1);
+output=input;
 
-RefDateNum=datenum(RefDateStr,'yyyymmdd');
+RefDateNum=datenum(input{1},format1);
 
-if strcmpi(Tunit,'S')
+if strcmpi(input{2},'S')
     factor=60*60*24;
-elseif strcmpi(Tunit,'M')
+elseif strcmpi(input{2},'M')
     factor=60*24;
-elseif strcmpi(Tunit,'H')
+elseif strcmpi(input{2},'H')
     factor=24;
 else
     error('Tunit has to be H, M or S')
 end
 
 % TStart
-try % TStart was given as a date
-    datenum(TStart,format2);
-    TStartNum=datenum(TStart,format2);
-    TStart_unit=(TStartNum-RefDateNum)*factor;
-catch % TStart was given w.r.t. RefDate (in TUnit)
-    TStartNum=RefDateNum+str2num(TStart)/factor;
-    TStart_unit=str2num(TStart);
+if isempty(input{3}) && ~isempty(input{4})
+    TStartNum=datenum(input{4},format2);
+    output{3}=num2str((TStartNum-RefDateNum)*factor);
+elseif ~isempty(input{3}) && isempty(input{4})
+    TStartNum=RefDateNum+str2num(input{3})/factor;
+    output{4}=datestr(TStartNum,format2);
 end
+
 % TStop
-try % TStop was given as a date
-        datenum(TStop,format2);
-    TStopNum=datenum(TStop,format2);
-    TStop_unit=(TStopNum-RefDateNum)*factor;
-catch % TStop was given w.r.t. RefDate (in TUnit)
-    TStopNum=RefDateNum+str2num(TStop)/factor;
-    TStop_unit=str2num(TStop);
+if isempty(input{5}) && ~isempty(input{6})
+    TStartNum=datenum(input{6},format2);
+    output{5}=num2str((TStartNum-RefDateNum)*factor);
+elseif ~isempty(input{5}) && isempty(input{6})
+    TStartNum=RefDateNum+str2num(input{5})/factor;
+    output{6}=datestr(TStartNum,format2);
 end
+
+inputdlg(prompt,'Output',1,output);
+
 clc
 disp(['====================EHY_dflowfm_mduTimes==================='])
-disp(['RefDate (yyyymmdd):                             ' RefDateStr])
-disp(['Tunit (H, M or S):                              ' Tunit])
-disp(['TStart: Start time w.r.t. RefDate (in TUnit):   ' num2str(TStart_unit) ])
-disp(['TStop :  Stop time w.r.t. RefDate (in TUnit):   ' num2str(TStop_unit) ])
+disp(['RefDate (yyyymmdd):                             ' output{1}])
+disp(['Tunit (H, M or S):                              ' output{2}])
+disp(['TStart: Start time w.r.t. RefDate (in TUnit):   ' output{3}])
+disp(['TStop :  Stop time w.r.t. RefDate (in TUnit):   ' output{5}])
 disp(['==========================================================='])
-disp(['start date:                                     ' datestr(TStartNum)])
-disp(['stop  date:                                     ' datestr(TStopNum)])
+disp(['start date:                                     ' output{4}])
+disp(['stop  date:                                     ' output{6}])
 disp(['==========================================================='])
-
