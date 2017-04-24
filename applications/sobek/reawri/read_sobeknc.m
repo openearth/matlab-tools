@@ -35,14 +35,8 @@ for i_field = 1: length(Fieldnames)
     Name_subfield = simona2mdu_replacechar(Name_subfield,'(','');
     Name_subfield = simona2mdu_replacechar(Name_subfield,')','');
     Name_subfield = simona2mdu_replacechar(Name_subfield,'.','');
+    Param =  length(Fields(i_field).DimFlag(Fields(i_field).DimFlag > 0));
     
-    for i_dim = 1:length(Fields(i_field).DimFlag)
-        tmp(i_dim) = 0;
-        if Fields(i_field).DimFlag(i_dim) > 0
-            tmp(i_dim) = 1;
-        end
-    end
-    Param = sum(tmp);
     if Param == 1
         Info.(Name_subfield) = qpread(File,Fieldnames{i_field},'data',0);
     elseif Param == 2
