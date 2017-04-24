@@ -1,4 +1,4 @@
-%% EHY_pp_wl kul
+%% EHY_pp_wl General EHY postprocessing script
 function EHY_pp_wl(varargin)
 
 clearvars -except varargin;
@@ -12,6 +12,11 @@ ListOfChapters = inifile('chapters',Info);
 modelType      = inifile('getstring',Info,'General'  ,'modelType   ');
 runid          = inifile('getstring',Info,'General'  ,'runid       ');
 sim_dir        = inifile('getstring',Info,'General'  ,'sim_dir     ');
+try
+    fig_dir    = inifile('getstring',Info,'General'  ,'fig_dir     ');
+catch
+    fig_dir    = [sim_dir filesep runid '_figs'];
+end
 meas_dir       = inifile('getstring',Info,'General'  ,'meas_dir    ');
 mup_temp       = inifile('getstring',Info,'General'  ,'mup_temp    ');
 
@@ -96,7 +101,6 @@ else
 end
 
 %% Start postprocessing, first create output directories
-fig_dir           = [sim_dir filesep runid '_figs'];
 if exist(fig_dir,'dir') rmdir(fig_dir,'s'); end
 mkdir (fig_dir);
 
