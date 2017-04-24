@@ -31,7 +31,7 @@ if strcmpi(modelType,'sobek3')
     sobekFile=dir([ sim_dir filesep runid '.dsproj_data\Water level (op)*.nc*']);
     D=read_sobeknc([sim_dir filesep runid '.dsproj_data' filesep sobekFile.name]);
     
-    Data.stationNames=strtrim(D.feature_name.Val);
+    Data.stationNames=strtrim(D.feature_name_points.Val);
 elseif strcmpi(modelType,'sobek3_new')
         sobekFile=[ sim_dir filesep runid '.dsproj_data\Integrated_Model_output\dflow1d\output\observations.nc'];
         D=read_sobeknc(sobekFile);
@@ -82,8 +82,8 @@ for i_stat = 1: length(stat_name)
                 Data.exist_stat(i_stat) = true;
                 %% Read Sobek3 data
                 if strcmpi(modelType,'sobek3')
-                    Data.times                 =D.water_level.Time;
-                    Data.val(:,i_stat)         =D.water_level.Val(:,nr_stat);
+                    Data.times                 =D.water_level_points.Time;
+                    Data.val(:,i_stat)         =D.water_level_points.Val(:,nr_stat);
                 elseif strcmpi(modelType,'sobek3_new')
                     Data.times                 =D.Observedwaterlevel.Time;
                     Data.val(:,i_stat)         =D.Observedwaterlevel.Val(:,nr_stat);
