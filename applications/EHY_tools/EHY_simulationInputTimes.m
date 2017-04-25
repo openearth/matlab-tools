@@ -7,7 +7,7 @@ function EHY_simulationInputTimes(varargin)
 % be provided
 %
 % Example1: EHY_simulationInputTimes
-% Example2: EHY_simulationInputTimes('D:\model.mdu')
+% Example2: EHY_simulationInputTimes('D:\model.mdu') 
 %
 % created by Julien Groenenboom, April 2017
 
@@ -67,7 +67,7 @@ userInput=inputdlg(prompt,'Input',1,mdInput);
 % if RefDate was changed, recompute TStart and TStop
 if any(changedLine==1); userInput{3}=''; userInput{5}=''; end
 % if TUnit was changed, recompute start date and stop date
-if any(changedLine==2); userInput{4}=''; userInput{6}=''; end
+if any(changedLine==2); userInput{3}=''; userInput{5}=''; end
 % if TStart was changed, change start date and vice versa.
 if any(changedLine==3); userInput{4}=''; elseif any(changedLine==4); userInput{3}='';  end
 % if TStop was changed, change stop date and vice versa.
