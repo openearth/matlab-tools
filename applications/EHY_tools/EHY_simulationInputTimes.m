@@ -1,13 +1,13 @@
 function EHY_simulationInputTimes(varargin)
 %% EHY_simulationInputTimes
 %
-% This function calculates the start and stop time w.r.t. the reference date 
+% This function calculates the start and stop time w.r.t. the reference date
 % of D-FLOW FM, Delft3D and SIMONA models.
 % As input, one of the corresponding input files (.mdu / .mdf / siminp) can
 % be provided
 %
 % Example1: EHY_simulationInputTimes
-% Example2: EHY_simulationInputTimes('D:\model.mdu') 
+% Example2: EHY_simulationInputTimes('D:\model.mdu')
 %
 % created by Julien Groenenboom, April 2017
 
@@ -16,8 +16,22 @@ format{1}='yyyymmdd';
 format{2}='yyyymmdd HHMMSS';
 
 %% get time info from mdFile
-if nargin>0
+if nargin==0
+    [option,~]=  listdlg('PromptString','Choose between:',...
+        'SelectionMode','single',...
+        'ListString',{'Start with blank fields','Open a .mdu / .mdf or SIMONA file as input'},...
+        'ListSize',[300 50]);
+    if option==1
+        mdInput={'','','','','',''};
+    elseif option==2
+        [filename, pathname]=uigetfile('*.*','Open a .mdu / .mdf / siminp file');
+        mdFile=[pathname filename];
+    end
+elseif nargin==1
     mdFile=varargin{1};
+end
+
+if exist('mdFile','var')
     modelType=nesthd_det_filetype(mdFile);
     [pathstr,name,ext]=fileparts(mdFile);
     switch modelType
@@ -42,20 +56,16 @@ if nargin>0
             ind=strmatch('TSTART',siminp.File);
             [~,TStart]=strtok(siminp.File{ind},' ');
             mdInput{3}=num2str(str2double(TStart)); %deal with .00
-        ind=strmatch('TSTOP',siminp.File);
-        [~,TStop]=strtok(siminp.File{ind},' ');
-        mdInput{5}=num2str(str2double(TStop)); %deal with .00
+            ind=strmatch('TSTOP',siminp.File);
+            [~,TStop]=strtok(siminp.File{ind},' ');
+            mdInput{5}=num2str(str2double(TStop)); %deal with .00
     end
-end
-
-%% complement the mdInput and ask for input
-if ~exist('mdInput','var')
-    mdInput={'','','','','',''};
-else
+    % complement the mdInput
     mdInput=EHY_simulationInputTimes_calc(mdInput,format);
-    mdInput=cellfun(@num2str,mdInput,'UniformOutput',0)
+    mdInput=cellfun(@num2str,mdInput,'UniformOutput',0);
 end
 
+%% get input from user
 prompt={['RefDate (' format{1} '): '],'Tunit (H, M or S): ',...
     'TStart: Start time w.r.t. RefDate (in TUnit)',['TStart: Start time as date (' format{2} ')'],...
     'TStop: Stop time w.r.t. RefDate (in TUnit)',['TStop: Stop time as date (' format{2} ')']};
