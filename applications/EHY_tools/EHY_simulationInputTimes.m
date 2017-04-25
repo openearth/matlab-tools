@@ -1,8 +1,8 @@
 function EHY_simulationInputTimes(varargin)
 %% EHY_simulationInputTimes
 %
-% This script calculates the start and stop time wrt the reference date of
-% D-FLOW FM, Delft3D and SIMONA models.
+% This function calculates the start and stop time w.r.t. the reference date 
+% of D-FLOW FM, Delft3D and SIMONA models.
 % As input, one of the corresponding input files (.mdu / .mdf / siminp) can
 % be provided
 %
