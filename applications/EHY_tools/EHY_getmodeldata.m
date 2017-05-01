@@ -15,7 +15,12 @@ function Data = EHY_getmodeldata(sim_dir,runid,stat_name,modelType,varargin)
 %  Data.val (:,no_stat): water level values for the requested stations
 
 OPT.varName = 'wl';
+OPT.t0 = '';
+OPT.tend = '';
+
 OPT         = setproperty(OPT,varargin);
+if ~isempty(OPT.t0); OPT.t0=datenum(OPT.t0); end
+if ~isempty(OPT.tend); OPT.tend=datenum(OPT.tend); end
 
 %% no stat_name specified, all stations, otherwise, stat_name is a string or a cell array of strings
 if ~isempty(stat_name)
@@ -70,6 +75,7 @@ end
 if isempty(stat_name)
     stat_name = Data.stationNames;
 end
+Data.requestedStatNames=stat_name';
 
 %% Get the computational data
 for i_stat = 1: length(stat_name)
@@ -130,12 +136,29 @@ for i_stat = 1: length(stat_name)
             end
                         
         case 'uv'
-
             % To be implemented
 
         case 'sal'
+            %% Waterlevels, times and values for station nr nr_stat
+            nr_stat  = find(strcmp(Data.stationNames,stat_name{i_stat}) ~= 0,1);
+            if ~isempty(nr_stat)
+                %% Read Waqua data
+                if strcmpi(modelType,'waqua')
+                    Data.times         = qpread(sds,1,'water level (station)','times');
+                    [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
+                    Data.val(i_stat,:,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat);
+                end
+            end
 
-            % To be implemented
     end
 end
+end
 
+function [Data, time_index]=EHY_getmodeldata_time_index(Data,OPT)
+if ~isempty('OPT.t0') && ~isempty('OPT.tend')
+    time_index=find((Data.times>=OPT.t0) & (Data.times<=OPT.tend));
+else
+    time_index=0;
+end
+Data.times=Data.times(time_index);
+end
