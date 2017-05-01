@@ -23,7 +23,6 @@ for irec = 1: length(S.File)
       if any(strfind(filename,'/'))
           filename=[filename(2) ':' strrep(filename(3:end),'/','\')];
       end
-      end
       hulp2    = readsiminp(S.FileDir,filename);
       hulp(end+1:end + length(hulp2.File)) = hulp2.File;
    end
