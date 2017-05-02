@@ -49,16 +49,28 @@ if exist('mdFile','var')
             mdInput{5}=num2str(mdf.keywords.tstop);
         case 'siminp'
             siminp=readsiminp(pathstr,[name ext]);
-            ind=strmatch('DATE',siminp.File);
-            [~,refDate]=strtok(siminp.File{ind},'''');
-            mdInput{1}=datestr(datenum(lower(refDate)),format{1});
-            mdInput{2}='M';
-            ind=strmatch('TSTART',siminp.File);
-            [~,TStart]=strtok(siminp.File{ind},' ');
-            mdInput{3}=num2str(str2double(TStart)); %deal with .00
-            ind=strmatch('TSTOP',siminp.File);
-            [~,TStop]=strtok(siminp.File{ind},' ');
-            mdInput{5}=num2str(str2double(TStop)); %deal with .00
+            try % if DATE, TSTART and TSTOP are on separate lines
+                ind=strmatch('DATE',siminp.File);
+                [~,refDate]=strtok(siminp.File{ind},'''');
+                mdInput{1}=datestr(datenum(lower(refDate)),format{1});
+                mdInput{2}='M';
+                ind=strmatch('TSTART',siminp.File);
+                [~,TStart]=strtok(siminp.File{ind},' ');
+                mdInput{3}=num2str(str2double(TStart)); %deal with .00
+                ind=strmatch('TSTOP',siminp.File);
+                [~,TStop]=strtok(siminp.File{ind},' ');
+                mdInput{5}=num2str(str2double(TStop)); %deal with .00
+            catch % if DATE, TSTART and TSTOP are NOT on separate lines
+                ind=strmatch('DATE',siminp.File);
+                split=strsplit(siminp.File{ind});
+                indDate=strmatch('date',lower(split),'exact');
+                indStart=strmatch('tstart',lower(split),'exact');
+                indStop=strmatch('tstop',lower(split),'exact');
+                mdInput{1}=datestr(datenum(lower(strjoin(split(indDate+1:indStart-1)))),format{1});
+                mdInput{2}='M';
+                mdInput{3}=num2str(str2double(split{indStart+1})); %deal with .00
+                mdInput{5}=num2str(str2double(split{indStop+1})); %deal with .00
+            end
     end
     % complement the mdInput
     mdInput=EHY_simulationInputTimes_calc(mdInput,format);
