@@ -136,10 +136,18 @@ for i_stat = 1: length(stat_name)
             end
                         
         case 'uv'
-            % To be implemented
-
+            %% Velocities, times and values for station nr nr_stat
+            nr_stat  = find(strcmp(Data.stationNames,stat_name{i_stat}) ~= 0,1);
+            if ~isempty(nr_stat)
+                %% Read Waqua data
+                if strcmpi(modelType,'waqua')
+                    Data.times         = qpread(sds,1,'water level (station)','times');
+                    [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
+                    Data.val(i_stat,:,:) = waquaio(sds,[],'uv-stat',time_index,nr_stat);
+                end
+            end
         case 'sal'
-            %% Waterlevels, times and values for station nr nr_stat
+            %% Salinity, times and values for station nr nr_stat
             nr_stat  = find(strcmp(Data.stationNames,stat_name{i_stat}) ~= 0,1);
             if ~isempty(nr_stat)
                 %% Read Waqua data
@@ -149,7 +157,6 @@ for i_stat = 1: length(stat_name)
                     Data.val(i_stat,:,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat);
                 end
             end
-
     end
 end
 end
