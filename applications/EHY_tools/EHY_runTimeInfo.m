@@ -25,14 +25,6 @@ switch modelType
         mdu=dflowfm_io_mdu('read',mdFile);
         runTimeInfo.mduInfo=mdu.time;
         
-        % dia
-        if exist([pathstr filesep name '_0000.dia'],'file') % first check if run was done in parallel
-            diaFile=[pathstr filesep name '_0000.dia'];
-        else %  not in parallel - use out.txt file
-            diaFile=[pathstr filesep 'out.txt'];
-        end
-        fid=fopen(diaFile,'r');
-        
         % startDate
         RefDateNum=datenum(num2str(mdu.time.RefDate),'yyyymmdd');
         if strcmpi(mdu.time.Tunit,'S')
@@ -51,26 +43,27 @@ switch modelType
         line2=strsplit(line);
         simPeriod_S=str2double(line2{end});
         
-        % average timestep
-        line=findLineOrQuit(fid,'** INFO   : average timestep      (s)  :');
-        line2=strsplit(line);
-        runTimeInfo.aveTimeStep_S=str2double(line2{end});
-        
-        % realTime_S
-        line=findLineOrQuit(fid,'** INFO   : time steps            (s)  :');
-        line2=strsplit(line);
-        realTime_S=str2double(line2{end});
-        
+        try % if simulation has finished
+            % dia
+            if exist([pathstr filesep name '_0000.dia'],'file') % first check if run was done in parallel
+                diaFile=[pathstr filesep name '_0000.dia'];
+            else %  not in parallel - use out.txt file
+                diaFile=[pathstr filesep 'out.txt'];
+            end
+            fid=fopen(diaFile,'r');
+            
+            % average timestep
+            line=findLineOrQuit(fid,'** INFO   : average timestep      (s)  :');
+            line2=strsplit(line);
+            runTimeInfo.aveTimeStep_S=str2double(line2{end});
+            
+            % realTime_S
+            line=findLineOrQuit(fid,'** INFO   : time steps            (s)  :');
+            line2=strsplit(line);
+            realTime_S=str2double(line2{end});
+        end
     case 'mdf'
         mdf=delft3d_io_mdf('read',mdFile);
-        
-        % dia
-        if exist([pathstr filesep 'tri-diag.' name ],'file') % first check if run was done in parallel
-            diaFile=[pathstr filesep 'tri-diag.' name ];
-        else %  not in parallel
-            diaFile=[pathstr filesep 'tri-diag.' name '-001'];
-        end
-        fid=fopen(diaFile,'r');
         
         % startDate
         RefDateNum=datenum(mdf.keywords.itdate,'yyyy-mm-dd');
@@ -89,17 +82,21 @@ switch modelType
         factor=(60*60*24)/factor;
         simPeriod_S=(mdf.keywords.tstop-mdf.keywords.tstart)*factor;
         
-        % realTime_S
-        line=findLineOrQuit(fid,'|Total                |');
-        line2=strsplit(line);
-        realTime_S=str2double(line2{3});
-        
+        try % if simulation has finished
+            % dia
+            if exist([pathstr filesep 'tri-diag.' name ],'file') % first check if run was done in parallel
+                diaFile=[pathstr filesep 'tri-diag.' name ];
+            else %  not in parallel
+                diaFile=[pathstr filesep 'tri-diag.' name '-001'];
+            end
+            fid=fopen(diaFile,'r');
+            
+            % realTime_S
+            line=findLineOrQuit(fid,'|Total                |');
+            line2=strsplit(line);
+            realTime_S=str2double(line2{3});
+        end
     case 'siminp'
-        % dia
-        directory=dir([pathstr filesep 'waqpro-m*']);
-        diaFile=[pathstr filesep directory(1).name];
-        fid=fopen(diaFile,'r');
-        
         % startDate
         siminp=readsiminp(pathstr,[name ext]);
         ind=strmatch('DATE',siminp.File);
@@ -114,14 +111,21 @@ switch modelType
         [~,TStop]=strtok(siminp.File{ind},' ');
         simPeriod_S=(str2num(TStop)-str2num(TStart))*60;
         
-        % realTime_S
-        line=findLineOrQuit(fid,'Simulation started at date:');
-        line2=strsplit(line);
-        t0=datenum([line2{8} line2{10}],'yyyymmddHHMMSS');
-        line=findLineOrQuit(fid,'Simulation ended   at date:');
-        line2=strsplit(line);
-        tend=datenum([line2{8} line2{10}],'yyyymmddHHMMSS')
-        realTime_S=(tend-t0)*24*60*60;
+        try % if simulation has finished
+            % dia
+            directory=dir([pathstr filesep 'waqpro-m*']);
+            diaFile=[pathstr filesep directory(1).name];
+            fid=fopen(diaFile,'r');
+            
+            % realTime_S
+            line=findLineOrQuit(fid,'Simulation started at date:');
+            line2=strsplit(line);
+            t0=datenum([line2{8} line2{10}],'yyyymmddHHMMSS');
+            line=findLineOrQuit(fid,'Simulation ended   at date:');
+            line2=strsplit(line);
+            tend=datenum([line2{8} line2{10}],'yyyymmddHHMMSS')
+            realTime_S=(tend-t0)*24*60*60;
+        end
 end
 fclose all
 %% Store all data in struct
@@ -134,15 +138,19 @@ runTimeInfo.simPeriod_M=runTimeInfo.simPeriod_S/60;
 runTimeInfo.simPeriod_H=runTimeInfo.simPeriod_S/3600;
 runTimeInfo.simPeriod_D=runTimeInfo.simPeriod_H/24;
 
-% runtime
-runTimeInfo.realTime_S=realTime_S;
-runTimeInfo.realTime_M=runTimeInfo.realTime_S/60;
-runTimeInfo.realTime_H=runTimeInfo.realTime_S/3600;
-runTimeInfo.realTime_D=runTimeInfo.realTime_H/24;
-
-% computational time
-runTimeInfo.compTime_minPerDay=(runTimeInfo.realTime_S/60)/(runTimeInfo.simPeriod_S/3600/24);
-runTimeInfo.compTime_dayPerYear=runTimeInfo.compTime_minPerDay/60/24*365;
+if exist('realTime_S','var') % if simulation has finished
+    % runtime
+    runTimeInfo.realTime_S=realTime_S;
+    runTimeInfo.realTime_M=runTimeInfo.realTime_S/60;
+    runTimeInfo.realTime_H=runTimeInfo.realTime_S/3600;
+    runTimeInfo.realTime_D=runTimeInfo.realTime_H/24;
+    
+    % computational time
+    runTimeInfo.compTime_minPerDay=(runTimeInfo.realTime_S/60)/(runTimeInfo.simPeriod_S/3600/24);
+    runTimeInfo.compTime_dayPerYear=runTimeInfo.compTime_minPerDay/60/24*365;
+else
+    runTimeInfo.comment='Simulation has probably not finished yet or crashed'
+end
 end
 %%
 function line=findLineOrQuit(fid,wantedLine)
