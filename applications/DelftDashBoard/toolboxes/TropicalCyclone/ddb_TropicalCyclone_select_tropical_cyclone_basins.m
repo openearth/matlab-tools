@@ -1,5 +1,5 @@
-function handles = ddb_selectTropicalCycloneBasins(handles)
-% DDB_SELECTTROPICALCYCLONEBASINS  Finds & plots TC basin polygons
+function handles = ddb_TropicalCyclone_select_tropical_cyclone_basins(handles)
+% ddb_TropicalCyclone_select_tropical_cyclone_basins  Finds & plots TC basin polygons
 %
 %   This Matlab function opens and plots (or removes plotted) TC basin
 %   polygons.  The user has, within the TC Toolbox, selected to display or
@@ -8,7 +8,7 @@ function handles = ddb_selectTropicalCycloneBasins(handles)
 %   domain.
 %
 %   Syntax:
-%   handles = ddb_selectTropicalCycloneBasins(handles)
+%   handles = ddb_TropicalCyclone_select_tropical_cyclone_basins(handles)
 %
 %   Input:
 %   handles  = handles data structure
@@ -18,7 +18,7 @@ function handles = ddb_selectTropicalCycloneBasins(handles)
 %   name(s) and TC basin polygon file name(s)
 %
 %   Example
-%   handles = ddb_selectTropicalCycloneBasins(handles)
+%   handles = ddb_TropicalCyclone_select_tropical_cyclone_basins(handles)
 %
 %   See also:
 %   ddb_initializeTropicalCyclone.m,
