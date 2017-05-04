@@ -1,6 +1,6 @@
 function varargout = EHY_plot_google_map(varargin)
-% EHY_plot_google_map is based on the function EHY_plot_google_map but also
-% works with Matlab versions older than Matlab 2014.
+% EHY_plot_google_map is based on the function plot_google_map but also
+% works with Matlab versions newer than Matlab 2014.
 
 % function h = EHY_plot_google_map(varargin)
 % Plots a google map on the current axes using the Google Static Maps API
