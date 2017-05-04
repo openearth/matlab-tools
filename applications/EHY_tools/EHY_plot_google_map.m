@@ -150,7 +150,7 @@ if nargin >= 2
             case 'apikey'
                 apiKey = varargin{idx+1}; % set new key
                 % save key to file
-                funcFile = which('EHY_plot_google_map.m');
+                funcFile = which('plot_google_map.m');
                 pth = fileparts(funcFile);
                 keyFile = fullfile(pth,'api_key.mat');
                 save(keyFile,'apiKey')
@@ -513,7 +513,7 @@ global inputParams
 if isfield(inputParams,['ax' num2str(gca*1e6,'%.0f')])
     params = inputParams.(['ax' num2str(gca*1e6,'%.0f')]);
     EHY_plot_google_map(params{:});
-elseif isfield(inputParams.ax123456)
+elseif isfield(inputParams.ax123456) 
     params = inputParams.ax123456;
     EHY_plot_google_map(params{:});
 end
