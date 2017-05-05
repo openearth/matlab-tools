@@ -32,5 +32,5 @@ runPeriod_S=str2num(line{2});
 runPeriod_D=runPeriod_S/3600/24;
 
 disp(['Status: ' num2str(runPeriod_D) '/' num2str(simPeriod_D) ' days - ',...
-    sprintf('%0.2f',runPeriod_S/simPeriod_S)  '%']);
+    sprintf('%0.1f',runPeriod_S/simPeriod_S*100) '%']);
 
