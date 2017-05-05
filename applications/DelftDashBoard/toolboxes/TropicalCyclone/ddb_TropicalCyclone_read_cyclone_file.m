@@ -133,6 +133,8 @@ try
         end
     end
     
+    fclose(fid);
+    
     inp.nrTrackPoints=it;
     
     handles.toolbox.tropicalcyclone=inp;
