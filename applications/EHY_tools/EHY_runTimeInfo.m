@@ -148,7 +148,7 @@ if exist('realTime_S','var') % if simulation has finished
     runTimeInfo.compTime_minPerDay=(runTimeInfo.realTime_S/60)/(runTimeInfo.simPeriod_S/3600/24);
     runTimeInfo.compTime_dayPerYear=runTimeInfo.compTime_minPerDay/60/24*365;
 else
-    runTimeInfo.comment='Simulation has probably not finished yet or crashed'
+    runTimeInfo.comment='Simulation has probably not finished yet or crashed';
 end
 end
 %%
