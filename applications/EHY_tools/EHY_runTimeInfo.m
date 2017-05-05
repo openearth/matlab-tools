@@ -39,9 +39,8 @@ switch modelType
         startDate=RefDateNum+mdu.time.TStart/factor;
         
         % simPeriod_S
-        line=findLineOrQuit(fid,'** INFO   : simulation period     (s)  :');
-        line2=strsplit(line);
-        simPeriod_S=str2double(line2{end});
+        factor=(60*60*24)/factor;
+        simPeriod_S=(mdu.time.TStop-mdu.time.TStart)*factor;
         
         try % if simulation has finished
             % dia
