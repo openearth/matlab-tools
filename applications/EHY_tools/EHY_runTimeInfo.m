@@ -126,7 +126,7 @@ switch modelType
             realTime_S=(tend-t0)*24*60*60;
         end
 end
-fclose all
+fclose all;
 %% Store all data in struct
 % simulation period
 runTimeInfo.startDate=datestr(startDate);
