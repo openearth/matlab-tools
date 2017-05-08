@@ -34,44 +34,13 @@ end
 if exist('mdFile','var')
     modelType=nesthd_det_filetype(mdFile);
     [pathstr,name,ext]=fileparts(mdFile);
-    switch modelType
-        case 'mdu'
-            mdu=dflowfm_io_mdu('read',mdFile);
-            mdInput{1}=mdu.time.RefDate;
-            mdInput{2}=mdu.time.Tunit;
-            mdInput{3}=num2str(mdu.time.TStart);
-            mdInput{5}=num2str(mdu.time.TStop);
-        case 'mdf'
-            mdf=delft3d_io_mdf('read',mdFile);
-            mdInput{1}=datestr(datenum(mdf.keywords.itdate,'yyyy-mm-dd'),format{1});
-            mdInput{2}=mdf.keywords.tunit;
-            mdInput{3}=num2str(mdf.keywords.tstart);
-            mdInput{5}=num2str(mdf.keywords.tstop);
-        case 'siminp'
-            siminp=readsiminp(pathstr,[name ext]);
-            try % if DATE, TSTART and TSTOP are on separate lines
-                ind=strmatch('DATE',siminp.File);
-                [~,refDate]=strtok(siminp.File{ind},'''');
-                mdInput{1}=datestr(datenum(lower(refDate)),format{1});
-                mdInput{2}='M';
-                ind=strmatch('TSTART',siminp.File);
-                [~,TStart]=strtok(siminp.File{ind},' ');
-                mdInput{3}=num2str(str2double(TStart)); %deal with .00
-                ind=strmatch('TSTOP',siminp.File);
-                [~,TStop]=strtok(siminp.File{ind},' ');
-                mdInput{5}=num2str(str2double(TStop)); %deal with .00
-            catch % if DATE, TSTART and TSTOP are NOT on separate lines
-                ind=strmatch('DATE',siminp.File);
-                split=strsplit(siminp.File{ind});
-                indDate=strmatch('date',lower(split),'exact');
-                indStart=strmatch('tstart',lower(split),'exact');
-                indStop=strmatch('tstop',lower(split),'exact');
-                mdInput{1}=datestr(datenum(lower(strjoin(split(indDate+1:indStart-1)))),format{1});
-                mdInput{2}='M';
-                mdInput{3}=num2str(str2double(split{indStart+1})); %deal with .00
-                mdInput{5}=num2str(str2double(split{indStop+1})); %deal with .00
-            end
-    end
+    [refdate,tunit,tstart,tstop]=getTimeInfoFromMdFile(mdFile);
+   
+     mdInput{1}=datestr(refdate,format{1});
+     mdInput{2}=tunit;
+     mdInput{3}=num2str(tstart);
+     mdInput{5}=num2str(tstop);
+
     % complement the mdInput
     mdInput=EHY_simulationInputTimes_calc(mdInput,format);
     mdInput=cellfun(@num2str,mdInput,'UniformOutput',0);
@@ -120,16 +89,7 @@ if length(A)<6
 end
 
 RefDateNum=datenum(num2str(A{1}),format{1});
-
-if strcmpi(A{2},'S')
-    factor=60*60*24;
-elseif strcmpi(A{2},'M')
-    factor=60*24;
-elseif strcmpi(A{2},'H')
-    factor=24;
-else
-    error('Tunit has to be H, M or S')
-end
+factor=timeFactor(A{2},'D');
 
 % TStart
 if isempty(A{3}) && ~isempty(A{4})

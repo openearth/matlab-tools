@@ -19,30 +19,19 @@ else
 end
 modelType=nesthd_det_filetype(mdFile);
 [pathstr,name,ext]=fileparts(mdFile);
+[refdate,tunit,tstart,tstop]=getTimeInfoFromMdFile(mdFile);
 
-switch modelType
-    case 'mdu'
-        mdu=dflowfm_io_mdu('read',mdFile);
-        runTimeInfo.mduInfo=mdu.time;
-        
-        % startDate
-        RefDateNum=datenum(num2str(mdu.time.RefDate),'yyyymmdd');
-        if strcmpi(mdu.time.Tunit,'S')
-            factor=60*60*24;
-        elseif strcmpi(mdu.time.Tunit,'M')
-            factor=60*24;
-        elseif strcmpi(mdu.time.Tunit,'H')
-            factor=24;
-        else
-            error('Tunit has to be H, M or S')
-        end
-        startDate=RefDateNum+mdu.time.TStart/factor;
-        
-        % simPeriod_S
-        factor=(60*60*24)/factor;
-        simPeriod_S=(mdu.time.TStop-mdu.time.TStart)*factor;
-        
-        try % if simulation has finished
+% startDate
+factor=timeFactor(tunit,'D');
+startDate=refdate+tstart/factor;
+
+% simPeriod_S
+factor=timeFactor(tunit,'S');
+simPeriod_S=(tstop-tstart)*factor;
+
+try % if simulation has finished
+    switch modelType
+        case 'mdu'
             % dia
             if exist([pathstr filesep name '_0000.dia'],'file') % first check if run was done in parallel
                 diaFile=[pathstr filesep name '_0000.dia'];
@@ -60,28 +49,7 @@ switch modelType
             line=findLineOrQuit(fid,'** INFO   : time steps            (s)  :');
             line2=strsplit(line);
             realTime_S=str2double(line2{end});
-        end
-    case 'mdf'
-        mdf=delft3d_io_mdf('read',mdFile);
-        
-        % startDate
-        RefDateNum=datenum(mdf.keywords.itdate,'yyyy-mm-dd');
-        if strcmpi(mdf.keywords.tunit,'S')
-            factor=60*60*24;
-        elseif strcmpi(mdf.keywords.tunit,'M')
-            factor=60*24;
-        elseif strcmpi(mdf.keywords.tunit,'H')
-            factor=24;
-        else
-            error('Tunit has to be H, M or S')
-        end
-        startDate=RefDateNum+mdf.keywords.tstart/factor;
-        
-        % simPeriod_S
-        factor=(60*60*24)/factor;
-        simPeriod_S=(mdf.keywords.tstop-mdf.keywords.tstart)*factor;
-        
-        try % if simulation has finished
+        case 'mdf'
             % dia
             if exist([pathstr filesep 'tri-diag.' name ],'file') % first check if run was done in parallel
                 diaFile=[pathstr filesep 'tri-diag.' name ];
@@ -94,23 +62,7 @@ switch modelType
             line=findLineOrQuit(fid,'|Total                |');
             line2=strsplit(line);
             realTime_S=str2double(line2{3});
-        end
-    case 'siminp'
-        % startDate
-        siminp=readsiminp(pathstr,[name ext]);
-        ind=strmatch('DATE',siminp.File);
-        [~,refDate]=strtok(siminp.File{ind},'''');
-        refDate=datestr(datenum(lower(refDate))); % make it matlab style
-        ind=strmatch('TSTART',siminp.File);
-        [~,TStart]=strtok(siminp.File{ind},' ');
-        startDate=datestr(datenum(refDate)+str2num(TStart)/60/24);
-        
-        % simPeriod_S
-        ind=strmatch('TSTOP',siminp.File);
-        [~,TStop]=strtok(siminp.File{ind},' ');
-        simPeriod_S=(str2num(TStop)-str2num(TStart))*60;
-        
-        try % if simulation has finished
+        case 'siminp'
             % dia
             directory=dir([pathstr filesep 'waqpro-m*']);
             diaFile=[pathstr filesep directory(1).name];
@@ -124,9 +76,10 @@ switch modelType
             line2=strsplit(line);
             tend=datenum([line2{8} line2{10}],'yyyymmddHHMMSS')
             realTime_S=(tend-t0)*24*60*60;
-        end
+    end
 end
 fclose all;
+
 %% Store all data in struct
 % simulation period
 runTimeInfo.startDate=datestr(startDate);
