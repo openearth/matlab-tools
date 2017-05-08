@@ -1,6 +1,8 @@
 function EHY_dflowfm_status(varargin)
 %% EHY_dflowfm_status(varargin)
 %
+% This function returns the status of the Delft3D-FM simulation in percentages
+%
 % Example1: EHY_dflowfm_status
 % Example2: EHY_dflowfm_status('D:\run1\')
 % Example3: EHY_dflowfm_status('D:\run1\model.mdu')

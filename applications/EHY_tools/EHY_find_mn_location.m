@@ -1,5 +1,6 @@
 function [m,n]=EHY_find_mn_location(x,y,grdFile)
 % [m,n]=EHY_find_mn_location(x,y,grdFile)
+%
 % Find the m,n-location(s) of your x,y-location(s) in a structured
 % Delft3D/SIMONA grid.
 % 
