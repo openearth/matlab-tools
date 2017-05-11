@@ -45,9 +45,17 @@ elseif strcmpi(modelType,'sobek3_new')
 
 %% Dflow-FM
 elseif strncmpi(modelType,'dflow',4)
-    files              = dir([ sim_dir filesep 'DFM_OUTPUT_' runid filesep '*his.nc*']);
-    dfmFile            = ([sim_dir filesep 'DFM_OUTPUT_' runid filesep files.name]);
-    dfm                = qpfopen(dfmFile);
+    mdu=dflowfm_io_mdu('read',[sim_dir filesep runid '.mdu']);
+    if isempty(mdu.output.OutputDir)
+      files              = dir([ sim_dir filesep 'DFM_OUTPUT_' runid filesep '*his.nc*']);
+    else
+      outputDir=strrep(mdu.output.OutputDir,'/','\');
+        while strcmp(outputDir(1),filesep) || strcmp(outputDir(1),'.')
+          outputDir=outputDir(2:end);
+        end
+      files              = dir([ sim_dir filesep outputDir filesep runid '*his.nc*']);
+    end
+    dfm                = qpfopen([files.folder filesep files.name]);
     Data.stationNames  = strtrim(qpread(dfm,1,'water level (points)','stations'));
     
 %% Waqua
