@@ -17,6 +17,7 @@ function Data = EHY_getmodeldata(sim_dir,runid,stat_name,modelType,varargin)
 OPT.varName = 'wl';
 OPT.t0 = '';
 OPT.tend = '';
+OPT.layer = 0; % all
 
 OPT         = setproperty(OPT,varargin);
 if ~isempty(OPT.t0); OPT.t0=datenum(OPT.t0); end
@@ -151,9 +152,9 @@ for i_stat = 1: length(stat_name)
                 if strcmpi(modelType,'waqua')
                     Data.times         = qpread(sds,1,'water level (station)','times');
                     [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
-                    Data.val(i_stat,:,:,1) = waquaio(sds,[],'u-stat',time_index,nr_stat);
-                    Data.val(i_stat,:,:,2) = waquaio(sds,[],'v-stat',time_index,nr_stat);
-                    Data.val_dim='time,station,layer,u/v';
+                    Data.u(i_stat,:,:) = waquaio(sds,[],'u-stat',time_index,nr_stat,OPT.layer);
+                    Data.v(i_stat,:,:) = waquaio(sds,[],'v-stat',time_index,nr_stat,OPT.layer);
+                    Data.uv_dim='station,time,layer';
                 end
             end
         case 'sal'
@@ -164,7 +165,8 @@ for i_stat = 1: length(stat_name)
                 if strcmpi(modelType,'waqua')
                     Data.times         = qpread(sds,1,'water level (station)','times');
                     [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
-                    Data.val(i_stat,:,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat);
+                    Data.val(i_stat,:,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat,OPT.layer);
+                    Data.val_dim='station,time,layer';
                 end
             end
     end
