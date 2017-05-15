@@ -151,7 +151,9 @@ for i_stat = 1: length(stat_name)
                 if strcmpi(modelType,'waqua')
                     Data.times         = qpread(sds,1,'water level (station)','times');
                     [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
-                    Data.val(i_stat,:,:) = waquaio(sds,[],'uv-stat',time_index,nr_stat);
+                    Data.val(i_stat,:,:,1) = waquaio(sds,[],'u-stat',time_index,nr_stat);
+                    Data.val(i_stat,:,:,2) = waquaio(sds,[],'v-stat',time_index,nr_stat);
+                    Data.val_dim='time,station,layer,u/v';
                 end
             end
         case 'sal'
