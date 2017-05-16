@@ -21,6 +21,7 @@ switch modelType
         try % if DATE, TSTART and TSTOP are on separate lines
             ind=strmatch('DATE',siminp.File);
             [~,refdate]=strtok(siminp.File{ind},'''');
+            refdate=datenum(refdate);
             % lets see if it TSTART,was on same line as DATE
             if ~isempty(findstr('tstart',lower(refdate)))
                 error;
@@ -38,7 +39,7 @@ switch modelType
             indDate=strmatch('date',lower(split),'exact');
             indStart=strmatch('tstart',lower(split),'exact');
             indStop=strmatch('tstop',lower(split),'exact');
-            refdate=datestr(datenum(lower(strjoin(split(indDate+1:indStart-1)))));
+            refdate=datenum(lower(strjoin(split(indDate+1:indStart-1))));
             tunit='M';
             tstart=str2double(split{indStart+1}); %deal with .00
             tstop=str2double(split{indStop+1}); %deal with .00
