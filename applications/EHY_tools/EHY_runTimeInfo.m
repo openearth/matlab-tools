@@ -23,7 +23,7 @@ modelType=nesthd_det_filetype(mdFile);
 
 % startDate
 factor=timeFactor(tunit,'D');
-startDate=refdate+tstart/factor;
+startDate=refdate+tstart*factor;
 
 % simPeriod_S
 factor=timeFactor(tunit,'S');
@@ -74,7 +74,7 @@ try % if simulation has finished
             t0=datenum([line2{8} line2{10}],'yyyymmddHHMMSS');
             line=findLineOrQuit(fid,'Simulation ended   at date:');
             line2=strsplit(line);
-            tend=datenum([line2{8} line2{10}],'yyyymmddHHMMSS')
+            tend=datenum([line2{8} line2{10}],'yyyymmddHHMMSS');
             realTime_S=(tend-t0)*24*60*60;
     end
 end
