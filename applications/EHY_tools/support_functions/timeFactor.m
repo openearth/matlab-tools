@@ -11,9 +11,9 @@ ind1=strmatch(lower(fromTunit),lower(tunits));
 ind2=strmatch(lower(toTunit),lower(tunits));
 
 if ind1<ind2
-    factor=1/prod(factors(ind2:ind1-1));
+    factor=1/prod(factors(ind1:ind2-1));
 elseif ind1>ind2
-    factor=prod(factors(ind1:ind2-1));
+    factor=prod(factors(ind2:ind1-1));
 elseif ind1==ind2
     factor=1;
 end
