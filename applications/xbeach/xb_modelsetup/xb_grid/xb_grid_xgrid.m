@@ -95,7 +95,7 @@ function [xgr zgr] = xb_grid_xgrid(xin, zin, varargin)
 OPT = struct(...
     'xgrid', [],...        % predefined xgrid vector
     'Tm',5,...             % incident short wave period (used for maximum grid size at offshore boundary) if you impose time series of wave conditions use the min(Tm) as input
-    'dxmin',2,...          % minimum required cross shore grid size (usually over land)
+    'dxmin',.5,...          % minimum required cross shore grid size (usually over land)
     'dxmax',Inf,...        % user-specified maximum grid size, when usual wave period / CFL condition does not suffice
     'vardx',1,...          % 0 = constant dx, 1 = varying dx
     'g', 9.81,...          % gravity constant
@@ -137,7 +137,7 @@ if OPT.vardx == 0
     zgr = interp1(xin, zin, xgr);
     
     xb_verbose(1,'Create equidistant cross-shore grid');
-    xb_verbose(2,'Grid size',dxmin);
+    xb_verbose(2,'Grid size',OPT.dxmin);
     
 elseif OPT.vardx == 1 && ~isempty(OPT.xgrid)
     
