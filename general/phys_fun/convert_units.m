@@ -250,6 +250,8 @@ debug = 0;
    kgs              = kg;                     % kilograms
    kilogram         = kg;                     % kilograms
    kilograms        = kg;                     % kilograms
+   
+   Mg               = 1e3;                    % Mg = 1000 kg
 
    libra            = 0.32736409;             % libra
    pound            = 0.45359237;             % pound
