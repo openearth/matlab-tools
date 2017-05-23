@@ -55,6 +55,13 @@ if nargin < 2
     end
     [fPat fName]=fileparts([pat nam]);
     inFile = [pat nam];
+    
+    saveOutput=input('Save the output to a .pol file? [Y/N] ','s');
+    if strcmpi(saveOutput,'Y')
+        saveOutput=1;
+    else
+        saveOutput=0;
+    end
 end
 
 if nargin == 2
