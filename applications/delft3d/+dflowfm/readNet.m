@@ -4,7 +4,7 @@ function varargout = readNet(varargin)
 %     G = dflowfm.readNet(ncfile)
 %
 %   reads the network network (grid) data from a D-Flow FM NetCDF file.
-%    node = corner data 
+%    node: corner data
 %    edge: links (connections)
 %    face (previously cen or peri): flow = circumcenter = center data
 %                                   perimeter  = contour data
@@ -50,11 +50,11 @@ function varargout = readNet(varargin)
 
 % TO DO make G a true object with methods etc.
 
-%% input
+%% Input
 
-OPT.node      = 1; % ,,
-OPT.edge      = 1; % ,,
-OPT.face      = 1; % ,,
+OPT.node      = 1; % Read values at nodes
+OPT.edge      = 1; % Read values at edges and flow links
+OPT.face      = 1; % Read values at faces
 OPT.peri2cell = 0; % overall faster when using plotNet with axis, so default 0
 OPT.quiet     = 0; % this options switches off all bunch of warnings
 
@@ -63,112 +63,64 @@ if nargin==0
     return
 else
     ncfile   = varargin{1};
-    %ncfile_net  = varargin{2};
     OPT = setproperty(OPT,varargin{2:end});
 end
 
-%% read network: corners only: input file
+%% Read network: nodes
 
 G.file.name         = ncfile;
 
-if nc_isvar(ncfile, 'mesh2d_node_x') && OPT.node % not for *_flowgeom.nc
+if nc_isvar(ncfile, 'mesh2d_node_x') && OPT.node
     G.node.x             = nc_varget(ncfile, 'mesh2d_node_x')';
     G.node.y             = nc_varget(ncfile, 'mesh2d_node_y')';
     G.node.z             = nc_varget(ncfile, 'mesh2d_node_z')';
     G.node.n             = size(G.node.x,2);
 end
 
-%% read network: edges (links) between corners only: input file
+%% Read network: edges (links) between nodes
 
- if nc_isvar(ncfile, 'mesh2d_node_x') && OPT.edge  % not for *_flowgeom.nc
-     G.edge.NetLink          = nc_varget(ncfile, 'mesh2d_edge_nodes')';     % link between two netnodes
-    try
-     G.edge.NetLinkType      = nc_varget(ncfile, 'mesh2d_edge_type')'; % link between two netnodes
-    end
-%     G.edge.NetLinkSize         = size(G.edge.NetLink      ,2);
-%     
-%     %% NOTE: Verify if flag_values and flag_meanings need to be nested
-%     G.edge.NetLinkType.flag_values   = nc_attget(ncfile, 'NetLinkType','flag_values');
-%     G.edge.NetLinkType.flag_meanings = nc_attget(ncfile, 'NetLinkType','flag_meanings');
-%     G.edge.NetLinkType.flag_meanings = textscan(G.edge.NetLinkType.flag_meanings,'%s');
- end
+if nc_isvar(ncfile, 'mesh2d_node_x') && OPT.edge 
+    G.edge.x                   = nc_varget(ncfile,'mesh2d_edge_x');
+    G.edge.y                   = nc_varget(ncfile,'mesh2d_edge_y');
+    
+    G.edge.NetLink             = nc_varget(ncfile, 'mesh2d_edge_nodes');  
+    G.edge.NetLinkSize         = size(G.edge.NetLink      ,2);
+    
+    G.edge.NetLinkType               = nc_varget(ncfile, 'mesh2d_edge_type'); 
+    G.edge.NetLinkTypeFlag.flag_values   = nc_attget(ncfile, 'mesh2d_edge_type','flag_values');
+    G.edge.NetLinkTypeFlag.flag_meanings = nc_attget(ncfile, 'mesh2d_edge_type','flag_meanings');
+    G.edge.NetLinkTypeFlag.flag_meanings = textscan(G.edge.NetLinkTypeFlag.flag_meanings,'%s','CollectOutput',1);
+end
 
-%% < read network: centers too: output file >
+%% Read network: faces (flow nodes)
 
 if nc_isvar(ncfile, 'mesh2d_face_x') && OPT.face
-    G.face.FlowElem_x             = nc_varget(ncfile, 'mesh2d_face_x')';
-    G.face.FlowElem_y             = nc_varget(ncfile, 'mesh2d_face_y')';
-    try
-        G.face.FlowElem_z             = nc_varget(ncfile, 'mesh2d_FlowElem_bl' )'; % Bottom level
-        G.face.FlowElemSize             = size(G.face.FlowElem_x,2);
+    G.face.FlowElem_x                = nc_varget(ncfile, 'mesh2d_face_x');
+    G.face.FlowElem_y                = nc_varget(ncfile, 'mesh2d_face_y');
+    try % z value is only available in map-files
+        G.face.FlowElem_z            = nc_varget(ncfile, 'mesh2d_flowelem_bl' ); % Bottom level
     end
+    G.face.FlowElemSize              = size(G.face.FlowElem_x,2);
 end
-% parallel: read cell domain number
-if nc_isvar(ncfile, 'FlowElemDomain') && OPT.face
-    G.face.FlowElemDomain      = nc_varget(ncfile, 'FlowElemDomain')';
-end
-
-%% < read network: contours too: output file >
 
 if nc_isvar(ncfile, 'mesh2d_face_x_bnd') && OPT.face
+    G.face.FlowElemCont_x            = nc_varget(ncfile, 'mesh2d_face_x_bnd');
+    G.face.FlowElemCont_y            = nc_varget(ncfile, 'mesh2d_face_y_bnd');
     
-    G.face.FlowElemCont_x            = nc_varget(ncfile, 'mesh2d_face_x_bnd')';
-    G.face.FlowElemCont_y            = nc_varget(ncfile, 'mesh2d_face_y_bnd')';
+    G.face.FlowElemCont_x(G.face.FlowElemCont_x > realmax('single')./100)=nc_attget(ncfile, 'mesh2d_face_x_bnd','_FillValue');
+    G.face.FlowElemCont_y(G.face.FlowElemCont_y > realmax('single')./100)=nc_attget(ncfile, 'mesh2d_face_y_bnd','_FillValue');
     
-    % TO DO: use _fillvalue for this. 
-    G.face.FlowElemCont_x(G.face.FlowElemCont_x > realmax('single')./100)=nan;
-    G.face.FlowElemCont_y(G.face.FlowElemCont_y > realmax('single')./100)=nan;
+    if OPT.peri2cell
+        [G.face.FlowElemCont_x ,G.face.FlowElemCont_y] = dflowfm.peri2cell(G.face.FlowElemCont_x ,G.face.FlowElemCont_y);
+    end
     
 end
-if OPT.peri2cell
-    [G.face.FlowElemCont_x ,G.face.FlowElemCont_y] = dflowfm.peri2cell(G.face.FlowElemCont_x ,G.face.FlowElemCont_y);
-    
-end % OPT.peri2cell
-
-%% < read network: links between centers too: output file >
 
 if nc_isvar(ncfile, 'mesh2d_face_nodes') && OPT.edge
+    G.face.FlowElemNode          = nc_varget(ncfile, 'mesh2d_face_nodes');    
     
-    G.edge.FlowLink          = nc_varget(ncfile, 'mesh2d_face_nodes')';     % link between two flownodes
-    try
-    G.edge.FlowLinkType      = nc_varget(ncfile, 'mesh2d_edge_type')'; % link between two flownodes
-    end
-    G.edge.FlowLinkSize         = size(G.edge.FlowLink      ,2);
-    
-    %% NOTE: Verify if flag_values and flag_meanings need to be nested
-%     G.edge.FlowLinkType.flag_values   = nc_attget(ncfile, 'mesh2d_edge_type','flag_values');
-%     G.edge.FlowLinkType.flag_meanings = nc_attget(ncfile, 'mesh2d_edge_type','flag_meanings');
-%     G.edge.FlowLinkType.flag_meanings = textscan(G.edge.FlowLinkType.flag_meanings,'%s');
-    
-end
-
-%% < read network: links between corners and centers too: output file >
-
-if nc_isvar(ncfile, 'mesh2d_face_nodes') && OPT.face
-    % make sure orientation is [n x 6], just like a delaunay tri is [n x 3]
-    G.face.NetElemNode             = nc_varget(ncfile, 'mesh2d_face_nodes');
-    
-    if nc_isvar(ncfile, 'BndLink')
-        G.face.BndLink               = nc_varget(ncfile, 'BndLink')';
-    end
-    
-    if nc_isvar(ncfile, 'mesh2d_face_x')
-        % new pointers for chopping up into triangles to be used in plotMap
-        [G.tri,G.map3,G.ntyp] = patch2tri(G.node.x,G.node.y,G.face.NetElemNode,'quiet',OPT.quiet);
-    end
-end
-
-%% < read network: faces too: output file >
-
-if nc_isvar(ncfile, 'FlowLink_xu') && OPT.edge
-    
-    G.edge.FlowLink_x              = nc_varget(ncfile, 'FlowLink_xu')';
-    G.edge.FlowLink_y              = nc_varget(ncfile, 'FlowLink_yu')';
-    %G.face.z              = nc_varget(ncfile, 'FlowLink_zu')';
-    
-    if nc_isvar(ncfile, 'FlowLinkDomain') && OPT.face
-        G.edge.FlowLinkDomain     = nc_varget(ncfile, 'FlowLinkDomain')';
-    end    
+    % new pointers for chopping up into triangles to be used in plotMap
+    [G.tri,G.map3,G.ntyp] = patch2tri(G.node.x,G.node.y,G.face.FlowElemNode,'quiet',OPT.quiet);
 end
 
 %% if only 'file' field is present, .nc file is probably based on old format
