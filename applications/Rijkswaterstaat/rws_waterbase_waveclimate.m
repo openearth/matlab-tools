@@ -145,9 +145,9 @@ h = waitbar(0,'Downloading data...');
 
 for iLoc=1:length(indLoc)
     
-    urlNameWaveHeight    = [OPT.baseurl,'sea_surface_wave_significant_height/','id22-',LOC.ID{indLoc(iLoc)},'.nc'];
-    urlNameWaveDirection = [OPT.baseurl,'sea_surface_wave_from_direction/'    ,'id23-',LOC.ID{indLoc(iLoc)},'.nc'];
-    urlNameWavePeriod    = [OPT.baseurl,'sea_surface_wind_wave_tm02/'         ,'id24-',LOC.ID{indLoc(iLoc)},'.nc'];
+    urlNameWaveHeight    = [OPT.baseurl,'17_Significante_golfhoogte_uit_energiespectrum_van_30-500_mhz_in_cm_in_oppervlaktewater/nc/','id22-',LOC.ID{indLoc(iLoc)},'.nc'];
+    urlNameWaveDirection = [OPT.baseurl,'08_Gemiddelde_richting_uit_golfrichtingsspectrum_van_30-500_mhz_in_graad_t.o.v._kaart_noorden_in_oppervlaktewater/nc/'    ,'id23-',LOC.ID{indLoc(iLoc)},'.nc'];
+    urlNameWavePeriod    = [OPT.baseurl,'07_Gem._golfperiode_uit_spectrale_momenten_m0+m2_van_30-500_mhz_in_s_in_oppervlaktewater/nc/'         ,'id24-',LOC.ID{indLoc(iLoc)},'.nc'];
     
     %% Perform operation on three separate time series, as they are not
     %% necessarily synchronous
