@@ -97,19 +97,27 @@ for i_stat = 1: length(stat_name)
                 Data.exist_stat(i_stat) = true;
                 %% Read Sobek3 data
                 if strcmpi(modelType,'sobek3')
-                    Data.times                 =D.water_level_points.Time;
+                    if ~isfield(Data,'times')
+                        Data.times                 =D.water_level_points.Time;
+                    end
                     Data.val(:,i_stat)         =D.water_level_points.Val(:,nr_stat);
                 elseif strcmpi(modelType,'sobek3_new')
-                    Data.times                 =D.Observedwaterlevel.Time;
+                    if ~isfield(Data,'times')
+                        Data.times                 =D.Observedwaterlevel.Time;
+                    end
                     Data.val(:,i_stat)         =D.Observedwaterlevel.Val(:,nr_stat);
                     %% Read Dflow-FM data
                 elseif strncmpi(modelType,'dflow',4)
                     tmp                = qpread(dfm,1,'water level (points)','data',0,nr_stat);
-                    Data.times         = tmp.Time;
+                    if ~isfield(Data,'times')
+                        Data.times         = tmp.Time;
+                    end
                     Data.val(:,i_stat) = tmp.Val;
                     %% Read Waqua data
                 elseif strcmpi(modelType,'waqua')
+                    if ~isfield(Data,'times')
                     Data.times         = qpread(sds,1,'water level (station)','times');
+                    end
                     Data.val(:,i_stat) = waquaio(sds,[],'wlstat',0,nr_stat);
                     %% Read Implic data (write to mat file for future fast pssing
                 elseif strcmpi(modelType,'implic')
@@ -150,8 +158,10 @@ for i_stat = 1: length(stat_name)
             if ~isempty(nr_stat)
                 %% Read Waqua data
                 if strcmpi(modelType,'waqua')
-                    Data.times         = qpread(sds,1,'water level (station)','times');
-                    [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
+                    if ~isfield(Data,'times')
+                        Data.times         = qpread(sds,1,'water level (station)','times');
+                        [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
+                    end
                     Data.u(i_stat,:,:) = waquaio(sds,[],'u-stat',time_index,nr_stat,OPT.layer);
                     Data.v(i_stat,:,:) = waquaio(sds,[],'v-stat',time_index,nr_stat,OPT.layer);
                     Data.uv_dim='station,time,layer';
@@ -163,8 +173,10 @@ for i_stat = 1: length(stat_name)
             if ~isempty(nr_stat)
                 %% Read Waqua data
                 if strcmpi(modelType,'waqua')
+                    if ~isfield(Data,'times')
                     Data.times         = qpread(sds,1,'water level (station)','times');
                     [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
+                    end
                     Data.val(i_stat,:,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat,OPT.layer);
                     Data.val_dim='station,time,layer';
                 end
@@ -174,7 +186,7 @@ end
 end
 
 function [Data, time_index]=EHY_getmodeldata_time_index(Data,OPT)
-if ~isempty(OPT.t0) && ~isempty(OPT.tend)
+if ~isempty('OPT.t0') && ~isempty('OPT.tend')
     time_index=find((Data.times>=OPT.t0) & (Data.times<=OPT.tend));
     if ~isempty(time_index)
         Data.times=Data.times(time_index);
