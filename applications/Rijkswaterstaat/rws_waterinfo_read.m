@@ -1,7 +1,7 @@
 function [Station,Time,Val,EPSG,x,y] = RWS_waterinfo_read(fname)
 %RWS_WATERINFO_READ  Function to read .csv files downloaded from waterinfo
 %
-%   https://waterinfo.rws.nl/. Script assumes a single station per .csv
+%   https://waterinfo.rws.nl/. Script assumes a single station in .csv file
 %   
 %   Syntax:
 %   [Station,Time,Val,EPSG,x,y] = RWS_waterinfo_read(fname)
