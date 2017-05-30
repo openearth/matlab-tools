@@ -4,7 +4,7 @@ function [Station,Time,Val,EPSG,x,y] = RWS_waterinfo_read(fname)
 %   https://waterinfo.rws.nl/. Script assumes a single station in .csv file
 %   
 %   Syntax:
-%   [Station,Time,Val,EPSG,x,y] = RWS_waterinfo_read(fname)
+%   [Station,Time,Val,EPSG,x,y] = rws_waterinfo_read(fname)
 %
 %   Input:
 %   fname           filename of .csv file
