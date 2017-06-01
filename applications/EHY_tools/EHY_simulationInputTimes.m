@@ -96,7 +96,7 @@ if isempty(A{3}) && ~isempty(A{4})
     TStartNum=datenum(A{4},format{2});
     A{3}=num2str((TStartNum-RefDateNum)*factor);
 elseif ~isempty(A{3}) && isempty(A{4})
-    TStartNum=RefDateNum+str2double(A{3})/factor;
+    TStartNum=RefDateNum+str2double(A{3})*factor;
     A{4}=datestr(TStartNum,format{2});
 end
 
@@ -105,7 +105,7 @@ if isempty(A{5}) && ~isempty(A{6})
     TStartNum=datenum(A{6},format{2});
     A{5}=num2str((TStartNum-RefDateNum)*factor);
 elseif ~isempty(A{5}) && isempty(A{6})
-    TStartNum=RefDateNum+str2double(A{5})/factor;
+    TStartNum=RefDateNum+str2double(A{5})*factor;
     A{6}=datestr(TStartNum,format{2});
 end
 end
