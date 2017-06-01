@@ -24,10 +24,11 @@ switch modelType
         for var={'date','tstart','tstop'}
             ind1=find(~cellfun(@isempty,strfind(lower(siminp.File),var{1})));
             ind2=regexp(lower(siminp.File{ind1}),var{1})+length(var{1});
+            dmy=strsplit(siminp.File{ind1}(ind2:end));
             if strcmp(var{1},'date')
-                refdate=datenum(strtrim(siminp.File{ind1}(ind2:end)));
+                refdate=datenum(strjoin(dmy(2:4)));
             else
-                eval([var{1} '=str2double(siminp.File{ind1}(ind2:end));'])
+                eval([var{1} '=str2double(dmy(2));'])
             end
         end
 end
