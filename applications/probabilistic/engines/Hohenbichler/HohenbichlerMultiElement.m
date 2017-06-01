@@ -26,7 +26,8 @@ Ne = size(alphasIn,1);
 while Ne>1
 
     % select elements to be combined
-    Rhomatrix = (repmat(rhos,Ne,1).*alphas)*alphas';
+    %Rhomatrix = (repmat(rhos,Ne,1).*alphas)*alphas';
+    Rhomatrix = alphas*alphas';
     Rhomatrix = Rhomatrix - 10*eye(Ne);
     maxcorr = max(max(Rhomatrix));
     [n1,n2] = find(Rhomatrix==maxcorr,1,'first');
