@@ -186,10 +186,10 @@ end
 end
 
 function [Data, time_index]=EHY_getmodeldata_time_index(Data,OPT)
-if ~isempty('OPT.t0') && ~isempty('OPT.tend')
+if ~isempty(OPT.t0) && ~isempty(OPT.tend)
     time_index=find((Data.times>=OPT.t0) & (Data.times<=OPT.tend));
     if ~isempty(time_index)
-        Data.times=Data.times(time_index);
+        Data.times=Data.times(time_index); 
     else
         time_index=0;
     end
