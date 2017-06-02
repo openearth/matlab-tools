@@ -162,8 +162,13 @@ for i_stat = 1: length(stat_name)
                         Data.times         = qpread(sds,1,'water level (station)','times');
                         [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
                     end
-                    Data.u(i_stat,:,:) = waquaio(sds,[],'u-stat',time_index,nr_stat,OPT.layer);
-                    Data.v(i_stat,:,:) = waquaio(sds,[],'v-stat',time_index,nr_stat,OPT.layer);
+                    if isempty(OPT.layer)
+                        Data.u(i_stat,:,:) = waquaio(sds,[],'u-stat',time_index,nr_stat);
+                        Data.v(i_stat,:,:) = waquaio(sds,[],'v-stat',time_index,nr_stat);
+                    else
+                        Data.u(i_stat,:,:) = waquaio(sds,[],'u-stat',time_index,nr_stat,OPT.layer);
+                        Data.v(i_stat,:,:) = waquaio(sds,[],'v-stat',time_index,nr_stat,OPT.layer);
+                    end
                     Data.uv_dim='station,time,layer';
                 end
             end
@@ -177,7 +182,12 @@ for i_stat = 1: length(stat_name)
                     Data.times         = qpread(sds,1,'water level (station)','times');
                     [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
                     end
-                    Data.val(i_stat,:,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat,OPT.layer);
+                    if isempty(OPT.layer)
+                        Data.val(i_stat,:,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat);
+                    else
+                        Data.val(i_stat,:,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat,OPT.layer);
+                    end
+                    
                     Data.val_dim='station,time,layer';
                 end
             end
