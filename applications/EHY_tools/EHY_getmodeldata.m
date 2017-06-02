@@ -173,7 +173,7 @@ for i_stat = 1: length(stat_name)
                 end
             end
         case 'sal'
-            %% Salinity, times and values for station nr nr_stat 
+            %% Salinity, times and values for station nr nr_stat
             nr_stat  = find(strcmp(Data.stationNames,stat_name{i_stat}) ~= 0,1);
             if ~isempty(nr_stat)
                 %% Read Waqua data
