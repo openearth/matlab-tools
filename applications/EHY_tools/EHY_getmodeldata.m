@@ -17,7 +17,7 @@ function Data = EHY_getmodeldata(sim_dir,runid,stat_name,modelType,varargin)
 OPT.varName = 'wl';
 OPT.t0 = '';
 OPT.tend = '';
-OPT.layer = 0; % all
+OPT.layer = []; % all
 
 OPT         = setproperty(OPT,varargin);
 if ~isempty(OPT.t0); OPT.t0=datenum(OPT.t0); end
@@ -173,7 +173,7 @@ for i_stat = 1: length(stat_name)
                 end
             end
         case 'sal'
-            %% Salinity, times and values for station nr nr_stat
+            %% Salinity, times and values for station nr nr_stat 
             nr_stat  = find(strcmp(Data.stationNames,stat_name{i_stat}) ~= 0,1);
             if ~isempty(nr_stat)
                 %% Read Waqua data
