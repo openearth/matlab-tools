@@ -93,8 +93,8 @@ OPT = setproperty(OPT,varargin);
 
 %% handle legacy
 
-   ver.str  = version('-release');;
-   ver.year = str2num(ver.str(1:4));
+   ver.str  = version('-release');
+   ver.year = str2double(ver.str(1:4));
    
    if ver.year < 2011 % 2011a introduced good HDF for netCDF4
        warning('Please upgrade to R2011a or higher, or use deprecated nc_struct.')
@@ -123,7 +123,7 @@ end
    ndat = length(fileinfo.Variables);
    for idat=1:ndat
       fldname     = fileinfo.Variables(idat).Name;
-      if ~any(strmatch(fldname,OPT.exclude, 'exact')) & ...
+      if ~any(strmatch(fldname,OPT.exclude, 'exact')) && ...
           any(strmatch(fldname,OPT.include, 'exact'))
          fldname_nc = fldname;
          if any(strmatch(fldname,OPT.rename{1}, 'exact'))
@@ -141,7 +141,7 @@ end
                try
                   D.datenum = ncread_cf_time(fileinfo.Filename,fldname);
                    if OPT.disp
-                        units = ncreadatt(fileinfo.Filename,'time','units')
+                        units = ncreadatt(fileinfo.Filename,'time','units');
                         disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
                    end
                end
@@ -163,9 +163,9 @@ end
             D.(fldname) = permute(D.(fldname),pm);
          end         
          if ischar(D.(fldname))
-            if length(size(D.destination)) <= 2
+%             if length(size(D.destination)) <= 2
             D.(fldname) = cellstr(D.(fldname)); % always n x 1, can be wrong order if mat file was 1 x n
-            end
+%             end
          end
       end % exclude/include
 
