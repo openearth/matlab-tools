@@ -95,7 +95,7 @@ for k = 1:length(T.data);
         case 4
             fprintf(fid,'%5i %5i %5i %5i %5i  %f\n',T.data{k}.n1, T.data{k}.m1, T.data{k}.n2, T.data{k}.m2, T.data{k}.definition, T.data{k}.percentage);
         case 5
-            fprintf(fid,'%18f %18f %18f %5i  %f\n',T.data{k}.x, T.data{k}.y, T.data{k}.z, T.data{k}.definition, T.data{k}.percentage);
+            fprintf(fid,'%18.8f %18.8f %18.8f %5i  %f\n',T.data{k}.x, T.data{k}.y, T.data{k}.z, T.data{k}.definition, T.data{k}.percentage);
     end
     if y ~= 0
         fclose(fid)
