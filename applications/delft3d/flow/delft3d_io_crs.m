@@ -179,6 +179,11 @@ iostat       = 1;
 fid          = fopen(filename,'w');
 OS           = 'windows'; % or 'unix'
 
+if size(S.m,1) < size(S.m,2) % edit - 9June'17 - Julien Groenenboom
+    S.m=S.m';
+    S.n=S.n';
+end
+
 for i=1:size(S.m,1)
 
    fprintf(fid,'%-20s %.3d %.3d %.3d %.3d',S.DATA(i).name,S.m(i,1),S.n(i,1),S.m(i,2),S.n(i,2));
