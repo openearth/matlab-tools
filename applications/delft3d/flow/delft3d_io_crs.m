@@ -179,10 +179,9 @@ iostat       = 1;
 fid          = fopen(filename,'w');
 OS           = 'windows'; % or 'unix'
 
-if size(S.m,1) < size(S.m,2) % edit - 9June'17 - Julien Groenenboom
+% edit - 9June'17 - Julien Groenenboom
     S.m=S.m';
     S.n=S.n';
-end
 
 for i=1:size(S.m,1)
 
