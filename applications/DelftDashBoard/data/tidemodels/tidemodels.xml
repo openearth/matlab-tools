@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 06-Jul-2012 11:07:38 using the XML Toolbox for Matlab -->
 <root>
   <model>
     <name>tpxo62</name>
@@ -23,6 +22,14 @@
     <version>1</version>
     <type>netCDF</type>
     <URL>http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/delftdashboard/tidemodels</URL>
+    <useCache>1</useCache>
+  </model>
+  <model>
+    <name>tpxo80</name>
+    <longName>TPXO 8.0 Global Inverse Tide Model</longName>
+    <version>1</version>
+    <type>netCDF</type>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/tidemodels/tpxo80</URL>
     <useCache>1</useCache>
   </model>
 </root>

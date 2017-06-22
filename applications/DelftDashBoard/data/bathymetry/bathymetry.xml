@@ -11,16 +11,16 @@
     <source>Other</source>
     <dataset/>
   </dataset>
-   <dataset>
-     <name>srtm41</name>
-     <longName>SRTM 4.1</longName>
-     <version>1</version>
-     <type>netCDFtiles</type>
-     <edit>0</edit>
-     <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/srtm41</URL>
-     <useCache>1</useCache>
-     <source>Other</source>
-     <dataset/>
+  <dataset>
+    <name>srtm41</name>
+    <longName>SRTM 4.1</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/srtm41</URL>
+    <useCache>1</useCache>
+    <source>Other</source>
+    <dataset/>
   </dataset>
   <dataset>
     <name>hawaii</name>
@@ -240,6 +240,61 @@
     <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/etopo2</URL>
     <useCache>1</useCache>
     <source>NGDC</source>
+    <dataset/>
+  </dataset>
+  <dataset>
+    <name>srtmgl1</name>
+    <longName>SRTM Global 1-arc-second</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/srtmgl1</URL>
+    <useCache>1</useCache>
+    <source>NASA</source>
+    <dataset/>
+  </dataset>
+  <dataset>
+    <name>usgs_ned_n31_w088</name>
+    <longName>NED N31W088</longName>
+    <version>3</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/usgs_ned_n31_w088</URL>
+    <useCache>1</useCache>
+    <source>USGS</source>
+    <dataset/>
+  </dataset>
+  <dataset>
+    <name>usgs_ned_n31_w089</name>
+    <longName>NED N31W089</longName>
+    <version>3</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/usgs_ned_n31_w089</URL>
+    <useCache>1</useCache>
+    <source>USGS</source>
+    <dataset/>
+  </dataset>
+  <dataset>
+    <name>usgs_ned_n31_w090</name>
+    <longName>NED N31W090</longName>
+    <version>3</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/usgs_ned_n31_w090</URL>
+    <useCache>1</useCache>
+    <source>USGS</source>
+    <dataset/>
+  </dataset>
+  <dataset>
+    <name>gbr100</name>
+    <longName>Great Barrier Reef 100m</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/gbr100</URL>
+    <useCache>1</useCache>
+    <source>GBR</source>
     <dataset/>
   </dataset>
 </root>
