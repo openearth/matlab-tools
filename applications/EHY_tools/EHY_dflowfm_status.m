@@ -42,6 +42,6 @@ line=strsplit(line);
 runPeriod_S=str2num(line{2});
 runPeriod_D=runPeriod_S/3600/24;
 
-disp(['Status of ' name ext ': ' num2str(runPeriod_D) '/' num2str(simPeriod_D) ' of simulation days - ',...
+disp(['Status of ' name ext ': ' num2str(round(runPeriod_D,1)) '/' num2str(round(simPeriod_D,1)) ' of simulation days - ',...
     sprintf('%0.1f',runPeriod_S/simPeriod_S*100) '%']);
 
