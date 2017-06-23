@@ -57,4 +57,6 @@ m_max=min([find(rows ~=0,1,'last')+OPT.border size(img,1)]);
 n_min=max([find(cols~=0,1,'first')-OPT.border 1]);
 n_max=min([find(cols ~=0,1,'last')+OPT.border size(img,2)]);
 
-imwrite(img_uint8(m_min:m_max,n_min:n_max,:),[pathstr filesep OPT.prefix name OPT.suffix ext])
+fileName=[pathstr filesep OPT.prefix name OPT.suffix ext];
+imwrite(img_uint8(m_min:m_max,n_min:n_max,:),fileName)
+disp(['EHY_crop created file: ' fileName])
