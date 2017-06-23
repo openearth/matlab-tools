@@ -57,7 +57,7 @@ userInput=inputdlg(prompt,'Input',1,mdInput);
 
 % if RefDate was changed, recompute TStart and TStop
 if any(changedLine==1); userInput{3}=''; userInput{5}=''; end
-% if TUnit was changed, recompute start date and stop date
+% if TUnit was changed, recompute TStart and TStop
 if any(changedLine==2); userInput{3}=''; userInput{5}=''; end
 % if TStart was changed, change start date and vice versa.
 if any(changedLine==3); userInput{4}=''; elseif any(changedLine==4); userInput{3}='';  end
