@@ -1,0 +1,27 @@
+function [times,val] = get_data_from_opendap (parameter, station)
+
+%% retrieve all information availlable on opendap server
+if ~exist('list_opendap.mat','file')
+    url = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/catalog.xml';
+    list = opendap_catalog(url,'disp','','maxlevel',4);
+    save('list_opendap.mat','list');
+else
+    load('list_opendap.mat');
+end
+
+%% find parameter within the list
+i_stat = find(~cellfun(@isempty,strfind(list,parameter)));
+list_param = list(i_stat);
+
+%% Find the station
+i_stat = find(~cellfun(@isempty,strfind(list_param,station)));
+
+%% Get information on the parameter name on the file
+Info       = ncinfo(list_param{i_stat});
+param_name = Info.Variables(end).Name;
+
+%% Retrieve data
+D           = nc_cf_timeseries(list_param{i_stat},param_name,'plot',0);
+times       = D.datenum;
+val         = D.(param_name);
+
