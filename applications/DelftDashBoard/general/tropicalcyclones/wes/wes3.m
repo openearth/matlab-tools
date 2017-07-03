@@ -67,16 +67,37 @@ for it=1:length(tc.track)
         end
     end
     
-    vrel=tc.track(it).vmax_rel;
-    pc=tc.track(it).pc;
-    rmax=tc.track(it).rmax;
-    pn=spw.pn;
-    rhoa=spw.rhoa;
-    lat=tc.track(it).y;
+    % Get values 
+    dp   = spw.pn - tc.track(it).pc;
+    vrel = tc.track(it).vmax_rel;
+    pc   = tc.track(it).pc;
+    rmax = tc.track(it).rmax;
+    pn	 = spw.pn;
+    rhoa = spw.rhoa;
+    xn   = 0.5;
+    rn   = 150;
+    lat  = abs(tc.track(it).y);
+    vt   = (tc.track(it).vtx.^2 + tc.track(it).vty.^2).^0.5;
     
-    xn=0.5;
-    rn=150;
+    % Pressure change
+    try
+        dpdt = (tc.track(it+1).pc -tc.track(it).pc) / ((tc.track(it+1).time - tc.track(it).time)*24);
+    catch
+        dpdt = (tc.track(it).pc -tc.track(it-1).pc) / ((tc.track(it).time - tc.track(it-1).time)*24);
+    end     
+    
+    % Holland et al. (2010) values
+    if isempty(spw.holland2008)
+        spw.holland2008 = 1;
+    end
 
+    % If Holland, 2008 used in Holland 2010
+    if spw.holland2008 == 1;
+        xn  = 0.6*(1-dp/215);
+    end
+    
+    
+    % If Holland 2010 > find xn fit
     if ~unidir && strcmpi(spw.wind_profile,'holland2010')
         % Try to compute average Xn from the four quadrants
         xn_fit=[NaN NaN NaN NaN];
@@ -93,7 +114,7 @@ for it=1:length(tc.track)
                 end
             end
             if ~isempty(robs)
-                [vr,pr,rn,xn,rmf]=holland2010(robs,vrel,pc,rmax,'pn',pn,'rhoa',rhoa,'robs',robs,'vobs',vobs);
+                [vr,pr,rn,xn,rmf]=holland2010(robs,vrel,pc,rmax,'pn',pn,'rhoa',rhoa,'robs',robs,'vobs',vobs, 'vt', vt, 'lat', lat, 'dpdt', dpdt, 'holland2008', spw.holland2008);
                 xn_fit(iq)=xn;
                 iok=1;
             end
@@ -107,7 +128,7 @@ for it=1:length(tc.track)
         case{'holland1980'}
             [vr,pr]=holland1980(r,pn,pc,vrel,rmax,'rhoa',rhoa);
         case{'holland2010'}
-            [vr,pr]=holland2010(r,vrel,pc,rmax,'pn',pn,'rhoa',rhoa,'xn',xn,'rn',rn);
+            [vr,pr]=holland2010(r,vrel,pc,rmax,'pn',pn,'rhoa',rhoa,'xn',xn,'rn',rn, 'vt', vt, 'lat', lat, 'dpdt', dpdt, 'holland2008', spw.holland2008);
         case{'fujita1952'}
             r0=rmax; % Should adjust here to r0!!!
             c1=0.7;
