@@ -125,7 +125,6 @@ else
     end
 end
 
-
 %% 3. Closure
 if handles.toolbox.modelmaker.rotation < 0
     rotation = round(360 + handles.toolbox.modelmaker.rotation);
@@ -133,9 +132,22 @@ else
     rotation = round(handles.toolbox.modelmaker.rotation);
 end
 
-z2 = (z');
-x2 = (x');
-y2 = (y');
+% Does the data need to be flipped?
+zmean1 = mean(z);
+zmean2 = mean(z');
+[p1,S1,mu1] = polyfit([1:length(zmean1)],zmean1,1);
+[p2,S2,mu2] = polyfit([1:length(zmean2)],zmean2,1);
+
+% x with number is org, x2 is used for creation
+if p2(1) > 0
+    z2 = (z');
+    x2 = (x');
+    y2 = (y');
+else
+    z2 = (z);
+    x2 = (x);
+    y2 = (y);
+end
 rotation_model = rotation;
 
 % Simulation
@@ -150,29 +162,29 @@ depthneeded = max(depthneeded1, depthneeded2)*-1;
 
 if handles.toolbox.modelmaker.domain1d == 1;
     xtmp = x; ytmp = y; ztmp = z;
-    [ny nx] = size(z);
-    x = x (round(ny/2),:);
-    y = y (round(ny/2),:);
-    z = z (round(ny/2),:);
+    [ny nx] = size(z2);
+    x2 = x2 (round(ny/2),:);
+    y2 = y2 (round(ny/2),:);
+    z2 = z2 (round(ny/2),:);
 end
 
 if handles.toolbox.modelmaker.domain1d == 1
     
     % Optimize grid
-    xtmp = x;
-    ytmp = y;
-    ztmp = z;
+    xtmp = x2;
+    ytmp = y2;
+    ztmp = z2;
     
     % Grid
     crossshore = ((x - x(1,1)).^2 + (y - y(1,1)).^2.).^0.5;
     [xopt zopt] = xb_grid_xgrid(crossshore, z);
-    
     xori = x(1); yori = y(1);
     rotation_applied = rotation_model 
     yopt = zeros(1,length(xopt));
     xr = xori+ cosd(rotation_applied)*xopt;
     yr = yori+ sind(rotation_applied)*xopt;
     
+    % plotting
     plotting = 0;
     if plotting == 1;
     figure; hold on;
@@ -215,9 +227,16 @@ if handles.toolbox.modelmaker.domain1d == 1
         xbm = xs_del(xbm, 'xori'); xbm = xs_del(xbm, 'yori');   xbm = xs_del(xbm, 'dx');
         xbm = xb_bathy2input(xbm, xr, yr, zopt); xbm = xs_set(xbm, 'vardx', 1)
 else
+    
+    % Optimize grid
+    xtmp    = x2; 
+    ytmp    = y2; 
+    ztmp    = z2;
+    
+    % Make 
     xbm = xb_generate_model(...
     'bathy',...
-            {'x', x, 'y', y, 'z', z,... 
+            {'x', xtmp, 'y', ytmp, 'z', ztmp,... 
             'xgrid', {'dxmin',dx, 'dxmax', handles.toolbox.modelmaker.dxmax},... 
             'ygrid', {'dymin',dy, 'dymax', handles.toolbox.modelmaker.dymax, 'area_size', handles.toolbox.modelmaker.areasize/100},...
             'rotate', rotation_model,...
@@ -286,9 +305,9 @@ xb_write_input('params.txt', xbm)
 
 % Write also the grid and bathy as Delft3D
 try
-enc=ddb_enclosure('extract',xgrid',ygrid');
-ddb_wlgrid('write','FileName',['grid_D3D.grd'],'X',xgrid','Y',ygrid','Enclosure',enc,'CoordinateSystem','Cartesian');
-ddb_wldep('write','bed_D3D.dep',zgrid'*-1);
+    enc=ddb_enclosure('extract',xgrid',ygrid');
+    ddb_wlgrid('write','FileName',['grid_D3D.grd'],'X',xgrid','Y',ygrid','Enclosure',enc,'CoordinateSystem','Cartesian');
+    ddb_wldep('write','bed_D3D.dep',zgrid'*-1);
 catch
 end
 
