@@ -117,7 +117,6 @@ if exist('reference_line','var')
 end
 
 
-
 %% OUTPUT
 jj=0;
 if option2==1
@@ -142,22 +141,35 @@ if option2==1
         end
     end
 elseif option2==2
+    if ~iscell(revetment)
+        revetment = {revetment};
+        number_of_revetments=1;
+    end
     for ii=1:number_of_revetments
         xyNew0=[];y_offset=[];
-
+        
         % load baseline
-        xy=readldb(reference_line{ii});
- 
+        xy=readldb(reference_line{min(ii,length(reference_line))});
+        
         % make it two colums
         id=find(xy.x~=999.999);
         xy=[xy.x(id),xy.y(id)];
-
+        idnotnan=find(~isnan(xy(:,1)));
+        xy=xy(idnotnan,:);
+        
         % load real revetment line
         %revetm{ii}=flipud(landboundary('read','walcheren_RD.ldb'));
-        revetm{ii}=readldb(revetment{ii});
+        %revetm{ii}=landboundary('read',revetment{ii});
+        if ischar(revetment{ii})
+            revetm{ii}=readldb(revetment{ii});
+        else
+            revetm{ii}=revetment{ii};
+        end
         id=find(revetm{ii}(:,1)~=999.999);
         revetm{ii}=[revetm{ii}(id,1),revetm{ii}(id,2)];
-
+        idnotnan=find(~isnan(revetm{ii}(:,1)));
+        revetm{ii}=revetm{ii}(idnotnan,:);
+        
         [xyNew0, y_offset] = relativeoffset(xy,revetm{ii},dx);
         
         number_of_points = size(xyNew0,1);
@@ -172,6 +184,7 @@ elseif option2==2
     end
 end
 number_of_revetments = length(y_offset);
+
 
 %-----------Write data to file--------------
 %-------------------------------------------

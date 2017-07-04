@@ -92,8 +92,10 @@ if err==0
     fprintf(fid,'%s\n','      Xw      Yw      .RAY');
     for i=1:size(dta2,1)
         if iscellstr(ray_file)
+            [pthnm,ray_file{i},extnm] = fileparts(ray_file{i});
             fprintf(fid,'  %12.4f  %12.4f   ''%s'' \n',dta2(i,1:2), [ray_file{i}]);
         else
+            [pthnm,ray_file,extnm] = fileparts(ray_file);
             fprintf(fid,'  %12.4f  %12.4f   ''%s'' \n',dta2(i,1:2), [ray_file,num2str(i,'%02.0f')]);
         end
     end

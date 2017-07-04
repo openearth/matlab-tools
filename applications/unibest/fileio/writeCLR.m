@@ -1,21 +1,49 @@
-function writeCLR(filename, time, phaseunit, timesteps, output_step, CL_filenames, varargin)
+function writeCLR(filename,CLdata)
 %write CLR : Writes a unibest cl-run specification file
 %
 %   Syntax:
-%     function writeCLR(filename, time, phases, timesteps, output_step, CL_filenames)
+%     function writeCLR(filename,CLdata)
 % 
 %   Input:
-%     time                 time in number of phases ([Nx1] matrix)
-%     phases               number of phases in 1 year (for months = 12, for years = 1)
-%     timesteps            computational timesteps (number / phase) (single value)
-%     output_step          output per number of computational timesteps (single value, every n-th timestep)
-%     CL_filenames         cellstringarray {e.g. 'abc','def','NULL','NULL','NULL','NULL','NULL'}
+%     filename                String with CLR filename
+%     CLdata                  Structure with CLR-data
+%             .t0             Start year
+%             .timesteps      Number of numerical timesteps per year
+%             .no_phases      Number of phases [N]
+%             .tstart         Start time of each phase (in year with respect to t0) [Nx1]
+%             .tend           End time of each phase (in year with respect to t0) [Nx1]
+%             .MDAfile        String with MDA-file
+%             .LATfile        (optional) string with LAT-file (uses same name as MDAfile if not specified)
+%             .GKLfile        Cell-string with GKL-file (with one filename per phase) {Nx1}
+%             .BCOfile        Cell-string with BCO-file (with one filename per phase) {Nx1}
+%             .GROfile        Cell-string with GRO-file (with one filename per phase) {Nx1}
+%             .SOSfile        Cell-string with SOS-file (with one filename per phase) {Nx1}
+%             .REVfile        Cell-string with REV-file (with one filename per phase) {Nx1}
+%             .OBWfile        Cell-string with OBW-file (with one filename per phase) {Nx1}
+%             .BCIfile        Cell-string with BCI-file (with one filename per phase) {Nx1}
+%             .iaant          (optional) Maximum number of output steps in PRN-file (default = 1000)
+%             .ifirst         (optional) Numerical timestep of first output written to PRN-file (default = 0)
+%             .output_step    Number of numerical timesteps before output is written to PRN-file
 %  
 %   Output:
-%     .clr file
+%     '.clr file'
 %
 %   Example:
-%     writeCLR('test.clr', [0:2:4], 'year', 52, 26, {'abc','def','NULL','NULL','NULL','NULL','NULL'})
+%     CLdata.t0 = 2000;
+%     CLdata.timesteps = 52;
+%     CLdata.no_phases = 1;
+%     CLdata.tstart = [0];
+%     CLdata.tend = [2];
+%     CLdata.MDAfile = 'abc';
+%     CLdata.GKLfile = {'NULL'};
+%     CLdata.BCOfile = {'NULL'};
+%     CLdata.GROfile = {'NULL'};
+%     CLdata.SOSfile = {'NULL'};
+%     CLdata.REVfile = {'NULL'};
+%     CLdata.OBWfile = {'NULL'};
+%     CLdata.BCIfile = {'NULL'};
+%     CLdata.output_step = 26;
+%     writeCLR('test.clr', CLdata)
 %
 %   See also 
 
@@ -63,50 +91,59 @@ function writeCLR(filename, time, phaseunit, timesteps, output_step, CL_filename
 % $HeadURL$
 % $Keywords: $
 
-if strcmp(phaseunit,'year')
-    phaseunit2=1;
-elseif strcmp(phaseunit,'month')
-    phaseunit2=12;
-elseif strcmp(phaseunit,'week')
-    phaseunit2=52;
-elseif strcmp(phaseunit,'day')
-    phaseunit2=365;
-elseif strcmp(phaseunit,'hour')
-    phaseunit2=8760;
-else
-    fprintf('\n warning: phaseunit not recognised!\n          (phaseunit set at year)');
-    phaseunit2=1;
+
+CL = CLdata;
+
+%% convert to cell if required
+fldnms = {'GKLfile','BCOfile','GROfile','SOSfile','REVfile','OBWfile','BCIfile'};
+for kk=1:length(fldnms)
+    if isstr(CL.(fldnms{kk}));
+        CL.(fldnms{kk}) = {CL.(fldnms{kk})};
+    end
 end
-
-no_phases      = length(time)-1;
-no_cycli       = 0;
-t0             = 0;
-mda_file       = ['''',CL_filenames{1},''''];
-
-%analysis
-t1             = time(1:end-1);
-t2             = time(2:end);
-ifirst         = 0;
-iaant          = ceil(((time(end)*timesteps-ifirst)/output_step)*(no_cycli+1))+1;
+if ~isfield(CL,'phaseunit'); CL.phaseunit = 1; end
+if ~isfield(CL,'timesteps'); CL.timesteps = 200; end
+if ~isfield(CL,'no_phases'); CL.no_phases = length(CL.GKLfile); end
+if ~isfield(CL,'no_cycli'); CL.no_cycli = 1; end
+if ~isfield(CL,'t0'); CL.t0 = 0; end
+if ~isfield(CL,'tstart'); CL.tstart = 0; end
+if ~isfield(CL,'tend'); CL.tend = 5; end
+if ~isfield(CL,'iaant'); CL.iaant = 100; end
+if ~isfield(CL,'ifirst'); CL.ifirst = 0; end
+if ~isfield(CL,'output_step'); CL.output_step = 50; end
+if ~isfield(CL,'LATfile'); CL.LATfile = CL.MDAfile; end
+[pthnm, CL.MDAfile, extnm] = fileparts(CL.MDAfile);
+[pthnm, CL.LATfile, extnm] = fileparts(CL.LATfile);
+for kk=1:CL.no_phases; 
+    [pthnm, CL.GKLfile{kk}, extnm] = fileparts(CL.GKLfile{kk});
+    [pthnm, CL.BCOfile{kk}, extnm] = fileparts(CL.BCOfile{kk});
+    [pthnm, CL.GROfile{kk}, extnm] = fileparts(CL.GROfile{kk});
+    [pthnm, CL.SOSfile{kk}, extnm] = fileparts(CL.SOSfile{kk});
+    [pthnm, CL.REVfile{kk}, extnm] = fileparts(CL.REVfile{kk});
+    [pthnm, CL.OBWfile{kk}, extnm] = fileparts(CL.OBWfile{kk});
+    [pthnm, CL.BCIfile{kk}, extnm] = fileparts(CL.BCIfile{kk});
+end
 
 %-----------Write data to file--------------
 %-------------------------------------------
 fid = fopen(filename,'wt');
 fprintf(fid,'%s\n','Phase unit');
-fprintf(fid,'%7.0f\n',phaseunit2);
+fprintf(fid,'%7.0f\n',CL.phaseunit);
 fprintf(fid,'%s\n','Delta t');
-fprintf(fid,'%7.0f\n',timesteps);
+fprintf(fid,'%7.0f\n',CL.timesteps);
 fprintf(fid,'%s\n','Number of Phases');
-fprintf(fid,'%7.0f\n',no_phases);
+fprintf(fid,'%7.0f\n',CL.no_phases);
 fprintf(fid,'%s\n','Number of Cycli');
-fprintf(fid,'%3.0f\n',no_cycli);
+fprintf(fid,'%3.0f\n',CL.no_cycli);
 fprintf(fid,'%s\n','Begin time (t0)');
-fprintf(fid,'%3.0f\n',t0);
-fprintf(fid,'%s    %s\n',mda_file,'(MDA-file)');
-fprintf(fid,'%s\n','    Fase      From      To        .GKL       .BCO       .GRO       .SOS       .REV       .OBW       .BCI');
-for ii=1:no_phases
-    fprintf(fid,'  %4.0f  %8.0f  %8.0f    ''%s''   ''%s''   ''%s''   ''%s''   ''%s''   ''%s''   ''%s''\n',ii,t1(ii),t2(ii),CL_filenames{1},CL_filenames{2},CL_filenames{3},CL_filenames{4},CL_filenames{5},CL_filenames{6},CL_filenames{7});
+fprintf(fid,'%4.4f\n',CL.t0);
+fprintf(fid,'''%s''      %s\n',CL.MDAfile,'(MDA-file)');
+fprintf(fid,'''%s''      %s\n',CL.LATfile,'(LAT-file)');
+fprintf(fid,'%s\n','    Phase     From      To        .GKL       .BCO       .GRO       .SOS       .REV       .OBW       .BCI');
+for ii=1:CL.no_phases
+    fprintf(fid,'  %4.0f  %8.3f  %8.3f    ''%s''   ''%s''   ''%s''   ''%s''   ''%s''   ''%s''   ''%s''\n',ii,CL.tstart(ii),CL.tend(ii),CL.GKLfile{ii},CL.BCOfile{ii},CL.GROfile{ii},CL.SOSfile{ii},CL.REVfile{ii},CL.OBWfile{ii},CL.BCIfile{ii});
 end
 fprintf(fid,'%s\n','iaant    ifirst    ival');
-fprintf(fid,'  %8.0f  %8.0f  %8.0f\n',iaant,ifirst,output_step);
+fprintf(fid,'  %8.0f  %8.0f  %8.0f\n',CL.iaant,CL.ifirst,CL.output_step);
 fclose(fid);
+

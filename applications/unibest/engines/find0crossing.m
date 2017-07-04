@@ -22,7 +22,6 @@ function [x_zerocross,varargout]=find0crossing(X,Y,varargin)
 %   See also 
 %     
 
-
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares

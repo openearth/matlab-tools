@@ -1,4 +1,4 @@
-function [hfig]=plotPRN_transport(data,PRNfile_number,year,dx,dy,dS,dF,colour,linewidth,fontsize,smoothing_steps,flipfigure)
+function [hfig,hq,ht]=plotPRN_transport(data,PRNfile_number,year,dx,dy,dS,dF,colour,linewidth,fontsize,smoothing_steps,flipfigure,units,formats)
 %function plotPRN_transport : Plots sediment transports in XY-plane
 %
 %   Syntax:
@@ -24,6 +24,7 @@ function [hfig]=plotPRN_transport(data,PRNfile_number,year,dx,dy,dS,dF,colour,li
 %     fontsize         text fontsize (i.e. 10)
 %     smoothing_steps  number of smoothing steps to schematise the computed sediment transport (set to 0 to ignore)
 %     flipfigure       (optional) flipping the figure horizontally (default: 0)
+%     units            (optional) present results in [10^3 m3/yr] (default) or in [m3/yr] (default : units=1 -> [10^3 m3/yr]; units=2 -> [m3/yr])
 %
 %   Output:
 %     hfig             handle of extra figure with smoothed transports
@@ -87,6 +88,12 @@ calibration_power = .3;
 if nargin<12
     flipfigure=0;
 end
+if nargin<13
+    units=1;
+end
+if nargin<14
+    formats='%1.0f';
+end
 if flipfigure==1
     data = flipPRN(data);
 end
@@ -142,7 +149,12 @@ XY1=[data.x2smooth(idx),...
 XY2=[data.x1smooth(idx)-data.x1smooth(idx-1),...
      data.y1smooth(idx)-data.y1smooth(idx-1)];
 Qtr=data.transportsmooth(idx);
-Qtr2=round(Qtr*10)/10;
+if units==1
+    Qtr2=round(Qtr*10)/10;
+else
+    Qtr = Qtr*1000;
+    Qtr2=round(Qtr);
+end
 
 %-----------------plot selected locations as lines----------------------
 % %plot smoothed data
@@ -163,7 +175,7 @@ magn0=sqrt(XY2(:,1).^2+XY2(:,2).^2);
 XY2(:,1)=XY2(:,1)./magn0;
 XY2(:,2)=XY2(:,2)./magn0;
 scaling_factor = (abs(Qtr)).^calibration_power *dS;
-scaling_factor(scaling_factor==0)=min(scaling_factor/2);
+scaling_factor(scaling_factor==0)=min(scaling_factor/2000);
 
 %-------Cross-shore Offset from XY location-----------
 XY1(:,1)=XY1(:,1)-XY2(:,2)*dy; %.*sign(Qtr)
@@ -179,9 +191,15 @@ for ii=1:length(Qtr)
     else
         Qtrsign(ii) = -1;
     end
-    X1B = XY1(ii,1)-Qtrsign(ii).*0.5*XY2(ii,1)*scaling_factor(ii);
-    Y1B = XY1(ii,2)-Qtrsign(ii).*0.5*XY2(ii,2)*scaling_factor(ii);
-    hq{ii}=quiver(X1B,Y1B,Qtrsign(ii)*XY2(ii,1),Qtrsign(ii)*XY2(ii,2),scaling_factor(ii));hold on;
+    XY2B=XY2;
+    if abs(Qtr(ii))==0
+        scaling_factor(ii)=scaling_factor(ii)/1000;
+        XY2B(ii,1)= 1e-5;
+        XY2B(ii,2)= 1e-5;
+    end
+    X1B = XY1(ii,1)-Qtrsign(ii).*0.5*XY2B(ii,1)*scaling_factor(ii);
+    Y1B = XY1(ii,2)-Qtrsign(ii).*0.5*XY2B(ii,2)*scaling_factor(ii);
+    hq{ii}=quiver(X1B,Y1B,Qtrsign(ii)*XY2B(ii,1),Qtrsign(ii)*XY2B(ii,2),scaling_factor(ii));hold on;
     set(hq{ii},'LineWidth',linewidth,'Color',colour);
     set(hq{ii},'ZData',get(hq{ii},'XData').*0+10);
     [hf,XYarrow{ii}] = fillarrowhead(hq{ii},0.35,colour);
@@ -193,7 +211,7 @@ if dF>0
         Xtext=XY1(ii,1)+Qtrsign(ii).*0.5*XY2(ii,1)*scaling_factor(ii)-XY2(ii,2)*dF*dy;
         Ytext=XY1(ii,2)+Qtrsign(ii).*0.5*XY2(ii,2)*scaling_factor(ii)+XY2(ii,1)*dF*dy;    
         %Qtext=['',num2str(abs(Qtr(ii)*1000),'%5.0f'),' '];% 'm3/yr'];
-        Qtext=['',num2str(abs(Qtr(ii)),'%5.0f'),' '];% 'km3/yr'];
+        Qtext=['',num2str(abs(Qtr(ii)),formats),' '];% 'km3/yr'];
         
         ht{ii}=text(Xtext,Ytext,Qtext);
         set(ht{ii},'Fontsize',fontsize,'Color',colour);

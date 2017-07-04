@@ -69,7 +69,11 @@ function [err_message] = writePRO(x1,y1,z_dynamicboundary, filename , varargin)
 %------------Read input data----------------
 %-------------------------------------------
 x_dir=1;
-if nargin>6
+z_truncate=[];
+if nargin>=8
+    z_truncate=varargin{4};
+end
+if nargin>=7
     x_dir=varargin{3};
     try
         if x_dir ~= 1 && x_dir ~= -1
@@ -79,10 +83,10 @@ if nargin>6
         error('Unknown format for <x_dir> input');
     end
 end
-if nargin>5
+if nargin>=6
     reference_level   = varargin{1};
     dx                = varargin{2};
-elseif nargin>4
+elseif nargin>=5
     reference_level   = varargin{1};
     dx=ceil((max(x1)-min(x1))/200);    
 else
@@ -102,8 +106,10 @@ err_message='';
 %-------------------------------------------
 % determine location of MSL-shoreline -> Define x-location of shoreline as x=0
 xoffset = find0crossing(x1,y1);
-%x1 = x1 - max(xoffset); 
+%x1 = x1 - max(xoffset);
+try
 x1 = x1 - min(xoffset); 
+end
 
 % define coast landwards
 xdiep = x1(find(y1==max(y1),1));
@@ -119,7 +125,26 @@ if z_dynamicboundary>max(y1)
     fprintf([' ! (depth of samples smaller than provided depth of dynamic boundary)\n'])
     err_message=[' ! dynamic boundary reset to ',num2str(z_dynamicboundary,'%2.1f'),'m'];
 end
-xdynbound = find0crossing(x1,y1,z_dynamicboundary);
+if isempty(z_truncate)
+    z_truncate=z_dynamicboundary;
+end
+xdynbound = find0crossing(x1,y1,z_dynamicboundary);   
+xtruncate = find0crossing(x1,y1,z_truncate); 
+if isempty(xdynbound)
+xdynbound = x1(find(abs(y1-z_dynamicboundary)==min(abs(y1-z_dynamicboundary)),1));
+end
+if isempty(xtruncate);
+xtruncate = x1(find(abs(y1-z_truncate)==min(abs(y1-z_truncate)),1));
+end
+if x_dir==0
+    xdynbound = max(xdynbound);
+    xtruncate = min(xtruncate);
+    xtruncate = min(xdynbound,xtruncate);
+elseif x_dir==1
+    xdynbound = min(xdynbound);
+    xtruncate = max(xtruncate);
+    xtruncate = max(xdynbound,xtruncate);
+end
 
 if x_dir==1
     x1=flipud(x1);
@@ -141,7 +166,7 @@ end
 %fprintf(fid,'1                 (Code X-Direction: +1/-1  Landwards/Seawards)\n');
 fprintf(fid,'%3.0f                (reference X-point coastline)\n',0);
 fprintf(fid,'%5.2f                (X-point dynamic boundary)\n',xdynbound(1));
-fprintf(fid,'%5.2f                (X-point trunction transpor_CFSt)\n',xdynbound(1));
+fprintf(fid,'%5.2f                (X-point trunction transpor_CFSt)\n',xtruncate(1));
 fprintf(fid,'-1                 (Code Z-Direction; +1/-1 Bottom-Level/Depth)\n');
 fprintf(fid,'%3.0f                 (Reference level)\n',reference_level);
 fprintf(fid,' 2                 (Number of points for Dx)\n');

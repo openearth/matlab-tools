@@ -133,58 +133,70 @@ elseif nargin == 1
         end
         tline = fgetl(fid1);tline = fgetl(fid1);
         DATA  = strread(tline);
+        
+        %--------------------------------------------------------------
+        %% TIME-SERIES FILE
+        %--------------------------------------------------------------
         jj=1;
-        R(ii).QSoffset = [];
-        R(ii).hass     = [];
-        if length(DATA)==14
-            %% timeseries ray + QSoffset
+        if length(DATA)>=13
             while ~feof(fid1)
                 if jj>1; tline = fgetl(fid1); end
-                [R(ii).time(jj,1),   R(ii).equi(jj,1),   R(ii).c1(jj,1),      R(ii).c2(jj,1), ...
-                 R(ii).h0(jj,1),     R(ii).hoek(jj,1),   R(ii).fshape(jj,1),  QSoffset, ...
-                 R(ii).Xb(jj,1),     R(ii).perc2(jj,1),  R(ii).perc20(jj,1),  R(ii).perc50(jj,1), ...
-                 R(ii).perc80(jj,1), R(ii).perc100(jj,1)]   = strread(tline,'%f%f%f%f%f%f%f%f%f%f%f%f%f%f');
-                R(ii).QSoffset(jj,1)=QSoffset;
-                [R(ii).Cequi(jj)]=computeEQUI(R(ii).equi(jj),R(ii).c1(jj),R(ii).c2(jj),R(ii).hoek(jj),R(ii).QSoffset(jj));
+                DATA = strread(tline);
+                R(ii).time(jj,1)      = DATA(1);  
+                R(ii).equi(jj,1)      = DATA(2);  
+                R(ii).c1(jj,1)        = DATA(3);     
+                R(ii).c2(jj,1)        = DATA(4); 
+                R(ii).h0(jj,1)        = DATA(5);    
+                R(ii).hoek(jj,1)      = DATA(6);  
+                R(ii).fshape(jj,1)    = DATA(7); 
+                qq = 0;
+                R(ii).QSoffset(jj,1)  = 0;
+                if (length(DATA)==14 && DATA(end)~=1) || (length(DATA)==15)
+                R(ii).QSoffset(jj,1)  = DATA(8);                           % timeseries ray with tide offset
+                qq = 1;
+                end
+                R(ii).Xb(jj,1)        = DATA(8+qq);    
+                R(ii).perc2(jj,1)     = DATA(9+qq); 
+                R(ii).perc20(jj,1)    = DATA(10+qq); 
+                R(ii).perc50(jj,1)    = DATA(11+qq); 
+                R(ii).perc80(jj,1)    = DATA(12+qq);
+                R(ii).perc100(jj,1)   = DATA(13+qq);
+                R(ii).hass            = 0;
+                if (length(DATA)>=14 && DATA(end)==1)                       % timeseries ray with high-angle stability switch
+                R(ii).hass            = 1;
+                end
+                R(ii).Cequi(jj)       = computeEQUI(R(ii).equi(jj),R(ii).c1(jj),R(ii).c2(jj),R(ii).hoek(jj),R(ii).QSoffset(jj));
                 jj=jj+1;
             end
-        elseif length(DATA)==13
-            %% timeseries ray
-            while ~feof(fid1)
-                if jj>1; tline = fgetl(fid1); end
-                [R(ii).time(jj,1),   R(ii).equi(jj,1),   R(ii).c1(jj,1),       R(ii).c2(jj,1), ...
-                 R(ii).h0(jj,1),     R(ii).hoek(jj,1),   R(ii).fshape(jj,1), ...
-                 R(ii).Xb(jj,1),     R(ii).perc2(jj,1),  R(ii).perc20(jj,1),   R(ii).perc50(jj,1), ...
-                 R(ii).perc80(jj,1), R(ii).perc100(jj,1)]   = strread(tline,'%f%f%f%f%f%f%f%f%f%f%f%f%f');
-                R(ii).QSoffset(jj,1)=0;
-                [R(ii).Cequi(jj)]=computeEQUI(R(ii).equi(jj),R(ii).c1(jj),R(ii).c2(jj),R(ii).hoek(jj),R(ii).QSoffset(jj));
-                jj=jj+1;
-            end
-        elseif length(DATA)<12
-            if length(DATA)==7
+
+        %--------------------------------------------------------------
+        %% STATIC CLIMATE
+        %--------------------------------------------------------------    
+        else
+            R(ii).time = [];
+            if length(DATA)==7 || (length(DATA)==8 && DATA(end)==1)
                 %% normal ray + QSoffset
-                R(ii).time = [];
                 [R(ii).equi,  R(ii).c1,    R(ii).c2, ...
-                 R(ii).h0,    R(ii).hoek,  R(ii).fshape,  QSoffset] = strread(tline,'%f%f%f%f%f%f%f');
+                 R(ii).h0,    R(ii).hoek,  R(ii).fshape,  R(ii).QSoffset] = strread(tline,'%f%f%f%f%f%f%f');
             else
                 %% normal ray
-                R(ii).time = [];
                 [R(ii).equi,  R(ii).c1,    R(ii).c2, ...
                  R(ii).h0,    R(ii).hoek,  R(ii).fshape] = strread(tline,'%f%f%f%f%f%f');
-                QSoffset=0;
+                R(ii).QSoffset=0;
             end
             tline = fgetl(fid1);tline = fgetl(fid1);
             DATA2 = strread(tline);
             if length(DATA2)==6
                 % Normal Ray:
+                R(ii).hass     = 0;
                 [R(ii).Xb R(ii).perc2 R(ii).perc20 R(ii).perc50 R(ii).perc80 R(ii).perc100]=strread(tline,'%f%f%f%f%f%f');
             elseif length(DATA2)==7
+                % Ray with high-angle stability switch:
                 [R(ii).Xb R(ii).perc2 R(ii).perc20 R(ii).perc50 R(ii).perc80 R(ii).perc100 R(ii).hass]=strread(tline,'%f%f%f%f%f%f%f');
             else
                 error(['Unexpected number of values in last *.Ray line in file ' R(ii).name]);
             end
-            R(ii).QSoffset=QSoffset;
-            [R(ii).Cequi]=computeEQUI(R(ii).equi,R(ii).c1,R(ii).c2,R(ii).hoek,R(ii).QSoffset);
+            R(ii).Cequi = computeEQUI(R(ii).equi,R(ii).c1,R(ii).c2,R(ii).hoek,R(ii).QSoffset);
         end
         fclose all;
     end

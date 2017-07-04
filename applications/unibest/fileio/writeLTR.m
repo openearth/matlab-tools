@@ -20,7 +20,7 @@ function writeLTR(filename, shoreline, locations, active_height, pro_file, cfs_f
 %     .LTR file
 %
 %   Example:
-%     writeLTR('test.ltr', 20, [], 8, 'diep', 'bijker', 'waves', 'baseline')
+%     writeLTR('test.ltr', 20, [], 8, 'diep', 'bijker', 'waves', 'baseline', 'baseline')
 %     writeLTR('test.ltr', 'shore.pol', 'loc.ldb', 5, 'diep', 'bijker', 'waves', 'baseline', 'baseline')
 %
 %   See also 
@@ -173,7 +173,7 @@ if err==0
     fprintf(fid,'%s\n', num2str(number_of_rays));
     fprintf(fid,'%s\n','         ORKST     PROFH     .PRO      .CFS      .CFE      .SCO      .RAY');
     for ii=1:number_of_rays
-        fprintf(fid,'     %8.2f    %8.2f   ''%s''  ''%s''  ''%s''  ''%s''  ''%s'' \n',locs2.angles(ii), active_height(ii), pro_file{ii}, cfs_file{ii}, cfe_file{ii}, sco_file{ii}, ray_file{ii});
+        fprintf(fid,'     %8.2f    %8.2f   ''%s''%s  ''%s''  ''%s''  ''%s''  ''%s'' \n',locs2.angles(ii), active_height(ii), pro_file{ii},repmat(' ',[1 max(0,25-length(pro_file{ii}))]), cfs_file{ii}, cfe_file{ii}, sco_file{ii}, ray_file{ii});
     end
     fclose(fid);
 else

@@ -83,7 +83,10 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
     OPT.KMLlabels = 0;
     OPT.KMLlabeltext = {};
     OPT.KMLheader = '';
-
+    OPT.KMLlineplot = 1;
+    OPT.KMLbarplot = 1;
+    BARsign=-1;
+    
     if ~isempty(varargin) 
        OPT = setproperty(OPT, varargin{:});
     end
@@ -123,140 +126,147 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
     %% write coastlines to KML file
     %%-------------------------------------------------------------------------
     colours     = jet(length(timesteps));
-    fid         = fopen(KMLfile,'wt');
-    kml         = KML_header('kmlName',OPT.KMLheader);
-    for tt=1:length(timesteps)
-        S.name      = ['col',num2str(timesteps(tt))];
-        x = PRNdata.x(:,timesteps(tt));
-        y = PRNdata.y(:,timesteps(tt));
-        %z = PRNdata.zminz0(:,timesteps(tt));
-        t1 = PRNdata.year(timesteps(tt))*365.25+reftimenum; 
-        if tt<length(timesteps)
-        t2 = PRNdata.year(timesteps(tt)+1)*365.25+reftimenum;
-        else
-        t2 = PRNdata.year(timesteps(tt))*365.25+reftimenum+DT*365.25;
+    if OPT.KMLlineplot
+        fid         = fopen(KMLfile,'wt');
+        kml         = KML_header('kmlName',OPT.KMLheader);
+        for tt=1:length(timesteps)
+            S.name      = ['col',num2str(timesteps(tt))];
+            x = PRNdata.x(:,timesteps(tt));
+            y = PRNdata.y(:,timesteps(tt));
+            %z = PRNdata.zminz0(:,timesteps(tt));
+            t1 = PRNdata.year(timesteps(tt))*365.25+reftimenum; 
+            if tt==1;t1=t1-0.5;end
+            if tt<length(timesteps)
+            t2 = PRNdata.year(timesteps(tt)+1)*365.25+reftimenum;
+            else
+            t2 = PRNdata.year(timesteps(tt))*365.25+reftimenum+DT*365.25;
+            end
+            tstart = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
+            tend   = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
+            S.lineColor = colours(tt,:);  % color of the lines in RGB
+            S.lineAlpha = OPT.lineAlpha ;     % transparency of the line, (0..1) with 0 transparent
+            S.lineWidth = OPT.lineWidth;        % line width, can be a fraction     
+            S0 = S; 
+            S0.name      = ['col0'];
+            S0.lineColor = [0.3 0.3 0.3];
+
+            [lon,lat] = convertCoordinates(x,y,EPSG,'CS1.code',EPSGcode,'CS2.name','WGS 84','CS2.type','geo');
+
+            if tt==1
+            kml         = [kml KML_style(S0)];
+            kml         = [kml KML_line(lat,lon,'styleName',S0.name)];
+            end 
+            kml         = [kml KML_style(S)];
+            kml         = [kml KML_line(lat,lon,'styleName',S.name,'timeIn',tstart,'timeOut',tend)];
         end
-        tstart = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
-        tend   = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
-        S.lineColor = colours(tt,:);  % color of the lines in RGB
-        S.lineAlpha = OPT.lineAlpha ;     % transparency of the line, (0..1) with 0 transparent
-        S.lineWidth = OPT.lineWidth;        % line width, can be a fraction     
-        S0 = S; 
-        S0.name      = ['col0'];
-        S0.lineColor = [0.3 0.3 0.3];
-
-        [lon,lat] = convertCoordinates(x,y,EPSG,'CS1.code',EPSGcode,'CS2.name','WGS 84','CS2.type','geo');
-
-        if tt==1
-        kml         = [kml KML_style(S0)];
-        kml         = [kml KML_line(lat,lon,'styleName',S0.name)];
-        end 
-        kml         = [kml KML_style(S)];
-        kml         = [kml KML_line(lat,lon,'styleName',S.name,'timeIn',tstart,'timeOut',tend)];
+        kml         = [kml KML_footer];
+        fprintf(fid,kml);
+        fclose all;
     end
-    kml         = [kml KML_footer];
-    fprintf(fid,kml);
-    fclose all;
-
+    
+    
     %%-------------------------------------------------------------------------
     % make bar polygons
     %%-------------------------------------------------------------------------
-    lonpoly={};
-    latpoly={};
-    xpoly={};
-    ypoly={};
-    for tt=1:length(timesteps)
-        x = PRNdata.x(:,1);
-        y = PRNdata.y(:,1);
-        if isempty(OPT.zdata)   %Default is zminz0
-            z = PRNdata.zminz0(:,timesteps(tt));
-        else                    %Optional user defined (for example wrt reference scenario)
-            z = OPT.zdata(:,timesteps(tt));
-        end
-        dx = diff(PRNdata.xdist);
+    if OPT.KMLbarplot
+        lonpoly={};
+        latpoly={};
+        xpoly={};
+        ypoly={};
+        for tt=1:length(timesteps)
+            x = PRNdata.x(:,1);
+            y = PRNdata.y(:,1);
+            if isempty(OPT.zdata)   %Default is zminz0
+                z = -BARsign*PRNdata.zminz0(:,timesteps(tt));     % changed sign here!
+            else                    %Optional user defined (for example wrt reference scenario)
+                z = OPT.zdata(:,timesteps(tt));
+            end
+            dx = diff(PRNdata.xdist);
 
-        if isempty(segments);segments=100;end
-        ID = unique(round([length(x)/segments/2:length(x)/segments:length(x)-length(x)/segments/2]));
-        ID1 = unique(round([1:length(x)/segments:length(x)-length(x)/segments+1]));
-        ID2 = [ID1(2:end)-1,length(x)];
-        %% construct x,y coordinates of bars on the basis of x1, xtip and barwidth (five coordinates specifying a rectangle for each bar)
-        for jj=1:length(ID)
-            x1 = x(ID(jj));
-            y1 = y(ID(jj));
-            z1 = mean(z(ID1(jj):ID2(jj)));z2{tt}(jj)=z1;
-            dx2 = 0.9*sum(dx(ID1(jj):ID2(jj)));
-            %dist = max(((x(ID2(jj))-x(ID1(jj))).^2+(y(ID2(jj))-y(ID1(jj))).^2).^0.5,dx2)
-            xtip         = x1+z1.*vectorscale.*sin(ANGLEcoast(ID(jj))*pi/180);
-            ytip         = y1+z1.*vectorscale.*cos(ANGLEcoast(ID(jj))*pi/180);
-            dxbar        = -0.5*dx2*cos(ANGLEcoast(ID(jj))*pi/180);
-            dybar        = 0.5*dx2*sin(ANGLEcoast(ID(jj))*pi/180);
-            xpoly{tt}(jj,:)  = [x1+dxbar, xtip+dxbar, xtip-dxbar, x1-dxbar, x1+dxbar];
-            ypoly{tt}(jj,:)  = [y1+dybar, ytip+dybar, ytip-dybar, y1-dybar, y1+dybar];
-            xtext{tt}(jj,:)  = xtip;
-            ytext{tt}(jj,:)  = ytip;
-            ztext{tt}{jj}  = num2str(round(z1));
- 
-    %         %% convert coordinates to lat-lon
-    %         
-    %         lonpoly{tt}{jj}      = lonpoly{tt}{jj}';
-    %         latpoly{tt}{jj}      = latpoly{tt}{jj}';
-           % figure(1);clf;plot(xpoly{tt}(jj,:),ypoly{tt}(jj,:),'k');hold on;plot(x1,y1,'r*');plot(xtip,ytip,'g*');
-        end
-        [lonpoly{tt},latpoly{tt}] = convertCoordinates(xpoly{tt},ypoly{tt},EPSG,'CS1.code',EPSGcode,'CS2.name','WGS 84','CS2.type','geo');
-        [lontext{tt},lattext{tt}] = convertCoordinates(xtext{tt},ytext{tt},EPSG,'CS1.code',EPSGcode,'CS2.name','WGS 84','CS2.type','geo');
-    end
+            if isempty(segments);segments=100;end
+            ID = unique(round([length(x)/segments/2:length(x)/segments:length(x)-length(x)/segments/2]));ID=setdiff(ID,0);
+            ID1 = unique(round([1:length(x)/segments:length(x)-length(x)/segments+1]));
+            ID2 = [ID1(2:end)-1,length(x)];
+            %% construct x,y coordinates of bars on the basis of x1, xtip and barwidth (five coordinates specifying a rectangle for each bar)
+            for jj=1:length(ID)
+                x1 = x(ID(jj));
+                y1 = y(ID(jj));
+                z1 = mean(z(ID1(jj):ID2(jj)));z2{tt}(jj)=z1;
+                dx2 = 0.9*sum(dx(ID1(jj):ID2(jj)));
+                %dist = max(((x(ID2(jj))-x(ID1(jj))).^2+(y(ID2(jj))-y(ID1(jj))).^2).^0.5,dx2)
+                xtip         = x1+z1.*vectorscale.*sin(ANGLEcoast(ID(jj))*pi/180);
+                ytip         = y1+z1.*vectorscale.*cos(ANGLEcoast(ID(jj))*pi/180);
+                dxbar        = -0.5*dx2*cos(ANGLEcoast(ID(jj))*pi/180);
+                dybar        = 0.5*dx2*sin(ANGLEcoast(ID(jj))*pi/180);
+                xpoly{tt}(jj,:)  = [x1+dxbar, xtip+dxbar, xtip-dxbar, x1-dxbar, x1+dxbar];
+                ypoly{tt}(jj,:)  = [y1+dybar, ytip+dybar, ytip-dybar, y1-dybar, y1+dybar];
+                xtext{tt}(jj,:)  = xtip;
+                ytext{tt}(jj,:)  = ytip;
+                ztext{tt}{jj}  = num2str(round(z1));
 
-    %%-------------------------------------------------------------------------
-    % plot KML bars
-    %%-------------------------------------------------------------------------
-    colour={[0 1 0],[1 0 0]};
-    fillalpha=0.7;
-    barstyle1            = KML_stylePoly('name','default','fillColor',colour{1},'lineColor',[0 0 0],'lineWidth',0.5,'fillAlpha',fillalpha); % red bar style
-    barstyle2            = KML_stylePoly('name','default','fillColor',colour{2},'lineColor',[0 0 0],'lineWidth',0.5,'fillAlpha',fillalpha); % green bar style
-    barstyle3            = KML_stylePoly('name','default','lineColor',[0.8 0.8 0.8],'lineWidth',0.5,'polyFill',0); % outline of area of bar
-
-    %% write KML bar plot
-    KMLfile2 = [KMLfile(1:end-4),'_bar.kml'];
-    fid         = fopen(KMLfile2,'wt');
-    kml2        = KML_header('kmlName',[OPT.KMLheader,'BAR']);
-    for tt=1:length(timesteps)
-        t1       = PRNdata.year(timesteps(tt))*365.25+reftimenum; 
-        if tt<length(timesteps)
-        t2 = PRNdata.year(timesteps(tt)+1)*365.25+reftimenum;
-        else
-        t2 = PRNdata.year(timesteps(tt))*365.25+reftimenum+DT*365.25;
+        %         %% convert coordinates to lat-lon
+        %         
+        %         lonpoly{tt}{jj}      = lonpoly{tt}{jj}';
+        %         latpoly{tt}{jj}      = latpoly{tt}{jj}';
+               % figure(1);clf;plot(xpoly{tt}(jj,:),ypoly{tt}(jj,:),'k');hold on;plot(x1,y1,'r*');plot(xtip,ytip,'g*');
+            end
+            [lonpoly{tt},latpoly{tt}] = convertCoordinates(xpoly{tt},ypoly{tt},EPSG,'CS1.code',EPSGcode,'CS2.name','WGS 84','CS2.type','geo');
+            [lontext{tt},lattext{tt}] = convertCoordinates(xtext{tt},ytext{tt},EPSG,'CS1.code',EPSGcode,'CS2.name','WGS 84','CS2.type','geo');
         end
-        tstart   = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
-        tend     = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
-        IDneg            = find(z2{tt}<0); % red
-        IDpos            = find(z2{tt}>=0);
-        kmlpoly2         = [];
 
-        for ii=1:length(IDpos) %length(S.PP(sens).settings.sgridRough)
-            kmlpoly2     = [kmlpoly2,barstyle1];
-            kmlpoly2     = [kmlpoly2 KMLpolytext(t1,t2,latpoly{tt}(IDpos(ii),:),lonpoly{tt}(IDpos(ii),:))];
-            if OPT.KMLlabels == 1
-                if isempty(OPT.KMLlabeltext)% Default zminz0
-                    kmlpoly2 = [kmlpoly2 KML_text(lattext{tt}(IDpos(ii),:),lontext{tt}(IDpos(ii),:),ztext{tt}{IDpos(ii)},'visible',1,'timeIn',tstart,'timeOut',tend)];
-                else % User specified
-                end
-            end            
-        end
-        for ii=1:length(IDneg) %length(S.PP(sens).settings.sgridRough)
-            kmlpoly2     = [kmlpoly2,barstyle2];
-            kmlpoly2     = [kmlpoly2 KMLpolytext(t1,t2,latpoly{tt}(IDneg(ii),:),lonpoly{tt}(IDneg(ii),:))];
-            if OPT.KMLlabels == 1
-                if isempty(OPT.KMLlabeltext)% Default zminz0
-                    kmlpoly2 = [kmlpoly2 KML_text(lattext{tt}(IDneg(ii),:),lontext{tt}(IDneg(ii),:),ztext{tt}{IDneg(ii)},'visible',1,'timeIn',tstart,'timeOut',tend)];
-                else % User specified
+        %%-------------------------------------------------------------------------
+        % plot KML bars
+        %%-------------------------------------------------------------------------
+        colour={[0 1 0],[1 0 0]};
+        fillalpha=0.7;
+        barstyle1            = KML_stylePoly('name','default','fillColor',colour{1},'lineColor',[0 0 0],'lineWidth',0.5,'fillAlpha',fillalpha); % red bar style
+        barstyle2            = KML_stylePoly('name','default','fillColor',colour{2},'lineColor',[0 0 0],'lineWidth',0.5,'fillAlpha',fillalpha); % green bar style
+        barstyle3            = KML_stylePoly('name','default','lineColor',[0.8 0.8 0.8],'lineWidth',0.5,'polyFill',0); % outline of area of bar
+
+        %% write KML bar plot
+        KMLfile2 = [KMLfile(1:end-4),'_bar.kml'];
+        fid         = fopen(KMLfile2,'wt');
+        kml2        = KML_header('kmlName',[OPT.KMLheader,'BAR']);
+        for tt=1:length(timesteps)
+            t1       = PRNdata.year(timesteps(tt))*365.25+reftimenum; 
+            if tt==1;t1=t1-0.5;end
+            if tt<length(timesteps)
+            t2 = PRNdata.year(timesteps(tt)+1)*365.25+reftimenum;
+            else
+            t2 = PRNdata.year(timesteps(tt))*365.25+reftimenum+DT*365.25;
+            end
+            tstart   = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
+            tend     = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
+            IDneg            = find(z2{tt}<0); % red
+            IDpos            = find(z2{tt}>=0);
+            kmlpoly2         = [];
+
+            for ii=1:length(IDpos) %length(S.PP(sens).settings.sgridRough)
+                kmlpoly2     = [kmlpoly2,barstyle1];
+                kmlpoly2     = [kmlpoly2 KMLpolytext(t1,t2,latpoly{tt}(IDpos(ii),:),lonpoly{tt}(IDpos(ii),:))];
+                if OPT.KMLlabels == 1
+                    if isempty(OPT.KMLlabeltext)% Default zminz0
+                        kmlpoly2 = [kmlpoly2 KML_text(lattext{tt}(IDpos(ii),:),lontext{tt}(IDpos(ii),:),ztext{tt}{IDpos(ii)},'visible',1,'timeIn',tstart,'timeOut',tend)];
+                    else % User specified
+                    end
+                end            
+            end
+            for ii=1:length(IDneg) %length(S.PP(sens).settings.sgridRough)
+                kmlpoly2     = [kmlpoly2,barstyle2];
+                kmlpoly2     = [kmlpoly2 KMLpolytext(t1,t2,latpoly{tt}(IDneg(ii),:),lonpoly{tt}(IDneg(ii),:))];
+                if OPT.KMLlabels == 1
+                    if isempty(OPT.KMLlabeltext)% Default zminz0
+                        kmlpoly2 = [kmlpoly2 KML_text(lattext{tt}(IDneg(ii),:),lontext{tt}(IDneg(ii),:),ztext{tt}{IDneg(ii)},'visible',1,'timeIn',tstart,'timeOut',tend)];
+                    else % User specified
+                    end
                 end
             end
+            kml2 = [kml2 kmlpoly2];
         end
-        kml2 = [kml2 kmlpoly2];
+        kml2         = [kml2 KML_footer];
+        fprintf(fid,kml2);
+        fclose all;
     end
-    kml2         = [kml2 KML_footer];
-    fprintf(fid,kml2);
-    fclose all;
 end
 
 %--------------------------------------------------------------------------

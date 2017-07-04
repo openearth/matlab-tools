@@ -97,7 +97,7 @@ if err==0
         if iscellstr(ray_file)
             fprintf(fid,'  %12.4f  %12.4f   %s \n',dta2(i,1:2), [ray_file{i}]);
         else
-            fprintf(fid,'  %12.4f  %12.4f   %s \n',dta2(i,1:2), [ray_file,num2str(i,'%02.0f')]);
+            fprintf(fid,'  %12.4f  %12.4f   %s \n',dta2(i,1:2), [ray_file,num2str(i,'%03.0f')]);
         end
     end
     fclose(fid);
