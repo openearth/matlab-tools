@@ -130,7 +130,7 @@ if ispc,
             fprintf(fid,'%s\n',['set flowexedir=' flowexedir]);
             if ~isempty(mdwfile)
                 fprintf(fid, '%s\n',['set mdwfile=' mdwfile]);
-                fprintf(fid, '%s\n',['set ARCH=win32']);
+                fprintf(fid, '%s\n',['set ARCH=win64']);
                 fprintf(fid, '%s\n',['set D3D_HOME=' handles.model.delft3dwave.exedir]);
                 fprintf(fid, '%s\n',['set waveexedir=%D3D_HOME%\%ARCH%\wave\bin']);
                 fprintf(fid, '%s\n',['set swanexedir=%D3D_HOME%\%ARCH%\swan\bin']);

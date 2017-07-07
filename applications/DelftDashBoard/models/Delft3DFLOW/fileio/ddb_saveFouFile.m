@@ -83,9 +83,17 @@ for i=1:length(tab.parameterNumber)
             optstr='y';
     end
     
-    t0str=num2str((tab.startTime(i)-handles.model.delft3dflow.domain(id).itDate)*1440,'%10.2f');
+    tunit='M';
+    switch lower(tunit)
+        case{'m'}
+            tfac=1440;
+        case{'s'}
+            tfac=86400;
+    end
+    
+    t0str=num2str((tab.startTime(i)-handles.model.delft3dflow.domain(id).itDate)*tfac,'%10.2f');
     t0str=[repmat(' ',1,12-length(t0str)) t0str];
-    t1str=num2str((tab.stopTime(i)-handles.model.delft3dflow.domain(id).itDate)*1440,'%10.2f');
+    t1str=num2str((tab.stopTime(i)-handles.model.delft3dflow.domain(id).itDate)*tfac,'%10.2f');
     t1str=[repmat(' ',1,12-length(t1str)) t1str];
     nrstr=num2str(tab.nrCycles(i));
     nrstr=[repmat(' ',1,6-length(nrstr)) nrstr];
