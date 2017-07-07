@@ -308,7 +308,7 @@ if ~isempty(outputfile)
         otherwise
             gridunit='m';
     end
-    write_spiderweb_file_delft3d(outputfile, tc, gridunit, spw.reference_time, spw.radius, 'merge_frac',spw.merge_frac);
+    write_spiderweb_file_delft3d(outputfile, tc, gridunit, spw.reference_time, spw.radius, 'merge_frac',spw.merge_frac,'tdummy',spw.tdummy);
 end
 
 %%
@@ -485,6 +485,12 @@ end
 if ~isfield(spw,'asymmetry_radial_distribution')
     spw.asymmetry_radial_distribution='v/vmax';
 end
+
+if ~isfield(spw,'tdummy')
+    spw.tdummy=[];
+end
+
+spw.holland2008=[];
 
 %%
 function tc=wes_cut_off_low_wind_speeds(tc,spw) % NOT USED ANYMORE!
