@@ -30,3 +30,5 @@ domains(id).nestgrid   = '';
 domains(id).coordsyst  = '';
 domains(id).mmax       = 0;
 domains(id).nmax       = 0;
+
+domains(id).mdffile = '';

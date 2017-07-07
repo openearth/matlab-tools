@@ -8,6 +8,11 @@ wave.mdffile = wave.flowfile;
 catch
 end
 
+%if wave.coupledwithflow
+if ~isempty(wave.mdffile)
+    wave.comwriteinterval=handles.model.delft3dflow.domain(1).comInterval;
+end
+
 ndomains=length(wave.domains);
 MDW.WaveFileInformation.FileVersion.value = '02.00';
 
@@ -33,6 +38,9 @@ switch lower(wave.simmode)
     case{'non-stationary'}
         MDW.General.TimeStep.value      = wave.timestep;
         MDW.General.TimeStep.type = 'real';
+        
+        
+        
 end
 
 MDW.General.DirConvention.value = wave.dirconvention;
