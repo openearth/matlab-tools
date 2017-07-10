@@ -32,9 +32,11 @@
               [grid_coarse.Xcen,grid_coarse.Ycen] = nesthd_det_cen(grid_coarse.X,grid_coarse.Y,icom_coarse);
               if strcmpi(grid_coarse.CoordinateSystem,'Spherical');sphere = true;end
           case 'DFLOWFM'
-              G=dflowfm.readNet(files{1});
-              try
-                  %% map file
+              G_new=dflowfm.readNet   (files{1});
+              G_old=dflowfm.readNetOld(files{1});
+              if isfield (G_old.face,'FlowElem_x')
+                  %% old map file
+                  G                = G_old;
                   grid_coarse.Xcen = G.face.FlowElem_x;
                   grid_coarse.Ycen = G.face.FlowElem_y;
                   name_coarse{length(G.face.FlowElem_x)} = [];
@@ -42,10 +44,8 @@
                       name_coarse{i_node} = ['FlowNode_' num2str(i_node,'%8.8i')];
                   end;
                   if strncmpi(ncreadatt(files{1},'wgs84','grid_mapping_name'),'latitu',6) sphere = true; end;
-              catch
-                  %% net file
-                  % to do: construct net topology from the net nodes link
-                  % administration
+              else 
+                  %% new map file
               end
       end
       

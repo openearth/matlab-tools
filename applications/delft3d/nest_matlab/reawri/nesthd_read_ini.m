@@ -42,7 +42,7 @@ function [handles] = read_ini(handles,varargin)
       switch handles.active
          case 'Nesthd1'
             handles.files_hd1{1}=inifile('get',Info,handles.active,'Overall model grid  ');
-            handles.files_hd1{2}=inifile('get',Info,handles.active,'Detailed model grid');
+            handles.files_hd1{2}=inifile('get',Info,handles.active,'Detailled model grid');
             handles.files_hd1{3}=inifile('get',Info,handles.active,'Boundary Definition ');
             handles.files_hd1{4}=inifile('get',Info,handles.active,'Observation Points  ');
             handles.files_hd1{5}=inifile('get',Info,handles.active,'Nest Administration ');

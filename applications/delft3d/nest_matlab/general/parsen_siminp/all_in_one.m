@@ -20,8 +20,12 @@ for irec = 1: length(S.File)
       istart   = strfind(lower(contents),'''');
       filename = contents(istart(1)+1:end-1);
       % change - J. Groenenboom - May '17 - account for Linux notation
-      if any(strfind(filename,'/'))
+      % change - TK Fix only works if full path is given ('/p/anydir/etc/file.file')
+      %             For relative path only slashes should be reversed 
+      if any(strfind(filename,'/')) && strcmp(filename(1),'/')
           filename=[filename(2) ':' strrep(filename(3:end),'/','\')];
+      else
+          filename = strrep(filename,'/','\');
       end
       hulp2    = readsiminp(S.FileDir,filename);
       hulp(end+1:end + length(hulp2.File)) = hulp2.File;
