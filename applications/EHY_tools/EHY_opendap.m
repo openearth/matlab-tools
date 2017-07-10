@@ -1,0 +1,90 @@
+function varargout = EHY_opendap (varargin)
+
+%% retrieve information availlable on the Deltares opendap server,
+%  (a copy of Rijkswaterstaat Waterbase)
+%
+%  parameters     = EHY_opendap
+%                   returns a cell array with the names of the parameters avalaible
+%
+%  2 <keyword,value> pairs are implemented
+%  Stations       = EHY_opendap('Parameter','waterhoogte')
+%                   returns a cell array with the names of the stations where this parameter is measured
+%  [times,values] = EHY_opendap('Parameter','waterhoogte','Station','HoekvH')
+%                   returns the time series, times and values, of this parameter at this station
+%
+
+%% Initialisation
+OPT.Parameter = '';
+OPT.Station   = '';
+
+OPT = setproperty(OPT,varargin);
+
+%% Retreive list of files available on the opendap server
+[path,~,~] = fileparts(mfilename('fullpath'));
+
+if ~exist([path filesep 'list_opendap.mat'],'file')
+    url = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/catalog.xml';
+    list = opendap_catalog(url,'disp','','maxlevel',4);
+    save([path filesep 'list_opendap.mat'],'list'); 
+else
+    load([path filesep 'list_opendap.mat']);
+end
+
+%% Nothing specified, return list of possible parameters
+if isempty(OPT.Parameter)
+    i_par = 1;
+    for i_data = 1: length(list)
+        i_sep = strfind(list{i_data},'/');
+        name_tmp = list{i_data}(i_sep(end-2) + 1:i_sep(end-1) - 1);
+        if i_data == 1
+            name_par{i_par} = name_tmp;
+        else
+            if ~strcmp(name_tmp,name_par{i_par})
+                i_par = i_par + 1;
+                name_par{i_par} = name_tmp;
+            end
+        end
+    end
+    varargout = {sort(name_par)};
+end
+
+%% Parameter name specified
+if ~isempty(OPT.Parameter)
+    i_stat = find(~cellfun(@isempty,strfind(lower(list),lower(OPT.Parameter))));
+    list_stat = list(i_stat);
+    if isempty(OPT.Station)
+        %% No station name specified, return list of stations
+        i_stat = 1;
+        for i_data = 1: length(list_stat)
+            i_sep = strfind(list_stat{i_data},'/');
+            name_tmp = list_stat{i_data}(i_sep(end) + 1:end-3);
+            i_id     = strfind(name_tmp,'-');
+            name_tmp = name_tmp(i_id+1:end);
+
+            if i_data == 1
+                name_stat{i_stat} = name_tmp;
+            else
+                if ~strcmp(name_tmp,name_stat{i_stat})
+                    i_stat            = i_stat + 1;
+                    name_stat{i_stat} = name_tmp;
+                end
+            end
+        end
+        varargout = {sort(name_stat)};
+    else
+        %% Station name specified, return time series of the parameter at this station
+        %  First find the station
+        i_stat = find(~cellfun(@isempty,strfind(lower(list_stat),lower(OPT.Station))));
+
+        % Get information on the parameter name on the file
+        Info       = ncinfo(list_stat{i_stat});
+        param_name = Info.Variables(end).Name;
+
+        %% Retrieve data
+        D           = nc_cf_timeseries(list_stat{i_stat},param_name,'plot',0);
+        varargout{1} = D.datenum;
+        varargout{2} = D.(param_name);
+        varargout{3} = D;
+    end
+end
+
