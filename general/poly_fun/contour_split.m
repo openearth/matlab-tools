@@ -64,7 +64,7 @@ OPT = setproperty(OPT,varargin);
       nc          = 1;
       S.index(nc) = 1;
 
-      S.level     (nc) = c(1,S.index(nc));
+      S.levels    (nc) = c(1,S.index(nc));
       S.n         (nc) = c(2,S.index(nc));
       i0 = S.index(nc)  + 1;
       i1 = i0 + S.n(nc) - 1; %S.index(nc) + S.n(nc) + 1
@@ -77,7 +77,7 @@ OPT = setproperty(OPT,varargin);
       nc          = nc + 1;
       S.index(nc) = i1 + 1;
          
-      S.level     (nc) = c(1,S.index(nc));
+      S.levels    (nc) = c(1,S.index(nc));
       S.n         (nc) = c(2,S.index(nc));
       i0 = S.index(nc)  + 1;
       i1 = i0 + S.n(nc) -1; %S.index(nc) + S.n(nc) + 1
