@@ -24,8 +24,16 @@
 %%        Get velocity data and rotate to obtain north and south velocities
 
          data_all  = ncread(runid,'x_velocity');
-         uu       = data_all(istat,:);
-         data_all  = ncread(runid,'y_velocity');
-         vv       = data_all(istat,:);
+         if  nfs_inf.kmax == 1         % depth averaged
+             uu       = data_all(istat,:);
+         else
+             uu       = squeeze(data_all(:,istat,:))';
+         end
          
+         data_all  = ncread(runid,'y_velocity');
+         if  nfs_inf.kmax == 1         % depth averaged
+             vv       = data_all(istat,:);
+         else
+             vv       = squeeze(data_all(:,istat,:))';
+         end
       end

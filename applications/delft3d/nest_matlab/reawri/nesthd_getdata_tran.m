@@ -11,4 +11,6 @@
             [conc] = nesthd_simhsc(filename,istat,nfs_inf,l);
          case {'SIMONA'}
             [conc] = nesthd_sdshsc(filename,istat,nfs_inf,l);
+         case {'DFLOWFM'}
+            [conc] = nesthd_hisncc(filename,istat,nfs_inf,l);
       end

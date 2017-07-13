@@ -15,7 +15,11 @@
 
          files   = varargin{1};
          if nargin == 2
-            add_inf = varargin{2};
+            add_inf             = varargin{2};
+            %% Temporary, set path to mdf file with NSC layer distribution
+            if exist('nsc_thick.mdf','file')
+                add_inf.interpolate_z = 'nsc_thick.mdf';
+            end
          else
             add_inf = nesthd_additional( );
          end
@@ -65,6 +69,12 @@
       %
 
       [bndval,error]      = nesthd_dethyd(fid_adm,bnd,nfs_inf,add_inf,files{3});
+      
+      %% Vertical interpolation, temprary, not correct place, shoud be don inside dethyd
+      if isfield(add_inf,'interpolate_z')
+          det_inf         = nesthd_get_general  (add_inf.interpolate_z);
+          bndval          = nesthd_interpolate_z(bndval,nsf_inf.rel_pos, det_inf.rel_pos);
+      end
       if error return; end;
 
       %
