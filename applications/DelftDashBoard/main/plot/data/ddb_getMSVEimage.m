@@ -119,22 +119,27 @@ yp=yy;
 ymin2=min(yy);
 ymax2=max(yy);
 
-% Adjust for mercator projection
+adjust=1;
 
-% Above the equator
-ymin3=max(ymin2,0);
-aa=(ymax2-ymin3)/(merc(ymax2)-merc(ymin3));
-bb=ymin3-aa*merc(ymin3);
-yp(ym>0)=aa*merc(ym(ym>0))+bb;
-% Below the equator
-ymin3=min(ymax2,0);
-aa=(ymin2-ymin3)/(merc(ymin2)-merc(ymin3));
-bb=ymin3-aa*merc(ymin3);
-yp(ym<0)=aa*merc(ym(ym<0))+bb;
-
-r=interp1(yy,r,yp);
-g=interp1(yy,g,yp);
-b=interp1(yy,b,yp);
+if adjust
+    % Adjust for mercator projection
+    
+    % Above the equator
+    ymin3=max(ymin2,0);
+    aa=(ymax2-ymin3)/(merc(ymax2)-merc(ymin3));
+    bb=ymin3-aa*merc(ymin3);
+    yp(ym>0)=aa*merc(ym(ym>0))+bb;
+    % Below the equator
+    ymin3=min(ymax2,0);
+    aa=(ymin2-ymin3)/(merc(ymin2)-merc(ymin3));
+    bb=ymin3-aa*merc(ymin3);
+    yp(ym<0)=aa*merc(ym(ym<0))+bb;
+    
+    r=interp1(yy,r,yp);
+    g=interp1(yy,g,yp);
+    b=interp1(yy,b,yp);
+    
+end
 
 cdata=[];
 cdata(:,:,1)=r;
