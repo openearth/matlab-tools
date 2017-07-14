@@ -182,8 +182,8 @@ point1=point1(1,1:2);
 % Check if mouse is in current axis
 if point1(1)>=xl(1) && point1(1)<=xl(2) && point1(2)>=yl(1) && point1(2)<=yl(2)
     if isempty(handles.GUIHandles.anchorhandle)
-        p=plot(point1(1),point1(2),'o');
-        set(p,'MarkerFaceColor','r');
+        p=plot(point1(1),point1(2),'r+');
+        set(p,'MarkerSize',10);
         handles.GUIHandles.anchorhandle=p;
         setHandles(handles);
     else
