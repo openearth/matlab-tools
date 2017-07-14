@@ -66,7 +66,7 @@ tbh = uitoolbar;
 
 c=load([handles.settingsDir filesep 'icons' filesep 'icons_muppet.mat']);
 
-c2=load([handles.settingsDir filesep 'icons' filesep 'icons6.mat']);
+% c2=load([handles.settingsDir filesep 'icons' filesep 'icons6.mat']);
 cpan=load([handles.settingsDir filesep 'icons' filesep 'icons.mat']);
 
 h = uitoggletool(tbh,'Separator','off','HandleVisibility','on','ToolTipString','Zoom In');
@@ -107,6 +107,14 @@ set(h,'cdata',cpan.icons.refreshauto);
 set(h,'State','on');
 handles.GUIHandles.toolBar.autoRefreshBathymetry=h;
 
+h = uitoggletool(tbh,'Separator','off','HandleVisibility','on','ToolTipString','Distance calculation with anchor. Press "a" to define anchor location.');
+set(h,'ClickedCallback',@ddb_setAnchor);
+set(h,'Tag','UIAnchor');
+%set(h,'cdata',c.ico.graph_bar16);
+set(h,'cdata',cpan.icons.anchor);
+set(h,'State','off');
+handles.GUIHandles.toolBar.anchor=h;
+
 % h = uitoggletool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','Set Anchor');
 % set(h,'ClickedCallback','');
 % set(h,'Tag','UISetAnchor');
@@ -115,13 +123,13 @@ handles.GUIHandles.toolBar.autoRefreshBathymetry=h;
 
 
 
-h = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','Quickplot');
-%set(h,'ClickedCallback','C:\Delft3D\w32\quickplot\bin\win32\d3d_qp.exe openfile "%1"');
-d3dpath=getenv('D3D_HOME');
-str=['system(''' d3dpath filesep 'w32' filesep 'quickplot' filesep 'bin' filesep 'win32' filesep 'd3d_qp.exe'');'];
-set(h,'ClickedCallback',str);
-set(h,'Tag','UIStartQuickplot');
-%set(h,'cdata',cpan.icons.refresh);
-set(h,'cdata',c.ico.graph_bar16);
-handles.GUIHandles.toolBar.QuickPlot=h;
+% h = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','Quickplot');
+% %set(h,'ClickedCallback','C:\Delft3D\w32\quickplot\bin\win32\d3d_qp.exe openfile "%1"');
+% d3dpath=getenv('D3D_HOME');
+% str=['system(''' d3dpath filesep 'w32' filesep 'quickplot' filesep 'bin' filesep 'win32' filesep 'd3d_qp.exe'');'];
+% set(h,'ClickedCallback',str);
+% set(h,'Tag','UIStartQuickplot');
+% %set(h,'cdata',cpan.icons.refresh);
+% set(h,'cdata',c.ico.graph_bar16);
+% handles.GUIHandles.toolBar.QuickPlot=h;
 

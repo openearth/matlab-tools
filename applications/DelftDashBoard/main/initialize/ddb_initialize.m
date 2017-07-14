@@ -125,10 +125,24 @@ switch lower(varargin{1}),
         ddb_setWindowButtonUpDownFcn;
         ddb_setWindowButtonMotionFcn;
         
+        handles=getHandles;
+        handles.GUIHandles.anchorhandle=[];
+        setHandles(handles);
+
     case{'all'}
         ddb_initializeModels;
         ddb_initializeToolboxes;
         ddb_refreshDomainMenu;
+        
+        handles=getHandles;
+        if ~isempty(handles.GUIHandles.anchorhandle)
+            try
+                delete(handles.GUIHandles.anchorhandle);
+            end
+            handles.GUIHandles.anchorhandle=[];
+        end
+        setHandles(handles);
+
         
     otherwise
         

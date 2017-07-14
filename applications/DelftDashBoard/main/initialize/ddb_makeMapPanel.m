@@ -111,6 +111,8 @@ handles.GUIHandles.textCoordinateSystem = uicontrol(gcf,'Units','pixels','Parent
     'String','WGS 84 - Geographic','Position',[100 655 200 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
 handles.GUIHandles.textBathymetry = uicontrol(gcf,'Units','pixels','Parent',handles.GUIHandles.mapPanel,'Style','text', ...
     'String','Bathymetry : GEBCO 08','Position',[620 655 400 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
+handles.GUIHandles.textAnchor = uicontrol(gcf,'Units','pixels','Parent',handles.GUIHandles.mapPanel,'Style','text', ...
+    'String','','Position',[800 655 100 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
 
 % Text box
 

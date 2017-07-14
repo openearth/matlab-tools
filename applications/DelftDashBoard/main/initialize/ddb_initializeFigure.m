@@ -92,5 +92,9 @@ set(handles.GUIHandles.Menu.CoordinateSystem.UTM,'Label',str);
 
 set(handles.GUIHandles.mainWindow,'Visible','off');
 
+set(handles.GUIHandles.mainWindow,'WindowKeyPressFcn',{@ddb_pan,'start',@ddb_updateDataInScreen,[],@ddb_updateDataInScreen,[]});
+set(handles.GUIHandles.mainWindow,'WindowKeyReleaseFcn',{@ddb_pan,'stop',@ddb_updateDataInScreen,[],@ddb_updateDataInScreen,[]});
+handles.GUIHandles.panning=0;
+
 setHandles(handles);
 
