@@ -155,10 +155,10 @@ switch type
         tlength = get_time_length(xb, vars);
     case{'jons_table'}
 
-        fid = fopen('jonswap.txt','wt');
+        fid = fopen(fullfile(OPT.path, 'jonswap.txt'),'wt');
         nconditions = length(xb.data(2).value);
         for ii = 1:nconditions
-        fprintf(fid, '%.1f ',   [xb.data(2).value(ii)]); % Hm0
+        fprintf(fid, '%.3f ',   [xb.data(2).value(ii)]); % Hm0
         fprintf(fid, '%.1f ',   [xb.data(3).value(ii)]); % Tp
         fprintf(fid, '%.0f ',   [xb.data(4).value(ii)]); % main angle
         fprintf(fid, '%.1f ',   [xb.data(5).value]);     % gamma
