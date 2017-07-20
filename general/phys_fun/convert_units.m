@@ -88,7 +88,8 @@ debug = 0;
    ppm             = 1e-6;
 
    %% Length units 
-   um              = 1e-6;                    % micro meter [VO]
+   micrometer      = 1e-6;                    % micro meter [VO]
+   um              = micrometer; 
    mm              = 1e-3;                    % mms
    mms             = mm;                      % mms
    millimeter      = mm;                      % mms
@@ -144,12 +145,19 @@ debug = 0;
    SEC             = s;                       % seconds SWAN
    
    ms              = 0.001*s;                 % milliseconds
+   msec            = ms;
    millisecs       = ms;                      % milliseconds
    millisec        = ms;                      % milliseconds
    millisecond     = ms;                      % milliseconds
    milliseconds    = ms;                      % milliseconds
    
+   microsecond     = 1e-6*s;
+   us              = microsecond;
+   microsec        = microsecond;
+   microseconds    = microsecond;
+   
    nanosecond      = 1e-9*s;                  % nanoseconds
+   nanosec         = nanosecond;
    nanoseconds     = nanosecond;              % nanoseconds
 
    min             = 60*s;                    % minutes
@@ -263,7 +271,7 @@ debug = 0;
    tds              = ton;                    % Tonnes Dry Solids [VO]
    
    %% Angle units 
-   rad             = 1;                       % radian
+   rad             = RAD; %1;                 % radian
    deg             = 1./RAD;                  % degree
    amin            = deg./60;                 % arcmin
    asec            = amin./60;                % arcsec
@@ -293,6 +301,18 @@ debug = 0;
    deg_k           = K;
    degrees_K       = K;
    degrees_k       = K;
+   C               = 272.15;                % 1 Kelvin = -272.15 Celsius
+   Celsius         = C;
+   degreeC         = C;
+   degreeC         = C;
+   degC            = C;
+   degC            = C;
+   degree_C        = C;
+   degree_C        = C;
+   deg_C           = C;
+   deg_C           = C;
+   degrees_C       = C;
+   degrees_C       = C;
    
    %% Power units
    W               = 1;
@@ -306,15 +326,22 @@ debug = 0;
    VA              = W;                         % volt Ampere
    kVA             = 1000*W;                    % kilo volt amperes
    
+   HP              = 745.699872*W;
+   hp              = HP;
+   pk              = HP;
+   
    %% Electrical units
    V               = 1;                         % volt
    kV              = 1000*V;                    % kilo volt
+   mV              = V / 1000;
    
    A               = 1;                         % ampere
    Amp             = A;                         % ampere
    Amps            = A;                         % ampere
    
    mA              = 1e-3;                      % milli ampere
+   microA          = 1e-6;
+   uA              = microA;
    
    %% Frequency
    hz              = 1;                         % hertz
@@ -323,6 +350,13 @@ debug = 0;
    RPM             = rpm;                       % revolutions per minute
    rmp             = rpm;   % common typo
    RMP             = rpm;   % common typo
+   
+   %% bits and bytes
+   bit = 1;
+   bits = bit;
+   
+   byte = 8*bit;
+   kB   = 1024 * byte;
    
 %% Find conversion factor 
    if debug
