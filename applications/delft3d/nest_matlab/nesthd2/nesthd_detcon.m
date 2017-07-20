@@ -23,7 +23,7 @@ lstci  = nfs_inf.lstci;
 mnstat = nfs_inf.mnstat;
 
 for itim = 1: notims
-    bndval(itim).value(1:no_pnt,1:kmax,1:lstci,1:2) = 0.;
+    bndval(itim).value(1:no_pnt,1:kmax,1:lstci) = 0.;
 end
 
 %
@@ -32,9 +32,6 @@ end
 for i_pnt = 1: no_pnt
     
     waitbar(i_pnt/no_pnt);
-    if i_pnt == 4
-        i_pnt
-    end
     
     %
     %-----------first get nesting stations, weights and orientation
@@ -104,7 +101,7 @@ for i_pnt = 1: no_pnt
                     
                     for itim = 1: notims
                         for k = 1: kmax
-                            bndval(itim).value(i_pnt,k,l,1) = bndval(itim).value(i_pnt,k,l,1) +             ...
+                            bndval(itim).value(i_pnt,k,l) = bndval(itim).value(i_pnt,k,l) +             ...
                                 conc(itim,k)*weight(iwght);
                         end
                     end
@@ -120,9 +117,9 @@ for i_pnt = 1: no_pnt
     for l = 1: lstci
         if add_inf.genconc(l)
             for itim = 1 : notims
-                bndval(itim).value(i_pnt,:,l,1) =  bndval(itim).value(i_pnt,:,l,1) + add_inf.add(l);
-                bndval(itim).value(i_pnt,:,l,1) =  min(bndval(itim).value(i_pnt,:,l,1),add_inf.max(l));
-                bndval(itim).value(i_pnt,:,l,1) =  max(bndval(itim).value(i_pnt,:,l,1),add_inf.min(l));
+                bndval(itim).value(i_pnt,:,l) =  bndval(itim).value(i_pnt,:,l) + add_inf.add(l);
+                bndval(itim).value(i_pnt,:,l) =  min(bndval(itim).value(i_pnt,:,l),add_inf.max(l));
+                bndval(itim).value(i_pnt,:,l) =  max(bndval(itim).value(i_pnt,:,l),add_inf.min(l));
             end
         end
     end

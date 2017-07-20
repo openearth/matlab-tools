@@ -8,7 +8,7 @@ function nesthd_wrihyd_dflowfmtim(filename,bnd,nfs_inf,bndval,add_inf)
 
 no_pnt        = length(bnd.DATA);
 no_times      = length(bndval);
-kmax          = nfs_inf.nolay;
+kmax          = size(bndval(1).value,2)/2;
 [path,~,~]    = fileparts(filename);
 
 %
@@ -42,13 +42,13 @@ for i_pnt = 1: no_pnt
     % Boundary values
 
     for i_time = 1: no_times
-        
+
         if isfield(nfs_inf,'time')
         SERIES.Values(i_time,1) = nfs_inf.time(i_time);
         else
         SERIES.Values(i_time,1) = nfs_inf.tstart + (i_time - 1)*nfs_inf.dtmin;
         end
-        
+
         SERIES.Values(i_time,2) = bndval(i_time).value(i_pnt,1,1);
         if lower(bnd.DATA(i_pnt).bndtype) == 'p' || lower(bnd.DATA(i_pnt).bndtype) == 'x'
             SERIES.Values(i_time,3) = bndval(i_time).value(i_pnt,2,1);

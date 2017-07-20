@@ -12,8 +12,11 @@
 
       %% relative position measured from the bed
       i_lay              = 1;
-      mdf_ini.rel_pos(1) = mdf_ini.thick(mdf_ini.kmax)/2;
+      tmp(1)             = mdf_ini.thick(mdf_ini.kmax)/2;
       for k = mdf_ini.kmax-1:-1:1
-          i_lay = i_lay + 1;
-          mdf_ini.rel_pos(i_lay) = mdf_ini.rel_pos(i_lay - 1) + mdf_ini.thick(k);
+          i_lay      = i_lay + 1;
+          tmp(i_lay) = tmp(i_lay - 1) + 0.5*mdf_ini.thick(k + 1) + ...
+                                                0.5*mdf_ini.thick(k    ) ;
       end
+      
+      mdf_ini.rel_pos = fliplr(tmp);

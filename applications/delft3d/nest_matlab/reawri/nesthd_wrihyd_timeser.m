@@ -8,7 +8,7 @@ function wrihyd_timeser(filename,bnd,nfs_inf,bndval,add_inf)
 
 no_bnd        = length(bnd.DATA)/2 ;
 notims        = length(bndval);
-kmax          = nfs_inf.nolay;
+kmax          = size(bndval(1).value,2)/2;
 
 if isfield(add_inf,'profile')
    profile       = add_inf.profile;

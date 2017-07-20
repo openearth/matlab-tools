@@ -7,10 +7,10 @@ function wricon_bcc(filename,bnd,nfs_inf,bndval,add_inf)
 %
 
 no_bnd        = length(bnd.DATA)/2;
-kmax          = nfs_inf.kmax;
-lstci         = nfs_inf.lstci;
-namcon        = nfs_inf.namcon;
 notims        = length(bndval);
+kmax          = size(bndval(1).value,2);
+lstci         = size(bndval(1).value,3);
+namcon        = nfs_inf.namcon;
 
 %
 % Fill the INFO structure (general information)
