@@ -93,7 +93,7 @@ for ipr=1:nplotroutines
         element(nelm).element.dependency.dependency.check.check.variable='plotroutine';
         element(nelm).element.dependency.dependency.check.check.value=datatype.plotroutine(ipr).plotroutine.name;
         element(nelm).element.dependency.dependency.check.check.operator='eq';
-        element(nelm).element.position=[0 0 width height];
+        element(nelm).element.position=[0 0 width height-50];
         posy=height-60;
     else
         posy=height-10;
