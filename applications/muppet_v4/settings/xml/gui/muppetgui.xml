@@ -2236,6 +2236,7 @@
     <tag>colormapaxis</tag>
     <style>axis</style>
     <position>200 180 130 20</position>
+    <parent>colormappanel</parent>
   </element>
   <element>
     <tag>selectcolormap</tag>
