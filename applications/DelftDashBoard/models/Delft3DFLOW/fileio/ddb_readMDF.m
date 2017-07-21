@@ -526,6 +526,10 @@ if isfield(MDF,'ocorio')
     end
 end
 
+if isfield(MDF,'filz0l')
+    handles.model.delft3dflow.domain(id).z0lFile=MDF.filz0l;
+end
+
 % Cstbnd= #yes#
 % TraFrm= #vrijn2004.frm#
 % Trtrou= #Y#

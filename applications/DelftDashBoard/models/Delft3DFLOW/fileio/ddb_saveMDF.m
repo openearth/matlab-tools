@@ -582,6 +582,10 @@ if ~Flow.ocorio
     MDF.OCorio='N';
 end
 
+if ~isempty(Flow.z0lFile)
+    MDF.Filz0l=Flow.z0lFile;
+end
+
 %% Now save everything to mdf file
 fname=[handles.model.delft3dflow.domain(id).runid '.mdf'];
 

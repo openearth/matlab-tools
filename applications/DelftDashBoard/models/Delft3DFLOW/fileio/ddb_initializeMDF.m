@@ -217,6 +217,7 @@ MDF.Wndgrd= 'A';
 MDF.MNmaxw= [0 0];
 MDF.Filweb = '';
 MDF.TraFrm = '';
+MDF.Filz0l = '';
 
 %% lower case
 fnames=fieldnames(MDF);

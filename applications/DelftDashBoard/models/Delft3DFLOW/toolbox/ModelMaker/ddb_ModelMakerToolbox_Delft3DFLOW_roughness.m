@@ -62,6 +62,7 @@ else
     switch opt
         case{'generateroughness'}
             generateRoughness;
+%             generateZ0Land;
     end
     
 end
@@ -94,4 +95,37 @@ if pathname~=0
     
     setHandles(handles);
 
+end
+
+%% 
+function generateZ0Land
+
+handles=getHandles;
+
+model=handles.activeModel.name;
+
+[filename, pathname, filterindex] = uiputfile('*.z0l', 'Z0land Name',[handles.model.(model).domain(ad).attName '.z0l']);
+
+if pathname~=0
+    
+    xmin=min(min(handles.model.(model).domain(ad).gridX));
+    xmax=max(max(handles.model.(model).domain(ad).gridX));
+    ymin=min(min(handles.model.(model).domain(ad).gridY));
+    ymax=max(max(handles.model.(model).domain(ad).gridY));
+    xl=[xmin xmax];
+    yl=[ymin ymax];
+    
+    bathyset='ngdc_crm';
+    dmin=500;
+    
+    [xx,yy,zz,ok]=ddb_getBathymetry(handles.bathymetry,xl,yl,'bathymetry',bathyset,'maxcellsize',dmin);
+    
+    xg=handles.model.(model).domain(ad).gridX;
+    yg=handles.model.(model).domain(ad).gridY;
+    
+    z0land=delft3d_create_z0land_file(filename,xg,yg,xx,yy,zz,'geo');
+    handles.model.(model).domain(ad).z0lFile=filename;
+    
+    setHandles(handles);
+    
 end

@@ -245,6 +245,7 @@ handles.model.delft3dflow.domain(id).edyFile='';
 handles.model.delft3dflow.domain(id).srcFile='';
 handles.model.delft3dflow.domain(id).disFile='';
 handles.model.delft3dflow.domain(id).w2dFile='';
+handles.model.delft3dflow.domain(id).z0lFile='';
 
 handles.model.delft3dflow.domain(id).MMax=0;
 handles.model.delft3dflow.domain(id).NMax=0;
