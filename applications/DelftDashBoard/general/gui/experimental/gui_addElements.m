@@ -138,9 +138,22 @@ for i=1:length(element)
 
             case{'axis'}
 
-                h=axes;
+                hp=[];
+                if ~isempty(element(i).element.parent)
+                    hp=findobj(figh,'tag',element(i).element.parent);
+                end
+                if ~isempty(hp)
+                    posp=get(hp,'Position');
+                    h=axes('Parent',hp);
+                else                
+                    posp=[0 0 0 0];
+                    h=axes;
+                end
                 set(h,'Units','pixels');
-                set(h,'Position',pos);
+                posn=pos;
+                posn(1)=pos(1)-posp(1);
+                posn(2)=pos(2)-posp(2);
+                set(h,'Position',posn);
                 element(i).element.handle=h;
 
             case{'togglebutton'}
