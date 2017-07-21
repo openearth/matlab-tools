@@ -8,28 +8,32 @@ switch mode
         delete(figh);
 end
 
+a=get(0,'ScreenSize');
+asprat=handles.figures(ifig).figure.width/handles.figures(ifig).figure.height;
+if asprat<a(3)/a(4)
+    y1=0.88*a(4);
+    cm2pix=y1/handles.figures(ifig).figure.height;
+else
+    x1=0.88*a(3);
+    cm2pix=x1/handles.figures(ifig).figure.width;
+end
+ScreenPixelsPerInch=get(0,'ScreenPixelsPerInch');
+
 % Compute some of the figure's size and unit parameters
 if strcmp(mode,'preview')
     % Preview on screen
     handles.figures(ifig).figure.units='pixels';
-    a=get(0,'ScreenSize');
-    asprat=handles.figures(ifig).figure.width/handles.figures(ifig).figure.height;
-    if asprat<a(3)/a(4)
-        y1=0.88*a(4);
-        handles.figures(ifig).figure.cm2pix=y1/handles.figures(ifig).figure.height;
-    else
-        x1=0.88*a(3);
-        handles.figures(ifig).figure.cm2pix=x1/handles.figures(ifig).figure.width;
-    end
-    ScreenPixelsPerInch=get(0,'ScreenPixelsPerInch');
-    cm2pix=handles.figures(ifig).figure.cm2pix;
+    handles.figures(ifig).figure.cm2pix=cm2pix;
     handles.figures(ifig).figure.fontreduction=2.5*cm2pix/ScreenPixelsPerInch;
     handles.figures(ifig).figure.zoom='none';
+    handles.figures(ifig).figure.export=0;    
 else
     % Export to file
-    handles.figures(ifig).figure.units='centimeters';
-    handles.figures(ifig).figure.cm2pix=1;
+%    handles.figures(ifig).figure.units='centimeters';
     handles.figures(ifig).figure.fontreduction=1;
+    handles.figures(ifig).figure.units='pixels';
+    handles.figures(ifig).figure.cm2pix=cm2pix;
+    handles.figures(ifig).figure.export=1; 
 end
 
 fig=handles.figures(ifig).figure;

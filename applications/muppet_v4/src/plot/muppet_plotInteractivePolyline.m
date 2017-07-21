@@ -13,7 +13,7 @@ else
     facecolor='none';
 end
 
-if handles.figures(i).figure.cm2pix==1
+if handles.figures(i).figure.export
     % Exporting
     if strcmpi(opt.marker,'none')    
         opt.marker='';

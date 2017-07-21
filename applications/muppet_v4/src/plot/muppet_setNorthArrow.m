@@ -86,7 +86,7 @@ pos(4)=plt.northarrow.position(3);
 set(northarrow,'Units',fig.units);
 set(northarrow,'Position',pos*fig.cm2pix);
 
-if fig.cm2pix==1
+if fig.export
     box off;
     axis off;
 else

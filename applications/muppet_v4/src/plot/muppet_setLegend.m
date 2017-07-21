@@ -22,7 +22,7 @@ if sum(hnd)>0
     leg=legend(hnd,txt);
     
     if ~plt.legend.border
-        if fig.cm2pix==1
+        if fig.export
             legend boxoff;
         else
             set(leg,'Color','none');

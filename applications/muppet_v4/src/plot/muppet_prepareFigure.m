@@ -10,13 +10,18 @@ if strcmp(mode,'export') || strcmp(mode,'guiexport')
     % Exporting figure
     figh=figure(999);
     set(figh,'visible','off');
-    set(figh,'PaperUnits',fig.units);
-    if strcmp(fig.orientation,'landscape')
-        set(figh,'PaperSize',[paperheight paperwidth]);
-    else
-        set(figh,'PaperSize',[paperwidth paperheight]);
-    end         
-    set(figh,'PaperPosition',[0.0 0.0 paperwidth paperheight]);
+%    set(figh,'Units','centimeters');
+    set(figh,'Units','pixels');
+    set(figh,'PaperUnits','centimeters');
+    set(figh,'Position',[0 0 paperwidth paperheight]);
+    set(figh,'PaperPosition',[0 0 fig.width fig.height]);
+    
+%     if strcmp(fig.orientation,'landscape')
+%         set(figh,'PaperSize',[paperheight paperwidth]);
+%     else
+%         set(figh,'PaperSize',[paperwidth paperheight]);
+%     end         
+%     set(figh,'PaperPosition',[0.0 0.0 paperwidth paperheight]);
     set(figh,'Renderer',fig.renderer);
     set(figh,'Tag','figure','UserData',ifig);
     for k=1:fig.nrsubplots
