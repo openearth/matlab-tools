@@ -31,22 +31,22 @@
       lstci       = nfs_inf.lstci;
       notims      = nfs_inf.notims;
 
-%       %% Generate hydrodynamic boundary conditions
-%       [bndval,error]      = nesthd_dethyd(fid_adm,bnd,nfs_inf,add_inf,files{3});
-%       if error return; end;
-% 
-%       %% Vertical interpolation, temporary, not correct place, shoud be don inside dethyd
-%       if isfield(add_inf,'interpolate_z')
-%           bndtype         = {bnd.DATA(:).bndtype};
-%           det_inf         = nesthd_get_general  (add_inf.interpolate_z);
-%           bndval          = nesthd_interpolate_z(bndtype,bndval,nfs_inf.rel_pos(1,:), det_inf.rel_pos);
-%       end
-%       
-%       %% Generate depth averaged bc from 3D simulation
-%       [bndval,nfs_inf] = nesthd_dethyd2dh(bndval,bnd,nfs_inf,add_inf);
-% 
-%       %% Write the hydrodynamic boundary conditions to file
-%       nesthd_wrihyd (files{4},bnd,nfs_inf,bndval, add_inf);
+      %% Generate hydrodynamic boundary conditions
+      [bndval,error]      = nesthd_dethyd(fid_adm,bnd,nfs_inf,add_inf,files{3});
+      if error return; end;
+
+      %% Vertical interpolation, temporary, not correct place, shoud be don inside dethyd
+      if isfield(add_inf,'interpolate_z')
+          bndtype         = {bnd.DATA(:).bndtype};
+          det_inf         = nesthd_get_general  (add_inf.interpolate_z);
+          bndval          = nesthd_interpolate_z(bndtype,bndval,nfs_inf.rel_pos(1,:), det_inf.rel_pos);
+      end
+      
+      %% Generate depth averaged bc from 3D simulation
+      [bndval,nfs_inf] = nesthd_dethyd2dh(bndval,bnd,nfs_inf,add_inf);
+
+      %% Write the hydrodynamic boundary conditions to file
+      nesthd_wrihyd (files{4},bnd,nfs_inf,bndval, add_inf);
 
       clear bndval 
 
