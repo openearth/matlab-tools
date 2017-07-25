@@ -19,6 +19,11 @@ catch
 end
 meas_dir       = inifile('getstring',Info,'General'  ,'meas_dir    ');
 mup_temp       = inifile('getstring',Info,'General'  ,'mup_temp    ');
+try
+    time_zone  =  str2num(inifile('getstring',Info,'General'  ,'time_zone   '));
+catch
+    time_zone  = 0.;
+end
 
 % Define periods
 ch_periods = find(~cellfun(@isempty,strfind(ListOfChapters,'Periods')));
@@ -63,11 +68,13 @@ for i_stat = 1: no_stat
 end
 
 % Measurements
-ch_stations = find(~cellfun(@isempty,strfind(ListOfChapters,'Measurements')));
-hlp        = size(Info.Data{ch_stations,2},1);
-if hlp ~= no_stat error(['Measurements inconsistent with Stations in ' varargin{1}]);end
-for i_stat = 1: no_stat
-    stations_tek{i_stat} = [meas_dir filesep Info.Data{ch_stations,2}{i_stat,2}];
+if isempty(strcmpi(lower(meas_dir),'opendap'))
+    ch_stations = find(~cellfun(@isempty,strfind(ListOfChapters,'Measurements')));
+    hlp        = size(Info.Data{ch_stations,2},1);
+    if hlp ~= no_stat error(['Measurements inconsistent with Stations in ' varargin{1}]);end
+    for i_stat = 1: no_stat
+        stations_tek{i_stat} = [meas_dir filesep Info.Data{ch_stations,2}{i_stat,2}];
+    end
 end
 
 % Tidal analyses
@@ -127,22 +134,34 @@ for i_per = 1: size(Periods,1)
             display(stations_sim{i_stat});
             
             %% Get water level data for i_stat
-            dattim_cmp = Data.times;
+            dattim_cmp = Data.times + time_zone/24.;
             wlev_cmp   = Data.val(:,i_stat);
             
             %% Read the measurement Data
-            INFO        = tekal('open',stations_tek{i_stat},'loaddata');
-            dates_meas  = num2str(INFO.Field.Data(:,1),'%8.8i');
-            times_meas  = num2str(INFO.Field.Data(:,2),'%6.6i');
-            dattim_meas = datenum([dates_meas(:,1:8) times_meas(:,1:6)],'yyyymmddHHMMSS');
-            wlev_meas   = INFO.Field.Data(:,3);
-            [dattim_meas,wlev_meas] = FillGaps(dattim_meas,wlev_meas,'interval',120./1440.); % Fill with NaNs if interval between consequetive measurements is more than 2 hours
+            if isempty(strcmpi(lower(meas_dir),'opendap'))
+                % tekal files at specific location
+                INFO        = tekal('open',stations_tek{i_stat},'loaddata');
+                dates_meas  = num2str(INFO.Field.Data(:,1),'%8.8i');
+                times_meas  = num2str(INFO.Field.Data(:,2),'%6.6i');
+                dattim_meas = datenum([dates_meas(:,1:8) times_meas(:,1:6)],'yyyymmddHHMMSS');
+                wlev_meas   = INFO.Field.Data(:,3);
+            else
+                % try to get the data from opendap server, only works for dutch stations
+                [dattim_meas,wlev_meas] = EHY_opendap('Parameter','waterhoogte','Station',stations_shortname{i_stat});
+                i_start = max(find(dattim_meas>datenum(Periods{i_per,1},'yyyymmdd  HHMMSS'),1,'first') - 1,1);
+                i_stop  = find(dattim_meas>datenum(Periods{i_per,2},'yyyymmdd  HHMMSS'),1,'first');
+                dattim_meas = dattim_meas(i_start:i_stop);
+                wlev_meas   = wlev_meas  (i_start:i_stop);  
+            end
             
+            if ~isempty(find(~isnan(wlev_meas)))
+                [dattim_meas,wlev_meas] = FillGaps(dattim_meas,wlev_meas,'interval',120./1440.); % Fill with NaNs if interval between consequetive measurements is more than 2 hours
+            end
             %% Determine shortest overlaping time span
             time_start    = max(dattim_cmp(1)  ,dattim_meas(1)  );
             time_start    = max(time_start,datenum(Periods{i_per,1},'yyyymmdd HHMMSS'));
             time_stop     = min(dattim_cmp(end),dattim_meas(end));
-            time_stop    = min(time_stop,datenum(Periods{i_per,2},'yyyymmdd HHMMSS'));
+            time_stop     = min(time_stop,datenum(Periods{i_per,2},'yyyymmdd HHMMSS'));
             dattim_interp = time_start:10/1440:time_stop;
             
             %% Intepolate both measurement as simulation data to 10 min time interval
@@ -197,7 +216,6 @@ for i_per = 1: size(Periods,1)
                 substitute    ('**station**'         ,stations_shortname{i_stat}     ,[per_dir filesep 'temporary.mup']);
                 substitute    ('**station_nr**'      ,num2str(i_stat,'%2.2i')  ,[per_dir filesep 'temporary.mup']);
                 substitute    ('**station_fullname**',stations_fullname{i_stat},[per_dir filesep 'temporary.mup']);
-                substitute    ('**meting**'          ,stations_tek{i_stat}     ,[per_dir filesep 'temporary.mup']);
                 substitute    ('**biasrmse**'        ,str_biasrmse             ,[per_dir filesep 'temporary.mup']);
                 substitute    ('**Tstart**'          ,Periods{i_per,1}         ,[per_dir filesep 'temporary.mup']);
                 substitute    ('**Tstop**'           ,Periods{i_per,2}         ,[per_dir filesep 'temporary.mup']);
@@ -244,7 +262,9 @@ for i_per = 1: size(Periods,1)
     i_row             = i_row + 1;
     cell_arr{i_row,1}  = 'Gemiddeld';
     for i_col = 2: size(cell_arr,2)
-        cell_arr{i_row,i_col}  = mean(cell2mat(cell_arr(2:end-1,i_col)));
+        values                 = cell2mat(cell_arr(2:end-1,i_col));
+        index                  = ~isnan(values);
+        cell_arr{i_row,i_col}  = mean(values(index));
     end
     
     % Write to excel file
@@ -326,17 +346,31 @@ if tide
     for i_stat = 1: no_stat
         if Data.exist_stat(i_stat)
             i_tide = i_tide + 1;
-            dattim_cmp = Data.times;
+            dattim_cmp = Data.times + time_zone/24.;
             wlev_cmp   = Data.val(:,i_stat);
             
             %% Read the measurement Data
-            INFO        = tekal('open',stations_tek{i_stat},'loaddata');
-            dates_meas  = num2str(INFO.Field.Data(:,1),'%8.8i');
-            times_meas  = num2str(INFO.Field.Data(:,2),'%6.6i');
-            dattim_meas = datenum([dates_meas(:,1:8) times_meas(:,1:6)],'yyyymmddHHMMSS');
-            wlev_meas   = INFO.Field.Data(:,3);
-            [dattim_meas,wlev_meas] = FillGaps(dattim_meas,wlev_meas,'interval',120./1440.); % Fill with NaNs if interval between consequetive measurements is more than 2 hours
-                       
+            %% Read the measurement Data
+            if isempty(strcmpi(lower(meas_dir),'opendap'))
+                % tekal files at specific location
+                INFO        = tekal('open',stations_tek{i_stat},'loaddata');
+                dates_meas  = num2str(INFO.Field.Data(:,1),'%8.8i');
+                times_meas  = num2str(INFO.Field.Data(:,2),'%6.6i');
+                dattim_meas = datenum([dates_meas(:,1:8) times_meas(:,1:6)],'yyyymmddHHMMSS');
+                wlev_meas   = INFO.Field.Data(:,3);
+            else
+                % try to get the data from opendap server, only works for dutch stations
+                [dattim_meas,wlev_meas] = EHY_opendap('Parameter','waterhoogte','Station',stations_shortname{i_stat});
+                i_start = max(find(dattim_meas>datenum(tide_start,'yyyymmdd  HHMMSS'),1,'first') - 1,1);
+                i_stop  = find(dattim_meas>datenum(tide_stop,'yyyymmdd  HHMMSS'),1,'first');
+                dattim_meas = dattim_meas(i_start:i_stop);
+                wlev_meas   = wlev_meas  (i_start:i_stop);  
+            end
+            
+            if ~isempty(find(~isnan(wlev_meas)))
+                [dattim_meas,wlev_meas] = FillGaps(dattim_meas,wlev_meas,'interval',120./1440.); % Fill with NaNs if interval between consequetive measurements is more than 2 hours
+            end
+            
             %% Determine shortest overlaping time span
             time_start    = max(dattim_cmp(1)  ,dattim_meas(1)  );
             time_start    = max(time_start,datenum(tide_start,'yyyymmdd HHMMSS'));
@@ -353,9 +387,14 @@ if tide
                     'rayleigh' ,Constituents, 'start time', time_start  , ...
                     'synthesis',0           , 'error'     ,'wboot'      );
             %% Analyse the measurements
-            Tide_meas(i_tide)= t_tide(wlev_meas_interp, 'interval', 10./60.     , 'latitude'  , latitude    , ...
-                    'rayleigh' ,Constituents, 'start time', time_start  , ...
-                    'synthesis',0           , 'error'     ,'wboot'      );
+            if ~isempty(find(~isnan(wlev_meas)))
+                Tide_meas(i_tide)= t_tide(wlev_meas_interp, 'interval', 10./60.     , 'latitude'  , latitude    , ...
+                         'rayleigh' ,Constituents, 'start time', time_start  , ...
+                         'synthesis',0           , 'error'     ,'wboot'      );
+            else
+                Tide_meas(i_tide)              = Tide_cmp(i_tide);
+                Tide_meas(i_tide).tidecon(:,:) = NaN;
+            end
         end
     end
     

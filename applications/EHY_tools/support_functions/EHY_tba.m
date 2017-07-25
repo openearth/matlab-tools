@@ -53,16 +53,24 @@ for i_freq = 1: no_freq
     cell_arr{no_stat + 3,1} = 'Mean Error';
     cell_arr{no_stat + 4,1} = 'Mean Absolute Error';
     cell_arr{no_stat + 5,1} = 'RMS Error';
-    cell_arr{no_stat + 3,6} = mean(cell2mat(cell_arr(2:no_stat + 1,6)));
-    cell_arr{no_stat + 3,7} = mean(cell2mat(cell_arr(2:no_stat + 1,7)));
-    cell_arr{no_stat + 3,8} = mean(cell2mat(cell_arr(2:no_stat + 1,8)));
-    cell_arr{no_stat + 3,9} = mean(cell2mat(cell_arr(2:no_stat + 1,9)));
-    cell_arr{no_stat + 4,6} = mean(abs(cell2mat(cell_arr(2:no_stat + 1,6))));
-    cell_arr{no_stat + 4,8} = mean(abs(cell2mat(cell_arr(2:no_stat + 1,8))));
-    cell_arr{no_stat + 5,6} = norm(cell2mat(cell_arr(2:no_stat + 1,6)))/sqrt(no_stat);
-    cell_arr{no_stat + 5,7} = norm(cell2mat(cell_arr(2:no_stat + 1,7)))/sqrt(no_stat);
-    cell_arr{no_stat + 5,8} = norm(cell2mat(cell_arr(2:no_stat + 1,8)))/sqrt(no_stat);
-    cell_arr{no_stat + 5,9} = norm(cell2mat(cell_arr(2:no_stat + 1,9)))/sqrt(no_stat);
+    for i_col = 6: 9
+        values = cell2mat(cell_arr(2:no_stat + 1,i_col));
+        index  = ~isnan(values);
+        cell_arr{no_stat + 3,i_col} = mean(values(index));
+    end
+    
+    for i_col = 6: 8
+        values = cell2mat(cell_arr(2:no_stat + 1,i_col));
+        index  = ~isnan(values);
+        cell_arr{no_stat + 4,i_col} = mean(abs(values(index)));
+    end
+    
+    for i_col = 6: 9
+        values  = cell2mat(cell_arr(2:no_stat + 1,i_col));
+        index   = ~isnan(values);
+        no_stat = length(values(index));
+        cell_arr{no_stat + 5,i_col} = norm(values(index))/sqrt(no_stat);
+    end
         
     xlswrite_report(file_name,cell_arr,Tide_cmp(1).name(i_freq,:),'Comments',Comments,...
                                                                   'colwidth',colwidth,...
