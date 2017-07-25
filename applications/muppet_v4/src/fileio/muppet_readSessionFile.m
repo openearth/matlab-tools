@@ -387,7 +387,16 @@ for ifig=1:handles.nrfigures
                 end
         end
     end
+    
+    if ~verLessThan('matlab', '8.4')
+        if strcmpi(handles.figures(ifig).figure.renderer,'zbuffer')
+            handles.figures(ifig).figure.renderer='OpenGL';
+        end
+    end
+    
+    
 end
+
 
 %end
 

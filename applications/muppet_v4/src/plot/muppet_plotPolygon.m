@@ -41,7 +41,12 @@ if opt.originmarker.enable
     end
 end
 
-transp=0;
+
+if opt.edgealpha<1 || opt.facealpha<1
+    transp=1;
+else
+    transp=0;    
+end
 
 if opt.timemarker.enable
     
@@ -107,13 +112,9 @@ if opt.timemarker.enable
 end
 
 if transp
-    z=zeros(size(x))-1;
-    h1=patchline(x,y,z,'edgealpha',0.05);
+    h1=patchline(x,y,'edgealpha',opt.edgealpha);
     set(h1,'LineWidth',opt.linewidth,'EdgeColor',colorlist('getrgb','color',opt.linecolor));
 else
-%    z=zeros(size(x));
-%    z=z-100;
-%    h1=line(x,y,z);
     h1=line(x,y);
     set(h1,'LineWidth',opt.linewidth,'Color',colorlist('getrgb','color',opt.linecolor));
 end
@@ -133,6 +134,10 @@ end
 if opt.fillclosedpolygons
     set(h2,'EdgeColor',colorlist('getrgb','color',opt.linecolor));
     set(h2,'FaceColor',colorlist('getrgb','color',opt.fillcolor));
+    if transp
+        set(h2,'EdgeAlpha',opt.edgealpha);
+        set(h2,'FaceAlpha',opt.facealpha);
+    end
     %     z=zeros(size(get(h1,'ZData')))+opt.polygonelevation;
     %     z=zeros(size(get(h1,'XData')))+1000;
     %     set(h1,'ZData',z);
@@ -173,3 +178,5 @@ set(h1,'Marker',opt.marker);
 set(h1,'MarkerEdgeColor',colorlist('getrgb','color',opt.markeredgecolor));
 set(h1,'MarkerFaceColor',colorlist('getrgb','color',opt.markerfacecolor));
 set(h1,'MarkerSize',opt.markersize);
+
+uistack(h1,'top');

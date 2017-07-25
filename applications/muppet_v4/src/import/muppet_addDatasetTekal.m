@@ -164,9 +164,13 @@ switch tp
     case{'xy'}
         % x and y
         npar=ncols;
-        dataset.selectxcoordinate=1;        
-        dataset.xcoordinate=columnlabels{1};
-        dataset.parameter=columnlabels{2};
+        dataset.selectxcoordinate=1;   
+        if isempty(dataset.xcoordinate)
+            dataset.xcoordinate=columnlabels{1};
+        end
+        if isempty(dataset.parameter)
+            dataset.parameter=columnlabels{2};
+        end
         for ipar=1:npar
             par=[];
             par=muppet_setDefaultParameterProperties(par);

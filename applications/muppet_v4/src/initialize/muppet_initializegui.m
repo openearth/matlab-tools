@@ -10,7 +10,12 @@ handles=getHandles;
 handles.outputformats={'png','jpeg','tiff','pdf','eps','epsc','eps2'};
 handles.outputresolutiontexts={'50','100','150','200','300','450','600'};
 handles.outputresolutions=[50 100 150 200 300 450 600];
-handles.renderers={'ZBuffer','Painters','OpenGL'};
+if verLessThan('matlab', '8.4')
+    handles.renderers={'ZBuffer','Painters','OpenGL'};
+else
+    handles.renderers={'Painters','OpenGL'};
+end
+
 
 % Color map names
 for ii=1:length(handles.colormaps)

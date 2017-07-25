@@ -15,9 +15,11 @@ end
 
 if ~isempty(data.x)
     % Georeferenced image
-%      data.z=zeros(size(data.c,1),size(data.c,2))+opt.verticallevel;
-%      p=surf(data.x,data.y,data.z,double(data.c)/255);shading flat;
-     p=image(data.x,data.y,data.c);
+    opt.verticallevel=0;
+      data.z=zeros(size(data.c,1),size(data.c,2))+opt.verticallevel;
+      p=surf(data.x,data.y,data.z,double(data.c)/255);shading flat;
+%     p=image(data.x,data.y,data.c);
+%     p=surf(data.x,data.y,data.c);shading flat;
 else
     data.z=zeros(size(data.c,1),size(data.c,2));
     data.c(:,:,1)=flipud(data.c(:,:,1));

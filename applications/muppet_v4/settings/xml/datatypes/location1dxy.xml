@@ -30,6 +30,12 @@
         <name>markerfacecolor</name>
       </plotoption>
       <plotoption>
+        <name>edgealpha</name>
+      </plotoption>
+      <plotoption>
+        <name>facealpha</name>
+      </plotoption>
+      <plotoption>
         <name>closepolygons</name>
       </plotoption>
       <plotoption>
@@ -44,6 +50,7 @@
       <elementgroup>line</elementgroup>
       <elementgroup>marker</elementgroup>
       <elementgroup>polygon</elementgroup>
+      <elementgroup>transparency</elementgroup>
       <elementgroup>legendtext</elementgroup>
     </plotroutine>
   </plottype>
@@ -76,6 +83,12 @@
         <name>markerfacecolor</name>
       </plotoption>
       <plotoption>
+        <name>edgealpha</name>
+      </plotoption>
+      <plotoption>
+        <name>facealpha</name>
+      </plotoption>
+      <plotoption>
         <name>closepolygons</name>
       </plotoption>
       <plotoption>
@@ -90,6 +103,7 @@
       <elementgroup>line</elementgroup>
       <elementgroup>marker</elementgroup>
       <elementgroup>polygon</elementgroup>
+      <elementgroup>transparency</elementgroup>
       <elementgroup>legendtext</elementgroup>
     </plotroutine>
   </plottype>

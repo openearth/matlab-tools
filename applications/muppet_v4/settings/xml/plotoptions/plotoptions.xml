@@ -1803,4 +1803,36 @@
     <keyword>ColoredRose</keyword>
     <default>1</default>
   </plotoption>
+  <plotoption>
+    <name>edgealpha</name>
+    <variable>edgealpha</variable>
+    <type>real</type>
+    <keyword>EdgeAlpha</keyword>
+    <default>1</default>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>edgealpha</variable>
+        <operator>lt</operator>
+        <value>1</value>
+      </check>
+    </dependency>
+  </plotoption>
+  <plotoption>
+    <name>facealpha</name>
+    <variable>facealpha</variable>
+    <type>real</type>
+    <keyword>FaceAlpha</keyword>
+    <default>1</default>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>facealpha</variable>
+        <operator>lt</operator>
+        <value>1</value>
+      </check>
+    </dependency>
+  </plotoption>
 </root>

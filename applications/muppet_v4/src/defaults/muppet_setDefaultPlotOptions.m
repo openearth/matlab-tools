@@ -206,3 +206,34 @@ opt.head2width=6;
 opt.head2length=6;
 opt.box=1;
 opt.backgroundcolor='white';
+
+% Transparency
+opt.edgealpha=1;
+opt.facealpha=1;
+
+%% Now overwrite with defaults from xml file
+h=getHandles;
+n=length(h.plotoption);
+for ii=1:n
+    name=h.plotoption(ii).plotoption.name;
+    if isfield(h.plotoption(ii).plotoption,'variable')
+        var=h.plotoption(ii).plotoption.variable;
+    else
+        var=name;
+    end
+    if isfield(h.plotoption(ii).plotoption,'default')
+        default=h.plotoption(ii).plotoption.default;
+        tp='string';
+        if isfield(h.plotoption(ii).plotoption,'type')
+            tp=h.plotoption(ii).plotoption.type;
+        end
+        switch tp
+            case{'real','int','integer','boolean','booleanorreal'}
+                default=str2num(default);
+        end
+%         opt.(name)=default;
+       evalstr=['opt.' var '=default;'];
+       eval(evalstr);
+        opt.changed=0;        
+    end
+end
