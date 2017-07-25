@@ -86,16 +86,15 @@ for it=1:length(tc.track)
         dpdt = (tc.track(it).pc -tc.track(it-1).pc) / ((tc.track(it).time - tc.track(it-1).time)*24);
     end     
     
-    % Holland et al. (2010) values
+    % If not known than we assume NOT Holland (2008) values
     if isempty(spw.holland2008)
-        spw.holland2008 = 1;
+        spw.holland2008 = 0;
     end
 
-    % If Holland, 2008 used in Holland 2010
+    % If Holland, 2008 we determine xn
     if spw.holland2008 == 1;
         xn  = 0.6*(1-dp/215);
     end
-    
     
     % If Holland 2010 > find xn fit
     if ~unidir && strcmpi(spw.wind_profile,'holland2010')
