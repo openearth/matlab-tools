@@ -4,7 +4,7 @@ function varargout = EHY_opendap (varargin)
 %  (a copy of Rijkswaterstaat Waterbase)
 %
 %  parameters     = EHY_opendap
-%                   returns a cell array with the names of the parameters avalaible
+%                   returns a cell array with the names of the parameters available
 %
 %  2 <keyword,value> pairs are implemented
 %  Stations       = EHY_opendap('Parameter','waterhoogte')

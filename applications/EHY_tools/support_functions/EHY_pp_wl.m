@@ -111,7 +111,7 @@ end
 % if exist(fig_dir,'dir') rmdir(fig_dir,'s'); end
 % mkdir (fig_dir);
 
-%% Read computational data for requested stations
+% Read computational data for requested stations
 Data=EHY_getmodeldata(sim_dir,runid,stations_sim, modelType);
 
 % % Cycle over the periods
@@ -337,7 +337,7 @@ Data=EHY_getmodeldata(sim_dir,runid,stations_sim, modelType);
 %                      'format'                          ,format  );
 % end
 
-%% Tidal analyses
+% Tidal analyses
 if tide
     tba_file = [fig_dir filesep runid '_tba.xls'];
     tbb_file = [fig_dir filesep runid '_tbb.xls'];
@@ -349,8 +349,7 @@ if tide
             dattim_cmp = Data.times + time_zone/24.;
             wlev_cmp   = Data.val(:,i_stat);
             
-            %% Read the measurement Data
-            %% Read the measurement Data
+            % Read the measurement Data
             if isempty(strcmpi(lower(meas_dir),'opendap'))
                 % tekal files at specific location
                 INFO        = tekal('open',stations_tek{i_stat},'loaddata');
@@ -364,33 +363,33 @@ if tide
                 i_start = max(find(dattim_meas>datenum(tide_start,'yyyymmdd  HHMMSS'),1,'first') - 1,1);
                 i_stop  = find(dattim_meas>datenum(tide_stop,'yyyymmdd  HHMMSS'),1,'first');
                 dattim_meas = dattim_meas(i_start:i_stop);
-                wlev_meas   = wlev_meas  (i_start:i_stop);  
+                wlev_meas   = wlev_meas  (i_start:i_stop);
             end
             
             if ~isempty(find(~isnan(wlev_meas)))
                 [dattim_meas,wlev_meas] = FillGaps(dattim_meas,wlev_meas,'interval',120./1440.); % Fill with NaNs if interval between consequetive measurements is more than 2 hours
             end
             
-            %% Determine shortest overlaping time span
+            % Determine shortest overlaping time span
             time_start    = max(dattim_cmp(1)  ,dattim_meas(1)  );
             time_start    = max(time_start,datenum(tide_start,'yyyymmdd HHMMSS'));
             time_stop     = min(dattim_cmp(end),dattim_meas(end));
             time_stop     = min(time_stop,datenum(tide_stop,'yyyymmdd HHMMSS'));
             dattim_interp = time_start:10/1440:time_stop;
             
-            %% Intepolate both measurement as simulation data to 10 min time interval
+            % Intepolate both measurement as simulation data to 10 min time interval
             wlev_cmp_interp  = interp1(dattim_cmp ,wlev_cmp ,dattim_interp);
             wlev_meas_interp = interp1(dattim_meas,wlev_meas,dattim_interp);
             
-            %% Analyse the computational results
+            % Analyse the computational results
             Tide_cmp(i_tide) = t_tide(wlev_cmp_interp , 'interval', 10./60.    , 'latitude'  , latitude    , ...
-                    'rayleigh' ,Constituents, 'start time', time_start  , ...
-                    'synthesis',0           , 'error'     ,'wboot'      );
-            %% Analyse the measurements
+                'rayleigh' ,Constituents, 'start time', time_start  , ...
+                'synthesis',0           , 'error'     ,'wboot'      );
+            % Analyse the measurements
             if ~isempty(find(~isnan(wlev_meas)))
                 Tide_meas(i_tide)= t_tide(wlev_meas_interp, 'interval', 10./60.     , 'latitude'  , latitude    , ...
-                         'rayleigh' ,Constituents, 'start time', time_start  , ...
-                         'synthesis',0           , 'error'     ,'wboot'      );
+                    'rayleigh' ,Constituents, 'start time', time_start  , ...
+                    'synthesis',0           , 'error'     ,'wboot'      );
             else
                 Tide_meas(i_tide)              = Tide_cmp(i_tide);
                 Tide_meas(i_tide).tidecon(:,:) = NaN;
@@ -398,7 +397,7 @@ if tide
         end
     end
     
-    %% Write to output (xls) file
+    % Write to output (xls) file
     EHY_tba(tba_file,runid,stations_fullname(Data.exist_stat),Tide_cmp,Tide_meas);
     EHY_tbb(tbb_file,runid,stations_fullname(Data.exist_stat),Tide_cmp,Tide_meas);
 end
