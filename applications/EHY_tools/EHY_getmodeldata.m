@@ -91,7 +91,7 @@ Data.requestedStatNames=stat_name';
 for i_stat = 1: length(stat_name)
     switch OPT.varName
         case 'wl'
-
+            
             %% Waterlevels, times and values for station nr nr_stat
             nr_stat  = find(strcmp(Data.stationNames,stat_name{i_stat}) ~= 0,1);
             if ~isempty(nr_stat)
@@ -117,7 +117,7 @@ for i_stat = 1: length(stat_name)
                     %% Read Waqua data
                 elseif strcmpi(modelType,'waqua')
                     if ~isfield(Data,'times')
-                    Data.times         = qpread(sds,1,'water level (station)','times');
+                        Data.times         = qpread(sds,1,'water level (station)','times');
                     end
                     Data.val(:,i_stat) = waquaio(sds,[],'wlstat',0,nr_stat);
                     %% Read Implic data (write to mat file for future fast pssing
@@ -150,9 +150,9 @@ for i_stat = 1: length(stat_name)
                 end
             else
                 Data.exist_stat(i_stat) = false;
-                display (['Station : ' stat_name{i_stat} ' does not exist']); 
+                display (['Station : ' stat_name{i_stat} ' does not exist']);
             end
-                        
+            
         case 'uv'
             %% Velocities, times and values for station nr nr_stat
             nr_stat  = find(strcmp(Data.stationNames,stat_name{i_stat}) ~= 0,1);
@@ -180,8 +180,8 @@ for i_stat = 1: length(stat_name)
                 %% Read Waqua data
                 if strcmpi(modelType,'waqua')
                     if ~isfield(Data,'times')
-                    Data.times         = qpread(sds,1,'water level (station)','times');
-                    [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
+                        Data.times         = qpread(sds,1,'water level (station)','times');
+                        [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
                     end
                     if isempty(OPT.layer)
                         Data.val(i_stat,:,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat);

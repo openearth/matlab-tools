@@ -59,7 +59,7 @@ for i_freq = 1: no_freq
         cell_arr{no_stat + 3,i_col} = mean(values(index));
     end
     
-    for i_col = 6: 8
+    for i_col = 6: 7
         values = cell2mat(cell_arr(2:no_stat + 1,i_col));
         index  = ~isnan(values);
         cell_arr{no_stat + 4,i_col} = mean(abs(values(index)));
@@ -68,8 +68,8 @@ for i_freq = 1: no_freq
     for i_col = 6: 9
         values  = cell2mat(cell_arr(2:no_stat + 1,i_col));
         index   = ~isnan(values);
-        no_stat = length(values(index));
-        cell_arr{no_stat + 5,i_col} = norm(values(index))/sqrt(no_stat);
+        no_values = length(values(index));
+        cell_arr{no_stat + 5,i_col} = norm(values(index))/sqrt(no_values);
     end
         
     xlswrite_report(file_name,cell_arr,Tide_cmp(1).name(i_freq,:),'Comments',Comments,...

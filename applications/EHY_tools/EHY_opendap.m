@@ -13,7 +13,7 @@ function varargout = EHY_opendap (varargin)
 %                   returns the time series, times and values, of this parameter at this station
 %
 
-%% Initialisation
+%% Initialisation 
 OPT.Parameter = '';
 OPT.Station   = '';
 
@@ -74,17 +74,38 @@ if ~isempty(OPT.Parameter)
     else
         %% Station name specified, return time series of the parameter at this station
         %  First find the station
-        i_stat = find(~cellfun(@isempty,strfind(lower(list_stat),lower(OPT.Station))));
-
-        % Get information on the parameter name on the file
-        Info       = ncinfo(list_stat{i_stat});
-        param_name = Info.Variables(end).Name;
-
-        %% Retrieve data
-        D           = nc_cf_timeseries(list_stat{i_stat},param_name,'plot',0);
-        varargout{1} = D.datenum;
-        varargout{2} = D.(param_name);
-        varargout{3} = D;
+        try
+            i_stat = find(~cellfun(@isempty,strfind(lower(list_stat),lower(OPT.Station))));
+            
+            % Get information on the parameter name on the file
+            date_tmp  = [];
+            value_tmp = [];
+            if ~isempty(i_stat)
+                for i_par = 1: length(i_stat)
+                    Info       = ncinfo(list_stat{i_stat(i_par)});
+                    param_name = Info.Variables(end).Name;
+                    
+                    %% Retrieve data
+                    D           = nc_cf_timeseries(list_stat{i_stat(i_par)},param_name,'plot',0);
+                    date_tmp    = [date_tmp  D.datenum'     ];
+                    value_tmp   = [value_tmp D.(param_name)'];
+                end
+                [dates,index]   = sort(date_tmp);
+                values          = value_tmp(index);
+                varargout{1} = dates;
+                varargout{2} = values;
+            else
+                varargout{1} = [datenum(1900,1,1); datenum(now)];
+                varargout{2} = [NaN              ; NaN         ];
+            end
+            
+       catch
+             disp(['Problems retrieving OPENDAP data for station : ' OPT.Station]);
+             [dates,values] = EHY_opendap (varargin{1:end});
+             varargout{1} = dates;
+             varargout{2} = values;
+        end
     end
+        
 end
 
