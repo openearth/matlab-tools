@@ -22,8 +22,8 @@ end
 fid = fopen(filename,'w+');
 
 for ibnd = 1: no_bnd
-
-   type     = lower (bnd.DATA(ibnd).bndtype);
+   i_pnt = (ibnd - 1)*2 + 1; 
+   type     = lower (bnd.DATA(i_pnt).bndtype);
 
    nolay    = 1;
    multilay = false;
