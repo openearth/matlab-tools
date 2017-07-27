@@ -56,7 +56,7 @@ fprintf(fid,'%s\n','* COLUMN3=Phase (deg)');
 
 tp=boundaries(ii).nodes(jj).cmptype;
 
-switch tp
+switch tp(1:5)
     case{'astro','astronomic'}
         components=boundaries(ii).nodes(jj).astronomiccomponents;
     case{'harmo'}

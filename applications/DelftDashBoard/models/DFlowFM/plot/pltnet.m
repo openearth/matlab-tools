@@ -1,5 +1,10 @@
 function p=pltnet(netStruc)
 
+if size(netStruc.edge.NetLink,1)==2
+    % transpose
+    netStruc.edge.NetLink=netStruc.edge.NetLink';
+end
+
 i1=netStruc.edge.NetLink(:,1);
 i2=netStruc.edge.NetLink(:,2);
 x=zeros(3,length(i1));
