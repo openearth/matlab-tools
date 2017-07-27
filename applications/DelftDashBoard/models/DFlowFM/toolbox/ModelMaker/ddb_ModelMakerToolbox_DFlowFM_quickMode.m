@@ -274,6 +274,11 @@ function generateBoundaryConditions
 
 handles = getHandles;
 
+if handles.model.dflowfm.domain(ad).nrboundaries==0
+    ddb_giveWarning('text','No boundary polylines have been specified!');
+    return
+end
+
 [filename,ok]=gui_uiputfile('*.bc', 'Boundary Forcing File',handles.model.dflowfm.domain(ad).bcfile);
 if ~ok
     return

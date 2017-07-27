@@ -71,6 +71,7 @@ handles.model.dflowfm.domain(id).boundaries(1).activenode = 1;
 handles.model.dflowfm.domain(id).boundaries(1).nodes(1).tim = 0;
 handles.model.dflowfm.domain(id).boundaries(1).nodes(1).cmp = 1;
 handles.model.dflowfm.domain(id).boundaries(1).nodes(1).cmptype = 'astro';
+handles.model.dflowfm.domain(id).boundaries(1).nodes(1).Function = 'astronomic';
 handles.model.dflowfm.domain(id).nrboundaries = 0;
 handles.model.dflowfm.domain(id).boundarynames = {''};
 handles.model.dflowfm.domain(id).activeboundary=1;
@@ -81,6 +82,9 @@ handles.model.dflowfm.domain(id).windvfile = '';
 handles.model.dflowfm.domain(id).airpressurefile = '';
 handles.model.dflowfm.domain(id).spiderwebfile = '';
 handles.model.dflowfm.domain(id).rainfile = '';
+
+%%
+handles.model.dflowfm.domain(id).foufile      = '';
 
 %%
 function handles=initializeOtherInput(handles,id,runid)

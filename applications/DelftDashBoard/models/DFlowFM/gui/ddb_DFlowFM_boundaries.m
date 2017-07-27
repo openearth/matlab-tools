@@ -238,12 +238,12 @@ if pathname~=0
     handles.model.dflowfm.domain.boundaries(iac).locationfile=filename;
     handles.model.dflowfm.domain.boundaries(iac).name=filename(1:end-4);
     handles=updateNames(handles);
-    x=handles.model.dflowfm.domain.boundaries(iac).x;
-    y=handles.model.dflowfm.domain.boundaries(iac).y;
+%     x=handles.model.dflowfm.domain.boundaries(iac).x;
+%     y=handles.model.dflowfm.domain.boundaries(iac).y;
     ddb_DFlowFM_saveBoundaryPolygon('.\',handles.model.dflowfm.domain.boundaries,iac);
 %    landboundary('write',filename,x,y);
 
-    ddb_DFlowFM_saveBCfile(handles.model.dflowfm.domain.boundaries);
+%     ddb_DFlowFM_saveBCfile(handles.model.dflowfm.domain.boundaries);
     
     
 %     % Save component files
