@@ -17,6 +17,14 @@ else
             y=varargin{4};
             nr=varargin{5};
             changeBoundary(h,x,y,nr);
+        case{'insertpoint'}
+            insertPoint;
+        case{'deletepoint'}
+            h=varargin{2};
+            x=varargin{3};
+            y=varargin{4};
+            nr=varargin{5};
+            insertPoint(h,x,y,nr);
         case{'editname'}
             editName;
         case{'add'}
@@ -44,7 +52,7 @@ oriname=handles.model.dflowfm.domain.boundarynames{iac};
 name=handles.model.dflowfm.domain.boundaries(iac).name;
 % Check for spaces
 if isempty(find(name==' ', 1));
-    handles.model.dflowfm.domain.boundaries(iac).filename=[name '.pli'];
+    handles.model.dflowfm.domain.boundaries(iac).locationfile=[name '.pli'];
     handles=updateNames(handles);
 else
     ddb_giveWarning('text','Sorry, boundary names cannot contain spaces!');
@@ -140,11 +148,24 @@ for ii=1:length(handles.model.dflowfm.domain.boundaries)
         break
     end
 end
-if ~isempty(iac)
+
+% if ~isempty(iac)
+%     
+%     % Find nearest point on circumference
+%     xcir=handles.model.dflowfm.domain.circumference.x;
+%     ycir=handles.model.dflowfm.domain.circumference.y;
+%     
+%     dst=sqrt((xcir-x(nr)).^2+(ycir-y(nr)).^2);
+%     imin=find(dst==min(dst));
+%     x(nr)=xcir(imin);
+%     y(nr)=ycir(imin);
+%     
     handles.model.dflowfm.domain.activeboundary=iac;
     handles.model.dflowfm.domain.boundaries(iac).x=x;
     handles.model.dflowfm.domain.boundaries(iac).y=y;
-end
+    handles.model.dflowfm.domain.boundaries(iac).activenode=nr;
+%     
+% end
 
 setHandles(handles);
 
@@ -163,10 +184,12 @@ nr=nr+1;
 
 [filename, pathname, filterindex] = uigetfile('*.pli', 'Load polyline file','');
 if pathname~=0
+    
     curdir=[lower(cd) '\'];
     if ~strcmpi(curdir,pathname)
         filename=[pathname filename];
     end    
+%    [x,y,nodenames]=ddb_DFlowFM_readBoundaryPolygon(filename);
     [x,y]=landboundary('read',filename);
 else
     return
@@ -207,27 +230,31 @@ handles=getHandles;
 
 iac=handles.model.dflowfm.domain.activeboundary;
 
-[filename, pathname, filterindex] = uiputfile('*.pli', 'Save polyline file',handles.model.dflowfm.domain.boundaries(iac).filename);
+[filename, pathname, filterindex] = uiputfile('*.pli', 'Save polyline file',handles.model.dflowfm.domain.boundaries(iac).locationfile);
 
 if pathname~=0
 
     % Save pli file
-    handles.model.dflowfm.domain.boundaries(iac).filename=filename;
+    handles.model.dflowfm.domain.boundaries(iac).locationfile=filename;
     handles.model.dflowfm.domain.boundaries(iac).name=filename(1:end-4);
     handles=updateNames(handles);
     x=handles.model.dflowfm.domain.boundaries(iac).x;
     y=handles.model.dflowfm.domain.boundaries(iac).y;
-    landboundary('write',filename,x,y);
+    ddb_DFlowFM_saveBoundaryPolygon('.\',handles.model.dflowfm.domain.boundaries,iac);
+%    landboundary('write',filename,x,y);
 
-    % Save component files
-    for jj=1:length(x)
-        if handles.model.dflowfm.domain.boundaries(iac).nodes(jj).cmp
-            ddb_DFlowFM_saveCmpFile(handles.model.dflowfm.domain.boundaries,iac,jj);
-        end
-        if handles.model.dflowfm.domain.boundaries(iac).nodes(jj).tim
-            ddb_DFlowFM_saveTimFile(handles.model.dflowfm.domain.boundaries,iac,jj,handles.model.dflowfm.domain.refdate);
-        end        
-    end
+    ddb_DFlowFM_saveBCfile(handles.model.dflowfm.domain.boundaries);
+    
+    
+%     % Save component files
+%     for jj=1:length(x)
+%         if handles.model.dflowfm.domain.boundaries(iac).nodes(jj).cmp
+%             ddb_DFlowFM_saveCmpFile(handles.model.dflowfm.domain.boundaries,iac,jj);
+%         end
+%         if handles.model.dflowfm.domain.boundaries(iac).nodes(jj).tim
+%             ddb_DFlowFM_saveTimFile(handles.model.dflowfm.domain.boundaries,iac,jj,handles.model.dflowfm.domain.refdate);
+%         end        
+%     end
 
 else
     return
@@ -247,17 +274,19 @@ for iac=1:handles.model.dflowfm.domain.nrboundaries
     % Save pli file
     x=handles.model.dflowfm.domain.boundaries(iac).x;
     y=handles.model.dflowfm.domain.boundaries(iac).y;
-    landboundary('write',handles.model.dflowfm.domain.boundaries(iac).filename,x,y);
+    ddb_DFlowFM_saveBoundaryPolygon('.\',handles.model.dflowfm.domain.boundaries,iac);
 
-    % Save component files
-    for jj=1:length(x)
-        if handles.model.dflowfm.domain.boundaries(iac).nodes(jj).cmp
-            ddb_DFlowFM_saveCmpFile(handles.model.dflowfm.domain.boundaries,iac,jj);
-        end
-        if handles.model.dflowfm.domain.boundaries(iac).nodes(jj).tim
-            ddb_DFlowFM_saveTimFile(handles.model.dflowfm.domain.boundaries,iac,jj,handles.model.dflowfm.domain.refdate);
-        end
-    end
+%    landboundary('write',handles.model.dflowfm.domain.boundaries(iac).filename,x,y);
+
+%     % Save component files
+%     for jj=1:length(x)
+%         if handles.model.dflowfm.domain.boundaries(iac).nodes(jj).cmp
+%             ddb_DFlowFM_saveCmpFile(handles.model.dflowfm.domain.boundaries,iac,jj);
+%         end
+%         if handles.model.dflowfm.domain.boundaries(iac).nodes(jj).tim
+%             ddb_DFlowFM_saveTimFile(handles.model.dflowfm.domain.boundaries,iac,jj,handles.model.dflowfm.domain.refdate);
+%         end
+%     end
 end
 
 setHandles(handles);
@@ -270,7 +299,7 @@ clearInstructions;
 
 handles=getHandles;
 
-[filename, pathname, filterindex] = uigetfile('*.ext', 'External Forcing File',handles.model.dflowfm.domain.extforcefile);
+[filename, pathname, filterindex] = uigetfile('*.ext', 'External Forcing File',handles.model.dflowfm.domain.extforcefilenew);
 if ~isempty(pathname)
     handles = ddb_DFlowFM_plotBoundaries(handles,'delete');
     handles.model.dflowfm.domain.extforcefilenew=filename;
@@ -286,9 +315,9 @@ clearInstructions;
 
 handles=getHandles;
 
-[filename, pathname, filterindex] = uiputfile('*.ext', 'External Forcing File',handles.model.dflowfm.domain.extforcefile);
+[filename, pathname, filterindex] = uiputfile('*.ext', 'External Forcing File',handles.model.dflowfm.domain.extforcefilenew);
 if pathname~=0
-    handles.model.dflowfm.domain.extforcefile=filename;
+    handles.model.dflowfm.domain.extforcefilenew=filename;
     ddb_DFlowFM_saveExtFile(handles);
     setHandles(handles);
 end
@@ -301,7 +330,60 @@ for ib=1:handles.model.dflowfm.domain.nrboundaries
     name=handles.model.dflowfm.domain.boundaries(ib).name;
     handles.model.dflowfm.domain.boundarynames{ib}=name;
     for ip=1:length(handles.model.dflowfm.domain.boundaries(ib).x)
-        handles.model.dflowfm.domain.boundaries(ib).nodes(ip).cmpfile=[name '_' num2str(ip,'%0.4i') '.cmp'];
+        handles.model.dflowfm.domain.boundaries(ib).nodes(ip).name=[name '_' num2str(ip,'%0.4i')];
+%        handles.model.dflowfm.domain.boundaries(ib).nodes(ip).cmpfile=[name '_' num2str(ip,'%0.4i') '.cmp'];
     end
 end
+
+%%
+function insertPoint
+
+handles=getHandles;
+
+iac=handles.model.dflowfm.domain.activeboundary;
+    
+nr=handles.model.dflowfm.domain.boundaries(iac).activenode;
+
+nrnodes0=length(handles.model.dflowfm.domain.boundaries(iac).nodes);
+
+nodes=handles.model.dflowfm.domain.boundaries(iac).nodes;
+
+nodes=insert_in_structure(nodes,nr+1);
+nr=nr+1;
+
+handles.model.dflowfm.domain.boundaries(iac).nodes=nodes;
+
+if nr>nrnodes0
+    % Append to end
+else
+    % Append in middle
+    xx=0.5*(handles.model.dflowfm.domain.boundaries(iac).x(nr-1)+handles.model.dflowfm.domain.boundaries(iac).x(nr));
+    yy=0.5*(handles.model.dflowfm.domain.boundaries(iac).y(nr-1)+handles.model.dflowfm.domain.boundaries(iac).y(nr));
+    x=[handles.model.dflowfm.domain.boundaries(iac).x(1:nr-1) xx handles.model.dflowfm.domain.boundaries(iac).x(nr:end)];
+    y=[handles.model.dflowfm.domain.boundaries(iac).y(1:nr-1) yy handles.model.dflowfm.domain.boundaries(iac).y(nr:end)];
+    handles.model.dflowfm.domain.boundaries(iac).nodes(nr)=handles.model.dflowfm.domain.boundaries(iac).nodes(nr-1);
+end
+
+% Find nearest point on circumference
+xcir=handles.model.dflowfm.domain.circumference.x;
+ycir=handles.model.dflowfm.domain.circumference.y;
+dst=sqrt((xcir-x(nr)).^2+(ycir-y(nr)).^2);
+imin=find(dst==min(dst),1,'first');
+x(nr)=xcir(imin);
+y(nr)=ycir(imin);
+
+handles.model.dflowfm.domain.activeboundary=iac;
+handles.model.dflowfm.domain.boundaries(iac).x=x;
+handles.model.dflowfm.domain.boundaries(iac).y=y;
+handles.model.dflowfm.domain.boundaries(iac).activenode=nr;
+
+for ip=1:nrnodes0+1
+    handles.model.dflowfm.domain.boundaries(iac).nodenames{ip}=[handles.model.dflowfm.domain.boundaries(iac).name '_' num2str(ip,'%0.4i')];
+end
+
+setHandles(handles);
+
+ddb_DFlowFM_plotBoundaries(handles,'update');
+
+gui_updateActiveTab;
 

@@ -66,10 +66,10 @@ posx=[];
 
 iac=handles.toolbox.observationstations.activedatabase;
 
-xmin=min(handles.model.dflowfm.domain(ad).netstruc.nodeX);
-xmax=max(handles.model.dflowfm.domain(ad).netstruc.nodeX);
-ymin=min(handles.model.dflowfm.domain(ad).netstruc.nodeY);
-ymax=max(handles.model.dflowfm.domain(ad).netstruc.nodeY);
+xmin=min(handles.model.dflowfm.domain(ad).netstruc.node.x);
+xmax=max(handles.model.dflowfm.domain(ad).netstruc.node.x);
+ymin=min(handles.model.dflowfm.domain(ad).netstruc.node.y);
+ymax=max(handles.model.dflowfm.domain(ad).netstruc.node.y);
 
 n=0;
 
@@ -104,11 +104,16 @@ end
 % Find stations within grid
 nrp=0;
 if ~isempty(posx)
+    xx=handles.model.dflowfm.domain(ad).circumference.x;
+    yy=handles.model.dflowfm.domain(ad).circumference.y;
+    inp1=inpolygon(posx,posy,xx,yy);
     for i=1:length(posx)
-        nrp=nrp+1;
-        istation(nrp)=istat(i);
-        posx2(nrp)=posx(i);
-        posy2(nrp)=posy(i);
+        if inp1(i)==1
+            nrp=nrp+1;
+            istation(nrp)=istat(i);
+            posx2(nrp)=posx(i);
+            posy2(nrp)=posy(i);
+        end
     end
 end
 

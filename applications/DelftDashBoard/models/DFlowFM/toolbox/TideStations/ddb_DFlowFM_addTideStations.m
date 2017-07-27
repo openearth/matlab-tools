@@ -51,8 +51,8 @@ posx=[];
 iac=handles.toolbox.tidestations.activeDatabase;
 names=handles.toolbox.tidestations.database(iac).stationShortNames;
 
-xg=handles.model.dflowfm.domain(ad).netstruc.nodeX;
-yg=handles.model.dflowfm.domain(ad).netstruc.nodeY;
+xg=handles.model.dflowfm.domain(ad).netstruc.node.x;
+yg=handles.model.dflowfm.domain(ad).netstruc.node.y;
 
 xmin=min(min(xg));
 xmax=max(max(xg));
@@ -77,25 +77,30 @@ for i=1:ns
     end
 end
 
-% Find stations within grid
-nrp=0;
-if ~isempty(posx)
-    [xx,yy,dd]=findNetCircumference(handles.model.dflowfm.domain(ad).netstruc);
-    inp1=inpolygon(posx,posy,xx,yy);
-    if ~isempty(handles.toolbox.tidestations.polygonx)
-        inp2=inpolygon(posx,posy,handles.toolbox.tidestations.polygonx,handles.toolbox.tidestations.polygony);
-    else
-        inp2=zeros(size(inp1))+1;
-    end
-    for i=1:length(posx)
-        if inp1(i)==1 && inp2(i)==1
-            nrp=nrp+1;
-            istation(nrp)=istat(i);
-            posx2(nrp)=posx(i);
-            posy2(nrp)=posy(i);
-        end
-    end
-end
+% % Find stations within grid
+% nrp=0;
+% if ~isempty(posx)
+%     xx=handles.model.dflowfm.domain(ad).circumference.x;
+%     yy=handles.model.dflowfm.domain(ad).circumference.y;
+%     inp1=inpolygon(posx,posy,xx,yy);
+%     if ~isempty(handles.toolbox.tidestations.polygonx)
+%         inp2=inpolygon(posx,posy,handles.toolbox.tidestations.polygonx,handles.toolbox.tidestations.polygony);
+%     else
+%         inp2=zeros(size(inp1))+1;
+%     end
+%     for i=1:length(posx)
+%         if inp1(i)==1 && inp2(i)==1
+%             nrp=nrp+1;
+%             istation(nrp)=istat(i);
+%             posx2(nrp)=posx(i);
+%             posy2(nrp)=posy(i);
+%         end
+%     end
+% end
+posx2=posx;
+posy2=posy;
+nrp=length(posx);
+istation=istat;
 
 for i=1:nrp
     

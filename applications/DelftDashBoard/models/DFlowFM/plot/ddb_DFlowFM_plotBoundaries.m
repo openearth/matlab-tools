@@ -154,7 +154,10 @@ switch lower(opt)
                         end                        
                     end
                     
-                    gui_polyline(plothandles(ip),'change','color',linecolor,'markeredgecolor',markercolor,'markerfacecolor',markercolor);
+                    x=handles.model.dflowfm.domain.boundaries(ip).x;
+                    y=handles.model.dflowfm.domain.boundaries(ip).y;
+                    
+                    gui_polyline(plothandles(ip),'change','color',linecolor,'markeredgecolor',markercolor,'markerfacecolor',markercolor,'x',x,'y',y);
                     
                 end
                 

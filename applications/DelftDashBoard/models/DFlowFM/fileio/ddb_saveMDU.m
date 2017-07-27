@@ -155,6 +155,10 @@ end
 s.wind.Windspeedbreakpoints.type     = 'real';
 s.wind.Windspeedbreakpoints.comment  = '# (m/s), e.g. 0.0      100.0';               
 
+s.wind.PavBnd.value  = inp.pavbnd;               
+s.wind.PavBnd.type   = 'real';  
+s.wind.PavBnd.comment  = '# Background pressure (Pa)';         
+
 %% Time
 
 rfd=str2double(datestr(inp.refdate,'yyyymmdd'));
@@ -253,6 +257,12 @@ s.output.WaqInterval.comment  = '# Interval (in s) between Delwaq file outputs';
 
 s.output.SnapshotDir.value        = inp.snapshotdir;
 s.output.SnapshotDir.comment      = '# Directory where snapshots/screendumps are saved.';                     
+
+if ~isempty(inp.foufile)
+    s.output.FouFile.value        = inp.foufile;
+    s.output.FouFile.comment      = '# Fourier file';                     
+end
+
 
 %% And now save the file ...
 ddb_saveDelft3D_keyWordFile(fname, s)

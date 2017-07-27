@@ -1,4 +1,4 @@
-function ddb_DFlowFM_saveBCfile(boundaries)
+function ddb_DFlowFM_saveBCfile(forcingfile,boundaries)
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares
@@ -42,32 +42,38 @@ function ddb_DFlowFM_saveBCfile(boundaries)
 % $Keywords: $
 
 % Get boundary name
-fname='Waterlevel.bc';
-fid=fopen(fname,'wt');
+
+fid=fopen(forcingfile,'wt');
 
 for ii = 1:length(boundaries);
     for jj = 1:length(boundaries(ii).nodenames)
         
-        % Header
-        fprintf(fid,'%s\n',['[forcing]']);
-        fprintf(fid,'%s\n',['Name                            = ' boundaries(ii).nodes(jj).cmpfile]);
-        fprintf(fid,'%s\n',['Function                        = ' boundaries(ii).nodes(jj).bc.Function]);
-        fprintf(fid,'%s\n',['Quantity                        = ',boundaries(ii).nodes(jj).bc.Quantity1]);
-        fprintf(fid,'%s\n',['Unit                            = ',boundaries(ii).nodes(jj).bc.Unit1]);
-        fprintf(fid,'%s\n',['Quantity                        = ',boundaries(ii).nodes(jj).bc.Quantity2]);
-        fprintf(fid,'%s\n',['Unit                            = ',boundaries(ii).nodes(jj).bc.Unit2]);
-        fprintf(fid,'%s\n',['Quantity                        = ',boundaries(ii).nodes(jj).bc.Quantity3]);
-        fprintf(fid,'%s\n',['Unit                            = ',boundaries(ii).nodes(jj).bc.Unit3]);
-
-        % Values
-        for oo = 1 : size(boundaries(ii).nodes(jj).astronomiccomponents,2);
-            name = boundaries(ii).nodes(jj).astronomiccomponents(oo).component;
-            amp = num2str(boundaries(ii).nodes(jj).astronomiccomponents(oo).amplitude);
-            phi = num2str(boundaries(ii).nodes(jj).astronomiccomponents(oo).phase);
-            fprintf(fid,'%s\n',[name,' ',num2str(amp), ' ', num2str(phi)]);
+        switch lower(boundaries(ii).nodes(jj).bc.Function)
+            
+            case{'astronomic'}
+                
+                % Header
+                fprintf(fid,'%s\n',['[forcing]']);
+                fprintf(fid,'%s\n',['Name                            = ' boundaries(ii).nodes(jj).name]);
+                fprintf(fid,'%s\n',['Function                        = ' boundaries(ii).nodes(jj).bc.Function]);
+                fprintf(fid,'%s\n',['Quantity                        = ',boundaries(ii).nodes(jj).bc.Quantity1]);
+                fprintf(fid,'%s\n',['Unit                            = ',boundaries(ii).nodes(jj).bc.Unit1]);
+                fprintf(fid,'%s\n',['Quantity                        = ',boundaries(ii).nodes(jj).bc.Quantity2]);
+                fprintf(fid,'%s\n',['Unit                            = ',boundaries(ii).nodes(jj).bc.Unit2]);
+                fprintf(fid,'%s\n',['Quantity                        = ',boundaries(ii).nodes(jj).bc.Quantity3]);
+                fprintf(fid,'%s\n',['Unit                            = ',boundaries(ii).nodes(jj).bc.Unit3]);
+                
+                % Values
+                for kk = 1 : size(boundaries(ii).nodes(jj).astronomiccomponents,2);
+                    name = boundaries(ii).nodes(jj).astronomiccomponents(kk).component;
+                    name = [name repmat(' ',1,6-length(name))];
+                    amp = boundaries(ii).nodes(jj).astronomiccomponents(kk).amplitude;
+                    phi = boundaries(ii).nodes(jj).astronomiccomponents(kk).phase;
+                    fprintf(fid,'%s %8.5f %7.2f\n',name,amp,phi);
+                end
+                fprintf(fid,'%s\n',[]);
+                
         end
-        fprintf(fid,'%s\n',[]);
-
-
+        
     end
 end

@@ -1,4 +1,4 @@
-function ddb_ModelMakerToolbox_quickMode_DFlowFM(varargin)
+function ddb_ModelMakerToolbox_DFlowFM_refine(varargin)
 %DDB_MODELMAKERTOOLBOX_QUICKMODE  One line description goes here.
 %
 %   More detailed description goes here.
@@ -208,76 +208,12 @@ handles     = getHandles;
 npmax       = 20000000;
 
 % Generate grid; not too big
-if handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.nY<=npmax
-    
-    % Values
-    wb      = waitbox('Generating grid ...'); pause(0.1);
-    xori    = handles.toolbox.modelmaker.xOri;
-    nx      = handles.toolbox.modelmaker.nX;
-    dx      = handles.toolbox.modelmaker.dX;
-    yori    = handles.toolbox.modelmaker.yOri;
-    ny      = handles.toolbox.modelmaker.nY;
-    dy      = handles.toolbox.modelmaker.dY;
-    rot     = pi*handles.toolbox.modelmaker.rotation/180;
-    zmax    = handles.toolbox.modelmaker.zMax;
-    
-    % Find minimum grid resolution (in metres)
-    dmin=min(dx,dy);
-    if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-        dmin = dmin*111111;
-    end
-
-    % Find coordinates of corner points
-    x(1)= xori;
-    y(1)= yori;
-    x(2)= x(1)+nx*dx*cos(pi*handles.toolbox.modelmaker.rotation/180);
-    y(2)= y(1)+nx*dx*sin(pi*handles.toolbox.modelmaker.rotation/180);
-    x(3)= x(2)+ny*dy*cos(pi*(handles.toolbox.modelmaker.rotation+90)/180);
-    y(3)= y(2)+ny*dy*sin(pi*(handles.toolbox.modelmaker.rotation+90)/180);
-    x(4)= x(3)+nx*dx*cos(pi*(handles.toolbox.modelmaker.rotation+180)/180);
-    y(4)= y(3)+nx*dx*sin(pi*(handles.toolbox.modelmaker.rotation+180)/180);
-    
-    % Limits for the bathy
-    xl(1)= min(x);
-    xl(2)= max(x);
-    yl(1)= min(y);
-    yl(2)= max(y);
-    dbuf = (xl(2)-xl(1))/20;
-    xl(1)= xl(1)-dbuf;
-    xl(2)= xl(2)+dbuf;
-    yl(1)= yl(1)-dbuf;
-    yl(2)= yl(2)+dbuf;
-    
-    % Get bathy
-    coord   = handles.screenParameters.coordinateSystem;
-    iac     = strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
-    dataCoord.name = handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
-    dataCoord.type = handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
-    [xlb,ylb]= ddb_coordConvert(xl,yl,coord,dataCoord);
-    [xx,yy,zz,ok]= ddb_getBathymetry(handles.bathymetry,xlb,ylb,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
-    
-    % xx and yy are in coordinate system of bathymetry (usually WGS 84)
-    % convert bathy grid to active coordinate system
-    if ~strcmpi(dataCoord.name,coord.name) || ~strcmpi(dataCoord.type,coord.type)
-        dmin=min(dx,dy);
-        [xg,yg]=meshgrid(xl(1):dmin:xl(2),yl(1):dmin:yl(2));
-        [xgb,ygb]=ddb_coordConvert(xg,yg,coord,dataCoord);
-        zz=interp2(xx,yy,zz,xgb,ygb);
-    else
-        xg=xx;
-        yg=yy;
-    end
-    
-    % Generate grid
-    [x,y,z]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
-    close(wb);
-    
-    % Adapt for FM, plot and clsoe
-    handles=ddb_ModelMakerToolbox_DFlowFM_generateGrid(handles,ad,x,y,z)
-    setHandles(handles);
+if handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.nY<=npmax   
+    handles=ddb_ModelMakerToolbox_DFlowFM_generateGrid(handles,ad);
 else
     ddb_giveWarning('Warning',['Maximum number of grid points (' num2str(npmax) ') exceeded ! Please reduce grid resolution.']);
 end
+setHandles(handles);
 
 %%
 function generateBathymetry
@@ -287,7 +223,7 @@ handles=getHandles;
 
 % Use background bathymetry data
 datasets(1).name=handles.screenParameters.backgroundBathymetry;
-handles=ddb_ModelMakerToolbox_DFlowFM_generateBathymetry(handles,datasets);
+handles=ddb_ModelMakerToolbox_DFlowFM_generateBathymetry(handles,ad,datasets);
 
 % Finish
 setHandles(handles);
@@ -302,21 +238,32 @@ handles=getHandles;
 maxdist     = handles.toolbox.modelmaker.sectionLengthMetres;
 minlev      = handles.toolbox.modelmaker.zMax;
 boundaries  = [];
-boundarysections = findBoundarySections(handles.model.dflowfm.domain(ad).netstruc,maxdist,minlev,handles.screenParameters.coordinateSystem.type);
+
+if isnan(nanmax(handles.model.dflowfm.domain(ad).netstruc.node.z))
+    ddb_giveWarning('text','Could not generate open boundaries! Please generate bathymetry first.');
+    return
+end
+
+boundarysections = ddb_DFlowFM_findBoundarySections(handles.model.dflowfm.domain(ad).circumference,maxdist,minlev,handles.screenParameters.coordinateSystem.type);
 handles.model.dflowfm.domain(ad).boundarynames = {''};
+
+% Delete existing boundaries
+ddb_DFlowFM_plotBoundaries(handles,'delete','domain',ad);
 
 % Name boundaries
 for ib=1:length(boundarysections)
-    boundaries  = ddb_DFlowFM_initializeBoundary(boundaries,boundarysections(ib).x,boundarysections(ib).y,['bnd' num2str(ib,'%0.3i')],ib, handles.model.dflowfm.domain(ad).tstart,handles.model.dflowfm.domain(ad).tstop);
-    handles.model.dflowfm.domain(ad).boundarynames{ib}=['bnd' num2str(ib,'%0.3i')];
+    boundaries  = ddb_DFlowFM_initializeBoundary(boundaries,boundarysections(ib).x,boundarysections(ib).y,['bnd_' num2str(ib,'%0.3i')],ib, handles.model.dflowfm.domain(ad).tstart,handles.model.dflowfm.domain(ad).tstop);
+    handles.model.dflowfm.domain(ad).boundarynames{ib}=['bnd_' num2str(ib,'%0.3i')];
 end
 
 % Save files
 handles.model.dflowfm.domain(ad).boundaries         = boundaries;
 handles.model.dflowfm.domain(ad).nrboundaries       = length(boundaries);
 handles = ddb_DFlowFM_plotBoundaries(handles,'plot','active',1);
-ddb_DFlowFM_saveBoundaryPolygons('.\',handles.model.dflowfm.domain(ad).boundaries);
-handles.model.dflowfm.domain(ad).extforcefile='forcing.ext';
+for ipol=1:length(handles.model.dflowfm.domain(ad).boundaries)
+    ddb_DFlowFM_saveBoundaryPolygon('.\',handles.model.dflowfm.domain(ad).boundaries,ipol);
+end
+handles.model.dflowfm.domain(ad).extforcefilenew='forcing.ext';
 ddb_DFlowFM_saveExtFile(handles);
 
 % Finish
@@ -325,10 +272,23 @@ setHandles(handles);
 %%
 function generateBoundaryConditions
 
-% Start
 handles = getHandles;
+
+[filename,ok]=gui_uiputfile('*.bc', 'Boundary Forcing File',handles.model.dflowfm.domain(ad).bcfile);
+if ~ok
+    return
+end
+handles.model.dflowfm.domain(ad).bcfile=filename;
+
+[filename,ok]=gui_uiputfile('*.ext', 'External Forcing File',handles.model.dflowfm.domain(ad).extforcefilenew);
+if ~ok
+    return
+end
+handles.model.dflowfm.domain(ad).extforcefilenew=filename;
+
+% Start
 wb      = waitbox('Generating Boundary Conditions ...');
-ad      = 1;
+%ad      = 1;
 
 % Make the tides
 boundaries = handles.model.dflowfm.domain(ad).boundaries;
@@ -340,7 +300,12 @@ for ipol=1:length(boundaries)
 end
 
  % Save the data
-ddb_DFlowFM_saveBCfile(boundaries);
+ddb_DFlowFM_saveBCfile(handles.model.dflowfm.domain.bcfile,boundaries);
+% for ii=1:length(boundaries)
+%     for jj=1:length(boundaries(ii).nodes)
+%         ddb_DFlowFM_saveCmpFile(boundaries,ii,jj);
+%     end
+% end
 handles.model.dflowfm.domain(ad).boundaries=boundaries;
 ddb_DFlowFM_saveExtFile(handles);
 setHandles(handles);

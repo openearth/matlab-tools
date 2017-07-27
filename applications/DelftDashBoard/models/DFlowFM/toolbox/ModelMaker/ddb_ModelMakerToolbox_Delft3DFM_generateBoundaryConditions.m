@@ -71,20 +71,24 @@ error = 1;
 try
     
     % Determine what to do: Riemmann, velocity or water level
-    igetwl = 1; igetv = 0;
-    if strcmpi(boundary.type, 'riemannbnd')
-        igetwl              = 1;
-        igetvel             = 1;
-    elseif  strcmpi(boundary.type, 'riemannbnd')
-        igetwl              = 0;
-        igetvel             = 1;
-    % Not supported, meaning waterlevels applied
-    else
-        boundary.type       = 'waterlevelbnd';
-        igetwl              = 1;
-        igetvel             = 0;
+    igetwl  = 1;
+    igetvel = 0;
+    
+    switch boundary.type
+        case{'riemanbnd'}
+            igetwl              = 1;
+            igetvel             = 1;
+        case{'velocitybnd'}
+            igetwl              = 0;
+            igetvel             = 1;
+        case{'uxuyadvectionvelocitybnd'}
+            igetwl              = 0;
+            igetvel             = 1;
+        case{'waterlevelbnd'}
+            igetwl              = 1;
+            igetvel             = 0;
     end
-
+    
     % Which tidal database?
     ii      = handles.toolbox.modelmaker.activeTideModelBC;
     name    = handles.tideModels.model(ii).name;
@@ -93,7 +97,7 @@ try
     else
         tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
     end
-
+    
     % Get location, potentially with grid conversion
     cs.name ='WGS 84';
     cs.type ='Geographic';
@@ -108,12 +112,11 @@ try
     end
     
     % Get velocities
-    if igetvel
-        
+    if igetvel        
         % Standard values
-        [lon,lat, gt, depth, conList] = readTideModel(tidefile,'type','q','x',xx,'y',yy,'constituent','all','includedepth');            
-        ampv = squeeze(gt(1).amp)';             phasev =  squeeze(gt(1).phi)';   
-        ampu = squeeze(gt(2).amp)';             phaseu =  squeeze(gt(2).phi)';         
+        [lon,lat, gt, depth, conList] = readTideModel(tidefile,'type','q','x',xx,'y',yy,'constituent','all','includedepth');
+        ampv = squeeze(gt(1).amp)';             phasev =  squeeze(gt(1).phi)';
+        ampu = squeeze(gt(2).amp)';             phaseu =  squeeze(gt(2).phi)';
     end
     
     % Constituents
@@ -128,31 +131,53 @@ try
         if strcmpi(boundary.nodes(n).cmptype, 'astronomic')
             for i=1:NrCons
                 
-                % Set component 
+                % Set component
                 boundary.nodes(n).astronomiccomponents(i).component = Constituents(:,i).name;
                 
-                if      strcmpi(boundary.type, 'riemannbnd')
-                    
-                    
-                elseif  strcmpi(boundary.type, 'velocitybnd')
+                switch boundary.type
+                    case{'riemanbnd'}
 
-                
-                % Waterlevelbnd    
-                else
-                
-                % Put values in
-                boundary.type = 'waterlevelbnd';
-                boundary.nodes(n).astronomiccomponents(i).amplitude = ampz(i);
-                boundary.nodes(n).astronomiccomponents(i).phase     = phasez(i);
-                
-                % Make values for the bc-file
-                boundary.nodes(n).bc.Function   = 'astronomic';
-                boundary.nodes(n).bc.Quantity1  = 'astronomic component';
-                boundary.nodes(n).bc.Unit1      = '-';
-                boundary.nodes(n).bc.Quantity2  = [boundary.type, ' amplitude'];
-                boundary.nodes(n).bc.Unit2      = 'm';
-                boundary.nodes(n).bc.Quantity3  = [boundary.type, ' phase'];
-                boundary.nodes(n).bc.Unit3      = 'deg';
+                    
+                    
+                    
+                    case{'velocitybnd'}
+                        
+                        
+                        
+                    case{'uxuyadvectionvelocitybnd'}
+
+                        boundary.nodes(n).astronomiccomponents(i).amplitude = ampu(i,n);
+                        boundary.nodes(n).astronomiccomponents(i).phase     = phaseu(i,n);
+%                         boundary.nodes(n).astronomiccomponents(i).amplitude = ampv(i,n);
+%                         boundary.nodes(n).astronomiccomponents(i).phase     = phasev(i,n);
+                        
+                        % Make values for the bc-file
+                        boundary.nodes(n).bc.Function   = 'astronomic';
+                        boundary.nodes(n).bc.Quantity1  = 'astronomic component';
+                        boundary.nodes(n).bc.Unit1      = '-';
+                        boundary.nodes(n).bc.Quantity2  = [boundary.type, ' amplitude'];
+                        boundary.nodes(n).bc.Unit2      = 'm';
+                        boundary.nodes(n).bc.Quantity3  = [boundary.type, ' phase'];
+                        boundary.nodes(n).bc.Unit3      = 'deg';
+%                         boundary.nodes(n).bc.Quantity4  = [boundary.type, ' amplitude'];
+%                         boundary.nodes(n).bc.Unit4      = 'm';
+%                         boundary.nodes(n).bc.Quantity5  = [boundary.type, ' phase'];
+%                         boundary.nodes(n).bc.Unit5      = 'deg';
+                        
+                    case{'waterlevelbnd'}
+                        
+                        % Set values
+                        boundary.nodes(n).astronomiccomponents(i).amplitude = ampz(i,n);
+                        boundary.nodes(n).astronomiccomponents(i).phase     = phasez(i,n);
+                        
+                        % Make values for the bc-file
+                        boundary.nodes(n).bc.Function   = 'astronomic';
+                        boundary.nodes(n).bc.Quantity1  = 'astronomic component';
+                        boundary.nodes(n).bc.Unit1      = '-';
+                        boundary.nodes(n).bc.Quantity2  = [boundary.type, ' amplitude'];
+                        boundary.nodes(n).bc.Unit2      = 'm';
+                        boundary.nodes(n).bc.Quantity3  = [boundary.type, ' phase'];
+                        boundary.nodes(n).bc.Unit3      = 'deg';
                 end
             end
         end

@@ -44,13 +44,14 @@ function ddb_DFlowFM_saveExtFile(handles)
 % $Keywords: $
     
 fid=fopen(handles.model.dflowfm.domain.extforcefilenew,'wt');
+%fid=fopen(handles.model.dflowfm.domain.extforcefile,'wt');
 
 % Boundaries
 for ip=1:handles.model.dflowfm.domain.nrboundaries
     fprintf(fid,'%s\n','[boundary]');
     fprintf(fid,'%s\n',['quantity       = ' handles.model.dflowfm.domain.boundaries(ip).type]);
-    fprintf(fid,'%s\n',['locationfile   = ' handles.model.dflowfm.domain.boundaries(ip).filename]);
-    fprintf(fid,'%s\n','forcingfile     = Waterlevel.bc');
+    fprintf(fid,'%s\n',['locationfile   = ' handles.model.dflowfm.domain.boundaries(ip).locationfile]);
+    fprintf(fid,'%s\n',['forcingfile    = ' handles.model.dflowfm.domain.bcfile]);
     fprintf(fid,'%s\n','');
 end
 

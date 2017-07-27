@@ -1,4 +1,4 @@
-function ddb_DFlowFM_saveBoundaryPolygons(dr,boundaries)
+function ddb_DFlowFM_saveBoundaryPolygons(dr,boundaries,ipol)
 %DDB_GENERATEBOUNDARYSECTIONSDFLOWFM  One line description goes here.
 %
 %   More detailed description goes here.
@@ -61,12 +61,13 @@ function ddb_DFlowFM_saveBoundaryPolygons(dr,boundaries)
 % $HeadURL$
 % $Keywords: $
 
-for ipol=1:length(boundaries)
-    fid=fopen([dr filesep boundaries(ipol).filename],'wt');
+%for ipol=1:length(boundaries)
+%    fid=fopen([dr filesep boundaries(ipol).filename],'wt');
+    fid=fopen([dr filesep boundaries(ipol).plifile],'wt');
     fprintf(fid,'%s\n',boundaries(ipol).name);
     fprintf(fid,'%i %i\n',length(boundaries(ipol).x),2);
     for ip=1:length(boundaries(ipol).x)
-        fprintf(fid,'%14.6e %14.7e %s\n',boundaries(ipol).x(ip),boundaries(ipol).y(ip),[boundaries(ipol).cmpfile{ip}]);
+        fprintf(fid,'%14.6e %14.7e %s\n',boundaries(ipol).x(ip),boundaries(ipol).y(ip),[boundaries(ipol).nodes(ip).name]);
     end
     fclose(fid);
-end
+%end

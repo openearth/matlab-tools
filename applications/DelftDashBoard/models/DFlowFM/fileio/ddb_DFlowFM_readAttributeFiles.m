@@ -51,19 +51,12 @@ function handles = ddb_DFlowFM_readAttributeFiles(handles, id)
 %%
 fname=handles.model.dflowfm.domain(id).netfile;
 
-if exist(fname,'file')
-    handles.model.dflowfm.domain(id).netstruc=[];
-    handles.model.dflowfm.domain(id).netstruc.nodeX=nc_varget(fname,'NetNode_x');
-    handles.model.dflowfm.domain(id).netstruc.nodeY=nc_varget(fname,'NetNode_y');
-    handles.model.dflowfm.domain(id).netstruc.nodeZ=nc_varget(fname,'NetNode_z');
-    handles.model.dflowfm.domain(id).netstruc.linkNodes=nc_varget(fname,'NetLink');
-    handles.model.dflowfm.domain(id).netstruc.linkType=nc_varget(fname,'NetLinkType');
-    try
-        handles.model.dflowfm.domain(id).netstruc.elemNodes=nc_varget(fname,'NetElemNode');
-    end
-    try
-        handles.model.dflowfm.domain(id).netstruc.bndLink=nc_varget(fname,'BndLink');
-    end
+if exist(fname,'file')    
+    % Load file
+    handles.model.dflowfm.domain(id).netstruc=dflowfm.readNet(fname);
+    handles.model.dflowfm.domain(id).netstruc.edge.NetLink=handles.model.dflowfm.domain(id).netstruc.edge.NetLink';
+%     % Compute circumference
+%     handles.model.dflowfm.domain.circumference=ddb_findNetCircumference(handles.model.dflowfm.domain(id).netstruc);
 else
     ddb_giveWarning('text','No net file found in mdu file!');
     return

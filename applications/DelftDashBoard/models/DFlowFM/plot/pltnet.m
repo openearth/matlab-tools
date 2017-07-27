@@ -1,11 +1,32 @@
 function p=pltnet(netStruc)
-for i=1:length(netStruc.linkNodes)
-    i1=netStruc.linkNodes(i,1);
-    i2=netStruc.linkNodes(i,2);
-    x{i}(1)=netStruc.nodeX(i1);
-    x{i}(2)=netStruc.nodeX(i2);
-    y{i}(1)=netStruc.nodeY(i1);
-    y{i}(2)=netStruc.nodeY(i2);
-end
-[x,y] = poly_join(x,y);
+
+i1=netStruc.edge.NetLink(:,1);
+i2=netStruc.edge.NetLink(:,2);
+x=zeros(3,length(i1));
+x(x==0)=NaN;
+y=x;
+x(1,:)=netStruc.node.x(i1);
+y(1,:)=netStruc.node.y(i1);
+x(2,:)=netStruc.node.x(i2);
+y(2,:)=netStruc.node.y(i2);
+
+x=reshape(x,[1 3*size(x,2)]);
+y=reshape(y,[1 3*size(y,2)]);
+
+% x=[netStruc.node.x(i1);netStruc.node.x(i2)];
+% y=[netStruc.node.y(i1);netStruc.node.y(i2)];
+
+% tic
+% for ii=1:size(netStruc.edge.NetLink,1)
+%     i1=netStruc.edge.NetLink(ii,1);
+%     i2=netStruc.edge.NetLink(ii,2);
+%     x{ii}(1)=netStruc.node.x(i1);
+%     x{ii}(2)=netStruc.node.x(i2);
+%     y{ii}(1)=netStruc.node.y(i1);
+%     y{ii}(2)=netStruc.node.y(i2);
+% end
+% toc
+% tic
+% [x,y] = poly_join(x,y);
+% toc
 p=plot(x,y);

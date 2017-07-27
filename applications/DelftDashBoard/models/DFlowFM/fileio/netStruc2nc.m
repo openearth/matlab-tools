@@ -11,15 +11,16 @@ for ii=1:length(varargin)
     end
 end
 
-nnodes=length(netStruc.nodeX);
-nlinks=length(netStruc.linkType);
-if isfield(netStruc,'elemNodes')
-    nelems=size(netStruc.elemNodes,1);
+nnodes=length(netStruc.node.x);
+%nlinks=length(netStruc.linkType);
+nlinks=size(netStruc.edge.NetLink,1);
+if isfield(netStruc,'face')
+    nelems=size(netStruc.face.NetElemNode,1);
 end
-if isfield(netStruc,'bndLink')
-    nbndlinks=length(netStruc.bndLink);
-end
-
+% if isfield(netStruc,'bndLink')
+%     nbndlinks=length(netStruc.bndLink);
+% end
+% 
 NCid     = netcdf.create(ncfile,'NC_CLOBBER');
 globalID = netcdf.getConstant('NC_GLOBAL');
 
@@ -29,19 +30,39 @@ grdmapping='wgs84';
 nNetNodeDimId        = netcdf.defDim(NCid,          'nNetNode',           nnodes);
 nNetLinkDimId        = netcdf.defDim(NCid,          'nNetLink',           nlinks);
 nNetLinkPtsDimId     = netcdf.defDim(NCid,          'nNetLinkPts',        2);
-if isfield(netStruc,'bndLink')
-    nBndLinkDimId        = netcdf.defDim(NCid,          'nBndLink',           nbndlinks);
-end
-if isfield(netStruc,'elemNodes')
+% if isfield(netStruc,'bndLink')
+%     nBndLinkDimId        = netcdf.defDim(NCid,          'nBndLink',           nbndlinks);
+% end
+if isfield(netStruc,'face')
     nNetElemDimId        = netcdf.defDim(NCid,          'nNetElem',           nelems);
-    nNetElemMaxNodeDimId = netcdf.defDim(NCid,          'nNetElemMaxNode',    size(netStruc.elemNodes,2));
+    nNetElemMaxNodeDimId = netcdf.defDim(NCid,          'nNetElemMaxNode',    size(netStruc.face.NetElemNode,2));
 end
-%nNetElemMaxNodeDimId = netcdf.defDim(NCid,          'nNetElemMaxNode',    7);
+% nNetElemMaxNodeDimId = netcdf.defDim(NCid,          'nNetElemMaxNode',    4);
+
+tstr=datestr(now,'yyyy-mm-ddTHH:MM:SS');
+netcdf.putAtt(NCid,globalID,'institution','Deltares');
+netcdf.putAtt(NCid,globalID,'references','http://www.deltares.nl');
+netcdf.putAtt(NCid,globalID,'source','Deltares');
+netcdf.putAtt(NCid,globalID,'history',['Created on ' tstr]);
+netcdf.putAtt(NCid,globalID,'date_created',tstr);
+netcdf.putAtt(NCid,globalID,'date_modified',tstr);
+netcdf.putAtt(NCid,globalID,'Conventions','UGRID-0.9');
 
 % Variables
+
+varid = netcdf.defVar(NCid,'Mesh2D','int',[]);
+netcdf.putAtt(NCid,varid,'cf_role','mesh_topology');
+netcdf.putAtt(NCid,varid,'node_coordinates','NetNode_x NetNode_y');
+netcdf.putAtt(NCid,varid,'node_dimension','nNetNode');
+netcdf.putAtt(NCid,varid,'edge_node_connectivity','NetLink');
+netcdf.putAtt(NCid,varid,'edge_dimension','nNetLink');
+netcdf.putAtt(NCid,varid,'topology_dimension',int32(1));
+netcdf.endDef(NCid);
+
+netcdf.reDef(NCid);
 varid = netcdf.defVar(NCid,'wgs84','int',[]);
 netcdf.putAtt(NCid,varid,'name','WGS84');
-netcdf.putAtt(NCid,varid,'epsg',4326);
+netcdf.putAtt(NCid,varid,'epsg',int32(4326));
 netcdf.putAtt(NCid,varid,'grid_mapping_name','latitude_longitude');
 netcdf.putAtt(NCid,varid,'longitude_of_prime_meridian',0);
 netcdf.putAtt(NCid,varid,'semi_major_axis',6.37814e+006);
@@ -70,7 +91,7 @@ else
     netcdf.putAtt(NCid,varid,'grid_mapping',grdmapping);
 end
 netcdf.endDef(NCid);
-netcdf.putVar(NCid,varid,netStruc.nodeX);
+netcdf.putVar(NCid,varid,netStruc.node.x);
 
 % Node y
 netcdf.reDef(NCid);
@@ -87,10 +108,10 @@ else
     netcdf.putAtt(NCid,varid,'grid_mapping',grdmapping);
 end
 netcdf.endDef(NCid);
-netcdf.putVar(NCid,varid,netStruc.nodeY);
+netcdf.putVar(NCid,varid,netStruc.node.y);
 
-netStruc.nodeLon=netStruc.nodeX;
-netStruc.nodeLat=netStruc.nodeY;
+netStruc.nodeLon=netStruc.node.x;
+netStruc.nodeLat=netStruc.node.y;
 
 % % Node lon
 % netcdf.reDef(NCid);
@@ -122,7 +143,7 @@ netcdf.putAtt(NCid,varid,'long_name','Bottom level at net nodes (flow element''s
 netcdf.putAtt(NCid,varid,'coordinates','NetNode_x NetNode_y');
 netcdf.putAtt(NCid,varid,'grid_mapping',grdmapping);
 netcdf.endDef(NCid);
-netcdf.putVar(NCid,varid,netStruc.nodeZ);
+netcdf.putVar(NCid,varid,netStruc.node.z);
 
 % Net link
 netcdf.reDef(NCid);
@@ -130,35 +151,39 @@ varid = netcdf.defVar(NCid,'NetLink','int',[nNetLinkPtsDimId nNetLinkDimId]);
 netcdf.putAtt(NCid,varid,'standard_name','netlink');
 netcdf.putAtt(NCid,varid,'long_name','link between two netnodes');
 netcdf.endDef(NCid);
-netcdf.putVar(NCid,varid,netStruc.linkNodes');
+netcdf.putVar(NCid,varid,netStruc.edge.NetLink');
 
 % Net link type
 netcdf.reDef(NCid);
 varid = netcdf.defVar(NCid,'NetLinkType','int',nNetLinkDimId);
 netcdf.putAtt(NCid,varid,'long_name','type of netlink');
-netcdf.putAtt(NCid,varid,'valid_range',[0 2]);
-netcdf.putAtt(NCid,varid,'flag_values',[0 1 2]);
+netcdf.putAtt(NCid,varid,'valid_range',int32([0 2]));
+netcdf.putAtt(NCid,varid,'flag_values',int32([0 1 2]));
 netcdf.putAtt(NCid,varid,'flag_meanings','closed_link_between_2D_nodes link_between_1D_nodes link_between_2D_nodes');
 netcdf.endDef(NCid);
-netcdf.putVar(NCid,varid,netStruc.linkType);
+linktype=zeros(nlinks,1)+2;
+%netcdf.putVar(NCid,varid,netStruc.linkType);
+netcdf.putVar(NCid,varid,linktype);
 
-if isfield(netStruc,'elemNodes')
+if isfield(netStruc,'face')
     % Net elem node
     netcdf.reDef(NCid);
     varid = netcdf.defVar(NCid,'NetElemNode','int',[nNetElemMaxNodeDimId nNetElemDimId]);
     netcdf.putAtt(NCid,varid,'long_name','Mapping from net cell to net nodes.');
     netcdf.endDef(NCid);
-    netcdf.putVar(NCid,varid,netStruc.elemNodes');
+    netcdf.putVar(NCid,varid,netStruc.face.NetElemNode');
 end
 
-if isfield(netStruc,'bndLink')
-    % Bnd Link
-    netcdf.reDef(NCid);
-    varid = netcdf.defVar(NCid,'BndLink','int',nBndLinkDimId);
-    netcdf.putAtt(NCid,varid,'long_name','Netlinks that compose the net boundary.');
-    netcdf.endDef(NCid);
-    netcdf.putVar(NCid,varid,netStruc.bndLink);
-end
+
+
+% if isfield(netStruc,'bndLink')
+%     % Bnd Link
+%     netcdf.reDef(NCid);
+%     varid = netcdf.defVar(NCid,'BndLink','int',nBndLinkDimId);
+%     netcdf.putAtt(NCid,varid,'long_name','Netlinks that compose the net boundary.');
+%     netcdf.endDef(NCid);
+%     netcdf.putVar(NCid,varid,netStruc.bndLink);
+% end
 
 % Close file
 netcdf.close(NCid)

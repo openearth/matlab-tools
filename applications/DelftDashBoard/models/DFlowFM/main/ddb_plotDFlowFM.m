@@ -108,25 +108,5 @@ handles=ddb_DFlowFM_plotObservationPoints(handles,option,'visible',vis,'active',
 
 handles=ddb_DFlowFM_plotCrossSections(handles,option,'visible',vis,'active',act);
 
-
-% Zoom to area of interest
-try
-    for i=1:length(netStruc.linkNodes)
-        i1=netStruc.linkNodes(i,1);
-        i2=netStruc.linkNodes(i,2);
-        x{i}(1)=netStruc.nodeX(i1);
-        x{i}(2)=netStruc.nodeX(i2);
-        y{i}(1)=netStruc.nodeY(i1);
-        y{i}(2)=netStruc.nodeY(i2);
-    end
-    [x,y] = poly_join(x,y);
-    xl(1)=min(min(x));
-    xl(2)=max(max(x));
-    yl(1)=min(min(y));
-    yl(2)=max(max(y));
-    handles=ddb_zoomTo(handles,xl,yl,0.1);
-catch
-end
-
 % Finish
 setHandles(handles);

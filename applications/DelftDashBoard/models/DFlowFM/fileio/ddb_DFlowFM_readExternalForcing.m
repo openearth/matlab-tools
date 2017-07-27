@@ -102,7 +102,8 @@ for ii=1:length(s)
             boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,nb,handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop);
             boundaries(nb).type=s(ii).quantity;
             boundaries(nb).name=name;
-            boundaries(nb).forcingfilename=s(ii).forcingfile;
+            boundaries(nb).forcingfile=s(ii).forcingfile;
+            handles.model.dflowfm.domain.bcfile=s(ii).forcingfile;
             handles.model.dflowfm.domain.boundarynames{nb}=name;            
         case{'riemannbnd'}
             nb=nb+1;
@@ -111,8 +112,9 @@ for ii=1:length(s)
             [x,y]=landboundary('read',plifile);
             boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,nb,handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop);
             boundaries(nb).type=s(ii).quantity;
-            boundaries(nb).name=s(ii).forcingfile;
+            boundaries(nb).forcingfile=s(ii).forcingfile;
             handles.model.dflowfm.domain.boundarynames{nb}=name;            
+            handles.model.dflowfm.domain.bcfile=s(ii).forcingfile;
         case{'dischargebnd'}
             nb=nb+1;
             plifile=s(ii).locationfile;
@@ -120,8 +122,9 @@ for ii=1:length(s)
             [x,y]=landboundary('read',plifile);
             boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,nb,handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop);
             boundaries(nb).type=s(ii).quantity;
-            boundaries(nb).name=s(ii).forcingfile;
+            boundaries(nb).forcingfile=s(ii).forcingfile;
             handles.model.dflowfm.domain.boundarynames{nb}=name;            
+            handles.model.dflowfm.domain.bcfile=s(ii).forcingfile;
         case{'spiderweb'}
             handles.model.dflowfm.domain.spiderwebfile=s(ii).filename;
             handles.model.dflowfm.domain.wind=1;
@@ -143,9 +146,9 @@ end
 for ii = 1:length(boundaries)
 
     % Now read time series / component files
-    [A] = textread(boundaries(ii).forcingfilename,'%s');
-    for jj = 1:length(boundaries(ii).cmpfile)
-        id = find(strcmpi(A, boundaries(ii).cmpfile(jj))); 
+    [A] = textread(handles.model.dflowfm.domain.bcfile,'%s');
+    for jj = 1:length(boundaries(ii).nodes)
+        id = find(strcmpi(A, boundaries(ii).nodes(jj).name)); 
         if ~isempty(id)
             
             % Reading time series
@@ -187,9 +190,9 @@ for ii = 1:length(boundaries)
             elseif strcmp(A{ (id+3) ,1}, 'astronomic')
                 
                 % Set the bc-file
-                id = find(strcmpi(A, boundaries(ii).cmpfile(jj))); 
+                id = find(strcmpi(A, boundaries(ii).nodes(jj).name)); 
                 boundaries(ii).nodes(jj).bc.Function   = A{id+3,1};
-                boundaries(ii).nodes(jj).bc.Quantity1  = [A{id+6,1}, ' ', A{id+7,1}]
+                boundaries(ii).nodes(jj).bc.Quantity1  = [A{id+6,1}, ' ', A{id+7,1}];
                 boundaries(ii).nodes(jj).bc.Unit1      = A{id+10,1};
                 boundaries(ii).nodes(jj).bc.Quantity2  = [A{id+13,1}, ' ', A{id+14,1}];
                 boundaries(ii).nodes(jj).bc.Unit2      = A{id+17,1};

@@ -109,16 +109,18 @@
   <element>
     <style>popupmenu</style>
     <text>Type</text>
-    <position>340 110 80 20</position>
+    <position>350 110 80 20</position>
     <tooltipstring>Select boundary type</tooltipstring>
     <variable>handles.model.dflowfm.domain.boundaries(handles.model.dflowfm.domain.activeboundary).type</variable>
     <type>string</type>
     <listtext>Water Level</listtext>
     <listtext>Discharge</listtext>
     <listtext>Riemann</listtext>
+    <listtext>Ux-Uy Adv-Vel</listtext>
     <listvalue>waterlevelbnd</listvalue>
     <listvalue>dischargebnd</listvalue>
     <listvalue>riemannbnd</listvalue>
+    <listvalue>uxuyadvectionvelocitybnd</listvalue>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
@@ -131,8 +133,8 @@
   </element>
     <element>
       <style>popupmenu</style>
-      <text>Type</text>
-      <position>340 85 80 20</position>
+      <text>Function</text>
+      <position>350 85 80 20</position>
       <tooltipstring>Select boundary type</tooltipstring>
       <variable>handles.model.dflowfm.domain.boundaries(handles.model.dflowfm.domain.activeboundary).nodes(1).bc(1).Function</variable>
       <type>string</type>
@@ -154,7 +156,7 @@
   </element>
   <element>
     <style>listbox</style>
-    <position>440 10 50 110</position>
+    <position>440 10 100 110</position>
     <tooltipstring>Edit boundary node data</tooltipstring>
     <variable>handles.model.dflowfm.domain.boundaries(handles.model.dflowfm.domain.activeboundary).activenode</variable>
     <type>int</type>
@@ -173,9 +175,46 @@
       </check>
     </dependency>
   </element>
+
+  <element>
+    <style>pushbutton</style>
+    <position>570 50 120 20</position>
+    <tooltipstring>Insert boundary node</tooltipstring>
+    <callback>ddb_DFlowFM_boundaries</callback>
+    <option1>insertpoint</option1>
+    <text>Insert Point</text>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.dflowfm.domain.nrboundaries</variable>
+        <value>10000000</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+
+  <element>
+    <style>pushbutton</style>
+    <position>570 25 120 20</position>
+    <tooltipstring>Delete boundary node</tooltipstring>
+    <callback>ddb_DFlowFM_boundaries</callback>
+    <option1>deletepoint</option1>
+    <text>Delete Point</text>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.dflowfm.domain.nrboundaries</variable>
+        <value>10000000</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+
   <element>
     <style>checkbox</style>
-    <position>500 100 120 20</position>
+    <position>550 100 120 20</position>
     <tooltipstring>Use time series data</tooltipstring>
     <variable>handles.model.dflowfm.domain.boundaries(handles.model.dflowfm.domain.activeboundary).nodes(handles.model.dflowfm.domain.boundaries(handles.model.dflowfm.domain.activeboundary).activenode).tim</variable>
     <dependency>
@@ -190,7 +229,7 @@
   </element>
   <element>
     <style>pushbutton</style>
-    <position>520 100 120 20</position>
+    <position>570 100 120 20</position>
     <tooltipstring>Edit boundary node time series data</tooltipstring>
     <callback>ddb_DFlowFM_boundaries</callback>
     <option1>editboundarydatatimeseries</option1>
@@ -212,7 +251,7 @@
   </element>
   <element>
     <style>checkbox</style>
-    <position>500 75 120 20</position>
+    <position>550 75 120 20</position>
     <tooltipstring>Use time series data</tooltipstring>
     <variable>handles.model.dflowfm.domain.boundaries(handles.model.dflowfm.domain.activeboundary).nodes(handles.model.dflowfm.domain.boundaries(handles.model.dflowfm.domain.activeboundary).activenode).cmp</variable>
     <dependency>
@@ -227,7 +266,7 @@
   </element>
   <element>
     <style>pushbutton</style>
-    <position>520 75 120 20</position>
+    <position>570 75 120 20</position>
     <tooltipstring>Edit boundary node component data</tooltipstring>
     <callback>ddb_DFlowFM_boundaries</callback>
     <option1>editboundarydatacomponents</option1>

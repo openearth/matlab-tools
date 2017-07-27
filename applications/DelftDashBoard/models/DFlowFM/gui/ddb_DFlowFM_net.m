@@ -61,14 +61,19 @@ handles=getHandles;
 
 fname=handles.model.dflowfm.domain(ad).netfile;
 
-handles.model.dflowfm.domain(ad).netstruc=[];
-handles.model.dflowfm.domain(ad).netstruc.nodeX=nc_varget(fname,'NetNode_x');
-handles.model.dflowfm.domain(ad).netstruc.nodeY=nc_varget(fname,'NetNode_y');
-handles.model.dflowfm.domain(ad).netstruc.nodeZ=nc_varget(fname,'NetNode_z');
-handles.model.dflowfm.domain(ad).netstruc.linkNodes=nc_varget(fname,'NetLink');
-handles.model.dflowfm.domain(ad).netstruc.linkType=nc_varget(fname,'NetLinkType');
-% handles.model.dflowfm.domain(ad).netstruc.elemNodes=nc_varget(fname,'NetElemNode');
-% handles.model.dflowfm.domain(ad).netstruc.bndLink=nc_varget(fname,'BndLink');
+%andles.model.dflowfm.domain(ad).netstruc=loadnetstruc(fname);
+%handles.model.dflowfm.domain(ad).netstruc=loadnetstruc2(fname);
+handles.model.dflowfm.domain(ad).netstruc=dflowfm.readNet(fname);
+% handles.model.dflowfm.domain(ad).netstruc.edge.NetLink=handles.model.dflowfm.domain(ad).netstruc.edge.NetLink';
+
+%handles.model.dflowfm.domain.circumference=ddb_findNetCircumference(handles.model.dflowfm.domain(ad).netstruc);
+
+% Zoom to grid
+xl(1)=min(handles.model.dflowfm.domain.netstruc.node.x);
+xl(2)=max(handles.model.dflowfm.domain.netstruc.node.x);
+yl(1)=min(handles.model.dflowfm.domain.netstruc.node.y);
+yl(2)=max(handles.model.dflowfm.domain.netstruc.node.y);
+handles=ddb_zoomTo(handles,xl,yl,0.1);
 
 handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',ad,'color',[0.35 0.35 0.35],'visible',1,'active',1);
 

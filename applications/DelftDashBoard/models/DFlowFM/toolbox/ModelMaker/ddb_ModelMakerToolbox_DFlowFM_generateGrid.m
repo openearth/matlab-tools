@@ -1,4 +1,4 @@
-function handles = ddb_generateGridDFlowFM(handles, id, x, y, z, varargin)
+function handles = ddb_ModelMakerToolbox_DFlowFM_generateGrid(handles, id, varargin)
 %DDB_GENERATEGRIDDFlowFM  One line description goes here.
 %
 %   More detailed description goes here.
@@ -71,13 +71,96 @@ if ~isempty(varargin)
     end
 end
 
+handles.model.dflowfm.domain(ad).netfile=[handles.model.dflowfm.domain(ad).attName '_net.nc'];
+[filename,ok]=gui_uiputfile('*_net.nc', 'Net File Name',handles.model.dflowfm.domain(ad).netfile);
+if ~ok
+    return
+end
+    
+% Values
+wb      = waitbox('Generating grid ...'); pause(0.1);
+xori    = handles.toolbox.modelmaker.xOri;
+nx      = handles.toolbox.modelmaker.nX;
+dx      = handles.toolbox.modelmaker.dX;
+yori    = handles.toolbox.modelmaker.yOri;
+ny      = handles.toolbox.modelmaker.nY;
+dy      = handles.toolbox.modelmaker.dY;
+rot     = pi*handles.toolbox.modelmaker.rotation/180;
+zmax    = handles.toolbox.modelmaker.zMax;
+
+% Find minimum grid resolution (in metres)
+dmin=min(dx,dy);
+if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+    dmin = dmin*111111;
+end
+
+% Find coordinates of corner points
+x(1)= xori;
+y(1)= yori;
+x(2)= x(1)+nx*dx*cos(pi*handles.toolbox.modelmaker.rotation/180);
+y(2)= y(1)+nx*dx*sin(pi*handles.toolbox.modelmaker.rotation/180);
+x(3)= x(2)+ny*dy*cos(pi*(handles.toolbox.modelmaker.rotation+90)/180);
+y(3)= y(2)+ny*dy*sin(pi*(handles.toolbox.modelmaker.rotation+90)/180);
+x(4)= x(3)+nx*dx*cos(pi*(handles.toolbox.modelmaker.rotation+180)/180);
+y(4)= y(3)+nx*dx*sin(pi*(handles.toolbox.modelmaker.rotation+180)/180);
+
+% Limits for the bathy
+xl(1)= min(x);
+xl(2)= max(x);
+yl(1)= min(y);
+yl(2)= max(y);
+dbuf = (xl(2)-xl(1))/20;
+xl(1)= xl(1)-dbuf;
+xl(2)= xl(2)+dbuf;
+yl(1)= yl(1)-dbuf;
+yl(2)= yl(2)+dbuf;
+
+% Get bathy
+coord   = handles.screenParameters.coordinateSystem;
+iac     = strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
+dataCoord.name = handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
+dataCoord.type = handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
+[xlb,ylb]= ddb_coordConvert(xl,yl,coord,dataCoord);
+[xx,yy,zz,ok]= ddb_getBathymetry(handles.bathymetry,xlb,ylb,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
+
+% xx and yy are in coordinate system of bathymetry (usually WGS 84)
+% convert bathy grid to active coordinate system
+if ~strcmpi(dataCoord.name,coord.name) || ~strcmpi(dataCoord.type,coord.type)
+    dmin=min(dx,dy);
+    [xg,yg]=meshgrid(xl(1):dmin:xl(2),yl(1):dmin:yl(2));
+    [xgb,ygb]=ddb_coordConvert(xg,yg,coord,dataCoord);
+    zz=interp2(xx,yy,zz,xgb,ygb);
+else
+    xg=xx;
+    yg=yy;
+end
+
+% Generate grid
+[x,y,z]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
+
+close(wb);
+
 ddb_plotDFlowFM('delete','domain',id);
 handles=ddb_initializeDFlowFMdomain(handles,'griddependentinput',id,handles.model.dflowfm.domain(id).runid);
 set(gcf,'Pointer','arrow');
-netstruc=curv2net(x,y,z);
-handles.model.dflowfm.domain(id).netfile=[handles.model.dflowfm.domain(id).attName '_net.nc'];
+
+netstruc=curv2net_new(x,y,z);
+
+% Set depths to NaN
+nans=zeros(size(netstruc.node.z));
+nans(nans==0)=NaN;
+netstruc.node.z=nans;
+
+handles.model.dflowfm.domain(id).netfile=filename;
 handles.model.dflowfm.domain(id).netstruc=netstruc;
+%handles.model.dflowfm.domain.circumference=ddb_findNetCircumference(handles.model.dflowfm.domain(id).netstruc);
+
+% % Clip shallow areas
+% netstruc=dflowfm_clip_shallow_areas(netstruc,zmax);
+
+
 netStruc2nc(handles.model.dflowfm.domain(id).netfile,netstruc,'cstype',handles.screenParameters.coordinateSystem.type);
 
 handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',id);
+
 

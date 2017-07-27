@@ -101,6 +101,7 @@ switch lower(opt)
 %         handles.model.dflowfm.domain(id).grid.handle=p.per;
         handles.model.dflowfm.domain(id).grid.handle=h;
         set(h,'Tag','dflowfmnet');
+        set(h,'HitTest','off');
 
         if vis
             set(h,'Color',col,'Visible','on');

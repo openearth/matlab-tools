@@ -1,9 +1,27 @@
-function ddb_DFlowFM_saveCmpFile(boundaries,ii,jj)
-%ddb_DFlowFM_saveCmpFile
+function ddb_DFlowFM_saveBoundaryPolygon(dr,boundaries,ipol)
+%DDB_GENERATEBOUNDARYSECTIONSDFLOWFM  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   handles = ddb_generateBoundarySectionsDFlowFM(handles)
+%
+%   Input:
+%   handles  =
+%   id       =
+%   varargin =
+%
+%   Output:
+%   handles  =
+%
+%   Example
+%   ddb_generateBoundaryLocationsDelft3DFLOW
+%
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2013 Deltares
+%   Copyright (C) 2011 Deltares
 %       Maarten van Ormondt
 %
 %       Maarten.vanOrmondt@deltares.nl
@@ -36,44 +54,20 @@ function ddb_DFlowFM_saveCmpFile(boundaries,ii,jj)
 % Created: 29 Nov 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id: ddb_DFlowFM_writeComponentsFile.m 9233 2013-09-19 09:19:19Z ormondt $
-% $Date: 2013-09-19 11:19:19 +0200 (Thu, 19 Sep 2013) $
-% $Author: ormondt $
-% $Revision: 9233 $
-% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/models/DFlowFM/fileio/ddb_DFlowFM_writeComponentsFile.m $
+% $Id: ddb_DFlowFM_saveBoundaryPolygons.m 12761 2016-06-01 15:19:32Z nederhof $
+% $Date: 2016-06-01 17:19:32 +0200 (Wed, 01 Jun 2016) $
+% $Author: nederhof $
+% $Revision: 12761 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/models/DFlowFM/fileio/ddb_DFlowFM_saveBoundaryPolygons.m $
 % $Keywords: $
 
-fname=boundaries(ii).nodes(jj).cmpfile;
-
-fid=fopen(fname,'wt');
-
-fprintf(fid,'%s\n',['* Delft3D-FLOW boundary segment name: ' boundaries(ii).name]);
-fprintf(fid,'%s\n',['* ' boundaries(ii).nodes(jj).cmpfile]);
-fprintf(fid,'%s\n','* COLUMNN=3');
-fprintf(fid,'%s\n','* COLUMN1=Period (min) or Astronomical Componentname');
-fprintf(fid,'%s\n','* COLUMN2=Amplitude (m)');
-fprintf(fid,'%s\n','* COLUMN3=Phase (deg)');
-
-tp=boundaries(ii).nodes(jj).cmptype;
-
-switch tp
-    case{'astro','astronomic'}
-        components=boundaries(ii).nodes(jj).astronomiccomponents;
-    case{'harmo'}
-        components=boundaries(ii).nodes(jj).harmoniccomponents;
-end
-        
-for ip=1:length(components)
-    cmp=components(ip).component;
-    if ischar(cmp)
-        cmp=[repmat(' ',1,12-length(cmp)) cmp]; 
-    else
-        cmp=num2str(cmp,'%12.3f');
-        cmp=[repmat(' ',1,12-length(cmp)) cmp]; 
+%for ipol=1:length(boundaries)
+%    fid=fopen([dr filesep boundaries(ipol).filename],'wt');
+    fid=fopen([dr filesep boundaries(ipol).locationfile],'wt');
+    fprintf(fid,'%s\n',boundaries(ipol).name);
+    fprintf(fid,'%i %i\n',length(boundaries(ipol).x),2);
+    for ip=1:length(boundaries(ipol).x)
+        fprintf(fid,'%14.7e %14.7e %s\n',boundaries(ipol).x(ip),boundaries(ipol).y(ip),[boundaries(ipol).nodes(ip).name]);
     end
-    amp=components(ip).amplitude;
-    phi=components(ip).phase;
-    fprintf(fid,'%s %11.4f %11.1f\n',cmp,amp,phi);
-end
-
-fclose(fid);
+    fclose(fid);
+%end

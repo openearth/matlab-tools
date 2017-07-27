@@ -72,7 +72,7 @@ switch lower(opt)
             handles.model.dflowfm.domain(ad).mduFile=[handles.model.dflowfm.domain(ad).runid '.mdu'];
         end
         ddb_saveMDU(handles.model.dflowfm.domain(ad).mduFile,inp);
-        ddb_DFlowFM_saveBatchFile(handles.model.dflowfm.exedir,'unstruc.exe',handles.model.dflowfm.domain(ad).mduFile);
+        ddb_DFlowFM_saveBatchFile(handles.model.dflowfm.exedir,'dflowfm.exe',handles.model.dflowfm.domain(ad).mduFile);
         
     %% Save MDU with a different name    
     case{'saveas'}
@@ -86,7 +86,7 @@ switch lower(opt)
             handles.model.dflowfm.domain(ad).runid=filename(1:ii-1);
             handles.model.dflowfm.domain(ad).mduFile=filename;
             ddb_saveMDU(filename,handles.model.dflowfm.domain(ad));
-            ddb_DFlowFM_saveBatchFile(handles.model.dflowfm.exedir,'unstruc.exe',handles.model.dflowfm.domain(ad).mduFile);
+            ddb_DFlowFM_saveBatchFile(handles.model.dflowfm.exedir,'dflowfm.exe',handles.model.dflowfm.domain(ad).mduFile);
         end
     
     %% Save all files 
@@ -157,7 +157,7 @@ switch lower(opt)
             handles.model.dflowfm.domain(ad).mduFile=[handles.model.dflowfm.domain(ad).runid '.mdu'];
         end
         ddb_saveMDU(handles.model.dflowfm.domain(ad).mduFile,inp);
-        ddb_DFlowFM_saveBatchFile(handles.model.dflowfm.exedir,'unstruc.exe',handles.model.dflowfm.domain(ad).mduFile);
+        ddb_DFlowFM_saveBatchFile(handles.model.dflowfm.exedir,'dflowfm.exe',handles.model.dflowfm.domain(ad).mduFile);
         fclose('all'); 
 end
 

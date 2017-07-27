@@ -59,7 +59,8 @@ handles.model.dflowfm.domain(id).activecrosssection=1;
 handles.model.dflowfm.domain(id).crosssectionnames={''};
 
 %% External forcing
-handles.model.dflowfm.domain(id).extforcefile        = '';
+handles.model.dflowfm.domain(id).extforcefilenew        = '';
+handles.model.dflowfm.domain(id).bcfile                 = '';
 
 % Boundaries
 handles.model.dflowfm.domain(id).boundaries = [];
@@ -117,6 +118,7 @@ handles.model.dflowfm.domain(id).salinity            = 0;
 handles.model.dflowfm.domain(id).icdtyp=3;
 handles.model.dflowfm.domain(id).cdbreakpoints=[0.00100  0.00300 0.0015];
 handles.model.dflowfm.domain(id).windspeedbreakpoints=[0.0 25.0 50.0];
+handles.model.dflowfm.domain(id).pavbnd=101200;
 
 %% Time
 handles.model.dflowfm.domain(id).refdate        = floor(now);
@@ -140,3 +142,41 @@ handles.model.dflowfm.domain(id).waqfilebase  = '';
 handles.model.dflowfm.domain(id).waqinterval  = 0;
 handles.model.dflowfm.domain(id).snapshotdir  = '';
 
+%% Fourier analysis
+handles.model.dflowfm.domain(id).fourier.parameterList={'water level','velocity','discharge'};
+handles.model.dflowfm.domain(id).fourier.pList={'wl','uv','qf'};
+handles.model.dflowfm.domain(id).fourier.optionList={'fourier','max','min','ellipse'};
+handles.model.dflowfm.domain(id).fourier.tableOption='generate';
+handles.model.dflowfm.domain(id).fourier.include=0;
+handles.model.dflowfm.domain(id).fourier.foufile='';
+
+% Edit table
+handles.model.dflowfm.domain(id).fourier.editTable.parameterNumber=1;
+handles.model.dflowfm.domain(id).fourier.editTable.startTime=floor(now);
+handles.model.dflowfm.domain(id).fourier.editTable.stopTime=floor(now)+1;
+handles.model.dflowfm.domain(id).fourier.editTable.nrCycles=1;
+handles.model.dflowfm.domain(id).fourier.editTable.nodalAmplificationFactor=1;
+handles.model.dflowfm.domain(id).fourier.editTable.astronomicalArgument=0;
+handles.model.dflowfm.domain(id).fourier.editTable.layer=1;
+handles.model.dflowfm.domain(id).fourier.editTable.max=0;
+handles.model.dflowfm.domain(id).fourier.editTable.min=0;
+handles.model.dflowfm.domain(id).fourier.editTable.ellipse=0;
+handles.model.dflowfm.domain(id).fourier.editTable.option=1;
+
+handles.model.dflowfm.domain(id).fourier.generateTable.parameterNumber=1;
+handles.model.dflowfm.domain(id).fourier.generateTable.astronomicalComponents='M2';
+handles.model.dflowfm.domain(id).fourier.generateTable.componentNumber=1;
+handles.model.dflowfm.domain(id).fourier.generateTable.layer=1;
+handles.model.dflowfm.domain(id).fourier.generateTable.fourier=1;
+handles.model.dflowfm.domain(id).fourier.generateTable.max=0;
+handles.model.dflowfm.domain(id).fourier.generateTable.min=0;
+handles.model.dflowfm.domain(id).fourier.generateTable.ellipse=0;
+
+handles.model.dflowfm.domain(id).fourier.layerList{1}='1';
+handles.model.dflowfm.domain(id).fourier.spinUpTime=1440;
+
+tt=t_getconsts;
+handles.model.dflowfm.domain(id).fourier.astronomicalComponents=[];
+for i=1:size(tt.name,1)
+    handles.model.dflowfm.domain(id).fourier.astronomicalComponents{i}=deblank(tt.name(i,:));
+end

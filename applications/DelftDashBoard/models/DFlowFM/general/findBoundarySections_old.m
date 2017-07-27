@@ -1,13 +1,12 @@
 function boundaries=findBoundarySections(netStruc,maxdist,minlev,cstype)
 
 bndLink=netStruc.bndLink;
-linkNodes=netStruc.edge.NetLink';
-nodeX=netStruc.node.x;
-nodeY=netStruc.node.y;
-nodeDepth=netStruc.node.z;
+linkNodes=netStruc.linkNodes;
+nodeX=netStruc.nodeX;
+nodeY=netStruc.nodeY;
+nodeDepth=netStruc.nodeZ;
 
 bndLinkUsed=zeros(size(bndLink));
-bndLinkUsed(1)=1;
 
 % Finds boundary points
 
@@ -17,6 +16,28 @@ node2=linkNodes(bndLink(1),2);
 bndNodes(1)=linkNodes(bndLink(1),1);
 bndNodes(2)=node2;
 nn=2;
+
+% iAcBnd=1;
+% bndLinkLeft(1)=0;
+
+%figure(20)
+% ph=plot(0,0,'y');
+% set(ph,'LineWidth',2);
+% 
+% xx(1)=nodeX(bndNodes(1));
+% xx(2)=nodeX(bndNodes(2));
+% yy(1)=nodeY(bndNodes(1));
+% yy(2)=nodeY(bndNodes(2));
+
+
+% for kk=1:length(bndLink)
+%     bndNode1=linkNodes(bndLink(kk),1);
+%     bndNode2=linkNodes(bndLink(kk),2);
+%     xxx(kk,:)=[nodeX(bndNode1) nodeX(bndNode2)];
+%     yyy(kk,:)=[nodeY(bndNode1) nodeY(bndNode2)];
+% end
+% 
+% plot(xxx',yyy','b');
 
 nit=0;
 while 1
@@ -44,6 +65,7 @@ while 1
             % Check if this link has nt already been indentified
             if ~bndLinkUsed(ibnd)
                 bndLinkUsed(ibnd)=1;
+%            if ibnd~=iAcBnd
                 nn=nn+1;
                 % Next boundary section found
                 if node2==linkNodes(ilnk,1)
@@ -51,8 +73,13 @@ while 1
                 else
                     node2=linkNodes(ilnk,1);
                 end
+%                iAcBnd=ibnd;
                 ibr=1;
                 bndNodes(nn)=node2;
+%                 xx=[xx nodeX(node2)];
+%                 yy=[yy nodeY(node2)];
+%                 set(ph,'XData',xx,'YData',yy);
+%                 drawnow
             end
         end
         if ibr
@@ -74,6 +101,13 @@ for ii=1:length(bndNodes)
     yy(ii)=nodeY(iNode);
     dd(ii)=nodeDepth(iNode);
 end
+
+% figh=gcf;
+% figure(20);
+% %plot(xx,yy);
+% pd=pathdistance(xx,yy);
+% plot(pd,dd)
+% figure(figh);
 
 % And now determine boundary sections
 npol=0;
@@ -141,5 +175,14 @@ for ipol=1:length(polln)
         boundaries(ipol).x(ip)=xx(polln(ipol).ip(ip));
         boundaries(ipol).y(ip)=yy(polln(ipol).ip(ip));
     end
+%     boundaries(ipol).filename=['bnd' num2str(ipol,'%0.3i') '.pli'];
+%     boundaries(ipol).name=['bnd' num2str(ipol,'%0.3i')];
+%     boundaries(ipol).type='waterlevelbnd';
+%     for ip=1:length(polln(ipol).ip)
+%         boundaries(ipol).x(ip)=xx(polln(ipol).ip(ip));
+%         boundaries(ipol).y(ip)=yy(polln(ipol).ip(ip));
+%         boundaries(ipol).nodes(ip).componentsfile=[boundaries(ipol).name '_' num2str(ip,'%0.4i') '.cmp'];
+%         boundaries(ipol).componentsFile{ip}=[boundaries(ipol).name '_' num2str(ip,'%0.4i') '.cmp'];
+%     end
 end
 

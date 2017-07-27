@@ -44,7 +44,8 @@ function boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,ib,t0,t
 % $Keywords: $
 
 %%
-boundaries(ib).filename=[name '.pli'];
+boundaries(ib).locationfile=[name '.pli'];
+%boundaries(ib).forcingfile='waterlevel.bc';
 boundaries(ib).name=name;
 boundaries(ib).type='waterlevelbnd';
 boundaries(ib).handle=NaN;
@@ -68,21 +69,22 @@ for ip=1:length(x)
     boundaries(ib).nodes(ip).timeseries.time=[t0 t1];
     boundaries(ib).nodes(ip).timeseries.value=[0 0];
 
+    boundaries(ib).nodes(ip).name          = [boundaries(ib).name '_' num2str(ip,'%0.4i')];
     boundaries(ib).nodes(ip).cmp=1;
     boundaries(ib).nodes(ip).tim=0;
-    boundaries(ib).nodes(ip).cmptype='astronomic';
+    boundaries(ib).nodes(ip).cmptype       = 'astronomic';    
+%    boundaries(ib).nodes(ip).cmpfile       = [boundaries(ib).name '_' num2str(ip,'%0.4i')];
+    boundaries(ib).nodes(ip).bc.Function   = 'astronomic';
+    boundaries(ib).nodes(ip).bc.Quantity1  = 'astronomic component';
+    boundaries(ib).nodes(ip).bc.Unit1      = '-';
+    boundaries(ib).nodes(ip).bc.Quantity2  = [boundaries(ib).type, ' amplitude'];
+    boundaries(ib).nodes(ip).bc.Unit2      = 'm';
+    boundaries(ib).nodes(ip).bc.Quantity3  = [boundaries(ib).type, ' phase'];
+    boundaries(ib).nodes(ip).bc.Unit3      = 'deg';
     
-    boundaries(ib).nodes(ip).cmpfile        = [boundaries(ib).name '_' num2str(ip,'%0.4i')];
-    boundaries(ib).nodes(ip).bc.function    = [boundaries(ib).name '_' num2str(ip,'%0.4i')];
-    boundaries(ib).nodes(ip).bc.Quantity1   = 'astronomic';
-    boundaries(ib).nodes(ip).bc.Unit1       = 'astronomic component';
-    boundaries(ib).nodes(ip).bc.Quantity2   = '-';
-    boundaries(ib).nodes(ip).bc.Unit2       = 'boundaries(ib).type';
-    boundaries(ib).nodes(ip).bc.Quantity3   = 'm';
-    boundaries(ib).nodes(ip).bc.Unit3       = '';
-    
-    boundaries(ib).cmpfile{ip}=[boundaries(ib).name '_' num2str(ip,'%0.4i')];
+%    boundaries(ib).cmpfile{ip}=[boundaries(ib).name '_' num2str(ip,'%0.4i')];
     boundaries(ib).activenode=1;
-    boundaries(ib).nodenames{ip}=num2str(ip);
+%    boundaries(ib).nodenames{ip}=num2str(ip);
+    boundaries(ib).nodenames{ip}=[boundaries(ib).name '_' num2str(ip,'%0.4i')];
 
 end
