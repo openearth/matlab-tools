@@ -69,6 +69,7 @@ function write_spiderweb_file_delft3d(fname, tc, gridunit, reftime, radius, vara
 
 vsn='1.03';
 merge_frac=[];
+tdummy=[]; % vector with tstart, tstop and dt
 for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
@@ -76,6 +77,8 @@ for ii=1:length(varargin)
                 vsn=varargin{ii+1};
             case{'merge_frac'}
                 merge_frac=varargin{ii+1};
+            case{'tdummy'}
+                tdummy=varargin{ii+1};
         end
     end
 end
@@ -116,6 +119,36 @@ fmt3='%9.2f';
 fmt3=[repmat(fmt3,1,ncols) '\n'];
 fmt3=repmat(fmt3,1,nrows);
 
+if ~isempty(tdummy)
+    dummys=zeros(size(tc.track(1).wind_speed))-999;
+    if tdummy(1)<tc.track(1).time
+        dxdt=(tc.track(2).x-tc.track(1).x)/(tc.track(2).time-tc.track(1).time);
+        dydt=(tc.track(2).y-tc.track(1).y)/(tc.track(2).time-tc.track(1).time);
+        dx=dxdt*tdummy(3);
+        dy=dydt*tdummy(3);
+        % Add dummy blocks (1)
+        tim=1440*(tdummy(1)-reftime);
+        fprintf(fid,'%s\n',['TIME           =   ' num2str(tim,'%10.2f') '   minutes since ' datestr(reftime,'yyyy-mm-dd HH:MM:SS') ' +00:00']);
+        fprintf(fid,'%s\n',['x_spw_eye      =     ' num2str(tc.track(1).x-dx) ]);
+        fprintf(fid,'%s\n',['y_spw_eye      =     ' num2str(tc.track(1).y-dy) ]);
+        fprintf(fid,'%s\n',['p_drop_spw_eye  =     ' num2str(max(max(tc.track(1).pressure_drop))) ]);
+        fprintf(fid,fmt1,dummys);
+        fprintf(fid,fmt2,dummys);
+        fprintf(fid,fmt3,dummys);
+        if tc.track(1).time-tdummy(3)>tdummy(1)
+            % Add dummy blocks (2)
+            tim=1440*((tc.track(1).time-tdummy(3))-reftime);
+            fprintf(fid,'%s\n',['TIME           =   ' num2str(tim,'%10.2f') '   minutes since ' datestr(reftime,'yyyy-mm-dd HH:MM:SS') ' +00:00']);
+            fprintf(fid,'%s\n',['x_spw_eye      =     ' num2str(tc.track(1).x-dx) ]);
+            fprintf(fid,'%s\n',['y_spw_eye      =     ' num2str(tc.track(1).y-dy) ]);
+            fprintf(fid,'%s\n',['p_drop_spw_eye  =     ' num2str(max(max(tc.track(1).pressure_drop))) ]);
+            fprintf(fid,fmt1,dummys);
+            fprintf(fid,fmt2,dummys);
+            fprintf(fid,fmt3,dummys);
+        end
+    end
+end
+
 for it=1:length(tc.track)
     tim=1440*(tc.track(it).time-reftime);
     tc.track(it).wind_speed(isnan(tc.track(it).wind_speed))=-999;
@@ -129,4 +162,36 @@ for it=1:length(tc.track)
     fprintf(fid,fmt2,tc.track(it).wind_from_direction);
     fprintf(fid,fmt3,tc.track(it).pressure_drop);
 end
+
+if ~isempty(tdummy)
+    dummys=zeros(size(tc.track(1).wind_speed))-999;
+    if tc.track(end).time+tdummy(3)<tdummy(2)
+        dxdt=(tc.track(end).x-tc.track(end-1).x)/(tc.track(end).time-tc.track(end-1).time);
+        dydt=(tc.track(end).y-tc.track(end-1).y)/(tc.track(end).time-tc.track(end-1).time);
+        dx=dxdt*tdummy(3);
+        dy=dydt*tdummy(3);
+        % Add dummy blocks (3)
+        tim=1440*((tc.track(end).time+tdummy(3))-reftime);
+        fprintf(fid,'%s\n',['TIME           =   ' num2str(tim,'%10.2f') '   minutes since ' datestr(reftime,'yyyy-mm-dd HH:MM:SS') ' +00:00']);
+        fprintf(fid,'%s\n',['x_spw_eye      =     ' num2str(tc.track(end).x+dx) ]);
+        fprintf(fid,'%s\n',['y_spw_eye      =     ' num2str(tc.track(end).y+dy) ]);
+        fprintf(fid,'%s\n',['p_drop_spw_eye  =     ' num2str(max(max(tc.track(end).pressure_drop))) ]);
+        fprintf(fid,fmt1,dummys);
+        fprintf(fid,fmt2,dummys);
+        fprintf(fid,fmt3,dummys);
+        if tdummy(2)>tc.track(end).time
+            % Add dummy blocks (4)
+            tim=1440*(tdummy(2)-reftime);
+            fprintf(fid,'%s\n',['TIME           =   ' num2str(tim,'%10.2f') '   minutes since ' datestr(reftime,'yyyy-mm-dd HH:MM:SS') ' +00:00']);
+            fprintf(fid,'%s\n',['x_spw_eye      =     ' num2str(tc.track(end).x+dx) ]);
+            fprintf(fid,'%s\n',['y_spw_eye      =     ' num2str(tc.track(end).y+dy) ]);
+            fprintf(fid,'%s\n',['p_drop_spw_eye  =     ' num2str(max(max(tc.track(end).pressure_drop))) ]);
+            fprintf(fid,fmt1,dummys);
+            fprintf(fid,fmt2,dummys);
+            fprintf(fid,fmt3,dummys);
+        end
+    end
+end
+
+
 fclose(fid);
