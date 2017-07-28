@@ -162,16 +162,16 @@ handles.toolbox.tropicalcyclone.tcBasinsFiles = dir([handles.toolbox.tropicalcyc
 handles.toolbox.tropicalcyclone.importFormat='JTWCCurrentTrack';
 % handles.toolbox.tropicalcyclone.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30','hurdat2besttrack','pagasa'};
 % handles.toolbox.tropicalcyclone.importFormatNames={'JTWC Current Track','NHC Current Track','JTWC Best Track','Unisys Best Track','JMV 3.0','HURDAT2','PAGASA', 'noaa'};
-handles.toolbox.tropicalcyclone.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30','noaa','recent'};
-handles.toolbox.tropicalcyclone.importFormatNames={'JTWC Current Track','NHC Current Track','JTWC Best Track','Unisys Best Track','JMV 3.0','HURDAT2', 'Recent Hurricanes'};
+handles.toolbox.tropicalcyclone.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30','noaa','recent','bom'};
+handles.toolbox.tropicalcyclone.importFormatNames={'JTWC Current Track','NHC Current Track','JTWC Best Track','Unisys Best Track','JMV 3.0','HURDAT2', 'Recent Hurricanes','BoM'};
 
 handles.toolbox.tropicalcyclone.downloadLocation='JTWCCurrentTracks';
 handles.toolbox.tropicalcyclone.downloadLocations={'JTWCCurrentTracks','NHCCurrentTracks','UnisysBestTracks','JTWCBestTracks','JTWCCurrentCyclones', 'recent'};
 handles.toolbox.tropicalcyclone.downloadLocationNames={'JTWC Current Cyclones','NHC Current Hurricanes','UNISYS Track Archive','JTWC Track Archive','JTWC Current Cyclones (Web)', 'Recent Hurricanes'};
 
 handles.toolbox.tropicalcyclone.wind_profile='holland2010';
-handles.toolbox.tropicalcyclone.wind_profile_options={'holland1980','holland2010','fujita1952'};
-handles.toolbox.tropicalcyclone.wind_profile_option_names={'Holland (1980)','Holland (2010)','Fujita (1952)'};
+handles.toolbox.tropicalcyclone.wind_profile_options={'holland1980','holland2010','fujita1952','modifiedrankinevortex'};
+handles.toolbox.tropicalcyclone.wind_profile_option_names={'Holland (1980)','Holland (2010)','Fujita (1952)','Modified Rankine Vortex'};
 
 handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';
 % handles.toolbox.tropicalcyclone.wind_pressure_relation_options={'holland2008','kz2007','vatvani'};
@@ -186,12 +186,28 @@ handles.toolbox.tropicalcyclone.rmax_relation_option_names={'Gross (2004)','25NM
 %% Ensemble
 handles.toolbox.tropicalcyclone.ensemble.t0=datenum(2008,9,11,0,0,0);
 handles.toolbox.tropicalcyclone.ensemble.t0_spw=datenum(2008,9,11,0,0,0);
+handles.toolbox.tropicalcyclone.ensemble.dt=12; % hours
 handles.toolbox.tropicalcyclone.ensemble.length=3; % days
 handles.toolbox.tropicalcyclone.ensemble.number_of_realizations=1000;
-handles.toolbox.tropicalcyclone.ensemble.sigma.ate=40000;
-handles.toolbox.tropicalcyclone.ensemble.sigma.cte=40000;
-handles.toolbox.tropicalcyclone.ensemble.sigma.ve=10;
-handles.toolbox.tropicalcyclone.ensemble.ncross=7;
-handles.toolbox.tropicalcyclone.ensemble.nspd=3;
-handles.toolbox.tropicalcyclone.ensemble.nvmax=3;
+
+% Based on JTWC annual report 2011
+handles.toolbox.tropicalcyclone.ensemble.mean_abs_cte24=36;
+handles.toolbox.tropicalcyclone.ensemble.mean_abs_ate24=43;
+handles.toolbox.tropicalcyclone.ensemble.mean_abs_ve24=10;
+
+handles.toolbox.tropicalcyclone.ensemble.bias_cte24=0;
+handles.toolbox.tropicalcyclone.ensemble.bias_ate24=0;
+handles.toolbox.tropicalcyclone.ensemble.bias_ve24=0;
+
+% Calibrated to fit 150/163 NM at 120 hours using JTWC annual report 2011
+handles.toolbox.tropicalcyclone.ensemble.sc_cte=1.30;
+handles.toolbox.tropicalcyclone.ensemble.sc_ate=1.25;
+handles.toolbox.tropicalcyclone.ensemble.sc_ve=1;
+
+handles.toolbox.tropicalcyclone.ensemble.nct=7;
+handles.toolbox.tropicalcyclone.ensemble.nat=3;
+handles.toolbox.tropicalcyclone.ensemble.nvm=3;
+
 handles.toolbox.tropicalcyclone.ensemble.spwname='testing';
+handles.toolbox.tropicalcyclone.ensemble.dt_spw=6; % hours
+

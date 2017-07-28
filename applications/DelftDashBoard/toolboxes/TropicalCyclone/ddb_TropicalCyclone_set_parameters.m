@@ -380,6 +380,9 @@ switch lower(handles.toolbox.tropicalcyclone.importFormat)
     case{'unisysbesttrack'}
         ext='dat';
         prefix = '';
+    case{'bom'}
+        ext='xml';
+        prefix = '';
     case{'jtwccurrenttrack', 'nhccurrenttrack'}
         %  This assumes that JTWC or NHC current track(s) have been 'JTWCCurrentTrack','NHCCurrentTrack'
         %  converted from their native format; cf. subfunc. downloadTrackData.
@@ -563,6 +566,11 @@ try
             handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
             handles.toolbox.tropicalcyclone.wind_profile='holland2010';
             handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';
+        case{'bom'}
+            tc=tc_read_bom_xml([pathname filename]);
+            handles.toolbox.tropicalcyclone.windconversionfactor=1.0;
+            handles.toolbox.tropicalcyclone.wind_profile='holland2010';
+            handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';
         case{'hurdat2besttrack'}
             tc=tc_read_hurdat2_best_track([pathname filename]);
             handles.toolbox.tropicalcyclone.cyclonename=tc.name;
@@ -649,6 +657,7 @@ function computeCyclone
 handles=getHandles;
 
 [filename, pathname, filterindex] = uiputfile('*.spw', 'Select Spiderweb File','');
+
 if filename==0
     return
 else
@@ -664,9 +673,29 @@ else
         switch lower(model)
             case{'delft3dflow'}
                 reftime=handles.model.(model).domain(ad).itDate;
+                tstart=handles.model.(model).domain(ad).startTime;
+                tstop=handles.model.(model).domain(ad).stopTime;
+            case{'dflowfm'}
+                reftime=handles.model.(model).domain(ad).refdate;
+                tstart=handles.model.(model).domain(ad).tstart;
+                tstop=handles.model.(model).domain(ad).tstop;
             otherwise
                 reftime=floor(handles.toolbox.tropicalcyclone.track.time(1));
         end
+        
+        tdummy=[];
+        if tstart<handles.toolbox.tropicalcyclone.track.time(1) || ...
+                tstop>handles.toolbox.tropicalcyclone.track.time(end)
+            ButtonName = questdlg('Add dummy blocks for missing times at start/end of simulation?','','No', 'Yes', 'Yes');
+            switch ButtonName,
+                case 'Yes'
+                    tdummy=[tstart tstop 0.25];
+                case 'No'
+                    tdummy=[];
+            end
+        end
+        
+        
         
         switch lower(wesopt)
             case{'exe'}
@@ -702,6 +731,8 @@ else
                 spw.asymmetry_related_to_storm_motion=1;
                 spw.asymmetry_radial_distribution='v/vmax';
 %                spw.asymmetry_radial_distribution='constant';
+                spw.tdummy=tdummy;
+
                 
                 % And now the actual tropical cyclone data                
                 tc.radius_velocity=[34 50 64 100];
