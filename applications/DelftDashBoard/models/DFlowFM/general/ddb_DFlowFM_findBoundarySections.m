@@ -18,8 +18,8 @@ end
 
 % Now loop around and find sections in which depth exceed minlev
 npol=1;
-ip=1;
-dpol(npol).index(ip)=1;
+ip=0;
+dpol(npol).index(1)=1;
 for ii=2:length(xx)
     if dd(ii-1)>minlev && dd(ii)<=minlev
         % New section found

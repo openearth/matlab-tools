@@ -56,7 +56,8 @@ if exist(fname,'file')
     handles.model.dflowfm.domain(id).netstruc=dflowfm.readNet(fname);
     handles.model.dflowfm.domain(id).netstruc.edge.NetLink=handles.model.dflowfm.domain(id).netstruc.edge.NetLink';
 %     % Compute circumference
-%     handles.model.dflowfm.domain.circumference=ddb_findNetCircumference(handles.model.dflowfm.domain(id).netstruc);
+%    handles.model.dflowfm.domain.circumference=ddb_findNetCircumference(handles.model.dflowfm.domain(id).netstruc);
+    handles.model.dflowfm.domain.circumference=[];
 else
     ddb_giveWarning('text','No net file found in mdu file!');
     return

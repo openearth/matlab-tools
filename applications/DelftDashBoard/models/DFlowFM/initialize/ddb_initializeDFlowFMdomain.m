@@ -33,6 +33,7 @@ handles.model.dflowfm.domain(id).botlevuni           = -5;
 handles.model.dflowfm.domain(id).botlevtype          = 3;
 handles.model.dflowfm.domain(id).anglat              = 0;
 handles.model.dflowfm.domain(id).conveyance2d        = 3;
+handles.model.dflowfm.domain(id).circumference       = [];
 
 %% Observation points
 handles.model.dflowfm.domain(id).obsfile      = '';
@@ -94,7 +95,7 @@ function handles=initializeOtherInput(handles,id,runid)
 handles.model.dflowfm.domain(id).attName=runid;
 
 %% Model
-handles.model.dflowfm.domain(id).autostart=0;
+handles.model.dflowfm.domain(id).autostart=1;
 
 %% Description
 handles.model.dflowfm.domain(id).description={''};

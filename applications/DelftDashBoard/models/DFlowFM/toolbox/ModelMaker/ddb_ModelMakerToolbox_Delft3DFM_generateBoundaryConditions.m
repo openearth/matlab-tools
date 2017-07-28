@@ -109,15 +109,22 @@ try
         handles.toolbox.tidedatabase.constituentList = cellstr(cnst);
         [lon,lat, gt, depth, conList] = readTideModel(tidefile,'type','h','x',xx,'y',yy,'constituent','all');
         ampz = squeeze(gt.amp)'; phasez = squeeze(gt.phi)';
+        ampz(isnan(ampz))=0;
+        phasez(isnan(phasez))=0;
     end
     
     % Get velocities
-    if igetvel        
+    if igetvel
         % Standard values
         [lon,lat, gt, depth, conList] = readTideModel(tidefile,'type','q','x',xx,'y',yy,'constituent','all','includedepth');
         ampv = squeeze(gt(1).amp)';             phasev =  squeeze(gt(1).phi)';
         ampu = squeeze(gt(2).amp)';             phaseu =  squeeze(gt(2).phi)';
+        ampu(isnan(ampu))=0;
+        ampv(isnan(ampv))=0;
+        phaseu(isnan(phaseu))=0;
+        phasev(isnan(phasev))=0;
     end
+    
     
     % Constituents
     NrCons=length(conList);

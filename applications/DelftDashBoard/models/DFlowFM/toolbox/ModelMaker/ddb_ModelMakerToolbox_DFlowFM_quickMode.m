@@ -244,6 +244,11 @@ if isnan(nanmax(handles.model.dflowfm.domain(ad).netstruc.node.z))
     return
 end
 
+if isempty(handles.model.dflowfm.domain(ad).circumference)
+    ddb_giveWarning('text','Sorry, open boundaries can only be created for grids that were just created, not for grids that were loaded in ...');
+    return
+end
+
 boundarysections = ddb_DFlowFM_findBoundarySections(handles.model.dflowfm.domain(ad).circumference,maxdist,minlev,handles.screenParameters.coordinateSystem.type);
 handles.model.dflowfm.domain(ad).boundarynames = {''};
 

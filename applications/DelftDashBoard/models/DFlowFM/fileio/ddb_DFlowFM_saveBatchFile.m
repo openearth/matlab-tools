@@ -50,6 +50,7 @@ fname='run_dflowfm.bat';
 fid=fopen(fname,'w');
 fprintf(fid,'%s\n','@ echo off');
 fprintf(fid,'%s\n',['set dflowfmdir="' exedir '"']);
+fprintf(fid,'%s\n','copy %dflowfmdir%\unstruc.ini .\unstruc.ini');
 fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
 fprintf(fid,'%s\n',['%dflowfmdir%\' exefile ' ' mdufile]);
 fclose(fid);

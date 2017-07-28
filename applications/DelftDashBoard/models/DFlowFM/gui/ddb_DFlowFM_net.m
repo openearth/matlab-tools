@@ -67,6 +67,7 @@ handles.model.dflowfm.domain(ad).netstruc=dflowfm.readNet(fname);
 % handles.model.dflowfm.domain(ad).netstruc.edge.NetLink=handles.model.dflowfm.domain(ad).netstruc.edge.NetLink';
 
 %handles.model.dflowfm.domain.circumference=ddb_findNetCircumference(handles.model.dflowfm.domain(ad).netstruc);
+handles.model.dflowfm.domain.circumference=[];
 
 % Zoom to grid
 xl(1)=min(handles.model.dflowfm.domain.netstruc.node.x);

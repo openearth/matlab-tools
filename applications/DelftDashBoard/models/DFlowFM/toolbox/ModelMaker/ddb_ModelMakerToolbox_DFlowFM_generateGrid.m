@@ -144,7 +144,7 @@ ddb_plotDFlowFM('delete','domain',id);
 handles=ddb_initializeDFlowFMdomain(handles,'griddependentinput',id,handles.model.dflowfm.domain(id).runid);
 set(gcf,'Pointer','arrow');
 
-netstruc=curv2net_new(x,y,z);
+[netstruc,circ]=curv2net_new(x,y,z);
 
 % Set depths to NaN
 nans=zeros(size(netstruc.node.z));
@@ -153,6 +153,7 @@ netstruc.node.z=nans;
 
 handles.model.dflowfm.domain(id).netfile=filename;
 handles.model.dflowfm.domain(id).netstruc=netstruc;
+handles.model.dflowfm.domain(id).circumference=circ;
 %handles.model.dflowfm.domain.circumference=ddb_findNetCircumference(handles.model.dflowfm.domain(id).netstruc);
 
 % % Clip shallow areas
