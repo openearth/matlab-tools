@@ -99,6 +99,8 @@ options.headwidth=4;
 options.headlength=8;
 options.nrheads=1;
 options.userdata=[];
+options.dxspline=0;
+options.cstype='projected';
 
 % Not generic yet! DDB specific.
 options.windowbuttonupdownfcn=@ddb_setWindowButtonUpDownFcn;
@@ -171,8 +173,16 @@ for i=1:length(varargin)
                 options.nrheads=varargin{i+1};
             case{'userdata'}
                 options.userdata=varargin{i+1};
+            case{'dxspline'}
+                options.dxspline=varargin{i+1};
+            case{'cstype'}
+                options.cstype=varargin{i+1};
         end
     end
+end
+
+if strcmpi(options.cstype,'geographic')
+    options.dxspline=options.dxspline/111111;
 end
 
 switch lower(opt)
@@ -188,12 +198,14 @@ switch lower(opt)
         switch options.type
             case{'polyline','spline'}
                 h=plot(x,y);
+                hm=plot(x,y);
+                set(hm,'LineStyle','none');
                 set(h,'Color',options.linecolor);
                 if ~isempty(options.marker)
-                    set(h,'Marker',options.marker);
-                    set(h,'MarkerEdgeColor',options.markeredgecolor);
-                    set(h,'MarkerFaceColor',options.markerfacecolor);
-                    set(h,'MarkerSize',options.markersize);
+                    set(hm,'Marker',options.marker);
+                    set(hm,'MarkerEdgeColor',options.markeredgecolor);
+                    set(hm,'MarkerFaceColor',options.markerfacecolor);
+                    set(hm,'MarkerSize',options.markersize);
                 end
             case{'curvedarrow'}
                 h=patch(x,y,'r');
@@ -204,8 +216,10 @@ switch lower(opt)
         
         set(hg,'Tag',options.tag);
         set(h,'Parent',hg);
+        set(hm,'Parent',hg);
         set(h,'LineWidth',options.linewidth);
         setappdata(hg,'linehandle',h);
+        setappdata(hg,'markerhandles',hm);
         
         setappdata(hg,'x',[]);
         setappdata(hg,'y',[]);
@@ -376,17 +390,6 @@ if ~isempty(x)
             end
     end
     
-    % Markers
-    for i=1:length(x)
-        mh(i)=plot(x(i),y(i),['r' options.marker]);
-        set(mh(i),'MarkerEdgeColor',options.markeredgecolor,'MarkerFaceColor',options.markerfacecolor,'MarkerSize',options.markersize,'LineStyle','none');
-        set(mh(i),'ButtonDownFcn',{@moveVertex});
-        setappdata(mh(i),'parent',h);
-        setappdata(mh(i),'number',i);
-        set(mh(i),'Parent',hg);
-    end
-    setappdata(hg,'markerhandles',mh);
-
     tx=[];
     if ~isempty(options.text)
         for i=1:length(x)
@@ -398,6 +401,17 @@ if ~isempty(x)
     end   
     setappdata(hg,'texthandles',tx);
     setappdata(hg,'axis',ax);
+
+    % Markers
+    for i=1:length(x)
+        mh(i)=plot(x(i),y(i),['r' options.marker]);
+        set(mh(i),'MarkerEdgeColor',options.markeredgecolor,'MarkerFaceColor',options.markerfacecolor,'MarkerSize',options.markersize,'LineStyle','none');
+        set(mh(i),'ButtonDownFcn',{@moveVertex});
+        setappdata(mh(i),'parent',h);
+        setappdata(mh(i),'number',i);
+        set(mh(i),'Parent',hg);
+    end
+    setappdata(hg,'markerhandles',mh);
     
     if ~isempty(options.createcallback) && strcmpi(opt,'withcallback')
         if isempty(options.createinput)
@@ -454,30 +468,59 @@ if strcmp(mouseclick,'normal')
     
     if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
         
-        x=[x posx];
-        y=[y posy];
-        
-        setappdata(hg,'x',x);
-        setappdata(hg,'y',y);
         
         setappdata(hg,'axis',haxis);
         setappdata(hg,'subplot',iaxis);
         
         h=getappdata(hg,'linehandle');
-        
-        xp=x;
-        yp=y;
+        hm=getappdata(hg,'markerhandles');
         
         switch options.type
             case{'spline'}
-                [xp,yp]=spline2d(x',y');
-                set(h,'Marker','none');
+                if isempty(x)
+                    x=posx;
+                    y=posy;
+                    xs=x;
+                    ys=y;
+                else
+                    if options.dxspline>0
+                        phi=atan2(posy-y(end),posx-x(end));
+                        dst=options.dxspline; % degrees
+                        posxend=x(end)+dst*cos(phi);
+                        posyend=y(end)+dst*sin(phi);
+                    else
+                        posxend=posx;
+                        posyend=posy;
+                    end
+                    x=[x posxend];
+                    y=[y posyend];
+                    [xs,ys]=spline2d(x',y');
+                end
+                set(h,'XData',xs,'YData',ys);
+                set(hm,'XData',x,'YData',y);
             case{'curvedarrow'}
+                x=[x posx];
+                y=[y posy];
                 [xp,yp]=muppet_makeCurvedArrow(x,y,'arrowwidth',options.arrowwidth, ...
                     'headwidth',options.headwidth,'headlength',options.headlength);
+                set(h,'XData',xp,'YData',yp);
+            case{'polyline'}
+                x=[x posx];
+                y=[y posy];
+                if options.closed
+                    xpl=[x x(1)];
+                    ypl=[y y(1)];
+                else
+                    xpl=x;
+                    ypl=y;
+                end
+                set(h,'XData',xpl,'YData',ypl);
+                set(hm,'XData',xpl,'YData',ypl);
         end
         
-        set(h,'XData',xp,'YData',yp);
+        setappdata(hg,'x',x);
+        setappdata(hg,'y',y);
+        
         set(hg,'Visible','on');
         
         if length(x)==options.maxpoints
@@ -527,6 +570,43 @@ end
 % If mouse cursor is within one of the axes, set mouse to cross hair
 if inaxis
     set(gcf, 'Pointer', 'crosshair');
+    
+    x=getappdata(hg,'x');
+    y=getappdata(hg,'y');
+
+    if ~isempty(x)
+        % First point has been defined
+        h=getappdata(hg,'linehandle');
+        mh=getappdata(hg,'markerhandles');
+        switch options.type
+            case{'spline'}
+                if options.dxspline>0
+                    phi=atan2(posy-y(end),posx-x(end));
+                    xpend=x(end)+options.dxspline*cos(phi);
+                    ypend=y(end)+options.dxspline*sin(phi);
+                else
+                    xpend=[];
+                    ypend=[];
+                end
+                xp=[x xpend];
+                yp=[y ypend];
+                [xs,ys]=spline2d(xp',yp');
+                set(mh,'XData',xp,'YData',yp);
+                set(h,'XData',xs,'YData',ys);
+            otherwise
+                xp=[x posx];
+                yp=[y posy];
+                if options.closed
+                    xp=[xp xp(1)];
+                    yp=[yp yp(1)];
+                end                
+                xs=xp;
+                ys=yp;
+                set(mh,'XData',xp,'YData',yp);
+                set(h,'XData',xs,'YData',ys);
+        end
+    end
+         
 else
     set(gcf,'Pointer','arrow');
 end
