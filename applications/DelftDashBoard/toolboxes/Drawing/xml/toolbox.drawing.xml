@@ -180,11 +180,117 @@
       </check>
     </dependency>
   </element>
+
+  <element>
+    <style>listbox</style>
+    <text>Splines</text>
+    <textposition>above-center</textposition>
+    <variable>handles.toolbox.drawing.activespline</variable>
+    <type>integer</type>
+    <position>490 20 110 125</position>
+    <tooltipstring>Select spline</tooltipstring>
+    <onchange>ddb_DrawingToolbox</onchange>
+    <option1>selectspline</option1>
+    <listtext>
+      <variable>handles.toolbox.drawing.splinenames</variable>
+    </listtext>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>610 125 80 20</position>
+    <text>Draw Spline</text>
+    <callback>ddb_DrawingToolbox</callback>
+    <option1>drawspline</option1>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>610 100 80 20</position>
+    <text>Delete Spline</text>
+    <callback>ddb_DrawingToolbox</callback>
+    <option1>deletespline</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.drawing.nrsplines</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>610 75 80 20</position>
+    <text>Load Spline</text>
+    <variable>handles.toolbox.drawing.splinefile</variable>
+    <onchange>ddb_DrawingToolbox</onchange>
+    <option1>loadspline</option1>
+    <showfilename>no</showfilename>
+    <extension>*.pli;*.pol;*.ldb</extension>
+    <selectiontext>Select spline file</selectiontext>
+    <tooltipstring>Select spline file</tooltipstring>
+  </element>
+  <element>
+    <style>pushsavefile</style>
+    <position>610 50 80 20</position>
+    <text>Save Spline</text>
+    <variable>handles.toolbox.drawing.splinefile</variable>
+    <onchange>ddb_DrawingToolbox</onchange>
+    <option1>savespline</option1>
+    <showfilename>no</showfilename>
+    <extension>*.pli</extension>
+    <selectiontext>Save spline file</selectiontext>
+    <tooltipstring>Save spline file</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.drawing.nrsplines</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>610 25 80 20</position>
+    <variable>handles.toolbox.drawing.splinenames{handles.toolbox.drawing.activespline}</variable>
+    <tooltipstring>Edit spline name</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.drawing.nrsplines</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>740 125 40 20</position>
+    <variable>handles.toolbox.drawing.dxspline</variable>
+    <type>real</type>
+    <text>dx (m)</text>
+    <tooltipstring>Distance between spline points</tooltipstring>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>740 100 40 20</position>
+    <variable>handles.toolbox.drawing.dxxspline</variable>
+    <type>real</type>
+    <text>dxx (m)</text>
+    <tooltipstring>Distance between spline points for output</tooltipstring>
+  </element>
   <element>
     <style>checkbox</style>
     <text>Show outside this toolbox</text>
     <variable>handles.toolbox.drawing.persistent</variable>
-    <position>500 125 125 20</position>
-    <tooltipstring>Plot polylines and polygons also in other toolboxes</tooltipstring>
+    <position>850 125 125 20</position>
+    <tooltipstring>Plot polylines and splines also in other toolboxes</tooltipstring>
   </element>
+
 </root>

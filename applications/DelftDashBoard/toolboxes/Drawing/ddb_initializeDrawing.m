@@ -77,4 +77,14 @@ handles.toolbox.drawing.polygon(1).x=[];
 handles.toolbox.drawing.polygon(1).y=[];
 handles.toolbox.drawing.polygonfile='';
 
+handles.toolbox.drawing.nrsplines=0;
+handles.toolbox.drawing.splinenames={''};
+handles.toolbox.drawing.activespline=1;
+handles.toolbox.drawing.spline(1).length=0;
+handles.toolbox.drawing.spline(1).x=[];
+handles.toolbox.drawing.spline(1).y=[];
+handles.toolbox.drawing.splinefile='';
+handles.toolbox.drawing.dxspline=0;
+handles.toolbox.drawing.dxxspline=0;
+
 handles.toolbox.drawing.persistent=1;

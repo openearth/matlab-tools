@@ -89,6 +89,16 @@ else
             loadPolygon;
         case{'savepolygon'}
             savePolygon;
+        case{'selectspline'}
+            selectSpline;
+        case{'drawspline'}
+            drawSpline;
+        case{'deletespline'}
+            deleteSpline;
+        case{'loadspline'}
+            loadSpline;
+        case{'savespline'}
+            saveSpline;
     end
 end
 
@@ -369,4 +379,142 @@ for ip=1:handles.toolbox.drawing.nrpolygons
     end
 end
 fclose(fid);
+
+
+%%
+function selectSpline
+handles=getHandles;
+setHandles(handles);
+
+%%
+function drawSpline
+
+handles=getHandles;
+ddb_zoomOff;
+
+handles.toolbox.drawing.splinehandle=gui_polyline('draw','tag','drawingspline','marker','o', ...
+    'createcallback',@createSpline,'changecallback',@changeSpline, ...
+    'type','spline','dxspline',handles.toolbox.drawing.dxspline,'cstype',handles.screenParameters.coordinateSystem.type);
+
+setHandles(handles);
+
+%%
+function createSpline(h,x,y)
+handles=getHandles;
+handles.toolbox.drawing.nrsplines=handles.toolbox.drawing.nrsplines+1;
+iac=handles.toolbox.drawing.nrsplines;
+handles.toolbox.drawing.spline(iac).handle=h;
+handles.toolbox.drawing.spline(iac).x=x;
+handles.toolbox.drawing.spline(iac).y=y;
+handles.toolbox.drawing.spline(iac).length=length(x);
+handles.toolbox.drawing.splinenames{iac}=['spline_' num2str(iac,'%0.3i')];
+handles.toolbox.drawing.activespline=iac;
+setHandles(handles);
+gui_updateActiveTab;
+
+%%
+function deleteSpline
+
+handles=getHandles;
+
+iac=handles.toolbox.drawing.activespline;
+if handles.toolbox.drawing.nrsplines>0
+    h=handles.toolbox.drawing.spline(iac).handle;
+    if ~isempty(h)
+        delete(h);
+    end
+end
+
+handles.toolbox.drawing.spline=removeFromStruc(handles.toolbox.drawing.spline,iac);
+handles.toolbox.drawing.splinenames=removeFromCellArray(handles.toolbox.drawing.splinenames,iac);
+
+handles.toolbox.drawing.nrsplines=max(handles.toolbox.drawing.nrsplines-1,0);
+handles.toolbox.drawing.activespline=min(handles.toolbox.drawing.activespline,handles.toolbox.drawing.nrsplines);
+
+if handles.toolbox.drawing.nrsplines==0
+    handles.toolbox.drawing.spline=[];
+    handles.toolbox.drawing.spline(1).x=[];
+    handles.toolbox.drawing.spline(1).y=[];
+    handles.toolbox.drawing.spline(1).length=0;
+    handles.toolbox.drawing.spline(1).handle=[];
+    handles.toolbox.drawing.nrsplines=0;
+    handles.toolbox.drawing.splinenames={''};
+    handles.toolbox.drawing.activespline=1;
+end
+
+setHandles(handles);
+
+%%
+function changeSpline(h,x,y,varargin)
+handles=getHandles;
+for ip=1:handles.toolbox.drawing.nrsplines
+    if handles.toolbox.drawing.spline(ip).handle==h
+        iac=ip;
+        break
+    end
+end
+
+handles.toolbox.drawing.spline(iac).x=x;
+handles.toolbox.drawing.spline(iac).y=y;
+handles.toolbox.drawing.spline(iac).length=length(x);
+handles.toolbox.drawing.activespline=iac;
+setHandles(handles);
+gui_updateActiveTab;
+
+%%
+function loadSpline
+
+handles=getHandles;
+
+% Clear all
+handles.toolbox.drawing.spline=[];
+handles.toolbox.drawing.spline(1).x=[];
+handles.toolbox.drawing.spline(1).y=[];
+handles.toolbox.drawing.spline(1).length=0;
+handles.toolbox.drawing.spline(1).handle=[];
+handles.toolbox.drawing.nrsplines=0;
+handles.toolbox.drawing.splinenames={''};
+
+h=findobj(gca,'Tag','drawingspline');
+delete(h);
+
+data=tekal('read',handles.toolbox.drawing.splinefile,'loaddata');
+handles.toolbox.drawing.nrsplines=length(data.Field);
+handles.toolbox.drawing.activespline=1;
+for ip=1:handles.toolbox.drawing.nrsplines
+    x=data.Field(ip).Data(:,1);
+    y=data.Field(ip).Data(:,2);
+    handles.toolbox.drawing.spline(ip).x=x;
+    handles.toolbox.drawing.spline(ip).y=y;
+    handles.toolbox.drawing.spline(ip).length=length(x);
+    handles.toolbox.drawing.splinenames{ip}=deblank2(data.Field(ip).Name);
+    h=gui_polyline('plot','x',x,'y',y,'tag','drawingspline','marker','o', ...
+        'changecallback',@changeSpline,'type','spline');
+    handles.toolbox.drawing.spline(ip).handle=h;
+end
+
+setHandles(handles);
+
+%%
+function saveSpline
+
+handles=getHandles;
+
+cs=handles.screenParameters.coordinateSystem.type;
+if strcmpi(cs,'geographic')
+    fmt='%12.7f %12.7f\n';
+else
+    fmt='%11.1f %11.1f\n';
+end
+
+fid=fopen(handles.toolbox.drawing.splinefile,'wt');
+for ip=1:handles.toolbox.drawing.nrsplines
+    fprintf(fid,'%s\n',handles.toolbox.drawing.splinenames{ip});
+    fprintf(fid,'%i %i\n',[handles.toolbox.drawing.spline(ip).length 2]);
+    for ix=1:handles.toolbox.drawing.spline(ip).length
+        fprintf(fid,fmt,[handles.toolbox.drawing.spline(ip).x(ix) handles.toolbox.drawing.spline(ip).y(ix)]);
+    end
+end
+fclose(fid);
+
 
