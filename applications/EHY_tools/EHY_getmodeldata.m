@@ -89,6 +89,7 @@ Data.requestedStatNames=stat_name';
 
 %% Get the computational data
 for i_stat = 1: length(stat_name)
+    disp(['EHY_getmodeldata progress - working on station: ' num2str(i_stat) '/' num2str(length(stat_name))])
     switch OPT.varName
         case 'wl'
             
