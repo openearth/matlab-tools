@@ -68,7 +68,9 @@ function varargout = plotNet(varargin)
    OPT.edge  = {'k-'};
    OPT.face  = {'b+','markersize',10};
    OPT.idmn  = -1;   % domain to plot
-   
+
+   ish=ishold;
+
    if nargin==0
       varargout = {OPT};
       return
@@ -145,13 +147,16 @@ function varargout = plotNet(varargin)
    end
    
 %% lay out
+if ~ish
+    hold off
+end
 
-	hold off
-    if ~isempty(OPT.axis)
-        axis([OPT.axis.x(:)' OPT.axis.y(:)'])
-    else
-        axis equal
-    end
+%	hold off
+%    if ~isempty(OPT.axis)
+%        axis([OPT.axis.x(:)' OPT.axis.y(:)'])
+%    else
+%        axis equal
+%    end
 %    grid on
    
 %% return handles
