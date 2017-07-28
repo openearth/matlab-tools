@@ -90,6 +90,9 @@ z(x<0)=z2(x<0);
 
 ifirst=find(z>=zmax,1,'last');
 ilast=find(z<=zmin,1,'first');
+if isempty(ilast)
+    ilast=length(z);
+end
 x=x(ifirst:ilast);
 z=z(ifirst:ilast);
 
