@@ -103,11 +103,11 @@ for i=1:length(varargin)
             case{'dt'}
                 dt=varargin{i+1}; % in minutes
             case{'cs'}
-                cs=varargin{i+1}; % in minutes
+                cs=varargin{i+1};
             case{'reftime'}
-                reftime=varargin{i+1}; % in minutes
+                reftime=varargin{i+1};
             case{'interpolationmethod'}
-                interpolationmethod=varargin{i+1}; % in minutes
+                interpolationmethod=varargin{i+1};
         end
     end
 end
@@ -258,11 +258,13 @@ for imeteo=1:nmeteo
         it1=find(t>tstop-0.001&t<tstop+0.001,1,'first');
         
         if isempty(it0)
-            error(['First time ' datestr(tstart) ' not found in ' meteoname{imeteo} '!']);
+            it0=1;
+%            error(['First time ' datestr(tstart) ' not found in ' meteoname{imeteo} '!']);
         end
         
         if isempty(it1)
-            error(['Last time ' datestr(tstop) ' not found in ' meteoname{imeteo} '!']);
+            it1=length(t);
+%            error(['Last time ' datestr(tstop) ' not found in ' meteoname{imeteo} '!']);
         end
             
         nt=it1-it0+1;
@@ -461,6 +463,9 @@ switch lower(model)
         for ipar=1:npar
             write_meteo_file_delft3d([rundir fname],s,parameter{ipar},unit,reftime,'version',vsn);
         end
+        
+    case{'netcdf'}
+        write_meteo_file_netcdf([rundir fname],s,unit,reftime);
         
     case{'ww3'}
         % Combined u and v
