@@ -11,6 +11,7 @@ name='tile';
 filefolder='';
 linkfolder='';
 colorbarlabel='';
+kmz=0;
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})
@@ -39,9 +40,12 @@ for ii=1:length(varargin)
                 end
                 if ~exist(filefolder,'dir')
                     mkdir(filefolder);
+                    mkdir([filefolder filesep 'tiles']);
                 end
             case{'colorbarlabel'}
                 colorbarlabel=varargin{ii+1};
+            case{'kmz'}
+                kmz=1;
         end
     end
 end
@@ -72,7 +76,7 @@ for it=1:ntx
                 alfa=zeros(tilesize,tilesize);
                 alfa(d>0)=transparency;
                 tilename=[name '.zl1.' num2str(it,'%0.5i') '.' num2str(jt,'%0.5i')];
-                filename=[filefolder tilename '.png'];
+                filename=[filefolder 'tiles' filesep tilename '.png'];
                 imwrite(cdata,filename,'png','alpha',alfa);
             else
                 itiles{1}(it,jt)=0;
@@ -107,7 +111,7 @@ while 1
                     north=south+tilesize*dy(ilev);
                     
                     tilename=[name '.zl1.' num2str(it,'%0.5i') '.' num2str(jt,'%0.5i')];
-                    filename=[filefolder tilename '.kml'];
+                    filename=[filefolder 'tiles' filesep tilename '.kml'];
                     
                     fid=fopen(filename,'wt');
                     fprintf(fid,'%s\n','<?xml version="1.0" encoding="UTF-8"?><kml xmlns="http://www.opengis.net/kml/2.2">');
@@ -120,11 +124,13 @@ while 1
                     fprintf(fid,'%s\n',['      <href>' tilename '.png' '</href>']);
                     fprintf(fid,'%s\n','    </Icon>      ');
                     fprintf(fid,'%s\n','    <LatLonBox>        ');
-                    fprintf(fid,'%s\n',['      <north>' num2str(north) '</north>']);
-                    fprintf(fid,'%s\n',['      <south>' num2str(south) '</south>']);
-                    fprintf(fid,'%s\n',['      <east>' num2str(east) '</east>']);
-                    fprintf(fid,'%s\n',['      <west>' num2str(west) '</west>']);
+                    fprintf(fid,'%s\n',['      <north>' num2str(north,'%10.6f') '</north>']);
+                    fprintf(fid,'%s\n',['      <south>' num2str(south,'%10.6f') '</south>']);
+                    fprintf(fid,'%s\n',['      <east>' num2str(east,'%10.6f') '</east>']);
+                    fprintf(fid,'%s\n',['      <west>' num2str(west,'%10.6f') '</west>']);
                     fprintf(fid,'%s\n','    </LatLonBox>');
+                    fprintf(fid,'%s\n','    <altitude>100.0</altitude>');
+                    fprintf(fid,'%s\n','    <altitudeMode>absolute</altitudeMode>');  
                     fprintf(fid,'%s\n','  </GroundOverlay>  ');
                     fprintf(fid,'%s\n','</Folder>');
                     fprintf(fid,'%s\n','</kml>');
@@ -149,7 +155,7 @@ while 1
                 if itiles{ilev}(it,jt)
 
                     tilename=[name '.zl' num2str(ilev) '.' num2str(it,'%0.5i') '.' num2str(jt,'%0.5i')];
-                    filename=[filefolder tilename '.kml'];
+                    filename=[filefolder 'tiles' filesep tilename '.kml'];
                     
                     west=xmin+(it-1)*tilesize*dx(ilev);
                     east=west+tilesize*dx(ilev);
@@ -165,10 +171,10 @@ while 1
                     fprintf(fid,'%s\n','      <minLodPixels>128</minLodPixels><maxLodPixels>1024</maxLodPixels>');
                     fprintf(fid,'%s\n','    </Lod>');
                     fprintf(fid,'%s\n','    <LatLonAltBox>');
-                    fprintf(fid,'%s\n',['      <north>' num2str(north) '</north>']);
-                    fprintf(fid,'%s\n',['      <south>' num2str(south) '</south>']);
-                    fprintf(fid,'%s\n',['      <east>' num2str(east) '</east>']);
-                    fprintf(fid,'%s\n',['      <west>' num2str(west) '</west>']);
+                    fprintf(fid,'%s\n',['      <north>' num2str(north,'%10.6f') '</north>']);
+                    fprintf(fid,'%s\n',['      <south>' num2str(south,'%10.6f') '</south>']);
+                    fprintf(fid,'%s\n',['      <east>' num2str(east,'%10.6f') '</east>']);
+                    fprintf(fid,'%s\n',['      <west>' num2str(west,'%10.6f') '</west>']);
                     fprintf(fid,'%s\n','    </LatLonAltBox>');
                     fprintf(fid,'%s\n','  </Region>');
                     
@@ -197,7 +203,7 @@ while 1
                     cdata=uint8(zeros(tilesize,tilesize,3));
                     alfa=uint8(zeros(tilesize,tilesize));
                     for inext=1:4
-                        tilenamenext=[filefolder name '.zl' num2str(ilev-1) '.' num2str(iit(inext),'%0.5i') '.' num2str(jjt(inext),'%0.5i')];
+                        tilenamenext=[filefolder 'tiles' filesep name '.zl' num2str(ilev-1) '.' num2str(iit(inext),'%0.5i') '.' num2str(jjt(inext),'%0.5i')];
                         if itiles{ilev-1}(iit(inext),jjt(inext))
                             [cdata0,map,alfa0]=imread([tilenamenext '.png']);
                             cdata0=cdata0(1:2:end-1,1:2:end-1,:);
@@ -206,7 +212,7 @@ while 1
                             alfa(jstart(inext):jstart(inext)+127,istart(inext):istart(inext)+127)=alfa0;
                         end
                     end
-                    imwrite(cdata,[filefolder tilename '.png'],'png','alpha',alfa);
+                    imwrite(cdata,[filefolder 'tiles' filesep tilename '.png'],'png','alpha',alfa);
                                         
                     % Now write ground overlay for this tile to kml file
                     fprintf(fid,'%s\n','  <GroundOverlay>');
@@ -215,11 +221,13 @@ while 1
                     fprintf(fid,'%s\n',['      <href>' tilename '.png' '</href>']);
                     fprintf(fid,'%s\n','    </Icon>      ');
                     fprintf(fid,'%s\n','    <LatLonBox>        ');
-                    fprintf(fid,'%s\n',['      <north>' num2str(north) '</north>']);
-                    fprintf(fid,'%s\n',['      <south>' num2str(south) '</south>']);
-                    fprintf(fid,'%s\n',['      <east>' num2str(east) '</east>']);
-                    fprintf(fid,'%s\n',['      <west>' num2str(west) '</west>']);
-                    fprintf(fid,'%s\n','    </LatLonBox>');
+                    fprintf(fid,'%s\n',['      <north>' num2str(north,'%10.6f') '</north>']);
+                    fprintf(fid,'%s\n',['      <south>' num2str(south,'%10.6f') '</south>']);
+                    fprintf(fid,'%s\n',['      <east>' num2str(east,'%10.6f') '</east>']);
+                    fprintf(fid,'%s\n',['      <west>' num2str(west,'%10.6f') '</west>']);
+                    fprintf(fid,'%s\n','    </LatLonBox>');                    
+                    fprintf(fid,'%s\n','    <altitude>100.0</altitude>');
+                    fprintf(fid,'%s\n','    <altitudeMode>absolute</altitudeMode>');  
                     fprintf(fid,'%s\n','  </GroundOverlay>  ');
                     
                     % And now for the 4 higher level regions                    
@@ -242,10 +250,10 @@ while 1
                             fprintf(fid,'%s\n','        <minLodPixels>128</minLodPixels><maxLodPixels>-1</maxLodPixels>');
                             fprintf(fid,'%s\n','      </Lod>');
                             fprintf(fid,'%s\n','      <LatLonAltBox>');
-                            fprintf(fid,'%s\n',['        <north>' num2str(north) '</north>']);
-                            fprintf(fid,'%s\n',['        <south>' num2str(south) '</south>']);
-                            fprintf(fid,'%s\n',['        <east>' num2str(east) '</east>']);
-                            fprintf(fid,'%s\n',['        <west>' num2str(west) '</west>']);
+                            fprintf(fid,'%s\n',['        <north>' num2str(north,'%10.6f') '</north>']);
+                            fprintf(fid,'%s\n',['        <south>' num2str(south,'%10.6f') '</south>']);
+                            fprintf(fid,'%s\n',['        <east>' num2str(east,'%10.6f') '</east>']);
+                            fprintf(fid,'%s\n',['        <west>' num2str(west,'%10.6f') '</west>']);
                             fprintf(fid,'%s\n','      </LatLonAltBox>');
                             fprintf(fid,'%s\n','    </Region>');
                             fprintf(fid,'%s\n','    <Link>');
@@ -324,7 +332,7 @@ fprintf(fid,'%s\n',['          <west>' num2str(west) '</west>']);
 fprintf(fid,'%s\n','        </LatLonAltBox>');
 fprintf(fid,'%s\n','      </Region>');
 fprintf(fid,'%s\n','      <Link>');
-fprintf(fid,'%s\n',['        <href>' tilename '.kml</href>']);
+fprintf(fid,'%s\n',['        <href>tiles\' tilename '.kml</href>']);
 fprintf(fid,'%s\n','        <viewRefreshMode>onRegion</viewRefreshMode>');
 fprintf(fid,'%s\n','      </Link>');
 fprintf(fid,'%s\n','    </NetworkLink>');
@@ -335,3 +343,20 @@ fclose(fid);
 
 cdec=1;
 cosmos_makeColorBar([filefolder 'colorbar.png'],'contours',clim(1):clim(2),'colormap','jet','label',colorbarlabel,'decimals',cdec);
+
+if kmz
+    n=0;
+    curdir=pwd;
+    kmzfile=[overallfilename(1:end-4) '.kmz'];
+    flist=dir(filefolder);
+    for ii=1:length(flist)
+        switch flist(ii).name
+            case{'.','..'}
+            otherwise
+                n=n+1;
+                files{n}=fullfile(curdir, filefolder, flist(ii).name);
+        end
+    end
+    zip(kmzfile, files);
+    movefile([kmzfile '.zip'],kmzfile);
+end
