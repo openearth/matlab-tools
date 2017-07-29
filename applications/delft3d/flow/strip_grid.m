@@ -1,4 +1,4 @@
-function GRID = strip(GRID,default,enclosure)
+function GRID = strip_grid(GRID,default,enclosure)
 
 % function - restricts the grid to the active grid within the enclosure
 %

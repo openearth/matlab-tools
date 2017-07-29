@@ -114,7 +114,7 @@ end
       G.nodatavalue     = OPT.missingvalue;
 
       if ~isempty(OPT.enclosure)
-         TMP            = strip    (TMP,OPT.missingvalue,OPT.enclosure);
+         TMP            = strip_grid    (TMP,OPT.missingvalue,OPT.enclosure);
       end
 
       fields2copy       = {'Enclosure',... %'FileName',...
