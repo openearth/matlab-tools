@@ -127,7 +127,7 @@ if exist('realTime_S','var') % if simulation has finished
   
     % partitions
     if exist('noPartitions','var')
-        runTimeInfo.partitions = noPartitions;
+        runTimeInfo.numberOfPartitions = noPartitions;
     end
     
 else
