@@ -57,7 +57,8 @@ dx=handles.toolbox.modelmaker.dX;
 yori=handles.toolbox.modelmaker.yOri;
 ny=handles.toolbox.modelmaker.nY;
 dy=handles.toolbox.modelmaker.dY;
-rot=pi*handles.toolbox.modelmaker.rotation/180;
+% rot=pi*handles.toolbox.modelmaker.rotation/180;
+rot=mod(handles.toolbox.modelmaker.rotation,360);
 zmax = handles.toolbox.modelmaker.zMax;
 
 % Find minimum grid resolution (in metres)
@@ -110,38 +111,41 @@ end
 
 %%  Get coordinates of rectangular grid
 % -> different for rotated geographic grids
-if ~rot==0 &  ~rot==90  &  ~rot==180  &  ~rot==360 & strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+if (rot~=0 && rot~=90 && rot~=180 && rot~=270) && strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
 
     % Determine UTM zone of the middle
-	[ans1,ans2, utmzone_total, utmzone_parts] = ddb_deg2utm(mean(y),mean(x))
+	[ans1,ans2, utmzone_total, utmzone_parts] = ddb_deg2utm(mean(y),mean(x));
     
     % Change coordinate system to UTM of the middle
     coord.name = 'WGS 84 / UTM zone ';
-    s           = {coord.name, '',num2str(utmzone_parts.number), utmzone_parts.lat}
-    coord.name  = [s{:}]
-    coord.type = 'Cartesian'
+    s           = {coord.name, '',num2str(utmzone_parts.number), utmzone_parts.lat};
+    coord.name  = [s{:}];
+    coord.type = 'Cartesian';
 
     % Convert the ori
     [xori_utm,yori_utm]             = ddb_coordConvert(xori,yori,dataCoord,coord);
 
     % Distance of the grid
     [x_utm,y_utm]             = ddb_coordConvert(x,y,dataCoord,coord);
-    sx                        = ((x_utm(1) - x_utm(2)).^2 + (y_utm(1) - y_utm(2)).^2).^0.5
-    sy                        = ((x_utm(2) - x_utm(3)).^2 + (y_utm(2) - y_utm(3)).^2).^0.5
+    sx                        = ((x_utm(1) - x_utm(2)).^2 + (y_utm(1) - y_utm(2)).^2).^0.5;
+    sy                        = ((x_utm(2) - x_utm(3)).^2 + (y_utm(2) - y_utm(3)).^2).^0.5;
 
     % Determine new dx and dy
     dx_utm = sx / nx;
     dy_utm = sy / ny;
     
+%     dx_utm = dx*111111;
+%     dy_utm = dy*111111;
+    
     % Determine new x and y 
     x_utm(1) = xori_utm;
     y_utm(1) = yori_utm;
-    x_utm(2) = x_utm(1)+nx*dx_utm*cos(pi*handles.toolbox.modelmaker.rotation/180);
-    y_utm(2) = y_utm(1)+nx*dx_utm*sin(pi*handles.toolbox.modelmaker.rotation/180);
-    x_utm(3) = x_utm(2)+ny*dy_utm*cos(pi*(handles.toolbox.modelmaker.rotation+90)/180);
-    y_utm(3) = y_utm(2)+ny*dy_utm*sin(pi*(handles.toolbox.modelmaker.rotation+90)/180);
-    x_utm(4) = x_utm(3)+nx*dx_utm*cos(pi*(handles.toolbox.modelmaker.rotation+180)/180);
-    y_utm(4) = y_utm(3)+nx*dx_utm*sin(pi*(handles.toolbox.modelmaker.rotation+180)/180);
+    x_utm(2) = x_utm(1)+nx*dx_utm*cos(pi*rot/180);
+    y_utm(2) = y_utm(1)+nx*dx_utm*sin(pi*rot/180);
+    x_utm(3) = x_utm(2)+ny*dy_utm*cos(pi*(rot+90)/180);
+    y_utm(3) = y_utm(2)+ny*dy_utm*sin(pi*(rot+90)/180);
+    x_utm(4) = x_utm(3)+nx*dx_utm*cos(pi*(rot+180)/180);
+    y_utm(4) = y_utm(3)+nx*dx_utm*sin(pi*(rot+180)/180);
     
     % Other set-ups
     dmin    = min(dx_utm,dy_utm);
@@ -152,10 +156,10 @@ if ~rot==0 &  ~rot==90  &  ~rot==180  &  ~rot==360 & strcmpi(handles.screenParam
 
     % Finalise
     [xg_utm,yg_utm]             = ddb_coordConvert(xg,yg,dataCoord,coord);
-    [x_grid_utm,y_grid_utm,z]   = MakeRectangularGrid(xori_utm,yori_utm,nx,ny,dx_utm,dy_utm,rot,zmax,xg_utm,yg_utm,zz);
+    [x_grid_utm,y_grid_utm,z]   = MakeRectangularGrid(xori_utm,yori_utm,nx,ny,dx_utm,dy_utm,rot*pi/180,zmax,xg_utm,yg_utm,zz);
     [x,y]                       = ddb_coordConvert(x_grid_utm,y_grid_utm,coord,dataCoord);
 
 else
-    [x,y,z]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
+    [x,y,z]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot*pi/180,zmax,xg,yg,zz);
 
 end
