@@ -40,6 +40,9 @@ if icheck
         pathname = pwd;
     end
 
+    if filename==0
+        return
+    end
     
     % Check if there is already data in depth matrix
     dmax=max(max(handles.model.delft3dflow.domain(id).depth));
