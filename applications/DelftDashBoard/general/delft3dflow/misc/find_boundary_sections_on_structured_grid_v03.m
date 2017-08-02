@@ -53,6 +53,7 @@ function openBoundaries=find_boundary_sections_on_structured_grid_v02(openBounda
 
 autolength=0;
 dpuopt='mean';
+dpsopt='max';
 gridrotation=0;
 
 for ii=1:length(varargin)
@@ -60,6 +61,8 @@ for ii=1:length(varargin)
         switch lower(varargin{ii})
             case{'dpuopt'}
                 dpuopt=lower(varargin{ii+1});
+            case{'dpsopt'}
+                dpsopt=lower(varargin{ii+1});
             case{'autolength'}
                 autolength=varargin{ii+1};
             case{'gridrotation'}
@@ -72,6 +75,10 @@ if autolength
     stdautolength=0.1;
 else
     stdautolength=1e9;
+end
+
+if strcmpi(dpsopt,'dp')
+    dpuopt='mor';
 end
 
 % Depths are dps values (depth(1,1)=NaN!)
