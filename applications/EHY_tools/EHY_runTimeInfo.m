@@ -18,6 +18,14 @@ else
     mdFile=[pathname filename];
 end
 modelType=nesthd_det_filetype(mdFile);
+if strcmp(modelType,'none')
+    mdFiles=[dir([mdFile '*.mdu']); dir([mdFile '*.mdf']); dir([mdFile '*siminp*'])];
+    mdFile=[mdFiles(1).folder filesep mdFiles(1).name];
+    modelType=nesthd_det_filetype(mdFile);
+    if strcmp(modelType,'none')
+        error('No .mdu or .mdf found in this folder')
+    end
+end
 [pathstr,name,ext]=fileparts(mdFile);
 [refdate,tunit,tstart,tstop]=getTimeInfoFromMdFile(mdFile);
 
@@ -40,6 +48,10 @@ try % if simulation has finished
             end
             fid=fopen(diaFile,'r');
             
+            % partitions
+            diaFiles=dir([pathstr filesep name '*.dia']);
+            noPartitions=length(diaFiles)-1;
+            
             % average timestep
             line=findLineOrQuit(fid,'** INFO   : average timestep      (s)  :');
             line2=strsplit(line);
@@ -49,6 +61,7 @@ try % if simulation has finished
             line=findLineOrQuit(fid,'** INFO   : time steps            (s)  :');
             line2=strsplit(line);
             realTime_S=str2double(line2{end});
+            
         case 'mdf'
             % dia
             if exist([pathstr filesep 'tri-diag.' name ],'file') % first check if run was done in parallel
@@ -58,15 +71,24 @@ try % if simulation has finished
             end
             fid=fopen(diaFile,'r');
             
+            % partitions - TO BE IMPLEMENTED
+%             shFiles=dir([pathstr filesep name '*.sh'])
+%             fid2=fopen([shFiles(1).folder filesep shFiles(1).name],'r');
+            
             % realTime_S
             line=findLineOrQuit(fid,'|Total                |');
             line2=strsplit(line);
             realTime_S=str2double(line2{3});
+            
         case 'siminp'
             % dia
             directory=dir([pathstr filesep 'waqpro-m*']);
             diaFile=[pathstr filesep directory(1).name];
             fid=fopen(diaFile,'r');
+            
+            % partitions
+            line=findLineOrQuit(fid,'PARTMETHOD'); line=fgetl(fid);
+            noPartitions=str2num(strrep(line,'NPART',''));
             
             % realTime_S
             line=findLineOrQuit(fid,'Simulation started at date:');
@@ -77,6 +99,7 @@ try % if simulation has finished
             while length(line2{10})<6; line2{10}=['0' line2{10}]; end %account for end time=15024
             tend=datenum([line2{8} line2{10}],'yyyymmddHHMMSS');
             realTime_S=(tend-t0)*24*60*60;
+
     end
 end
 fclose all;
@@ -101,6 +124,12 @@ if exist('realTime_S','var') % if simulation has finished
     % computational time
     runTimeInfo.compTime_minPerDay=(runTimeInfo.realTime_S/60)/(runTimeInfo.simPeriod_S/3600/24);
     runTimeInfo.compTime_dayPerYear=runTimeInfo.compTime_minPerDay/60/24*365;
+  
+    % partitions
+    if exist('noPartitions','var')
+        runTimeInfo.partitions = noPartitions;
+    end
+    
 else
     runTimeInfo.comment='Simulation has probably not finished yet or crashed';
 end
