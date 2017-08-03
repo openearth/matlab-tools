@@ -19,6 +19,7 @@ else
 end
 modelType=nesthd_det_filetype(mdFile);
 if strcmp(modelType,'none')
+    mdFile=[mdFile filesep];
     mdFiles=[dir([mdFile '*.mdu']); dir([mdFile '*.mdf']); dir([mdFile '*siminp*'])];
     mdFile=[mdFiles(1).folder filesep mdFiles(1).name];
     modelType=nesthd_det_filetype(mdFile);
