@@ -13,6 +13,7 @@ function Data = EHY_getmodeldata(sim_dir,runid,stat_name,modelType,varargin)
 %  Data.stationNames   : list of ALL stations available on history file
 %  Data.times          : (matlab) times belonging with the series
 %  Data.val (:,no_stat): water level values for the requested stations
+%  Data.val (time,no_stat,layers): sal/uv values for the requested stations. Layers only if 3D model.
 
 OPT.varName = 'wl';
 OPT.t0 = '';
@@ -165,13 +166,13 @@ for i_stat = 1: length(stat_name)
                         [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
                     end
                     if isempty(OPT.layer)
-                        Data.u(i_stat,:,:) = waquaio(sds,[],'u-stat',time_index,nr_stat);
-                        Data.v(i_stat,:,:) = waquaio(sds,[],'v-stat',time_index,nr_stat);
+                        Data.u(:,i_stat,:) = waquaio(sds,[],'u-stat',time_index,nr_stat);
+                        Data.v(:,i_stat,:) = waquaio(sds,[],'v-stat',time_index,nr_stat);
                     else
-                        Data.u(i_stat,:,:) = waquaio(sds,[],'u-stat',time_index,nr_stat,OPT.layer);
-                        Data.v(i_stat,:,:) = waquaio(sds,[],'v-stat',time_index,nr_stat,OPT.layer);
+                        Data.u(:,i_stat,:) = waquaio(sds,[],'u-stat',time_index,nr_stat,OPT.layer);
+                        Data.v(:,i_stat,:) = waquaio(sds,[],'v-stat',time_index,nr_stat,OPT.layer);
                     end
-                    Data.uv_dim='station,time,layer';
+                    Data.uv_dim='time,station,layer';
                 end
             end
         case 'sal'
@@ -185,12 +186,12 @@ for i_stat = 1: length(stat_name)
                         [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
                     end
                     if isempty(OPT.layer)
-                        Data.val(i_stat,:,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat);
+                        Data.val(:,i_stat,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat);
                     else
-                        Data.val(i_stat,:,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat,OPT.layer);
+                        Data.val(:,i_stat,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat,OPT.layer);
                     end
                     
-                    Data.val_dim='station,time,layer';
+                    Data.val_dim='time,station,layer';
                 end
             end
     end
