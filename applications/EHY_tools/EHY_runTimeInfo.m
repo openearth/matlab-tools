@@ -58,10 +58,21 @@ try % if simulation has finished
             line2=strsplit(line);
             runTimeInfo.aveTimeStep_S=str2double(line2{end});
             
+            % max time step
+            fid_mdu=fopen(mdFile,'r');
+            line=findLineOrQuit(fid_mdu,'DtMax');
+            [~,line]=strtok(line,'=');
+            line=strrep(strrep(line,'=',''),'.','');
+            line(strfind(line,'#'):end)='';
+            runTimeInfo.maxTimeStep_S=str2double(line);
+            
             % realTime_S
             line=findLineOrQuit(fid,'** INFO   : time steps            (s)  :');
             line2=strsplit(line);
             realTime_S=str2double(line2{end});
+            
+
+            
             
         case 'mdf'
             % dia
