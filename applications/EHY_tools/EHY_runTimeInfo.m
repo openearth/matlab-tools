@@ -51,7 +51,7 @@ try % if simulation has finished
             
             % partitions
             diaFiles=dir([pathstr filesep name '*.dia']);
-            noPartitions=length(diaFiles)-1;
+            noPartitions=max([1 length(diaFiles)-1]);
             
             % average timestep
             line=findLineOrQuit(fid,'** INFO   : average timestep      (s)  :');
