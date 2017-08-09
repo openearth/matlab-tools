@@ -144,6 +144,11 @@ if exist('realTime_S','var') % if simulation has finished
     
 else
     runTimeInfo.comment='Simulation has probably not finished yet or crashed';
+    try 
+        percentage=EHY_simulationStatus(mdFile);
+        runTimeInfo.status=[num2str(percentage,'%0.1f') '%'];
+    end
+    
 end
 end
 %%
