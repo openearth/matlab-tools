@@ -61,8 +61,8 @@ function KMLPlaceMark(lat,lon,kmlName,varargin)
 
 %% Keywords
 
-OPT.name          = {''};
-OPT.description   = {''};
+OPT.name(1:length(lat))          = {''};
+OPT.description(1:length(lat))   = {''};
 OPT.Z             = zeros(size(lat));
 OPT.icon          = 'http://maps.google.com/mapfiles/kml/paddle/blu-stars.png';
 OPT.iconScale     = 1.4;
