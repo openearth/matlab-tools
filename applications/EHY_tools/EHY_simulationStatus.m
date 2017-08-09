@@ -3,14 +3,14 @@ function EHY_simulationStatus(varargin)
 %
 % This function returns the status of a D-FLOW FM, Delft3D and SIMONA simulation.
 %
-% Example1: EHY_dflowfm_status
-% Example2: EHY_dflowfm_status('D:\run1\model.mdu')
+% Example1: EHY_simulationStatus
+% Example2: EHY_simulationStatus('D:\run1\model.mdu')
 %
 % created by Julien Groenenboom, August 2017
 
 %%
 if nargin==0
-    [filename, pathname]=uigetfile('*.*','Open a .mdu / .mdf or SIMONA file as input');
+    [filename, pathname]=uigetfile('*.*','Open a .mdu, .mdf or SIMONA file as input');
     mdFile=[pathname filename];
 elseif nargin==1
     mdFile=varargin{1};
