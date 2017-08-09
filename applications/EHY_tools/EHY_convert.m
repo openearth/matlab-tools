@@ -8,6 +8,7 @@ function output=EHY_convert(varargin)
 % Example2: EHY_convert('D:\path.kml')
 % Example3: EHY_convert('D:\path.kml','ldb')
 % Example4: EHY_convert('D:\path.kml','ldb','saveOutputFile',0)
+
 % created by Julien Groenenboom, August 2017
 
 OPT.saveOutputFile=1; % 0=do not save, 1=save
@@ -22,7 +23,6 @@ if nargin>2
 end
 
 %% availableConversions
-fid=fopen(which('EHY_convert.m'),'r');
 A=textread(which('EHY_convert.m'),'%s','delimiter','\n');
 searchLine='function output=EHY_convert_';
 lineNrs=find(~cellfun('isempty',strfind(A,searchLine)));
