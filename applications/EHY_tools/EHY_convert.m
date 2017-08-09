@@ -29,6 +29,7 @@ availableConversions={'kml','ldb';,...
     'ldb','pol';,...
     'pol','kml';,...
     'pol','ldb';,...
+    'pol','xyz';,...
     'xyz','kml'};
 %% initialise
 if length(varargin)==0
@@ -60,7 +61,7 @@ else
     outputExt=varargin{2};
 end
 
-%%
+%% Choose and run conversion
 if isempty(OPT.outputFile)
     [pathstr, name, ext] = fileparts(inputFile);
     outputFile=[pathstr filesep name '.' outputExt];
@@ -102,25 +103,42 @@ end
 % ldb2kml
     function output=EHY_convert_ldb2kml(inputFile,outputFile,OPT)
         ldb=landboundary('read',inputFile);
-        ldb2kml(ldb,outputFile,[1 0 0])
+        if OPT.saveOutputFile
+            ldb2kml(ldb,outputFile,[1 0 0])
+        end
         output=[];
     end
 % ldb2pol
     function output=EHY_convert_ldb2pol(inputFile,outputFile,OPT)
         ldb=landboundary('read',inputFile);
-        io_polygon('write',outputFile,ldb);
+        if OPT.saveOutputFile
+            io_polygon('write',outputFile,ldb);
+        end
         output=ldb;
     end
 % pol2kml
     function output=EHY_convert_pol2kml(inputFile,outputFile,OPT)
         pol=landboundary('read',inputFile);
-        ldb2kml(pol,outputFile,[1 0 0])
+        if OPT.saveOutputFile
+            ldb2kml(pol,outputFile,[1 0 0])
+        end
         output=[];
     end
 % pol2ldb
     function output=EHY_convert_pol2ldb(inputFile,outputFile,OPT)
         pol=landboundary('read',inputFile);
-        output=landboundary('write',outputFile,pol)
+        if OPT.saveOutputFile
+            output=landboundary('write',outputFile,pol);
+        end
+    end
+% pol2xyz
+    function output=EHY_convert_pol2xyz(inputFile,outputFile,OPT)
+        xyz=landboundary('read',inputFile);
+        xyz(isnan(xyz(:,1)),:)=[];
+        if OPT.saveOutputFile
+            dlmwrite(outputFile,xyz);
+        end
+        output=xyz;
     end
 % xyz2kml
     function output=EHY_convert_xyz2kml(inputFile,outputFile,OPT)
@@ -132,5 +150,5 @@ end
         end
         output=[lon lat];
     end
-
 end
+
