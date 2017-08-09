@@ -22,18 +22,21 @@ if nargin>2
 end
 
 %% availableConversions
-availableConversions={'kml','ldb';,...
-    'kml','pol';,...
-    'kml','xyz';,...
-    'ldb','kml';,...
-    'ldb','pol';,...
-    'pol','kml';,...
-    'pol','ldb';,...
-    'pol','xyz';,...
-    'xyz','kml'};
+fid=fopen(which('EHY_convert.m'),'r');
+A=textread(which('EHY_convert.m'),'%s','delimiter','\n');
+searchLine='function output=EHY_convert_';
+lineNrs=find(~cellfun('isempty',strfind(A,searchLine)));
+availableConversions={};
+for ii=2:length(lineNrs)
+    availableConversions{end+1,1}=A{lineNrs(ii)}(length(searchLine)+1:length(searchLine)+3);
+    availableConversions{end,2}=A{lineNrs(ii)}(length(searchLine)+5:length(searchLine)+7);
+end
 %% initialise
 if length(varargin)==0
-    [filename, pathname]=uigetfile('*.*','Open a file that you want to convert');
+    disp(['EHY_convert  -  Conversion possible for following inputFiles: ',...
+        strrep(strjoin(unique(availableConversions(:,1))),' ',', ')])
+    availableExt=strcat('*.',[{'*'}; unique(availableConversions(:,1))]);
+    [filename, pathname]=uigetfile(availableExt,'Open a file that you want to convert');
     varargin{1}=[pathname filename];
 end
 if length(varargin)==1
@@ -144,7 +147,7 @@ end
     function output=EHY_convert_xyz2kml(inputFile,outputFile,OPT)
         %         [lon lat ~]=textread(inputFile,'delimiter','\n');
         xyz=dlmread(inputFile);
-        lat=xyz(:,1); lon=xyz(:,2);
+        lon=xyz(:,1); lat=xyz(:,2);
         if OPT.saveOutputFile
             KMLPlaceMark(lat,lon,outputFile);
         end
