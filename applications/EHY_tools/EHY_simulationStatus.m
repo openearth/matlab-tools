@@ -1,4 +1,4 @@
-function percentage=EHY_simulationStatus(varargin)
+function varargout=EHY_simulationStatus(varargin)
 %% EHY_simulationStatus(varargin)
 %
 % This function returns the status of a D-FLOW FM, Delft3D and SIMONA simulation.
@@ -78,3 +78,4 @@ percentage=runPeriod_S/simPeriod_S*100;
 disp(['Status of ' name ext ': ' num2str(round(runPeriod_D,1)) '/' num2str(round(simPeriod_D,1)) ' of simulation days - ',...
     sprintf('%0.1f',percentage) '%']);
 
+varargout{1}=percentage;
