@@ -75,7 +75,7 @@ switch modelType
         fclose(fid);
         line2=strsplit(line2);
         
-        runPeriod_D=datenum(strjoin(line2(7:8)))-refdate-tstart*timeFactor('M','D');
+        runPeriod_D=datenum(strjoin(line2(end-1:end)))-refdate-tstart*timeFactor('M','D');
         runPeriod_S=runPeriod_D*timeFactor('D','S');
 end
 
