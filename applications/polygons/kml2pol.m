@@ -80,9 +80,9 @@ pol=[];
 for ii=1:length(coorsStart)
     tLdb=str2num(char(kmlFile(coorsStart(ii):coorsStop(ii)))');
 %     pol=[tLdb(1:3:end) tLdb(2:3:end)];
-    pol=[pol tLdb];
+    pol=[pol; tLdb];
 end
 
 if saveOutput==1
-io_polygon('write',[fPat filesep fName '.pol'],pol);
+io_polygon('write',[fPat filesep fName '.pol'],pol(:,1:2));
 end
