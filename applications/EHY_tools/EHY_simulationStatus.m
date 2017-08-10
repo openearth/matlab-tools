@@ -18,6 +18,12 @@ end
 
 %%
 modelType=nesthd_det_filetype(mdFile);
+if strcmp(modelType,'none')
+    [modelType,mdFile]=EHY_getModelType(mdFile);
+    if strcmp(modelType,'none')
+        error('No .mdu, .mdf or siminp found in this folder')
+    end
+end
 [refdate,tunit,tstart,tstop]=getTimeInfoFromMdFile(mdFile);
 simPeriod_S=(tstop-tstart)*timeFactor(tunit,'S');
 simPeriod_D=(tstop-tstart)*timeFactor(tunit,'D');
@@ -78,4 +84,6 @@ percentage=runPeriod_S/simPeriod_S*100;
 disp(['Status of ' name ext ': ' num2str(round(runPeriod_D,1)) '/' num2str(round(simPeriod_D,1)) ' of simulation days - ',...
     sprintf('%0.1f',percentage) '%']);
 
-varargout{1}=percentage;
+if nargout==1
+    varargout{1}=percentage;
+end
