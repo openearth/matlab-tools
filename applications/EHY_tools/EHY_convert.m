@@ -124,7 +124,9 @@ end
     function output=EHY_convert_pol2kml(inputFile,outputFile,OPT)
         pol=landboundary('read',inputFile);
         if OPT.saveoutputFile
-            ldb2kml(pol,outputFile,[1 0 0])
+            tempFile=[tempdir 'temp.kml'];
+            ldb2kml(pol,tempFile,[1 0 0])
+            movefile(tempFile,outputFile);
         end
         output=[];
     end
@@ -149,7 +151,9 @@ end
     function output=EHY_convert_xyn2kml(inputFile,outputFile,OPT)
         xyn=delft3d_io_xyn('read',inputFile);
         if OPT.saveoutputFile
-            KMLPlaceMark(xyn.y,xyn.x,outputFile,'name',xyn.name);
+            tempFile=[tempdir 'temp.kml'];
+            KMLPlaceMark(xyn.y,xyn.x,tempFile,'name',xyn.name);
+            movefile(tempFile,outputFile);
         end
         output=[];
     end
@@ -159,7 +163,9 @@ end
         xyz=dlmread(inputFile);
         lon=xyz(:,1); lat=xyz(:,2);
         if OPT.saveoutputFile
-            KMLPlaceMark(lat,lon,outputFile);
+            tempFile=[tempdir 'temp.kml'];
+            KMLPlaceMark(lat,lon,tempFile);
+            movefile(tempFile,outputFile);
         end
         output=[lon lat];
     end
