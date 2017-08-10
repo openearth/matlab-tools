@@ -108,7 +108,9 @@ end
     function output=EHY_convert_ldb2kml(inputFile,outputFile,OPT)
         ldb=landboundary('read',inputFile);
         if OPT.saveoutputFile
-            ldb2kml(ldb,outputFile,[1 0 0])
+            tempFile=[tempdir 'temp.kml'];
+            ldb2kml(ldb,tempFile,[1 0 0])
+            movefile(tempFile,outputFile);
         end
         output=[];
     end
