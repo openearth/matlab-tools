@@ -19,7 +19,7 @@ else
 end
 modelType=nesthd_det_filetype(mdFile);
 if strcmp(modelType,'none')
-    [modelType,mdFile]=EHY_getModelType;
+    [modelType,mdFile]=EHY_getModelType(mdFile);
     if strcmp(modelType,'none')
         error('No .mdu, .mdf or siminp found in this folder')
     end
