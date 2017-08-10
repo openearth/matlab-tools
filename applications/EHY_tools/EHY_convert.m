@@ -1,4 +1,4 @@
-function output=EHY_convert(varargin)
+function varargout=EHY_convert(varargin)
 %% output=EHY_convert(inputFile,outputExt)
 %
 % Converts the inputFile to a file with the outputExt.
@@ -6,12 +6,12 @@ function output=EHY_convert(varargin)
 
 % Example1: EHY_convert
 % Example2: EHY_convert('D:\path.kml')
-% Example3: EHY_convert('D:\path.kml','ldb')
-% Example4: EHY_convert('D:\path.kml','ldb','saveOutputFile',0)
+% Example3: ldb=EHY_convert('D:\path.kml','ldb')
+% Example4: EHY_convert('D:\path.kml','ldb','saveoutputFile',0)
 
 % created by Julien Groenenboom, August 2017
 
-OPT.saveOutputFile=1; % 0=do not save, 1=save
+OPT.saveoutputFile=1; % 0=do not save, 1=save
 OPT.outputFile=''; % if isempty > outputFile=strrep(inputFile,inputExt,outputExt);
 
 if nargin>2
@@ -48,15 +48,15 @@ if length(varargin)==1
     if isempty(availableInputId)
         error(['No conversions available for ' inputExt '-files.'])
     end
-    availableOutputExt=availableConversions(availableInputId,2);
-    [availableOutputId,~]=  listdlg('PromptString',['Convert this ' inputExt '-file to:'],...
+    availableoutputExt=availableConversions(availableInputId,2);
+    [availableoutputId,~]=  listdlg('PromptString',['Convert this ' inputExt '-file to:'],...
         'SelectionMode','single',...
-        'ListString',availableOutputExt,...
+        'ListString',availableoutputExt,...
         'ListSize',[300 50]);
-    if isempty(availableOutputId)
+    if isempty(availableoutputId)
         error('No output extension was chosen.')
     end
-    outputExt=availableOutputExt{availableOutputId};
+    outputExt=availableoutputExt{availableoutputId};
 else
     inputFile=varargin{1};
     [~,~,inputExt]= fileparts(inputFile);
@@ -72,33 +72,34 @@ else % outputFile was specified by user
     outputFile=OPT.outputFile;
 end
 
-if OPT.saveOutputFile && exist(outputFile,'file')
+if OPT.saveoutputFile && exist(outputFile,'file')
     [YesNoID,~]=  listdlg('PromptString',{'The outputFile already exists. Overwrite the file below?',outputFile},...
         'SelectionMode','single',...
         'ListString',{'Yes','No'},...
         'ListSize',[500 50]);
     if YesNoID==2
-        OPT.saveOutputFile=0;
+        OPT.saveoutputFile=0;
     end
 end
+
 eval(['output=EHY_convert_' inputExt '2' outputExt '(''' inputFile ''',''' outputFile ''',OPT);'])
-if OPT.saveOutputFile
+if OPT.saveoutputFile
     disp([char(10) 'EHY_convert created the file: ' char(10) outputFile char(10)])
 end
 %% conversion functions - in alphabetical order
 % kml2ldb
     function output=EHY_convert_kml2ldb(inputFile,outputFile,OPT)
-        output=kml2ldb(OPT.saveOutputFile,inputFile);
+        output=kml2ldb(OPT.saveoutputFile,inputFile);
     end
 % kml2pol
     function output=EHY_convert_kml2pol(inputFile,outputFile,OPT)
-        output=kml2pol(OPT.saveOutputFile,inputFile);
+        output=kml2pol(OPT.saveoutputFile,inputFile);
     end
 % kml2xyz
     function output=EHY_convert_kml2xyz(inputFile,outputFile,OPT)
-        xyz=kml2ldb(OPT.saveOutputFile,inputFile);
+        xyz=kml2ldb(OPT.saveoutputFile,inputFile);
         xyz(isnan(xyz(:,1)),:)=[];
-        if OPT.saveOutputFile
+        if OPT.saveoutputFile
             dlmwrite(outputFile,xyz);
         end
         output=xyz;
@@ -106,7 +107,7 @@ end
 % ldb2kml
     function output=EHY_convert_ldb2kml(inputFile,outputFile,OPT)
         ldb=landboundary('read',inputFile);
-        if OPT.saveOutputFile
+        if OPT.saveoutputFile
             ldb2kml(ldb,outputFile,[1 0 0])
         end
         output=[];
@@ -114,7 +115,7 @@ end
 % ldb2pol
     function output=EHY_convert_ldb2pol(inputFile,outputFile,OPT)
         ldb=landboundary('read',inputFile);
-        if OPT.saveOutputFile
+        if OPT.saveoutputFile
             io_polygon('write',outputFile,ldb);
         end
         output=ldb;
@@ -122,7 +123,7 @@ end
 % pol2kml
     function output=EHY_convert_pol2kml(inputFile,outputFile,OPT)
         pol=landboundary('read',inputFile);
-        if OPT.saveOutputFile
+        if OPT.saveoutputFile
             ldb2kml(pol,outputFile,[1 0 0])
         end
         output=[];
@@ -130,28 +131,44 @@ end
 % pol2ldb
     function output=EHY_convert_pol2ldb(inputFile,outputFile,OPT)
         pol=landboundary('read',inputFile);
-        if OPT.saveOutputFile
+        if OPT.saveoutputFile
             output=landboundary('write',outputFile,pol);
         end
+        output=[];
     end
 % pol2xyz
     function output=EHY_convert_pol2xyz(inputFile,outputFile,OPT)
         xyz=landboundary('read',inputFile);
         xyz(isnan(xyz(:,1)),:)=[];
-        if OPT.saveOutputFile
+        if OPT.saveoutputFile
             dlmwrite(outputFile,xyz);
         end
         output=xyz;
+    end
+% xyn2kml
+    function output=EHY_convert_xyn2kml(inputFile,outputFile,OPT)
+        xyn=delft3d_io_xyn('read',inputFile);
+        if OPT.saveoutputFile
+            KMLPlaceMark(xyn.y,xyn.x,outputFile,'name',xyn.name);
+        end
+        output=[];
     end
 % xyz2kml
     function output=EHY_convert_xyz2kml(inputFile,outputFile,OPT)
         %         [lon lat ~]=textread(inputFile,'delimiter','\n');
         xyz=dlmread(inputFile);
         lon=xyz(:,1); lat=xyz(:,2);
-        if OPT.saveOutputFile
+        if OPT.saveoutputFile
             KMLPlaceMark(lat,lon,outputFile);
         end
         output=[lon lat];
     end
+%% output
+if nargout==1
+    varargout{1}=output;
+elseif nargout>1
+    varargout{1}=output(:,1);
+    varargout{2}=output(:,2);
+end
 end
 
