@@ -149,6 +149,27 @@ end
         end
         output=xyz;
     end
+% shp2kml
+    function output=EHY_convert_shp2kml(inputFile,outputFile,OPT)
+        ldb=shape2ldb(inputFile,0);
+        if OPT.saveoutputFile
+            tempFile=[tempdir 'temp.kml'];
+            ldb2kml(ldb,tempFile,[1 0 0])
+            movefile(tempFile,outputFile);
+        end
+        output=[];
+    end
+% shp2ldb
+    function output=EHY_convert_shp2ldb(inputFile,outputFile,OPT)
+        output=shape2ldb(inputFile,OPT.saveoutputFile);
+    end
+% shp2pol
+    function output=EHY_convert_shp2pol(inputFile,outputFile,OPT)
+        output=shape2ldb(inputFile,0);
+        if OPT.saveoutputFile
+            io_polygon('write',outputFile,output);
+        end
+    end
 % xyn2kml
     function output=EHY_convert_xyn2kml(inputFile,outputFile,OPT)
         xyn=delft3d_io_xyn('read',inputFile);
