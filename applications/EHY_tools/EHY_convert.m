@@ -87,6 +87,17 @@ if OPT.saveoutputFile
     disp([char(10) 'EHY_convert created the file: ' char(10) outputFile char(10)])
 end
 %% conversion functions - in alphabetical order
+% grd2kml
+    function output=EHY_convert_grd2kml(inputFile,outputFile,OPT)
+        if OPT.saveoutputFile
+            tempFile=[tempdir 'temp.grd'];
+            copyfile(inputFile,tempFile);
+            grid2kml(tempFile,[255;0;0]);
+            movefile(strrep(tempFile,'.grd','.kml'),outputFile);
+            delete(tempFile)
+        end
+        output=[];
+    end
 % kml2ldb
     function output=EHY_convert_kml2ldb(inputFile,outputFile,OPT)
         output=kml2ldb(OPT.saveoutputFile,inputFile);
