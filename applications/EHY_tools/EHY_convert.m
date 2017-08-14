@@ -13,6 +13,7 @@ function varargout=EHY_convert(varargin)
 
 OPT.saveoutputFile=1; % 0=do not save, 1=save
 OPT.outputFile=''; % if isempty > outputFile=strrep(inputFile,inputExt,outputExt);
+OPT.lineColor=[1 0 0]; % default is red
 
 if nargin>2
     if mod(nargin,2)==0
@@ -26,7 +27,7 @@ end
 A=textread(which('EHY_convert.m'),'%s','delimiter','\n');
 searchLine='function output=EHY_convert_';
 lineNrs=find(~cellfun('isempty',strfind(A,searchLine)));
-availableConversions={};
+availableConversions={'pli'};
 for ii=2:length(lineNrs)
     availableConversions{end+1,1}=A{lineNrs(ii)}(length(searchLine)+1:length(searchLine)+3);
     availableConversions{end,2}=A{lineNrs(ii)}(length(searchLine)+5:length(searchLine)+7);
@@ -43,6 +44,8 @@ if length(varargin)==1
     inputFile=varargin{1};
     [~,~,inputExt]= fileparts(inputFile);
     inputExt=strrep(inputExt,'.','');
+    
+    if strcmp(inputExt,'pli'); inputExt='pol'; end
     
     availableInputId=strmatch(inputExt,availableConversions(:,1));
     if isempty(availableInputId)
@@ -92,7 +95,7 @@ end
         if OPT.saveoutputFile
             tempFile=[tempdir 'temp.grd'];
             copyfile(inputFile,tempFile);
-            grid2kml(tempFile,[255;0;0]);
+            grid2kml(tempFile,OPT.lineColor*255);
             movefile(strrep(tempFile,'.grd','.kml'),outputFile);
             delete(tempFile)
         end
@@ -120,7 +123,7 @@ end
         ldb=landboundary('read',inputFile);
         if OPT.saveoutputFile
             tempFile=[tempdir 'temp.kml'];
-            ldb2kml(ldb,tempFile,[1 0 0])
+            ldb2kml(ldb,tempFile,OPT.lineColor)
             movefile(tempFile,outputFile);
         end
         output=[];
