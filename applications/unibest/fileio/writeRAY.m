@@ -121,7 +121,7 @@ elseif nargin == 1
         if isempty(RAYdata(ii).time)
             fprintf(fid4,'    equi      c1     c2   h0    angle   fshape\n');
             if isempty(RAYdata(ii).QSoffset)
-                fprintf(fid4,'%8.2e %12.8f %8.4f %5.1f %9.2f %9.2f\n',[RAYdata(ii).equi RAYdata(ii).c1 RAYdata(ii).c2 RAYdata(ii).h0 RAYdata(ii).hoek RAYdata(ii).fshape]);
+                fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).equi RAYdata(ii).c1 RAYdata(ii).c2 RAYdata(ii).h0 RAYdata(ii).hoek RAYdata(ii).fshape]);
             else
                 fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).equi RAYdata(ii).c1 RAYdata(ii).c2 RAYdata(ii).h0 RAYdata(ii).hoek RAYdata(ii).fshape RAYdata(ii).QSoffset]);
             end
@@ -130,11 +130,11 @@ elseif nargin == 1
                 % hass is not empty:
                 % whatever non-zero value is set (e.g. 1, 1000, 'on', etc.), hass is printed as 1 (except for 0):
                 fprintf(fid4,'       Xb      2 %%      20%%      50%%      80%%     100%%     high_angle_stability_switch\n');
-                fprintf(fid4,'%9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.0f\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100 ~isempty(nonzeros(RAYdata(ii).hass))]);
+                fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100 ~isempty(nonzeros(RAYdata(ii).hass))]);
             else
                 % hass is empty, ignore it (not printed as zero, as in the original file):
                 fprintf(fid4,'       Xb      2 %%      20%%      50%%      80%%     100%%\n');
-                fprintf(fid4,'%9.1f %9.1f %9.1f %9.1f %9.1f %9.1f\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100]);
+                fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100]);
             end
         else
             if isempty(RAYdata(ii).hass)
