@@ -16,7 +16,7 @@ if length(x)~=length(y); error('x and y should have the same length'); end
 for ixy=1:length(x)
 dist=sqrt( (grd.cen.x-x(ixy)).^2 + (grd.cen.y-y(ixy)).^2 );
 [mm,nn]=find(dist==min(min(dist)));
-m(ixy)=mm+1;
-n(ixy)=nn+1;
+m(ixy)=mm(1)+1;
+n(ixy)=nn(1)+1;
 end
 
