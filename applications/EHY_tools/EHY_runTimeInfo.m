@@ -68,9 +68,6 @@ try % if simulation has finished
             line2=strsplit(line);
             realTime_S=str2double(line2{end});
             
-
-            
-            
         case 'mdf'
             % dia
             if exist([pathstr filesep 'tri-diag.' name ],'file') % first check if run was done in parallel
