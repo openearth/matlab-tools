@@ -40,7 +40,7 @@ switch modelType
         fclose(fid);
         line=strsplit(line);
         
-        runPeriod_S=str2num(line{2});
+        runPeriod_S=str2num(line{2})-tstart*timeFactor(tunit,'S');
         runPeriod_D=runPeriod_S/3600/24;
     case 'mdf'
         [pathstr, name, ext] = fileparts(mdFile);
@@ -56,7 +56,8 @@ switch modelType
         end
         fclose(fid);
         line2=strsplit(line2);
-        runperiod_perc=str2num(strrep((line2{6}),'%',''))/100;
+        indexPerc=find(~cellfun('isempty',strfind(line2,'%')));
+        runperiod_perc=str2num(strrep((line2{indexPerc}),'%',''))/100;
         
         runPeriod_S=simPeriod_S*runperiod_perc;
         runPeriod_D=runPeriod_S*timeFactor('S','D');
@@ -81,7 +82,7 @@ end
 
 percentage=runPeriod_S/simPeriod_S*100;
 
-disp(['Status of ' name ext ': ' num2str(round(runPeriod_D,1)) '/' num2str(round(simPeriod_D,1)) ' of simulation days - ',...
+disp(['Status of ' name ext ': ' num2str(round(runPeriod_D)) '/' num2str(round(simPeriod_D)) ' of simulation days - ',...
     sprintf('%0.1f',percentage) '%']);
 
 if nargout==1
