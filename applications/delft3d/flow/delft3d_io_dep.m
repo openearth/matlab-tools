@@ -274,7 +274,10 @@ else strcmpi(cmd,'write');
         
         D3Dmatrix          = G.cen.dep;
         if OPT.dummy
-            D3Dmatrix          = addrowcol(D3Dmatrix,[-1 1],[-1 1],nan);
+            % NOTE : There was the transpose ' missing here...and this was
+            % messing up the file writing - QUICKING was yielding : depth
+            % does not fit grid
+            D3Dmatrix          = addrowcol(D3Dmatrix,[-1 1],[-1 1],nan)';
             disp('Dummy values are added around the depth matrix')
         end
         position           = 'center';
