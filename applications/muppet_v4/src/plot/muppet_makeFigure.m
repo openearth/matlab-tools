@@ -29,11 +29,19 @@ if strcmp(mode,'preview')
     handles.figures(ifig).figure.export=0;    
 else
     % Export to file
-%    handles.figures(ifig).figure.units='centimeters';
-    handles.figures(ifig).figure.fontreduction=1;
-    handles.figures(ifig).figure.units='pixels';
-    handles.figures(ifig).figure.cm2pix=cm2pix;
+    
+    if ~verLessThan('matlab', '8.4')
+        handles.figures(ifig).figure.fontreduction=1;
+        handles.figures(ifig).figure.units='pixels';
+        handles.figures(ifig).figure.cm2pix=cm2pix;
+    else
+        handles.figures(ifig).figure.units='centimeters';
+        handles.figures(ifig).figure.cm2pix=1;
+        handles.figures(ifig).figure.fontreduction=1;
+    end
+    
     handles.figures(ifig).figure.export=1; 
+    
 end
 
 fig=handles.figures(ifig).figure;
