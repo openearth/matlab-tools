@@ -1,4 +1,4 @@
-      function angle = detang (x     , y     , icom  , bnd   )
+      function angle = detang (x     , y     , icom  , bnd   ,sphere)
 
       % detangle: determines orientation of a boundary segment
       % delft hydraulics                         marine and coastal management
@@ -25,11 +25,33 @@
 % -------determine orientation (angle) (not for diagonal boundaries)
 %
          if mb > ma || nb > na
-            dx = x   (ibnd,2) - x   (ibnd,1);
-            dy = y   (ibnd,2) - y   (ibnd,1);
+             if ~sphere
+                dx = x   (ibnd,2) - x   (ibnd,1);
+                dy = y   (ibnd,2) - y   (ibnd,1);
+             else
+                 x1  = x  (ibnd,2);
+                 x2  = x  (ibnd,1);
+                 y12 = (y(ibnd,1) + y(ibnd,2))/2;
+                 dx = sign(x (ibnd,2) - x(ibnd,1)) * nesthd_distance(x1,y12,x2,y12,sphere);
+                 y1  = y  (ibnd,2);
+                 y2  = y  (ibnd,1);
+                 x12 = (x(ibnd,1) + x(ibnd,2))/2;
+                 dy = sign(y (ibnd,2) - y(ibnd,1)) * nesthd_distance(x12,y1,x12,y2,sphere);
+             end
          else
-            dx = x   (ibnd,1) - x   (ibnd,2);
-            dy = y   (ibnd,1) - y   (ibnd,2);
+            if ~sphere
+                dx = x   (ibnd,1) - x   (ibnd,2);
+                dy = y   (ibnd,1) - y   (ibnd,2);
+            else
+                 x1  = x  (ibnd,1);
+                 x2  = x  (ibnd,2);
+                 y12 = (y(ibnd,1) + y(ibnd,2))/2;
+                 dx = sign(x (ibnd,1) - x(ibnd,2)) * nesthd_distance(x1,y12,x2,y12,sphere);
+                 y1  = y  (ibnd,1);
+                 y2  = y  (ibnd,2);
+                 x12 = (x(ibnd,1) + x(ibnd,2))/2;
+                 dy = sign(y (ibnd,1) - y(ibnd,2)) * nesthd_distance(x12,y1,x12,y2,sphere);
+             end
          end
 
          angle (ibnd) = atan2(dy,dx)*180./pi;

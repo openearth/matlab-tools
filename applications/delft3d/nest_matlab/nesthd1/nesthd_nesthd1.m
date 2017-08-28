@@ -44,11 +44,11 @@
                       name_coarse{i_node} = ['FlowNode_' num2str(i_node,'%8.8i')];
                   end;
                   if strncmpi(ncreadatt(files{1},'wgs84','grid_mapping_name'),'latitu',6) sphere = true; end;
-              else 
+              else
                   %% new map file
               end
       end
-      
+
       %% Read detailled grid; Make the icom matrix (active, inactive), not needed for DFLOWFM because all information is in the pli's
       switch type_nest
           case 'grd'
@@ -97,7 +97,7 @@
               switch type_bnd
                   case {'Delft3D','siminp'}
                       [help_X,help_Y,~]      = nesthd_detxy (grid_fine.X,grid_fine.Y,bnd,icom_fine,'UVp');
-                      angles                 = nesthd_detang (help_X,help_Y,icom_fine,bnd);
+                      angles                 = nesthd_detang (help_X,help_Y,icom_fine,bnd,sphere);
                       angles                 = reshape([angles;angles],size(bnd.Name,1)*2,1);
                   case {'ext','pli','mdu'}
                       % todo, detrmine orientation of the boundary such
