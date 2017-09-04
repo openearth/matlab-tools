@@ -32,11 +32,11 @@
                  x1  = x  (ibnd,2);
                  x2  = x  (ibnd,1);
                  y12 = (y(ibnd,1) + y(ibnd,2))/2;
-                 dx = sign(x (ibnd,2) - x(ibnd,1)) * nesthd_distance(x1,y12,x2,y12,sphere);
+                 dx = sign(x (ibnd,2) - x(ibnd,1)) * nesthd_detlength(x1,y12,x2,y12,'Spherical',sphere);
                  y1  = y  (ibnd,2);
                  y2  = y  (ibnd,1);
                  x12 = (x(ibnd,1) + x(ibnd,2))/2;
-                 dy = sign(y (ibnd,2) - y(ibnd,1)) * nesthd_distance(x12,y1,x12,y2,sphere);
+                 dy = sign(y (ibnd,2) - y(ibnd,1)) * nesthd_detlength(x12,y1,x12,y2,'Spherical',sphere);
              end
          else
             if ~sphere
@@ -46,11 +46,11 @@
                  x1  = x  (ibnd,1);
                  x2  = x  (ibnd,2);
                  y12 = (y(ibnd,1) + y(ibnd,2))/2;
-                 dx = sign(x (ibnd,1) - x(ibnd,2)) * nesthd_distance(x1,y12,x2,y12,sphere);
+                 dx = sign(x (ibnd,1) - x(ibnd,2)) * nesthd_detlength(x1,y12,x2,y12,'Spherical',sphere);
                  y1  = y  (ibnd,1);
                  y2  = y  (ibnd,2);
                  x12 = (x(ibnd,1) + x(ibnd,2))/2;
-                 dy = sign(y (ibnd,1) - y(ibnd,2)) * nesthd_distance(x12,y1,x12,y2,sphere);
+                 dy = sign(y (ibnd,1) - y(ibnd,2)) * nesthd_detlength(x12,y1,x12,y2,'Spherical',sphere);
              end
          end
 

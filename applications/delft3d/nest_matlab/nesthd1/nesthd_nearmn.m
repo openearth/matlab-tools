@@ -25,7 +25,7 @@
 %------------- distance from specified location and centre of grid cell
 %
 
-               dist = nesthd_distance(xp,yp,xz,yz,OPT.spherical);
+               dist = nesthd_detlength(xp,yp,xz,yz,'Spherical',OPT.spherical);
 
 %
 %------------- if closer set M,N co-ordinates and reset minimal distance
