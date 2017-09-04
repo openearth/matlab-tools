@@ -1,6 +1,6 @@
 function [refdate,tunit,tstart,tstop]=getTimeInfoFromMdFile(mdFile)
 
-modelType=nesthd_det_filetype(mdFile);
+[modelType,mdFile]=EHY_getModelType(mdFile);
 
 switch modelType
     case 'mdu'
