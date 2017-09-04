@@ -18,11 +18,11 @@ else
     %% Spherical coordinates, use native matlab functions
     x_to (2:length(x_from)) = x_to(1);
     y_to (2:length(x_from)) = y_to(1);
-    
+
     pnt_1 = [y_from ; x_from];
     pnt_2 = [y_to   ; x_to];
-       
-    dist  = deg2km(distance(pnt_1',pnt_2'))*1000.;
+
+    dist  = geo.deg2km(distance(pnt_1',pnt_2'))*1000.;
 
  %   no_pnt        = length(x_from);
  %   for i_pnt = 1: no_pnt
