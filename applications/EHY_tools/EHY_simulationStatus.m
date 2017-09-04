@@ -17,12 +17,9 @@ elseif nargin==1
 end
 
 %%
-modelType=nesthd_det_filetype(mdFile);
+[modelType,mdFile]=EHY_getModelType(mdFile);
 if strcmp(modelType,'none')
-    [modelType,mdFile]=EHY_getModelType(mdFile);
-    if strcmp(modelType,'none')
-        error('No .mdu, .mdf or siminp found in this folder')
-    end
+    error('No .mdu, .mdf or siminp found in this folder')
 end
 [refdate,tunit,tstart,tstop]=getTimeInfoFromMdFile(mdFile);
 simPeriod_S=(tstop-tstart)*timeFactor(tunit,'S');
