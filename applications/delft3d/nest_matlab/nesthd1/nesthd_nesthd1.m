@@ -32,8 +32,11 @@
               [grid_coarse.Xcen,grid_coarse.Ycen] = nesthd_det_cen(grid_coarse.X,grid_coarse.Y,icom_coarse);
               if strcmpi(grid_coarse.CoordinateSystem,'Spherical');sphere = true;end
           case 'DFLOWFM'
+              try
               G_new=dflowfm.readNet   (files{1});
-              G_old=dflowfm.readNetOld(files{1});
+              catch
+              G_old=dflowfm.readNetOld(files{1},'edge',0);
+              end
               if isfield (G_old.face,'FlowElem_x')
                   %% old map file
                   G                = G_old;
