@@ -109,7 +109,6 @@
     <text>Make Open Boundaries</text>
     <callback>ddb_ModelMakerToolbox_DFlowFM_quickMode</callback>
     <option1>generateopenboundaries</option1>
-    <enable>0</enable>
   </element>
   <element>
     <style>pushbutton</style>

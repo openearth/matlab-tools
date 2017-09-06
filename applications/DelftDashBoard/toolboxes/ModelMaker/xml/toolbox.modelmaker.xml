@@ -60,6 +60,7 @@
       <formodel>delft3dwave</formodel>
       <formodel>ww3</formodel>
       <formodel>xbeach</formodel>
+      <formodel>sfincs</formodel>
       <tabstring>Bathymetry</tabstring>
       <callback>ddb_ModelMakerToolbox_bathymetry</callback>
       <enable>1</enable>
@@ -96,6 +97,18 @@
       <tabstring>Refinement</tabstring>
       <callback>ddb_ModelMakerToolbox_modflowusg_lines</callback>
       <element>toolbox.modelmaker.modflowusg.lines.xml</element>
+    </tab>
+    <tab>
+      <formodel>esm</formodel>
+      <tabstring>Quick Mode</tabstring>
+      <callback>ddb_ModelMakerToolbox_esm_quickMode</callback>
+      <element>toolbox.modelmaker.esm.quickmode.xml</element>
+    </tab>
+    <tab>
+      <formodel>dflowfm</formodel>
+      <tabstring>Refine & Clip</tabstring>
+      <callback>ddb_ModelMakerToolbox_DFlowFM_refine</callback>
+      <element>toolbox.modelmaker.dflowfm.refine.xml</element>
     </tab>
   </element>
 </root>

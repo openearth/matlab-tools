@@ -53,8 +53,8 @@ else
     % grids
     dmin=5000;
     dmax=5000;
-    dmin=5;
-    dmax=5;
+    dmin=1000;
+    dmax=1000;
 end
 %dmin=dmin/2;
 xg0=xg;

@@ -103,47 +103,36 @@
     <enable>1</enable>
   </element>
   <element>
-    <style>pushbutton</style>
-    <position>320 60 140 20</position>
-    <tooltipstring>Push to generate open boundary locations</tooltipstring>
-    <text>Make Open Boundaries</text>
+    <style>edit</style>
+    <position>810 100 110 20</position>
+    <tooltipstring>Edit reference time</tooltipstring>
+    <text>Ref Time</text>
+    <textposition>left</textposition>
+    <variable>handles.model.sfincs.domain(ad).tref</variable>
+    <type>datetime</type>
     <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
-    <option1>generateopenboundaries</option1>
-  </element>
-  <element>
-    <style>pushbutton</style>
-    <position>320 35 140 20</position>
-    <tooltipstring>Push to generate astronomical boundary conditions</tooltipstring>
-    <text>Make Boundary Conditions</text>
-    <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
-    <option1>generateboundaryconditions</option1>
+    <option1>edittimes</option1>
   </element>
   <element>
     <style>edit</style>
-    <position>470 110 30 20</position>
-    <tooltipstring>Edit maximum elevation for grid generation. Land areas at elevations above this value will not be included in the grid.</tooltipstring>
-    <text>Z Max (m)</text>
-    <textposition>right</textposition>
-    <type>real</type>
-    <variable>handles.toolbox.modelmaker.zMax</variable>
+    <position>810 75 110 20</position>
+    <tooltipstring>Edit start time</tooltipstring>
+    <text>Start Time</text>
+    <textposition>left</textposition>
+    <variable>handles.model.sfincs.domain(ad).tstart</variable>
+    <type>datetime</type>
+    <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
+    <option1>edittimes</option1>
   </element>
   <element>
     <style>edit</style>
-    <position>470 60 50 20</position>
-    <tooltipstring>Edit maximum distance between boundary nodes (in metres)</tooltipstring>
-    <text>Max Distance</text>
-    <textposition>right</textposition>
-    <type>integer</type>
-    <variable>handles.toolbox.modelmaker.sectionLengthMetres</variable>
-  </element>
-  <element>
-    <style>popupmenu</style>
-    <position>470 35 100 20</position>
-    <tooltipstring>Select tide database for boundary conditions</tooltipstring>
-    <variable>handles.toolbox.modelmaker.activeTideModelBC</variable>
-    <type>integer</type>
-    <listtext>
-      <variable>handles.tideModels.longNames</variable>
-    </listtext>
+    <position>810 50 110 20</position>
+    <tooltipstring>Edit stop time</tooltipstring>
+    <text>Stop Time</text>
+    <textposition>left</textposition>
+    <variable>handles.model.sfincs.domain(ad).tstop</variable>
+    <type>datetime</type>
+    <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
+    <option1>edittimes</option1>
   </element>
 </root>

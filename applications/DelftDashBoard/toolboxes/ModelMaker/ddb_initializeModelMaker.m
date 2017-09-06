@@ -194,3 +194,18 @@ handles.toolbox.modelmaker.gridgen.lines(1).refinement_level=[];
 handles.toolbox.modelmaker.gridgen.activeline=1;
 handles.toolbox.modelmaker.gridgen.linenames={''};
 
+%% ESM
+handles.toolbox.modelmaker.esm.coastline.filename='';
+handles.toolbox.modelmaker.esm.coastline.length=0;
+handles.toolbox.modelmaker.esm.coastline.x=[];
+handles.toolbox.modelmaker.esm.coastline.y=[];
+handles.toolbox.modelmaker.esm.coastline.dx=5000;
+handles.toolbox.modelmaker.esm.coastline.xon=20000;
+handles.toolbox.modelmaker.esm.coastline.xoff=200000;
+handles.toolbox.modelmaker.esm.depthcontour.value=-100;
+
+%% DFLowFM refinement
+handles.toolbox.modelmaker.dflowfm.nr_refinement_steps=1;
+handles.toolbox.modelmaker.dflowfm.dtmax=60;
+handles.toolbox.modelmaker.polyLength=0;
+handles.toolbox.modelmaker.polygonFile='';

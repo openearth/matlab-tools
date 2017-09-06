@@ -193,51 +193,53 @@ switch lower(handles.activeModel.name)
     case{'dflowfm'}
         handles=ddb_ModelMakerToolbox_DFlowFM_generateBathymetry(handles,ad,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
     case{'xbeach'}
-    
-    % Check: no geographic coordinate systems
-    coord=handles.screenParameters.coordinateSystem;
-    iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
-    dataCoord.name=handles.screenParameters.coordinateSystem.name;
-    dataCoord.type=handles.screenParameters.coordinateSystem.type;
-    if ~strcmpi(lower(dataCoord.type), 'geographic')
-
-        try
-            tmp = handles.toolbox.modelmaker.xb_trans.X;
-            xbeach1d = 1;
-        catch
-            xbeach1d = 0;
-        end
         
-        % Make XBeach in 1D
-        if xbeach1d == 1
-        
+        % Check: no geographic coordinate systems
+        coord=handles.screenParameters.coordinateSystem;
+        iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
+        dataCoord.name=handles.screenParameters.coordinateSystem.name;
+        dataCoord.type=handles.screenParameters.coordinateSystem.type;
+        if ~strcmpi(lower(dataCoord.type), 'geographic')
+            
+            try
+                tmp = handles.toolbox.modelmaker.xb_trans.X;
+                xbeach1d = 1;
+            catch
+                xbeach1d = 0;
+            end
+            
+            % Make XBeach in 1D
+            if xbeach1d == 1
+                
+            else
+                wb =   waitbox('XBeach model is being created');
+                handles=ddb_ModelMakerToolbox_XBeach_generateModel(handles, datasets);
+                close(wb);
+                
+                % Plotting -> no, because there are already windows open
+                %handles=ddb_initializeXBeach(handles,1,'xbeach1');% Check
+                %pathname = pwd; filename='\params.txt';
+                %handles.model.xbeach.domain(handles.activeDomain).params_file=[pathname filename];
+                %handles=ddb_readParams(handles,[pathname filename],1);
+                %handles=ddb_readAttributeXBeachFiles(handles,[pathname,'\'],1); % need to add all files
+                %ddb_plotXBeach('plot','domain',ad); % make
+                setHandles(handles);
+                
+                %ddb_updateDataInScreen;
+                % gui_updateActiveTab;
+                % ddb_refreshDomainMenu;
+                
+                % Overview
+                ddb_ModelMakerToolbox_XBeach_modelsetup(handles)
+            end
         else
-        wb =   waitbox('XBeach model is being created');
-        handles=ddb_ModelMakerToolbox_XBeach_generateModel(handles, datasets);
-        close(wb);
-
-        % Plotting -> no, because there are already windows open
-        %handles=ddb_initializeXBeach(handles,1,'xbeach1');% Check
-        %pathname = pwd; filename='\params.txt';
-        %handles.model.xbeach.domain(handles.activeDomain).params_file=[pathname filename];
-        %handles=ddb_readParams(handles,[pathname filename],1);
-        %handles=ddb_readAttributeXBeachFiles(handles,[pathname,'\'],1); % need to add all files
-        %ddb_plotXBeach('plot','domain',ad); % make
-        setHandles(handles);
-
-        %ddb_updateDataInScreen;
-        % gui_updateActiveTab;
-        % ddb_refreshDomainMenu; 
-
-        % Overview
-        ddb_ModelMakerToolbox_XBeach_modelsetup(handles)
+            ddb_giveWarning('text',['XBeach models are ALWAYS in cartesian coordinate systems. Change your coordinate system to make a XBeach model']);
         end
-    else
-        ddb_giveWarning('text',['XBeach models are ALWAYS in cartesian coordinate systems. Change your coordinate system to make a XBeach model']);
-    end
-
+        
     case{'ww3'}
         handles=ddb_ModelMakerToolbox_ww3_generate_bathymetry(handles,ad,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
+    case{'sfincs'}
+        handles=ddb_ModelMakerToolbox_sfincs_generateBathymetry(handles,ad,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);        
 end
 
 setHandles(handles);
