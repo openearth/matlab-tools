@@ -23,7 +23,7 @@ selection=  listdlg('PromptString',['Which function would you like to use:'],...
     'ListSize',[300 200]);
 % run selection
 if ~isempty(selection)
-    run(NoInputNeeded{selection})
+    run(NoInputNeeded{selection}(1:end-2))
 else
     disp('No function was selected.')
 end
