@@ -197,7 +197,7 @@ end
         pol=landboundary('read',inputFile);
         if OPT.saveoutputFile
             tempFile=[tempdir 'temp.kml'];
-            ldb2kml(pol,tempFile,[1 0 0])
+            ldb2kml(pol,tempFile,OPT.lineColor)
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
@@ -225,7 +225,7 @@ end
         ldb=shape2ldb(inputFile,0);
         if OPT.saveoutputFile
             tempFile=[tempdir 'temp.kml'];
-            ldb2kml(ldb,tempFile,[1 0 0])
+            ldb2kml(ldb,tempFile,OPT.lineColor)
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
@@ -240,6 +240,50 @@ end
         output=shape2ldb(inputFile,0);
         if OPT.saveoutputFile
             io_polygon('write',outputFile,output);
+        end
+    end
+% thd2kml
+    function output=EHY_convert_thd2kml(inputFile,outputFile,OPT)
+        OPT_user=OPT;
+        OPT.saveoutputFile=0;
+        pli=EHY_convert_thd2pli(inputFile,outputFile,OPT);
+        [x,y]=EHY_convert_coorCheck(pli(:,1),pli(:,2));
+        output=[x y];
+        OPT=OPT_user;
+        if OPT.saveoutputFile
+            tempFile=[tempdir 'temp.kml'];
+            ldb2kml(output,tempFile,OPT.lineColor)
+            copyfile(tempFile,outputFile);
+            delete(tempFile)
+        end
+    end
+% thd2pli
+    function output=EHY_convert_thd2pli(inputFile,outputFile,OPT)
+        thd=delft3d_io_thd('read',inputFile);
+        x=[];y=[];
+        disp('Open the corresponding .grd-file')
+        [grdName,grdPath]=uigetfile([pathstr filesep '.grd'],'Open the corresponding .grd-file');
+        tempFile=[tempdir 'tmp.grd'];
+        copyfile([grdPath grdName],tempFile);
+        grd=wlgrid('read',tempFile);
+        delete(tempFile);
+        
+        for iM=1:length(thd.m)
+            if strcmpi(thd.DATA(iM).direction,'U')
+                x=[x;grd.X(thd.m(1,iM),thd.n(1,iM));...
+                    grd.X(thd.m(2,iM),thd.n(2,iM)); NaN];
+                y=[y;grd.Y(thd.m(1,iM),thd.n(1,iM));...
+                    grd.Y(thd.m(2,iM),thd.n(2,iM)-1); NaN];
+            else
+                x=[x;grd.X(thd.m(1,iM),thd.n(1,iM));...
+                    grd.X(thd.m(2,iM)-1,thd.n(2,iM)); NaN];
+                y=[y;grd.Y(thd.m(1,iM),thd.n(1,iM));...
+                    grd.Y(thd.m(2,iM),thd.n(2,iM)); NaN];
+            end
+        end
+        output=[x y];
+        if OPT.saveoutputFile
+            io_polygon('write',outputFile,x,y,'dosplit');
         end
     end
 % xyn2kml
@@ -302,7 +346,6 @@ end
     end
 % xyz2kml
     function output=EHY_convert_xyz2kml(inputFile,outputFile,OPT)
-        %         [lon lat ~]=textread(inputFile,'delimiter','\n');
         xyz=dlmread(inputFile);
         lon=xyz(:,1); lat=xyz(:,2);
         if OPT.saveoutputFile
@@ -333,7 +376,7 @@ if (min(y)>max(x)) && (~any(x<0)) && (~any(y<0)) && (prod(x>1000)==1) % RD in m
         fromEPSG=input('What is the code of the input coordinates? EPSG: ');
         [x,y]=convertCoordinates(x,y,'CS1.code',fromEPSG,'CS2.code',4326);
     end
-elseif and(min(y)>max(x),~any(x<0),~any(y<0)) % RD in km
+elseif (min(y)>max(x)) && (~any(x<0)) && (~any(y<0)) % RD in km
     disp('Input coordinations are probably in kilometer Amersfoort/RD New, EPSG 28992')
     yn=input('Apply conversion from Amersfoort/RD New, EPSG 28992? [Y/N]  ','s');
     if strcmpi(yn,'y')
