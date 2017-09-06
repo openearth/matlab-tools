@@ -315,6 +315,7 @@ end
 function [x,y]=EHY_convert_coorCheck(x,y)
 if any([any(x<-180),any(x>180),any(y<-90),any(y>90)])
     disp('Input coordinations are probably not in [Longitude,Latitude] - WGS ''84')
+    disp('common EPSG-codes: Amersfoort/RD New: 28992')
     fromEPSG=input('What is the code of the input coordinates? EPSG: ');
     [x,y]=convertCoordinates(x,y,'CS1.code',fromEPSG,'CS2.code',4326);
 end
