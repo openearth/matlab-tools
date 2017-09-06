@@ -35,7 +35,7 @@ end
 %% initialise
 if length(varargin)==0
     disp(['EHY_convert  -  Conversion possible for following inputFiles: ',...
-        strrep(strjoin(unique(availableConversions(:,1))),' ',', ')])
+        strrep(strtrim(sprintf('%s ',availableConversions{:,1})),' ',', ')])
     availableExt=strcat('*.',[{'*'}; unique(availableConversions(:,1))]);
     disp('Open a file that you want to convert')
     [filename, pathname]=uigetfile(availableExt,'Open a file that you want to convert');
