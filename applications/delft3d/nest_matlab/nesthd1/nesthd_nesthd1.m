@@ -35,7 +35,6 @@
               G = dflowfm.readNet   (files{1});
               if isfield (G.face,'FlowElem_x')
                   %% old map file
-                  G                = G_old;
                   grid_coarse.Xcen = G.face.FlowElem_x;
                   grid_coarse.Ycen = G.face.FlowElem_y;
                   name_coarse{length(G.face.FlowElem_x)} = [];
