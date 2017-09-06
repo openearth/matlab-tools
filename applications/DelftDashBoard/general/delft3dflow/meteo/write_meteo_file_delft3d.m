@@ -122,6 +122,11 @@ switch par
         unit='W/m2';
         ext='ams';
         fmt='%7.1f';
+    case{'precip'}
+        quantity='precipitation';
+        unit='mm/h';
+        ext='ampr';
+        fmt='%7.1f';
 end
 
 ncols=length(parameter.x);

@@ -70,6 +70,8 @@ function write_spiderweb_file_delft3d(fname, tc, gridunit, reftime, radius, vara
 vsn='1.03';
 merge_frac=[];
 tdummy=[]; % vector with tstart, tstop and dt
+include_precip=0;
+
 for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
@@ -79,6 +81,8 @@ for ii=1:length(varargin)
                 merge_frac=varargin{ii+1};
             case{'tdummy'}
                 tdummy=varargin{ii+1};
+            case{'include_precipitation'}
+                include_precip=varargin{ii+1};
         end
     end
 end
@@ -99,13 +103,23 @@ fprintf(fid,'%s\n','spw_rad_unit   = m');
 if ~isempty(merge_frac)
     fprintf(fid,'%s\n',['spw_merge_frac =   ' num2str(merge_frac)]);
 end
-fprintf(fid,'%s\n','n_quantity     = 3');
+if ~include_precip
+    fprintf(fid,'%s\n','n_quantity     = 3');
+else
+    fprintf(fid,'%s\n','n_quantity     = 4');
+end
 fprintf(fid,'%s\n','quantity1      = wind_speed');
 fprintf(fid,'%s\n','quantity2      = wind_from_direction');
 fprintf(fid,'%s\n','quantity3      = p_drop');
+if include_precip
+    fprintf(fid,'%s\n','quantity4      = precipitation');
+end
 fprintf(fid,'%s\n','unit1          = m s-1');
 fprintf(fid,'%s\n','unit2          = degree');
 fprintf(fid,'%s\n','unit3          = Pa');
+if include_precip
+    fprintf(fid,'%s\n','unit4          = mm/h');
+end
 
 fmt1='%9.2f';
 fmt1=[repmat(fmt1,1,ncols) '\n'];
@@ -135,6 +149,9 @@ if ~isempty(tdummy)
         fprintf(fid,fmt1,dummys);
         fprintf(fid,fmt2,dummys);
         fprintf(fid,fmt3,dummys);
+        if include_precip
+            fprintf(fid,fmt3,dummys);
+        end
         if tc.track(1).time-tdummy(3)>tdummy(1)
             % Add dummy blocks (2)
             tim=1440*((tc.track(1).time-tdummy(3))-reftime);
@@ -145,6 +162,9 @@ if ~isempty(tdummy)
             fprintf(fid,fmt1,dummys);
             fprintf(fid,fmt2,dummys);
             fprintf(fid,fmt3,dummys);
+            if include_precip
+                fprintf(fid,fmt3,dummys);
+            end
         end
     end
 end
@@ -161,6 +181,9 @@ for it=1:length(tc.track)
     fprintf(fid,fmt1,tc.track(it).wind_speed);
     fprintf(fid,fmt2,tc.track(it).wind_from_direction);
     fprintf(fid,fmt3,tc.track(it).pressure_drop);
+    if include_precip
+        fprintf(fid,fmt3,tc.track(it).precipitation);
+    end
 end
 
 if ~isempty(tdummy)
@@ -179,6 +202,10 @@ if ~isempty(tdummy)
         fprintf(fid,fmt1,dummys);
         fprintf(fid,fmt2,dummys);
         fprintf(fid,fmt3,dummys);
+        if include_precip
+            fprintf(fid,fmt3,dummys);
+        end
+
         if tdummy(2)>tc.track(end).time
             % Add dummy blocks (4)
             tim=1440*(tdummy(2)-reftime);
@@ -189,6 +216,9 @@ if ~isempty(tdummy)
             fprintf(fid,fmt1,dummys);
             fprintf(fid,fmt2,dummys);
             fprintf(fid,fmt3,dummys);
+            if include_precip
+                fprintf(fid,fmt3,dummys);
+            end
         end
     end
 end
