@@ -7,10 +7,17 @@ function varargout = EHY_opendap (varargin)
 %                   returns a cell array with the names of the parameters available
 %
 %  2 <keyword,value> pairs are implemented
-%  Stations       = EHY_opendap('Parameter','waterhoogte')
-%                   returns a cell array with the names of the stations where this parameter is measured
-%  [times,values] = EHY_opendap('Parameter','waterhoogte','Station','HoekvH')
-%                   returns the time series, times and values, of this parameter at this station
+%  Stations            = EHY_opendap('Parameter','waterhoogte')
+%                        returns a cell array with the names of the stations where this parameter is measured
+%  [times,values]      = EHY_opendap('Parameter','waterhoogte','Station','HoekvH')
+%                        returns the time series, times and values, of this parameter at this station
+%  [times,values,Info] = EHY_opendap('Parameter','waterhoogte','Station','HoekvH')
+%                        returns the time series, times and values, of this parameter at this station
+%                        in addition, some general Infomation like for instance:
+%                        - Full name of the station,
+%                        - Location of the station,
+%                        - Measurement height, etc
+%                        Is returned in the stucture Info 
 %
 
 %% Initialisation 
@@ -94,14 +101,35 @@ if ~isempty(OPT.Parameter)
                 values          = value_tmp(index);
                 varargout{1} = dates;
                 varargout{2} = values;
+                
+                %% Retrieve general information (if requested)
+                if nargout == 3
+                    for i_var = 1: length(Info.Variables) - 2
+                        if i_var <= 2
+                            geninf.(Info.Variables(i_var).Name) = ncread(list_stat{i_stat(i_par)},Info.Variables(i_var).Name)';
+                        else
+                            geninf.(Info.Variables(i_var).Name) = ncread(list_stat{i_stat(i_par)},Info.Variables(i_var).Name);
+                        end
+                    end
+                    varargout{3} = geninf;
+                end
             else
                 varargout{1} = [datenum(1900,1,1); datenum(now)];
                 varargout{2} = [NaN              ; NaN         ];
+                if nargout == 3
+                    varargout{3} = 'Station not found on Deltares OPENDAP server';
+                end
+                
             end
             
        catch
              disp(['Problems retrieving OPENDAP data for station : ' OPT.Station]);
-             [dates,values] = EHY_opendap (varargin{1:end});
+             if nargout == 2
+                 [dates,values]        = EHY_opendap (varargin{1:end});
+             elseif nargout == 3
+                 [dates,values,geninf] = EHY_opendap (varargin{1:end});
+                 varargout{3}          = geninf;
+             end
              varargout{1} = dates;
              varargout{2} = values;
         end
