@@ -272,4 +272,16 @@
       </check>
     </dependency>
   </element>
+
+  <element>
+    <style>edit</style>
+    <position>820 10 50 20</position>
+    <text>Rain</text>
+    <textposition>left</textposition>
+    <variable>handles.toolbox.tropicalcyclone.rainfall</variable>
+    <type>real</type>
+    <tooltipstring>Edit rainfall</tooltipstring>
+  </element>
+
+
 </root>

@@ -211,3 +211,5 @@ handles.toolbox.tropicalcyclone.ensemble.nvm=3;
 handles.toolbox.tropicalcyclone.ensemble.spwname='testing';
 handles.toolbox.tropicalcyclone.ensemble.dt_spw=6; % hours
 
+
+handles.toolbox.tropicalcyclone.rainfall=-999;

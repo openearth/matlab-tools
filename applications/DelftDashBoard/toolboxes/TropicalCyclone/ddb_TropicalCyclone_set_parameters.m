@@ -608,6 +608,10 @@ try
             handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
             handles.toolbox.tropicalcyclone.wind_profile='holland2010';
             handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';   
+        case{'hurdat2besttrack'}
+            tc=tc_read_hurdat2_best_track([pathname filename]);
+            handles.toolbox.tropicalcyclone.cyclonename=tc.name;
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
         otherwise
             giveWarning('text','Sorry, present import format not supported!');
             return
@@ -727,10 +731,11 @@ else
                 
                 spw.asymmetry_magnitude='schwerdt1979';
 %                spw.asymmetry_magnitude='user_defined';
-                spw.asymmetry_factor=0.55;
+                spw.asymmetry_magnitude='factor';
+                spw.asymmetry_factor=0.60;
                 spw.asymmetry_related_to_storm_motion=1;
-                spw.asymmetry_radial_distribution='v/vmax';
-%                spw.asymmetry_radial_distribution='constant';
+%                spw.asymmetry_radial_distribution='v/vmax';
+                spw.asymmetry_radial_distribution='constant';
                 spw.tdummy=tdummy;
 
                 
@@ -738,10 +743,17 @@ else
                 tc.radius_velocity=[34 50 64 100];
                 tc.wind_speed_unit='kts';
                 tc.radius_unit='NM';
-                tc.cs.name='WGS 84';
-                tc.cs.type='geographic';
+                
+%                tc.cs.name='WGS 84';
+%                tc.cs.type='geographic';
+                tc.cs=handles.screenParameters.coordinateSystem;
+%                tc.cs.type='geographic';
 
                 tc.track=handles.toolbox.tropicalcyclone.track;
+                
+%                if handles.toolbox.tropicalcyclone.rainfall>0.0
+                    spw.rainfall=handles.toolbox.tropicalcyclone.rainfall;
+%                end
                 
                 % Run WES
                 tc=wes3(tc,'tcstructure',spw,[name '.spw']);
