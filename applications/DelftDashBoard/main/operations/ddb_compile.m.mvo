@@ -1,10 +1,21 @@
 function ddb_compile
-%DDCOMPILE Compiles DelftDashboard
+%DDCOMPILE3  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddcompile3
+%
+%   Input:
+%   varargin =
+%
+%
+%
 %
 %   Example
-%   ddb_compile
+%   ddcompile3
 %
-%   See also mcc
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -41,22 +52,15 @@ function ddb_compile
 % Created: 29 Nov 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: ddb_compile.m 12822 2016-07-29 08:51:54Z nederhof $
+% $Date: 2016-07-29 10:51:54 +0200 (Fri, 29 Jul 2016) $
+% $Author: nederhof $
+% $Revision: 12822 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/main/operations/ddb_compile.m $
 % $Keywords: $
 
 %%
 warning 'off';
-% matlabfolder='c:\Program Files\MATLAB\R2016b\';
-% compilefolder='c:\Users\grasmeijerb\Documents\delftdashboardsetup\';
-% ddbsettingsdir='c:\Users\grasmeijerb\Documents\delftdashboardsetup\ddbsettings\';
-% include_additional_toolboxes=0;
-% ddb_path = 'c:\SVN_Projects\OpenEarthTools\matlab\applications\DelftDashBoard\';
-% netcdf_path = 'c:\SVN_Projects\OpenEarthTools\matlab\io\netcdf\netcdfAll-4.2.jar';
-
 matlabfolder='c:\Program Files\Matlab\MATLAB2013b_64\';
 compilefolder='d:\delftdashboardsetup\';
 ddbsettingsdir='d:\ddbsettings\';
@@ -64,17 +68,16 @@ include_additional_toolboxes=0;
 ddb_path = 'd:\checkouts\OET\trunk\matlab\applications\DelftDashBoard';
 netcdf_path = 'd:\checkouts\OET\trunk\matlab\io\netcdf\netcdfAll-4.2.jar';
 
-% % Throw away compilefolder
-% if exist(compilefolder,'dir')
-%    rmdir(compilefolder,'s');
-% end
-% 
-% if exist(ddbsettingsdir,'dir')
-%    rmdir(ddbsettingsdir,'s');
-% end
+% Throw away compilefolder
+if exist(compilefolder,'dir')
+   rmdir(compilefolder,'s');
+end
+
+if exist(ddbsettingsdir,'dir')
+   rmdir(ddbsettingsdir,'s');
+end
 
 % Make new compile folder
-disp('Making compile folder...')
 mkdir(compilefolder);
 mkdir([compilefolder 'data']);
 mkdir([compilefolder 'bin']);
@@ -102,7 +105,6 @@ fprintf(fid,'%s\n','-a');
 fprintf(fid,'%s\n','DelftDashBoard.m');
 
 % Make directory for compiled settings
-disp('Making directory for compiled settings...')
 flist=dir([inipath 'settings']);
 for i=1:length(flist)
     switch flist(i).name
@@ -114,7 +116,6 @@ for i=1:length(flist)
 end
 
 % Add models
-disp('Adding models...')
 flist=dir([inipath 'models']);
 for j=1:length(flist)
     if flist(j).isdir
@@ -142,7 +143,6 @@ for j=1:length(flist)
 end
 
 % Add toolboxes
-disp('Adding toolboxes...')
 flist=dir([inipath 'toolboxes']);
 for j=1:length(flist)
     if flist(j).isdir
@@ -219,7 +219,6 @@ fclose(fid);
 % end
 
 %% Generate data folder in exe folder
-disp('Generating data folder...')
 ddb_copyAllFilesToDataFolder(inipath,compiledatadir,additionalToolboxDir);
 
 %mcc -m -v -d exe\bin DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
@@ -231,14 +230,12 @@ ddb_copyAllFilesToDataFolder(inipath,compiledatadir,additionalToolboxDir);
 cd(ddb_path)
 disp('Start compiling ...');
 mcc('-m','-v','-d',exedir,'DelftDashBoard.m','-B','complist','-a',ddbsettingsdir,'-a',netcdf_path);
-% % ddbsettings folder no longer linked
-% mcc('-m','-v','-d',exedir,'DelftDashBoard.m','-B','complist','-a',netcdf_path);
 
 % copyfile('exe2\delftdashboard.exe',exedir);
 % rmdir('exe','s');
 
 % make about.txt file
-Revision = '$Revision$';
+Revision = '$Revision: 12822 $';
 eval([strrep(Revision(Revision~='$'),':','=') ';']);
 
 dos(['copy ' fileparts(which('ddsettings')) filesep 'main' filesep 'menu' filesep 'ddb_aboutDelftDashBoard.txt ' fileparts(which('ddsettings')) filesep 'exe']);

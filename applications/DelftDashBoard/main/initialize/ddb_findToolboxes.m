@@ -67,9 +67,10 @@ if isdeployed
 %     exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
 %     dr=[fileparts(exeDir) filesep 'data' filesep 'toolboxes' filesep];
 %     dr=[ctfroot filesep 'ddbsettings' filesep 'toolboxes'];%dr=[ctfroot filesep 'toolboxes'];%
-    [status, result] = system('path');
-    exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
-    dr = [fileparts(exeDir) filesep 'ddbsettings' filesep 'toolboxes']; % by Bart Grasmeijer
+%     [status, result] = system('path');
+%     exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
+%    dr = [fileparts(exeDir) filesep 'ddbsettings' filesep 'toolboxes']; % by Bart Grasmeijer
+    dr=[ctfroot filesep 'ddbsettings' filesep 'toolboxes']; % Changed back MvO (2017-4-20)
 else
     ddb_root = fileparts(which('delftdashboard.ini'));
     dr=[ddb_root filesep 'toolboxes'];

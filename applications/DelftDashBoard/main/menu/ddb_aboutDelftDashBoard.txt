@@ -1,6 +1,6 @@
 Delft DashBoard
-Version v1.01.$revision
-September 2010
+Version v2.02.$revision
+April 2017
 
 --------------------------------------------------------------------
 Copyright notice:
