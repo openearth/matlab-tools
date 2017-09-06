@@ -35,7 +35,7 @@ switch modelType
             line=fgetl(fid);
         end
         fclose(fid);
-        line=strsplit(line);
+        line=regexp(line,'\s+','split');
         
         runPeriod_S=str2num(line{2})-tstart*timeFactor(tunit,'S');
         runPeriod_D=runPeriod_S/3600/24;
@@ -52,7 +52,7 @@ switch modelType
             end
         end
         fclose(fid);
-        line2=strsplit(line2);
+        line2=regexp(line2,'\s+','split');
         indexPerc=find(~cellfun('isempty',strfind(line2,'%')));
         runperiod_perc=str2num(strrep((line2{indexPerc}),'%',''))/100;
         
@@ -71,9 +71,8 @@ switch modelType
             end
         end
         fclose(fid);
-        line2=strsplit(line2);
-        
-        runPeriod_D=datenum(strjoin(line2(end-1:end)))-refdate-tstart*timeFactor('M','D');
+        line2=regexp(line2,'\s+','split');
+        runPeriod_D=datenum(strtrim(sprintf('%s ',line2{end-1:end}))-refdate-tstart*timeFactor('M','D');
         runPeriod_S=runPeriod_D*timeFactor('D','S');
 end
 
