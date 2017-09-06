@@ -72,7 +72,7 @@ switch modelType
         end
         fclose(fid);
         line2=regexp(line2,'\s+','split');
-        runPeriod_D=datenum(strtrim(sprintf('%s ',line2{end-1:end}))-refdate-tstart*timeFactor('M','D');
+        runPeriod_D=datenum(strtrim(sprintf('%s ',line2{end-1:end})))-refdate-tstart*timeFactor('M','D');
         runPeriod_S=runPeriod_D*timeFactor('D','S');
 end
 
