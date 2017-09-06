@@ -4,7 +4,7 @@ tunits={'S','M','H','D','Y'};
 factors=[60 60 24 365.25];
 
 if ~ismember(fromTunit,tunits) || ~ismember(toTunit,tunits)
-   error(['fromTunit and toTunit have to be: ' strjoin(tunits(1:end-1) ) ' or ' tunits{end}]) 
+   error(['fromTunit and toTunit have to be: ' strtrim(sprintf('%s ',tunits{1:end-1})) ' or ' tunits{end}]) 
 end
 
 ind1=strmatch(lower(fromTunit),lower(tunits));
