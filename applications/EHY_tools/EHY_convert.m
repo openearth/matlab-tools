@@ -34,9 +34,10 @@ for ii=2:length(lineNrs)
 end
 %% initialise
 if length(varargin)==0
+    listOfExt=unique(availableConversions(:,1));
     disp(['EHY_convert  -  Conversion possible for following inputFiles: ',...
-        strrep(strtrim(sprintf('%s ',availableConversions{:,1})),' ',', ')])
-    availableExt=strcat('*.',[{'*'}; unique(availableConversions(:,1))]);
+        strrep(strtrim(sprintf('%s ',listOfExt{:})),' ',', ')])
+    availableExt=strcat('*.',[{'*'}; listOfExt]);
     disp('Open a file that you want to convert')
     [filename, pathname]=uigetfile(availableExt,'Open a file that you want to convert');
     varargin{1}=[pathname filename];
@@ -245,7 +246,7 @@ end
             xyn.y=D{1,2};
             xyn.name=D{1,3};
         end
-        [xyn.x,xyn.y]=EHY_convert_coorCheck(xyn.x,xyn.y)
+        [xyn.x,xyn.y]=EHY_convert_coorCheck(xyn.x,xyn.y);
         if OPT.saveoutputFile
             tempFile=[tempdir 'temp.kml'];
             KMLPlaceMark(xyn.y,xyn.x,tempFile,'name',xyn.name);
@@ -313,7 +314,27 @@ end
 end
 
 function [x,y]=EHY_convert_coorCheck(x,y)
-if any([any(x<-180),any(x>180),any(y<-90),any(y>90)])
+if and(min(y)>max(x),~any(x<0),~any(y<0),prod(x>1000)) % RD in m
+    disp('Input coordinations are probably in meter Amersfoort/RD New, EPSG 28992')
+    yn=input('Apply conversion from Amersfoort/RD New, EPSG 28992? [Y/N]  ','s');
+    if strcmpi(yn,'y')
+        fromEPSG='28992';
+        [x,y]=convertCoordinates(x,y,'CS1.code',fromEPSG,'CS2.code',4326);
+    else
+        fromEPSG=input('What is the code of the input coordinates? EPSG: ');
+        [x,y]=convertCoordinates(x,y,'CS1.code',fromEPSG,'CS2.code',4326);
+    end
+elseif and(min(y)>max(x),~any(x<0),~any(y<0)) % RD in km
+    disp('Input coordinations are probably in kilometer Amersfoort/RD New, EPSG 28992')
+    yn=input('Apply conversion from Amersfoort/RD New, EPSG 28992? [Y/N]  ','s');
+    if strcmpi(yn,'y')
+        fromEPSG='28992';
+        [x,y]=convertCoordinates(x/1000,y/1000,'CS1.code',fromEPSG,'CS2.code',4326);
+    else
+        fromEPSG=input('What is the code of the input coordinates? EPSG: ');
+        [x,y]=convertCoordinates(x,y,'CS1.code',fromEPSG,'CS2.code',4326);
+    end
+elseif any([any(x<-180),any(x>180),any(y<-90),any(y>90)])
     disp('Input coordinations are probably not in [Longitude,Latitude] - WGS ''84')
     disp('common EPSG-codes: Amersfoort/RD New: 28992')
     fromEPSG=input('What is the code of the input coordinates? EPSG: ');
