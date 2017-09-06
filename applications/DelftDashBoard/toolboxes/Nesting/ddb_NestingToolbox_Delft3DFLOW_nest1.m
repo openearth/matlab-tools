@@ -181,6 +181,26 @@ switch handles.toolbox.nesting.delft3dflow.detailmodeltype
         
         obspoints=ddb_nesthd1_xbeach_in_delft3dflow('admfile',admfile,'overall',overall,'detail',detail,'exedir',exedir);
         
+    case{'sfincs'}
+        
+        %% Detail model is SFINCS
+        
+        if isempty(handles.toolbox.nesting.delft3dflow.sfincs_flow_bnd_file)
+            ddb_giveWarning('text','Please first load boundary file of nested model!');
+            return
+        end
+
+        overall.grdfile=handles.model.delft3dflow.domain(ad).grdFile;
+        overall.encfile=handles.model.delft3dflow.domain(ad).encFile;
+        overall.cs=handles.screenParameters.coordinateSystem;
+
+        detail.bndfile=handles.toolbox.nesting.delft3dflow.sfincs_flow_bnd_file;
+        detail.cs.name=handles.toolbox.nesting.delft3dflow.detailmodelcsname;
+        detail.cs.type=handles.toolbox.nesting.delft3dflow.detailmodelcstype;
+
+        admfile=handles.toolbox.nesting.delft3dflow.admFile;
+        
+        obspoints=nest1_sfincs_in_delft3dflow('overall',overall,'detail',detail,'admfile',admfile);
         
 end
 

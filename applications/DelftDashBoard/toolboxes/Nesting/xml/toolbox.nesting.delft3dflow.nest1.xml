@@ -15,9 +15,11 @@
     <listtext>Delft3D-FLOW</listtext>
     <listtext>DFlow-FM</listtext>
     <listtext>XBeach</listtext>
+    <listtext>SFINCS</listtext>
     <listvalue>delft3dflow</listvalue>
     <listvalue>dflowfm</listvalue>
     <listvalue>xbeach</listvalue>
+    <listvalue>sfincs</listvalue>
   </element>
   <element>
     <style>pushbutton</style>
@@ -171,6 +173,27 @@
       <check>
         <variable>handles.toolbox.nesting.delft3dflow.detailmodeltype</variable>
         <value>xbeach</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>20 70 120 20</position>
+    <text>Select Boundary File</text>
+    <variable>handles.toolbox.nesting.delft3dflow.sfincs_flow_bnd_file</variable>
+    <onchange>ddb_NestingToolbox_Delft3DFLOW_nest1</onchange>
+    <option1>selectbndfile</option1>
+    <showfilename>yes</showfilename>
+    <extension>*.bnd</extension>
+    <selectiontext>Select boundary file of detailed model</selectiontext>
+    <tooltipstring>Select boundary file (*.bnd) of detailed model</tooltipstring>
+    <dependency>
+      <action>visible</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.nesting.delft3dflow.detailmodeltype</variable>
+        <value>sfincs</value>
         <operator>eq</operator>
       </check>
     </dependency>

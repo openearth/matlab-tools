@@ -60,5 +60,11 @@
       <formodel>xbeach</formodel>
       <element>toolbox.nesting.xbeach.nest2.xml</element>
     </tab>
+    <tab>
+      <tabstring>Nesting - 2</tabstring>
+      <callback>ddb_NestingToolbox_SFINCS_nest2</callback>
+      <formodel>sfincs</formodel>
+      <element>toolbox.nesting.sfincs.nest2.xml</element>
+    </tab>
   </element>
 </root>

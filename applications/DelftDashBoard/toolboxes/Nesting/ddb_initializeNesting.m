@@ -91,6 +91,7 @@ handles.toolbox.nesting.delft3dflow.encFile       = '';
 handles.toolbox.nesting.delft3dflow.bndFile       = '';
 handles.toolbox.nesting.delft3dflow.depFile       = '';
 handles.toolbox.nesting.delft3dflow.extfile       = '';
+handles.toolbox.nesting.delft3dflow.sfincs_flow_bnd_file = '';
 handles.toolbox.nesting.delft3dflow.admFile       = 'nesting.adm';
 
 % DFlow-FM
@@ -124,6 +125,13 @@ handles.toolbox.nesting.ww3.grdFile       = '';
 handles.toolbox.nesting.ww3.depFile       = '';
 handles.toolbox.nesting.ww3.ww3_grid_file = '';
 handles.toolbox.nesting.ww3.nr_cells_per_section=10;
+
+% SFINCS
+handles.toolbox.nesting.sfincs.detailmodeltype   = 'sfincs';
+handles.toolbox.nesting.sfincs.detailmodelcsname = 'unspecified';
+handles.toolbox.nesting.sfincs.detailmodelcstype = 'unspecified';
+handles.toolbox.nesting.sfincs.bndfile       = '';
+handles.toolbox.nesting.sfincs.admFile       = 'nesting.adm';
 
 % Nest 2
 % handles.toolbox.nesting.admFile       = 'nesting.adm';

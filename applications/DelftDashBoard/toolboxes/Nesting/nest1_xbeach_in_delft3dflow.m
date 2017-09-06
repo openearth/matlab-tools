@@ -87,8 +87,8 @@ obspoints=[];
 % Convert detailed grid (if necessary)
 if ~strcmpi(detail.cs.name,'unspecified')
     [grd.X,grd.Y]= convertCoordinates(detail.x,detail.y, 'CS1.name',detail.cs.name,'CS1.type',detail.cs.type,'CS2.name',overall.cs.name,'CS2.type',overall.cs.type);
-    grd.CoordinateSystem='Cartesian'
-    filename = [detail.path, 'TMP.grd']
+    grd.CoordinateSystem='Cartesian';
+    filename = [detail.path, 'TMP.grd'];
     ddb_wlgrid('write',filename,grd, 'x', grd.X, 'y', grd.Y);
     detail.grdfile=filename;
 end
@@ -99,7 +99,7 @@ enclosure('write',filename,enc);
 detail.encfile=filename;
 
 %% Create TMP.bnd file
-filename = [detail.path, 'TMP.bnd']
+filename = [detail.path, 'TMP.bnd'];
 detail.bndfile=filename;
 fi2=fopen(filename,'wt');
 fprintf(fi2,'%s\n',['sea                  Z T     1     1     ' num2str(size(grd.X,1)-1) '   1   0.0000000e+000']);
@@ -107,17 +107,17 @@ fclose(fi2);
 
 %% Run NestHD1
 cd(overall.path)
-[ny nx] = size(detail.x)
+[ny nx] = size(detail.x);
 
 if ny == 1;
     
     G1 = delft3d_io_grd('read' ,overall.grdfile);
     distance_x = detail.x(1,1) - G1.cen.x; distance_y = detail.y(1,1) - G1.cen.y;
     distance_tot = (distance_x.^2 + distance_y.^2).^0.5;
-    [idx idy] = find(distance_tot == min(min(distance_tot)))
+    [idx idy] = find(distance_tot == min(min(distance_tot)));
     obspoints.name = 'XBeach';
-    obspoints.m = idx
-    obspoints.n = idy
+    obspoints.m = idx;
+    obspoints.n = idy;
     
 else
     
@@ -152,18 +152,18 @@ for ii = 1:2
     if ii == 2;
         cd(detail.path);
     end
-try
-    delete('ddtemp.obs');
-end
-if exist('TMP.grd','file')
-    delete('TMP.grd');
-end
-if exist('TMP.enc','file')
-    delete('TMP.enc');
-end
-if exist('TMP.bnd','file')
-    delete('TMP.bnd');
-end
+    try
+        delete('ddtemp.obs');
+    end
+    if exist('TMP.grd','file')
+        delete('TMP.grd');
+    end
+    if exist('TMP.enc','file')
+        delete('TMP.enc');
+    end
+    if exist('TMP.bnd','file')
+        delete('TMP.bnd');
+    end
 end
 cd ..
 

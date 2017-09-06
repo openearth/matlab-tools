@@ -1,4 +1,4 @@
-function obspoints=nest1_delft3dflow_in_delft3dflow(varargin)
+function obspoints=nest1_sfincs_in_delft3dflow(varargin)
 %ddb_nesthd1_dflowfm_in_delft3dflow  Step 1 of nesting Delft3D-FLOW model in Delft3D-FLOW model.
 %
 % Creates nesting administration file
@@ -60,28 +60,30 @@ overall.cs.name='WGS 84';
 overall.cstype='geographic';
 detail.cs.name='WGS 84';
 detail.cs.type='geographic';
-admfile='nesting.adm';
 
 % Input
 for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
-            case{'admfile'}
-                admfile=varargin{ii+1};
             case{'overall'}
                 overall=varargin{ii+1};
             case{'detail'}
                 detail=varargin{ii+1};
-            case{'exedir'}
-                exedir=varargin{ii+1};
+            case{'admfile'}
+                admfile=varargin{ii+1};
         end
     end
 end
 
 obspoints=[];
 
-%% Detail grid
-grd=ddb_wlgrid('read',detail.grdfile);
+%% SFINCS boundary points
+xy=load(detail.bndfile);
+xp=xy(:,1);
+yp=xy(:,2);
+
+%% Overall grid
+grd=ddb_wlgrid('read',overall.grdfile);
 
 % Convert detailed grid (if necessary)
 if ~isfield(detail,'cs')
@@ -91,71 +93,25 @@ if ~isfield(detail,'cs')
 end
 
 if ~strcmpi(detail.cs.name,'unspecified')
-    grid = ddb_wlgrid('read',detail.grdfile);
-    [grd.X,grd.Y]=convertCoordinates(grid.X,grid.Y,'CS1.name',detail.cs.name,'CS1.type',detail.cs.type,'CS2.name',overall.cs.name,'CS2.type',overall.cs.type);
-    switch lower(overall.cs.type)
-        case{'geographic'}
-            grd.CoordinateSystem='Spherical';
-        otherwise
-            grd.CoordinateSystem='Cartesian';
-    end
-%    [pathstr,name,ext] = fileparts(FILE)
-%     cd(detail.path)
-    ddb_wlgrid('write','_TMP.grd',grd);
-%    detail.grdfile= [detail.path, 'TMP.grd'];
-    detail.grdfile= '_TMP.grd';
-%     cd(overall.path)
+    % Convert SFINCS points to coordinate system of Delft3D model
+    [xp,yp]=convertCoordinates(xp,yp,'CS1.name',detail.cs.name,'CS1.type',detail.cs.type,'CS2.name',overall.cs.name,'CS2.type',overall.cs.type);    
 end
 
-%% Run NestHD1
-%cd(overall.path)
-fid=fopen('nesthd1.inp','wt');
-fprintf(fid,'%s\n',overall.grdfile);
-fprintf(fid,'%s\n',overall.encfile);
-fprintf(fid,'%s\n',detail.grdfile);
-fprintf(fid,'%s\n',detail.encfile);
-fprintf(fid,'%s\n',detail.bndfile);
-fprintf(fid,'%s\n',admfile);
-fprintf(fid,'%s\n','_TMP.obs');
-fclose(fid);
-system(['"' exedir 'nesthd1" < nesthd1.inp']);
+% Get 
+[m,n]=findgridcell(xp,yp,grd.X,grd.Y);
 
-
-% Check grids
-% G1 = delft3d_io_grd('read',overall.grdfile);
-% G2 = delft3d_io_grd('read',detail.grdfile);
-
-% figure; hold on
-% plot(G1.cor.x, G1.cor.y,'b');
-% plot(G1.cor.x', G1.cor.y','b');
-% plot(G2.cor.x, G2.cor.y,'r');
-% plot(G2.cor.x', G2.cor.y','r');
-
-%% Read obs file
-[name,m,n] = textread('_TMP.obs','%21c%f%f');
 for iobs=1:length(m)
-    obspoints(iobs).name=name(iobs,:);
-    obspoints(iobs).m=m(iobs,:);
-    obspoints(iobs).n=n(iobs,:);
+    mstr=[repmat(' ',[1 5-length(num2str(m(iobs)))]) num2str(m(iobs))];
+    nstr=[repmat(' ',[1 5-length(num2str(n(iobs)))]) num2str(n(iobs))];
+    name=['(M,N)=('   mstr ','  nstr ')'];
+    obspoints(iobs).name=name;
+    obspoints(iobs).m=m(iobs);
+    obspoints(iobs).n=n(iobs);    
 end
 
-%% Delete temporary files
-delete('nesthd1.inp');
-% for ii = 1:2
-%     if ii == 1;     cd(overall.path); end
-%     if ii == 1;     cd(detail.path); end
-try
-    delete('_TMP.obs');
+fid=fopen(admfile,'wt');
+for iobs=1:length(m)
+    fprintf(fid,'%5i %5i\n',m(iobs),n(iobs));
 end
-if exist('_TMP.grd','file')
-    delete('_TMP.grd');
-end
-if exist('_TMP.enc','file')
-    delete('_TMP.enc');
-end
-if exist('_TMP.bnd','file')
-    delete('_TMP.bnd');
-end
-% end
-% cd(overall.path);
+fclose(fid);
 
