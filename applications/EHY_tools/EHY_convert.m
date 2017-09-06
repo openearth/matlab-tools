@@ -37,6 +37,7 @@ if length(varargin)==0
     disp(['EHY_convert  -  Conversion possible for following inputFiles: ',...
         strrep(strjoin(unique(availableConversions(:,1))),' ',', ')])
     availableExt=strcat('*.',[{'*'}; unique(availableConversions(:,1))]);
+    disp('Open a file that you want to convert')
     [filename, pathname]=uigetfile(availableExt,'Open a file that you want to convert');
     varargin{1}=[pathname filename];
 end
@@ -78,10 +79,14 @@ end
 if OPT.saveoutputFile && exist(outputFile,'file')
     [YesNoID,~]=  listdlg('PromptString',{'The outputFile already exists. Overwrite the file below?',outputFile},...
         'SelectionMode','single',...
-        'ListString',{'Yes','No'},...
+        'ListString',{'Yes','No','No, but save as...'},...
         'ListSize',[500 50]);
     if YesNoID==2
         OPT.saveoutputFile=0;
+    elseif YesNoID==3
+        [pathstr,~,ext] = fileparts(outputFile);
+        [FileName,PathName] = uiputfile([pathstr filesep ext]);
+        outputFile=[PathName FileName];
     end
 end
 
@@ -90,6 +95,19 @@ if OPT.saveoutputFile
     disp([char(10) 'EHY_convert created the file: ' char(10) outputFile char(10)])
 end
 %% conversion functions - in alphabetical order
+% dry2xyz
+    function output=EHY_convert_dry2xyz(inputFile,outputFile,OPT)
+        pathstr = fileparts(inputFile);
+        dry=delft3d_io_dry('read',inputFile);
+        disp('Open the corresponding .grd-file')
+        [grdName,grdPath]=uigetfile([pathstr filesep '.grd'],'Open the corresponding .grd-file');
+        [x,y]=EHY_mn2xy(dry.m,dry.n,[grdPath grdName]);
+        xyz=[x y zeros(length(x),1)];
+        if OPT.saveoutputFile
+            dlmwrite(outputFile,xyz,'delimiter',' ','precision','%16.7e')
+        end
+        output=xyz;
+    end
 % grd2kml
     function output=EHY_convert_grd2kml(inputFile,outputFile,OPT)
         if OPT.saveoutputFile
@@ -135,6 +153,37 @@ end
             io_polygon('write',outputFile,ldb);
         end
         output=ldb;
+    end
+% obs2kml
+    function output=EHY_convert_obs2kml(inputFile,outputFile,OPT)
+        OPT_user=OPT;
+        OPT.saveoutputFile=0;
+        xyn=EHY_convert_obs2xyn(inputFile,outputFile,OPT);
+        OPT=OPT_user;
+        if OPT.saveoutputFile
+            tempFile=[tempdir 'temp.kml'];
+            KMLPlaceMark(xyn{1,1},xyn{1,2},tempFile,'name',xyn{1,3});
+            movefile(tempFile,outputFile);
+        end
+        output=[];
+    end
+% obs2xyn
+    function output=EHY_convert_obs2xyn(inputFile,outputFile,OPT)
+        pathstr = fileparts(inputFile);
+        obs=delft3d_io_obs('read',inputFile);
+        disp('Open the corresponding .grd-file')
+        [grdName,grdPath]=uigetfile([pathstr filesep '.grd'],'Open the corresponding .grd-file');
+        [x,y]=EHY_mn2xy(obs.m,obs.n,[grdPath grdName]);
+        
+        if OPT.saveoutputFile
+            fid=fopen(outputFile,'w');
+            for iM=1:length(x)
+                fprintf(fid,'%16.7e%16.7e ',[x(iM,1) y(iM,1)]);
+                fprintf(fid,'%-s\n',obs.namst(iM,:));
+            end
+            fclose(fid);
+        end
+        output={x y cellstr(obs.namst)};
     end
 % pol2kml
     function output=EHY_convert_pol2kml(inputFile,outputFile,OPT)
@@ -186,13 +235,61 @@ end
     end
 % xyn2kml
     function output=EHY_convert_xyn2kml(inputFile,outputFile,OPT)
-        xyn=delft3d_io_xyn('read',inputFile);
+        try
+            xyn=delft3d_io_xyn('read',inputFile);
+        catch
+            fid=fopen(inputFile,'r');
+            D=textscan(fid,'%f%f%s','delimiter','\n');
+            fclose(fid);
+            xyn.x=D{1,1};
+            xyn.y=D{1,2};
+            xyn.name=D{1,3};
+        end
+        [xyn.x,xyn.y]=EHY_convert_coorCheck(xyn.x,xyn.y)
         if OPT.saveoutputFile
             tempFile=[tempdir 'temp.kml'];
             KMLPlaceMark(xyn.y,xyn.x,tempFile,'name',xyn.name);
-            movefile(tempFile,outputFile);
+            copyfile(tempFile,outputFile);
+            delete(tempFile);
         end
         output=[];
+    end
+% xyn2obs
+    function output=EHY_convert_xyn2obs(inputFile,outputFile,OPT)
+        pathstr = fileparts(inputFile);
+        try
+            xyn=delft3d_io_xyn('read',inputFile);
+        catch
+            fid=fopen(inputFile,'r');
+            D=textscan(fid,'%f%f%s','delimiter','\n');
+            fclose(fid);
+            xyn.x=D{1,1};
+            xyn.y=D{1,2};
+            xyn.name=D{1,3};
+        end
+        [x,y]=EHY_convert_coorCheck(xyn.x,xyn.y);
+        disp('Open the corresponding .grd-file')
+        [grdName,grdPath]=uigetfile([pathstr filesep '.grd'],'Open the corresponding .grd-file');
+        [m,n]=EHY_xy2mn(xyn.x,xyn.y,[grdPath grdName]);
+        obs.m=m; obs.n=n; obs.namst=xyn.name;
+        if OPT.saveoutputFile
+            delft3d_io_obs('write',outputFile,obs);
+        end
+        if size(m,1)==1; m=m'; n=n'; end
+        output=[m n];
+    end
+% xyz2dry
+    function output=EHY_convert_xyz2dry(inputFile,outputFile,OPT)
+        pathstr = fileparts(inputFile);
+        xyz=importdata(inputFile);
+        disp('Open the corresponding .grd-file')
+        [grdName,grdPath]=uigetfile([pathstr filesep '.grd'],'Open the corresponding .grd-file');
+        [m,n]=EHY_xy2mn(xyz(:,1),xyz(:,2),[grdPath grdName]);
+        if OPT.saveoutputFile
+            delft3d_io_dry('write',outputFile,m,n);
+        end
+        if size(m,1)==1; m=m'; n=n'; end
+        output=[m n];
     end
 % xyz2kml
     function output=EHY_convert_xyz2kml(inputFile,outputFile,OPT)
@@ -215,3 +312,10 @@ elseif nargout>1
 end
 end
 
+function [x,y]=EHY_convert_coorCheck(x,y)
+if any([any(x<-180),any(x>180),any(y<-90),any(y>90)])
+    disp('Input coordinations are probably not in [Longitude,Latitude] - WGS ''84')
+    fromEPSG=input('What is the code of the input coordinates? EPSG: ');
+    [x,y]=convertCoordinates(x,y,'CS1.code',fromEPSG,'CS2.code',4326);
+end
+end
