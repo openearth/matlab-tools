@@ -1,0 +1,45 @@
+table-name          'Boundary Section : 1'
+contents            'uniform'
+location            'North1'
+time-function       'non-equidistant'
+reference-time       20151127
+time-unit           'minutes'
+interpolation       'linear'
+parameter           'time' unit '[min]'
+parameter           'Water elevation (Z)  End A uniform' unit '[m]'
+parameter           'Water elevation (Z)  End B uniform' unit '[m]'
+records-in-table     4
+           0.00   0.00000e+00   0.00000e+00 
+          10.00   6.00000e+00   6.00000e+00 
+          20.00   0.00000e+00   0.00000e+00 
+         120.00   0.00000e+00   0.00000e+00 
+table-name          'Boundary Section : 2'
+contents            'uniform'
+location            'West1'
+time-function       'non-equidistant'
+reference-time       20151127
+time-unit           'minutes'
+interpolation       'linear'
+parameter           'time' unit '[min]'
+parameter           'Water elevation (Z)  End A uniform' unit '[m]'
+parameter           'Water elevation (Z)  End B uniform' unit '[m]'
+records-in-table     4
+           0.00   0.00000e+00   0.00000e+00 
+          10.00   6.00000e+00   6.00000e+00 
+          20.00   0.00000e+00   0.00000e+00 
+         120.00   0.00000e+00   0.00000e+00 
+table-name          'Boundary Section : 3'
+contents            'uniform'
+location            'East1'
+time-function       'non-equidistant'
+reference-time       20151127
+time-unit           'minutes'
+interpolation       'linear'
+parameter           'time' unit '[min]'
+parameter           'Water elevation (Z)  End A uniform' unit '[m]'
+parameter           'Water elevation (Z)  End B uniform' unit '[m]'
+records-in-table     4
+           0.00   0.00000e+00   0.00000e+00 
+          10.00   6.00000e+00   6.00000e+00 
+          20.00   0.00000e+00   0.00000e+00 
+         120.00   0.00000e+00   0.00000e+00 

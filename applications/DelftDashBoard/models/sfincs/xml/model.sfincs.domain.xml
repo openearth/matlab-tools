@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>listbox</style>
+    <mx>1000</mx>
+    <position>10 10 150 140</position>
+    <tooltipstring>Select point</tooltipstring>
+    <text>Points</text>
+    <textposition>above-center</textposition>
+    <variable>handles.model.fast.domain.activepoint</variable>
+    <multivariable>handles.model.fast.domain.activepoints</multivariable>
+    <max>1000</max>
+    <type>integer</type>
+    <onchange>ddb_FAST_domain</onchange>
+    <option1>selectfromlist</option1>
+    <listtext>
+      <variable>handles.model.fast.domain.pointnames</variable>
+    </listtext>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>170 130 150 20</position>
+    <tooltipstring>Push to delete points</tooltipstring>
+    <text>Delete</text>
+    <callback>ddb_FAST_domain</callback>
+    <option1>deletepoints</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.fast.domain.nrpoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>170 105 150 20</position>
+    <tooltipstring>Push to draw polygon in which depth points will be deleted</tooltipstring>
+    <text>Draw Polygon</text>
+    <callback>ddb_FAST_domain</callback>
+    <option1>drawpolygon</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.fast.domain.nrpoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>170 80 150 20</position>
+    <tooltipstring>Push to delete polygon</tooltipstring>
+    <text>Delete Polygon</text>
+    <callback>ddb_FAST_domain</callback>
+    <option1>deletepolygon</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.fast.domain.polygonlength</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>170 55 150 20</position>
+    <tooltipstring>Push to delete points inside polygon</tooltipstring>
+    <text>Delete Points in Polygon</text>
+    <callback>ddb_FAST_domain</callback>
+    <option1>deletepointsinpolygon</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.fast.domain.polygonlength</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.model.fast.domain.nrpoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>340 130 100 20</position>
+    <tooltipstring>Push to load points</tooltipstring>
+    <text>Load Points</text>
+    <callback>ddb_FAST_domain</callback>
+    <option1>loadpoints</option1>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>340 105 100 20</position>
+    <tooltipstring>Push to save points</tooltipstring>
+    <text>Save Points</text>
+    <callback>ddb_FAST_domain</callback>
+    <option1>savepoints</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.fast.domain.nrpoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+</root>

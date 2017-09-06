@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>pushselectfile</style>
+    <position>40 120 130 20</position>
+    <text>Spiderweb File</text>
+    <variable>handles.model.sfincs.domain(ad).input.spwfile</variable>
+    <showfilename>yes</showfilename>
+    <extension>*.spw</extension>
+    <selectiontext>Select spiderweb file</selectiontext>
+    <tooltipstring>Select spiderweb file</tooltipstring>
+  </element>
+</root>

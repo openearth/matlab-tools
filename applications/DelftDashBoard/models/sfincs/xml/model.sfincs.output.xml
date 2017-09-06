@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>edit</style>
+    <position>150 130 80 20</position>
+    <tooltipstring>Edit map output interval (in seconds)</tooltipstring>
+    <text>Map output interval</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.model.sfincs.domain(ad).input.dtout</variable>
+  </element>  
+  <element>
+    <style>edit</style>
+    <position>150 105 80 20</position>
+    <tooltipstring>Edit history output interval (in seconds)</tooltipstring>
+    <text>His output interval</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.model.sfincs.domain(ad).input.dthisout</variable>
+  </element>  
+</root>
