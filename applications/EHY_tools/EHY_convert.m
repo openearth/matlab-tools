@@ -112,11 +112,13 @@ end
 % grd2kml
     function output=EHY_convert_grd2kml(inputFile,outputFile,OPT)
         if OPT.saveoutputFile
-            tempFile=[tempdir 'temp.grd'];
-            copyfile(inputFile,tempFile);
-            grid2kml(tempFile,OPT.lineColor*255);
-            movefile(strrep(tempFile,'.grd','.kml'),outputFile);
-            delete(tempFile)
+            tempFileGrd=[tempdir 'temp.grd'];
+            tempFileKml=[tempdir 'temp.kml'];
+            copyfile(inputFile,tempFileGrd);
+            grid2kml(tempFileGrd,OPT.lineColor*255);
+            copyfile(tempFileKml,outputFile);
+            delete(tempFileGrd)
+            delete(tempFileKml)
         end
         output=[];
     end
@@ -143,7 +145,8 @@ end
         if OPT.saveoutputFile
             tempFile=[tempdir 'temp.kml'];
             ldb2kml(ldb,tempFile,OPT.lineColor)
-            movefile(tempFile,outputFile);
+            copyfile(tempFile,outputFile);
+            delete(tempFile);
         end
         output=[];
     end
@@ -160,11 +163,14 @@ end
         OPT_user=OPT;
         OPT.saveoutputFile=0;
         xyn=EHY_convert_obs2xyn(inputFile,outputFile,OPT);
+        [x,y]=EHY_convert_coorCheck(xyn{1,1},xyn{1,2});
+        xyn{1,1}=x;xyn{1,2}=y;
         OPT=OPT_user;
         if OPT.saveoutputFile
             tempFile=[tempdir 'temp.kml'];
-            KMLPlaceMark(xyn{1,1},xyn{1,2},tempFile,'name',xyn{1,3});
-            movefile(tempFile,outputFile);
+            KMLPlaceMark(xyn{1,2},xyn{1,1},tempFile,'name',xyn{1,3});
+            copyfile(tempFile,outputFile);
+            delete(tempFile)
         end
         output=[];
     end
@@ -192,7 +198,8 @@ end
         if OPT.saveoutputFile
             tempFile=[tempdir 'temp.kml'];
             ldb2kml(pol,tempFile,[1 0 0])
-            movefile(tempFile,outputFile);
+            copyfile(tempFile,outputFile);
+            delete(tempFile)
         end
         output=[];
     end
@@ -219,7 +226,8 @@ end
         if OPT.saveoutputFile
             tempFile=[tempdir 'temp.kml'];
             ldb2kml(ldb,tempFile,[1 0 0])
-            movefile(tempFile,outputFile);
+            copyfile(tempFile,outputFile);
+            delete(tempFile)
         end
         output=[];
     end
@@ -300,7 +308,8 @@ end
         if OPT.saveoutputFile
             tempFile=[tempdir 'temp.kml'];
             KMLPlaceMark(lat,lon,tempFile);
-            movefile(tempFile,outputFile);
+            copyfile(tempFile,outputFile);
+            delete(tempFile)
         end
         output=[lon lat];
     end
@@ -314,7 +323,7 @@ end
 end
 
 function [x,y]=EHY_convert_coorCheck(x,y)
-if and(min(y)>max(x),~any(x<0),~any(y<0),prod(x>1000)) % RD in m
+if (min(y)>max(x)) && (~any(x<0)) && (~any(y<0)) && (prod(x>1000)==1) % RD in m
     disp('Input coordinations are probably in meter Amersfoort/RD New, EPSG 28992')
     yn=input('Apply conversion from Amersfoort/RD New, EPSG 28992? [Y/N]  ','s');
     if strcmpi(yn,'y')
