@@ -1,4 +1,4 @@
-function runTimeInfo=EHY_runTimeInfo(varargin)
+function varargout=EHY_runTimeInfo(varargin)
 %% runTimeInfo=EHY_runTimeInfo(varargin)
 %
 % Based on an D-FLOW FM, Delft3D or SIMONA input file (.mdu / .mdf /
@@ -52,7 +52,7 @@ try % if simulation has finished
             
             % average timestep
             line=findLineOrQuit(fid,'** INFO   : average timestep      (s)  :');
-            line2=strsplit(line);
+            line2=regexp(line,'\s+','split');
             runTimeInfo.aveTimeStep_S=str2double(line2{end});
             
             % max time step
@@ -65,7 +65,7 @@ try % if simulation has finished
             
             % realTime_S
             line=findLineOrQuit(fid,'** INFO   : time steps            (s)  :');
-            line2=strsplit(line);
+            line2=regexp(line,'\s+','split');
             realTime_S=str2double(line2{end});
             
         case 'mdf'
@@ -83,7 +83,7 @@ try % if simulation has finished
             
             % realTime_S
             line=findLineOrQuit(fid,'|Total                |');
-            line2=strsplit(line);
+            line2=regexp(line,'\s+','split');
             realTime_S=str2double(line2{3});
             
         case 'siminp'
@@ -98,14 +98,13 @@ try % if simulation has finished
             
             % realTime_S
             line=findLineOrQuit(fid,'Simulation started at date:');
-            line2=strsplit(line);
+            line2=regexp(line,'\s+','split');
             t0=datenum([line2{8} line2{10}],'yyyymmddHHMMSS');
             line=findLineOrQuit(fid,'Simulation ended   at date:');
-            line2=strsplit(line);
+            line2=regexp(line,'\s+','split');
             while length(line2{10})<6; line2{10}=['0' line2{10}]; end %account for end time=15024
             tend=datenum([line2{8} line2{10}],'yyyymmddHHMMSS');
             realTime_S=(tend-t0)*24*60*60;
-
     end
 end
 fclose all;
@@ -144,6 +143,11 @@ else
     end
     
 end
+runTimeInfo % disp struct with info
+if nargout==1
+    varargout{1}=runTimeInfo;
+end
+
 end
 %%
 function line=findLineOrQuit(fid,wantedLine)
