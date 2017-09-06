@@ -4,7 +4,7 @@ function plt=plotGeoImage(imname,geoname)
 
 frm=imname(end-2:end);
 switch lower(frm),
-    case{'jpg','epg','bmp'}
+    case{'jpg','epg','bmp','tif'}
         jpgcol=imread(imname);
     case{'png'}
         jpgcol=imread(imname,'BackgroundColor','none');
