@@ -96,6 +96,49 @@ if OPT.saveoutputFile
     disp([char(10) 'EHY_convert created the file: ' char(10) outputFile char(10)])
 end
 %% conversion functions - in alphabetical order
+% crs2kml
+    function output=EHY_convert_crs2kml(inputFile,outputFile,OPT)
+        OPT_user=OPT;
+        OPT.saveoutputFile=0;
+        pli=EHY_convert_crs2pli(inputFile,outputFile,OPT);
+        [x,y]=EHY_convert_coorCheck(pli(:,1),pli(:,2));
+        output=[x y];
+        OPT=OPT_user;
+        if OPT.saveoutputFile
+            [~,name]=fileparts(inputFile);
+            tempFile=[tempdir name '.kml'];
+            ldb2kml(output,tempFile,OPT.lineColor)
+            copyfile(tempFile,outputFile);
+            delete(tempFile)
+        end
+    end
+% crs2pli
+    function output=EHY_convert_crs2pli(inputFile,outputFile,OPT)
+        crs=delft3d_io_crs('read',inputFile);
+        x=[];y=[];
+        disp('Open the corresponding .grd-file')
+        [grdName,grdPath]=uigetfile([pathstr filesep '.grd'],'Open the corresponding .grd-file');
+        tempFile=[tempdir 'tmp.grd'];
+        copyfile([grdPath grdName],tempFile);
+        grd=wlgrid('read',tempFile);
+        delete(tempFile);
+        
+        for iM=1:length(crs.m)
+            mrange=min(crs.DATA(iM).m):max(crs.DATA(iM).m);
+            nrange=min(crs.DATA(iM).n):max(crs.DATA(iM).n);
+            if length(mrange)~=1
+                mrange=[mrange(1)-1 mrange];
+            elseif length(nrange)~=1
+                nrange=[nrange(1)-1 nrange];
+            end
+            x=[x;reshape(grd.X(mrange,nrange),[],1); NaN];
+            y=[y;reshape(grd.Y(mrange,nrange),[],1); NaN];
+        end
+        output=[x y];
+        if OPT.saveoutputFile
+            io_polygon('write',outputFile,x,y,'dosplit');
+        end
+    end
 % dry2xyz
     function output=EHY_convert_dry2xyz(inputFile,outputFile,OPT)
         pathstr = fileparts(inputFile);
@@ -112,9 +155,16 @@ end
 % grd2kml
     function output=EHY_convert_grd2kml(inputFile,outputFile,OPT)
         if OPT.saveoutputFile
-            tempFileGrd=[tempdir 'temp.grd'];
-            tempFileKml=[tempdir 'temp.kml'];
+            [~,name]=fileparts(inputFile);
+            tempFileGrd=[tempdir name '.grd'];
+            tempFileKml=[tempdir name '.kml'];
             copyfile(inputFile,tempFileGrd);
+            grd=wlgrid('read',tempFileGrd);
+            [x,y]=EHY_convert_coorCheck(grd.X,grd.Y);
+            if ~any(any(grd.X==x)) % coordinates have been converted
+                grd.X=x; grd.Y=y; grd.CoordinateSystem='Spherical';
+                wlgrid('write',tempFileGrd,grd);
+            end
             grid2kml(tempFileGrd,OPT.lineColor*255);
             copyfile(tempFileKml,outputFile);
             delete(tempFileGrd)
@@ -143,7 +193,8 @@ end
     function output=EHY_convert_ldb2kml(inputFile,outputFile,OPT)
         ldb=landboundary('read',inputFile);
         if OPT.saveoutputFile
-            tempFile=[tempdir 'temp.kml'];
+            [~,name]=fileparts(inputFile);
+            tempFile=[tempdir name '.kml'];
             ldb2kml(ldb,tempFile,OPT.lineColor)
             copyfile(tempFile,outputFile);
             delete(tempFile);
@@ -167,7 +218,8 @@ end
         xyn{1,1}=x;xyn{1,2}=y;
         OPT=OPT_user;
         if OPT.saveoutputFile
-            tempFile=[tempdir 'temp.kml'];
+            [~,name]=fileparts(inputFile);
+            tempFile=[tempdir name '.kml'];
             KMLPlaceMark(xyn{1,2},xyn{1,1},tempFile,'name',xyn{1,3});
             copyfile(tempFile,outputFile);
             delete(tempFile)
@@ -196,7 +248,8 @@ end
     function output=EHY_convert_pol2kml(inputFile,outputFile,OPT)
         pol=landboundary('read',inputFile);
         if OPT.saveoutputFile
-            tempFile=[tempdir 'temp.kml'];
+            [~,name]=fileparts(inputFile);
+            tempFile=[tempdir name '.kml'];
             ldb2kml(pol,tempFile,OPT.lineColor)
             copyfile(tempFile,outputFile);
             delete(tempFile)
@@ -224,7 +277,8 @@ end
     function output=EHY_convert_shp2kml(inputFile,outputFile,OPT)
         ldb=shape2ldb(inputFile,0);
         if OPT.saveoutputFile
-            tempFile=[tempdir 'temp.kml'];
+            [~,name]=fileparts(inputFile);
+            tempFile=[tempdir name '.kml'];
             ldb2kml(ldb,tempFile,OPT.lineColor)
             copyfile(tempFile,outputFile);
             delete(tempFile)
@@ -251,7 +305,8 @@ end
         output=[x y];
         OPT=OPT_user;
         if OPT.saveoutputFile
-            tempFile=[tempdir 'temp.kml'];
+            [~,name]=fileparts(inputFile);
+            tempFile=[tempdir name '.kml'];
             ldb2kml(output,tempFile,OPT.lineColor)
             copyfile(tempFile,outputFile);
             delete(tempFile)
@@ -270,15 +325,15 @@ end
         
         for iM=1:length(thd.m)
             if strcmpi(thd.DATA(iM).direction,'U')
-                x=[x;grd.X(thd.m(1,iM),thd.n(1,iM));...
-                    grd.X(thd.m(2,iM),thd.n(2,iM)); NaN];
-                y=[y;grd.Y(thd.m(1,iM),thd.n(1,iM));...
-                    grd.Y(thd.m(2,iM),thd.n(2,iM)-1); NaN];
+                x=[x;grd.X(thd.DATA(iM).m,thd.DATA(iM).n);...
+                    grd.X(thd.DATA(iM).m,thd.DATA(iM).n-1); NaN];
+                y=[y;grd.Y(thd.DATA(iM).m,thd.DATA(iM).n);...
+                    grd.Y(thd.DATA(iM).m,thd.DATA(iM).n-1); NaN];
             else
-                x=[x;grd.X(thd.m(1,iM),thd.n(1,iM));...
-                    grd.X(thd.m(2,iM)-1,thd.n(2,iM)); NaN];
-                y=[y;grd.Y(thd.m(1,iM),thd.n(1,iM));...
-                    grd.Y(thd.m(2,iM),thd.n(2,iM)); NaN];
+                x=[x;grd.X(thd.DATA(iM).m,thd.DATA(iM).n);...
+                    grd.X(thd.DATA(iM).m-1,thd.DATA(iM).n); NaN];
+                y=[y;grd.Y(thd.DATA(iM).m,thd.DATA(iM).n);...
+                    grd.Y(thd.DATA(iM).m-1,thd.DATA(iM).n); NaN];
             end
         end
         output=[x y];
@@ -300,7 +355,8 @@ end
         end
         [xyn.x,xyn.y]=EHY_convert_coorCheck(xyn.x,xyn.y);
         if OPT.saveoutputFile
-            tempFile=[tempdir 'temp.kml'];
+            [~,name]=fileparts(inputFile);
+            tempFile=[tempdir name '.kml'];
             KMLPlaceMark(xyn.y,xyn.x,tempFile,'name',xyn.name);
             copyfile(tempFile,outputFile);
             delete(tempFile);
@@ -349,7 +405,8 @@ end
         xyz=dlmread(inputFile);
         lon=xyz(:,1); lat=xyz(:,2);
         if OPT.saveoutputFile
-            tempFile=[tempdir 'temp.kml'];
+            [~,name]=fileparts(inputFile);
+            tempFile=[tempdir name '.kml'];
             KMLPlaceMark(lat,lon,tempFile);
             copyfile(tempFile,outputFile);
             delete(tempFile)
@@ -366,7 +423,7 @@ end
 end
 
 function [x,y]=EHY_convert_coorCheck(x,y)
-if (min(y)>max(x)) && (~any(x<0)) && (~any(y<0)) && (prod(x>1000)==1) % RD in m
+if (min(min(y))>max(max(x))) && (~any(any(x<0))) && (~any(any((y<0)))) && (prod(prod(x>1000)==1)) % RD in m
     disp('Input coordinations are probably in meter Amersfoort/RD New, EPSG 28992')
     yn=input('Apply conversion from Amersfoort/RD New, EPSG 28992? [Y/N]  ','s');
     if strcmpi(yn,'y')
@@ -376,19 +433,10 @@ if (min(y)>max(x)) && (~any(x<0)) && (~any(y<0)) && (prod(x>1000)==1) % RD in m
         fromEPSG=input('What is the code of the input coordinates? EPSG: ');
         [x,y]=convertCoordinates(x,y,'CS1.code',fromEPSG,'CS2.code',4326);
     end
-elseif (min(y)>max(x)) && (~any(x<0)) && (~any(y<0)) % RD in km
-    disp('Input coordinations are probably in kilometer Amersfoort/RD New, EPSG 28992')
-    yn=input('Apply conversion from Amersfoort/RD New, EPSG 28992? [Y/N]  ','s');
-    if strcmpi(yn,'y')
-        fromEPSG='28992';
-        [x,y]=convertCoordinates(x/1000,y/1000,'CS1.code',fromEPSG,'CS2.code',4326);
-    else
-        fromEPSG=input('What is the code of the input coordinates? EPSG: ');
-        [x,y]=convertCoordinates(x,y,'CS1.code',fromEPSG,'CS2.code',4326);
-    end
 elseif any([any(x<-180),any(x>180),any(y<-90),any(y>90)])
     disp('Input coordinations are probably not in [Longitude,Latitude] - WGS ''84')
     disp('common EPSG-codes: Amersfoort/RD New: 28992')
+    disp('                   Panama           : 32617')
     fromEPSG=input('What is the code of the input coordinates? EPSG: ');
     [x,y]=convertCoordinates(x,y,'CS1.code',fromEPSG,'CS2.code',4326);
 end
