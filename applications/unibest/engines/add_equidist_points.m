@@ -1,10 +1,11 @@
-function outLDB=add_equidist_points(dx,ldb,varargin)
+function [outLDB ori_ldb_inds]=add_equidist_points(dx,ldb,varargin)
 %=Overview=================================================================
 %
 % add_equidist_points - cuts up ldb's in sections of dx length (only works
 %                       for refinement, does not coarsen the ldb)
 %
-%        outLDB = add_equidist_points(<dx>,<ldb>,<dx option>)
+%      outLDB = add_equidist_points(<dx>,<ldb>,<dx option>)
+%      [outLDB, ori_ldb_inds] = add_equidist_points(<dx>,<ldb>,<dx option>)
 %
 % input variables:
 %
@@ -52,6 +53,9 @@ function outLDB=add_equidist_points(dx,ldb,varargin)
 %            scripting only (no dialogs are triggered)
 %
 % ldb_out=add_equidist_points(dx,ldb_in,'equi')
+%            scripting only (no dialogs are triggered)
+%
+% [ldb_out,ori_ldb_inds]=add_equidist_points(dx,ldb_in,'equi')
 %            scripting only (no dialogs are triggered)
 %
 %=Elaborated overview of default 'exact' functionality=====================
@@ -188,64 +192,49 @@ end
 %% Actual ldb scripting:
 %
 
-if strcmp(dx_opt,'exact')
-    for cc=1:length(ldbCell)
-        in=ldbCell{cc};
-        out=[];
-        for ii=1:size(in,1)-1
-            %Determine distance between two points 
-            dist=sqrt((in(ii+1,1)-in(ii,1)).^2 + (in(ii+1,2)-in(ii,2)).^2);
-            if dist~=0
+ori_ldb_inds = []; cur_ori_ind = 0;
+for cc=1:length(ldbCell)
+    cur_ori_ind = cur_ori_ind+2;
+    in=ldbCell{cc};
+    out=[];
+    for ii=1:size(in,1)-1
+        %Determine distance between two points 
+        dist=sqrt((in(ii+1,1)-in(ii,1)).^2 + (in(ii+1,2)-in(ii,2)).^2);
+        if dist~=0
+            if strcmp(dx_opt,'exact')
                 ox=interp1([0 dist],in(ii:ii+1,1),0:dx:dist)';
                 oy=interp1([0 dist],in(ii:ii+1,2),0:dx:dist)';
-                
-                if ii>1
-                    if (out(end,1) == ox(1,1)) & (out(end,2) == oy(1,1))
-                        out=[out ; [ox(2:end,1) oy(2:end,1)]];
-                    else
-                        out=[out ; [ox oy]];
-                    end
-                else
-                    out=[out ; [ox oy]];
-                end
-            end
-        end
-        outCell{cc}=out;
-        if (outCell{cc}(end,1) ~= ldbEnd(cc,1)) | (outCell{cc}(end,2) ~= ldbEnd(cc,2))
-            outCell{cc}(end+1,1:2) = ldbEnd(cc,:);
-        end
-    end
-elseif strcmp(dx_opt,'equi')
-    for cc=1:length(ldbCell)
-        in=ldbCell{cc};
-        out=[];
-        for ii=1:size(in,1)-1
-            %Determine distance between two points 
-            dist=sqrt((in(ii+1,1)-in(ii,1)).^2 + (in(ii+1,2)-in(ii,2)).^2);
-            if dist~=0
+            elseif strcmp(dx_opt,'equi')
                 dx_cur = dist/(ceil(dist/dx));
-                
+
                 ox=interp1([0 dist],in(ii:ii+1,1),0:dx_cur:dist)';
                 oy=interp1([0 dist],in(ii:ii+1,2),0:dx_cur:dist)';
-                
-                if ii>1
-                    if (out(end,1) == ox(1,1)) & (out(end,2) == oy(1,1))
-                        out=[out ; [ox(2:end,1) oy(2:end,1)]];
-                    else
-                        out=[out ; [ox oy]];
-                    end
+            else
+                error(['Unknown dx_opt option: ''' dx_opt '''']);
+            end
+
+            if ii>1
+                if (out(end,1) == ox(1,1)) & (out(end,2) == oy(1,1))
+                    out=[out ; [ox(2:end,1) oy(2:end,1)]];
+                    ori_ldb_inds = [ori_ldb_inds; cur_ori_ind+length(ox)-1];
                 else
                     out=[out ; [ox oy]];
+                    cur_ori_ind  = cur_ori_ind + 1;
+                    ori_ldb_inds = [ori_ldb_inds(1:end-1); cur_ori_ind; cur_ori_ind+length(ox)-1];
                 end
+            else
+                out=[out ; [ox oy]];
+                ori_ldb_inds = [ori_ldb_inds; cur_ori_ind; cur_ori_ind+length(ox)-1];
             end
-        end
-        outCell{cc}=out;
-        if (outCell{cc}(end,1) ~= ldbEnd(cc,1)) | (outCell{cc}(end,2) ~= ldbEnd(cc,2))
-            outCell{cc}(end+1,1:2) = ldbEnd(cc,:);
+            cur_ori_ind  = ori_ldb_inds(end);
         end
     end
-else
-    error('Please contact developer with error code ''add_equidist_points_1001''');
+    outCell{cc}=out;
+    if (outCell{cc}(end,1) ~= ldbEnd(cc,1)) | (outCell{cc}(end,2) ~= ldbEnd(cc,2))
+        outCell{cc}(end+1,1:2) = ldbEnd(cc,:);
+        ori_ldb_inds(end) = ori_ldb_inds(end)+1;
+        cur_ori_ind       = cur_ori_ind + 1;
+    end
 end
 
 %% Output:
@@ -253,6 +242,10 @@ end
 
 if ~isstruct(ldb)
     outLDB=rebuildLdb(outCell);
+%     plot(outLDB(:,1),outLDB(:,2),'k.-');
+%     hold on;
+%     plot(ldb(:,1),ldb(:,2),'rx');
+%     plot(outLDB(ori_ldb_inds,1),outLDB(ori_ldb_inds,2),'bo');
 else
     outLDB.ldbCell=outCell;
     outLDB.ldbBegin=ldbBegin;
