@@ -423,7 +423,7 @@ end
 end
 
 function [x,y]=EHY_convert_coorCheck(x,y)
-if (min(min(y))>max(max(x))) && (~any(any(x<0))) && (~any(any((y<0)))) && (prod(prod(x>1000)==1)) % RD in m
+if (min(min(y))>max(max(x))) && (~any(any(x<0))) && (~any(any((y<0)))) && (prod(prod(x(~isnan(x))>1000)==1)) % RD in m
     disp('Input coordinations are probably in meter Amersfoort/RD New, EPSG 28992')
     yn=input('Apply conversion from Amersfoort/RD New, EPSG 28992? [Y/N]  ','s');
     if strcmpi(yn,'y')
