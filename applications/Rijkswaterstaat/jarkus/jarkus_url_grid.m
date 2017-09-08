@@ -63,6 +63,6 @@ if exist(local,'dir')
         url{ii} = fullfile(local,names(ii).name);
     end
 else
-    url = opendap_catalog('http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/','log',0);
+    url = opendap_catalog('http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/');
 end
 
