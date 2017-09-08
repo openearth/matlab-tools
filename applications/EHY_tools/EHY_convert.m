@@ -148,7 +148,7 @@ end
         [x,y]=EHY_mn2xy(dry.m,dry.n,[grdPath grdName]);
         xyz=[x y zeros(length(x),1)];
         if OPT.saveoutputFile
-            dlmwrite(outputFile,xyz,'delimiter',' ','precision','%16.7e')
+            dlmwrite(outputFile,xyz,'delimiter',' ','precision','%20.7f')
         end
         output=xyz;
     end
@@ -237,7 +237,7 @@ end
         if OPT.saveoutputFile
             fid=fopen(outputFile,'w');
             for iM=1:length(x)
-                fprintf(fid,'%16.7e%16.7e ',[x(iM,1) y(iM,1)]);
+                fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
                 fprintf(fid,'%-s\n',obs.namst(iM,:));
             end
             fclose(fid);
