@@ -136,7 +136,7 @@ end
         end
         output=[x y];
         if OPT.saveoutputFile
-            io_polygon('write',outputFile,x,y,'dosplit');
+            io_polygon('write',outputFile,x,y,'dosplit','-1');
         end
     end
 % dry2xyz
@@ -338,7 +338,7 @@ end
         end
         output=[x y];
         if OPT.saveoutputFile
-            io_polygon('write',outputFile,x,y,'dosplit');
+            io_polygon('write',outputFile,x,y,'dosplit','-1');
         end
     end
 % xyn2kml
