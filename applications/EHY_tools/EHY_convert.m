@@ -16,6 +16,7 @@ OPT.outputFile=[]; % if isempty > outputFile=strrep(inputFile,inputExt,outputExt
 OPT.lineColor=[1 0 0]; % default is red
 OPT.fromEPSG=[]; % convert from this EPSG in case of conversion to kml (Google Earth)
 OPT.grdFile=[];  % corresponding .grd file for files like .crs / .dry / obs. / ...
+OPT.grd=[]; % wlgrid('read',OPT.grdFile);
 
 % if structure was given as input OPT
 OPTid=find(cellfun(@isstruct, varargin));
@@ -132,15 +133,7 @@ end
     function [output,OPT]=EHY_convert_crs2pol(inputFile,outputFile,OPT)
         crs=delft3d_io_crs('read',inputFile);
         x=[];y=[];
-        if isempty(OPT.grdFile)
-            disp('Open the corresponding .grd-file')
-            [grdName,grdPath]=uigetfile([pathstr filesep '.grd'],'Open the corresponding .grd-file');
-            OPT.grdFile=[grdPath grdName];
-        end
-        tempFile=[tempdir 'tmp.grd'];
-        copyfile(OPT.grdFile,tempFile);
-        grd=wlgrid('read',tempFile);
-        delete(tempFile);
+        [OPT,grd]=EHY_convert_gridCheck(OPT);
         for iM=1:length(crs.m)
             mrange=min(crs.DATA(iM).m):max(crs.DATA(iM).m);
             nrange=min(crs.DATA(iM).n):max(crs.DATA(iM).n);
@@ -161,11 +154,7 @@ end
     function [output,OPT]=EHY_convert_dry2xyz(inputFile,outputFile,OPT)
         pathstr = fileparts(inputFile);
         dry=delft3d_io_dry('read',inputFile);
-        if isempty(OPT.grdFile)
-            disp('Open the corresponding .grd-file')
-            [grdName,grdPath]=uigetfile([pathstr filesep '.grd'],'Open the corresponding .grd-file');
-            OPT.grdFile=[grdPath grdName];
-        end
+        OPT=EHY_convert_gridCheck(OPT);
         [x,y]=EHY_mn2xy(dry.m,dry.n,OPT.grdFile);
         xyz=[x y zeros(length(x),1)];
         if OPT.saveoutputFile
@@ -177,15 +166,7 @@ end
     function [output,OPT]=EHY_convert_dry2kml(inputFile,outputFile,OPT)
         pathstr = fileparts(inputFile);
         dry=delft3d_io_dry('read',inputFile);
-        if isempty(OPT.grdFile)
-            disp('Open the corresponding .grd-file')
-            [grdName,grdPath]=uigetfile([pathstr filesep '.grd'],'Open the corresponding .grd-file');
-            OPT.grdFile=[grdPath grdName];
-        end
-        tempFile=[tempdir 'tmp.grd'];
-        copyfile(OPT.grdFile,tempFile);
-        grd=wlgrid('read',tempFile);
-        delete(tempFile);
+        [OPT,grd]=EHY_convert_gridCheck(OPT);
         pol=[];
         for iM=1:length(dry.m)
             mm=dry.m(iM);
@@ -282,11 +263,7 @@ end
     function [output,OPT]=EHY_convert_obs2xyn(inputFile,outputFile,OPT)
         pathstr = fileparts(inputFile);
         obs=delft3d_io_obs('read',inputFile);
-        if isempty(OPT.grdFile)
-            disp('Open the corresponding .grd-file')
-            [grdName,grdPath]=uigetfile([pathstr filesep '.grd'],'Open the corresponding .grd-file');
-            OPT.grdFile=[grdPath grdName];
-        end
+        OPT=EHY_convert_gridCheck(OPT);
         [x,y]=EHY_mn2xy(obs.m,obs.n,OPT.grdFile);
         
         if OPT.saveoutputFile
@@ -371,11 +348,7 @@ end
     function [output,OPT]=EHY_convert_src2xyn(inputFile,outputFile,OPT)
         pathstr = fileparts(inputFile);
         src=delft3d_io_src('read',inputFile);
-        if isempty(OPT.grdFile)
-            disp('Open the corresponding .grd-file')
-            [grdName,grdPath]=uigetfile([pathstr filesep '.grd'],'Open the corresponding .grd-file');
-            OPT.grdFile=[grdPath grdName];
-        end
+        OPT=EHY_convert_gridCheck(OPT);
         [x,y]=EHY_mn2xy(src.m,src.n,OPT.grdFile);
         
         if OPT.saveoutputFile
@@ -408,15 +381,7 @@ end
     function [output,OPT]=EHY_convert_thd2pol(inputFile,outputFile,OPT)
         thd=delft3d_io_thd('read',inputFile);
         x=[];y=[];
-        if isempty(OPT.grdFile)
-            disp('Open the corresponding .grd-file')
-            [grdName,grdPath]=uigetfile([pathstr filesep '.grd'],'Open the corresponding .grd-file');
-            OPT.grdFile=[grdPath grdName];
-        end
-        tempFile=[tempdir 'tmp.grd'];
-        copyfile(OPT.grdFile,tempFile);
-        grd=wlgrid('read',tempFile);
-        delete(tempFile);
+        [OPT,grd]=EHY_convert_gridCheck(OPT);
         
         for iM=1:length(thd.m)
             if strcmpi(thd.DATA(iM).direction,'U')
@@ -472,11 +437,7 @@ end
             xyn.name=D{1,3};
         end
         [xyn.x,xyn.y,OPT]=EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
-        if isempty(OPT.grdFile)
-            disp('Open the corresponding .grd-file')
-            [grdName,grdPath]=uigetfile([pathstr filesep '.grd'],'Open the corresponding .grd-file');
-            OPT.grdFile=[grdPath grdName];
-        end
+        OPT=EHY_convert_gridCheck(OPT);
         [m,n]=EHY_xy2mn(xyn.x,xyn.y,OPT.grdFile);
         obs.m=m; obs.n=n; obs.namst=xyn.name;
         if OPT.saveoutputFile
@@ -488,11 +449,7 @@ end
     function [output,OPT]=EHY_convert_xyz2dry(inputFile,outputFile,OPT)
         pathstr = fileparts(inputFile);
         xyz=importdata(inputFile);
-        if isempty(OPT.grdFile)
-            disp('Open the corresponding .grd-file')
-            [grdName,grdPath]=uigetfile([pathstr filesep '.grd'],'Open the corresponding .grd-file');
-            OPT.grdFile=[grdPath grdName];
-        end
+        OPT=EHY_convert_gridCheck(OPT);
         [m,n]=EHY_xy2mn(xyz(:,1),xyz(:,2),OPT.grdFile);
         if OPT.saveoutputFile
             delft3d_io_dry('write',outputFile,m,n);
@@ -519,6 +476,27 @@ if nargout==1
 elseif nargout>1
     varargout{1}=output;
     varargout{2}=OPT;
+end
+end
+
+function varargout=EHY_convert_gridCheck(OPT) 
+if nargout==1
+    if isempty(OPT.grdFile)
+        disp('Open the corresponding .grd-file')
+        [grdName,grdPath]=uigetfile([pathstr filesep '.grd'],'Open the corresponding .grd-file');
+        OPT.grdFile=[grdPath grdName];
+    end
+    varargout{1}=OPT;
+elseif nargout==2
+    if isempty(OPT.grd)
+        [~, name] = fileparts(OPT.grdFile);
+        tempFile=[tempdir name '.grd'];
+        copyfile(OPT.grdFile,tempFile);
+        OPT.grd=wlgrid('read',tempFile);
+        delete(tempFile);
+    end
+    varargout{1}=OPT;
+    varargout{2}=OPT.grd;
 end
 end
 
