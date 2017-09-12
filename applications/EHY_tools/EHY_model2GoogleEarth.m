@@ -18,7 +18,7 @@ else
     mdFile=[pathname filename];
 end
 modelType=nesthd_det_filetype(mdFile);
-if strcmp(modelType,'none')
+if strcmp(modelType,'none') || ~strcmp(modelType,'mdu') || ~strcmp(modelType,'mdf')
     [modelType,mdFile]=EHY_getModelType(mdFile);
     if strcmp(modelType,'none')
         error('No .mdu, .mdf or siminp found in this folder')
@@ -54,7 +54,7 @@ switch modelType
          end
          
          % .thd
-         if isfield(mdf.keywords,'filtd') && ~isempty(mdf.keywords.filthd)
+         if isfield(mdf.keywords,'filtd') && ~isempty(mdf.keywords.filtd)
          d3dfile=mdf.keywords.filtd;
          outputFile=[outputDir strrep(d3dfile,'.thd','_thd.kml')];
          inputFile=[runDir filesep d3dfile];
