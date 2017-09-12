@@ -21,7 +21,7 @@ OPT.grdFile=[];  % corresponding .grd file for files like .crs / .dry / obs. / .
 OPTid=find(cellfun(@isstruct, varargin));
 if ~isempty(OPTid)
     OPT=setproperty(OPT,varargin{OPTid});
-    varargin{OPTid}=[];        
+    varargin{OPTid}=[];
     varargin=varargin(~cellfun('isempty',varargin));
 end
 
@@ -538,5 +538,10 @@ if isempty(OPT.fromEPSG)
         OPT.fromEPSG=input('What is the code of the input coordinates? EPSG: ');
     end
 end
-[x,y]=convertCoordinates(x,y,'CS1.code',OPT.fromEPSG,'CS2.code',4326);
+if isempty(OPT.fromEPSG)
+    disp('Coordinates are assumed to be in WGS''84 (Latitude,Longitude)')
+    OPT.fromEPSG='4326';
+else
+    [x,y]=convertCoordinates(x,y,'CS1.code',OPT.fromEPSG,'CS2.code',4326);
+end
 end
