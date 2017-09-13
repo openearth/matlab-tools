@@ -133,7 +133,7 @@ end
     function [output,OPT]=EHY_convert_crs2pol(inputFile,outputFile,OPT)
         crs=delft3d_io_crs('read',inputFile);
         x=[];y=[];
-        [OPT,grd]=EHY_convert_gridCheck(OPT);
+        [OPT,grd]=EHY_convert_gridCheck(OPT,inputFile);
         for iM=1:length(crs.m)
             mrange=min(crs.DATA(iM).m):max(crs.DATA(iM).m);
             nrange=min(crs.DATA(iM).n):max(crs.DATA(iM).n);
@@ -154,7 +154,7 @@ end
     function [output,OPT]=EHY_convert_dry2xyz(inputFile,outputFile,OPT)
         pathstr = fileparts(inputFile);
         dry=delft3d_io_dry('read',inputFile);
-        OPT=EHY_convert_gridCheck(OPT);
+        OPT=EHY_convert_gridCheck(OPT,inputFile);
         [x,y]=EHY_mn2xy(dry.m,dry.n,OPT.grdFile);
         xyz=[x y zeros(length(x),1)];
         if OPT.saveoutputFile
@@ -166,7 +166,7 @@ end
     function [output,OPT]=EHY_convert_dry2kml(inputFile,outputFile,OPT)
         pathstr = fileparts(inputFile);
         dry=delft3d_io_dry('read',inputFile);
-        [OPT,grd]=EHY_convert_gridCheck(OPT);
+        [OPT,grd]=EHY_convert_gridCheck(OPT,inputFile);
         pol=[];
         for iM=1:length(dry.m)
             mm=dry.m(iM);
@@ -263,7 +263,7 @@ end
     function [output,OPT]=EHY_convert_obs2xyn(inputFile,outputFile,OPT)
         pathstr = fileparts(inputFile);
         obs=delft3d_io_obs('read',inputFile);
-        OPT=EHY_convert_gridCheck(OPT);
+        OPT=EHY_convert_gridCheck(OPT,inputFile);
         [x,y]=EHY_mn2xy(obs.m,obs.n,OPT.grdFile);
         
         if OPT.saveoutputFile
@@ -348,7 +348,7 @@ end
     function [output,OPT]=EHY_convert_src2xyn(inputFile,outputFile,OPT)
         pathstr = fileparts(inputFile);
         src=delft3d_io_src('read',inputFile);
-        OPT=EHY_convert_gridCheck(OPT);
+        OPT=EHY_convert_gridCheck(OPT,inputFile);
         [x,y]=EHY_mn2xy(src.m,src.n,OPT.grdFile);
         
         if OPT.saveoutputFile
@@ -381,7 +381,7 @@ end
     function [output,OPT]=EHY_convert_thd2pol(inputFile,outputFile,OPT)
         thd=delft3d_io_thd('read',inputFile);
         x=[];y=[];
-        [OPT,grd]=EHY_convert_gridCheck(OPT);
+        [OPT,grd]=EHY_convert_gridCheck(OPT,inputFile);
         
         for iM=1:length(thd.m)
             if strcmpi(thd.DATA(iM).direction,'U')
@@ -437,7 +437,7 @@ end
             xyn.name=D{1,3};
         end
         [xyn.x,xyn.y,OPT]=EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
-        OPT=EHY_convert_gridCheck(OPT);
+        OPT=EHY_convert_gridCheck(OPT,inputFile);
         [m,n]=EHY_xy2mn(xyn.x,xyn.y,OPT.grdFile);
         obs.m=m; obs.n=n; obs.namst=xyn.name;
         if OPT.saveoutputFile
@@ -449,7 +449,7 @@ end
     function [output,OPT]=EHY_convert_xyz2dry(inputFile,outputFile,OPT)
         pathstr = fileparts(inputFile);
         xyz=importdata(inputFile);
-        OPT=EHY_convert_gridCheck(OPT);
+        OPT=EHY_convert_gridCheck(OPT,inputFile);
         [m,n]=EHY_xy2mn(xyz(:,1),xyz(:,2),OPT.grdFile);
         if OPT.saveoutputFile
             delft3d_io_dry('write',outputFile,m,n);
@@ -479,11 +479,11 @@ elseif nargout>1
 end
 end
 
-function varargout=EHY_convert_gridCheck(OPT) 
+function varargout=EHY_convert_gridCheck(OPT,inputFile) 
 if nargout==1
     if isempty(OPT.grdFile)
         disp('Open the corresponding .grd-file')
-        [grdName,grdPath]=uigetfile([pathstr filesep '.grd'],'Open the corresponding .grd-file');
+        [grdName,grdPath]=uigetfile([fileparts(inputFile) filesep '.grd'],'Open the corresponding .grd-file');
         OPT.grdFile=[grdPath grdName];
     end
     varargout{1}=OPT;
@@ -502,14 +502,19 @@ end
 
 function [x,y,OPT]=EHY_convert_coorCheck(x,y,OPT)
 if isempty(OPT.fromEPSG)
-    if all(x(~isnan(x))>-7000) && all(x(~isnan(x)<300000)) && all(x(~isnan(y)>289000)) && all(x(~isnan(y)<629000))   % probably RD in m
+    if isempty(OPT.fromEPSG) && all(x>=-180) && all(x<=180) && all(y>=-90) && all(y<=90)
+        disp('Input coordinations are probably in [Longitude,Latitude] - WGS ''84')
+        yn=input('Is this correct? [Y/N]  ','s');
+        if strcmpi(yn(1),'y')
+            OPT.fromEPSG='4326';
+        end
+    elseif isempty(OPT.fromEPSG) && all(x(~isnan(x))>-7000) && all(x(~isnan(x)<300000)) && all(x(~isnan(y)>289000)) && all(x(~isnan(y)<629000))   % probably RD in m
         disp('Input coordinations are probably in meter Amersfoort/RD New, EPSG 28992')
         yn=input('Apply conversion from Amersfoort/RD New, EPSG 28992? [Y/N]  ','s');
         if strcmpi(yn,'y')
             OPT.fromEPSG='28992';
         end
-    end
-    if isempty(OPT.fromEPSG) && any([any(x<-180),any(x>180),any(y<-90),any(y>90)])
+    else 
         disp('Input coordinations are probably not in [Longitude,Latitude] - WGS ''84')
         disp('common EPSG-codes: Amersfoort/RD New: 28992')
         disp('                   Panama           : 32617')
@@ -519,7 +524,7 @@ end
 if isempty(OPT.fromEPSG)
     disp('Coordinates are assumed to be in WGS''84 (Latitude,Longitude)')
     OPT.fromEPSG='4326';
-else
+elseif ~isempty(OPT.fromEPSG) && ~strcmp(OPT.fromEPSG,'4326')
     [x,y]=convertCoordinates(x,y,'CS1.code',OPT.fromEPSG,'CS2.code',4326);
 end
 end
