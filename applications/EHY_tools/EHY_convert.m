@@ -202,6 +202,7 @@ end
             grid2kml(tempFileGrd,OPT.lineColor*255);
             copyfile(tempFileKml,outputFile);
             delete(tempFileGrd)
+            delete(strrep(tempFileGrd,'.grd','.enc'))
             delete(tempFileKml)
         end
         output=[];
@@ -346,7 +347,6 @@ end
     end
 % src2xyn
     function [output,OPT]=EHY_convert_src2xyn(inputFile,outputFile,OPT)
-        pathstr = fileparts(inputFile);
         src=delft3d_io_src('read',inputFile);
         OPT=EHY_convert_gridCheck(OPT,inputFile);
         [x,y]=EHY_mn2xy(src.m,src.n,OPT.grdFile);
@@ -425,7 +425,6 @@ end
     end
 % xyn2obs
     function [output,OPT]=EHY_convert_xyn2obs(inputFile,outputFile,OPT)
-        pathstr = fileparts(inputFile);
         try
             xyn=delft3d_io_xyn('read',inputFile);
         catch
@@ -446,7 +445,6 @@ end
     end
 % xyz2dry
     function [output,OPT]=EHY_convert_xyz2dry(inputFile,outputFile,OPT)
-        pathstr = fileparts(inputFile);
         xyz=importdata(inputFile);
         OPT=EHY_convert_gridCheck(OPT,inputFile);
         [m,n]=EHY_xy2mn(xyz(:,1),xyz(:,2),OPT.grdFile);
@@ -501,19 +499,21 @@ end
 
 function [x,y,OPT]=EHY_convert_coorCheck(x,y,OPT)
 if isempty(OPT.fromEPSG)
-    if isempty(OPT.fromEPSG) && all(x>=-180) && all(x<=180) && all(y>=-90) && all(y<=90)
+    if isempty(OPT.fromEPSG) && all(all(x(~isnan(x))>=-180)) && all(all(x(~isnan(x))<=180)) && all(all(y(~isnan(y))>=-90)) && all(all(y(~isnan(y))<=90))
         disp('Input coordinations are probably in [Longitude,Latitude] - WGS ''84')
         yn=input('Is this correct? [Y/N]  ','s');
         if strcmpi(yn(1),'y')
             OPT.fromEPSG='4326';
         end
-    elseif isempty(OPT.fromEPSG) && all(x(~isnan(x))>-7000) && all(x(~isnan(x)<300000)) && all(x(~isnan(y)>289000)) && all(x(~isnan(y)<629000))   % probably RD in m
+    end
+    if isempty(OPT.fromEPSG) && all(all(x(~isnan(x))>-7000)) && all(all(x(~isnan(x)<300000))) && all(all(x(~isnan(y)>289000))) && all(all(x(~isnan(y)<629000)))   % probably RD in m
         disp('Input coordinations are probably in meter Amersfoort/RD New, EPSG 28992')
         yn=input('Apply conversion from Amersfoort/RD New, EPSG 28992? [Y/N]  ','s');
         if strcmpi(yn,'y')
             OPT.fromEPSG='28992';
         end
-    else 
+    end
+    if isempty(OPT.fromEPSG)
         disp('Input coordinations are probably not in [Longitude,Latitude] - WGS ''84')
         disp('common EPSG-codes: Amersfoort/RD New: 28992')
         disp('                   Panama           : 32617')
