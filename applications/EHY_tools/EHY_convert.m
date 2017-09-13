@@ -436,7 +436,6 @@ end
             xyn.y=D{1,2};
             xyn.name=D{1,3};
         end
-        [xyn.x,xyn.y,OPT]=EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
         OPT=EHY_convert_gridCheck(OPT,inputFile);
         [m,n]=EHY_xy2mn(xyn.x,xyn.y,OPT.grdFile);
         obs.m=m; obs.n=n; obs.namst=xyn.name;
