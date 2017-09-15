@@ -1,3 +1,4 @@
+
 function varargout=EHY_convert(varargin)
 %% varargout=EHY_convert(varargin)
 %
@@ -105,6 +106,7 @@ if OPT.saveoutputFile && exist(outputFile,'file')
     end
 end
 
+if strcmp(inputExt,'pli'); inputExt='pol'; end
 if strcmpi(outputExt,'pli'); outputExt='pol'; end %threat as .pol, but still save as .pli
 
 output=[];
@@ -280,6 +282,7 @@ end
 % pol2kml
     function [output,OPT]=EHY_convert_pol2kml(inputFile,outputFile,OPT)
         pol=landboundary('read',inputFile);
+        [pol(:,1),pol(:,2),OPT]=EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
         if OPT.saveoutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
@@ -516,7 +519,7 @@ if isempty(OPT.fromEPSG)
     if isempty(OPT.fromEPSG)
         disp('Input coordinations are probably not in [Longitude,Latitude] - WGS ''84')
         disp('common EPSG-codes: Amersfoort/RD New: 28992')
-        disp('                   Panama           : 32617')
+        disp('                   .........        :      ')
         OPT.fromEPSG=input('What is the code of the input coordinates? EPSG: ');
     end
 end
