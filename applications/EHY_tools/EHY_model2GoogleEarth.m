@@ -31,57 +31,98 @@ if ~exist(outputDir); mkdir(outputDir); end
 OPT.saveoutputFile=1;
 switch modelType
     case 'mdu'
-        mdu=delft3d_io_mdu('read',mdFile);
+        mdu=dflowfm_io_mdu('read',mdFile);
+         
+         % landboundary
+         if isfield(mdu.geometry,'LandBoundaryFile') && ~isempty(mdu.geometry.LandBoundaryFile)
+         file=mdu.geometry.LandBoundaryFile;
+         outputFile=[outputDir strrep(file,'.ldb','_ldb.kml')];
+         inputFile=[runDir filesep file];
+         [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
+         end
+              
+         % thin dams
+         if isfield(mdu.geometry,'ThinDamFile') && ~isempty(mdu.geometry.ThinDamFile)
+         file=mdu.geometry.ThinDamFile;
+         outputFile=[outputDir strrep(file,'.pli','_thd.kml')];
+         inputFile=[runDir filesep file];
+         [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
+         end
         
+        % dry points
+         if isfield(mdu.geometry,'DryPointsFile') && ~isempty(mdu.geometry.DryPointsFile)
+         file=mdu.geometry.DryPointsFile;
+         outputFile=[outputDir strrep(file,'.xyz','_dry.kml')];
+         inputFile=[runDir filesep file];
+         [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
+         end
+        
+        % Observation points
+         if isfield(mdu.output,'ObsFile') && ~isempty(mdu.output.ObsFile)
+         file=mdu.output.ObsFile;
+         outputFile=[outputDir strrep(file,'.xyn','_obs.kml')];
+         inputFile=[runDir filesep file];
+         [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
+         end
+
+         % cross sections
+         if isfield(mdu.geometry,'CrsFile') && ~isempty(mdu.geometry.CrsFile)
+         file=mdu.geometry.CrsFile;
+         outputFile=[outputDir strrep(file,'.xyz','_crs.kml')];
+         inputFile=[runDir filesep file];
+         [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
+         end
+
     case 'mdf'
          mdf=delft3d_io_mdf('read',mdFile);
+         
          % .grd
          if isfield(mdf.keywords,'filcco') && ~isempty(mdf.keywords.filcco)
          OPT.grdFile=[runDir filesep mdf.keywords.filcco];
-         d3dfile=mdf.keywords.filcco;
-         inputFile=[runDir filesep d3dfile];
-         outputFile=[outputDir strrep(d3dfile,'.grd','_grd.kml')];
-         inputFile=[runDir filesep d3dfile];
+         file=mdf.keywords.filcco;
+         inputFile=[runDir filesep file];
+         outputFile=[outputDir strrep(file,'.grd','_grd.kml')];
+         inputFile=[runDir filesep file];
          [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[1 0 0],OPT);
          end
          
          % .dry
          if isfield(mdf.keywords,'fildry') && ~isempty(mdf.keywords.fildry)
-         d3dfile=mdf.keywords.fildry;
-         outputFile=[outputDir strrep(d3dfile,'.dry','_dry.kml')];
-         inputFile=[runDir filesep d3dfile];
+         file=mdf.keywords.fildry;
+         outputFile=[outputDir strrep(file,'.dry','_dry.kml')];
+         inputFile=[runDir filesep file];
          [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
          end
          
          % .thd
          if isfield(mdf.keywords,'filtd') && ~isempty(mdf.keywords.filtd)
-         d3dfile=mdf.keywords.filtd;
-         outputFile=[outputDir strrep(d3dfile,'.thd','_thd.kml')];
-         inputFile=[runDir filesep d3dfile];
+         file=mdf.keywords.filtd;
+         outputFile=[outputDir strrep(file,'.thd','_thd.kml')];
+         inputFile=[runDir filesep file];
          [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
          end
          
          % .crs
          if isfield(mdf.keywords,'filcrs') && ~isempty(mdf.keywords.filcrs)
-         d3dfile=mdf.keywords.filcrs;
-         outputFile=[outputDir strrep(d3dfile,'.crs','_crs.kml')];
-         inputFile=[runDir filesep d3dfile];
+         file=mdf.keywords.filcrs;
+         outputFile=[outputDir strrep(file,'.crs','_crs.kml')];
+         inputFile=[runDir filesep file];
          [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],OPT);
          end
          
          % .obs
          if isfield(mdf.keywords,'filsta') && ~isempty(mdf.keywords.filsta)
-         d3dfile=mdf.keywords.filsta;
-         outputFile=[outputDir strrep(d3dfile,'.obs','_obs.kml')];
-         inputFile=[runDir filesep d3dfile];
+         file=mdf.keywords.filsta;
+         outputFile=[outputDir strrep(file,'.obs','_obs.kml')];
+         inputFile=[runDir filesep file];
          [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,OPT);
          end
          
          % .src
          if isfield(mdf.keywords,'filsrc') && ~isempty(mdf.keywords.filsrc)
-         d3dfile=mdf.keywords.filsrc;
-         outputFile=[outputDir strrep(d3dfile,'.src','_src.kml')];
-         inputFile=[runDir filesep d3dfile];
+         file=mdf.keywords.filsrc;
+         outputFile=[outputDir strrep(file,'.src','_src.kml')];
+         inputFile=[runDir filesep file];
          [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
          end
 end
