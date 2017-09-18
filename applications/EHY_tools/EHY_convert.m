@@ -1,4 +1,3 @@
-
 function varargout=EHY_convert(varargin)
 %% varargout=EHY_convert(varargin)
 %
