@@ -16,6 +16,9 @@ end
 NoInputNeeded(strmatch('EHY_opendap',NoInputNeeded))=[];
 NoInputNeeded(strmatch('EHY_plot_google_map',NoInputNeeded))=[];
 
+% add other useful OET functions
+NoInputNeeded=[NoInputNeeded;'SuperTrans.m';'ldbTool.m'];
+
 % select which function to use
 selection=  listdlg('PromptString',['Which function would you like to use:'],...
     'SelectionMode','single',...
