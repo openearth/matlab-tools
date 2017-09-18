@@ -47,7 +47,7 @@ end
 %% initialise
 if length(varargin)==0
     listOfExt=unique(availableConversions(:,1));
-    disp(['EHY_convert  -  Conversion possible for following inputFiles: ',...
+    disp(['EHY_convert  -  Conversion possible for following inputFiles: ' char(10),...
         strrep(strtrim(sprintf('%s ',listOfExt{:})),' ',', ')])
     availableExt=strcat('*.',[{'*'}; listOfExt]);
     disp('Open a file that you want to convert')
