@@ -1,9 +1,8 @@
 function EHY_model2GoogleEarth(varargin)
 %% EHY_model2GoogleEarth(varargin)
 %
-% Based on an D-FLOW FM, Delft3D or SIMONA input file (.mdu / .mdf /
-% siminp) the simulation period, calculation time and corresponding
-% computational time is computed.
+% Based on an D-FLOW FM or Delft3D file (.mdu / .mdf) the model input files
+% are converted to kml, so they can be visualised in Google Earth. 
 %
 % Example1: EHY_model2GoogleEarth
 % Example2: EHY_model2GoogleEarth('D:\model\model.mdu')
