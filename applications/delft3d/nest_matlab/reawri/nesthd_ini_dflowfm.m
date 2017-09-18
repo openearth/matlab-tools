@@ -40,9 +40,9 @@
       %
       % Get the depth data (assumes sigma layer distribution!!!)
       %
-      tmp_zw      = ncread(filename,'zcoordinate_w');
-      tmp_zc      = ncread(filename,'zcoordinate_c');
-      sds_ini.dps = -1.*squeeze(tmp_zw(1,:,1));                      % For now, d3d-flow convention 
+      tmp_zw      = ncread(filename,'zcoordinate_w',[1 1 1],[inf inf 1]);
+      tmp_zc      = ncread(filename,'zcoordinate_c',[1 1 1],[inf inf 1]);
+      sds_ini.dps = tmp_zw(1,:);                                % For now, d3d-flow convention 
       
       %
       % Thicknesses (for now only works with assumes sigma layer
@@ -53,9 +53,9 @@
           sds_ini.thick(1:sds_ini.kmax) = 1.0/sds_ini.kmax;
           % create relative position cell centres, measured from the bed
           for i_stat = 1: nostat
-              w_depth = tmp_zw(sds_ini.kmax + 1,i_stat,1) - tmp_zw(1,i_stat,1);
+              w_depth = tmp_zw(sds_ini.kmax + 1,i_stat) - tmp_zw(1,i_stat);
               for k = 1: sds_ini.kmax
-                  sds_ini.rel_pos(i_stat,k) = (tmp_zc(k,i_stat,1) - tmp_zw(1,i_stat,1))/w_depth;
+                  sds_ini.rel_pos(i_stat,k) = (tmp_zc(k,i_stat) - tmp_zw(1,i_stat))/w_depth;
               end
           end
           

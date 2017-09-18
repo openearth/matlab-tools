@@ -22,7 +22,7 @@
       
       %% Read the boundary definition (use points structure!)
       bnd         = nesthd_get_bnd_data (files{1},'Points',true);
-      if isempty(bnd) return; end;
+      if isempty(bnd) return; end
       
       %% Get general information from history file
       nfs_inf = nesthd_get_general(files{3});
@@ -33,7 +33,7 @@
 
       %% Generate hydrodynamic boundary conditions
       [bndval,error]      = nesthd_dethyd(fid_adm,bnd,nfs_inf,add_inf,files{3});
-      if error return; end;
+      if error return; end
 
       %% Vertical interpolation, temporary, not correct place, shoud be don inside dethyd
       if isfield(add_inf,'interpolate_z')
@@ -55,7 +55,7 @@
          
          %% Needed?
          if sum(add_inf.genconc) > 0
-             if isempty(bnd) return; end;
+             if isempty(bnd) return; end
              
              %% Determine (nested) concentrations
              bndval      = nesthd_detcon(fid_adm,bnd,nfs_inf,add_inf,files{3});
