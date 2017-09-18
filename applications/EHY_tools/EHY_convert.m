@@ -17,6 +17,7 @@ OPT.lineColor=[1 0 0]; % default is red
 OPT.fromEPSG=[]; % convert from this EPSG in case of conversion to kml (Google Earth)
 OPT.grdFile=[];  % corresponding .grd file for files like .crs / .dry / obs. / ...
 OPT.grd=[]; % wlgrid('read',OPT.grdFile);
+% OPT.iconFile=[]; % wlgrid('read',OPT.grdFile);
 
 % if structure was given as input OPT
 OPTid=find(cellfun(@isstruct, varargin));
@@ -135,7 +136,7 @@ end
         crs=delft3d_io_crs('read',inputFile);
         x=[];y=[];
         [OPT,grd]=EHY_convert_gridCheck(OPT,inputFile);
-        for iM=1:length(crs.m)
+        for iM=1:crs.NTables
             mrange=min(crs.DATA(iM).m):max(crs.DATA(iM).m);
             nrange=min(crs.DATA(iM).n):max(crs.DATA(iM).n);
             if length(mrange)~=1
@@ -385,7 +386,7 @@ end
         x=[];y=[];
         [OPT,grd]=EHY_convert_gridCheck(OPT,inputFile);
         
-        for iM=1:length(thd.m)
+        for iM=1:thd.NTables
             if strcmpi(thd.DATA(iM).direction,'U')
                 x=[x;grd.X(thd.DATA(iM).m,thd.DATA(iM).n);...
                     grd.X(thd.DATA(iM).m,thd.DATA(iM).n-1); NaN];
