@@ -24,6 +24,7 @@ if nargin==0
     if option==1
         mdInput={'','','','','',''};
     elseif option==2
+        disp('Open a .mdu / .mdf / siminp file')
         [filename, pathname]=uigetfile('*.*','Open a .mdu / .mdf / siminp file');
         mdFile=[pathname filename];
     end

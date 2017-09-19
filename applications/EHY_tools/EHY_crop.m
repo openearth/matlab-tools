@@ -22,6 +22,7 @@ OPT.tol=3; %tolerance in color
 if nargin>0
     file=varargin{1};
 else
+    disp('Open a figure')
     [filename, pathname]=uigetfile('*.*','Open a figure');
     file=[pathname filename];
 end

@@ -13,6 +13,7 @@ function EHY_model2GoogleEarth(varargin)
 if nargin>0
     mdFile=varargin{1};
 else
+    disp('Open a .mdu or .mdf  file')
     [filename, pathname]=uigetfile('*.*','Open a .mdu or .mdf  file');
     mdFile=[pathname filename];
 end
