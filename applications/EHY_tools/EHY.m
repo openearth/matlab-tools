@@ -18,13 +18,14 @@ NoInputNeeded(strmatch('EHY_opendap',NoInputNeeded))=[];
 NoInputNeeded(strmatch('EHY_plot_google_map',NoInputNeeded))=[];
 
 % add other useful OET functions
-NoInputNeeded=[NoInputNeeded;'SuperTrans (convert files to another coordinate system)'];
+NoInputNeeded=[NoInputNeeded;'SuperTrans'];
 
 % select which function to use
 selection=  listdlg('PromptString',['Which function would you like to use:'],...
     'SelectionMode','single',...
     'ListString',strrep(NoInputNeeded,'.m',''),...
     'ListSize',[300 200]);
+
 % run selection
 if ~isempty(selection)
     run(NoInputNeeded{selection}(1:end-2))
