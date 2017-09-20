@@ -1,3 +1,4 @@
+
 function EHY
 [pathstr ~] = fileparts(which('EHY'));
 D=dir([pathstr filesep '*.m']);
@@ -17,7 +18,7 @@ NoInputNeeded(strmatch('EHY_opendap',NoInputNeeded))=[];
 NoInputNeeded(strmatch('EHY_plot_google_map',NoInputNeeded))=[];
 
 % add other useful OET functions
-NoInputNeeded=[NoInputNeeded;'SuperTrans.m';'ldbTool.m'];
+NoInputNeeded=[NoInputNeeded;'SuperTrans (convert files to another coordinate system)'];
 
 % select which function to use
 selection=  listdlg('PromptString',['Which function would you like to use:'],...
