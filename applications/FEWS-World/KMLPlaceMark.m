@@ -127,7 +127,7 @@ for place = 1:length(lat)
     fprintf(fid,'%s\n','</tessellate>');
     fprintf(fid,'%s\n','<extrude>0</extrude>');
     fprintf(fid,'%s\n','<coordinates>');
-    fprintf(fid,'%s\n',['  ' num2str(lon(place)) ',' num2str(lat(place)) ',' num2str(OPT.Z(place))]);
+    fprintf(fid,'%s\n',['  ' num2str(lon(place),'%.10e') ',' num2str(lat(place),'%.10e') ',' num2str(OPT.Z(place),'%.10e')]);
     fprintf(fid,'%s\n','</coordinates>');
     fprintf(fid,'%s\n','</Point>');
     fprintf(fid,'%s\n','</Placemark>');
