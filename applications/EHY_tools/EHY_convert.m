@@ -126,7 +126,7 @@ end
         if OPT.saveoutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
-            ldb2kml(output,tempFile,OPT.lineColor)
+            ldb2kml(output(:,1:2),tempFile,OPT.lineColor)
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
@@ -182,7 +182,7 @@ end
         if OPT.saveoutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
-            ldb2kml(pol,tempFile,OPT.lineColor)
+            ldb2kml(pol(:,1:2),tempFile,OPT.lineColor)
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
@@ -230,9 +230,10 @@ end
     function [output,OPT]=EHY_convert_ldb2kml(inputFile,outputFile,OPT)
         ldb=landboundary('read',inputFile);
         if OPT.saveoutputFile
+            [ldb(:,1),ldb(:,2),OPT]=EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
-            ldb2kml(ldb,tempFile,OPT.lineColor)
+            ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor)
             copyfile(tempFile,outputFile);
             delete(tempFile);
         end
@@ -286,7 +287,7 @@ end
         if OPT.saveoutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
-            ldb2kml(pol,tempFile,OPT.lineColor)
+            ldb2kml(pol(:,1:2),tempFile,OPT.lineColor)
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
@@ -315,7 +316,7 @@ end
         if OPT.saveoutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
-            ldb2kml(ldb,tempFile,OPT.lineColor)
+            ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor)
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
@@ -375,7 +376,7 @@ end
         if OPT.saveoutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
-            ldb2kml(output,tempFile,OPT.lineColor)
+            ldb2kml(output(:,1:2),tempFile,OPT.lineColor)
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
