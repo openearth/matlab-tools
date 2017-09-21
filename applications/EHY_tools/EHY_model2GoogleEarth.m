@@ -30,6 +30,14 @@ switch modelType
     case 'mdu'
         mdu=dflowfm_io_mdu('read',mdFile);
         
+        % net
+        if isfield(mdu.geometry,'NetFile') && ~isempty(mdu.geometry.NetFile)
+            file=mdu.geometry.NetFile;
+            outputFile=[outputDir strrep(file,'.nc','.kml')];
+            inputFile=[runDir filesep file];
+            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
+        end
+        
         % landboundary
         if isfield(mdu.geometry,'LandBoundaryFile') && ~isempty(mdu.geometry.LandBoundaryFile)
             file=mdu.geometry.LandBoundaryFile;
