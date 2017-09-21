@@ -61,19 +61,19 @@ if length(varargin)==0
 end
 if length(varargin)==1
     inputFile=varargin{1};
-    [~,~,inputExt]= fileparts(inputFile);
-    inputExt=strrep(inputExt,'.','');
+    [~,~,inputExt0]= fileparts(inputFile);
+    inputExt=strrep(inputExt0,'.','');
     
     if strcmp(inputExt,'pli'); inputExt='pol'; end
     availableInputId=strmatch(inputExt,availableConversions(:,1));
     if isempty(availableInputId)
         error(['No conversions available for ' inputExt '-files.'])
     end
-    availableoutputExt=availableConversions(availableInputId,2);
+    availableoutputExt=[availableConversions(availableInputId,2); inputExt];
     if ~isempty(strmatch('pol',availableoutputExt))
         availableoutputExt=[availableoutputExt; 'pli'];
     end
-    [availableoutputId,~]=  listdlg('PromptString',['Convert this ' inputExt '-file to:'],...
+    [availableoutputId,~]=  listdlg('PromptString',['Convert this ' inputExt0 '-file to (to same extension >> coordinate conversion):'],...
         'SelectionMode','single',...
         'ListString',availableoutputExt,...
         'ListSize',[500 100]);
@@ -96,6 +96,10 @@ else % outputFile was specified by user
     outputFile=OPT.outputFile;
 end
 
+if strcmp(inputFile,outputFile)
+    outputFile=strrep(inputFile,inputExt0,['_converted' inputExt0]);
+end
+
 if OPT.saveoutputFile && exist(outputFile,'file')
     [YesNoID,~]=  listdlg('PromptString',{'The outputFile already exists. Overwrite the file below?',outputFile},...
         'SelectionMode','single',...
@@ -114,7 +118,12 @@ if strcmp(inputExt,'pli'); inputExt='pol'; end
 if strcmpi(outputExt,'pli'); outputExt='pol'; end %threat as .pol, but still save as .pli
 
 output=[];
-eval(['[output,OPT]=EHY_convert_' inputExt '2' outputExt '(''' inputFile ''',''' outputFile ''',OPT);'])
+
+if ~strcmp(inputExt,outputExt)
+    eval(['[output,OPT]=EHY_convert_' inputExt '2' outputExt '(''' inputFile ''',''' outputFile ''',OPT);'])
+else
+    eval(['[output,OPT]=EHY_convertCoordinates(''' inputFile ''',''' outputFile ''',OPT);'])
+end
 if OPT.saveoutputFile && exist(outputFile,'file')
     disp([char(10) 'EHY_convert created the file: ' char(10) outputFile char(10)])
 end
@@ -578,5 +587,60 @@ if isempty(OPT.fromEPSG)
     OPT.fromEPSG='4326';
 elseif ~isempty(OPT.fromEPSG) && ~strcmp(OPT.fromEPSG,'4326')
     [x,y]=convertCoordinates(x,y,'CS1.code',OPT.fromEPSG,'CS2.code',4326);
+end
+end
+
+function [output,OPT]=EHY_convertCoordinates(inputFile,outputFile,OPT)
+
+availableCoorSys={'EPSG: 28992, Amersfoort / RD New',28992;,...
+    'EPSG:  4326, WGS ''84',4326;,...
+    'Other...',-999};
+
+% coordinate system of input file
+[outputId,~]=  listdlg('PromptString','Coordinate system of the input file is: ',...
+    'SelectionMode','single',...
+    'ListString',availableCoorSys(:,1),'ListSize',[500 100]);
+if outputId~=length(availableCoorSys)
+    fromEPSG=availableCoorSys{outputId,2};
+elseif outputId==length(availableCoorSys)
+    fromEPSG=input('Coordinate system of the input file is, EPSG-code: ')
+end
+
+% coordinate system of output file
+[outputId,~]=  listdlg('PromptString','Convert the input file to coordinate system: ',...
+    'SelectionMode','single',...
+    'ListString',availableCoorSys(:,1),'ListSize',[500 100]);
+if outputId~=length(availableCoorSys)
+    toEPSG=availableCoorSys{outputId,2};
+elseif outputId==length(availableCoorSys)
+    toEPSG=input('Convert the input file to coordinate system of EPSG-code: ')
+end
+
+% convert the file
+if fromEPSG~=toEPSG
+    [~,~,ext]=fileparts(inputFile);
+    switch ext
+        case '.grd'
+            output=wlgrid('read',inputFile);
+            [output.x,output.y]=convertCoordinates(output.x,output.y,'CS1.code',fromEPSG,'CS2.code',toEPSG);
+            wlgrid('write',outputFile,output);
+        case {'.ldb','.pli','.pol'}
+            output=landboundary('read',inputFile);
+            [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',fromEPSG,'CS2.code',toEPSG);
+            io_polygon('write',outputFile,output);
+        case {'.xyz'}
+            output=importdata(inputFile);
+            [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',fromEPSG,'CS2.code',toEPSG);
+            dlmwrite(outputFile,output,'delimiter',' ','precision','%20.7f');
+        case {'.xyn'}    
+            output=delft3d_io_xyn('read',inputFile);
+            [output.x,output.y]=convertCoordinates(output.x,output.y,'CS1.code',fromEPSG,'CS2.code',toEPSG);
+            fid=fopen(outputFile,'w');
+            for iM=1:length(output.x)
+                fprintf(fid,'%20.7f%20.7f ',[output.x(iM) output.y(iM)]);
+                fprintf(fid,'%-s\n',output.name{iM});
+            end
+            fclose(fid);
+    end
 end
 end
