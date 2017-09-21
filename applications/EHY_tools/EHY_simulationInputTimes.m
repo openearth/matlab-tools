@@ -35,78 +35,202 @@ end
 if exist('mdFile','var')
     modelType=nesthd_det_filetype(mdFile);
     [pathstr,name,ext]=fileparts(mdFile);
-    [refdate,tunit,tstart,tstop]=getTimeInfoFromMdFile(mdFile);
-   
-     mdInput{1}=datestr(refdate,format{1});
-     mdInput{2}=tunit;
-     mdInput{3}=num2str(tstart);
-     mdInput{5}=num2str(tstop);
+    E=struct;
+    [E.refdate,E.tunit,E.tstart,E.tstop]=getTimeInfoFromMdFile(mdFile);
+    
+    mdInput{1}=datestr(E.refdate,format{1});
+    mdInput{2}=E.tunit;
+    mdInput{3}=E.tstart;
+    mdInput{5}=E.tstop;
+    switch modelType
+        case 'mdf'
+            mdf=delft3d_io_mdf('read',mdFile);
+            mdInput{7}=mdf.keywords.flhis(1);
+            mdInput{9}=mdf.keywords.flhis(2);
+            mdInput{10}=mdf.keywords.flhis(3);
+            mdInput{12}=mdf.keywords.flmap(1);
+            mdInput{14}=mdf.keywords.flmap(2);
+            mdInput{15}=mdf.keywords.flmap(3);
+            HisMapUnit='M';
+        case 'mdu'
+            mdu=dflowfm_io_mdu('read',mdFile);
+            if length(mdu.output.HisInterval)==1
+                mdInput{9}=mdu.output.HisInterval;
+            elseif length(mdu.output.HisInterval)==3
+                mdInput{9}=mdu.output.HisInterval(1);
+                mdInput{7}=mdu.output.HisInterval(2);
+                mdInput{10}=mdu.output.HisInterval(3);
+            end
+            if length(mdu.output.MapInterval)==1
+                mdInput{14}=mdu.output.MapInterval;
+            elseif length(mdu.output.MapInterval)==3
+                mdInput{14}=mdu.output.MapInterval(1);
+                mdInput{12}=mdu.output.MapInterval(2);
+                mdInput{15}=mdu.output.MapInterval(3);
+            end
+            
+            HisMapUnit='S';
+        case 'siminp'
+            [pathstr,name,ext]=fileparts(mdFile);
+            siminp=readsiminp(pathstr,[name ext]);
+            keywords={'TFHIS','TIHIS','TLHIS','TFMAP','TIMAP','TLMAP'};
+            mdInputInd=[7 9 10 12 14 15];
+            for iK=1:length(keywords)
+                try
+                    lineInd=find(~cellfun(@isempty,strfind(siminp.File,keywords{iK})));
+                    line=regexp(siminp.File(lineInd),'\s+','split');
+                    lineInd2=find(~cellfun(@isempty,strfind(line{1,1},keywords{iK})));
+                    mdInput{mdInputInd(iK)}=strrep(line{1,1}{lineInd2+1},'.','');
+                catch
+                    mdInput{mdInputInd(iK)}=[];
+                end
+            end
+            HisMapUnit='M';
+    end
+    mdInput=mdInput';
+end
 
+duos=[3 4;5 6;7 8;10 11;12 13; 15 16];
+
+%% Keep looping till user stops the script
+keepLooping=1;
+while keepLooping
     % complement the mdInput
-    mdInput=EHY_simulationInputTimes_calc(mdInput,format);
-    mdInput=cellfun(@num2str,mdInput,'UniformOutput',0);
-end
-
-%% get input from user
-prompt={['RefDate (' format{1} '): '],'Tunit (H, M or S): ',...
-    'TStart: Start time w.r.t. RefDate (in TUnit)',['TStart: Start time as date (' format{2} ')'],...
-    'TStop: Stop time w.r.t. RefDate (in TUnit)',['TStop: Stop time as date (' format{2} ')']};
-userInput=inputdlg(prompt,'Input',1,mdInput);
-
-%% check changes wrt mdInput
-[~,changedLine]=setdiff(mdInput,userInput);
-
-% if RefDate was changed, recompute TStart and TStop
-if any(changedLine==1); userInput{3}=''; userInput{5}=''; end
-% if TUnit was changed, recompute TStart and TStop
-if any(changedLine==2); userInput{3}=''; userInput{5}=''; end
-% if TStart was changed, change start date and vice versa.
-if any(changedLine==3); userInput{4}=''; elseif any(changedLine==4); userInput{3}='';  end
-% if TStop was changed, change stop date and vice versa.
-if any(changedLine==5); userInput{6}=''; elseif any(changedLine==6); userInput{5}='';  end
-
-%% complement the userInput and display output
-output=EHY_simulationInputTimes_calc(userInput,format);
-% inputdlg(prompt,'Output',1,output);
-
-clc
-disp(['========================EHY_simulationInputTimes========================'])
-disp(['RefDate (yyyymmdd) :                            ' output{1}])
-disp(['Tunit   (H, M or S):                            ' output{2}])
-disp(['TStart: Start time w.r.t. RefDate (in TUnit):   ' output{3}])
-disp(['TStop :  Stop time w.r.t. RefDate (in TUnit):   ' output{5}])
-disp(['========================================================================'])
-disp(['start date:                                     ' output{4}])
-disp(['stop  date:                                     ' output{6}])
-disp(['========================================================================'])
-
-end
-%% calculate missing fields
-function A=EHY_simulationInputTimes_calc(A,format)
-if length(A)<6
-    for ii=length(A)+1:6
-        A{ii}='';
+    mdInput=EHY_simulationInputTimes_calc(mdInput,format,HisMapUnit,duos);
+    
+    prompt={['RefDate (' format{1} '): '],'Tunit (H, M or S): ',...
+        ['TStart: Start time w.r.t. RefDate (in TUnit (' mdInput{2} '))'],['TStart: Start time as date (' format{2} ')'],...
+        ['TStop: Stop time w.r.t. RefDate (in TUnit (' mdInput{2} '))'],['TStop: Stop time as date (' format{2} ')'],...
+        ['His output: Start time w.r.t. RefDate (in ' HisMapUnit '))'],['His output: Start time as date (' format{2} ')'],...
+        ['His output - interval in ' HisMapUnit],...
+        ['His output: Stop time w.r.t. RefDate (in ' HisMapUnit '))'],['His output: Stop time as date (' format{2} ')'],...
+        ['Map output: Start time w.r.t. RefDate (in ' HisMapUnit '))'],['Map output: Start time as date (' format{2} ')'],...
+        ['Map output - interval in ' HisMapUnit],...
+        ['Map output: Stop time w.r.t. RefDate (in ' HisMapUnit '))'],['Map output: Stop time as date (' format{2} ')']};
+    
+    % show the mdInput
+    
+    userInput=inputdlg(prompt,'Input',1,mdInput);
+    
+    changedLine=[];
+    if ~isempty(userInput)
+        for ii=1:length(userInput)
+            if ~strcmp(mdInput{ii},userInput{ii})
+                changedLine=[changedLine; ii];
+            end
+        end
+    elseif isempty(userInput)
+        keepLooping=0;
+    end
+    
+    % if RefDate was changed
+    if ismember(1,changedLine); userInput([3 5 7 10 12 15])={''}; end
+    % if TUnit was changed
+    if ismember(2,changedLine); userInput{2}=upper(userInput{2}); userInput([3 5 7 10 12 15])={''}; end
+    % if TStart was changed
+    if ismember(3,changedLine); userInput{4}=''; elseif ismember(4,changedLine); userInput{3}='';  end
+    % if TStop was changed
+    if ismember(5,changedLine); userInput{6}=''; elseif ismember(6,changedLine); userInput{5}='';  end
+    % ...
+    if ismember(7,changedLine); userInput{8}=''; elseif ismember(8,changedLine); userInput{7}='';  end
+    if ismember(10,changedLine); userInput{11}=''; elseif ismember(11,changedLine); userInput{10}='';  end
+    if ismember(12,changedLine); userInput{13}=''; elseif ismember(13,changedLine); userInput{12}='';  end
+    if ismember(15,changedLine); userInput{16}=''; elseif ismember(16,changedLine); userInput{15}='';  end
+    
+    % complement the userInput
+    if keepLooping
+        userInput=EHY_simulationInputTimes_calc(userInput,format,HisMapUnit,duos);
+    end
+    
+    changedLine=[];
+    for ii=1:length(userInput)
+        if ~strcmp(mdInput{ii},userInput{ii})
+            changedLine=[changedLine; ii];
+        end
+    end
+    
+    % display changes made and effects on other parameters to user
+    if ~isempty(changedLine); disp([ char(10) '========================EHY_simulationInputTimes========================']); end
+    for iL=1:length(changedLine)
+        if ismember(changedLine(iL),duos(:,2))
+            disp(['Corresponding ''' prompt{changedLine(iL)} ''': ' num2str(userInput{changedLine(iL)})])
+        else
+            disp(['Change ''' prompt{changedLine(iL)} ' / '  ''' to: ' num2str(userInput{changedLine(iL)})])
+        end
+    end
+    if ~isempty(changedLine); disp(['========================================================================' char(10)]); end
+    
+    if keepLooping
+        mdInput=userInput;
+    end
+    
+     [YesNoID,~]=  listdlg('PromptString','Show al (new) relevant master definition file settings?',...
+        'SelectionMode','single',...
+        'ListString',{'Yes','No'},...
+        'ListSize',[300 50]);
+    if YesNoID==1
+        switch modelType
+            case 'mdf'
+                disp(['Itdate = #' mdInput{1}(1:4) '-' mdInput{1}(5:6) '-' mdInput{1}(7:8)  '#'])
+                disp(['Tunit = #' mdInput{2} '#'])
+                disp(['Tstart = ' mdInput{3} ])
+                disp(['Tstop = ' mdInput{5} ])
+                disp(['Flhis = ' mdInput{7} '   ' mdInput{9} '   ' mdInput{10} ])
+                disp(['Flmap = ' mdInput{12} '   ' mdInput{14} '   ' mdInput{15} ])
+            case 'mdu'
+                disp(['RefDate = ' mdInput{1}])
+                disp(['Tunit = ' mdInput{2}])
+                disp(['Tstart = ' mdInput{3} ])
+                disp(['Tstop = ' mdInput{5} ])
+                 disp(['HisInterval = ' mdInput{9} '   ' mdInput{7} '   ' mdInput{10} ])   
+                disp(['MapInterval = ' mdInput{14} '   ' mdInput{12} '   ' mdInput{15} ])
+            case 'siminp'
+                disp(['DATE = ''' datestr(datenum(mdInput{1},format{1}),'dd mmm yyyy') ''''])
+                disp(['TSTART = ' mdInput{3}])
+                disp(['TSTOP = ' mdInput{5} ])
+                disp(['TFHIS = ' mdInput{7} ])
+                disp(['TIHIS = ' mdInput{9} ])
+                disp(['TLHIS = ' mdInput{10} ])
+                disp(['TFMAP = ' mdInput{12} ])
+                disp(['TIMAP = ' mdInput{14} ])
+                disp(['TLMAP = ' mdInput{15} ])
+        end    
+    end
+    
+    if ~keepLooping
+    disp([char(10) '* * * EHY_simulationInputTimes was stopped by user * * *' char(10)])
     end
 end
-
-RefDateNum=datenum(num2str(A{1}),format{1});
-factor=timeFactor(A{2},'D');
-
-% TStart
-if isempty(A{3}) && ~isempty(A{4})
-    TStartNum=datenum(A{4},format{2});
-    A{3}=num2str((TStartNum-RefDateNum)/factor); %divide by factor
-elseif ~isempty(A{3}) && isempty(A{4})
-    TStartNum=RefDateNum+str2double(A{3})*factor;
-    A{4}=datestr(TStartNum,format{2});
+end
+%% calculate missing fields
+function A=EHY_simulationInputTimes_calc(A,format,HisMapUnit,duos)
+while length(A)<16
+    A{end+1}=[];
+end
+refdate=datenum(A{1},format{1});
+tunitUser=A{2};
+A(duos(:,1))=cellfun(@num2str,A(duos(:,1)),'uniformoutput',0);
+for ii=1:length(duos)
+    if duos(ii,1)>6
+        tunit=HisMapUnit;
+    else
+        tunit=tunitUser;
+    end
+    if isempty(A{duos(ii,1)}) && ~isempty(A{duos(ii,2)})
+        A{duos(ii,1)}=(datenum(A{duos(ii,2)},format{2})-refdate)*timeFactor('D',tunit);
+    elseif ~isempty(A{duos(ii,1)}) && isempty(A{duos(ii,2)})
+        A{duos(ii,2)}=datestr(refdate+str2num(A{duos(ii,1)})*timeFactor(tunit,'D'),format{2});
+    end
+end
+A=cellfun(@num2str,A,'UniformOutput',0);
 end
 
-% TStop
-if isempty(A{5}) && ~isempty(A{6})
-    TStartNum=datenum(A{6},format{2});
-    A{5}=num2str((TStartNum-RefDateNum)/factor); %divide by factor
-elseif ~isempty(A{5}) && isempty(A{6})
-    TStartNum=RefDateNum+str2double(A{5})*factor;
-    A{6}=datestr(TStartNum,format{2});
+function line=findLineOrQuit(fid,wantedLine)
+line=fgetl(fid);
+while isempty(strfind(line,wantedLine)) && ischar(line)
+    line=fgetl(fid);
+end
+if ~ischar(line) && line==-1
+    error('Could not find the requested line')
 end
 end
