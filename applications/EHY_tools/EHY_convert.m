@@ -42,9 +42,13 @@ searchLine='function [output,OPT]=EHY_convert_';
 lineNrs=find(~cellfun('isempty',strfind(A,searchLine)));
 availableConversions={'pli'};
 for ii=2:length(lineNrs)
-    availableConversions{end+1,1}=A{lineNrs(ii)}(length(searchLine)+1:length(searchLine)+3);
-    availableConversions{end,2}=A{lineNrs(ii)}(length(searchLine)+5:length(searchLine)+7);
+    txt=strrep(A{lineNrs(ii)},searchLine,'');
+    txt(strfind(txt,'('):end)=[];
+    [ext1,ext2]=strtok(txt,'2');
+    availableConversions{end+1,1}=ext1;
+    availableConversions{end,2}=ext2(2:end);
 end
+
 %% initialise
 if length(varargin)==0
     listOfExt=unique(availableConversions(:,1));
@@ -111,7 +115,7 @@ if strcmpi(outputExt,'pli'); outputExt='pol'; end %threat as .pol, but still sav
 
 output=[];
 eval(['[output,OPT]=EHY_convert_' inputExt '2' outputExt '(''' inputFile ''',''' outputFile ''',OPT);'])
-if OPT.saveoutputFile
+if OPT.saveoutputFile && exist(outputFile,'file')
     disp([char(10) 'EHY_convert created the file: ' char(10) outputFile char(10)])
 end
 %% conversion functions - in alphabetical order
@@ -217,6 +221,25 @@ end
     function [output,OPT]=EHY_convert_kml2pol(inputFile,outputFile,OPT)
         output=kml2pol(OPT.saveoutputFile,inputFile);
     end
+% kml2xyn
+    function [output,OPT]=EHY_convert_kml2xyn(inputFile,outputFile,OPT)
+        kml = xml_read(inputFile);
+        for ii=1:length(kml.Placemark)
+            names{ii,1}=kml.Placemark(ii).name;
+            coords=regexp(kml.Placemark(ii).Point.coordinates,',','split');
+            x(ii,1)=str2num(coords{1});
+            y(ii,1)=str2num(coords{2});
+        end
+        output={x y names};
+        if OPT.saveoutputFile
+            fid=fopen(outputFile,'w');
+            for iM=1:length(x)
+                fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
+                fprintf(fid,'%-s\n',names{iM});
+            end
+            fclose(fid);
+        end
+    end
 % kml2xyz
     function [output,OPT]=EHY_convert_kml2xyz(inputFile,outputFile,OPT)
         xyz=kml2ldb(OPT.saveoutputFile,inputFile);
@@ -246,6 +269,29 @@ end
             io_polygon('write',outputFile,ldb);
         end
         output=ldb;
+    end
+% nc2kml
+    function [output,OPT]=EHY_convert_nc2kml(inputFile,outputFile,OPT)
+        disp('function nc2kml not yet available, use Hermans GUI')
+        %         if OPT.saveoutputFile
+        %             nc=dflowfm.readNet(inputFile);
+        %             x=nc_varget(inputFile,'NetNode_x');
+        %             y=nc_varget(inputFile,'NetNode_y');
+        %             xOld=x;
+        %             [x,y,OPT]=EHY_convert_coorCheck(x,y,OPT);
+        %             if ~all(x==xOld)
+        %                 outputFile=strrep(inputFile,'.nc','_WGS84.nc');
+        %                 copyfile(inputFile,outputFile);
+        %                 nc_varput(outputFile,'NetNode_x',x);
+        %                 nc_varput(outputFile,'NetNode_y',y);
+        %                 nc_varput(outputFile,'NetNode_y',y);
+        %                 disp(['Net is converted to WGS84, see file: ' outputFile])
+        %             end
+        %             disp('Direct conversion from .nc to .kml not yet possible.')
+        %             disp('Open the WGS84 (Lat,Lon) nc in Herman Kernkamps GUI and select:')
+        %             disp('  ''Files'' > ''Save network for Google Earth''')
+        %         end
+        output=[];
     end
 % obs2kml
     function [output,OPT]=EHY_convert_obs2kml(inputFile,outputFile,OPT)
@@ -480,7 +526,7 @@ elseif nargout>1
 end
 end
 
-function varargout=EHY_convert_gridCheck(OPT,inputFile) 
+function varargout=EHY_convert_gridCheck(OPT,inputFile)
 if nargout==1
     if isempty(OPT.grdFile)
         disp('Open the corresponding .grd-file')
@@ -502,15 +548,18 @@ end
 end
 
 function [x,y,OPT]=EHY_convert_coorCheck(x,y,OPT)
+% coordinates to check to guess coordinate system
+xx=x(~isnan(x));
+yy=y(~isnan(y));
 if isempty(OPT.fromEPSG)
-    if isempty(OPT.fromEPSG) && all(all(x(~isnan(x))>=-180)) && all(all(x(~isnan(x))<=180)) && all(all(y(~isnan(y))>=-90)) && all(all(y(~isnan(y))<=90))
+    if isempty(OPT.fromEPSG) && all(all(xx>=-180)) && all(all(xx<=180)) && all(all(yy>=-90)) && all(all(yy<=90))
         disp('Input coordinations are probably in [Longitude,Latitude] - WGS ''84')
         yn=input('Is this correct? [Y/N]  ','s');
         if strcmpi(yn(1),'y')
             OPT.fromEPSG='4326';
         end
     end
-    if isempty(OPT.fromEPSG) && all(all(x(~isnan(x))>-7000)) && all(all(x(~isnan(x)<300000))) && all(all(x(~isnan(y)>289000))) && all(all(x(~isnan(y)<629000)))   % probably RD in m
+    if isempty(OPT.fromEPSG) && all(all(xx>-7000)) && all(all(xx<300000)) && all(all(yy>289000)) && all(all(yy<629000))   % probably RD in m
         disp('Input coordinations are probably in meter Amersfoort/RD New, EPSG 28992')
         yn=input('Apply conversion from Amersfoort/RD New, EPSG 28992? [Y/N]  ','s');
         if strcmpi(yn,'y')
