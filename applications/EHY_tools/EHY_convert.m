@@ -603,7 +603,7 @@ availableCoorSys={'EPSG: 28992, Amersfoort / RD New',28992;,...
 if outputId~=length(availableCoorSys)
     fromEPSG=availableCoorSys{outputId,2};
 elseif outputId==length(availableCoorSys)
-    fromEPSG=input('Coordinate system of the input file is, EPSG-code: ')
+    fromEPSG=input('Coordinate system of the input file is, EPSG-code: ');
 end
 
 % coordinate system of output file
@@ -613,7 +613,7 @@ end
 if outputId~=length(availableCoorSys)
     toEPSG=availableCoorSys{outputId,2};
 elseif outputId==length(availableCoorSys)
-    toEPSG=input('Convert the input file to coordinate system of EPSG-code: ')
+    toEPSG=input('Convert the input file to coordinate system of EPSG-code: ');
 end
 
 % convert the file
@@ -622,7 +622,7 @@ if fromEPSG~=toEPSG
     switch ext
         case '.grd'
             output=wlgrid('read',inputFile);
-            [output.x,output.y]=convertCoordinates(output.x,output.y,'CS1.code',fromEPSG,'CS2.code',toEPSG);
+            [output.X,output.Y]=convertCoordinates(output.X,output.Y,'CS1.code',fromEPSG,'CS2.code',toEPSG);
             wlgrid('write',outputFile,output);
         case {'.ldb','.pli','.pol'}
             output=landboundary('read',inputFile);
