@@ -17,12 +17,24 @@ format{2}='yyyymmdd HHMMSS';
 
 %% get time info from mdFile
 if nargin==0
-    [option,~]=  listdlg('PromptString','Choose between:',...
-        'SelectionMode','single',...
-        'ListString',{'Start with blank fields','Open a .mdu / .mdf or SIMONA file as input'},...
-        'ListSize',[300 50]);
+    option=listdlg('PromptString','Choose between:','SelectionMode','single','ListString',...
+        {'Start with blank fields','Open a .mdu / .mdf or SIMONA file as input'},'ListSize',[300 50]);
     if option==1
-        mdInput={'','','','','',''};
+        mdInput={};
+        option=  listdlg('PromptString','modelType :','SelectionMode','single','ListString',...
+            {'Delft3D','Delft3D-FM','SIMONA'},'ListSize',[300 50]);
+        if option==1
+            modelType='mdf';HisMapUnit='M';
+        elseif option==2
+            modelType='mdu';HisMapUnit='S';
+        elseif option==3
+            modelType='simona';HisMapUnit='M';
+        end
+        SMH={'S','M','H'};
+        option=  listdlg('PromptString','time unit for start/stop date :','SelectionMode','single','ListString',...
+            SMH,'ListSize',[300 50]);
+        mdInput{2}=SMH{option};
+        mdInput{1}=input(['Reference time in format [' format{2} ']: '],'s');
     elseif option==2
         disp('Open a .mdu / .mdf / siminp file')
         [filename, pathname]=uigetfile('*.*','Open a .mdu / .mdf / siminp file');
@@ -51,7 +63,6 @@ if exist('mdFile','var')
             mdInput{12}=mdf.keywords.flmap(1);
             mdInput{14}=mdf.keywords.flmap(2);
             mdInput{15}=mdf.keywords.flmap(3);
-            HisMapUnit='M';
         case 'mdu'
             mdu=dflowfm_io_mdu('read',mdFile);
             if length(mdu.output.HisInterval)==1
@@ -85,7 +96,6 @@ if exist('mdFile','var')
                     mdInput{mdInputInd(iK)}=[];
                 end
             end
-            HisMapUnit='M';
     end
     mdInput=mdInput';
 end
@@ -164,7 +174,7 @@ while keepLooping
         mdInput=userInput;
     end
     
-     [YesNoID,~]=  listdlg('PromptString','Show al (new) relevant master definition file settings?',...
+    [YesNoID,~]=  listdlg('PromptString','Show al (new) relevant master definition file settings?',...
         'SelectionMode','single',...
         'ListString',{'Yes','No'},...
         'ListSize',[300 50]);
@@ -182,7 +192,7 @@ while keepLooping
                 disp(['Tunit = ' mdInput{2}])
                 disp(['Tstart = ' mdInput{3} ])
                 disp(['Tstop = ' mdInput{5} ])
-                 disp(['HisInterval = ' mdInput{9} '   ' mdInput{7} '   ' mdInput{10} ])   
+                disp(['HisInterval = ' mdInput{9} '   ' mdInput{7} '   ' mdInput{10} ])
                 disp(['MapInterval = ' mdInput{14} '   ' mdInput{12} '   ' mdInput{15} ])
             case 'siminp'
                 disp(['DATE = ''' datestr(datenum(mdInput{1},format{1}),'dd mmm yyyy') ''''])
@@ -194,11 +204,11 @@ while keepLooping
                 disp(['TFMAP = ' mdInput{12} ])
                 disp(['TIMAP = ' mdInput{14} ])
                 disp(['TLMAP = ' mdInput{15} ])
-        end    
+        end
     end
     
     if ~keepLooping
-    disp([char(10) '* * * EHY_simulationInputTimes was stopped by user * * *' char(10)])
+        disp([char(10) '* * * EHY_simulationInputTimes was stopped by user * * *' char(10)])
     end
 end
 end
