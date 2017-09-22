@@ -281,8 +281,6 @@ end
     end
 % nc2kml
     function [output,OPT]=EHY_convert_nc2kml(inputFile,outputFile,OPT)
-        disp('function nc2kml not yet available, use Hermans GUI')
-
         x=nc_varget(inputFile,'NetNode_x');
         y=nc_varget(inputFile,'NetNode_y');
         links=nc_varget(inputFile,'NetLink');

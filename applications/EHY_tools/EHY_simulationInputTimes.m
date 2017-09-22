@@ -45,7 +45,7 @@ elseif nargin==1
 end
 
 if exist('mdFile','var')
-    modelType=nesthd_det_filetype(mdFile);
+    [modelType,mdFile]=EHY_getModelType(mdFile);
     [pathstr,name,ext]=fileparts(mdFile);
     E=struct;
     [E.refdate,E.tunit,E.tstart,E.tstop]=getTimeInfoFromMdFile(mdFile);
@@ -54,6 +54,8 @@ if exist('mdFile','var')
     mdInput{2}=E.tunit;
     mdInput{3}=E.tstart;
     mdInput{5}=E.tstop;
+    
+    HisMapUnit='M';
     switch modelType
         case 'mdf'
             mdf=delft3d_io_mdf('read',mdFile);
@@ -79,7 +81,6 @@ if exist('mdFile','var')
                 mdInput{12}=mdu.output.MapInterval(2);
                 mdInput{15}=mdu.output.MapInterval(3);
             end
-            
             HisMapUnit='S';
         case 'siminp'
             [pathstr,name,ext]=fileparts(mdFile);
