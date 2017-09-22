@@ -282,25 +282,26 @@ end
 % nc2kml
     function [output,OPT]=EHY_convert_nc2kml(inputFile,outputFile,OPT)
         disp('function nc2kml not yet available, use Hermans GUI')
-        %         if OPT.saveoutputFile
-        %             nc=dflowfm.readNet(inputFile);
-        %             x=nc_varget(inputFile,'NetNode_x');
-        %             y=nc_varget(inputFile,'NetNode_y');
-        %             xOld=x;
-        %             [x,y,OPT]=EHY_convert_coorCheck(x,y,OPT);
-        %             if ~all(x==xOld)
-        %                 outputFile=strrep(inputFile,'.nc','_WGS84.nc');
-        %                 copyfile(inputFile,outputFile);
-        %                 nc_varput(outputFile,'NetNode_x',x);
-        %                 nc_varput(outputFile,'NetNode_y',y);
-        %                 nc_varput(outputFile,'NetNode_y',y);
-        %                 disp(['Net is converted to WGS84, see file: ' outputFile])
-        %             end
-        %             disp('Direct conversion from .nc to .kml not yet possible.')
-        %             disp('Open the WGS84 (Lat,Lon) nc in Herman Kernkamps GUI and select:')
-        %             disp('  ''Files'' > ''Save network for Google Earth''')
-        %         end
-        output=[];
+
+        x=nc_varget(inputFile,'NetNode_x');
+        y=nc_varget(inputFile,'NetNode_y');
+        links=nc_varget(inputFile,'NetLink');
+        
+        lines=zeros(length(links)*3,2);
+        
+        lines(3*(1:length(links))-2,:)=[x(links(:,1)) y(links(:,1))];
+        lines(3*(1:length(links))-1,:)=[x(links(:,2)) y(links(:,2))];
+        lines(3*(1:length(links)),:)=NaN;
+        lines=ipGlueLDB(lines);
+        if OPT.saveoutputFile
+            [lines(:,1),lines(:,2),OPT]=EHY_convert_coorCheck(lines(:,1),lines(:,2),OPT);
+            [~,name]=fileparts(inputFile);
+            tempFile=[tempdir name '.kml'];
+            ldb2kml(lines,tempFile,OPT.lineColor)
+            copyfile(tempFile,outputFile);
+            delete(tempFile)
+        end
+        output=lines;
     end
 % obs2kml
     function [output,OPT]=EHY_convert_obs2kml(inputFile,outputFile,OPT)
