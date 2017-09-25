@@ -14,7 +14,8 @@ if nargin>0
     mdFile=varargin{1};
 else
     disp('Open a .mdu or .mdf  file')
-    [filename, pathname]=uigetfile('*.*','Open a .mdu or .mdf  file');
+    [filename, pathname]=uigetfile({'*.mdu';'*.mdf';'*.*'},'Open a .mdu or .mdf file');
+        
     mdFile=[pathname filename];
 end
 [modelType,mdFile]=EHY_getModelType(mdFile);

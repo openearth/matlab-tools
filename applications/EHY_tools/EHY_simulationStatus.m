@@ -11,7 +11,7 @@ function varargout=EHY_simulationStatus(varargin)
 %%
 if nargin==0
     disp('Open a .mdu, .mdf or SIMONA file as input')
-    [filename, pathname]=uigetfile('*.*','Open a .mdu, .mdf or SIMONA file as input');
+    [filename, pathname]=uigetfile({'*.mdu';'*.mdf';'*siminp*';'*.*'},'Open a .mdu, .mdf or SIMONA file as input');
     mdFile=[pathname filename];
 elseif nargin==1
     mdFile=varargin{1};

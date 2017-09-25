@@ -15,7 +15,7 @@ if nargin>0
     mdFile=varargin{1};
 else
     disp('Open a .mdu / .mdf / siminp file')
-    [filename, pathname]=uigetfile('*.*','Open a .mdu / .mdf / siminp file');
+    [filename, pathname]=uigetfile({'*.mdu';'*.mdf';'*siminp*';'*.*'},'Open a .mdu / .mdf / siminp file');
     mdFile=[pathname filename];
 end
 modelType=nesthd_det_filetype(mdFile);

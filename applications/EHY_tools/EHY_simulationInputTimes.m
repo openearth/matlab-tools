@@ -37,7 +37,7 @@ if nargin==0
         mdInput{1}=input(['Reference time in format [' format{2} ']: '],'s');
     elseif option==2
         disp('Open a .mdu / .mdf / siminp file')
-        [filename, pathname]=uigetfile('*.*','Open a .mdu / .mdf / siminp file');
+        [filename, pathname]=uigetfile({'*.mdu';'*.mdf';'*siminp*';'*.*'},'Open a .mdu / .mdf / siminp file');
         mdFile=[pathname filename];
     end
 elseif nargin==1
