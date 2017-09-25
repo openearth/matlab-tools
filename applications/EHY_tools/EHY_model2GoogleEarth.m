@@ -32,10 +32,14 @@ switch modelType
         
         % net
         if isfield(mdu.geometry,'NetFile') && ~isempty(mdu.geometry.NetFile)
-            inputFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.NetFile,runDir);
-            [~,name]=fileparts(inputFile);
-            outputFile=[outputDir name '_net.kml'];
-            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
+            [selection,~]=  listdlg('PromptString','Conversion of nc to kml might take a while, you can also use Hermans GUI, choose:',...
+                'SelectionMode','single','ListString',{'Get a coffee and wait (few minutes)','Convert the nc to kml yourself'},'ListSize',[500 100]);
+            if selection==1
+                inputFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.NetFile,runDir);
+                [~,name]=fileparts(inputFile);
+                outputFile=[outputDir name '_net.kml'];
+                [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[1 0 0],OPT);
+            end
         end
         
         % landboundary
@@ -51,7 +55,7 @@ switch modelType
             inputFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.ThinDamFile,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_pli.kml'];
-            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
+            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],OPT);
         end
         
         % dry points
@@ -59,7 +63,8 @@ switch modelType
             inputFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.DryPointsFile,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_dry.kml'];
-            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
+            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],...
+                'iconFile','http://maps.google.com/mapfiles/kml/paddle/ylw-square.png',OPT);
         end
         
         % Observation points
@@ -67,7 +72,8 @@ switch modelType
             inputFile=EHY_model2GoogleEarth_checkPath(mdu.output.ObsFile,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_obs.kml'];
-            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
+            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],...
+                'iconFile','http://maps.google.com/mapfiles/kml/paddle/blu-stars.png',OPT);
         end
         
         % cross sections
@@ -75,7 +81,7 @@ switch modelType
             inputFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.CrsFile,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_crs.kml'];
-            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
+            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[1 1 0],OPT);
         end
         
     case 'mdf'
@@ -95,7 +101,7 @@ switch modelType
             inputFile=EHY_model2GoogleEarth_checkPath(mdf.keywords.fildry,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_dry.kml'];
-            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
+            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[1 0 0],OPT);
         end
         
         % .thd
@@ -103,7 +109,7 @@ switch modelType
             inputFile=EHY_model2GoogleEarth_checkPath(mdf.keywords.filtd,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_thd.kml'];
-            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
+            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],OPT);
         end
         
         % .crs
@@ -111,7 +117,7 @@ switch modelType
             inputFile=EHY_model2GoogleEarth_checkPath(mdf.keywords.filcrs,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_crs.kml'];
-            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],OPT);
+            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[1 1 0],OPT);
         end
         
         % .obs
@@ -119,7 +125,8 @@ switch modelType
             inputFile=EHY_model2GoogleEarth_checkPath(mdf.keywords.filsta,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_obs.kml'];
-            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,OPT);
+            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,...
+                'iconFile','http://maps.google.com/mapfiles/kml/paddle/blu-stars.png',OPT);
         end
         
         % .src
@@ -127,7 +134,7 @@ switch modelType
             inputFile=EHY_model2GoogleEarth_checkPath(mdf.keywords.filsrc,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_src.kml'];
-            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
+            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'iconFile','http://maps.google.com/mapfiles/kml/shapes/square.png',OPT);
         end
 end
 end

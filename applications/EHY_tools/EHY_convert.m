@@ -17,7 +17,7 @@ OPT.lineColor=[1 0 0]; % default is red
 OPT.fromEPSG=[]; % convert from this EPSG in case of conversion to kml (Google Earth)
 OPT.grdFile=[];  % corresponding .grd file for files like .crs / .dry / obs. / ...
 OPT.grd=[]; % wlgrid('read',OPT.grdFile);
-% OPT.iconFile=[]; % wlgrid('read',OPT.grdFile);
+OPT.iconFile='http://maps.google.com/mapfiles/kml/paddle/blu-stars.png'; % for PlaceMark
 
 % if structure was given as input OPT
 OPTid=find(cellfun(@isstruct, varargin));
@@ -311,7 +311,7 @@ end
         if OPT.saveoutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
-            KMLPlaceMark(xyn{1,2},xyn{1,1},tempFile,'name',xyn{1,3});
+            KMLPlaceMark(xyn{1,2},xyn{1,1},tempFile,'name',xyn{1,3},'icon',OPT.iconFile);
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
@@ -397,7 +397,7 @@ end
         if OPT.saveoutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
-            KMLPlaceMark(xyn{1,2},xyn{1,1},tempFile,'name',xyn{1,3});
+            KMLPlaceMark(xyn{1,2},xyn{1,1},tempFile,'name',xyn{1,3},'icon',OPT.iconFile);
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
@@ -475,7 +475,7 @@ end
         if OPT.saveoutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
-            KMLPlaceMark(xyn.y,xyn.x,tempFile,'name',xyn.name);
+            KMLPlaceMark(xyn.y,xyn.x,tempFile,'name',xyn.name,'icon',OPT.iconFile);
             copyfile(tempFile,outputFile);
             delete(tempFile);
         end
@@ -519,7 +519,7 @@ end
         if OPT.saveoutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
-            KMLPlaceMark(lat,lon,tempFile);
+            KMLPlaceMark(lat,lon,tempFile,'icon',OPT.iconFile);
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
