@@ -73,10 +73,17 @@ if length(varargin)==1
     if ~isempty(strmatch('pol',availableoutputExt))
         availableoutputExt=[availableoutputExt; 'pli'];
     end
+    if ~ismember(inputExt0(2:end),{'thd','crs','dry','src','obs'})
     [availableoutputId,~]=  listdlg('PromptString',['Convert this ' inputExt0 '-file to (to same extension >> coordinate conversion):'],...
         'SelectionMode','single',...
         'ListString',availableoutputExt,...
         'ListSize',[500 100]);
+    else
+        [availableoutputId,~]=  listdlg('PromptString',['Convert this ' inputExt0 '-file to:'],...
+        'SelectionMode','single',...
+        'ListString',availableoutputExt(cellfun(@isempty,strfind(availableoutputExt,inputExt0(2:end)))),...
+        'ListSize',[500 100]);    
+    end
     if isempty(availableoutputId)
         error('No output extension was chosen.')
     end
@@ -535,14 +542,13 @@ end
 end
 
 function varargout=EHY_convert_gridCheck(OPT,inputFile)
-if nargout==1
-    if isempty(OPT.grdFile)
-        disp('Open the corresponding .grd-file')
-        [grdName,grdPath]=uigetfile([fileparts(inputFile) filesep '.grd'],'Open the corresponding .grd-file');
-        OPT.grdFile=[grdPath grdName];
-    end
-    varargout{1}=OPT;
-elseif nargout==2
+if isempty(OPT.grdFile)
+    disp('Open the corresponding .grd-file')
+    [grdName,grdPath]=uigetfile([fileparts(inputFile) filesep '.grd'],'Open the corresponding .grd-file');
+    OPT.grdFile=[grdPath grdName];
+end
+
+if nargout==2
     if isempty(OPT.grd)
         [~, name] = fileparts(OPT.grdFile);
         tempFile=[tempdir name '.grd'];
@@ -550,9 +556,9 @@ elseif nargout==2
         OPT.grd=wlgrid('read',tempFile);
         delete(tempFile);
     end
-    varargout{1}=OPT;
     varargout{2}=OPT.grd;
 end
+varargout{1}=OPT;
 end
 
 function [x,y,OPT]=EHY_convert_coorCheck(x,y,OPT)
@@ -631,7 +637,7 @@ if fromEPSG~=toEPSG
             output=importdata(inputFile);
             [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',fromEPSG,'CS2.code',toEPSG);
             dlmwrite(outputFile,output,'delimiter',' ','precision','%20.7f');
-        case {'.xyn'}    
+        case {'.xyn'}
             output=delft3d_io_xyn('read',inputFile);
             [output.x,output.y]=convertCoordinates(output.x,output.y,'CS1.code',fromEPSG,'CS2.code',toEPSG);
             fid=fopen(outputFile,'w');
