@@ -166,7 +166,7 @@ while keepLooping
         if ismember(changedLine(iL),duos(:,2))
             disp(['Corresponding ''' prompt{changedLine(iL)} ''': ' num2str(userInput{changedLine(iL)})])
         else
-            disp(['Change ''' prompt{changedLine(iL)} ' / '  ''' to: ' num2str(userInput{changedLine(iL)})])
+            disp(['Change ''' prompt{changedLine(iL)} ''' to: ' num2str(userInput{changedLine(iL)})])
         end
     end
     if ~isempty(changedLine); disp(['========================================================================' char(10)]); end
