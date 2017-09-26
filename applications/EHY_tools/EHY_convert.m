@@ -122,7 +122,7 @@ if OPT.saveoutputFile && exist(outputFile,'file')
 end
 
 if strcmp(inputExt,'pli'); inputExt='pol'; end
-if strcmpi(outputExt,'pli'); outputExt='pol'; end %threat as .pol, but still save as .pli
+if strcmpi(outputExt,'pli'); outputExt='pol'; end %treat as .pol, but still save as .pli
 
 output=[];
 
