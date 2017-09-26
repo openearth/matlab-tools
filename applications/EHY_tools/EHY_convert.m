@@ -280,10 +280,10 @@ end
     end
 % ldb2pol
     function [output,OPT]=EHY_convert_ldb2pol(inputFile,outputFile,OPT)
-        ldb=landboundary('read',inputFile);
         if OPT.saveoutputFile
-            io_polygon('write',outputFile,ldb);
+            copyfile(inputFile,outputFile);
         end
+        ldb=landboundary('read',inputFile);
         output=ldb;
     end
 % nc2kml
@@ -356,11 +356,10 @@ end
     end
 % pol2ldb
     function [output,OPT]=EHY_convert_pol2ldb(inputFile,outputFile,OPT)
-        pol=landboundary('read',inputFile);
         if OPT.saveoutputFile
-            output=landboundary('write',outputFile,pol);
+           copyfile(inputFile,outputFile)
         end
-        output=[];
+        output=landboundary('read',inputFile);
     end
 % pol2xyz
     function [output,OPT]=EHY_convert_pol2xyz(inputFile,outputFile,OPT)
