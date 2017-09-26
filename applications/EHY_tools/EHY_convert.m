@@ -583,7 +583,6 @@ if isempty(OPT.fromEPSG)
     if isempty(OPT.fromEPSG)
         disp('Input coordinations are probably not in [Longitude,Latitude] - WGS ''84')
         disp('common EPSG-codes: Amersfoort/RD New: 28992')
-        disp('                   .........        :      ')
         OPT.fromEPSG=input('What is the code of the input coordinates? EPSG: ');
     end
 end
@@ -599,7 +598,7 @@ function [output,OPT]=EHY_convertCoordinates(inputFile,outputFile,OPT)
 
 availableCoorSys={'EPSG: 28992, Amersfoort / RD New',28992;,...
     'EPSG:  4326, WGS ''84',4326;,...
-    'Other...',[]};
+    'Other...',-999};
 
 % coordinate system of input file
 [outputId,~]=  listdlg('PromptString','Coordinate system of the input file is: ',...
@@ -612,6 +611,8 @@ elseif outputId==length(availableCoorSys)
 end
 
 % coordinate system of output file
+indExclToEPSG=find(cell2mat(availableCoorSys(:,2))~=fromEPSG);
+availableCoorSys=availableCoorSys(indExclToEPSG,:);
 [outputId,~]=  listdlg('PromptString','Convert the input file to coordinate system: ',...
     'SelectionMode','single',...
     'ListString',availableCoorSys(:,1),'ListSize',[500 100]);
