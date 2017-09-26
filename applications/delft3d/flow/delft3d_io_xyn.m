@@ -164,7 +164,7 @@ function iostat=Local_write(varargin)
    
       for i=1:length(D.x)
        if ~isnan(D.x(i))
-        fprintf(fid,'%10.3f %10.3f ''%s''',D.x(i),D.y(i),D.name{i});
+        fprintf(fid,'%10.7f %10.7 ''%s''',D.x(i),D.y(i),D.name{i});
         fprinteol(fid,OS);
        end
       end
