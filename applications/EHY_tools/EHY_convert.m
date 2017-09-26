@@ -172,21 +172,8 @@ end
             io_polygon('write',outputFile,x,y,'dosplit','-1');
         end
     end
-% dry2xyz
-    function [output,OPT]=EHY_convert_dry2xyz(inputFile,outputFile,OPT)
-        pathstr = fileparts(inputFile);
-        dry=delft3d_io_dry('read',inputFile);
-        OPT=EHY_convert_gridCheck(OPT,inputFile);
-        [x,y]=EHY_mn2xy(dry.m,dry.n,OPT.grdFile);
-        xyz=[x y zeros(length(x),1)];
-        if OPT.saveoutputFile
-            dlmwrite(outputFile,xyz,'delimiter',' ','precision','%20.7f')
-        end
-        output=xyz;
-    end
 % dry2kml
     function [output,OPT]=EHY_convert_dry2kml(inputFile,outputFile,OPT)
-        pathstr = fileparts(inputFile);
         dry=delft3d_io_dry('read',inputFile);
         [OPT,grd]=EHY_convert_gridCheck(OPT,inputFile);
         pol=[];
@@ -207,6 +194,41 @@ end
             delete(tempFile)
         end
         output=pol;
+    end
+% dry2thd
+    function [output,OPT]=EHY_convert_dry2thd(inputFile,outputFile,OPT)
+        dry=delft3d_io_dry('read',inputFile);  
+        thd.DATA=struct;
+        for iM=1:length(dry.m)
+            if iM==1
+                thd.DATA(end).mn=[dry.m(iM);dry.n(iM);dry.m(iM);dry.n(iM)];
+                thd.DATA(end).direction='U';
+            else
+                thd.DATA(end+1).mn=[dry.m(iM);dry.n(iM);dry.m(iM);dry.n(iM)];
+                thd.DATA(end).direction='U';
+            end
+            thd.DATA(end+1).mn=[dry.m(iM);dry.n(iM);dry.m(iM);dry.n(iM)];
+            thd.DATA(end).direction='V';
+            thd.DATA(end+1).mn=[dry.m(iM)-1;dry.n(iM);dry.m(iM)-1;dry.n(iM)];
+            thd.DATA(end).direction='U';
+            thd.DATA(end+1).mn=[dry.m(iM);dry.n(iM)-1;dry.m(iM);dry.n(iM)-1];
+            thd.DATA(end).direction='V';
+        end
+        if OPT.saveoutputFile
+        delft3d_io_thd('write',outputFile,thd)
+        end
+        output=[];
+    end
+% dry2xyz
+    function [output,OPT]=EHY_convert_dry2xyz(inputFile,outputFile,OPT)
+        dry=delft3d_io_dry('read',inputFile);
+        OPT=EHY_convert_gridCheck(OPT,inputFile);
+        [x,y]=EHY_mn2xy(dry.m,dry.n,OPT.grdFile);
+        xyz=[x y zeros(length(x),1)];
+        if OPT.saveoutputFile
+            dlmwrite(outputFile,xyz,'delimiter',' ','precision','%20.7f')
+        end
+        output=xyz;
     end
 % grd2kml
     function [output,OPT]=EHY_convert_grd2kml(inputFile,outputFile,OPT)
