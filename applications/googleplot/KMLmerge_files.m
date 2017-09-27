@@ -93,6 +93,9 @@ function varargout = KMLmerge_files(varargin)
            
            if ~isempty(OPT.foldernames)
                fprintf(fid0,'<name>%s</name>',OPT.foldernames{ii});
+               if ~isempty(find(strcmp(contents,'<name></name>')))
+                   contents(find(strcmp(contents,'<name></name>'))) = [];
+               end
            end
            fprintf(fid0,'%s\n',contents{:}); % for large files do not insert any indentation: '___indentation___%s\n'
 
