@@ -22,9 +22,11 @@ OPT.iconFile='http://maps.google.com/mapfiles/kml/paddle/blu-stars.png'; % for P
 % if structure was given as input OPT
 OPTid=find(cellfun(@isstruct, varargin));
 if ~isempty(OPTid)
-    OPT=setproperty(OPT,varargin{OPTid});
-    varargin{OPTid}=[];
-    varargin=varargin(~cellfun('isempty',varargin));
+    if ~isfield(varargin{OPTid},'X') % grd can also be given as input struct
+        OPT=setproperty(OPT,varargin{OPTid});
+        varargin{OPTid}=[];
+        varargin=varargin(~cellfun('isempty',varargin));
+    end
 end
 
 % if pairs were given as input OPT
@@ -69,20 +71,21 @@ if length(varargin)==1
     if isempty(availableInputId)
         error(['No conversions available for ' inputExt '-files.'])
     end
-    availableoutputExt=[availableConversions(availableInputId,2); inputExt];
+    availableoutputExt=availableConversions(availableInputId,2);
     if ~isempty(strmatch('pol',availableoutputExt))
         availableoutputExt=[availableoutputExt; 'pli'];
     end
     if ismember(inputExt0,{'.grd','.ldb','.pli','.pol','.xyz','.xyn'})
-    [availableoutputId,~]=  listdlg('PromptString',['Convert this ' inputExt0 '-file to (to same extension >> coordinate conversion):'],...
-        'SelectionMode','single',...
-        'ListString',availableoutputExt,...
-        'ListSize',[500 100]);
+        availableoutputExt=[availableoutputExt; inputExt0(2:end)];
+        [availableoutputId,~]=  listdlg('PromptString',['Convert this ' inputExt0 '-file to (to same extension >> coordinate conversion):'],...
+            'SelectionMode','single',...
+            'ListString',availableoutputExt,...
+            'ListSize',[500 100]);
     else
         [availableoutputId,~]=  listdlg('PromptString',['Convert this ' inputExt0 '-file to:'],...
-        'SelectionMode','single',...
-        'ListString',availableoutputExt(cellfun(@isempty,strfind(availableoutputExt,inputExt0(2:end)))),...
-        'ListSize',[500 100]);    
+            'SelectionMode','single',...
+            'ListString',availableoutputExt,...
+            'ListSize',[500 100]);
     end
     if isempty(availableoutputId)
         error('No output extension was chosen.')
@@ -197,7 +200,7 @@ end
     end
 % dry2thd
     function [output,OPT]=EHY_convert_dry2thd(inputFile,outputFile,OPT)
-        dry=delft3d_io_dry('read',inputFile);  
+        dry=delft3d_io_dry('read',inputFile);
         thd.DATA=struct;
         for iM=1:length(dry.m)
             if iM==1
@@ -215,7 +218,7 @@ end
             thd.DATA(end).direction='V';
         end
         if OPT.saveoutputFile
-        delft3d_io_thd('write',outputFile,thd)
+            delft3d_io_thd('write',outputFile,thd)
         end
         output=[];
     end
@@ -257,7 +260,7 @@ end
     end
 % kml2pol
     function [output,OPT]=EHY_convert_kml2pol(inputFile,outputFile,OPT)
-        output=kml2pol(OPT.saveoutputFile,inputFile);
+        output=kml2ldb(OPT.saveoutputFile,inputFile);
     end
 % kml2xyn
     function [output,OPT]=EHY_convert_kml2xyn(inputFile,outputFile,OPT)
@@ -379,7 +382,7 @@ end
 % pol2ldb
     function [output,OPT]=EHY_convert_pol2ldb(inputFile,outputFile,OPT)
         if OPT.saveoutputFile
-           copyfile(inputFile,outputFile)
+            copyfile(inputFile,outputFile)
         end
         output=landboundary('read',inputFile);
     end
