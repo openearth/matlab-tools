@@ -18,8 +18,12 @@ format{2}='yyyymmdd HHMMSS';
 %% get time info from mdFile
 if nargin==0
     option=listdlg('PromptString','Choose between:','SelectionMode','single','ListString',...
-        {'Start with blank fields','Open a .mdu / .mdf or SIMONA file as input'},'ListSize',[300 50]);
+        {'Open a .mdu / .mdf or SIMONA file as input','Start with blank fields'},'ListSize',[300 50]);
     if option==1
+        disp('Open a .mdu / .mdf / siminp file')
+        [filename, pathname]=uigetfile({'*.mdu';'*.mdf';'*siminp*';'*.*'},'Open a .mdu / .mdf / siminp file');
+        mdFile=[pathname filename];
+    elseif option==2    
         mdInput={};
         option=  listdlg('PromptString','modelType :','SelectionMode','single','ListString',...
             {'Delft3D','Delft3D-FM','SIMONA'},'ListSize',[300 50]);
@@ -34,11 +38,7 @@ if nargin==0
         option=  listdlg('PromptString','time unit for start/stop date :','SelectionMode','single','ListString',...
             SMH,'ListSize',[300 50]);
         mdInput{2}=SMH{option};
-        mdInput{1}=input(['Reference time in format [' format{2} ']: '],'s');
-    elseif option==2
-        disp('Open a .mdu / .mdf / siminp file')
-        [filename, pathname]=uigetfile({'*.mdu';'*.mdf';'*siminp*';'*.*'},'Open a .mdu / .mdf / siminp file');
-        mdFile=[pathname filename];
+        mdInput{1}=input(['Reference time in format [' format{2} ']: '],'s');       
     end
 elseif nargin==1
     mdFile=varargin{1};
@@ -92,7 +92,7 @@ if exist('mdFile','var')
                     lineInd=find(~cellfun(@isempty,strfind(siminp.File,keywords{iK})));
                     line=regexp(siminp.File(lineInd),'\s+','split');
                     lineInd2=find(~cellfun(@isempty,strfind(line{1,1},keywords{iK})));
-                    mdInput{mdInputInd(iK)}=strrep(line{1,1}{lineInd2+1},'.','');
+                    mdInput{mdInputInd(iK)}=str2num(line{1,1}{lineInd2+1});
                 catch
                     mdInput{mdInputInd(iK)}=[];
                 end
