@@ -131,7 +131,8 @@ while keepLooping
             end
         end
     elseif isempty(userInput)
-        keepLooping=0;
+        disp([char(10) '* * * EHY_simulationInputTimes was stopped by user * * *' char(10)])
+        return
     end
     
     % if RefDate was changed
@@ -206,10 +207,6 @@ while keepLooping
                 disp(['TIMAP = ' mdInput{14} ])
                 disp(['TLMAP = ' mdInput{15} ])
         end
-    end
-    
-    if ~keepLooping
-        disp([char(10) '* * * EHY_simulationInputTimes was stopped by user * * *' char(10)])
     end
 end
 end
