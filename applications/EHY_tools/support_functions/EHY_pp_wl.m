@@ -147,13 +147,15 @@ for i_per = 1: size(Periods,1)
                 wlev_meas   = INFO.Field.Data(:,3);
             else
                 % try to get the data from opendap server, only works for dutch stations
-                [dattim_meas,wlev_meas] = EHY_opendap('Parameter','waterhoogte','Station',stations_shortname{i_stat});
-                i_start = max(find(dattim_meas>datenum(Periods{i_per,1},'yyyymmdd  HHMMSS'),1,'first') - 1,1);
-                i_stop  = find(dattim_meas>datenum(Periods{i_per,2},'yyyymmdd  HHMMSS'),1,'first');
-                dattim_meas = dattim_meas(i_start:i_stop);
-                wlev_meas   = wlev_meas  (i_start:i_stop);  
+                [dattim_meas,wlev_meas] = EHY_opendap('Parameter','waterhoogte','Station',stations_shortname{i_stat}); 
             end
             
+            % only use data in selected period
+            i_start = max(find(dattim_meas>datenum(Periods{i_per,1},'yyyymmdd  HHMMSS'),1,'first') - 1,1);
+            i_stop  = find(dattim_meas>datenum(Periods{i_per,2},'yyyymmdd  HHMMSS'),1,'first');
+            dattim_meas = dattim_meas(i_start:i_stop);
+            wlev_meas   = wlev_meas  (i_start:i_stop);
+                
             if ~isempty(find(~isnan(wlev_meas)))
                 [dattim_meas,wlev_meas] = FillGaps(dattim_meas,wlev_meas,'interval',120./1440.); % Fill with NaNs if interval between consequetive measurements is more than 2 hours
             end
