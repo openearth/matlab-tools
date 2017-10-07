@@ -36,7 +36,11 @@ function [xi,yi,x,y]=m_hatch(lon,lat,varargin);
 % Hatch Algorithm originally by K. Pankratov, with a bit stolen from 
 % Iram Weinsteins 'fancification'. Speckle modifications by R. Pawlowicz.
 %
-% R Pawlowicz 15/Dec/2005
+% R Pawlowicz (rich@ocgy.ubc.ca) 15/Dec/2005
+%
+% This software is provided "as is" without warranty of any kind. But
+% it's mine, so you can't sell it.
+%
 %% 4/DEc/11 - isstr to ischar
 %  Apr/12  - handle NaN-separated coastlines
 
@@ -156,7 +160,11 @@ switch lower(styl),
     if any(xi),
       xi=line(xi,yi,'marker','.','linestyle','none','markersize',2,varargin{:});
     else
-      xi=NaN;yi=NaN;
+      if verLessThan('matlab','8.4.0'),
+        xi=NaN;yi=NaN;
+      else
+        xi=gobjects(1);yi=gobjects(1);
+      end;		
     end;    
   end; 
  case 'outspeckle',
@@ -171,7 +179,11 @@ switch lower(styl),
     if any(xi),
       xi=line(xi,yi,'marker','.','linestyle','none','markersize',2,varargin{:});
     else
-      xi=NaN;yi=NaN;
+      if verLessThan('matlab','8.4.0'),
+        xi=NaN;yi=NaN;
+      else
+        xi=gobjects(1);yi=gobjects(1);
+      end;		
     end;    
   end; 
     

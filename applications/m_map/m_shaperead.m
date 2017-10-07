@@ -33,6 +33,9 @@ function M=m_shaperead(fname,UBR);
 %
 
 % R. Pawlowicz rpawlowicz@eos.ubc.ca 24/Jan/2011
+%
+% This software is provided "as is" without warranty of any kind. But
+% it's mine, so you can't sell it.
 
 
 if nargin<2,
@@ -64,7 +67,7 @@ status=fseek(fidb,100,'bof');
 recn16=fread(fidb,[2 Inf],'int32')';
 lrec=size(recn16,1);
 
-%fprintf('%d Records in file, by 500:\n',lrec);
+fprintf('%d Records in file, by 500:\n',lrec);
 
 fclose(fidb);
 
