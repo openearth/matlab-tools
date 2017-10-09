@@ -7,11 +7,11 @@ function varargout=EHY_convert(varargin)
 % Example1: EHY_convert
 % Example2: EHY_convert('D:\path.kml')
 % Example3: ldb=EHY_convert('D:\path.kml','ldb')
-% Example4: EHY_convert('D:\path.kml','ldb','saveoutputFile',0)
+% Example4: EHY_convert('D:\path.kml','ldb','saveOutputFile',0)
 
 % created by Julien Groenenboom, August 2017
 
-OPT.saveoutputFile=1; % 0=do not save, 1=save
+OPT.saveOutputFile=1; % 0=do not save, 1=save
 OPT.outputFile=[]; % if isempty > outputFile=strrep(inputFile,inputExt,outputExt);
 OPT.lineColor=[1 0 0]; % default is red
 OPT.fromEPSG=[]; % convert from this EPSG in case of conversion to kml (Google Earth)
@@ -110,13 +110,13 @@ if strcmp(inputFile,outputFile)
     outputFile=strrep(inputFile,inputExt0,['_converted' inputExt0]);
 end
 
-if OPT.saveoutputFile && exist(outputFile,'file')
+if OPT.saveOutputFile && exist(outputFile,'file')
     [YesNoID,~]=  listdlg('PromptString',{'The outputFile already exists. Overwrite the file below?',outputFile},...
         'SelectionMode','single',...
         'ListString',{'Yes','No','No, but save as...'},...
         'ListSize',[800 50]);
     if YesNoID==2
-        OPT.saveoutputFile=0;
+        OPT.saveOutputFile=0;
     elseif YesNoID==3
         [pathstr,~,ext] = fileparts(outputFile);
         [FileName,PathName] = uiputfile([pathstr filesep ext]);
@@ -134,19 +134,19 @@ if ~strcmp(inputExt,outputExt)
 else
     eval(['[output,OPT]=EHY_convertCoordinates(''' inputFile ''',''' outputFile ''',OPT);'])
 end
-if OPT.saveoutputFile && exist(outputFile,'file')
+if OPT.saveOutputFile && exist(outputFile,'file')
     disp([char(10) 'EHY_convert created the file: ' char(10) outputFile char(10)])
 end
 %% conversion functions - in alphabetical order
 % crs2kml
     function [output,OPT]=EHY_convert_crs2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
-        OPT.saveoutputFile=0;
+        OPT.saveOutputFile=0;
         pol=EHY_convert_crs2pol(inputFile,outputFile,OPT);
         [x,y,OPT]=EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
         output=[x y];
         OPT=OPT_user;
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(output(:,1:2),tempFile,OPT.lineColor)
@@ -171,7 +171,7 @@ end
             y=[y;reshape(grd.Y(mrange,nrange),[],1); NaN];
         end
         output=[x y];
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             io_polygon('write',outputFile,x,y,'dosplit','-1');
         end
     end
@@ -189,7 +189,7 @@ end
             pol=[pol;grd.X(crossInd)' grd.Y(crossInd)'; NaN NaN];
         end
         [pol(:,1),pol(:,2),OPT]=EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(pol(:,1:2),tempFile,OPT.lineColor)
@@ -217,7 +217,7 @@ end
             thd.DATA(end+1).mn=[dry.m(iM);dry.n(iM)-1;dry.m(iM);dry.n(iM)-1];
             thd.DATA(end).direction='V';
         end
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             delft3d_io_thd('write',outputFile,thd)
         end
         output=[];
@@ -228,14 +228,14 @@ end
         OPT=EHY_convert_gridCheck(OPT,inputFile);
         [x,y]=EHY_mn2xy(dry.m,dry.n,OPT.grdFile);
         xyz=[x y zeros(length(x),1)];
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             dlmwrite(outputFile,xyz,'delimiter',' ','precision','%20.7f')
         end
         output=xyz;
     end
 % grd2kml
     function [output,OPT]=EHY_convert_grd2kml(inputFile,outputFile,OPT)
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             [~,name]=fileparts(inputFile);
             tempFileGrd=[tempdir name '.grd'];
             tempFileKml=[tempdir name '.kml'];
@@ -256,11 +256,11 @@ end
     end
 % kml2ldb
     function [output,OPT]=EHY_convert_kml2ldb(inputFile,outputFile,OPT)
-        output=kml2ldb(OPT.saveoutputFile,inputFile);
+        output=kml2ldb(OPT.saveOutputFile,inputFile);
     end
 % kml2pol
     function [output,OPT]=EHY_convert_kml2pol(inputFile,outputFile,OPT)
-        output=kml2ldb(OPT.saveoutputFile,inputFile);
+        output=kml2ldb(OPT.saveOutputFile,inputFile);
     end
 % kml2xyn
     function [output,OPT]=EHY_convert_kml2xyn(inputFile,outputFile,OPT)
@@ -272,7 +272,7 @@ end
             y(ii,1)=str2num(coords{2});
         end
         output={x y names};
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             fid=fopen(outputFile,'w');
             for iM=1:length(x)
                 fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
@@ -283,9 +283,9 @@ end
     end
 % kml2xyz
     function [output,OPT]=EHY_convert_kml2xyz(inputFile,outputFile,OPT)
-        xyz=kml2ldb(OPT.saveoutputFile,inputFile);
+        xyz=kml2ldb(OPT.saveOutputFile,inputFile);
         xyz(isnan(xyz(:,1)),:)=[];
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             dlmwrite(outputFile,xyz);
         end
         output=xyz;
@@ -293,7 +293,7 @@ end
 % ldb2kml
     function [output,OPT]=EHY_convert_ldb2kml(inputFile,outputFile,OPT)
         ldb=landboundary('read',inputFile);
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             [ldb(:,1),ldb(:,2),OPT]=EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
@@ -305,7 +305,7 @@ end
     end
 % ldb2pol
     function [output,OPT]=EHY_convert_ldb2pol(inputFile,outputFile,OPT)
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             copyfile(inputFile,outputFile);
         end
         ldb=landboundary('read',inputFile);
@@ -323,7 +323,7 @@ end
         lines(3*(1:length(links))-1,:)=[x(links(:,2)) y(links(:,2))];
         lines(3*(1:length(links)),:)=NaN;
         lines=ipGlueLDB(lines);
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             [lines(:,1),lines(:,2),OPT]=EHY_convert_coorCheck(lines(:,1),lines(:,2),OPT);
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
@@ -336,11 +336,11 @@ end
 % obs2kml
     function [output,OPT]=EHY_convert_obs2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
-        OPT.saveoutputFile=0;
+        OPT.saveOutputFile=0;
         xyn=EHY_convert_obs2xyn(inputFile,outputFile,OPT);
         [xyn{1,1},xyn{1,2},OPT]=EHY_convert_coorCheck(xyn{1,1},xyn{1,2},OPT);
         OPT=OPT_user;
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
             KMLPlaceMark(xyn{1,2},xyn{1,1},tempFile,'name',xyn{1,3},'icon',OPT.iconFile);
@@ -356,7 +356,7 @@ end
         OPT=EHY_convert_gridCheck(OPT,inputFile);
         [x,y]=EHY_mn2xy(obs.m,obs.n,OPT.grdFile);
         
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             fid=fopen(outputFile,'w');
             for iM=1:length(x)
                 fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
@@ -370,7 +370,7 @@ end
     function [output,OPT]=EHY_convert_pol2kml(inputFile,outputFile,OPT)
         pol=landboundary('read',inputFile);
         [pol(:,1),pol(:,2),OPT]=EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(pol(:,1:2),tempFile,OPT.lineColor)
@@ -381,7 +381,7 @@ end
     end
 % pol2ldb
     function [output,OPT]=EHY_convert_pol2ldb(inputFile,outputFile,OPT)
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             copyfile(inputFile,outputFile)
         end
         output=landboundary('read',inputFile);
@@ -390,7 +390,7 @@ end
     function [output,OPT]=EHY_convert_pol2xyz(inputFile,outputFile,OPT)
         xyz=landboundary('read',inputFile);
         xyz(isnan(xyz(:,1)),:)=[];
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             dlmwrite(outputFile,xyz);
         end
         output=xyz;
@@ -398,7 +398,7 @@ end
 % shp2kml
     function [output,OPT]=EHY_convert_shp2kml(inputFile,outputFile,OPT)
         ldb=shape2ldb(inputFile,0);
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor)
@@ -409,23 +409,23 @@ end
     end
 % shp2ldb
     function [output,OPT]=EHY_convert_shp2ldb(inputFile,outputFile,OPT)
-        output=shape2ldb(inputFile,OPT.saveoutputFile);
+        output=shape2ldb(inputFile,OPT.saveOutputFile);
     end
 % shp2pol
     function [output,OPT]=EHY_convert_shp2pol(inputFile,outputFile,OPT)
         output=shape2ldb(inputFile,0);
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             io_polygon('write',outputFile,output);
         end
     end
 % src2kml
     function [output,OPT]=EHY_convert_src2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
-        OPT.saveoutputFile=0;
+        OPT.saveOutputFile=0;
         xyn=EHY_convert_src2xyn(inputFile,outputFile,OPT);
         [xyn{1,1},xyn{1,2},OPT]=EHY_convert_coorCheck(xyn{1,1},xyn{1,2},OPT);
         OPT=OPT_user;
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
             KMLPlaceMark(xyn{1,2},xyn{1,1},tempFile,'name',xyn{1,3},'icon',OPT.iconFile);
@@ -440,7 +440,7 @@ end
         OPT=EHY_convert_gridCheck(OPT,inputFile);
         [x,y]=EHY_mn2xy(src.m,src.n,OPT.grdFile);
         
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             fid=fopen(outputFile,'w');
             for iM=1:length(x)
                 fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
@@ -453,12 +453,12 @@ end
 % thd2kml
     function [output,OPT]=EHY_convert_thd2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
-        OPT.saveoutputFile=0;
+        OPT.saveOutputFile=0;
         pol=EHY_convert_thd2pol(inputFile,outputFile,OPT);
         [pol(:,1),pol(:,2),OPT]=EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
         output=pol;
         OPT=OPT_user;
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(output(:,1:2),tempFile,OPT.lineColor)
@@ -486,7 +486,7 @@ end
             end
         end
         output=[x y];
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             io_polygon('write',outputFile,x,y,'dosplit','-1');
         end
     end
@@ -503,7 +503,7 @@ end
             xyn.name=D{1,3};
         end
         [xyn.x,xyn.y,OPT]=EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
             KMLPlaceMark(xyn.y,xyn.x,tempFile,'name',xyn.name,'icon',OPT.iconFile);
@@ -527,7 +527,7 @@ end
         OPT=EHY_convert_gridCheck(OPT,inputFile);
         [m,n]=EHY_xy2mn(xyn.x,xyn.y,OPT.grdFile);
         obs.m=m; obs.n=n; obs.namst=xyn.name;
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             delft3d_io_obs('write',outputFile,obs);
         end
         output=[reshape(m,[],1) reshape(n,[],1)];
@@ -537,7 +537,7 @@ end
         xyz=importdata(inputFile);
         OPT=EHY_convert_gridCheck(OPT,inputFile);
         [m,n]=EHY_xy2mn(xyz(:,1),xyz(:,2),OPT.grdFile);
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             delft3d_io_dry('write',outputFile,m,n);
         end
         if size(m,1)==1; m=m'; n=n'; end
@@ -547,7 +547,7 @@ end
     function [output,OPT]=EHY_convert_xyz2kml(inputFile,outputFile,OPT)
         xyz=dlmread(inputFile);
         [lon,lat,OPT]=EHY_convert_coorCheck(xyz(:,1),xyz(:,2),OPT);
-        if OPT.saveoutputFile
+        if OPT.saveOutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
             KMLPlaceMark(lat,lon,tempFile,'icon',OPT.iconFile);
