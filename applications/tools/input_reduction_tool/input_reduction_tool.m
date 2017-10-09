@@ -244,7 +244,7 @@ data.handles.method.num_bins_H_s = uicontrol(data.handles.fig,'style','edit','En
 data.handles.method.num_bins_tot = uicontrol(data.handles.fig,'style','edit','Enable','off','fontsize',8,'Position',[start_point_3 dd_bin_no_size],'String',num2str(data.data.bin_values.tot),'callback',@edit_bin_value,'tag','tot','TooltipString','Total number of bins/classes');
 data.handles.method.num_bins_dir_txt = uicontrol(data.handles.fig,'style','text','Enable','off','String','No. dir. bins:','Position',[start_point_1+[0 20] dd_bin_no_size(1) data.sizes.txt_height],'TooltipString','Number of directional bins/classes');
 data.handles.method.num_bins_H_s_txt = uicontrol(data.handles.fig,'style','text','Enable','off','String','No. H_s bins:','Position',[start_point_2+[0 20] dd_bin_no_size(1) data.sizes.txt_height],'TooltipString','Number of wave bins/classes');
-data.handles.method.num_bins_tot_txt = uicontrol(data.handles.fig,'style','text','Enable','off','String','Totol no. bins:','Position',[start_point_3+[0 20] dd_bin_no_size(1) data.sizes.txt_height],'TooltipString','Total number of bins/classes');
+data.handles.method.num_bins_tot_txt = uicontrol(data.handles.fig,'style','text','Enable','off','String','Total no. centroids:','Position',[start_point_3+[0 20] dd_bin_no_size(1) data.sizes.txt_height],'TooltipString','Total number of bins/classes');
 
 equi_bins_checkbox_size = [dd_method_size(1)-50 data.sizes.txt_height];
 start_point = start_point + [0 -data.sizes.button_spacing-equi_bins_checkbox_size(2)+data.sizes.txt_height]; % +15 to make it tight
