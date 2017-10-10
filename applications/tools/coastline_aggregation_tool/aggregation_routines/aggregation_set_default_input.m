@@ -27,9 +27,10 @@ function [coastline data settings varargout] = aggregation_set_default_input(num
 %
 % This tool is developed as part of the research cooperation between
 % Deltares and the Korean Institute of Science and Technology (KIOST).
-% The development is funded by the CoMIDAS project of the South Korean
-% government and the Deltares strategic research program Coastal and
-% Offshore Engineering. This financial support is highly appreciated.
+% The development is funded by the research project titled "Development
+% of Coastal Erosion Control Technology (or CoMIDAS)" funded by the Korean
+% Ministry of Oceans and Fisheries and the Deltares strategic research program
+% Coastal and Offshore Engineering. This financial support is highly appreciated.
 
 coastline.ldb_file        = 'some_ldb_file_representing_the_coastline.ldb OR an [Mx2] matrix';
 coastline.structure_inds  = {};

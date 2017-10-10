@@ -27,9 +27,10 @@ function [v,inds_f,bin_limits]=energy_flux_method(data,nhs,ndir)
 %
 % This tool is developed as part of the research cooperation between
 % Deltares and the Korean Institute of Science and Technology (KIOST).
-% The development is funded by the CoMIDAS project of the South Korean
-% government and the Deltares strategic research program Coastal and
-% Offshore Engineering. This financial support is highly appreciated.
+% The development is funded by the research project titled "Development
+% of Coastal Erosion Control Technology (or CoMIDAS)" funded by the Korean
+% Ministry of Oceans and Fisheries and the Deltares strategic research program
+% Coastal and Offshore Engineering. This financial support is highly appreciated.
 
 %
 % Energy Flux method (Adaptaded from Joao Dobrochinski and Lindino Benedet)
