@@ -134,8 +134,14 @@ if ~strcmp(inputExt,outputExt)
 else
     eval(['[output,OPT]=EHY_convertCoordinates(''' inputFile ''',''' outputFile ''',OPT);'])
 end
+
 if OPT.saveOutputFile && exist(outputFile,'file')
-    disp([char(10) 'EHY_convert created the file: ' char(10) outputFile char(10)])
+    if strcmp(outputExt,'nc'); 
+        outputFile0=outputFile;
+        outputFile=strrep(outputFile0,'.nc','_net.nc');
+        movefile(outputFile0,outputFile);
+    end
+    disp([char(10) 'EHY_convert created the file: ' char(10) strrep(outputFile,[filesep filesep],filesep) char(10)])
 end
 %% conversion functions - in alphabetical order
 % crs2kml
@@ -251,6 +257,34 @@ end
             delete(tempFileGrd)
             delete(strrep(tempFileGrd,'.grd','.enc'))
             delete(tempFileKml)
+        end
+        output=[];
+    end
+% grd2nc
+    function [output,OPT]=EHY_convert_grd2nc(inputFile,outputFile,OPT)
+        if OPT.saveOutputFile
+            % based on d3d2dflowfm_grd2net
+            G             = delft3d_io_grd('read',inputFile);
+            xh            = G.cor.x';
+            yh            = G.cor.y';
+            mmax          = G.mmax;
+            nmax          = G.nmax;
+            xh(mmax,:)    = NaN;
+            yh(mmax,:)    = NaN;
+            xh(:,nmax)    = NaN;
+            yh(:,nmax)    = NaN;
+            spher         = 0;
+            if strcmp(G.CoordinateSystem,'Spherical');
+                spher     = 1;
+            end
+            zh            = -5.*ones(mmax,nmax); 
+            netfile=outputFile;
+            
+            % to avoid error of variables being created in below function 
+            X=[];Y=[];Z=[];NetNode_mask=[];nNetNode=[];vals=[];nc=[];ifld=[];attr=[];dims=[];
+            ContourLink=[];NetLink=[];
+            convertWriteNetcdf;
+            disp('For grd2nc conversion incl. depth, have a look at function ''d3d2dflowfm_grd2net.m'' ');
         end
         output=[];
     end
