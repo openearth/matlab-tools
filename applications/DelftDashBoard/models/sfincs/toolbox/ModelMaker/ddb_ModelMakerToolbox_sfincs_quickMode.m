@@ -199,7 +199,7 @@ function generateBathymetry
 handles=getHandles;
 % Use background bathymetry data
 datasets(1).name=handles.screenParameters.backgroundBathymetry;
-handles=ddb_ModelMakerToolbox_sfincs_generateBathymetry(handles,datasets);
+handles=ddb_ModelMakerToolbox_sfincs_generateBathymetry(handles,1,datasets);
 setHandles(handles);
 
 %%

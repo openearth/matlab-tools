@@ -78,9 +78,9 @@ gridz=handles.model.sfincs.domain(id).gridz';
 %gridz=min(gridz,20);
 
 %xy=landboundary('read','texas_land.pli');
-xy=landboundary('read','southflorida.pli');
-msk=sfincs_make_mask(xg',yg',gridz,[-2 100],'includepolygon',xy);
-% msk=sfincs_make_mask(xg',yg',gridz,[-2 100],'includepolygon',xy);
+%xy=landboundary('read','southflorida.pli');
+msk=sfincs_make_mask(xg',yg',gridz,[-2 100]);
+%msk=sfincs_make_mask(xg',yg',gridz,[-2 100],'includepolygon',xy);
 msk(isnan(gridz))=0;
 gridz(msk==0)=NaN;
 
