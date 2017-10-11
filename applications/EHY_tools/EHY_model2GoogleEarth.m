@@ -26,7 +26,7 @@ runDir=fileparts(mdFile);
 outputDir=[runDir filesep 'EHY_model2GoogleEarth_OUTPUT' filesep];
 if ~exist(outputDir); mkdir(outputDir); end
 %%
-OPT.saveoutputFile=1;
+OPT.saveOutputFile=1;
 switch modelType
     case 'mdu'
         mdu=dflowfm_io_mdu('read',mdFile);
