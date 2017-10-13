@@ -14,6 +14,7 @@ function varargout=EHY_convert(varargin)
 OPT.saveOutputFile=1; % 0=do not save, 1=save
 OPT.outputFile=[]; % if isempty > outputFile=strrep(inputFile,inputExt,outputExt);
 OPT.lineColor=[1 0 0]; % default is red
+OPT.lineWidth=1;
 OPT.fromEPSG=[]; % convert from this EPSG in case of conversion to kml (Google Earth)
 OPT.grdFile=[];  % corresponding .grd file for files like .crs / .dry / obs. / ...
 OPT.grd=[]; % wlgrid('read',OPT.grdFile);
@@ -154,8 +155,8 @@ end
         OPT=OPT_user;
         if OPT.saveOutputFile
             [~,name]=fileparts(inputFile);
-            tempFile=[tempdir name '.kml'];
-            ldb2kml(output(:,1:2),tempFile,OPT.lineColor)
+            tempFile=[tempdir name '_crs.kml'];
+            ldb2kml(output(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
@@ -197,8 +198,8 @@ end
         [pol(:,1),pol(:,2),OPT]=EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
         if OPT.saveOutputFile
             [~,name]=fileparts(inputFile);
-            tempFile=[tempdir name '.kml'];
-            ldb2kml(pol(:,1:2),tempFile,OPT.lineColor)
+            tempFile=[tempdir name '_dry.kml'];
+            ldb2kml(pol(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
@@ -331,7 +332,7 @@ end
             [ldb(:,1),ldb(:,2),OPT]=EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
-            ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor)
+            ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
             delete(tempFile);
         end
@@ -361,7 +362,7 @@ end
             [lines(:,1),lines(:,2),OPT]=EHY_convert_coorCheck(lines(:,1),lines(:,2),OPT);
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
-            ldb2kml(lines,tempFile,OPT.lineColor)
+            ldb2kml(lines,tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
@@ -407,7 +408,7 @@ end
         if OPT.saveOutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
-            ldb2kml(pol(:,1:2),tempFile,OPT.lineColor)
+            ldb2kml(pol(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
@@ -435,7 +436,7 @@ end
         if OPT.saveOutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
-            ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor)
+            ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
@@ -494,8 +495,8 @@ end
         OPT=OPT_user;
         if OPT.saveOutputFile
             [~,name]=fileparts(inputFile);
-            tempFile=[tempdir name '.kml'];
-            ldb2kml(output(:,1:2),tempFile,OPT.lineColor)
+            tempFile=[tempdir name '_thd.kml'];
+            ldb2kml(output(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
