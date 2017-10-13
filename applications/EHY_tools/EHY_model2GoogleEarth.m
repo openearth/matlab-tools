@@ -56,7 +56,7 @@ switch modelType
             inputFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.ThinDamFile,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_pli.kml'];
-            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],OPT);
+            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],'lineWidth',4,OPT);
         end
         
         % dry points
@@ -82,7 +82,7 @@ switch modelType
             inputFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.CrsFile,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_crs.kml'];
-            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[1 1 0],OPT);
+            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[1 1 0],'lineWidth',4,OPT);
         end
         
     case 'mdf'
@@ -110,7 +110,7 @@ switch modelType
             inputFile=EHY_model2GoogleEarth_checkPath(mdf.keywords.filtd,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_thd.kml'];
-            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],OPT);
+            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],'lineWidth',4,OPT);
         end
         
         % .crs
@@ -118,7 +118,7 @@ switch modelType
             inputFile=EHY_model2GoogleEarth_checkPath(mdf.keywords.filcrs,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_crs.kml'];
-            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[1 1 0],OPT);
+            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[1 1 0],'lineWidth',4,OPT);
         end
         
         % .obs
