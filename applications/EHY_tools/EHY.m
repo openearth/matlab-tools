@@ -14,7 +14,6 @@ for iD=1:length(D)
 end
 
 % delete certain scripts
-NoInputNeeded(strmatch('EHY_opendap',NoInputNeeded))=[];
 NoInputNeeded(strmatch('EHY_plot_google_map',NoInputNeeded))=[];
 
 % select which function to use
