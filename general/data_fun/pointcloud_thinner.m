@@ -9,7 +9,10 @@ function XY = pointcloud_thinner(XY,min_dist,split_amount)
 % Input variables:
 %
 %      XY         The pointcloud to be thinned out, is a matrix of size
-%                 [M,2] with horizontal and vertical points.
+%                 [M,2] with horizontal and vertical points. Once could
+%                 also supply a [M,N] matrix, in which case it will assume
+%                 [M,1] to be the X-values, and [M,2] to be the Y-values.
+%                 All other columns will be maintained columnwise.
 %      min_dist   The minimum distance by which points will be removed.
 %                 After running the function, the minimum distance between
 %                 any 2 point will be at least min_dist.
@@ -85,14 +88,20 @@ if exist('split_amount','var') ~= 1
     % disp(mean(val'));
 end
 
-if size(XY,2) ~= 2
-    if size(XY,1) == 2 && size(XY,2) > 2
-        XY = XY';
-    else
-        error(['Please provide a [M,2] dataset for XY, and not [' num2str(size(XY,1)) ',' num2str(size(XY,2)) ']']);
+if isnumeric(XY)
+    if size(XY,2)<2
+        error('Your input matrix should have at least 2 dimensions');
+    elseif size(XY,1)<2
+        error('Your XY data should have at least 2 points');
+    elseif size(XY,1) < size(XY,2)
+    	disp(['Your pointcloud has more dimensions than points! [' num2str(size(XY,1)) ',' num2str(size(XY,2)) ']']);
+        disp('Please flip your data is this is incorrect');
+        disp(' ');
     end
+else
+    error('XY input should be a matrix');
 end
-    
+
 dx = diff([min(XY(:,1)) max(XY(:,1))]);
 dy = diff([min(XY(:,2)) max(XY(:,2))]);
 
@@ -104,7 +113,7 @@ elseif dx == 0 || dx/dy <= 1
     [XY]=sortrows(XY,2);
 end
 
-ori_size = length(XY);
+ori_size = size(XY,1);
 
 number_of_partitions  = ceil(length(XY(:,1))./split_amount);
 points_removed        = true;
@@ -117,11 +126,11 @@ while number_of_partitions > 1 && points_removed
     number_of_pts_removed(filter_tel) = 0;
     
     clear XY_parts;
-    partition_size = floor(length(XY)/number_of_partitions);
+    partition_size = floor(size(XY,1)/number_of_partitions);
     for ii=1:number_of_partitions
         inds = [[ii-1 ii] .* partition_size] + [1 0];
         if ii == number_of_partitions
-            inds = [inds(1) length(XY)];
+            inds = [inds(1) size(XY,1)];
         end
         XY_parts{ii} = XY(inds(1):inds(2),:);
     end
@@ -132,7 +141,7 @@ while number_of_partitions > 1 && points_removed
         for ii=1:length(XY_parts{partition})
             if ii/(split_amount/100) == round(ii/(split_amount/100))
                 tel = tel + (split_amount/100);
-                disp(['Filter #' num2str(filter_tel) ': partition ' num2str(partition) '/' num2str(number_of_partitions) ': Step ' num2str(ii) '/' num2str(length(XY_parts{partition})) ' - '  num2str(tel*100/length(XY),'%9.1f') '% of total - ETA: ' num2str((((1-(tel/length(XY)))*toc)/(tel/length(XY)))./60,'%9.1f') ' min.']);
+                disp(['Filter #' num2str(filter_tel) ': partition ' num2str(partition) '/' num2str(number_of_partitions) ': Step ' num2str(ii) '/' num2str(length(XY_parts{partition})) ' - '  num2str(tel*100/size(XY,1),'%9.1f') '% of total - ETA: ' num2str((((1-(tel/size(XY,1)))*toc)/(tel/size(XY,1)))./60,'%9.1f') ' min.']);
             end
             if ~isnan(XY_parts{partition}(ii,1))
                 XY_parts{partition}(find(sqrt(((XY_parts{partition}(:,1) - XY_parts{partition}(ii,1)).^2) + ((XY_parts{partition}(:,2) - XY_parts{partition}(ii,2)).^2)) < min_dist & sqrt(((XY_parts{partition}(:,1) - XY_parts{partition}(ii,1)).^2) + ((XY_parts{partition}(:,2) - XY_parts{partition}(ii,2)).^2)) > 0),:) = NaN;
@@ -158,10 +167,10 @@ end
 % Final filtering:
 
 tel = 0; tic;
-for ii=1:length(XY)
+for ii=1:size(XY,1)
     if ii/(split_amount/100) == round(ii/(split_amount/100))
         tel = tel + (split_amount/100);
-        disp(['Finalizing: Step ' num2str(ii) '/' num2str(length(XY)) ' - '  num2str(tel*100/length(XY),'%9.1f') '% of total - ETA: ' num2str((((1-(tel/length(XY)))*toc)/(tel/length(XY)))./60,'%9.1f') ' min.']);
+        disp(['Finalizing: Step ' num2str(ii) '/' num2str(size(XY,1)) ' - '  num2str(tel*100/size(XY,1),'%9.1f') '% of total - ETA: ' num2str((((1-(tel/size(XY,1)))*toc)/(tel/size(XY,1)))./60,'%9.1f') ' min.']);
     end
     if ~isnan(XY(ii,1))
         XY(find(sqrt(((XY(:,1) - XY(ii,1)).^2) + ((XY(:,2) - XY(ii,2)).^2)) < min_dist & sqrt(((XY(:,1) - XY(ii,1)).^2) + ((XY(:,2) - XY(ii,2)).^2)) > 0),:) = NaN;
@@ -173,7 +182,7 @@ XY = XY(~isnan(XY(:,1)),:);
 disp(' ')
 disp('Script completed succesfully')
 disp(['Removed a total of ' num2str(sum(number_of_pts_removed)) ' points from the ' num2str(ori_size) ' point dataset'])
-disp(['Thinned dataset (min. distance ' num2str(min_dist) ') has a total of ' num2str(length(XY)) ' points']);
+disp(['Thinned dataset (min. distance ' num2str(min_dist) ') has a total of ' num2str(size(XY,1)) ' points']);
 
 
 
