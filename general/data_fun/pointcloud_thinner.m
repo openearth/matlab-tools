@@ -115,7 +115,7 @@ end
 
 ori_size = size(XY,1);
 
-number_of_partitions  = ceil(length(XY(:,1))./split_amount);
+number_of_partitions  = ceil(size(XY,1)./split_amount);
 points_removed        = true;
 
 filter_tel = 1;
@@ -153,9 +153,9 @@ while number_of_partitions > 1 && points_removed
     
     XY = XY_new;
     
-    number_of_partitions  = ceil(length(XY(:,1))./split_amount);
+    number_of_partitions  = ceil(size(XY,1)./split_amount);
     
-    if number_of_pts_removed(filter_tel) == 0
+    if number_of_pts_removed(filter_tel) == 0 || number_of_pts_removed(filter_tel) < (0.001 .* size(XY,1))
         points_removed = false;
     end
     
