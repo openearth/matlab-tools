@@ -116,12 +116,12 @@ end
 ori_size = size(XY,1);
 
 number_of_partitions  = ceil(size(XY,1)./split_amount);
-points_removed        = true;
+next_iter             = true;
 
 filter_tel = 1;
 number_of_pts_removed = [];
 
-while number_of_partitions > 1 && points_removed
+while number_of_partitions > 1 && next_iter
     
     number_of_pts_removed(filter_tel) = 0;
     
@@ -151,13 +151,13 @@ while number_of_partitions > 1 && points_removed
         number_of_pts_removed(filter_tel) = number_of_pts_removed(filter_tel) + sum(isnan(XY_parts{partition}(:,1)));
     end
     
-    XY = XY_new;
-    
-    number_of_partitions  = ceil(size(XY,1)./split_amount);
+    number_of_partitions  = ceil(size(XY_new,1)./split_amount);
     
     if number_of_pts_removed(filter_tel) == 0 || number_of_pts_removed(filter_tel) < (0.001 .* size(XY,1))
-        points_removed = false;
+        next_iter = false;
     end
+    
+    XY = XY_new;
     
     filter_tel = filter_tel + 1;
     
