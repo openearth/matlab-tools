@@ -17,14 +17,18 @@ function varargout = EHY_opendap (varargin)
 %                        - Full name of the station,
 %                        - Location of the station,
 %                        - Measurement height, etc
-%                        Is returned in the stucture Info 
-%
+%                        Is returned in the stucture Info
 
-%% Initialisation 
+%% Initialisation
 OPT.Parameter = '';
 OPT.Station   = '';
 
 OPT = setproperty(OPT,varargin);
+
+% interactively retrieving data
+if nargout==0 & nargin==0
+    EHY_opendap_interactive
+end
 
 %% Retreive list of files available on the opendap server
 [path,~,~] = fileparts(mfilename('fullpath'));
@@ -32,13 +36,13 @@ OPT = setproperty(OPT,varargin);
 if ~exist([path filesep 'list_opendap.mat'],'file')
     url = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/catalog.xml';
     list = opendap_catalog(url,'disp','','maxlevel',4);
-    save([path filesep 'list_opendap.mat'],'list'); 
+    save([path filesep 'list_opendap.mat'],'list');
 else
     load([path filesep 'list_opendap.mat']);
 end
 
 %% Nothing specified, return list of possible parameters
-if isempty(OPT.Parameter)
+if isempty(OPT.Parameter) & nargout==1
     i_par = 1;
     for i_data = 1: length(list)
         i_sep = strfind(list{i_data},'/');
@@ -52,7 +56,7 @@ if isempty(OPT.Parameter)
             end
         end
     end
-    varargout = {sort(name_par)};
+    varargout = {sort(name_par)'};
 end
 
 %% Parameter name specified
@@ -67,7 +71,7 @@ if ~isempty(OPT.Parameter)
             name_tmp = list_stat{i_data}(i_sep(end) + 1:end-3);
             i_id     = strfind(name_tmp,'-');
             name_tmp = name_tmp(i_id+1:end);
-
+            
             if i_data == 1
                 name_stat{i_stat} = name_tmp;
             else
@@ -77,7 +81,7 @@ if ~isempty(OPT.Parameter)
                 end
             end
         end
-        varargout = {sort(name_stat)};
+        varargout = {sort(name_stat)'};
     else
         %% Station name specified, return time series of the parameter at this station
         %  First find the station
@@ -99,8 +103,8 @@ if ~isempty(OPT.Parameter)
                 end
                 [dates,index]   = sort(date_tmp);
                 values          = value_tmp(index);
-                varargout{1} = dates;
-                varargout{2} = values;
+                varargout{1} = reshape(dates,[],1);
+                varargout{2} = reshape(values,[],1);
                 
                 %% Retrieve general information (if requested)
                 if nargout == 3
@@ -122,18 +126,69 @@ if ~isempty(OPT.Parameter)
                 
             end
             
-       catch
-             disp(['Problems retrieving OPENDAP data for station : ' OPT.Station]);
-             if nargout == 2
-                 [dates,values]        = EHY_opendap (varargin{1:end});
-             elseif nargout == 3
-                 [dates,values,geninf] = EHY_opendap (varargin{1:end});
-                 varargout{3}          = geninf;
-             end
-             varargout{1} = dates;
-             varargout{2} = values;
+        catch
+            disp(['Problems retrieving OPENDAP data for station : ' OPT.Station]);
+            if nargout == 2
+                [dates,values]        = EHY_opendap (varargin{1:end});
+            elseif nargout == 3
+                [dates,values,geninf] = EHY_opendap (varargin{1:end});
+                varargout{3}          = geninf;
+            end
+            varargout{1} = reshape(dates,[],1);
+            varargout{2} = reshape(values,[],1);
         end
     end
-        
+    
+end
 end
 
+function EHY_opendap_interactive
+parameters=EHY_opendap;
+for iP=1:length(parameters)
+    parameters2{iP,1}=strrep(parameters{iP}(4:end),'_',' ');
+end
+[selection,~]=  listdlg('PromptString','Select a parameter',...
+    'SelectionMode','single',...
+    'ListString',parameters2,...
+    'ListSize',[500 500]); if isempty(selection); return; end
+selectedParameter=parameters{selection};
+
+Stations            = EHY_opendap('Parameter',selectedParameter);
+[selection,~]=  listdlg('PromptString',['Select a station for variable '''  parameters2{selection}  ''''],...
+    'SelectionMode','single',...
+    'ListString',Stations,...
+    'ListSize',[500 500]); if isempty(selection); return; end
+selectedStation=Stations{selection};
+[selection,~]=  listdlg('PromptString','Choose between:',...
+    'SelectionMode','single',...
+    'ListString',{'Download times and values','Download times, values and additional information (e.g. location of station)'},...
+    'ListSize',[500 100]); if isempty(selection); return; end
+
+disp(['start downloading data... Station: ' selectedStation ' - Parameter: ' selectedParameter])
+if selection==1
+    [times,values]=EHY_opendap('Parameter',selectedParameter,'Station',selectedStation);
+    disp([char(10) 'Note that next time you want to download this data, you can also use:'])
+    disp(['[times,values]=EHY_opendap(''Parameter'',''' selectedParameter ''',''Station'',''' selectedStation ''');' char(10)])
+elseif selection==2
+    [times,values,info]=EHY_opendap('Parameter',selectedParameter,'Station',selectedStation);
+    disp([char(10) 'Note that next time you want to download this data, you can also use:'])
+    disp(['[times,values,info]=EHY_opendap(''Parameter'',''' selectedParameter ''',''Station'',''' selectedStation ''');' char(10)])
+end
+
+assignin('base','times',times);
+assignin('base','values',values);
+    
+[selection,~]=  listdlg('PromptString','Do you want to plot the download data?',...
+    'SelectionMode','single',...
+    'ListString',{'Yes','No'},...
+    'ListSize',[500 100]); if isempty(selection); return; end
+if selection==1
+    figure('units','normalized','outerposition',[0 0 1 1])
+    plot(times,values);
+    xlabel('time')
+    datetick('x','dd-mmm-yyyy')
+    ylabel(selectedParameter,'interpreter','none')
+    title(['Station: ' selectedStation])
+end
+
+end
