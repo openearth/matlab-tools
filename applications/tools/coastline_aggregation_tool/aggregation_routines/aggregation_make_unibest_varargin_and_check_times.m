@@ -58,6 +58,8 @@ unibest_varargin = '';
 if sum(strcmp(fieldnames(data),'set_model_time')) ~= 0
     if ignore_time_inds
         disp('   Ignoring data.set_model_time due to different time-axes of the Unibest models');
+    elseif isempty(data.set_model_time)
+        % Nothing...
     elseif isnumeric(data.set_model_time) && min(size(data.set_model_time)) == 1 && max(size(data.set_model_time)) == 2
         if data.set_model_time(1) > data.set_model_time(2)
             disp(['   ERROR: Initial time indice should be smaller than the end time indice, default [1 end] is used']);

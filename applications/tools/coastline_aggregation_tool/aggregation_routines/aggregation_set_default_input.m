@@ -51,6 +51,7 @@ for ii = 1:num_of_models
     data(ii).most_likely_diff  = [];
     data(ii).min_diff          = [];
     data(ii).max_diff          = [];
+    data(ii).set_model_time    = [];
 end
 
 settings.combined_fig          = true;
