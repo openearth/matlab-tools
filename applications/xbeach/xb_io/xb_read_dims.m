@@ -107,12 +107,21 @@ if strcmpi(extension, '.nc')
     
     % put dimensions in structure
     for ivar = 1:length(info.Dimension)
-        XBdims.(info.Dimension(ivar).Name) = info.Dimension(ivar).Length;
+        name = info.Dimension(ivar).Name;
+        if strcmpi(name, 'nx')
+            name = 'globalx';
+        elseif strcmpi(name, 'ny')
+            name = 'globaly';
+        end
+        XBdims.(name) = info.Dimension(ivar).Length;
     end
     
     % read dimension data from structure
     datadimensionids = cellfun(@length, {info.Dataset.Dimension}) < 3;
     for i = find(datadimensionids)
+        if info.Dataset(i).Name(1) == '_'
+            continue
+        end
         XBdims.([info.Dataset(i).Name '_DATA']) = nc_varget(filename, info.Dataset(i).Name);
     end
     
