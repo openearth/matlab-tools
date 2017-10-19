@@ -81,13 +81,13 @@ end
 ch_tide  = find(~cellfun(@isempty,strfind(ListOfChapters,'Tide')));
 if ~isempty(ch_tide)
     tide = true;
-    
+
     % Start and stop time
     hlp                 = inifile('get',Info,'Tide'  ,'Period      ');
     index               = strfind(hlp,'''');
     tide_start          = hlp(index(1) + 1:index(2) - 1);
     tide_stop           = hlp(index(3) + 1:index(4) - 1);
-    
+
     % Constituents
     hlp                 = inifile('get',Info,'Tide'  ,'Constituents');
     i_cons              = 1;
@@ -100,7 +100,7 @@ if ~isempty(ch_tide)
             Constituents{i_cons} = '';
         end
     end
-            
+
     % Latitude
     latitude    = inifile('get',Info,'Tide'  ,'Latitude');
 else
@@ -123,20 +123,20 @@ for i_per = 1: size(Periods,1)
                                             'tide'         , true            , ...
                                             'extremes'     , 2               ) ;
     end
-    
+
     %% Create directory for the Figures for each seperate period
     per_dir   = [fig_dir filesep 'Period_' num2str(i_per,'%3.3i')];
     mkdir (per_dir)
-    
+
     %% Cycle over the requested stations
     for i_stat = 1: no_stat
         if Data.exist_stat(i_stat)
             display(stations_sim{i_stat});
-            
+
             %% Get water level data for i_stat
             dattim_cmp = Data.times + time_zone/24.;
             wlev_cmp   = Data.val(:,i_stat);
-            
+
             %% Read the measurement Data
             if ~strcmpi(lower(meas_dir),'opendap') && ~strcmpi(lower(stations_tek{i_stat}(end-6:end)),'opendap')
                 % tekal files at specific location
@@ -147,15 +147,15 @@ for i_per = 1: size(Periods,1)
                 wlev_meas   = INFO.Field.Data(:,3);
             else
                 % try to get the data from opendap server, only works for dutch stations
-                [dattim_meas,wlev_meas] = EHY_opendap('Parameter','waterhoogte','Station',stations_shortname{i_stat}); 
+                [dattim_meas,wlev_meas] = EHY_opendap('Parameter','waterhoogte','Station',stations_shortname{i_stat});
             end
-            
+
             % only use data in selected period
             i_start = max(find(dattim_meas>datenum(Periods{i_per,1},'yyyymmdd  HHMMSS'),1,'first') - 1,1);
-            i_stop  = find(dattim_meas>datenum(Periods{i_per,2},'yyyymmdd  HHMMSS'),1,'first');
+            i_stop  = find(dattim_meas>=datenum(Periods{i_per,2},'yyyymmdd  HHMMSS'),1,'first');
             dattim_meas = dattim_meas(i_start:i_stop);
             wlev_meas   = wlev_meas  (i_start:i_stop);
-                
+
             if ~isempty(find(~isnan(wlev_meas)))
                 [dattim_meas,wlev_meas] = FillGaps(dattim_meas,wlev_meas,'interval',120./1440.); % Fill with NaNs if interval between consequetive measurements is more than 2 hours
             end
@@ -165,12 +165,12 @@ for i_per = 1: size(Periods,1)
             time_stop     = min(dattim_cmp(end),dattim_meas(end));
             time_stop     = min(time_stop,datenum(Periods{i_per,2},'yyyymmdd HHMMSS'));
             dattim_interp = time_start:10/1440:time_stop;
-            
+
             %% Intepolate both measurement as simulation data to 10 min time interval
             wlev_cmp_interp     = interp1(dattim_cmp ,wlev_cmp        ,dattim_interp);
             [dattim_meas,index] = unique(dattim_meas);
             wlev_meas_interp    = interp1(dattim_meas,wlev_meas(index),dattim_interp);
-            
+
             %% Write the simulation and measurement data to TEKAL TEK file
             file_tek = [per_dir filesep stations_shortname{i_stat} '_' runid '_' num2str(i_per,'%3.3i') '.tek'];
             fid      = fopen(file_tek,'w+');
@@ -182,7 +182,7 @@ for i_per = 1: size(Periods,1)
             fprintf(fid,'* Column    4: Water level Measured\n');
             fprintf(fid,'* Column    5: Difference (Computed - Measured) \n');
             fprintf(fid,'WaterLevel \n');
-            
+
             if length(dattim_interp) == 0
                 fprintf(fid,'%5i %5i \n',1,5);
                 fprintf(fid,'%16s  %12.6f %12.6f %12.6f \n',datestr(datenum(1900,0,0),'yyyymmdd  HHMMSS'),             ...
@@ -199,16 +199,16 @@ for i_per = 1: size(Periods,1)
                 end
             end
             fclose (fid);
-            
+
             %% Do statistics
             Statistics(i_stat) = EHY_statistics(wlev_cmp_interp, wlev_meas_interp, ...
                 'times'        , dattim_interp   , ...
                 'tide'         , true            , ...
                 'extremes'     , 2               ) ;
-            
+
             str_biasrmse  = ['Bias = '   num2str(Statistics(i_stat).bias,'%6.3f') ' [m]'...
                 ', Rmse = ' num2str(Statistics(i_stat).rmse,'%6.3f') ' [m]'];
-            
+
             %% Plot simulation results
             if plot_per(i_per)
                 copyfile      (mup_temp,[per_dir filesep 'temporary.mup']);
@@ -224,30 +224,30 @@ for i_per = 1: size(Periods,1)
                 substitute    ('**Tstart2**'         ,Periods{i_per,1}(1:8)    ,[per_dir filesep 'temporary.mup']);
                 substitute    ('**Tstop2**'          ,Periods{i_per,2}(1:8)    ,[per_dir filesep 'temporary.mup']);
                 substitute    ('**Tper**'            ,num2str(i_per,'%3.3i')   ,[per_dir filesep 'temporary.mup']);
-                
+
                 orgdir = pwd;
                 cd (per_dir);
                 %             command = '"n:\Deltabox\Bulletin\ormondt\Muppet_v4.03\win64\muppet\bin\muppet4.exe" temporary.mup';
                 %             system (command);
                 muppet4('temporary.mup')
                 copyfile('temporary.mup',[num2str(i_stat,'%2.2i') '_' stations_shortname{i_stat} '.mup']);
-                delete  ([num2str(i_stat,'%2.2i') '_' stations_shortname{i_stat} '_' runid '_' Periods{i_per,1}(1:8) '-' Periods{i_per,2}(1:8)]);   
+                delete  ([num2str(i_stat,'%2.2i') '_' stations_shortname{i_stat} '_' runid '_' Periods{i_per,1}(1:8) '-' Periods{i_per,2}(1:8)]);
                 delete  ('temporary.mup');
                 cd (orgdir);
             end
         end
     end
-    
-    
+
+
     %% Write statistics to xls files
-    
+
     clear cell_arr
     %  Definition
     cell_arr{1,1}  = ['Simulation : ' runid];
     cell_arr{1,2}  = 'Bias [m]';
     cell_arr{1,3}  = 'RMSE [m]';
     cell_arr{1,4}  = 'Std  [m]';
-    
+
     % values
     i_row = 1;
     for i_stat = 1: no_stat
@@ -259,7 +259,7 @@ for i_per = 1: size(Periods,1)
             cell_arr {i_row,4}  = Statistics(i_stat).std;
         end
     end
-    
+
     % Averages
     i_row             = i_row + 1;
     cell_arr{i_row,1}  = 'Gemiddeld';
@@ -268,18 +268,18 @@ for i_per = 1: size(Periods,1)
         index                  = ~isnan(values);
         cell_arr{i_row,i_col}  = mean(values(index));
     end
-    
+
     % Write to excel file
     colwidth      = [28 repmat(17,1,size(cell_arr,2) - 1)];
     format(1:4)   = {'.000'};
-        
+
     xlswrite_report([fig_dir filesep runid '.xls'],cell_arr,[Periods{i_per,1}(1:8) ' - ' Periods{i_per,2}(1:8)], ...
                      'colwidth'                   ,colwidth, ...
                      'format'                     ,format  );
-                 
+
     % High and low water statistics
     clear cell_arr
-    
+
     % Definition
     cell_arr{1,1}  = ['Simulation : ' runid];
     cell_arr{1,2}  = 'HW Bias [m]';
@@ -294,7 +294,7 @@ for i_per = 1: size(Periods,1)
     cell_arr{1,11} = 'timHW [min]';
     cell_arr{1,12} = 'difLW [m]';
     cell_arr{1,13} = 'timLW [min]';
-    
+
     % values
     i_row = 1;
     for i_stat = 1: no_stat
@@ -315,14 +315,14 @@ for i_per = 1: size(Periods,1)
             cell_arr {i_row,13} = Statistics(i_stat).hwlw(2).time_diff;
         end
     end
-    
+
     % Averages
     i_row             = i_row + 1;
     cell_arr{i_row,1}  = 'Gemiddeld';
     for i_col = 2: size(cell_arr,2)
         cell_arr{i_row,i_col}  = mean(cell2mat(cell_arr(2:end-1,i_col)));
     end
-    
+
     % Write to excel file
     colwidth      = [28 repmat(17,1,size(cell_arr,2) - 1)];
     format(1:2)   = {'.000'};
@@ -333,7 +333,7 @@ for i_per = 1: size(Periods,1)
     format(10)    = {'0'};
     format(11)    = {'.000'};
     format(12)    = {'0'};
-        
+
     xlswrite_report([fig_dir filesep runid '_hwlw.xls'],cell_arr,[Periods{i_per,1}(1:8) ' - ' Periods{i_per,2}(1:8)], ...
                      'colwidth'                        ,colwidth, ...
                      'format'                          ,format  );
@@ -343,14 +343,14 @@ end
 if tide
     tba_file = [fig_dir filesep runid '_tba.xls'];
     tbb_file = [fig_dir filesep runid '_tbb.xls'];
-    
+
     i_tide = 0;
     for i_stat = 1: no_stat
         if Data.exist_stat(i_stat)
             i_tide = i_tide + 1;
             dattim_cmp = Data.times + time_zone/24.;
             wlev_cmp   = Data.val(:,i_stat);
-            
+
             % Read the measurement Data
             if ~strcmpi(lower(meas_dir),'opendap') && ~strcmpi(lower(stations_tek{i_stat}(end-6:end)),'opendap')
                 % tekal files at specific location
@@ -363,26 +363,26 @@ if tide
                 % try to get the data from opendap server, only works for dutch stations
                 [dattim_meas,wlev_meas] = EHY_opendap('Parameter','waterhoogte','Station',stations_shortname{i_stat});
                 i_start = max(find(dattim_meas>datenum(tide_start,'yyyymmdd  HHMMSS'),1,'first') - 1,1);
-                i_stop  = find(dattim_meas>datenum(tide_stop,'yyyymmdd  HHMMSS'),1,'first');
+                i_stop  = find(dattim_meas>=datenum(tide_stop,'yyyymmdd  HHMMSS'),1,'first');
                 dattim_meas = dattim_meas(i_start:i_stop);
                 wlev_meas   = wlev_meas  (i_start:i_stop);
             end
-            
+
             if ~isempty(find(~isnan(wlev_meas)))
                 [dattim_meas,wlev_meas] = FillGaps(dattim_meas,wlev_meas,'interval',120./1440.); % Fill with NaNs if interval between consequetive measurements is more than 2 hours
             end
-            
+
             % Determine shortest overlaping time span
             time_start    = max(dattim_cmp(1)  ,dattim_meas(1)  );
             time_start    = max(time_start,datenum(tide_start,'yyyymmdd HHMMSS'));
             time_stop     = min(dattim_cmp(end),dattim_meas(end));
             time_stop     = min(time_stop,datenum(tide_stop,'yyyymmdd HHMMSS'));
             dattim_interp = time_start:10/1440:time_stop;
-            
+
             % Intepolate both measurement as simulation data to 10 min time interval
             wlev_cmp_interp  = interp1(dattim_cmp ,wlev_cmp ,dattim_interp);
             wlev_meas_interp = interp1(dattim_meas,wlev_meas,dattim_interp);
-            
+
             % Analyse the computational results
             Tide_cmp(i_tide) = t_tide(wlev_cmp_interp , 'interval', 10./60.    , 'latitude'  , latitude    , ...
                 'rayleigh' ,Constituents, 'start time', time_start  , ...
@@ -398,7 +398,7 @@ if tide
             end
         end
     end
-    
+
     % Write to output (xls) file
     EHY_tba(tba_file,runid,stations_fullname(Data.exist_stat),Tide_cmp,Tide_meas);
     EHY_tbb(tbb_file,runid,stations_fullname(Data.exist_stat),Tide_cmp,Tide_meas);
