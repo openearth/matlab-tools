@@ -73,7 +73,8 @@ function oetsettings(varargin)
 
    OPT = struct(...
        'quiet',false,...
-       'searchdb',true);
+       'searchdb',true,...
+       'append',false);                  % Added with the default in Revision 12890
    nextarg   = 1;
    
    if mod(nargin,2)==1 % odd # arguments
@@ -104,7 +105,8 @@ function oetsettings(varargin)
    basepath = fileparts(mfilename('fullpath'));
 %    warning off
 % keep the warning on
-   addpathfast(basepath,'append',false); % excludes *.svn directories!
+%  addpathfast(basepath,'append',false); % excludes *.svn directories!
+   addpathfast(basepath,'append',OPT.append); % excludes *.svn directories!
 
 %% Create tutorial search database
 
