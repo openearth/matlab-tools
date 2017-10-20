@@ -142,7 +142,7 @@ if OPT.saveOutputFile && exist(outputFile,'file')
         outputFile=strrep(outputFile0,'.nc','_net.nc');
         movefile(outputFile0,outputFile);
     end
-    disp([char(10) 'EHY_convert created the file: ' char(10) strrep(outputFile,[filesep filesep],filesep) char(10)])
+    disp([char(10) 'EHY_convert created the file: ' char(10) fullfile(outputFile) char(10)])
 end
 %% conversion functions - in alphabetical order
 % crs2kml
