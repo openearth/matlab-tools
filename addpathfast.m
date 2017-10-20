@@ -77,7 +77,9 @@ function addpathfast(basepath,varargin)
 % via dir2, faster
 
       % do a dir commando that excludes all .svn and private directories, and does not include any files
-      dirs    = dir2(basepath,'dir_excl','^\+|^@|^private$|^\.svn$|^\.','file_incl','');
+%     dirs    = dir2(basepath,'dir_excl','^\+|^@|^private$|^\.svn$|^\.','file_incl','');
+      % Added deprecated folder to the excluse list
+      dirs    = dir2(basepath,'dir_excl','^\+|^@|^private$|^\.svn$|^\.|^deprecated$','file_incl','');
       
       if ~isempty(dirs)
           % concatenate the path and the directory names
