@@ -18,13 +18,7 @@ else
     [filename, pathname]=uigetfile({'*.mdu';'*.mdf';'*siminp*';'*.*'},'Open a .mdu / .mdf / siminp file');
     mdFile=[pathname filename];
 end
-modelType=nesthd_det_filetype(mdFile);
-if strcmp(modelType,'none')
-    [modelType,mdFile]=EHY_getModelType(mdFile);
-    if strcmp(modelType,'none')
-        error('No .mdu, .mdf or siminp found in this folder')
-    end
-end
+[modelType,mdFile]=EHY_getModelType(mdFile);
 [pathstr,name,ext]=fileparts(mdFile);
 [refdate,tunit,tstart,tstop]=getTimeInfoFromMdFile(mdFile);
 
@@ -111,6 +105,9 @@ end
 fclose all;
 
 %% Store all data in struct
+% path
+runTimeInfo.mdFile = strrep(mdFile,[filesep filesep],filesep);
+
 % simulation period
 runTimeInfo.startDate=datestr(startDate);
 runTimeInfo.endDate=datestr(datenum(startDate)+simPeriod_S/3600/24);
