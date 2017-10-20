@@ -109,7 +109,7 @@ fclose all;
 
 %% Store all data in struct
 % path
-runTimeInfo.mdFile = strrep(mdFile,[filesep filesep],filesep);
+runTimeInfo.mdFile = fullfile(mdFile);
 
 % simulation period
 runTimeInfo.startDate=datestr(startDate);
