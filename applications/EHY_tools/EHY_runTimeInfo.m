@@ -94,10 +94,13 @@ try % if simulation has finished
             % realTime_S
             line=findLineOrQuit(fid,'Simulation started at date:');
             line2=regexp(line,'\s+','split');
+            while length(line2{8})<6;  line2{8}=['0' line2{8}]; end % 6 digits
+            while length(line2{10})<6; line2{10}=['0' line2{10}]; end % 6 digits
             t0=datenum([line2{8} line2{10}],'yyyymmddHHMMSS');
             line=findLineOrQuit(fid,'Simulation ended   at date:');
             line2=regexp(line,'\s+','split');
-            while length(line2{10})<6; line2{10}=['0' line2{10}]; end %account for end time=15024
+            while length(line2{8})<6;  line2{8}=['0' line2{8}]; end % 6 digits
+            while length(line2{10})<6; line2{10}=['0' line2{10}]; end % 6 digits
             tend=datenum([line2{8} line2{10}],'yyyymmddHHMMSS');
             realTime_S=(tend-t0)*24*60*60;
     end
