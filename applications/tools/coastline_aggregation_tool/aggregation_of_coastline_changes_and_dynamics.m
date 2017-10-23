@@ -1232,7 +1232,7 @@ if ~isempty(settings.diff_indices) || ~isempty(loaded_diff_data)
         if ~isempty(find(isnan(part_coastline_used_orie)))
             nan_sets = [find(diff(isnan(part_coastline_used_orie))==1)+1 find(diff(isnan(part_coastline_used_orie))==-1)];
             for jj=1:size(nan_sets,1)
-                p_p=patch(part_coastline_used_dist(min(length(part_coastline_used_dist),max(1,nan_sets(jj,[1 1 2 2 1])+[-1 -1 1 1 -1])))./1000,[get(gca,'YLim') fliplr(get(gca,'YLim')) min(get(gca,'YLim'))],[-10 -10 -10 -10 -10],[0.95 0.95 0.95],'linestyle','none'); set(p_p,'Parent',ax_2(1));
+                p_p=patch(part_coastline_used_dist(min(length(part_coastline_used_dist),max(1,nan_sets(jj,[1 1 2 2 1])+[-1 -1 1 1 -1])))./1000,[get(gca,'YLim') fliplr(get(gca,'YLim')) min(get(gca,'YLim'))],[-10 -10 -10 -10 -10],[0.95 0.95 0.95],'linestyle','none'); set(p_p,'Parent',ax_2(2));
                 text(part_coastline_used_dist(nan_sets(jj,1)-1)./1000,max(get(gca,'YLim')),'\rightarrow No data section','verticalalignment','top','horizontalalignment','left','fontsize',8);
                 text(part_coastline_used_dist(nan_sets(jj,2)+1)./1000,min(get(gca,'YLim')),'No data section \leftarrow','verticalalignment','bottom','horizontalalignment','right','fontsize',8);
             end
