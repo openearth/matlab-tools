@@ -1,4 +1,4 @@
-function [xMKL volume varargout] = jarkus_getMKL(x, z, UpperBoundary, LowerBoundary, varargin)
+function [xMKL, volume, varargout] = jarkus_getMKL(x, z, UpperBoundary, LowerBoundary, varargin)
 %JARKUS_GETMKL returns the cross shore coordinate of the volume based coastal indicator MKL 
 %
 %  input:
@@ -49,24 +49,31 @@ function [xMKL volume varargout] = jarkus_getMKL(x, z, UpperBoundary, LowerBound
 % $Keywords: $
 
 %%
+mask=~isnan(z); %Use only non-NaN points, otherwise crossings may be missed.
+x=x(mask);
+z=z(mask);
+
 LandwardBoundary = max(jarkus_findCrossings(x,z,[x(1) x(end)],[UpperBoundary UpperBoundary])); %most landward crossing
 SeawardBoundary  = max(jarkus_findCrossings(x,z,[x(1) x(end)],[LowerBoundary LowerBoundary])); %most seaward crossing
 
 if isempty(LandwardBoundary)
     warning('transect does not cross UpperBoundary')
     xMKL = NaN;
+    volume=NaN;
     return
 end
 
 if isempty(SeawardBoundary)
     warning('transect does not cross LowerBoundary')
     xMKL = NaN;
+    volume=NaN;
     return
 end
 
 if LandwardBoundary >= SeawardBoundary
     warning('can''t calculate MKL position: LandwardBoundary >= SeawardBoundary')
     xMKL = NaN;
+    volume=NaN;
     return
 end
 
@@ -74,7 +81,7 @@ end
 if nargout > 2
     % jarkus_getVolume is much slower than jarkus_getVolumeFast, but gives
     % additional output arguments "result" and "Boundaries"
-    [volume result Boundaries] = jarkus_getVolume(x, z, UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary);
+    [volume, result, Boundaries] = jarkus_getVolume(x, z, UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary, [], [], varargin);
     varargout = {result Boundaries};
 else
     % use the faster jarkus_getVolumeFast if only the xMKL is of interest,

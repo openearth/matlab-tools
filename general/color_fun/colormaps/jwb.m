@@ -1,213 +1,83 @@
-function col=jwb(m)
-%JWB Sets the colormap to 'jwb', which is jet, with a white band in the middle, instead of green. 
-%Colors go from red and yellow via white to cyan and blue.
-%Default there are 64 colours, jwb(n) will give you n colours.
+function col=jwb(varargin)
+%JWB Sets the colormap to 'jwb', which is jet, with a white band in the middle.
+% JWB is a colormap based on JET, but with an adjustable white band in the 
+% centre. Colors go from red and yellow via white to cyan and blue.
+% Default there are 100 coloursteps, jwb(n) will give you n colours.
+% The defaul white-space is 10%
+%
+% Syntax: col=jwb(n);
+%         col=jwb(n,per);
+%         colormap(jwb(n,per));
+%
+% Input:  n: number of colors [1 inf].
+%         per: percentage of white (in colorbar) [+0 1]
+%
+% Output: col: nx3 matrix with rgb triplets.
 %
 % See also: colormap.
-r=[  0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-     0   
-0.1250   
-0.2500   
-0.3750   
-0.5000   
-0.6250   
-0.7500   
-0.8750   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-1.0000   
-0.9375   
-0.8750   
-0.8125   
-0.7500   
-0.6875   
-0.6250   
-0.5625   
-0.5000];
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2017 TU Delft
+%       Bart Roest
+%
+%       l.w.m.roest@student.tudelft.nl
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
 
-g=[   0  
-      0  
-      0  
-      0  
-      0  
-      0  
-      0  
-      0  
- 0.0625  
- 0.1250  
- 0.1875  
- 0.2500  
- 0.3125  
- 0.3750  
- 0.4375  
- 0.5000  
- 0.5625  
- 0.6250  
- 0.6875  
- 0.7500  
- 0.8125  
- 0.8750  
- 0.9375  
- 1.0000  
- 1.0000  
- 1.0000  
- 1.0000  
- 1.0000  
- 1.0000  
- 1.0000  
- 1.0000  
- 1.0000  
- 1.0000  
- 1.0000  
- 1.0000  
- 1.0000  
- 1.0000  
- 1.0000  
- 1.0000  
- 1.0000  
- 0.9375  
- 0.8750  
- 0.8125  
- 0.7500  
- 0.6875  
- 0.6250  
- 0.5625  
- 0.5000  
- 0.4375  
- 0.3750  
- 0.3125  
- 0.2500  
- 0.1875  
- 0.1250  
- 0.0625  
-      0  
-      0  
-      0  
-      0  
-      0  
-      0  
-      0  
-      0  
-      0];
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
 
-b=[0.5625
-  0.6250
-  0.6875
-  0.7500
-  0.8125
-  0.8750
-  0.9375
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000	
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  1.0000
-  0.8750
-  0.7500
-  0.6250
-  0.5000
-  0.3750
-  0.2500
-  0.1250
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0
-       0];
-	   
-	   
-if nargin < 1
-    col=[r g b];
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 22 Feb 2017
+% Created with Matlab version: 8.6.0.267246 (R2015b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+n=100;
+per=0.1;
+if length(varargin)==1;
+    n=varargin{1};
+elseif length(varargin)>=2;
+    n=varargin{1};
+    per=varargin{2};
+end
+
+if per==0;
+    x=[0.000, 0.125, 0.450, 0.500, 0.550, 0.875, 1.000];
+    r=[0.000, 0.000, 0.000, 1.000, 1.000, 1.000, 0.500];
+    g=[0.000, 0.000, 1.000, 1.000, 1.000, 0.000, 0.000];
+    b=[0.500, 1.000, 1.000, 1.000, 0.000, 0.000, 0.000];
 else
-    x=1:1:length(r);
-    r=interp1(x,r,linspace(1,length(r),m));
-    g=interp1(x,g,linspace(1,length(g),m));
-    b=interp1(x,b,linspace(1,length(b),m));
-    col=[r' g' b'];
+    x=[0.000, 0.125-per*0.125, 0.450-per*0.450,  0.500-per*0.500, 0.500+per*0.500, 0.550+per*0.450, 0.875+per*0.125, 1.000];
+    r=[0.000, 0.000          , 0.000          ,  1.000          , 1.000          , 1.000          , 1.000          , 0.500];
+    g=[0.000, 0.000          , 1.000          ,  1.000          , 1.000          , 1.000          , 0.000          , 0.000];
+    b=[0.500, 1.000          , 1.000          ,  1.000          , 1.000          , 0.000          , 0.000          , 0.000];
 end
+
+ri=interp1(x,r,linspace(0,1,n));
+gi=interp1(x,g,linspace(0,1,n));
+bi=interp1(x,b,linspace(0,1,n));
+col=[ri' gi' bi'];
 end
+%EOF

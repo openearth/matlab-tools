@@ -1,4 +1,4 @@
-function [Volume result Boundaries Redefined] = jarkus_getVolume(varargin)
+function [Volume, result, Boundaries, Redefined] = jarkus_getVolume(varargin)
 % JARKUS_GETVOLUME   generic routine to determine volumes on transects
 %
 %   Routine determines volumes on transects. In case of no second profile (x2, z2),
@@ -15,7 +15,7 @@ function [Volume result Boundaries Redefined] = jarkus_getVolume(varargin)
 %   PropertyValue pairs (or combined, propertyName propertyValue pairs at the end).
 %
 %   syntax:
-%   [Volume result Boundaries Redefined] =
+%   [Volume, result, Boundaries, Redefined] =
 %   getVolume(x, z, UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary, x2, z2)
 %
 %   input:
@@ -28,6 +28,7 @@ function [Volume result Boundaries Redefined] = jarkus_getVolume(varargin)
 %       x2                  = column array with x2 points (increasing index and positive x in seaward direction)
 %       z2                  = column array with z2 points
 %       propertyname propertyvalue pairs:
+%           plot                            boolean (true/false)
 %           suppressMessEqualBoundaries     boolean (true/false)
 %           suppressMessAdaptedBoundaries   boolean (true/false)
 %
@@ -39,9 +40,9 @@ function [Volume result Boundaries Redefined] = jarkus_getVolume(varargin)
 %                   are redefined within this function
 %
 %   Example
-%   getVolume
+%   jarkus_getVolume
 %
-%   See also createEmptyDUROSResult
+%   See also createEmptyDUROSResult, jarkus_getVolumeFast
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -102,6 +103,7 @@ propertyName = {...
     'SeawardBoundary'...
     'x2'...
     'z2'...
+    'plot'...
     'suppressMessEqualBoundaries'...
     'suppressMessAdaptedBoundaries'};
 propertyValue = [...
@@ -134,7 +136,7 @@ end
 if any(isnan(OPT.z))
     % remove NaNs
     ZnonNaN = ~isnan(OPT.z);
-    [OPT.x OPT.z] = deal(OPT.x(ZnonNaN), OPT.z(ZnonNaN));
+    [OPT.x, OPT.z] = deal(OPT.x(ZnonNaN), OPT.z(ZnonNaN));
     
     % check whether the remaining non-NaN part is still a vector
     if sum(size(OPT.x)) <= 2
@@ -155,7 +157,7 @@ end
 if any(isnan(OPT.z2))
     % remove NaNs
     Z2nonNaN = ~isnan(OPT.z2);
-    [OPT.x2 OPT.z2] = deal(OPT.x2(Z2nonNaN), OPT.z2(Z2nonNaN));
+    [OPT.x2, OPT.z2] = deal(OPT.x2(Z2nonNaN), OPT.z2(Z2nonNaN));
     
     % check whether the remaining non-NaN part is still a vector
     if sum(size(OPT.x2)) <= 2
@@ -178,7 +180,7 @@ end
 
 % create separate variables (conform old version of getVolume) out of the OPT-structure
 finalInput = struct2cell(OPT);
-[x z UpperBoundary LowerBoundary LandwardBoundary SeawardBoundary x2 z2] = deal(finalInput{1:8});
+[x, z, UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary, x2, z2] = deal(finalInput{1:8});
 
 result = createEmptyDUROSResult;
 
@@ -355,48 +357,49 @@ end
 result.info.time = toc;
 [Boundaries.Upper, Boundaries.Lower, Boundaries.Landward, Boundaries.Seaward] = deal(UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary);
 
-% if dbstate
-%     figure(11);clf;hold on
-%     lh(1) = plot(UpperBoundary(:,1),UpperBoundary(:,2),'-or');
-%     lh(2) = plot(LowerBoundary(:,1),LowerBoundary(:,2),'-dg');
-%     lh(3) = plot([SeawardBoundary SeawardBoundary],get(gca,'YLim'),'m');
-%     lh(4) = plot([LandwardBoundary LandwardBoundary],get(gca,'YLim'),'y');
-%     try
-%         lh(5) = plot(x,z,'-xk');
-%         lh(6) = plot(x2,z2,':+k');
-%         lh(7) = plot(OPT.x,OPT.z,'-pk');
-%         lh(8) = plot(OPT.x2,OPT.z2,':hk');
-%     end
-%     hold on
-%     color = {'b'};
-%     for i = 1 : length(result)
-%         if ~isempty(result(i).z2Active)
-%             volumepatch = [result(i).xActive' fliplr(result(i).xActive'); result(i).z2Active' fliplr(result(i).zActive')]';
-%             hp(i) = patch(volumepatch(:,1), volumepatch(:,2), ones(size(volumepatch(:,2)))*-(length(result)-i),color{i});
-%         end
-%     end
-%     legendtxt = {'Upperboundary','Lowerboundary','Seawardboundary','Landwardboundary','Profile','Profile 2'};
-%     l = legend(lh,legendtxt,'location','northwest');
-%     set(l,'fontsize',8,'fontweight','bold');
-%     legend  boxoff;
-% 
-%     set(gca,'XDir','reverse')
-%     xlabel('Crossshore location (m wrt RSP)');
-%     ylabel('Profile height (m wrt NAP)', 'Rotation', 270, 'VerticalAlignment', 'top');
-%     box on
+%% Plot the result
+if OPT.plot;%dbstate
+    figure;clf;hold on
+    lh(1) = plot(UpperBoundary(:,1),UpperBoundary(:,2),'-oc');
+    lh(2) = plot(LowerBoundary(:,1),LowerBoundary(:,2),'-dg');
+    lh(3) = plot([SeawardBoundary SeawardBoundary],get(gca,'YLim'),'m');
+    lh(4) = plot([LandwardBoundary LandwardBoundary],get(gca,'YLim'),'y');
+    try
+        lh(5) = plot(x,z,'-xk');
+        lh(6) = plot(x2,z2,':+r');
+        lh(7) = plot(OPT.x,OPT.z,'pk');
+        lh(8) = plot(OPT.x2,OPT.z2,'hr');
+    end
+    hold on
+    color = {'b'};
+    for i = 1 : length(result)
+        if ~isempty(result(i).z2Active)
+            volumepatch = [result(i).xActive' fliplr(result(i).xActive'); result(i).z2Active' fliplr(result(i).zActive')]';
+            hp(i) = patch(volumepatch(:,1), volumepatch(:,2), ones(size(volumepatch(:,2)))*-(length(result)-i),color{i},'edgeColor','none');
+        end
+    end
+    legendtxt = {'Upperboundary','Lowerboundary','Seawardboundary','Landwardboundary','Profile','Profile 2','Data 1','Data 2'};
+    l = legend(lh,legendtxt,'location','northwest');
+    set(l,'fontsize',8,'fontweight','bold');
+    legend  boxoff;
+
+    set(gca,'XDir','reverse')
+    xlabel('Crossshore location (m wrt RSP)');
+    ylabel('Profile height (m wrt NAP)', 'Rotation', 270, 'VerticalAlignment', 'top');
+    box on
 %     dbstopcurrent
-% end
+end
 
 %%
 function [x, z] = removeDoublePoints(x, z)
-[x sortid] = sort(x);
+[x, sortid] = sort(x);
 z = z(sortid);
 
 threshold = 1e-10;
 if length(unique(x))~=length(x)
     xz = unique([x z], 'rows');
     if size(xz,1)==length(unique(x))
-        [x z] = deal(xz(:,1), xz(:,2));
+        [x, z] = deal(xz(:,1), xz(:,2));
     else
         ids = find(diff(x)==0);
         for idd = 1:length(ids)

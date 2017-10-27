@@ -149,7 +149,8 @@ end
              if ~isempty(fileinfo.Variables(idat).Attributes);
              j = strmatch('standard_name',{fileinfo.Variables(idat).Attributes.Name}, 'exact');
               if ~isempty(j)
-               if strcmpi(fileinfo.Variables(idat).Attributes(j).Value,'time')
+               %Try to covert non-standard time field, but it must at least be numeric!
+               if strcmpi(fileinfo.Variables(idat).Attributes(j).Value,'time') && ~strcmpi(fileinfo.Variables(idat).Datatype,'char');
                    D.datenum = ncread_cf_time(fileinfo.Filename,fldname);
                      if OPT.disp
                         disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
