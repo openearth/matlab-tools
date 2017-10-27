@@ -1,4 +1,4 @@
-function result = write(filename, data, flowstyle)
+function result = write(data, filename, flowstyle)
 % Writes a struct to a YAML file 
 %   Functions are copied from Google Code and modified to a name space 
 %   structure. The test are updated and complimented.
@@ -10,8 +10,8 @@ function result = write(filename, data, flowstyle)
 %   to the hierarchy of java.util.ArrayListS and java.util.MapS. Then calls
 %   Snakeyaml to write it to a file.
 %
-%   Input:  filename  = empty or filename
-%           data      = data to be written, can be cell or struct etc.
+%   Input:  data      = data to be written, can be cell or struct etc.
+%           filename  = empty or filename
 %           flowstyle = output style (0,1)
 %
 %   Output: result    = if filename isempty: output text  
