@@ -688,7 +688,11 @@ if fromEPSG~=toEPSG
         case '.grd'
             output=wlgrid('read',inputFile);
             [output.X,output.Y]=convertCoordinates(output.X,output.Y,'CS1.code',fromEPSG,'CS2.code',toEPSG);
-            wlgrid('write',outputFile,output);
+            if toEPSG==4326
+                wlgrid('write',outputFile,output,'CoordinateSystem','Spherical');
+            else
+                wlgrid('write',outputFile,output);
+            end
         case {'.ldb','.pli','.pol'}
             output=landboundary('read',inputFile);
             [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',fromEPSG,'CS2.code',toEPSG);
