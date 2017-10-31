@@ -1,5 +1,5 @@
 function result = read(filename, nosuchfileaction, makeords, treatasdata, dictionary)
-% Reads YAML files 
+% Reads YAML files (and also json files)
 %   Functions are copied from Google Code and modified to a name space 
 %   structure. The test are updated and complimented.
 %
