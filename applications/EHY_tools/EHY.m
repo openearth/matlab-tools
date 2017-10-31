@@ -22,6 +22,18 @@ selection=  listdlg('PromptString',['Which function would you like to use:'],...
     'ListString',strrep(NoInputNeeded,'.m',''),...
     'ListSize',[300 200]);
 
+% try to write user to file, to check usage of EHY tools
+try
+    filename='n:\Deltabox\Bulletin\groenenb\OET_EHY\stats\stats.csv';
+    if exist(filename,'file')
+        fid=fopen(filename,'a');
+    else
+        fid=fopen(filename,'w');
+    end
+    fprintf(fid,'%s\n',[getenv('username') ';' NoInputNeeded{selection}(1:end-2) ';' datestr(now)]);
+    fclose(fid);
+end
+
 % run selection
 if ~isempty(selection)
     run(NoInputNeeded{selection}(1:end-2))
