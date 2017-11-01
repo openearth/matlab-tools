@@ -107,6 +107,9 @@ else % outputFile was specified by user
     outputFile=OPT.outputFile;
 end
 
+inputFile=strrep(inputFile,[filesep filesep],filesep);
+outputFile=strrep(outputFile,[filesep filesep],filesep);
+
 if strcmp(inputFile,outputFile)
     outputFile=strrep(inputFile,inputExt0,['_converted' inputExt0]);
 end
