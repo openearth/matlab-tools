@@ -381,7 +381,7 @@ end
         if OPT.saveOutputFile
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
-            KMLPlaceMark(xyn{1,2},xyn{1,1},tempFile,'name',xyn{1,3},'icon',OPT.iconFile);
+            KMLPlaceMark(xyn{1,2},xyn{1,1},tempFile,'name',xyn{1,3}','icon',OPT.iconFile);
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
