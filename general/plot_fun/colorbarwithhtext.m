@@ -77,28 +77,45 @@ function [varargout]=colorbarwithhtext(colorbartxt,varargin)
 % $HeadURL$
 % $Keywords: $
 
+% Defaults
     OPT.position = 'text';
     OPT.rotation = 0;
+    OPT.peer     = gca;
+    OPT.fontsize = 8;
+    
+% Overrule defaults
+OPT2 = setproperty(OPT, varargin, 'onExtraField','silentAppend');
 
-    nextarg = 1;
-    ctick   = [];
-if nargin>1
+% Filter fields position and rotation from OPT2
+OPT.position = OPT2.position;
+OPT.rotation = OPT2.rotation;
 
-    %% note that 0 is also a handle,
-    %% so we cannot use ishandle(), and we use istype()
-
-    if isnumeric(varargin{1}) & ~istype(varargin{1},'axes');
-    nextarg = 2;
-    ctick   = varargin{1};
-    end    
-
-    if isempty(varargin{1})
-    nextarg = 2;
-    ctick   = varargin{1}; % [] default
-    end    
-end
-
-Handles.axes          = colorbar(varargin{nextarg:end});
+fields = {'position','rotation'};
+OPT2 = rmfield(OPT2,fields);
+ctick   = [];
+ 
+%     nextarg = 1;
+%     ctick   = [];
+% if nargin>1
+% 
+%     %% note that 0 is also a handle,
+%     %% so we cannot use ishandle(), and we use istype()
+% 
+%     if isnumeric(varargin{1}) & ~istype(varargin{1},'axes');
+%     nextarg = 2;
+%     ctick   = varargin{1};
+%     end    
+% 
+%     if isempty(varargin{1})
+%     nextarg = 2;
+%     ctick   = varargin{1}; % [] default
+%     end   
+%         
+%     
+% end
+% Handles.axes        = colorbar(varargin{nextarg:end});
+varargs               = struct2arg(OPT2);
+Handles.axes          = colorbar(varargs{:});
 
 Handles.colorbar       = get(Handles.axes,'children');
 if     strcmp(OPT.position,'title' );Handles.txt = get(Handles.axes,'title');
@@ -110,6 +127,7 @@ elseif strcmp(OPT.position,'text'  );
     text(0.5,0.5,colorbartxt,'units','normalized',...
                           'rotation',OPT.rotation,...
                'horizontalalignment','center',...
+                          'fontsize',OPT.fontsize,...
                             'Parent',Handles.axes);
     else % 2015a: Error using text / While setting the 'Parent' property of Text: / Text cannot be a child of ColorBar.
     newax = axes('position',get(Handles.axes,'position'));
@@ -117,6 +135,7 @@ elseif strcmp(OPT.position,'text'  );
     text(0.5,0.5,colorbartxt,'units','normalized',...
                           'rotation',OPT.rotation,...
                'horizontalalignment','center',...
+                          'fontsize',OPT.fontsize,...
                             'Parent',newax);
     set(newax,'XColor','none')
     set(newax,'YColor','none')
