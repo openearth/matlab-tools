@@ -27,9 +27,9 @@ uek=real(s);
 vek=imag(s);
 %% Plot results
 figure(1);
-quiver3(xek,yek,zek,uek,vek,0,'linewidth',2);
+quiver3(xek,yek,zek,uek,vek,zeros(size(vek)),'linewidth',2);
 hold on
-quiver3(xek,yek,zek,taux,tauy,0,'r','linewidth',2);
+quiver3(xek,yek,zek,taux,tauy,zeros(size(tauy)),'r','linewidth',2);
 title('Ekman spiral')
 xlabel('u');ylabel('v');
 zlabel('z')
