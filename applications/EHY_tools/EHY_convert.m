@@ -371,6 +371,27 @@ end
         end
         output=lines;
     end
+% nc2pol
+    function [output,OPT]=EHY_convert_nc2pol(inputFile,outputFile,OPT)
+        x=nc_varget(inputFile,'NetNode_x');
+        y=nc_varget(inputFile,'NetNode_y');
+        links=nc_varget(inputFile,'NetLink');
+        
+        lines=zeros(length(links)*3,2);
+        
+        lines(3*(1:length(links))-2,:)=[x(links(:,1)) y(links(:,1))];
+        lines(3*(1:length(links))-1,:)=[x(links(:,2)) y(links(:,2))];
+        lines(3*(1:length(links)),:)=NaN;
+        lines=ipGlueLDB(lines);
+        if OPT.saveOutputFile
+            [~,name]=fileparts(inputFile);
+            tempFile=[tempdir name '.kml'];
+             io_polygon('write',tempFile,lines);
+            copyfile(tempFile,outputFile);
+            delete(tempFile)
+        end
+        output=lines;
+    end
 % obs2kml
     function [output,OPT]=EHY_convert_obs2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
