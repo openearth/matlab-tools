@@ -9,7 +9,7 @@ function varargout=EHY_runTimeInfo(varargin)
 % Example2: runTimeInfo=EHY_runTimeInfo('D:\model.mdu')
 %
 % created by Julien Groenenboom, March 2017
-
+EHYs(mfilename);
 %%
 if nargin>0
     mdFile=varargin{1};
