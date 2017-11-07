@@ -59,7 +59,7 @@ try % if simulation has finished
             runTimeInfo.maxTimeStep_S=str2double(line);
             
             % realTime_S
-            line=findLineOrQuit(fid,'** INFO   : time steps            (s)  :');
+            line=findLineOrQuit(fid,'** INFO   : time steps + plots    (s)  :');
             line2=regexp(line,'\s+','split');
             realTime_S=str2double(line2{end});
             
@@ -70,7 +70,7 @@ try % if simulation has finished
             else %  not in parallel
                 diaFile=[pathstr filesep 'tri-diag.' name '-001'];
             end
-            % partitions - TO BE IMPLEMENTED
+            % partitions
             shFiles=dir([pathstr filesep '*.sh']);
             fid=fopen([pathstr filesep shFiles(1).name],'r');
             lineNodes=findLineOrQuit(fid,'#$ -pe distrib ');
