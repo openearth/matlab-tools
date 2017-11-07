@@ -70,13 +70,18 @@ try % if simulation has finished
             else %  not in parallel
                 diaFile=[pathstr filesep 'tri-diag.' name '-001'];
             end
-            fid=fopen(diaFile,'r');
-            
             % partitions - TO BE IMPLEMENTED
-%             shFiles=dir([pathstr filesep name '*.sh'])
-%             fid2=fopen([shFiles(1).folder filesep shFiles(1).name],'r');
+            shFiles=dir([pathstr filesep '*.sh']);
+            fid=fopen([pathstr filesep shFiles(1).name],'r');
+            lineNodes=findLineOrQuit(fid,'#$ -pe distrib ');
+            fclose(fid);
+            fid=fopen([pathstr filesep shFiles(1).name],'r');
+            lineCores=findLineOrQuit(fid,'export processes_per_node=');
+            fclose(fid);
+            noPartitions=str2num(strrep(lineNodes,'#$ -pe distrib ',''))*str2num(strrep(lineCores,'export processes_per_node=',''));
             
             % realTime_S
+            fid=fopen(diaFile,'r');
             line=findLineOrQuit(fid,'|Total                |');
             line2=regexp(line,'\s+','split');
             realTime_S=str2double(line2{3});
