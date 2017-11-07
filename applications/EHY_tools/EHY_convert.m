@@ -10,6 +10,7 @@ function varargout=EHY_convert(varargin)
 % Example4: EHY_convert('D:\path.kml','ldb','saveOutputFile',0)
 
 % created by Julien Groenenboom, August 2017
+EHY_userStats(mfilename);
 
 OPT.saveOutputFile=1; % 0=do not save, 1=save
 OPT.outputFile=[]; % if isempty > outputFile=strrep(inputFile,inputExt,outputExt);
