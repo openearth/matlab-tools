@@ -1,4 +1,4 @@
-function [x,s1,zb] = belanger (varargin)
+function [s1,zb] = belanger (varargin)
 
 %% Initialisation
 OPT.g        =     9.81;
@@ -9,12 +9,18 @@ OPT.ib       =    1.e-5;
 OPT.C        =     55.0;
 OPT.depth    =     10.1;
 OPT.AorR     =      'R';
+OPT.grid     =       [];
 
 OPT         = setproperty (OPT,varargin);
 
 %% Numerical parameters
-dx             =   -1.*(OPT.L/10000);
-x              =   0.0:-1.*dx:OPT.L;
+if isempty (OPT.grid)
+    dx             =   -1.*(OPT.L/10000);
+    x              =   0.0:-1.*dx:OPT.L;
+else
+    x              =   OPT.grid;
+end
+
 no_pnt         =   length(x);
 eps            =   1e-6;
 
@@ -31,11 +37,16 @@ a(end)         =   OPT.depth;
 
 %% Local water levels (calculate backwards)
 for i_pnt      = no_pnt:-1:2
+    if ~isempty(OPT.grid)
+        dx = x(i_pnt - 1) - x(i_pnt); % dx negative!
+    end
+    
     if strcmpi(AorR,'r')
         R = (B*a(i_pnt))/(B + 2*a(i_pnt));
     else
         R = a(i_pnt);
     end
+    
     u      = Q/(B*a(i_pnt)); 
     da_old = (ib - abs(u)*u/(C*C*R))/(1 - u*u/(g*a(i_pnt)))*dx;
     diff   = 1e10;
@@ -64,7 +75,7 @@ end
 zb(no_pnt) =  0;
 s1(no_pnt) =  a(no_pnt);
 for i_pnt = no_pnt-1:-1:1
-    zb(i_pnt) = zb(i_pnt + 1) - ib*dx;
+    zb(i_pnt) = zb(i_pnt + 1) + ib*(x(i_pnt + 1) - x(i_pnt));
     s1(i_pnt) = zb(i_pnt) + a(i_pnt);
 end
 
