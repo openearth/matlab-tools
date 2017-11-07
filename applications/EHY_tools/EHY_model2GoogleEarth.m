@@ -8,7 +8,7 @@ function EHY_model2GoogleEarth(varargin)
 % Example2: EHY_model2GoogleEarth('D:\model\model.mdu')
 %
 % created by Julien Groenenboom, September 2017
-
+EHYs(mfilename);
 %%
 if nargin>0
     mdFile=varargin{1};
