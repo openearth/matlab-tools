@@ -29,17 +29,35 @@ simPeriod_D=(tstop-tstart)*timeFactor(tunit,'D');
 switch modelType
     case 'mdu'
         [pathstr, name, ext] = fileparts(mdFile);
-        D=dir([pathstr '\*\*_timings.txt']);
-        timingsFile=[D(1).folder filesep D(1).name];
-        fid=fopen(timingsFile,'r');
-        while feof(fid)~=1
-            line=fgetl(fid);
+        mdu=dflowfm_io_mdu('read',mdFile);
+        if ~isempty(mdu.output.OutputDir)
+            folder=[pathstr mdu.output.OutputDir filesep];
+        else
+            [~,name]=fileparts(mdFile);
+            folder=[pathstr 'DFM_OUTPUT_' name filesep];
         end
-        fclose(fid);
-        line=regexp(line,'\s+','split');
-        
-        runPeriod_S=str2num(line{2})-tstart*timeFactor(tunit,'S');
+
+        D=dir([folder '*_timings.txt']);
+        if ~isempty(D) % try to get the runPeriod from the timings file
+            timingsFile=[D(1).folder filesep D(1).name];
+            fid=fopen(timingsFile,'r');
+            while feof(fid)~=1
+                line=fgetl(fid);
+            end
+            fclose(fid);
+            line=regexp(line,'\s+','split');
+            runPeriod_S=str2num(line{2})-tstart*timeFactor(tunit,'S');
+        else % get the runPeriod from the his nc file
+            hisncfiles=dir([folder '*his*.nc']);
+            hisncfile=[folder hisncfiles(1).name];
+            infonc=ncinfo(hisncfile);
+            indNC=strmatch('time',{infonc.Dimensions.Name},'exact');
+            no_times=infonc.Dimensions(indNC).Length;
+            nctimesEnd=nc_varget(hisncfile,'time',no_times-1,1); % sec from ref date
+            runPeriod_S=nctimesEnd-tstart*timeFactor(tunit,'S');
+        end
         runPeriod_D=runPeriod_S/3600/24;
+        
     case 'mdf'
         [pathstr, name, ext] = fileparts(mdFile);
         D=dir([pathstr '\*.o*']);
