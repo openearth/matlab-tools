@@ -6,6 +6,8 @@ function EHY_wait(time,path)
 % Example: EHY_wait('23-Mar-2017 12:00','D:\script.m')
 %
 % created by Julien Groenenboom, March 2017
+EHYs(mfilename);
+
 if ~isnumeric(time)
     time=datenum(time);
 end

@@ -8,7 +8,7 @@ function EHY_crop(varargin)
 % Example2: EHY_crop('D:\output.png')
 %
 % created by Julien Groenenboom, April 2017
-
+EHYs(mfilename);
 %% load figure and set settings
 % default settings
 % EHY_crop('n:\My Documents\Julien\EHY_tools\testmap\fig.PNG');

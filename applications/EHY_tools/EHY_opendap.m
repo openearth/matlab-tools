@@ -18,7 +18,7 @@ function varargout = EHY_opendap (varargin)
 %                        - Location of the station,
 %                        - Measurement height, etc
 %                        Is returned in the stucture Info
-
+EHYs(mfilename);
 %% Initialisation
 OPT.Parameter = '';
 OPT.Station   = '';

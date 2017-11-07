@@ -7,7 +7,7 @@ function varargout=EHY_simulationStatus(varargin)
 % Example2: EHY_simulationStatus('D:\run1\model.mdu')
 %
 % created by Julien Groenenboom, August 2017
-
+EHYs(mfilename);
 %%
 if nargin==0
     disp('Open a .mdu, .mdf or SIMONA file as input')
