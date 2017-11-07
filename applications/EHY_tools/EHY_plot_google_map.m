@@ -87,7 +87,7 @@ function varargout = EHY_plot_google_map(varargin)
 %       - Auto-adjust axis extent so the map isn't stretched.
 %       - Set and use an API key which enables a much higher usage volume per day.
 %  Version 1.1 - 25/08/2011
-
+EHYs(mfilename);
 % store parameters in global variable (used for auto-refresh)
 global inputParams
 persistent apiKey
