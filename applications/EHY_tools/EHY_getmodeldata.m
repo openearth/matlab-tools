@@ -196,9 +196,9 @@ for i_stat = 1: length(stat_name)
                 %% Temperature, times and values for station nr nr_stat
                 %% Read Dflow-FM data
                 if strncmpi(modelType,'dflow',4)
-                    Data.times = nc_varget(hisncfile,'time')/60/24;
+                    Data.times = nc_varget(hisncfile,'time')*timeFactor('S','D'); % from seconds to days
                     refdate = datenum(num2str(mdu.time.RefDate),'yyyymmdd');
-                    Data.times = Data.times/60+refdate;
+                    Data.times = Data.times+refdate;
                     if isempty(OPT.layer)
                         Data.val(:,i_stat,:)=nc_varget(hisncfile,'temperature',[0 nr_stat-1 0],[length(Data.times) 1 no_layers]);
                         Data.zCen(:,i_stat,:)=nc_varget(hisncfile,'zcoordinate_c',[0 nr_stat-1 0],[length(Data.times) 1 no_layers]);
