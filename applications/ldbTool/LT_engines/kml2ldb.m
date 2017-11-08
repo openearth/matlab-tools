@@ -70,7 +70,11 @@ coorsStop=findstr('</coordinates>',char(kmlFile)')-1;
 ldb=[nan nan];
 for ii=1:length(coorsStart)
     tLdb=str2num(char(kmlFile(coorsStart(ii):coorsStop(ii)))');
-    ldb=[ldb;tLdb(:,1:2); nan nan];
+    if size(tLdb,1)~=1 % J. Groenenboom - take 2 different kml formats into account
+     ldb=[ldb;tLdb(:,1:2); nan nan];
+    else
+        ldb=[ldb;tLdb(1:3:end)' tLdb(2:3:end)'; nan nan];
+    end
 end
 
 if saveOutput==1
