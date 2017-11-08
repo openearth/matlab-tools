@@ -14,7 +14,7 @@ function ldb=kml2ldb(saveOutput,inFile)
 % See also: LDBTOOL, KML2LDB3D, LDB2KML, GOOGLEPLOT, KML2Coordinates
 
 %% Copyright notice
-%   --------------------------------------------------------------------
+%   -------------------- ------------------------------------------------
 %   Copyright (C) 2010 Deltares
 %       Arjan Mol
 %
@@ -69,8 +69,8 @@ coorsStop=findstr('</coordinates>',char(kmlFile)')-1;
 
 ldb=[nan nan];
 for ii=1:length(coorsStart)
-    tLdb=str2num(char(kmlFile(coorsStart(ii):coorsStop(ii)))')';
-    ldb=[ldb;tLdb(1:3:end) tLdb(2:3:end); nan nan];
+    tLdb=str2num(char(kmlFile(coorsStart(ii):coorsStop(ii)))');
+    ldb=[ldb;tLdb(:,1:2); nan nan];
 end
 
 if saveOutput==1
