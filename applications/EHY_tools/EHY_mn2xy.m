@@ -8,6 +8,7 @@ function [x,y]=EHY_mn2xy(m,n,grdFile)
 % Example2: [x,y]=EHY_mn2xy([20 40],[30 32],'D:\Nederland.grd')
 %
 % created by Julien Groenenboom, September 2017
+EHYs(mfilename);
 
 tempGrdFile=[tempdir 'tmp.grd'];
 copyfile(grdFile,tempGrdFile);
