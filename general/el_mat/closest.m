@@ -1,4 +1,4 @@
-function [xc ic] = closest(x,y)
+function [xc ic] = closest(x,y,varargin)
 %CLOSEST  Returns values in y closest to values in x
 %
 %   Returns values in y closest to values in x. Result is a scalar, vector
@@ -64,12 +64,23 @@ function [xc ic] = closest(x,y)
 
 %% find closest
 
+if ~isempty(varargin)
+    flip = true;
+else
+    flip = false;
+end
+
 xc = nan(size(x));
 ic = nan(size(x));
 
 for i = 1:numel(x)
     [m mi]  = min(abs(y(:) - x(i)));
     
-    xc(i)   = y(mi);
-    ic(i)   = mi;
+    if flip
+        ic(i)   = y(mi);
+        xc(i)   = mi;
+    else
+        xc(i)   = y(mi);
+        ic(i)   = mi;
+    end
 end
