@@ -110,6 +110,7 @@ if exist(paramsfname, 'file')
     parametertype='unknown';
 
     while ~feof(fid)
+        try
         if parread==0
             % does this line say type parameters?
             line=strtrim(fgetl(fid));
@@ -138,7 +139,7 @@ if exist(paramsfname, 'file')
             t7=findstr(']',line);  if length(t7)>1; t7=t7(t7>t3c);t7=t7(1); end;
             t8=findstr('(advanced)',line);
             t9=findstr('(deprecated)',line);
-            if (~isempty(t3) && ~isempty(t4) && t5~=1)
+            if (~isempty(t3) && ~isempty(t4) && ~isempty(t5))
                 parcount=parcount+1;
                 params_array(parcount).type = strtrim(line(1:t3-1));
                 params_array(parcount).name = strtrim(line(t3+2:t4-1));
@@ -348,6 +349,8 @@ if exist(paramsfname, 'file')
                 iflevel=iflevel-1;
             end
         end
+        catch
+        end
     end
     % make list of elements that affect current element
     affectedby=cell(length(params_array),1);
@@ -391,11 +394,14 @@ if exist(paramsfname, 'file')
     end
 
     for i=1:length(params_array)
+        try
         names = fieldnames(params_array(i));
         for ii=1:length(names)
             if ~strcmp(names{ii},'name')
                 eval(['params.' params_array(i).name '.' names{ii} '= params_array(i).' names{ii} ';']);
             end
+        end
+        catch
         end
     end
 
