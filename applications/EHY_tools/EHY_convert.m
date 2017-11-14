@@ -481,6 +481,9 @@ end
 % pol2shp
     function [output,OPT]=EHY_convert_pol2shp(inputFile,outputFile,OPT)
         pol=landboundary('read',inputFile);
+        if ~isnan(pol(1,1)); pol=[NaN NaN; pol(:,1:2)];  end
+        if ~isnan(pol(end,1)); pol=[pol(:,1:2);NaN NaN]; end
+        
         nanInd=find(isnan(pol(:,1)));
         for ii=1:length(nanInd)-1
             pol2{ii}=pol(nanInd(ii)+1:nanInd(ii+1)-1,1:2);
