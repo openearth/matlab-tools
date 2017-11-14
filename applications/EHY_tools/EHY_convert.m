@@ -301,6 +301,21 @@ end
     function [output,OPT]=EHY_convert_kml2pol(inputFile,outputFile,OPT)
         output=kml2ldb(OPT.saveOutputFile,inputFile);
     end
+% kml2shp
+    function [output,OPT]=EHY_convert_kml2shp(inputFile,outputFile,OPT)
+        OPT_user=OPT;
+        OPT.saveOutputFile=0;
+        lines=EHY_convert_kml2pol(inputFile,outputFile,OPT)
+        OPT=OPT_user;
+        nanInd=find(isnan(lines(:,1)));
+        for ii=1:length(nanInd)-1
+            lines2{ii}=lines(nanInd(ii)+1:nanInd(ii+1)-1,1:2);
+        end
+        if OPT.saveOutputFile
+            shapewrite(outputFile,'polyline',lines2,{})
+        end
+        output=lines;
+    end
 % kml2xyn
     function [output,OPT]=EHY_convert_kml2xyn(inputFile,outputFile,OPT)
         kml = xml_read(inputFile);
@@ -350,17 +365,24 @@ end
         ldb=landboundary('read',inputFile);
         output=ldb;
     end
+% ldb2shp
+    function [output,OPT]=EHY_convert_ldb2shp(inputFile,outputFile,OPT)
+        ldb=landboundary('read',inputFile);
+        nanInd=find(isnan(ldb(:,1)));
+        for ii=1:length(nanInd)-1
+            ldb2{ii}=ldb(nanInd(ii)+1:nanInd(ii+1)-1,1:2);
+        end
+        if OPT.saveOutputFile
+            shapewrite(outputFile,'polyline',ldb2,{})
+        end
+        output=ldb;
+    end
 % nc2kml
     function [output,OPT]=EHY_convert_nc2kml(inputFile,outputFile,OPT)
-        x=nc_varget(inputFile,'NetNode_x');
-        y=nc_varget(inputFile,'NetNode_y');
-        links=nc_varget(inputFile,'NetLink');
-        
-        lines=zeros(length(links)*3,2);
-        
-        lines(3*(1:length(links))-2,:)=[x(links(:,1)) y(links(:,1))];
-        lines(3*(1:length(links))-1,:)=[x(links(:,2)) y(links(:,2))];
-        lines(3*(1:length(links)),:)=NaN;
+        OPT_user=OPT;
+        OPT.saveOutputFile=0;
+        lines=EHY_convert_nc2ldb(inputFile,outputFile,OPT);
+        OPT=OPT_user;
         lines=ipGlueLDB(lines);
         if OPT.saveOutputFile
             [lines(:,1),lines(:,2),OPT]=EHY_convert_coorCheck(lines(:,1),lines(:,2),OPT);
@@ -387,6 +409,21 @@ end
              io_polygon('write',outputFile,lines);
         end
         output=lines;
+    end
+% nc2shp
+    function [output,OPT]=EHY_convert_nc2shp(inputFile,outputFile,OPT)
+        OPT_user=OPT;
+        OPT.saveOutputFile=0;
+        lines=EHY_convert_nc2ldb(inputFile,outputFile,OPT);
+        OPT=OPT_user;
+        nanInd=find(isnan(lines(:,1)));
+        for ii=1:length(nanInd)-1
+            lines2{ii}=lines(nanInd(ii)+1:nanInd(ii+1)-1,1:2);
+        end
+        if OPT.saveOutputFile
+            shapewrite(outputFile,'polyline',lines2,{})
+        end
+        output=pol;
     end
 % obs2kml
     function [output,OPT]=EHY_convert_obs2kml(inputFile,outputFile,OPT)
@@ -441,6 +478,18 @@ end
         end
         output=landboundary('read',inputFile);
     end
+% pol2shp
+    function [output,OPT]=EHY_convert_pol2shp(inputFile,outputFile,OPT)
+        pol=landboundary('read',inputFile);
+        nanInd=find(isnan(pol(:,1)));
+        for ii=1:length(nanInd)-1
+            pol2{ii}=pol(nanInd(ii)+1:nanInd(ii+1)-1,1:2);
+        end
+        if OPT.saveOutputFile
+            shapewrite(outputFile,'polyline',pol2,{})
+        end
+        output=pol;
+    end
 % pol2xyz
     function [output,OPT]=EHY_convert_pol2xyz(inputFile,outputFile,OPT)
         xyz=landboundary('read',inputFile);
@@ -454,6 +503,7 @@ end
     function [output,OPT]=EHY_convert_shp2kml(inputFile,outputFile,OPT)
         ldb=shape2ldb(inputFile,0);
         if OPT.saveOutputFile
+            [ldb(:,1),ldb(:,2),OPT]=EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
             [~,name]=fileparts(inputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
@@ -464,7 +514,10 @@ end
     end
 % shp2ldb
     function [output,OPT]=EHY_convert_shp2ldb(inputFile,outputFile,OPT)
-        output=shape2ldb(inputFile,OPT.saveOutputFile);
+        output=shape2ldb(inputFile,0);
+        if OPT.saveOutputFile
+            landboundary('write',outputFile,output);
+        end
     end
 % shp2pol
     function [output,OPT]=EHY_convert_shp2pol(inputFile,outputFile,OPT)
