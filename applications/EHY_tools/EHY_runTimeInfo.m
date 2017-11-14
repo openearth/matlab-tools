@@ -46,7 +46,11 @@ try % if simulation has finished
             noPartitions=max([1 length(diaFiles)-1]);
             
             % average timestep
-            line=findLineOrQuit(fid,'** INFO   : average timestep      (s)  :');
+            line=findLineOrQuit(fid,'** INFO   : average timestep       (s)  :');
+            if isempty(line) % older DFM version
+                fid=fopen(diaFile,'r');
+                line=findLineOrQuit(fid,'** INFO   : average timestep      (s)  :');
+            end
             line2=regexp(line,'\s+','split');
             runTimeInfo.aveTimeStep_S=str2double(line2{end});
             
@@ -59,7 +63,11 @@ try % if simulation has finished
             runTimeInfo.maxTimeStep_S=str2double(line);
             
             % realTime_S
-            line=findLineOrQuit(fid,'** INFO   : time steps + plots    (s)  :');
+            line=findLineOrQuit(fid,'** INFO   : time steps (+ plots)   (s)  :');
+            if isempty(line) % older DFM version
+                fid=fopen(diaFile,'r');
+                line=findLineOrQuit(fid,'** INFO   : time steps + plots    (s)  :');
+            end
             line2=regexp(line,'\s+','split');
             realTime_S=str2double(line2{end});
             
@@ -163,6 +171,6 @@ while isempty(strfind(line,wantedLine)) && ischar(line)
 end
 
 if ~ischar(line) && line==-1
-    error('Run has probably not finished yet or crashed')
+    line=[];
 end
 end
