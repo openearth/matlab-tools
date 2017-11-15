@@ -20,6 +20,7 @@ functions{7,2}='This function crops the surrounding area of a figure based on th
 h=findall(0,'type','figure','name','EHY_TOOLS');
 if ~isempty(h)
     uistack(h,'top');
+    figure(h);
     disp('The EHY_TOOLS GUI was already open')
 else
     EHYfig=figure('units','normalized','position',[0.4922 0.0583 0.5000 0.3000],'name','EHY_TOOLS');
