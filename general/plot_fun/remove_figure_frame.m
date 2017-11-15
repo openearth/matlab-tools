@@ -11,8 +11,6 @@ function remove_figure_frame(varargin)
 %
 %
 
-try
-
 if isempty(varargin)
     hFig = gcf;
 else
@@ -77,6 +75,8 @@ warning(oldWarn);
 if isempty(jWindow)
     error('Cannot retrieve the figure''s underlying Java Frame');
 end
+
+try
 
 setappdata(hFig,'undecorate_jWindow',jWindow);
 
