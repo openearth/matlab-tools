@@ -39,7 +39,7 @@ end
 end
 
 function runEHYscript(hObject,event)
-run(event.Source.String);
+run(get(hObject,'String'))
 end
 
 function closeFig(hObject,event)
