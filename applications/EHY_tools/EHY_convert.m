@@ -519,14 +519,14 @@ end
     function [output,OPT]=EHY_convert_shp2ldb(inputFile,outputFile,OPT)
         output=shape2ldb(inputFile,0);
         if OPT.saveOutputFile
-            landboundary('write',outputFile,output);
+            landboundary('write',outputFile,output(:,1:2));
         end
     end
 % shp2pol
     function [output,OPT]=EHY_convert_shp2pol(inputFile,outputFile,OPT)
         output=shape2ldb(inputFile,0);
         if OPT.saveOutputFile
-            io_polygon('write',outputFile,output);
+            io_polygon('write',outputFile,output(:,1:2));
         end
     end
 % src2kml
