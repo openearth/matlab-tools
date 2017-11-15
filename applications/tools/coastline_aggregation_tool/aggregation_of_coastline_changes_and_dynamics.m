@@ -73,6 +73,7 @@ function varargout = aggregation_of_coastline_changes_and_dynamics(coastline_use
 %     settings.save_mat_files        (true/false, save model data to mat-files)
 %     settings.save_kml_files        (true/false, save results to KML-files)
 %     settings.diff_indices          (creates difference plots, data, etc.)
+%     settings.show_splash           (optional, turn on the EPIC splash screen)
 %
 %  DETAILED CORRECT FORMATTING OF THE INPUT BELOW
 %
@@ -271,6 +272,10 @@ function varargout = aggregation_of_coastline_changes_and_dynamics(coastline_use
 %   It is strongly advised to set the keyword settings.cumulative_results
 %   to false when using this keyword (unless you really know what it does)
 %   
+%   <<<settings.show_splash>>>
+%   When set to true (false by default) an EPIC splash screen is shown when
+%   running this function
+%
 % see also landboundary, readPRN, qpread
 
 %   Copyright notice
@@ -357,6 +362,7 @@ elseif nargin == 0
     example_input.settings.save_figures_to_file  = true;
     example_input.settings.save_mat_files        = true;
     example_input.settings.diff_indices          = [2 1];
+    example_input.settings.show_splash           = false;
     
     % Make sure the output is stored, no matter how many output variables
     % are requested (0-Inf)
@@ -403,6 +409,17 @@ end
 
 %% Continue all the scripting that needs to be done
 %
+
+close(findall(0,'tag','ACDC_splash_screen'));
+if settings.show_splash
+    m_file = mfilename('fullpath'); splash_img = imread([m_file(1,1:max(strfind(m_file,filesep))) 'ACDC_tool.png']);
+    splash_screen = figure; set(splash_screen,'menubar','none','toolbar','none','Tag','ACDC_splash_screen','color','w');
+    axis tight;
+    imshow(splash_img); set(gca,'Position',[0 0 1 1]); ss = get(0,'ScreenSize'); ss = ss(3:4);
+    set(splash_screen,'position',[(ss./2)-([size(splash_img,2)./2 size(splash_img,1)./2]./2) size(splash_img,2)./2 (size(splash_img,1)./2)-18],'NumberTitle','off','Name','ACDC is running...');
+    remove_figure_frame(splash_screen);
+    hold on; plot([get(gca,'xlim') fliplr(get(gca,'xlim')) min(get(gca,'xlim'))],[min(get(gca,'ylim')) get(gca,'ylim') fliplr(get(gca,'ylim'))],'k'); drawnow;
+end
 
 % Now let's make a vector that we can use as the offshore direction
 coastline = aggregation_coastline_orientation(coastline);
@@ -1019,7 +1036,8 @@ for ii=find(plot_fig_inds)
             export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_alongshore_frame_' num2str(ii) '-B_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type '.png'],'-m3','-png');
             if ii == length(coastline_changes)
                 disp(['Succesfully saved a total of ' num2str(sum(plot_fig_inds)) ' figures']);
-                close all force;
+                % close figures:
+                fig_hands = findall(0,'type','figure'); close(fig_hands(find(strcmp(get(fig_hands,'Tag'),'ACDC_splash_screen')==0)));
             end
         end
     end
@@ -1055,7 +1073,8 @@ if settings.combined_fig && ~isempty(find(plot_fig_inds))
             export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') '_combined_alongshore_aggregation_of_' num2str(length(coastline_changes)) '_models_and_datasets.png'],'-m3','-png');
         end
         disp(['Succesfully saved aggregated figure to file']);
-        close all force;
+        % close figures:
+        fig_hands = findall(0,'type','figure'); close(fig_hands(find(strcmp(get(fig_hands,'Tag'),'ACDC_splash_screen')==0)));
     end
 end
 
@@ -1248,12 +1267,15 @@ if ~isempty(settings.diff_indices) || ~isempty(loaded_diff_data)
             elseif strcmp(diff_mode,'new_data');
                 export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') '_diff_plot_model_inds_' num2str(diff_data(ii).model_inds(1)) '_and_' num2str(diff_data(ii).model_inds(2)) '.png'],'-m3','-png');
             end
-            close all force;
+            % close figures:
+            fig_hands = findall(0,'type','figure'); close(fig_hands(find(strcmp(get(fig_hands,'Tag'),'ACDC_splash_screen')==0)));
         end
         
     end
     
 end
+
+close(findall(0,'tag','ACDC_splash_screen'));
 
 % Function end
 end
