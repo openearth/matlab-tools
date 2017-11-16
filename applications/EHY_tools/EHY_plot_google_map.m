@@ -1,36 +1,41 @@
 function varargout = EHY_plot_google_map(varargin)
-% EHY_plot_google_map is based on the function plot_google_map but also
-% works with Matlab versions newer than Matlab 2014.
-
-% function h = EHY_plot_google_map(varargin)
-% Plots a google map on the current axes using the Google Static Maps API
+%plot_google_map Plots a google map on the current axes using the Google Static Maps API
+%
+% based on OET-function '..\matlab\general\plot_fun\plot_google_map.m'
+% However, there are 2 conflicting versions
 %
 % USAGE:
-% h = EHY_plot_google_map(Property, Value,...)
+% h = plot_google_map(Property, Value,...)
 % Plots the map on the given axes. Used also if no output is specified
 %
 % Or:
-% [lonVec latVec imag] = EHY_plot_google_map(Property, Value,...)
+% [lonVec latVec imag] = plot_google_map(Property, Value,...)
 % Returns the map without plotting it
 %
 % PROPERTIES:
+%    Axis           - Axis handle. If not given, gca is used. (LP)
 %    Height (640)   - Height of the image in pixels (max 640)
 %    Width  (640)   - Width of the image in pixels (max 640)
-%    Scale (2)      - (1/2) Resolution scale factor . using Scale=2 will
+%    Scale (2)      - (1/2) Resolution scale factor. Using Scale=2 will
 %                     double the resulotion of the downloaded image (up
 %                     to 1280x1280) and will result in finer rendering,
 %                     but processing time will be longer.
-%    MapType        - ('roadmap') Type of map to return. Any of [roadmap,
-%                     satellite, terrain, hybrid] See the Google Maps API for
-%                     more information.
+%    MapType        - ('roadmap') Type of map to return. Any of [roadmap, 
+%                     satellite, terrain, hybrid]. See the Google Maps API for
+%                     more information. 
 %    Alpha (1)      - (0-1) Transparency level of the map (0 is fully
-%                     transparent). While the map is always
-%                     moved to the bottom of the plot (i.e. will
-%                     not hide previously drawn items), this can
-%                     be useful in order to increase readability
-%                     if many colors are ploted (using SCATTER
-%                     for example).
-%    ShowLabels (1) - (0/1) Controls wheter to display city/street textual labels on the map
+%                     transparent). While the map is always moved to the
+%                     bottom of the plot (i.e. will not hide previously
+%                     drawn items), this can be useful in order to increase
+%                     readability if many colors are plotted 
+%                     (using SCATTER for example).
+%    ShowLabels (1) - (0/1) Controls whether to display city/street textual labels on the map
+%    Language       - (string) A 2 letter ISO 639-1 language code for displaying labels in a 
+%                     local language instead of English (where available).
+%                     For example, for Chinese use:
+%                     plot_google_map('language','zh')
+%                     For the list of codes, see:
+%                     http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 %    Marker         - The marker argument is a text string with fields
 %                     conforming to the Google Maps API. The
 %                     following are valid examples:
@@ -46,50 +51,62 @@ function varargout = EHY_plot_google_map(varargin)
 %                     of the plot to avoid the map being stretched.
 %                     This will adjust the span to be correct
 %                     according to the shape of the map axes.
-%    APIKey         - (string) set your own API key which you obtained from Google:
+%    FigureResizeUpdate (1) - (0/1) defines whether to automatically refresh the
+%                     map upon resizing the figure. This will ensure map
+%                     isn't stretched after figure resize.
+%    APIKey         - (string) set your own API key which you obtained from Google: 
 %                     http://developers.google.com/maps/documentation/staticmaps/#api_key
-%                     This will enable up to 25,000 map requests per day,
-%                     compared to a few hundred requests without a key.
+%                     This will enable up to 25,000 map requests per day, 
+%                     compared to a few hundred requests without a key. 
 %                     To set the key, use:
-%                     EHY_plot_google_map('APIKey','SomeLongStringObtaindFromGoogle')
+%                     plot_google_map('APIKey','SomeLongStringObtaindFromGoogle')
 %                     You need to do this only once to set the key.
 %                     To disable the use of a key, use:
-%                     EHY_plot_google_map('APIKey','')
+%                     plot_google_map('APIKey','')
 %
 % OUTPUT:
 %    h              - Handle to the plotted map
 %
-%    lonVect        - Vector of Longidute coordinates (WGS84) of the image
-%    latVect        - Vector of Latidute coordinates (WGS84) of the image
+%    lonVect        - Vector of Longidute coordinates (WGS84) of the image 
+%    latVect        - Vector of Latidute coordinates (WGS84) of the image 
 %    imag           - Image matrix (height,width,3) of the map
 %
 % EXAMPLE - plot a map showing some capitals in Europe:
 %    lat = [48.8708   51.5188   41.9260   40.4312   52.523   37.982];
 %    lon = [2.4131    -0.1300    12.4951   -3.6788    13.415   23.715];
 %    plot(lon,lat,'.r','MarkerSize',20)
-%    EHY_plot_google_map
+%    plot_google_map
 %
 % References:
-% http://www.mathworks.com/matlabcentral/fileexchange/24113
-% http://www.maptiler.org/google-maps-coordinates-tile-bounds-projection/
-% http://developers.google.com/maps/documentation/staticmaps/
+%  http://www.mathworks.com/matlabcentral/fileexchange/24113
+%  http://www.maptiler.org/google-maps-coordinates-tile-bounds-projection/
+%  http://developers.google.com/maps/documentation/staticmaps/
 %
-%  Acknowledgement to Val Schmidt for his submission of get_google_map.m
+%See also: googleplot
+
+% Acknowledgements:
+%  Val Schmidt for his submission of get_google_map.m
 %
-%  Author:
+% Author:
 %  Zohar Bar-Yehuda
+%
+% Version 1.5 - 20/11/2014
+%       - Support for MATLAB R2014b
+%       - several fixes complex layouts: several maps in one figure, 
+%         map inside a panel, specifying axis handle as input (thanks to Luke Plausin)
+% Version 1.4 - 25/03/2014
+%       - Added the language parameter for showing labels in a local language
+%       - Display the URL on error to allow easier debugging of API errors
 % Version 1.3 - 06/10/2013
-%       - Improved functionality of AutoAxis, which now handles any shape of map axes.
+%       - Improved functionality of AutoAxis, which now handles any shape of map axes. 
 %         Now also updates the extent of the map if the figure is resized.
-%       - Added the ShowLabels param which allows hiding the textual labels on the map.
+%       - Added the showLabels parameter which allows hiding the textual labels on the map.
 % Version 1.2 - 16/06/2012
 %       - Support use of the "scale=2" parameter by default for finer rendering (set scale=1 if too slow).
 %       - Auto-adjust axis extent so the map isn't stretched.
 %       - Set and use an API key which enables a much higher usage volume per day.
-%  Version 1.1 - 25/08/2011
-EHYs(mfilename);
-% store parameters in global variable (used for auto-refresh)
-global inputParams
+% Version 1.1 - 25/08/2011
+
 persistent apiKey
 if isnumeric(apiKey)
     % first run, check if API key file exists
@@ -99,54 +116,50 @@ if isnumeric(apiKey)
         apiKey = '';
     end
 end
-axHandle = gca;
-try
-    inputParams.(['ax' num2str(axHandle*1e6,'%.0f')]) = varargin;
-catch
-    inputParams.ax123456 = varargin;
-end
-% Handle input arguments
+hold on
 
+% Default parametrs
+axHandle = gca;
 height = 640;
 width = 640;
 scale = 2;
 maptype = 'roadmap';
 alphaData = 1;
-autoRferesh = 1;
+autoRefresh = 1;
+figureResizeUpdate = 1;
 autoAxis = 1;
-ShowLabels = 1;
-hold on
-xl=[];
-yl=[];
-
+showLabels = 1;
+language = '';
 markeridx = 1;
 markerlist = {};
+
+% Handle input arguments
 if nargin >= 2
     for idx = 1:2:length(varargin)
         switch lower(varargin{idx})
+            case 'axis'
+                axHandle = varargin{idx+1};
             case 'height'
                 height = varargin{idx+1};
             case 'width'
                 width = varargin{idx+1};
-            case 'scale'
-                scale = varargin{idx+1};
             case 'maptype'
                 maptype = varargin{idx+1};
             case 'alpha'
                 alphaData = varargin{idx+1};
             case 'refresh'
-                autoRferesh = varargin{idx+1};
+                autoRefresh = varargin{idx+1};
             case 'showlabels'
-                ShowLabels = varargin{idx+1};
+                showLabels = varargin{idx+1};
+            case 'figureresizeupdate'
+                figureResizeUpdate = varargin{idx+1};
+            case 'language'
+                language = varargin{idx+1};
             case 'marker'
                 markerlist{markeridx} = varargin{idx+1};
                 markeridx = markeridx + 1;
             case 'autoaxis'
                 autoAxis = varargin{idx+1};
-            case 'xlim'
-                xl=varargin{idx+1};
-            case 'ylim'
-                yl=varargin{idx+1};
             case 'apikey'
                 apiKey = varargin{idx+1}; % set new key
                 % save key to file
@@ -159,20 +172,20 @@ if nargin >= 2
         end
     end
 end
-% if height > 640
-%     height = 640;
-% end
-% if width > 640
-%     width = 640;
-% end
-
-if isempty(xl)
-    curAxis = axis;
-else
-    curAxis = [xl yl];
+if height > 640
+    height = 640;
+end
+if width > 640
+    width = 640;
 end
 
-% Enforce Latitude constraints of EPSG:900913
+% Store paramters in axis handle (for auto refresh callbacks)
+ud = get(axHandle, 'UserData');
+ud.gmap_params = varargin;
+set(axHandle, 'UserData', ud);
+
+curAxis = axis(axHandle);
+% Enforce Latitude constraints of EPSG:900913 
 if curAxis(3) < -85
     curAxis(3) = -85;
 end
@@ -204,21 +217,21 @@ if autoAxis
     % adjust current axis limit to avoid strectched maps
     [xExtent,yExtent] = latLonToMeters(curAxis(3:4), curAxis(1:2) );
     xExtent = diff(xExtent); % just the size of the span
-    yExtent = diff(yExtent);
+    yExtent = diff(yExtent); 
     % get axes aspect ratio
     drawnow
     org_units = get(axHandle,'Units');
     set(axHandle,'Units','Pixels')
-    ax_position = get(axHandle,'position');
+    ax_position = get(axHandle,'position');        
     set(axHandle,'Units',org_units)
     aspect_ratio = ax_position(4) / ax_position(3);
     
-    if xExtent*aspect_ratio > yExtent
+    if xExtent*aspect_ratio > yExtent        
         centerX = mean(curAxis(1:2));
         centerY = mean(curAxis(3:4));
         spanX = (curAxis(2)-curAxis(1))/2;
         spanY = (curAxis(4)-curAxis(3))/2;
-        
+       
         % enlarge the Y extent
         spanY = spanY*xExtent*aspect_ratio/yExtent; % new span
         if spanY > 85
@@ -246,7 +259,7 @@ if autoAxis
         curAxis(2) = centerX+spanX;
         curAxis(3) = centerY-spanY;
         curAxis(4) = centerY+spanY;
-    end
+    end            
     % Enforce Latitude constraints of EPSG:900913
     if curAxis(3) < -85
         curAxis(3:4) = curAxis(3:4) + (-85 - curAxis(3));
@@ -254,7 +267,7 @@ if autoAxis
     if curAxis(4) > 85
         curAxis(3:4) = curAxis(3:4) + (85 - curAxis(4));
     end
-    axis(curAxis) % update axis as quickly as possible, before downloading new image
+    axis(axHandle, curAxis); % update axis as quickly as possible, before downloading new image
     drawnow
 end
 
@@ -280,13 +293,13 @@ minResY = diff(yExtent) / height;
 minRes = max([minResX minResY]);
 tileSize = 256;
 initialResolution = 2 * pi * 6378137 / tileSize; % 156543.03392804062 for tileSize 256 pixels
-zoomlevel = floor(log2(initialResolution/minRes))+1;
+zoomlevel = floor(log2(initialResolution/minRes));
 
 % Enforce valid zoom levels
-if zoomlevel < 0
+if zoomlevel < 0 
     zoomlevel = 0;
 end
-if zoomlevel > 19
+if zoomlevel > 19 
     zoomlevel = 19;
 end
 
@@ -294,7 +307,7 @@ end
 lat = (curAxis(3)+curAxis(4))/2;
 lon = (curAxis(1)+curAxis(2))/2;
 
-% CONSTRUCT QUERY URL
+% Construct query URL
 preamble = 'http://maps.googleapis.com/maps/api/staticmap';
 location = ['?center=' num2str(lat,10) ',' num2str(lon,10)];
 zoomStr = ['&zoom=' num2str(zoomlevel)];
@@ -313,11 +326,17 @@ for idx = 1:length(markerlist)
         markers = [markers markerlist{idx}];
     end
 end
-if ShowLabels == 0
+if showLabels == 0
     labelsStr = '&style=feature:all|element:labels|visibility:off';
 else
     labelsStr = '';
 end
+if ~isempty(language)
+    languageStr = ['&language=' language];
+else
+    languageStr = '';
+end
+    
 if ismember(maptype,{'satellite','hybrid'})
     filename = 'tmp.jpg';
     format = '&format=jpg';
@@ -328,15 +347,16 @@ else
     convertNeeded = 1;
 end
 sensor = '&sensor=false';
-url = [preamble location zoomStr sizeStr maptypeStr format markers labelsStr sensor keyStr];
+url = [preamble location zoomStr sizeStr maptypeStr format markers labelsStr languageStr sensor keyStr];
 
 % Get the image
 try
     urlwrite(url,filename);
 catch % error downloading map
     warning(sprintf(['Unable to download map form Google Servers.\n' ...
-        'Possible reasons: no network connection, or quota exceeded.\n' ...
-        'Consider using an API key if quota problems persist.']));
+        'Possible reasons: no network connection, quota exceeded, or some other error.\n' ...
+        'Consider using an API key if quota problems persist.\n\n' ...
+        'To debug, try pasting the following URL in your browser, which may result in a more informative error:\n%s'], url));
     varargout{1} = [];
     varargout{2} = [];
     varargout{3} = [];
@@ -355,7 +375,7 @@ centerPixelX = round(width/2);
 curResolution = initialResolution / 2^zoomlevel/scale; % meters/pixel (EPSG:900913)
 xVec = centerX + ((1:width)-centerPixelX) * curResolution; % x vector
 yVec = centerY + ((height:-1:1)-centerPixelY) * curResolution; % y vector
-[xMesh,yMesh] = meshgrid(xVec,yVec); % construct meshgrid
+[xMesh,yMesh] = meshgrid(xVec,yVec); % construct meshgrid 
 
 % convert meshgrid to WGS1984
 [lonMesh,latMesh] = metersToLatLon(xMesh,yMesh);
@@ -395,13 +415,14 @@ uniImag =  myTurboInterp2(lonMesh,latMesh,imag,uniLonMesh,uniLatMesh);
 
 if nargout <= 1 % plot map
     % display image
-    h = image(lonVect,latVect,uniImag);
-    set(gca,'YDir','Normal')
+    hold(axHandle, 'on');
+    h = image(lonVect,latVect,uniImag, 'Parent', axHandle);
+    set(axHandle,'YDir','Normal')
     set(h,'tag','gmap')
     set(h,'AlphaData',alphaData)
     
     % add a dummy image to allow pan/zoom out to x2 of the image extent
-    h_tmp = image(lonVect([1 end]),latVect([1 end]),zeros(2),'Visible','off');
+    h_tmp = image(lonVect([1 end]),latVect([1 end]),zeros(2),'Visible','off', 'Parent', axHandle);
     set(h_tmp,'tag','gmap')
     
     % older version (display without conversion to uniform grid)
@@ -410,19 +431,26 @@ if nargout <= 1 % plot map
     % caxis([0 255])
     % warning off % to avoid strange rendering warnings
     % shading flat
-    
+   
     uistack(h,'bottom') % move map to bottom (so it doesn't hide previously drawn annotations)
-    axis(curAxis) % restore original zoom
+    axis(axHandle, curAxis) % restore original zoom
     if nargout == 1
         varargout{1} = h;
     end
-    % if auto-refresh mode - override zoom callback to allow autumatic
+    
+    % if auto-refresh mode - override zoom callback to allow autumatic 
     % refresh of map upon zoom actions.
-    zoomHandle = zoom;
-    panHandle = pan;
-    if autoRferesh
-        set(zoomHandle,'ActionPostCallback',@update_google_map);
-        set(panHandle, 'ActionPostCallback', @update_google_map);
+    figHandle = axHandle;
+    while ~strcmpi(get(figHandle, 'Type'), 'figure')
+        % Recursively search for parent figure in case axes are in a panel
+        figHandle = get(figHandle, 'Parent');
+    end
+    
+    zoomHandle = zoom(axHandle);   
+    panHandle = pan(figHandle); % This isn't ideal, doesn't work for contained axis    
+    if autoRefresh        
+        set(zoomHandle,'ActionPostCallback',@update_google_map);          
+        set(panHandle, 'ActionPostCallback', @update_google_map);        
     else % disable zoom override
         set(zoomHandle,'ActionPostCallback',[]);
         set(panHandle, 'ActionPostCallback',[]);
@@ -430,10 +458,12 @@ if nargout <= 1 % plot map
     
     % set callback for figure resize function, to update extents if figure
     % is streched.
-    figHandle = get(axHandle,'Parent');
-    set(figHandle, 'ResizeFcn', @update_google_map_fig);
+    if figureResizeUpdate &&isempty(get(figHandle, 'ResizeFcn'))
+        % set only if not already set by someone else
+        set(figHandle, 'ResizeFcn', @update_google_map_fig);       
+    end    
     
-    % set callback properties
+    % set callback properties 
     set(h,'ButtonDownFcn',bd_callback);
 else % don't plot, only return map
     varargout{1} = lonVect;
@@ -509,33 +539,38 @@ ZI = Z(yiPos,xiPos,:);
 function update_google_map(obj,evd)
 % callback function for auto-refresh
 drawnow;
-global inputParams
-if isfield(inputParams,['ax' num2str(gca*1e6,'%.0f')])
-    params = inputParams.(['ax' num2str(gca*1e6,'%.0f')]);
-    EHY_plot_google_map(params{:});
-elseif isfield(inputParams.ax123456) 
-    params = inputParams.ax123456;
-    EHY_plot_google_map(params{:});
+try
+    axHandle = evd.Axes;
+catch ex
+    % Event doesn't contain the correct axes. Panic!
+    axHandle = gca;
+end
+ud = get(axHandle, 'UserData');
+if isfield(ud, 'gmap_params')
+    params = ud.gmap_params;
+    plot_google_map(params{:});
 end
 
 
 function update_google_map_fig(obj,evd)
 % callback function for auto-refresh
 drawnow;
-global inputParams
 axes_objs = findobj(get(gcf,'children'),'type','axes');
 for idx = 1:length(axes_objs)
     if ~isempty(findobj(get(axes_objs(idx),'children'),'tag','gmap'));
-        if isfield(inputParams,['ax' num2str(axes_objs(idx)*1e6,'%.0f')])
-            params = inputParams.(['ax' num2str(axes_objs(idx)*1e6,'%.0f')]);
-        elseif isfield(inputParams.ax123456)
-            params = inputParams.ax123456;
+        ud = get(axes_objs(idx), 'UserData');
+        if isfield(ud, 'gmap_params')
+            params = ud.gmap_params;
         else
             params = {};
         end
-        axes(axes_objs(idx));
-        EHY_plot_google_map(params{:});
-        break;
+        
+        % Add axes to inputs if needed
+        if ~sum(strcmpi(params, 'Axis'))
+            params = [params, {'Axis', axes_objs(idx)}];
+        end
+        plot_google_map(params{:});
     end
 end
 
+    

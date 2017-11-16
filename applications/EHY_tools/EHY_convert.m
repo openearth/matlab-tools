@@ -66,7 +66,7 @@ end
 if length(varargin)==1
     inputFile=varargin{1};
     [~,~,inputExt0]= fileparts(inputFile);
-    inputExt=strrep(inputExt0,'.','');
+    inputExt=lower(strrep(inputExt0,'.',''));
     
     if strcmp(inputExt,'pli'); inputExt='pol'; end
     availableInputId=strmatch(inputExt,availableConversions(:,1));
@@ -96,7 +96,7 @@ if length(varargin)==1
 else
     inputFile=varargin{1};
     [~,~,inputExt]= fileparts(inputFile);
-    inputExt=strrep(inputExt,'.','');
+    inputExt=lower(strrep(inputExt,'.',''));
     outputExt=varargin{2};
 end
 
@@ -128,6 +128,10 @@ if OPT.saveOutputFile && exist(outputFile,'file')
         outputFile=[PathName FileName];
     end
 end
+
+inputExt=lower(inputExt);
+outputExt=lower(outputExt);
+
 
 if strcmp(inputExt,'pli'); inputExt='pol'; end
 if strcmpi(outputExt,'pli'); outputExt='pol'; end %treat as .pol, but still save as .pli
