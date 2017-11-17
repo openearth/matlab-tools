@@ -39,7 +39,7 @@ switch modelType
 
         D=dir([folder '*_timings.txt']);
         if ~isempty(D) % try to get the runPeriod from the timings file
-            timingsFile=[D(1).folder filesep D(1).name];
+            timingsFile=[folder filesep D(1).name];
             fid=fopen(timingsFile,'r');
             while feof(fid)~=1
                 line=fgetl(fid);
@@ -62,7 +62,7 @@ switch modelType
         [pathstr, name, ext] = fileparts(mdFile);
         D=dir([pathstr '\*.o*']);
         [~,order] = sort([D.datenum]);
-        runFile=[D(order(end)).folder filesep D(order(end)).name];
+        runFile=[pathstr filesep D(order(end)).name];
         fid=fopen(runFile,'r');
         while feof(fid)~=1
             line=fgetl(fid);
@@ -81,7 +81,7 @@ switch modelType
         [pathstr, name, ext] = fileparts(mdFile);
         D=dir([pathstr '\waqpro-m.*']);
         [~,order] = sort([D.datenum]);
-        runFile=[D(order(end)).folder filesep D(order(end)).name];
+        runFile=[pathstr filesep D(order(end)).name];
         fid=fopen(runFile,'r');
         while feof(fid)~=1
             line=fgetl(fid);
