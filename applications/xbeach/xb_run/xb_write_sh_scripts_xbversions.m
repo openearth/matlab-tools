@@ -77,7 +77,7 @@ switch OPT.version
         fprintf(FileID,'module load hdf5/1.8.14_gcc_4.9.2\n');
         fprintf(FileID,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.2\n');
         fprintf(FileID,'module load openmpi/1.8.3_gcc_4.9.2\n');
-        fprintf(FileID,'module load /opt/xbeach/modules/xbeach-xbx-BETA_gcc_4.9.2_1.8.3_HEAD\n\n');
+        fprintf(FileID,'module load /opt/xbeach/modules/xbeach-xbx_BETA_gcc_4.9.2_1.8.3_HEAD\n\n');
         fprintf(FileID,'module list\n');
     case {1.22, 'kingsday'}
         % XBeach v1.22 King's Day BETA release
