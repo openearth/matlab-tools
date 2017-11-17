@@ -1,15 +1,15 @@
 function varargout = EHY_plot_google_map(varargin)
-%plot_google_map Plots a google map on the current axes using the Google Static Maps API
+%EHY_plot_google_map Plots a google map on the current axes using the Google Static Maps API
 %
 % based on OET-function '..\matlab\general\plot_fun\plot_google_map.m'
 % However, there are 2 conflicting versions
 %
 % USAGE:
-% h = plot_google_map(Property, Value,...)
+% h = EHY_plot_google_map(Property, Value,...)
 % Plots the map on the given axes. Used also if no output is specified
 %
 % Or:
-% [lonVec latVec imag] = plot_google_map(Property, Value,...)
+% [lonVec latVec imag] = EHY_plot_google_map(Property, Value,...)
 % Returns the map without plotting it
 %
 % PROPERTIES:
@@ -33,7 +33,7 @@ function varargout = EHY_plot_google_map(varargin)
 %    Language       - (string) A 2 letter ISO 639-1 language code for displaying labels in a 
 %                     local language instead of English (where available).
 %                     For example, for Chinese use:
-%                     plot_google_map('language','zh')
+%                     EHY_plot_google_map('language','zh')
 %                     For the list of codes, see:
 %                     http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 %    Marker         - The marker argument is a text string with fields
@@ -59,10 +59,10 @@ function varargout = EHY_plot_google_map(varargin)
 %                     This will enable up to 25,000 map requests per day, 
 %                     compared to a few hundred requests without a key. 
 %                     To set the key, use:
-%                     plot_google_map('APIKey','SomeLongStringObtaindFromGoogle')
+%                     EHY_plot_google_map('APIKey','SomeLongStringObtaindFromGoogle')
 %                     You need to do this only once to set the key.
 %                     To disable the use of a key, use:
-%                     plot_google_map('APIKey','')
+%                     EHY_plot_google_map('APIKey','')
 %
 % OUTPUT:
 %    h              - Handle to the plotted map
@@ -75,7 +75,7 @@ function varargout = EHY_plot_google_map(varargin)
 %    lat = [48.8708   51.5188   41.9260   40.4312   52.523   37.982];
 %    lon = [2.4131    -0.1300    12.4951   -3.6788    13.415   23.715];
 %    plot(lon,lat,'.r','MarkerSize',20)
-%    plot_google_map
+%    EHY_plot_google_map
 %
 % References:
 %  http://www.mathworks.com/matlabcentral/fileexchange/24113
@@ -163,7 +163,7 @@ if nargin >= 2
             case 'apikey'
                 apiKey = varargin{idx+1}; % set new key
                 % save key to file
-                funcFile = which('plot_google_map.m');
+                funcFile = which('EHY_plot_google_map.m');
                 pth = fileparts(funcFile);
                 keyFile = fullfile(pth,'api_key.mat');
                 save(keyFile,'apiKey')
@@ -548,7 +548,7 @@ end
 ud = get(axHandle, 'UserData');
 if isfield(ud, 'gmap_params')
     params = ud.gmap_params;
-    plot_google_map(params{:});
+    EHY_plot_google_map(params{:});
 end
 
 
@@ -569,7 +569,7 @@ for idx = 1:length(axes_objs)
         if ~sum(strcmpi(params, 'Axis'))
             params = [params, {'Axis', axes_objs(idx)}];
         end
-        plot_google_map(params{:});
+        EHY_plot_google_map(params{:});
     end
 end
 
