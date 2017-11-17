@@ -101,7 +101,11 @@ function varargout = knmi_etmgeg_get_url(varargin)
       basepath = '';
    if odd(nargin)
       basepath = varargin{1};
-      varargin = varargin{2:end};
+      if nargin==1
+      varargin = {};
+      else
+      varargin = {varargin{2:end}};
+      end
    end
 
 %% Set <keyword,value> pairs
@@ -112,8 +116,8 @@ function varargout = knmi_etmgeg_get_url(varargin)
    OPT.opendap         = 1; 
    OPT.directory_raw   = [basepath,filesep,'raw'      ,filesep]; % zip files
    OPT.directory_nc    = [basepath,filesep,'processed',filesep];
-   OPT.url             = '"./datafiles3/'; % unique string to recognize datafiles in html page
-   OPT.preurl          = 'http://www.knmi.nl/klimatologie/daggegevens/'; % prefix to relative link in OPT.url
+   OPT.url             = '//cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/'; % unique string to recognize datafiles in html page
+   OPT.preurl          = 'http:'; % prefix to relative link in OPT.url
 
    OPT = setproperty(OPT,varargin{:});
 
@@ -126,17 +130,17 @@ if OPT.download
       disp(OPT.directory_raw)
       disp('does not exist, create? Press <CTRL> + <C> to quit, <enter> to continue.')
       pause
-      mkpath(OPT.directory_raw)
+      mkdir(OPT.directory_raw)
    end   
    
 %% Load website
 
    if ~(OPT.debug)
-   website   = urlread ('http://www.knmi.nl/klimatologie/daggegevens/download.html');
-               urlwrite('http://www.knmi.nl/klimatologie/daggegevens/download.html',...
-                        [OPT.directory_raw,'download.html']);
+   website   = urlread ('http://www.knmi.nl/nederland-nu/klimatologie/daggegevens');
+               urlwrite('http://www.knmi.nl/nederland-nu/klimatologie/daggegevens',...
+                        [OPT.directory_raw,'daggegevens.html']);
    else
-   website = urlread(['file:///',OPT.directory_raw,filesep,'download.html']);
+   website = urlread(['file:///',OPT.directory_raw,filesep,'daggegevens.html']);
    end
 
 %% Extract names of files to be downloaded from webpage
@@ -149,12 +153,12 @@ if OPT.download
    nfile     = 0;
    for index=indices
    
-      dindex = strfind(website(index:end),'"')-1;
-      
-      nfile  = nfile +1;
+      dindex = strfind(website(index:end),'.zip');      
+      dindex = dindex(1)+2;
+      nfile  = nfile+1;
       
       %% mind to leave out "" brackets
-      OPT.files{nfile} = [OPT.preurl,website(index+2:index+dindex(2)-1)];
+      OPT.files{nfile} = [OPT.preurl,website(index:index+dindex)];
    
    end
    nfile = length(OPT.files);
