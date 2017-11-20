@@ -96,6 +96,10 @@ for i = 1:length(measured)
         
         if isempty(y); continue; end;
         
+        if size(y,2) > size(y,1)
+            y = y';
+        end
+        
         if isvector(y)
             y0 = [];
             y1 = squeeze(y);
