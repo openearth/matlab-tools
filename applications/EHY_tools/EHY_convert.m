@@ -400,15 +400,27 @@ end
     end
 % nc2ldb
     function [output,OPT]=EHY_convert_nc2ldb(inputFile,outputFile,OPT)
-        x=nc_varget(inputFile,'NetNode_x');
-        y=nc_varget(inputFile,'NetNode_y');
-        links=nc_varget(inputFile,'NetLink');
-        
-        lines=zeros(length(links)*3,2);
-        
-        lines(3*(1:length(links))-2,:)=[x(links(:,1)) y(links(:,1))];
-        lines(3*(1:length(links))-1,:)=[x(links(:,2)) y(links(:,2))];
-        lines(3*(1:length(links)),:)=NaN;
+        infonc=ncinfo(inputFile);
+        if any(ismember({infonc.Variables.Name},'NetNode_x'))
+            x=nc_varget(inputFile,'NetNode_x');
+            y=nc_varget(inputFile,'NetNode_y');
+            links=nc_varget(inputFile,'NetLink');
+            lines=zeros(length(links)*3,2);
+            lines(3*(1:length(links))-2,:)=[x(links(:,1)) y(links(:,1))];
+            lines(3*(1:length(links))-1,:)=[x(links(:,2)) y(links(:,2))];
+            lines(3*(1:length(links)),:)=NaN;
+        elseif any(ismember({infonc.Variables.Name},'mesh2d_node_x'))
+            x=nc_varget(inputFile,'mesh2d_node_x');
+            y=nc_varget(inputFile,'mesh2d_node_y');
+            links=nc_varget(inputFile,'mesh2d_edge_nodes');
+            lines=zeros(length(links)*3,2);
+            lines(3*(1:length(links))-2,:)=[x(links(:,1)) y(links(:,1))];
+            lines(3*(1:length(links))-1,:)=[x(links(:,2)) y(links(:,2))];
+            lines(3*(1:length(links)),:)=NaN;
+        else
+            error('This information is not in the nc file')
+        end
+       
         if OPT.saveOutputFile
              io_polygon('write',outputFile,lines);
         end
