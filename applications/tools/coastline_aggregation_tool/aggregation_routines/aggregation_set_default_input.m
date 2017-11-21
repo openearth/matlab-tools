@@ -67,6 +67,7 @@ settings.save_mat_files        = false;
 settings.save_kml_files        = false;
 settings.diff_indices          = [];
 settings.show_splash           = false;
+settings.file_suffix           = '';
 
 % Optional keywords listed here:
 varargout{1}  = {'set_model_time','set_model_vert_level'};

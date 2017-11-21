@@ -74,6 +74,30 @@ while isnan(coastline.ori_ldb(1,1)); coastline.ori_ldb = coastline.ori_ldb(2:end
 while isnan(coastline.ori_ldb(end,1)); coastline.ori_ldb = coastline.ori_ldb(1:end-1,:); end;
 if ~isempty(find(isnan(coastline.ori_ldb))); error('The provided coastline (reference line) consists of multiple sections, please check and avoid this (should be one line, without NaN''s)'); end;
 
+% Check the input of 'structure_inds' and 'ignore_inds'
+if size(coastline.structure_inds,1) > 1 && size(coastline.structure_inds,2) == 1
+    coastline.structure_inds = coastline.structure_inds';
+end
+if size(coastline.ignore_inds,1) > 1 && size(coastline.ignore_inds,2) == 1
+    coastline.ignore_inds = coastline.ignore_inds';
+end
+if ~iscell(coastline.ignore_inds)
+    error(['Incorrect format of ''coastline.ignore_inds'', should be a cell!']);
+end
+if ~iscell(coastline.structure_inds)
+    error(['Incorrect format of ''coastline.structure_inds'', should be a cell!']);
+end
+for ii=1:length(coastline.ignore_inds)
+    if min(coastline.ignore_inds{ii})<1 || max(coastline.ignore_inds{ii})>length(coastline.ori_ldb)
+        error(['Indices of ''coastline.ignore_inds'' are larger than the provided ldb!']);
+    end
+end
+for ii=1:length(coastline.structure_inds)
+    if min(coastline.structure_inds{ii})<1 || max(coastline.structure_inds{ii})>length(coastline.ori_ldb)
+        error(['Indices of ''coastline.structure_inds'' are larger than the provided ldb!']);
+    end
+end
+
 % Refine the landboundary to a certain min. resolution where needed:
 ldb_dx_min = 100;
 if ~isempty(find(sqrt(sum(diff(coastline.ori_ldb).^2,2))>ldb_dx_min))
@@ -110,6 +134,10 @@ if ~isempty(settings.diff_indices)
     else
         error('Keyword ".diff_indices" should be numeric');
     end
+end
+
+if ~isstr(settings.file_suffix)
+    error(['Keyword ''settings.file_suffix'' should be a string']);
 end
 
 % function end

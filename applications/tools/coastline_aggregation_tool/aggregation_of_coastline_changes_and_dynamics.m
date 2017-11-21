@@ -74,6 +74,7 @@ function varargout = aggregation_of_coastline_changes_and_dynamics(coastline_use
 %     settings.save_kml_files        (true/false, save results to KML-files)
 %     settings.diff_indices          (creates difference plots, data, etc.)
 %     settings.show_splash           (optional, turn on the EPIC splash screen)
+%     settings.file_suffix           (optional, add suffix to saved files)
 %
 %  DETAILED CORRECT FORMATTING OF THE INPUT BELOW
 %
@@ -276,6 +277,12 @@ function varargout = aggregation_of_coastline_changes_and_dynamics(coastline_use
 %   When set to true (false by default) an EPIC splash screen is shown when
 %   running this function
 %
+%   <<<settings.file_suffix>>>
+%   When saving figures, kml's or data to a file, a default file-name is
+%   used (based on the aggregation). A suffix can be added to these
+%   filenames by using the keyword settings.file_suffix. By default, this
+%   is '' (example: settings.file_suffix = '_run2_test').
+%
 % see also landboundary, readPRN, qpread
 
 %   Copyright notice
@@ -439,7 +446,9 @@ for ii=1:length(data)
         eval(['tf_statement_2 = size(data(ii).' model_output_type{:} '_diff,1)>1 & size(data(ii).' model_output_type{:} '_diff,2) == 3;']);
         if tf_statement_1
             % Single value for this diff type:
-            eval(['coastline_changes(ii).' model_output_type{:} ' = repmat(data(ii).' model_output_type{:} '_diff,size(coastline.offshore_orientation));'])
+            eval(['coastline_changes(ii).' model_output_type{:} ' = repmat(data(ii).' model_output_type{:} '_diff,size(coastline.offshore_orientation));']);
+            % Make sure the NaN values are included:
+            eval(['coastline_changes(ii).' model_output_type{:} '(isnan(coastline.offshore_orientation)) = NaN;']);
         elseif tf_statement_2
             % Defined on a xy-value line
             eval(['[tmp_ldb, tmp_ldb_inds] = add_equidist_points(1,data(ii).' model_output_type{:} '_diff(:,1:2),''equi''); tmp_ldb = tmp_ldb(2:end-1,:); tmp_ldb_inds = tmp_ldb_inds-1;']);
@@ -467,6 +476,9 @@ for ii=1:length(data)
                 while smaller == 1
                     old_dist = new_dist;
                     ind      = ind + addition;
+                    if ind < 1 || ind > length(dist_x)
+                        break
+                    end
                     new_dist = min(sqrt(((tmp_ldb(:,1) - dist_x(ind)).^2)+((tmp_ldb(:,2) - dist_y(ind)).^2)));
                     if new_dist>old_dist
                         ind = ind - addition;
@@ -519,7 +531,7 @@ for ii=1:length(data)
             if exist([strrep([settings.output_folder filesep],[filesep filesep],filesep) 'mat_files']) ~= 7
                 mkdir([strrep([settings.output_folder filesep],[filesep filesep],filesep) 'mat_files']);
             end
-            save([strrep([settings.output_folder filesep],[filesep filesep],filesep) 'mat_files' filesep 'data_file_for_custom_range_'  datestr(now,'yyyymmdd_HHMMSS')],'saved_data','-v7.3');
+            save([strrep([settings.output_folder filesep],[filesep filesep],filesep) 'mat_files' filesep 'data_file_for_custom_range_'  datestr(now,'yyyymmdd_HHMMSS') settings.file_suffix],'saved_data','-v7.3');
         end
         
     elseif data(ii).from_model == true
@@ -665,7 +677,7 @@ for ii=1:length(data)
                 if exist([strrep([settings.output_folder filesep],[filesep filesep],filesep) 'mat_files']) ~= 7
                     mkdir([strrep([settings.output_folder filesep],[filesep filesep],filesep) 'mat_files']);
                 end
-                save([strrep([settings.output_folder filesep],[filesep filesep],filesep) 'mat_files' filesep 'data_file_for_' num2str(length(data(ii).model_files)) '_' strrep(strrep([data(ii).model_name '_models_'],' ','_'),'+','') datestr(now,'yyyymmdd_HHMMSS')],'saved_data','-v7.3');
+                save([strrep([settings.output_folder filesep],[filesep filesep],filesep) 'mat_files' filesep 'data_file_for_' num2str(length(data(ii).model_files)) '_' strrep(strrep([data(ii).model_name '_models_'],' ','_'),'+','') datestr(now,'yyyymmdd_HHMMSS') settings.file_suffix],'saved_data','-v7.3');
             end
             
         else
@@ -809,8 +821,16 @@ for ii=find(plot_fig_inds)
             set(leg,'location','EastOutside','Orientation','vertical','color','w');
         end
         
-        xlim([min(part_coastline_used_ldb(:,1))-(0.05.*diff([min(part_coastline_used_ldb(:,1)) max(part_coastline_used_ldb(:,1))])) max(part_coastline_used_ldb(:,1))+(0.05.*diff([min(part_coastline_used_ldb(:,1)) max(part_coastline_used_ldb(:,1))]))]);
-        ylim([min(part_coastline_used_ldb(:,2))-(0.05.*diff([min(part_coastline_used_ldb(:,2)) max(part_coastline_used_ldb(:,2))])) max(part_coastline_used_ldb(:,2))+(0.05.*diff([min(part_coastline_used_ldb(:,2)) max(part_coastline_used_ldb(:,2))]))]);
+        if length(coastline.structure_inds) > 0
+            struc_lims_x = [min(coastline.ldb(cell2mat(coastline.structure_inds),1)) max(coastline.ldb(cell2mat(coastline.structure_inds),1))];
+            struc_lims_y = [min(coastline.ldb(cell2mat(coastline.structure_inds),2)) max(coastline.ldb(cell2mat(coastline.structure_inds),1))];
+        else
+            struc_lims_x = [Inf -Inf];
+            struc_lims_y = [Inf -Inf];
+        end
+        
+        xlim([min([part_coastline_used_ldb(:,1); struc_lims_x(1)])-(0.05.*diff([min([part_coastline_used_ldb(:,1); struc_lims_x(1)]) max([part_coastline_used_ldb(:,1); struc_lims_x(2)])])) max([part_coastline_used_ldb(:,1); struc_lims_x(2)])+(0.05.*diff([min([part_coastline_used_ldb(:,1); struc_lims_x(1)]) max([part_coastline_used_ldb(:,1); struc_lims_x(2)])]))]);
+        ylim([min([part_coastline_used_ldb(:,2); struc_lims_y(1)])-(0.05.*diff([min([part_coastline_used_ldb(:,2); struc_lims_y(1)]) max([part_coastline_used_ldb(:,2); struc_lims_y(2)])])) max([part_coastline_used_ldb(:,2); struc_lims_y(2)])+(0.05.*diff([min([part_coastline_used_ldb(:,2); struc_lims_y(1)]) max([part_coastline_used_ldb(:,2); struc_lims_y(2)])]))]);
         
         set(gca,'XTickLabel',[],'YTickLabel',[]);
         
@@ -880,17 +900,17 @@ for ii=find(plot_fig_inds)
             mkdir([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth'])
         end
         if ii == 1
-            kml_files{end+1} = [strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep 'reference_coastline.kml'];
+            kml_files{end+1} = [strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep 'reference_coastline' settings.file_suffix '.kml'];
             kml_folders{end+1} = ['Reference coastline'];
             KMLline(wgs_cst(:,2),wgs_cst(:,1),'fileName',kml_files{end},'lineColor',[0 0 0],'name',kml_folders{end},'lineWidth',5);
         end
-        kml_files{end+1} = [strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep f_name 'mol.kml'];
+        kml_files{end+1} = [strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep f_name 'mol' settings.file_suffix '.kml'];
         kml_folders{end+1} = [data(ii).name ' - Most likely result'];
         KMLline(wgs_mol(:,2),wgs_mol(:,1),'fileName',kml_files{end},'lineColor',data(ii).color,'name',kml_folders{end},'lineWidth',5);
-        kml_files{end+1} = [strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep f_name 'min.kml'];
+        kml_files{end+1} = [strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep f_name 'min' settings.file_suffix '.kml'];
         kml_folders{end+1} = [data(ii).name ' - Minimum result'];
         KMLline(wgs_min(:,2),wgs_min(:,1),'fileName',kml_files{end},'lineColor',data(ii).color,'name',kml_folders{end},'lineWidth',2);
-        kml_files{end+1} = [strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep f_name 'max.kml'];
+        kml_files{end+1} = [strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep f_name 'max' settings.file_suffix '.kml'];
         kml_folders{end+1} = [data(ii).name ' - Maximum result'];
         KMLline(wgs_max(:,2),wgs_max(:,1),'fileName',kml_files{end},'lineColor',data(ii).color,'name',kml_folders{end},'lineWidth',2);
         
@@ -899,7 +919,7 @@ for ii=find(plot_fig_inds)
             kml_files_sh = {};
             kml_folders_sh = {};
             
-            kml_files{end+1} = [strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep f_name2 'shades.kml'];
+            kml_files{end+1} = [strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep f_name2 'shades' settings.file_suffix '.kml'];
             kml_folders{end+1} = [data(ii).name ' - Shade'];
             
             nan_inds = find(isnan(wgs_mol(:,1)));
@@ -908,11 +928,11 @@ for ii=find(plot_fig_inds)
             for jj=1:size(val_inds,1)
                 inds = val_inds(jj,1):val_inds(jj,2);
                 
-                kml_files_sh{end+1} = [strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep f_name 'min_shade_' num2str(jj) '.kml'];
+                kml_files_sh{end+1} = [strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep f_name 'min_shade_' num2str(jj) settings.file_suffix '.kml'];
                 kml_folders_sh{end+1} = [data(ii).name ' - Minimum shade ' num2str(jj)];
                 KMLpatch([wgs_mol(inds,2); wgs_min(fliplr(inds),2)],[wgs_mol(inds,1); wgs_min(fliplr(inds),1)],'fileName',kml_files_sh{end},'fillColor',data(ii).color,'name','','fillAlpha',shade_alpha(1),'timeIn',[],'timeOut',[]);
                 
-                kml_files_sh{end+1} = [strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep f_name 'max_shade_' num2str(jj) '.kml'];
+                kml_files_sh{end+1} = [strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep f_name 'max_shade_' num2str(jj) settings.file_suffix '.kml'];
                 kml_folders_sh{end+1} = [data(ii).name ' - Maximum shade ' num2str(jj)];
                 KMLpatch([wgs_mol(inds,2); wgs_max(fliplr(inds),2)],[wgs_mol(inds,1); wgs_max(fliplr(inds),1)],'fileName',kml_files_sh{end},'fillColor',data(ii).color,'name','','fillAlpha',shade_alpha(1),'timeIn',[],'timeOut',[]);
             end
@@ -924,9 +944,9 @@ for ii=find(plot_fig_inds)
         if ii == length(coastline_changes)
             % All KML-files are created, let's combine them:
             if ii == 1
-                KMLmerge_files('sourceFiles',kml_files,'fileName',[strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep datestr(now,'yyyymmdd') strrep(['_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') 'combined.kml'],'foldernames',kml_folders);
+                KMLmerge_files('sourceFiles',kml_files,'fileName',[strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep datestr(now,'yyyymmdd') strrep(['_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') 'combined' settings.file_suffix '.kml'],'foldernames',kml_folders);
             else
-                KMLmerge_files('sourceFiles',kml_files,'fileName',[strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep datestr(now,'yyyymmdd') '_combined_aggregation_of_' num2str(length(coastline_changes)) '_models_and_datasets.kml'],'foldernames',kml_folders);
+                KMLmerge_files('sourceFiles',kml_files,'fileName',[strrep([settings.output_folder filesep],[filesep filesep], filesep) 'Google_Earth' filesep datestr(now,'yyyymmdd') '_combined_aggregation_of_' num2str(length(coastline_changes)) '_models_and_datasets' settings.file_suffix '.kml'],'foldernames',kml_folders);
             end
             delete(kml_files{:});
         end
@@ -964,10 +984,12 @@ for ii=find(plot_fig_inds)
     
     p_1 = plot(part_coastline_used_dist./1000,coastline_changes(ii).most_likely(part_coastline_used_inds),'k','color',data(ii).color,'linewidth',2); hold on;
     p_2 = plot(part_coastline_used_dist./1000,coastline_changes(ii).min(part_coastline_used_inds),'k--','color',data(ii).color,'linewidth',1);
-    plot(part_coastline_used_dist./1000,coastline_changes(ii).max(part_coastline_used_inds),'k--','color',data(ii).color,'linewidth',1);
+    p_3 = plot(part_coastline_used_dist./1000,coastline_changes(ii).max(part_coastline_used_inds),'k--','color',data(ii).color,'linewidth',1);
     
     xlim([part_coastline_used_dist(1) part_coastline_used_dist(end)]./1000);
-    hold on; grid on; box on; set(gca,'layer','top');
+    max_num_ticks = 12; poss_dy       = sort([10.^[-3:5] 2.*10.^[-3:5] 5.*10.^[-3:5]]); dy = poss_dy(max(1,min(length(poss_dy),min(find(poss_dy>diff([min(get(p_2,'YData')) max(get(p_3,'YData'))])./max_num_ticks)))));
+    ylim([min(-dy,floor(min(get(p_2,'YData'))./dy).*dy) max(dy,ceil(max(get(p_3,'YData'))./dy).*dy)]);
+    hold on; grid on; box on; set(gca,'layer','top','YTick',[min(-dy,floor(min(get(p_2,'YData'))./dy).*dy):dy:max(dy,ceil(max(get(p_3,'YData'))./dy).*dy)]);
     xlabel(['Distance [km] (for reference see the ' layout_location ' panel)']);
     text(min(get(gca,'xlim')),0,' No coastline change line','verticalalignment','bottom');
     
@@ -977,7 +999,16 @@ for ii=find(plot_fig_inds)
         title(['Coastline differences incl. uncertainty ranges for model/data: ' data(ii).name]);
     end
     
-    legend([p_1 p_2],'Most likely coastline changes','Min./max. coastline changes')
+    if ~isempty(find(isnan(part_coastline_used_orie)))
+        nan_sets = [find(diff(isnan(part_coastline_used_orie))==1)+1 find(diff(isnan(part_coastline_used_orie))==-1)];
+        for jj=1:size(nan_sets,1)
+            p_p=patch(part_coastline_used_dist(min(length(part_coastline_used_dist),max(1,nan_sets(jj,[1 1 2 2 1])+[-1 -1 1 1 -1])))./1000,[get(gca,'YLim') fliplr(get(gca,'YLim')) min(get(gca,'YLim'))],[-10 -10 -10 -10 -10],[0.95 0.95 0.95],'linestyle','none');
+            text(part_coastline_used_dist(nan_sets(jj,1)-1)./1000,max(get(gca,'YLim')),'\rightarrow No data section','verticalalignment','top','horizontalalignment','left','fontsize',8);
+            text(part_coastline_used_dist(nan_sets(jj,2)+1)./1000,min(get(gca,'YLim')),'No data section \leftarrow','verticalalignment','bottom','horizontalalignment','right','fontsize',8);
+        end
+    end
+    
+    legend([p_1 p_2],'Most likely coastline changes','Min./max. coastline changes','location','southwest')
     
     if settings.combined_fig
         figure(findobj(get(0,'children'),'Tag',['Spatial plot 1']));
@@ -1003,7 +1034,7 @@ for ii=find(plot_fig_inds)
             end
             disp([' ']);
             disp(['Saving figure ' num2str(ii) '-A out of ' num2str(sum(plot_fig_inds))]);
-            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_spatial_frame_' num2str(ii) '_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type '.png'],'-m3','-png');
+            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_spatial_frame_' num2str(ii) '_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type settings.file_suffix '.png'],'-m3','-png');
             if ii == length(coastline_changes)
                 disp(['Succesfully saved a total of ' num2str(sum(plot_fig_inds)) ' figures']);
             end
@@ -1033,7 +1064,7 @@ for ii=find(plot_fig_inds)
             end
             disp([' ']);
             disp(['Saving figure ' num2str(ii) '-B out of ' num2str(sum(plot_fig_inds))]);
-            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_alongshore_frame_' num2str(ii) '-B_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type '.png'],'-m3','-png');
+            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_alongshore_frame_' num2str(ii) '-B_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type settings.file_suffix '.png'],'-m3','-png');
             if ii == length(coastline_changes)
                 disp(['Succesfully saved a total of ' num2str(sum(plot_fig_inds)) ' figures']);
                 % close figures:
@@ -1055,10 +1086,10 @@ if settings.combined_fig && ~isempty(find(plot_fig_inds))
         disp(['Saving 1/2 aggregated figures to file']);
         if length(coastline_changes) == 1
             % Only a sinlge figure 'combined'
-            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_spatial_frame_' num2str(ii) '_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type '.png'],'-m3','-png');
+            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_spatial_frame_' num2str(ii) '_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type settings.file_suffix '.png'],'-m3','-png');
         else
             % A real combined figure:
-            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') '_combined_spatial_aggregation_of_' num2str(length(coastline_changes)) '_models_and_datasets.png'],'-m3','-png');
+            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') '_combined_spatial_aggregation_of_' num2str(length(coastline_changes)) '_models_and_datasets' settings.file_suffix '.png'],'-m3','-png');
         end
         disp(['Succesfully saved aggregated figure to file']);
         
@@ -1067,10 +1098,10 @@ if settings.combined_fig && ~isempty(find(plot_fig_inds))
         figure(findobj(get(0,'children'),'Tag',['Alongshore plot 1']));
         if length(coastline_changes) == 1
             % Only a sinlge figure 'combined'
-            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_alongshore_frame_' num2str(ii) '_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type '.png'],'-m3','-png');
+            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_alongshore_frame_' num2str(ii) '_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type settings.file_suffix '.png'],'-m3','-png');
         else
             % A real combined figure:
-            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') '_combined_alongshore_aggregation_of_' num2str(length(coastline_changes)) '_models_and_datasets.png'],'-m3','-png');
+            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') '_combined_alongshore_aggregation_of_' num2str(length(coastline_changes)) '_models_and_datasets' settings.file_suffix '.png'],'-m3','-png');
         end
         disp(['Succesfully saved aggregated figure to file']);
         % close figures:
@@ -1144,7 +1175,7 @@ if ~isempty(settings.diff_indices) || ~isempty(loaded_diff_data)
                 if exist([strrep([settings.output_folder filesep],[filesep filesep],filesep) 'mat_files']) ~= 7
                     mkdir([strrep([settings.output_folder filesep],[filesep filesep],filesep) 'mat_files']);
                 end
-                save([strrep([settings.output_folder filesep],[filesep filesep],filesep) 'mat_files' filesep 'diff_data_file_for_2_models_inds_' num2str(settings.diff_indices(ii,1)) '_and_' num2str(settings.diff_indices(ii,2)) '_' datestr(now,'yyyymmdd_HHMMSS')],'saved_data','-v7.3');
+                save([strrep([settings.output_folder filesep],[filesep filesep],filesep) 'mat_files' filesep 'diff_data_file_for_2_models_inds_' num2str(settings.diff_indices(ii,1)) '_and_' num2str(settings.diff_indices(ii,2)) '_' datestr(now,'yyyymmdd_HHMMSS') settings.file_suffix],'saved_data','-v7.3');
             end
         end
         
@@ -1198,8 +1229,16 @@ if ~isempty(settings.diff_indices) || ~isempty(loaded_diff_data)
             set(leg,'location','EastOutside','Orientation','vertical','color','w');
         end
         
-        xlim([min(part_coastline_used_ldb(:,1))-(0.05.*diff([min(part_coastline_used_ldb(:,1)) max(part_coastline_used_ldb(:,1))])) max(part_coastline_used_ldb(:,1))+(0.05.*diff([min(part_coastline_used_ldb(:,1)) max(part_coastline_used_ldb(:,1))]))]);
-        ylim([min(part_coastline_used_ldb(:,2))-(0.05.*diff([min(part_coastline_used_ldb(:,2)) max(part_coastline_used_ldb(:,2))])) max(part_coastline_used_ldb(:,2))+(0.05.*diff([min(part_coastline_used_ldb(:,2)) max(part_coastline_used_ldb(:,2))]))]);
+        if length(coastline.structure_inds) > 0
+            struc_lims_x = [min(coastline.ldb(cell2mat(coastline.structure_inds),1)) max(coastline.ldb(cell2mat(coastline.structure_inds),1))];
+            struc_lims_y = [min(coastline.ldb(cell2mat(coastline.structure_inds),2)) max(coastline.ldb(cell2mat(coastline.structure_inds),1))];
+        else
+            struc_lims_x = [Inf -Inf];
+            struc_lims_y = [Inf -Inf];
+        end
+        
+        xlim([min([part_coastline_used_ldb(:,1); struc_lims_x(1)])-(0.05.*diff([min([part_coastline_used_ldb(:,1); struc_lims_x(1)]) max([part_coastline_used_ldb(:,1); struc_lims_x(2)])])) max([part_coastline_used_ldb(:,1); struc_lims_x(2)])+(0.05.*diff([min([part_coastline_used_ldb(:,1); struc_lims_x(1)]) max([part_coastline_used_ldb(:,1); struc_lims_x(2)])]))]);
+        ylim([min([part_coastline_used_ldb(:,2); struc_lims_y(1)])-(0.05.*diff([min([part_coastline_used_ldb(:,2); struc_lims_y(1)]) max([part_coastline_used_ldb(:,2); struc_lims_y(2)])])) max([part_coastline_used_ldb(:,2); struc_lims_y(2)])+(0.05.*diff([min([part_coastline_used_ldb(:,2); struc_lims_y(1)]) max([part_coastline_used_ldb(:,2); struc_lims_y(2)])]))]);
         
         set(gca,'XTickLabel',[],'YTickLabel',[]);
         
@@ -1263,9 +1302,9 @@ if ~isempty(settings.diff_indices) || ~isempty(loaded_diff_data)
             end
             disp(['   Saving difference plot to file: ' num2str(ii) ' out of ' num2str(size(settings.diff_indices,1))]);
             if strcmp(diff_mode,'loaded_data');
-                export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') '_diff_plot_earlier_saved_data_' num2str(ii) '.png'],'-m3','-png');
+                export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') '_diff_plot_earlier_saved_data_' num2str(ii) settings.file_suffix '.png'],'-m3','-png');
             elseif strcmp(diff_mode,'new_data');
-                export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') '_diff_plot_model_inds_' num2str(diff_data(ii).model_inds(1)) '_and_' num2str(diff_data(ii).model_inds(2)) '.png'],'-m3','-png');
+                export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') '_diff_plot_model_inds_' num2str(diff_data(ii).model_inds(1)) '_and_' num2str(diff_data(ii).model_inds(2)) settings.file_suffix '.png'],'-m3','-png');
             end
             % close figures:
             fig_hands = findall(0,'type','figure'); close(fig_hands(find(strcmp(get(fig_hands,'Tag'),'ACDC_splash_screen')==0)));

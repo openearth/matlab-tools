@@ -50,8 +50,8 @@ fig = figure('visible','off');
 close(fig);
 c_ini = c_ini';
 c_end = c_end';
-c_ini(find(min(abs(c_ini),[],2)==0),:)=NaN;
-c_end(find(min(abs(c_end),[],2)==0),:)=NaN;
+c_ini(find(c_ini(:,1)==OPT.z_level),:)=NaN;
+c_end(find(c_end(:,1)==OPT.z_level),:)=NaN;
 % Remove start and trailing NaN's:
 if ~isempty(find(find(isnan(c_ini(:,1))) == 1))
     c_ini = c_ini(2:end,:);
