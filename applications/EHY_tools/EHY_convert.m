@@ -439,7 +439,7 @@ end
         if OPT.saveOutputFile
             shapewrite(outputFile,'polyline',lines2,{})
         end
-        output=pol;
+        output=lines;
     end
 % obs2kml
     function [output,OPT]=EHY_convert_obs2kml(inputFile,outputFile,OPT)
