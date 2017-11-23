@@ -96,13 +96,13 @@ for i = 1:length(measured)
         
         if isempty(y); continue; end;
         
-        if size(y,2) > size(y,1)
-            y = y';
-        end
-        
         if isvector(y)
             y0 = [];
             y1 = squeeze(y);
+            
+            if size(y1,2) > 1
+                y1 = y1';
+            end
         elseif ndims(y) == 2
             y0 = squeeze(y(1,:))';
             y1 = squeeze(y(end,:))';
