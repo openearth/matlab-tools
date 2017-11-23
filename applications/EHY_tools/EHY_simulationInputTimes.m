@@ -23,7 +23,7 @@ if nargin==0
         disp('Open a .mdu / .mdf / siminp file')
         [filename, pathname]=uigetfile({'*.mdu';'*.mdf';'*siminp*';'*.*'},'Open a .mdu / .mdf / siminp file');
         mdFile=[pathname filename];
-    elseif option==2    
+    elseif option==2
         mdInput={};
         option=  listdlg('PromptString','modelType :','SelectionMode','single','ListString',...
             {'Delft3D','Delft3D-FM','SIMONA'},'ListSize',[300 50]);
@@ -38,7 +38,7 @@ if nargin==0
         option=  listdlg('PromptString','time unit for start/stop date :','SelectionMode','single','ListString',...
             SMH,'ListSize',[300 50]);
         mdInput{2}=SMH{option};
-        mdInput{1}=input(['Reference time in format [' format{2} ']: '],'s');       
+        mdInput{1}=input(['Reference time in format [' format{2} ']: '],'s');
     end
 elseif nargin==1
     mdFile=varargin{1};
@@ -59,12 +59,20 @@ if exist('mdFile','var')
     switch modelType
         case 'mdf'
             mdf=delft3d_io_mdf('read',mdFile);
-            mdInput{7}=mdf.keywords.flhis(1);
-            mdInput{9}=mdf.keywords.flhis(2);
-            mdInput{10}=mdf.keywords.flhis(3);
-            mdInput{12}=mdf.keywords.flmap(1);
-            mdInput{14}=mdf.keywords.flmap(2);
-            mdInput{15}=mdf.keywords.flmap(3);
+            if isempty(mdf.keywords.flhis)
+                mdInput{7}='';mdInput{9}='';mdInput{10}='';
+            else
+                mdInput{7}=mdf.keywords.flhis(1);
+                mdInput{9}=mdf.keywords.flhis(2);
+                mdInput{10}=mdf.keywords.flhis(3);
+            end
+            if isempty(mdf.keywords.flmap)
+                mdInput{12}='';mdInput{14}='';mdInput{15}='';
+            else
+                mdInput{12}=mdf.keywords.flmap(1);
+                mdInput{14}=mdf.keywords.flmap(2);
+                mdInput{15}=mdf.keywords.flmap(3);
+            end
         case 'mdu'
             mdu=dflowfm_io_mdu('read',mdFile);
             if length(mdu.output.HisInterval)==1
