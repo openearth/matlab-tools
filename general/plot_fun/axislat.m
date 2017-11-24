@@ -2,7 +2,9 @@ function axislat(varargin)
 %AXISLAT   Sets (lon,lat) dataaspectratio for speficic latitude to have equal (dx,dy).
 %
 %    axislat
-%    axislat(latitude)
+%    axislat(latitude)      % passing the speficic latitude
+%    axislat(ha)            % passing the axes handle
+%    axislat(ha, latitude)  % passing the axes handle and speficic latitude
 %
 % sets the x and y dataaspectratio so that
 % WHEN PLOTTING IN DEGREES LAT AND LON, the vertical 
@@ -49,12 +51,21 @@ function axislat(varargin)
 % $Keywords: $
 
 lat = mean(ylim); %52.5;
-
-if nargin==1
-   lat = abs(varargin{1});
+ha  = gca;
+if nargin==1 
+   if ishandle(varargin{1})
+       ha = varargin{1};
+   else
+       lat = abs(varargin{1});
+       ha  = gca;
+   end
+elseif nargin == 2;
+    ha  = varargin{1};
+    lat = abs(varargin{2});
 end
 
-d = get(gca,'dataaspectratio');
+% d = get(gca,'dataaspectratio');
+d = get(ha,'dataaspectratio');
 
 d(2) = d(1).*cosd(lat);
 
