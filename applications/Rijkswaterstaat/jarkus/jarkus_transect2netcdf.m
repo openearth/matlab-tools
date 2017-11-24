@@ -122,6 +122,13 @@ for i = 1 : length(yearArray)
         if isempty(transect)
             continue
         elseif length(transect) > 1 % if more than one dataset per year and per ray is present, the data is merged
+            if length(unique(transect(1).crossShoreCoordinate)) ~= length(transect(1).crossShoreCoordinate) || ...
+                length(unique(transect(2).crossShoreCoordinate)) ~= length(transect(2).crossShoreCoordinate)
+                
+                % waiting for a fix from RWS, then delete this if-loop
+                warning('Measurement type 1, 3 or 5 might be present for the same cross-shore coordinate')
+                continue
+            end
             transect = mergetransects(transect);
         end
         [c, ia, ib] = intersect(crossShoreCoordinateArray, transect.crossShoreCoordinate);
