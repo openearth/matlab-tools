@@ -140,22 +140,23 @@ while 1
         end
     end
     
-    
-    if ~isempty(s{18})
-        tc.pressure_last_closed_isobar(it)=str2double(s{18});
-    end
-    if ~isempty(s{19})
-        tc.radius_last_closed_isobar(it)=str2double(s{19});
-    end
-    if ~isempty(s{20})
-        if str2double(s{20})>0
-            tc.rmax(it)=str2double(s{20});
+    if length(s)>17
+        if ~isempty(s{18})
+            tc.pressure_last_closed_isobar(it)=str2double(s{18});
         end
-    end
-    if length(s)>=28
-    if ~isempty(s{28})
-        tc.name=s{28};
-    end
+        if ~isempty(s{19})
+            tc.radius_last_closed_isobar(it)=str2double(s{19});
+        end
+        if ~isempty(s{20})
+            if str2double(s{20})>0
+                tc.rmax(it)=str2double(s{20});
+            end
+        end
+        if length(s)>=28
+            if ~isempty(s{28})
+                tc.name=s{28};
+            end
+        end
     end
 end
 fclose(fid);
