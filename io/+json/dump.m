@@ -17,8 +17,8 @@ function str = dump(value, varargin)
 % The function takes following options.
 %
 %   'ColMajor'    Represent matrix in column-major order. Default false.
-%   'indent'      Pretty-print the output string with indentation.  Default
-%                 []
+%   'indent'      Pretty-print the output string with indentation.  Default []
+%   'correct_x'   Added for disabling 'mangling' option. Default true (= correct 'x_' to '_' ) 
 %
 % EXAMPLE
 %
@@ -78,7 +78,8 @@ function options = get_options_(varargin)
 %GET_OPTIONS_
   options = struct(...
     'ColMajor', false,...
-    'indent', [] ...
+    'indent', [], ...
+    'correct_x', true ...            % Added for disabling this 'mangling' option
     );
   for i = 1:2:numel(varargin)
     switch varargin{i}
@@ -86,6 +87,8 @@ function options = get_options_(varargin)
         options.ColMajor = logical(varargin{i+1});
       case 'indent'
         options.indent = varargin{i+1};
+      case 'correct_x'
+        options.correct_x = logical(varargin{i+1});
       otherwise
         error('Unknown option to json.dump')
     end
@@ -135,9 +138,13 @@ function obj = dump_data_(value, options)
   elseif isstruct(value)
     obj = org.json.JSONObject();
     keys = fieldnames(value);
-    % replace name mangling as a result of loading
-    % todo, do this using ^(x_)\w regexp
-    keynames = cellfun(@(x) strrep(x, 'x_','_'), keys, 'UniformOutput', 0);
+    if options.correct_x
+        % replace name mangling as a result of loading
+        % todo, do this using ^(x_)\w regexp
+        keynames = cellfun(@(x) strrep(x, 'x_','_'), keys, 'UniformOutput', 0);
+    else
+        keynames = keys;  % Don't remove 'x_'
+    end
     for i = 1:length(keys)
       obj.put(keynames{i},dump_data_(value.(keys{i}), options));
     end
