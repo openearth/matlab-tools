@@ -82,7 +82,7 @@ if isempty(a)
     a = 0.51 * vfall ^ 0.44;
 end
 
-x=-10000:dx:10000;
+x=-10000:dx:1000000;
 
 z=-a*x.^(m);
 z2=-beta_dry*x;
