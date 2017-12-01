@@ -66,14 +66,19 @@ if isempty(vmax)
     vmax=sqrt(100*bs.*dp./(rhoa*e));
     output=vmax;
 else    
-    % Pc to be determined
-    dpall = 1:5:151;
-    x       = 0.6*(1-dpall/215);
-    bs      = -4.4e-5*dpall.^2 + 0.01*dpall + 0.03*dpcdt - 0.014*phi + 0.15*vt.^x + 1.0;
-    vmaxall = sqrt(100*bs.*dpall./(rhoa*e));
-    vmaxall=[vmaxall 200];
-    dpall=[dpall 156];
-    dp      = interp1(vmaxall,dpall,vmax);
+%     % Pc to be determined
+%     dpall = 1:5:151;
+%     x       = 0.6*(1-dpall/215);
+%     bs      = -4.4e-5*dpall.^2 + 0.01*dpall + 0.03*dpcdt - 0.014*phi + 0.15*vt.^x + 1.0;
+%     vmaxall = sqrt(100*bs.*dpall./(rhoa*e));
+%     vmaxall=[vmaxall 200];
+%     dpall=[dpall 156];
+%     dp      = interp1(vmaxall,dpall,vmax);
+    
+    vtkmh   = vt*3.6;
+    vmaxkmh = vmax*3.6*0.88;    
+    dp=0.00592*(1-0.0687*vtkmh.^0.33).*(1+0.00285*abs(phi).^1.35).*vmaxkmh.^1.81;
+
     output  = pn-dp;    
 end
 
