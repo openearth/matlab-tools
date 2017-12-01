@@ -1,4 +1,4 @@
-function z0land=create_z0land_file(fname,xg,yg,xx,yy,zz,opt)
+function z0land=delft3d_create_z0land_file(fname,xg,yg,xx,yy,zz,z0luni,opt)
 
 % Compute coordinates of cell centres
 [xz,yz]=getXZYZ(xg,yg);
@@ -42,7 +42,7 @@ zp(isnan(zp))=-100;
 zland=-0.5;
 iland=find(zp>zland);
 isea=find(zp<=zland);
-zp(iland)=1;
+zp(iland)=z0luni;
 zp(isea)=0;
 
 z0land=zeros(size(xz,1)+2,size(xz,2)+2,12)-999;
