@@ -12,7 +12,16 @@ function write(value, filename, varargin)
 % A struct array is mapped to a JSON object. However, since a JSON object
 % is unordered, the order of field names are not preserved.
 %
-% The function takes the same options as json.dump.
+% The function takes the same options as json.dump like:
+% The function takes following options.
+%
+%   where the following <keyword,value> pairs have been implemented (values indicated are the current default settings):
+%   'ColMajor'  , false  =  Represent matrix in column-major order. Default false.
+%   'indent'    , []     =  Pretty-print the output string with indentation. 
+%                           Value is the number of spaces used for indentation.
+%                           [] (no indent = 0 spaces)
+%   'correct_x' , true   =  Added for disabling 'mangling' option. 
+%                           By default it corrects 'x_' to '_' (WHY ??) 
 %
 % See also json.dump
 

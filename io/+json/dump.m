@@ -16,9 +16,13 @@ function str = dump(value, varargin)
 %
 % The function takes following options.
 %
-%   'ColMajor'    Represent matrix in column-major order. Default false.
-%   'indent'      Pretty-print the output string with indentation.  Default []
-%   'correct_x'   Added for disabling 'mangling' option. Default true (= correct 'x_' to '_' ) 
+%   where the following <keyword,value> pairs have been implemented (values indicated are the current default settings):
+%   'ColMajor'  , false  =  Represent matrix in column-major order. Default false.
+%   'indent'    , []     =  Pretty-print the output string with indentation. 
+%                           Value is the number of spaces used for indentation.
+%                           [] (no indent = 0 spaces)
+%   'correct_x' , true   =  Added for disabling 'mangling' option. 
+%                           By default it corrects 'x_' to '_' (WHY ??) 
 %
 % EXAMPLE
 %
@@ -104,7 +108,8 @@ function obj = dump_data_(value, options)
   elseif ~isscalar(value)
     obj = org.json.JSONArray();
     
-    if ndims(value) > 2
+    if ~ismatrix(value)
+%     if ndims(value) > 2
       split_value = num2cell(value, 1:ndims(value)-1);
       for i = 1:numel(split_value)
         obj.put(dump_data_(split_value{i}, options));
@@ -140,8 +145,11 @@ function obj = dump_data_(value, options)
     keys = fieldnames(value);
     if options.correct_x
         % replace name mangling as a result of loading
-        % todo, do this using ^(x_)\w regexp
-        keynames = cellfun(@(x) strrep(x, 'x_','_'), keys, 'UniformOutput', 0);
+        % todo, do this using ^(x_)\w regexp                                    -> ^ means leading 'x_'
+%       keynames = cellfun(@(x) strrep(x, 'x_','_'), keys, 'UniformOutput', 0);  % Original code
+        
+%       keynames = regexprep(keys,'^x_\w*','_');  % QUESTION: IS THE REPACEMENT OK ? Fieldnames in a structure can NOT start with '_'
+        keynames = regexprep(keys,'^x_\w*','');   % Should be better
     else
         keynames = keys;  % Don't remove 'x_'
     end

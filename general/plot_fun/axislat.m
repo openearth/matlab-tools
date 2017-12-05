@@ -50,25 +50,25 @@ function axislat(varargin)
 % $HeadURL$
 % $Keywords: $
 
-lat = mean(ylim); %52.5;
-ha  = gca;
-if nargin==1 
-   if ishandle(varargin{1})
-       ha = varargin{1};
-   else
-       lat = abs(varargin{1});
-       ha  = gca;
-   end
-elseif nargin == 2;
+if nargin ==1
+    if ishandle(varargin{1})            % Thus the input is: the axes handle
+        ha  = varargin{1};
+        lat = abs(mean(ylim(ha)));      %   Calculate the average y coordinate
+    else                                % Thus the input is: lat
+        ha  = gca;
+        lat = abs(varargin{1});
+    end
+    
+elseif nargin == 2;                     % Thus the input is: (ha , lat)
     ha  = varargin{1};
     lat = abs(varargin{2});
+else
+    return
 end
 
-% d = get(gca,'dataaspectratio');
-d = get(ha,'dataaspectratio');
+d    = get(ha,'dataaspectratio');       % Get the current aspect ratio
+d(2) = d(1).*cosd(lat);                 % Calculate the aspect ratio correction
 
-d(2) = d(1).*cosd(lat);
-
-daspect(d);
+daspect(ha,d);                          % Set the new aspect ratio
 
 %% EOF
