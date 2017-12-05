@@ -162,8 +162,8 @@ C     Call the computational subroutine
 
       write(900,'(a,f10.1,a,a,a)')  'TIME           = ',t(it),
 &        ' minutes since ',trim(refstr),' +00:00'
-      write(900,'(a,f12.4)')  'x_spw_eye      = ',x(it)
-      write(900,'(a,f12.4)')  'y_spw_eye      = ',y(it)
+      write(900,'(a,f14.4)')  'x_spw_eye      = ',x(it)
+      write(900,'(a,f14.4)')  'y_spw_eye      = ',y(it)
       write(900,'(a,f10.1)')  'p_drop_spw_eye = ',pmax
          
          do irow = 1, nrows
