@@ -55,61 +55,61 @@ function varargout = udunits2datenum(varargin)
 % 2009 jul 09: added option to pass only 1 string argument [GJdB]
 
 %% Handle input
+if nargin==1
+    if     iscell(varargin{1});
+        celltime = varargin{1};
+    elseif ischar(varargin{1});
+        celltime = cellstr(varargin{1});
+    end
+    
+    % Preallocate
+    [time , isounits] = deal(cell(length(celltime),1));
+    for irow = 1:length(celltime)
+        ind   = strfind(celltime{irow},'since');
+        [a,b] = strtok(celltime{irow}(1:ind-1)); % a can be missing
+        if isempty(strtrim(b))
+            b = a;
+            a = '';
+        end
+        time{irow}     = a;
+        isounits{irow} = [b ' ' celltime{irow}(ind:end)];
+    end
+    time = str2double(char(time));                          % time = str2num(char(time));
+    time = time(:)';                                        % time = double(time(:)');% to prevent erroneous roundoff
+    
+elseif nargin==2
+    time      = double(varargin{1}); % to prevent erroneous roundoff
+    isounits  = cellstr(varargin{2});
+end
 
-   if     nargin==1
-      if     iscell(varargin{1});celltime =         varargin{1};
-      elseif ischar(varargin{1});celltime = cellstr(varargin{1});
-      end
-
-      for irow=1:length(celltime)
-      ind = strfind(celltime{irow},'since');
-     [a,b] = strtok(celltime{irow}(1:ind-1)); % a can be missing
-      if isempty(strtrim(b))
-         b = a;
-         a = '';
-      end
-      time{irow}     = a;
-      isounits{irow} = [b ' ' celltime{irow}(ind:end)];
-      end
-      time = str2num(char(time));
-      time = double(time(:)');% to prevent erroneous roundoff
-      
-   elseif nargin==2
-      time      = double(varargin{1}); % to prevent erroneous roundoff
-      isounits  = cellstr(varargin{2});
-   end   
-   
 %% Interpret unit and reference date string
+refdatenum    = nan([1 length(isounits)]);                  % refdatenum  = repmat(nan,[1 length(isounits)]);
+[units, zone] = deal(cell(length(isounits),1));
+for irow=1:length(isounits)
+    rest              = isounits{irow};
+    [units{irow},rest] = strtok(rest);
+    [~          ,rest] = strtok(rest); % since              % [dummy      ,rest] = strtok(rest);
+    [refdatenum(irow), zone{irow}] = iso2datenum(rest);
+end
 
-      refdatenum = repmat(nan,[1 length(isounits)]);
-   for irow=1:length(isounits)
-      rest              = isounits{irow};
-     [units{irow},rest] = strtok(rest);
-     [dummy      ,rest] = strtok(rest); % since
-     [refdatenum(irow),...
-      zone{irow}]       = iso2datenum(rest);
-   end
+if length(time) >1 && length(isounits)==1
+    datenumbers = time.*convert_units(units{1},'day') + refdatenum;
+else
+    %% create matrix of factors to have a factorized multiplication below
+    unitfactor = nan(size(time));                           %   unitfactor = repmat(nan,size(time));
+    for irow=1:length(time)
+        unitfactor(irow) = convert_units(units{irow},'day');
+    end
+    datenumbers = time.*unitfactor + refdatenum;
+end
 
-   if length(time) >1 & length(isounits)==1
-      datenumbers = time.*convert_units(units{1},'day') + refdatenum;
-   else
-      %% create matrix of factors to have a factorized multiplication below
-      unitfactor = repmat(nan,size(time));
-      for irow=1:length(time)
-         unitfactor(irow) = convert_units(units{irow},'day');
-      end
-      datenumbers = time.*unitfactor + refdatenum;
-   end
-   
 %% Output
+if     nargout<2
+    varargout = {datenumbers};
+elseif nargout==2
+    varargout = {datenumbers,strtrim(zone)};
+else
+    error('to much output parameters')
+end
 
-   if     nargout<2
-      varargout = {datenumbers};
-   elseif nargout==2
-      varargout = {datenumbers,strtrim(zone)};
-   else
-      error('to much output parameters')
-   end
-
-   
-%% EOF   
+  
