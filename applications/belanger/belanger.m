@@ -72,7 +72,7 @@ for i_pnt      = no_pnt:-1:2
             disp('no convergance');
         end
         a(i_pnt - 1) = a(i_pnt) + da_old;
-    else
+    elseif strcmpi(OPT.method,'pc');
         % predictor corrector
         a_tmp  = a(i_pnt) + da_old;
         if strcmpi(AorR,'r')
@@ -83,6 +83,28 @@ for i_pnt      = no_pnt:-1:2
         u      = Q/(B*a_tmp);
         dhdx2 = (ib - abs(u)*u/(C*C*R))/(1 - u*u/(g*a_tmp));
         a(i_pnt - 1) = a(i_pnt) + 0.5*(dhdx1 + dhdx2)*dx;
+    else
+        diff   = 1e10;
+        iter   = 0;
+        while diff > eps && iter <= 1000
+            iter = iter + 1;
+            a_tmp  = a(i_pnt) + da_old;
+            if strcmpi(AorR,'r')
+                R = (B*a_tmp)/(B + 2*a_tmp);
+            else
+                R = a_tmp;
+            end
+            u      = Q/(B*a_tmp);
+            dhdx2 = (ib - abs(u)*u/(C*C*R))/(1 - u*u/(g*a_tmp));
+            da_new = 0.5*(dhdx1 + dhdx2)*dx;
+            diff   = abs (da_old - da_new);
+            da_old = da_new;
+        end
+        if iter == 1000
+            disp('no convergance');
+        end
+        a(i_pnt - 1) = a(i_pnt) + da_old;
+        
     end
 end
 
