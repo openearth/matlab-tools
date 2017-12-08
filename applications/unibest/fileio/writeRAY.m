@@ -119,7 +119,7 @@ elseif nargin == 1
         end
         
         if isempty(RAYdata(ii).time)
-            fprintf(fid4,'    equi      c1     c2   h0    angle   fshape\n');
+            fprintf(fid4,'    equi              c1              c2             h0           angle         fshape\n');
             if isempty(RAYdata(ii).QSoffset)
                 fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).equi RAYdata(ii).c1 RAYdata(ii).c2 RAYdata(ii).h0 RAYdata(ii).hoek RAYdata(ii).fshape]);
             else
@@ -129,34 +129,44 @@ elseif nargin == 1
             if ~isempty(RAYdata(ii).hass)
                 % hass is not empty:
                 % whatever non-zero value is set (e.g. 1, 1000, 'on', etc.), hass is printed as 1 (except for 0):
+<<<<<<< .mine
+                fprintf(fid4,'       Xb            2 %%           20%%           50%%           80%%          100%%     high_angle_stability_switch\n');
+                fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100 ~isempty(nonzeros(RAYdata(ii).hass))]);
+=======
                 fprintf(fid4,'       Xb      2 %%      20%%      50%%      80%%     100%%     high_angle_stability_switch\n');
                 fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100 ~isempty(nonzeros(RAYdata(ii).hass))]);
+>>>>>>> .r14027
             else
                 % hass is empty, ignore it (not printed as zero, as in the original file):
+<<<<<<< .mine
+                fprintf(fid4,'       Xb            2 %%           20%%           50%%           80%%          100%%\n');
+                fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100]);
+=======
                 fprintf(fid4,'       Xb      2 %%      20%%      50%%      80%%     100%%\n');
                 fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100]);
+>>>>>>> .r14027
             end
         else
             if isempty(RAYdata(ii).hass)
                 if isempty(RAYdata(ii).QSoffset)
-                    fprintf(fid4,'     timepoint          equi            c1             c2             h0           angle         fshape            Xb              2%%              20%%             50%%             80%%            100%%  \n');
+                    fprintf(fid4,'     timepoint          equi              c1              c2             h0           angle         fshape            Xb              2%%              20%%             50%%             80%%            100%%  \n');
                     fprintf(fid4,'   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e\n',...
                             [RAYdata(ii).time(:), RAYdata(ii).equi(:), RAYdata(ii).c1(:), RAYdata(ii).c2(:), RAYdata(ii).h0(:), RAYdata(ii).hoek(:), RAYdata(ii).fshape(:), ...
                             RAYdata(ii).Xb(:), RAYdata(ii).perc2(:), RAYdata(ii).perc20(:), RAYdata(ii).perc50(:), RAYdata(ii).perc80(:), RAYdata(ii).perc100(:)]');
                 else
-                    fprintf(fid4,'     timepoint          equi            c1             c2             h0           angle         fshape         QSoffset            Xb              2%%              20%%             50%%             80%%            100%%  \n');
+                    fprintf(fid4,'     timepoint          equi              c1              c2             h0           angle         fshape         QSoffset            Xb              2%%              20%%             50%%             80%%            100%%  \n');
                     fprintf(fid4,'   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e\n',...
                             [RAYdata(ii).time(:), RAYdata(ii).equi(:), RAYdata(ii).c1(:), RAYdata(ii).c2(:), RAYdata(ii).h0(:), RAYdata(ii).hoek(:), RAYdata(ii).fshape(:), RAYdata(ii).QSoffset(:), ...
                             RAYdata(ii).Xb(:), RAYdata(ii).perc2(:), RAYdata(ii).perc20(:), RAYdata(ii).perc50(:), RAYdata(ii).perc80(:), RAYdata(ii).perc100(:)]');
                 end
             else
                 if isempty(RAYdata(ii).QSoffset)
-                    fprintf(fid4,'     timepoint          equi            c1             c2             h0           angle         fshape            Xb              2%%              20%%             50%%             80%%            100%%     high-angle switch  \n');
+                    fprintf(fid4,'     timepoint          equi              c1              c2             h0           angle         fshape            Xb              2%%              20%%             50%%             80%%            100%%     high-angle switch  \n');
                     fprintf(fid4,'   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %1.0f\n',...
                             [RAYdata(ii).time(:), RAYdata(ii).equi(:), RAYdata(ii).c1(:), RAYdata(ii).c2(:), RAYdata(ii).h0(:), RAYdata(ii).hoek(:), RAYdata(ii).fshape(:), ...
                             RAYdata(ii).Xb(:), RAYdata(ii).perc2(:), RAYdata(ii).perc20(:), RAYdata(ii).perc50(:), RAYdata(ii).perc80(:), RAYdata(ii).perc100(:), repmat(RAYdata(ii).hass(1),[length(RAYdata(ii).perc100),1])]');
                 else
-                    fprintf(fid4,'     timepoint          equi            c1             c2             h0           angle         fshape         QSoffset            Xb              2%%              20%%             50%%             80%%            100%%     high-angle switch\n');
+                    fprintf(fid4,'     timepoint          equi              c1              c2             h0           angle         fshape         QSoffset            Xb              2%%              20%%             50%%             80%%            100%%     high-angle switch\n');
                     fprintf(fid4,'   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %8.6e   %1.0f\n',...
                             [RAYdata(ii).time(:), RAYdata(ii).equi(:), RAYdata(ii).c1(:), RAYdata(ii).c2(:), RAYdata(ii).h0(:), RAYdata(ii).hoek(:), RAYdata(ii).fshape(:), RAYdata(ii).QSoffset(:), ...
                             RAYdata(ii).Xb(:), RAYdata(ii).perc2(:), RAYdata(ii).perc20(:), RAYdata(ii).perc50(:), RAYdata(ii).perc80(:), RAYdata(ii).perc100(:), repmat(RAYdata(ii).hass(1),[length(RAYdata(ii).perc100),1])]');
