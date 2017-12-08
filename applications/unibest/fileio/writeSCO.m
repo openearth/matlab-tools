@@ -105,6 +105,13 @@ if nargin>2
     end
 else
     SCOdata = varargin{1};
+    if ~isfield(SCOdata,'Htide')
+        SCOdata.Htide=0;
+    end
+    if ~isfield(SCOdata,'isTimeseries')
+        SCOdata.isTimeseries=0;
+    end
+    
     if ~isfield(SCOdata,'time') && isfield(SCOdata,'timenum')
         SCOdata.time = (SCOdata.timenum-SCOdata.timenum(1))*24;
     end
@@ -129,6 +136,20 @@ if ~isfield(SCOdata,'prctDynamicBND')
     SCOdata.prctDynamicBND=100;
 end
 
+%% FILL IN FIELDS WHICH MAY NOT BE SPECIFIED FOR WIND AND TIDE
+fldnms = {'Htide','Vtide','Ptide','RefDep'};  % 'WS','Wdir','Wdrag'
+defval = [0, 0, 100, 5];
+for kk=1:length(fldnms)
+    if ~isfield(SCOdata,fldnms{kk}) && SCOdata.isTimeseries==0; 
+        SCOdata.(fldnms{kk}) = defval(kk);
+    elseif ~isfield(SCOdata,fldnms{kk}) && SCOdata.isTimeseries==1; 
+        SCOdata.(fldnms{kk}) = repmat(defval(kk),size(SCOdata.hs));
+    elseif length(SCOdata.(fldnms{kk}))==1 && length(SCOdata.hs)>1 && SCOdata.isTimeseries==1
+        SCOdata.(fldnms{kk}) = repmat(SCOdata.(fldnms{kk}),size(SCOdata.hs));
+    end
+end
+
+
 %% WRITE REGULAR SCO FILE (CLIMATE CONDITIONS)
 fid = fopen(SCOfilename,'wt');
 if SCOdata.isTimeseries~=1
@@ -140,13 +161,22 @@ if SCOdata.isTimeseries~=1
     fprintf(fid,' Y= ');
     fprintf(fid,'%11.2f',SCOdata.y);
     fprintf(fid,'  )\n');
+    if SCOdata.isWavecurrent>0 || SCOdata.isDynamicBND>0 || SCOdata.isWind>0 || SCOdata.isTideoffset>0 || SCOdata.isTimeseries>0
+    fprintf(fid,'%2.0f       (Model for wave-current interaction 0..8)\n',SCOdata.isWavecurrent);
+    fprintf(fid,'%2.0f      %3.0f      (Use Dynamic boundary (on=1/off=0))\n',SCOdata.isDynamicBND,SCOdata.prctDynamicBND);
+    fprintf(fid,'%2.0f       (Use Wind Driven Currents (on=1/off=0))\n',SCOdata.isWind);
+    end
+    if SCOdata.isTideoffset>0 || SCOdata.isTimeseries>0
+    fprintf(fid,'%2.0f       (Use Tide offset for schematisation (on=1/off=0))\n',SCOdata.isTideoffset);
+    fprintf(fid,'%2.0f       (Use timeseries)\n',SCOdata.isTimeseries);
+    end
     fprintf(fid,'WAVM      H0            wave height   period   direction   Duration\n');
     fprintf(fid,'   %14.3f%14.3f%14.3f%14.3f%14.5f\n',[SCOdata.h0(:),SCOdata.hs(:),SCOdata.tp(:),SCOdata.xdir(:),SCOdata.dur(:)]');
     if writedummyTIDE==1
         fprintf(fid,'  1    (Number of Tide condition\n');
         fprintf(fid,'          DH            Vgety         Ref.depth   Perc\n');
         fprintf(fid,'             0.00          0.00          3.00        100.00\n');
-    elseif writedummyTIDE~=0
+    elseif writedummyTIDE==0
         fprintf(fid,' %2.0f    (Number of Tide condition\n',length(SCOdata.Htide));
         fprintf(fid,'     %9s %9s %9s %9s\n','DH','Vgety','Ref.depth','Perc');
         fprintf(fid,'     %9.3f %9.3f %9.3f %9.5f\n',[SCOdata.Htide(:), SCOdata.Vtide(:), SCOdata.RefDep(:), SCOdata.Ptide(:)]');

@@ -22,11 +22,11 @@ function [Kr,alfa]=calcrefrac(d,T,alfa0)
 alfa0=alfa0*pi/180;
 k=2*pi/L;
 if alfa0>=0 && alfa0<=pi/2
-    alfa=asin(tanh(k*d))*sin(alfa0);
+    alfa=asin(tanh(k*d)*sin(alfa0));
     Kr=sqrt(cos(alfa0)/cos(alfa));
 elseif alfa0>pi/2 && alfa0<pi
     alfa0=pi-alfa0;
-    alfa=asin(tanh(k*d))*sin(alfa0);
+    alfa=asin(tanh(k*d)*sin(alfa0));
     Kr=sqrt(cos(alfa0)/cos(alfa));
     alfa=pi-alfa;
 else

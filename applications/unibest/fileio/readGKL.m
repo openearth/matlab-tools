@@ -79,5 +79,6 @@ end
 for i=1:nloc
    lin = fgetl(fid);
    [x(i) y(i) ray_file(i) ]=strread(lin,'%f%f%s');
+   ray_file{i}=regexprep(ray_file{i},'''','');
 end
 fclose(fid);

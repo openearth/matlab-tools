@@ -114,7 +114,9 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
     if ~isempty(reftime);reftimenum = datenum(reftime,'yyyy-mm-dd');end
     if isempty(timesteps);timesteps=[1:PRNdata.year];end
     if length(timesteps)>1;DT = PRNdata.year(2)-PRNdata.year(1);end
-
+    IDT=find(timesteps<=length(PRNdata.year));
+    timesteps=timesteps(IDT);
+    
     %% coast angle
     ANGLEcoast = mean(PRNdata.alfa(:,timesteps),2);
     smoothvar(ANGLEcoast,10);

@@ -68,6 +68,13 @@ err=0;
 if isstr(locs)
     dta1=readldb(locs);
     dta2=[dta1.x dta1.y];
+elseif isstruct(locs)
+    try
+        dta2=[locs.x(:),locs.y(:)];
+    catch
+        dta2=[locs.X(:),locs.Y(:)];
+    end
+    ray_file=locs.ray_file;
 elseif isnumeric(locs)
     dta2=locs;
 else
