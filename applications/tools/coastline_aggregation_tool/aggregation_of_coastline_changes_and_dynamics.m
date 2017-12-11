@@ -683,15 +683,7 @@ for ii=1:length(data)
         else
             if strcmp(saved_data.type,'single_model_data_storage')
                 % Pre-loaded single model/data result:
-                %% FREEK TO DO, DEBUGGING:
-%                 try
                 coastline_changes(ii) = saved_data.coastline_changes;
-%                 catch
-%                     fields0=fields(coastline_changes);
-%                     for kk=1:length(fields0)
-%                         coastline_changes(ii).(fields0{kk}) = saved_data.coastline_changes.(fields0{kk});
-%                     end
-%                 end
             elseif strcmp(saved_data.type,'difference_data_model_storage')
                 % This is relative data, so we feed the default datastream
                 % with zero's to avoid cumulative effects we don't want:
