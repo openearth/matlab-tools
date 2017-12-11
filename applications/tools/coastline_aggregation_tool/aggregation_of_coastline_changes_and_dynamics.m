@@ -424,9 +424,8 @@ if settings.show_splash
     axis tight;
     imshow(splash_img); set(gca,'Position',[0 0 1 1]); ss = get(0,'ScreenSize'); ss = ss(3:4);
     set(splash_screen,'position',[(ss./2)-([size(splash_img,2)./2 size(splash_img,1)./2]./2) size(splash_img,2)./2 (size(splash_img,1)./2)-18],'NumberTitle','off','Name','ACDC is running...');
-    close(splash_screen); 
-    %remove_figure_frame(splash_screen);
-    %hold on; plot([get(gca,'xlim') fliplr(get(gca,'xlim')) min(get(gca,'xlim'))],[min(get(gca,'ylim')) get(gca,'ylim') fliplr(get(gca,'ylim'))],'k'); drawnow;
+    remove_figure_frame(splash_screen);
+    hold on; plot([get(gca,'xlim') fliplr(get(gca,'xlim')) min(get(gca,'xlim'))],[min(get(gca,'ylim')) get(gca,'ylim') fliplr(get(gca,'ylim'))],'k'); drawnow;
 end
 
 % Now let's make a vector that we can use as the offshore direction
@@ -684,14 +683,15 @@ for ii=1:length(data)
         else
             if strcmp(saved_data.type,'single_model_data_storage')
                 % Pre-loaded single model/data result:
-                try
+                %% FREEK TO DO, DEBUGGING:
+%                 try
                 coastline_changes(ii) = saved_data.coastline_changes;
-                catch
-                    fields0=fields(coastline_changes);
-                    for kk=1:length(fields0)
-                        coastline_changes(ii).(fields0{kk}) = saved_data.coastline_changes.(fields0{kk});
-                    end
-                end
+%                 catch
+%                     fields0=fields(coastline_changes);
+%                     for kk=1:length(fields0)
+%                         coastline_changes(ii).(fields0{kk}) = saved_data.coastline_changes.(fields0{kk});
+%                     end
+%                 end
             elseif strcmp(saved_data.type,'difference_data_model_storage')
                 % This is relative data, so we feed the default datastream
                 % with zero's to avoid cumulative effects we don't want:
