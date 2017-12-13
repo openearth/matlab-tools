@@ -1,4 +1,14 @@
 function input_reduction_tool(varargin)
+%
+% Below a brief summary on how to work with the input reduction tool is
+% provided. A more detailed user manual can be found in the pdf:
+%
+% Description_and_user_manual_input_reduction_tool.pdf
+%
+% Which can be found in the following OET folder:
+%
+% .\matlab\applications\tools\input_reduction_tool\
+%
 % The input reduction tool can be used to reduce wave input, primarily to
 % reduce the computational burdon of numerical models. It supports the
 % following input reduction methods:
