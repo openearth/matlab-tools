@@ -10,6 +10,15 @@ function varargout = aggregation_of_coastline_changes_and_dynamics(coastline_use
 % data (which can be used for any other model) called "Landboundaries" or
 % simply provided as manual input.
 %
+% Below a summary on how to work with the ACDC tool is provided.
+% A more detailed user manual can be found in the pdf:
+%
+% Description_and_user_manual_ACDC_tool.pdf
+%
+% Which can be found in the following OET folder:
+%
+% .\matlab\applications\tools\coastline_aggregation_tool\
+%
 % The function can be called as follows:
 %
 % aggregation_of_coastline_changes_and_dynamics(coastline,data,settings)
