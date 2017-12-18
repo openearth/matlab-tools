@@ -38,6 +38,7 @@ function [xgr zgr] = xb_grid_xgrid(xin, zin, varargin)
 %     - dxdry    :: [m] grid size for dry points
 %     - zdry     :: [m] elevation above which points are dry 
 %     - xdry     :: [m] cross-shore distance from which points are dry
+%     - minh     :: [m] minimum water depth used in dispersion relation
 %
 %   Output:
 %   xgr   = x-grid coordinates
@@ -108,7 +109,8 @@ OPT = struct(...
     'nonh', false, ...     % setting grid to solve individual short waves instead of infragravity waves
     'dxdry', [], ...       % grid size to use for dry cells
     'zdry', [],...         % vertical level above which cells should be considered dry
-    'xdry', []...          % horizontal (cross-shore) level from which cells should be considered dry
+    'xdry', [],...         % horizontal (cross-shore) level from which cells should be considered dry
+    'minh', 0.01 ...       % minimum water depth used in dispersion relation
     );
 
 % overrule default settings by propertyName-propertyValue pairs, given in varargin
@@ -212,16 +214,20 @@ elseif OPT.vardx == 1
         
         % need to recompute k for changing water depth
         hlast = hgr(ii);
-        if OPT.nonh
-            k       = disper(2*pi/OPT.Tm, hlast, OPT.g);
-            Lwave = 2*pi/k;
+        if hlast>OPT.minh
+            if OPT.nonh
+                k       = disper(2*pi/OPT.Tm, hlast, OPT.g);
+                Lwave = 2*pi/k;
+            else
+                %Llong   = 4*2*pi/k;
+                k       = disper(2*pi/(OPT.Tm), hlast, OPT.g);
+                Lshort = 2*pi/k;
+                Lwave = 4*Lshort;
+            end
         else
-            %Llong   = 4*2*pi/k;
-            k       = disper(2*pi/(OPT.Tm), hlast, OPT.g);
-            Lshort = 2*pi/k;
-            Lwave = 4*Lshort;
+            Lwave = 0;
         end
-        
+        abvc = 1;
         
     end
     if all(dx<=OPT.dxmin)
