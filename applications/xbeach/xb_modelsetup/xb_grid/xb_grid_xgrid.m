@@ -153,13 +153,14 @@ elseif OPT.vardx == 1
     hin      = max(OPT.wl-zin,0.01);
     %k       = disper(2*pi/OPT.Tm, hin(1), OPT.g);
     if OPT.nonh
-    	k       = disper(2*pi/OPT.Tm, hin(1), OPT.g);
-        %Llong = 2*pi/k;
+        k       = disper(2*pi/OPT.Tm, hin(1), OPT.g);
+        Lwave = 2*pi/k;
     else
         %Llong   = 4*2*pi/k;
-        k       = disper(2*pi/(OPT.Tm*4), hin(1), OPT.g);% assume Tlong = 4 * Tshort, instead of Llong = 4*Lshort
+        k       = disper(2*pi/(OPT.Tm), hin(1), OPT.g);
+        Lshort = 2*pi/k;
+        Lwave = 4*Lshort;
     end
-    Llong = 2*pi/k;
     x       = xin;
         
     % grid settings
@@ -182,7 +183,7 @@ elseif OPT.vardx == 1
         end
         
         % compute dx; minimum value dx (on dry land) = dxmin
-        dxmax = Llong/OPT.ppwl;
+        dxmax = Lwave/OPT.ppwl;
         dxmax = min(dxmax,OPT.dxmax);
         % dxmax = sqrt(g*hgr(min(ii)))*Tlong_min/12;
         dx(ii) = sqrt(OPT.g*hgr(ii))*OPT.dtref/OPT.CFL;
@@ -192,10 +193,6 @@ elseif OPT.vardx == 1
             dx(ii) = min(dx(ii),dxmax);
         else
             dx(ii) = localmin;
-            if ii == 1
-                warning(['Computed dxmax (= ' num2str(dxmax) ' m) is smaller than the user defined dxmin (= ' num2str(localmin) ' m). ',...
-                    'Grid will be generated using constant dx = dxmin. Please change dxmin if this is not desired.']);
-            end
         end
         
         % make sure that dx(ii)<= maxfac*dx(ii-1) or dx(ii)>= 1/maxfac*dx(ii-1)
@@ -212,6 +209,24 @@ elseif OPT.vardx == 1
         hgr(ii) = interp1(xin2,hin(index),xtemp);
         zgr(ii) = interp1(xin2,zin(index),xtemp);
         xlast=xgr(ii);
+        
+        % need to recompute k for changing water depth
+        hlast = hgr(ii);
+        if OPT.nonh
+            k       = disper(2*pi/OPT.Tm, hlast, OPT.g);
+            Lwave = 2*pi/k;
+        else
+            %Llong   = 4*2*pi/k;
+            k       = disper(2*pi/(OPT.Tm), hlast, OPT.g);
+            Lshort = 2*pi/k;
+            Lwave = 4*Lshort;
+        end
+        
+        
+    end
+    if all(dx<=OPT.dxmin)
+        warning(['Computed dxmax (= ' num2str(dxmax) ' m) is smaller than the user defined dxmin (= ' num2str(localmin) ' m). ',...
+            'Grid will be generated using constant dx = dxmin. Please change dxmin if this is not desired.']);
     end
     
     xb_verbose(1,'Optimize cross-shore grid using CFL condition');
