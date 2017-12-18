@@ -19,7 +19,11 @@ end
 
 %% Make the list of pli files
 for i_bnd = 1: no_bnd
-    filpli{i_bnd} = [mdu.pathmdu filesep ext_force(index(i_bnd)).filename];
+    if ~isempty(mdu.pathmdu)
+        filpli{i_bnd} = [mdu.pathmdu filesep ext_force(index(i_bnd)).filename];
+    else
+        filpli{i_bnd} = ext_force(index(i_bnd)).filename;
+    end
 end
 
 %% Convert hydrodynamic boundary conditions, start with astronomical bc
@@ -63,7 +67,11 @@ end
 
 %% Make the list of pli files
 for i_bnd = 1: no_bnd
-    filpli{i_bnd} = [mdu.pathmdu filesep ext_force(index(i_bnd)).filename];
+    if ~isempty(mdu.pathmdu)
+        filpli{i_bnd} = [mdu.pathmdu filesep ext_force(index(i_bnd)).filename];
+    else
+        filpli{i_bnd} = ext_force(index(i_bnd)).filename;
+    end
 end
 
 %% Convert sea level anomolies boundaries

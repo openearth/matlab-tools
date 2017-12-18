@@ -206,29 +206,28 @@
                % set default value in case of diagonal velocity boundaries
 
                for isize = 1: 2
-                    for isize = 1: 2
-                        m = bnd.m (ibnd,isize);
-                        n = bnd.n (ibnd,isize);
-                        if m > 1
-                            if icom(m-1,n) == 1
-                                m = m - 1;
-                            end
-                        end
-                        if n > 1
-                            if icom(m,n-1) == 1
-                                n = n - 1;
-                            end
-                        end
-                                                
-                        Xbnd (ibnd,isize) =  0.5 * ( X(m,n) + X(m-1,n) );
-                        Ybnd (ibnd,isize) =  0.5 * ( X(m,n) + X(m-1,n) );
-                        if isnan (Xbnd(ibnd,isize))
-                             Xbnd (ibnd,isize) =  0.5 * ( X(m,n) + X(m,n-1) );
-                             Ybnd (ibnd,isize) =  0.5 * ( X(m,n) + X(m,n-1) );
-                        end
-                    end
-                end
+                   
+                   m = bnd.m (ibnd,isize);
+                   n = bnd.n (ibnd,isize);
+                   if m > 1
+                       if icom(m-1,n) == 1
+                           m = m - 1;
+                       end
+                   end
+                   if n > 1
+                       if icom(m,n-1) == 1
+                           n = n - 1;
+                       end
+                   end
+                   try
+                       Xbnd (ibnd,isize) =  0.5 * ( X(m,n) + X(m-1,n) );
+                       Ybnd (ibnd,isize) =  0.5 * ( Y(m,n) + Y(m-1,n) );
+                   catch
+                       Xbnd (ibnd,isize) =  0.5 * ( X(m,n) + X(m,n-1) );
+                       Ybnd (ibnd,isize) =  0.5 * ( Y(m,n) + Y(m,n-1) );
+                   end
+               end
             end
          end
-      end
+       end
 

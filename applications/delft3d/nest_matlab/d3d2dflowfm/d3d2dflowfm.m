@@ -94,7 +94,11 @@ else
 end
 
 [path_mdu,name_mdu,~] = fileparts([fil_mdu]);
-fil_mdu               = [path_mdu filesep name_mdu];
+if ~isempty(path_mdu)
+    fil_mdu               = [path_mdu filesep name_mdu];
+else
+    fil_mdu               = name_mdu;
+end
 
 if ~exist(fil_mdf,'file'); error(['The input *.mdf file ' filmdf ' does not exist']); end;
 if ~exist(path_mdu,'dir'); mkdir(path_mdu); end;

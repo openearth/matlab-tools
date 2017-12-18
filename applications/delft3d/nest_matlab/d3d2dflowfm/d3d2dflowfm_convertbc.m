@@ -110,7 +110,11 @@ for i_pli = 1: length(filpli)
             case 'h'
                 if OPT.Harmonic
                     %% Filename with harmonic bc
-                    filename{i_output} = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.cmp'];
+                    if ~isempty(path_output)
+                        filename{i_output} = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.cmp'];
+                    else
+                        filename{i_output} = [LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.cmp'];
+                    end
 
                     %% Write some general information
                     SERIES.Comments{1} = '* COLUMNN=3';
@@ -142,7 +146,11 @@ for i_pli = 1: length(filpli)
             %% Time series forcing data
             case 't'
                 if OPT.Series
-                    filename{i_output} = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.tim'];
+                    if ~isempty(path_output)
+                        filename{i_output} = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.tim'];
+                    else
+                        filename{i_output} = [LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.tim'];
+                    end
 
                     %% Find Time series table number
                     bndname = strtrim(LINE.DATA{i_pnt,3}(index(3):index(end - 1) - 1));
