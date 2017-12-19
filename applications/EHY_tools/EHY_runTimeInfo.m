@@ -46,11 +46,7 @@ try % if simulation has finished
             noPartitions=max([1 length(diaFiles)-1]);
             
             % average timestep
-            line=findLineOrQuit(fid,'** INFO   : average timestep       (s)  :');
-            if isempty(line) % older DFM version
-                fid=fopen(diaFile,'r');
-                line=findLineOrQuit(fid,'** INFO   : average timestep      (s)  :');
-            end
+            line=findLineOrQuit(fid,'** INFO   : average timestep * (s)  :');
             line2=regexp(line,'\s+','split');
             runTimeInfo.aveTimeStep_S=str2double(line2{end});
             
@@ -63,11 +59,7 @@ try % if simulation has finished
             runTimeInfo.maxTimeStep_S=str2double(line);
             
             % realTime_S
-            line=findLineOrQuit(fid,'** INFO   : time steps (+ plots)   (s)  :');
-            if isempty(line) % older DFM version
-                fid=fopen(diaFile,'r');
-                line=findLineOrQuit(fid,'** INFO   : time steps + plots    (s)  :');
-            end
+            line=findLineOrQuit(fid,    '** INFO   : time steps*+ plots*  (s)  :');
             line2=regexp(line,'\s+','split');
             realTime_S=str2double(line2{end});
             
@@ -123,6 +115,8 @@ fclose all;
 %% Store all data in struct
 % path
 runTimeInfo.mdFile = fullfile(mdFile);
+[~,name,ext] = fileparts(mdFile);
+runTimeInfo.mdName=[name ext];
 
 % simulation period
 runTimeInfo.startDate=datestr(startDate);
@@ -166,7 +160,8 @@ end
 %%
 function line=findLineOrQuit(fid,wantedLine)
 line=fgetl(fid);
-while isempty(strfind(line,wantedLine)) && ischar(line)
+wantedLine2=regexptranslate('wildcard',wantedLine);
+while ischar(line) && isempty(regexp(line,wantedLine2))
     line=fgetl(fid);
 end
 
