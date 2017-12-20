@@ -39,45 +39,49 @@ for mm = 1:length(mapFiles)
         if isfield(grd,'node')
             % merge fields
             nodeFields = fieldnames(grd.node);
+            nodeDim = find(size(grd.node.x)>1);
             for ff = 1:length(nodeFields)
                 if ~strcmpi(nodeFields{ff},'n')
-                    grd.node.(nodeFields{ff}) = [grd.node.(nodeFields{ff}) grdPart(mm).node.(nodeFields{ff})];
+                    grd.node.(nodeFields{ff}) = appendMatrices(grd.node.(nodeFields{ff}),grdPart(mm).node.(nodeFields{ff}),nodeDim);
                 end
-            end            
+            end
             grd.node.n = length(grd.node.x);
         end
         
         if isfield(grd,'edge')
             % merge fields
             edgeFields = fieldnames(grd.edge);
+            edgeDim = find(size(grd.edge.FlowLinkType)>1);
             for ff = 1:length(edgeFields)
                 if strcmpi(edgeFields{ff},'NetLink')
-                    grd.edge.NetLink = [grd.edge.NetLink grdPart(mm).edge.NetLink+addNode];
+                    grd.edge.NetLink = appendMatrices(grd.edge.NetLink,grdPart(mm).edge.NetLink+addNode,edgeDim);
                 elseif strcmpi(edgeFields{ff},'FlowLink')
-                    grd.edge.FlowLink = [grd.edge.FlowLink grdPart(mm).edge.FlowLink+addFlowElem];                  
-                elseif ~strcmpi(edgeFields{ff},'NetLinkSize') & ~strcmpi(edgeFields{ff},'FlowLinkSize')
-                    grd.edge.(edgeFields{ff}) = [grd.edge.(edgeFields{ff}) grdPart(mm).edge.(edgeFields{ff})];
+                    grd.edge.FlowLink = appendMatrices(grd.edge.FlowLink,grdPart(mm).edge.FlowLink+addFlowElem,edgeDim);
+                elseif ~strcmpi(edgeFields{ff},'NetLinkSize') & ~strcmpi(edgeFields{ff},'FlowLinkSize') & ~strcmpi(edgeFields{ff},'NetLinkTypeFlag') & ~strcmpi(edgeFields{ff},'FlowLinkTypeFlag')
+                    grd.edge.(edgeFields{ff}) = appendMatrices(grd.edge.(edgeFields{ff}),grdPart(mm).edge.(edgeFields{ff}),edgeDim);
                 end
             end
             
-            grd.edge.NetLinkSize = length(grd.edge.NetLinkType);
-            grd.edge.FlowLinkSize = length(grd.edge.FlowLinkType);
+            if isfield(grd.edge,'NetLinkType')
+                grd.edge.NetLinkSize = length(grd.edge.NetLinkType);
+            end
+            
+            if isfield(grd.edge,'FlowLinkType')
+                grd.edge.FlowLinkSize = length(grd.edge.FlowLinkType);
+            end
         end
         
         if isfield(grd,'face')
             % merge fields
             faceFields = fieldnames(grd.face);
+            faceDim = find(size(grd.face.FlowElem_x)>1);
             for ff = 1:length(faceFields)
-                if strcmpi(faceFields{ff},'FlowElemCont_x')
-                    grd.face.FlowElemCont_x = appendMatrices(grd.face.FlowElemCont_x,grdPart(mm).face.FlowElemCont_x,2);
-                elseif strcmpi(faceFields{ff},'FlowElemCont_y')
-                    grd.face.FlowElemCont_y = appendMatrices(grd.face.FlowElemCont_y,grdPart(mm).face.FlowElemCont_y,2);
-                elseif strcmpi(faceFields{ff},'NetElemNode')
+                if strcmpi(faceFields{ff},'NetElemNode')  %% check if this is always the case
                     grd.face.NetElemNode = appendMatrices(grd.face.NetElemNode,grdPart(mm).face.NetElemNode+addNode,1);
                 elseif strcmpi(faceFields{ff},'BndLink')
-                    grd.face.BndLink = [grd.face.BndLink grdPart(mm).face.BndLink+addNetLink];
+                    grd.face.BndLink = appendMatrices(grd.face.BndLink,grdPart(mm).face.BndLink+addNetLink,faceDim);
                 elseif ~strcmpi(faceFields{ff},'FlowElemSize')
-                    grd.face.(faceFields{ff}) = [grd.face.(faceFields{ff}) grdPart(mm).face.(faceFields{ff})];
+                    grd.face.(faceFields{ff}) = appendMatrices(grd.face.(faceFields{ff}),grdPart(mm).face.(faceFields{ff}),faceDim);
                 end
             end
             grd.face.FlowElemSize = length(grd.face.FlowElem_x);
@@ -109,7 +113,7 @@ switch AppendDimension
     case 1
         newVal = zeros(size(val1,1)+size(val2,1),max(size(val1,2),size(val2,2)))+NaN;
         newVal(1:size(val1,1),1:size(val1,2)) = val1;
-        newVal(size(val1,1)+1:end,1:size(val2,2)) = val2;        
+        newVal(size(val1,1)+1:end,1:size(val2,2)) = val2;
     case 2
         newVal = zeros(max(size(val1,1),size(val2,1)),size(val1,2)+size(val2,2))+NaN;
         newVal(1:size(val1,1),1:size(val1,2)) = val1;
