@@ -74,10 +74,6 @@ else
         end
     end
     
-% %     Below is now obsolete, it will find these files automatically if they are present    
-%     disp('No *.mdf file selected, using default ''test.mdf'' instead');
-%     fil_mdf = 'test.mdf';
-%     fil_mdu = 'test.mdu';
     if length(varargin) > 1
         fil_mdf = varargin{1};
         fil_mdu = varargin{2};
@@ -94,6 +90,7 @@ else
 end
 
 [path_mdu,name_mdu,~] = fileparts([fil_mdu]);
+if isempty(path_mdu) path_mdu = '.'; end
 if ~isempty(path_mdu)
     fil_mdu               = [path_mdu filesep name_mdu];
 else

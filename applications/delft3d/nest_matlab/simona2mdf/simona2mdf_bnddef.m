@@ -76,10 +76,6 @@ for iopen = 1: length(bnddef.B)
     bnd.DATA(iopen).name = opendef.OPEN(iopennr).LINE.NAME;
     ipoint(1)= opendef.OPEN(iopennr).LINE.P(1);
     ipoint(2)= opendef.OPEN(iopennr).LINE.P(2);
-    if bnddef.B(iopen).SAME
-        ipoint(2) = ipoint(1);
-    end
-        
 
     %
     % find mn cordinates of boundary support points
@@ -90,7 +86,11 @@ for iopen = 1: length(bnddef.B)
         bnd.m(iopen,iside)     = points.P(pntnr).M;
         bnd.n(iopen,iside)     = points.P(pntnr).N;
         bnd.pntnr(iopen,iside) = ipoint(iside);
+        if iside == 2 && bnddef.B(iopen).SAME
+           bnd.pntnr(iopen,iside) = ipoint(1);
+        end
     end
+        
     bnd.DATA(iopen).mn(1) = bnd.m(iopen,1);
     bnd.DATA(iopen).mn(2) = bnd.n(iopen,1);
     bnd.DATA(iopen).mn(3) = bnd.m(iopen,2);
