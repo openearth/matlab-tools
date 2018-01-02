@@ -174,7 +174,7 @@ elseif OPT.vardx == 1
         
         % what is the minimum grid size in this area
         if ~isempty(OPT.xdry)
-            drycell = ii > OPT.xdry;
+            drycell = xgr(ii)>OPT.xdry;
         else
             drycell = zgr(ii)>OPT.zdry;
         end
