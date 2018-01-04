@@ -7,7 +7,7 @@ function varargout=EHY_convert(varargin)
 % Example1: EHY_convert
 % Example2: EHY_convert('D:\path.kml')
 % Example3: ldb=EHY_convert('D:\path.kml','ldb')
-% Example4: EHY_convert('D:\path.kml','ldb','saveOutputFile',0)
+% Example4: ldb=EHY_convert('D:\path.kml','ldb','saveOutputFile',0)
 
 % created by Julien Groenenboom, August 2017
 EHYs(mfilename);
@@ -529,7 +529,7 @@ end
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
-        output=[];
+        output=ldb;
     end
 % shp2ldb
     function [output,OPT]=EHY_convert_shp2ldb(inputFile,outputFile,OPT)
