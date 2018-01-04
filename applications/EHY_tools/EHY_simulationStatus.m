@@ -47,6 +47,32 @@ switch modelType
             fclose(fid);
             line=regexp(line,'\s+','split');
             runPeriod_S=str2num(line{2})-tstart*timeFactor(tunit,'S');
+            
+            if mod((mdu.time.TStop-mdu.time.TStart)*timeFactor(tunit,'S'),mdu.output.TimingsInterval)~=0
+                diaFile0001=[pathstr name '_0001.dia'];
+                if exist(diaFile0001,'file')
+                    fid=fopen(diaFile0001,'r');
+                    l=fgetl(fid);
+                    while feof(fid)~=1 & isempty(strfind(l,'Computation finished at'))
+                        l=fgetl(fid);
+                        DONE=1;
+                    end
+                    fclose(fid);
+                else
+                    fid=fopen([pathstr 'out.txt'],'r');
+                    l=fgetl(fid);
+                    while feof(fid)~=1 & isempty(strfind(l,'Computation finished at'))
+                        l=fgetl(fid);
+                        DONE=1;
+                    end
+                    fclose(fid);
+                end
+                
+                if exist('DONE','var')
+                    runPeriod_S=simPeriod_S;
+                end
+                
+            end
         else % get the runPeriod from the his nc file
             hisncfiles=dir([folder '*his*.nc']);
             hisncfile=[folder hisncfiles(1).name];
