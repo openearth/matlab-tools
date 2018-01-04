@@ -1,31 +1,43 @@
-function Data = EHY_getmodeldata(sim_dir,runid,stat_name,modelType,varargin)
-
-% Extracts time series (of water levels), from SDS file, Sobek3 file, implic output etc.
+function varargout = EHY_getmodeldata(sim_dir,runid,stat_name,modelType,varargin)
+% Extracts time series (of water levels), from output of different models
+%
 % Input Arguments:
 % sim_dir   : Directory with simulation results
-% runid     : runid of thew simulation
+% runid     : runid of the simulation
 % stat_name : station names can be either:
 %             []       all stations
 %             'name'   single string with station name
 %             {'name'} cell array of strings
-%  modelType : 'implic', 'sobek3', 'waqua' etc
+% modelType : 'dflowfm','delft3d4,'waqua','sobek3','implic'
 %
-%  Data.stationNames   : list of ALL stations available on history file
-%  Data.times          : (matlab) times belonging with the series
-%  Data.val (:,no_stat): water level values for the requested stations
-%  Data.val (time,no_stat,layers): sal/uv values for the requested stations. Layers only if 3D model.
+% Output:
+% Data.stationNames       : list of ALL stations available on history file
+% Data.requestedStatNames : list of requested stations
+% Data.exist_stat         : logical if requested station exist in file
+% Data.times              : (matlab) times belonging with the series
+% Data.val/vel            : requested data
+% Data.dimensions         : Dimensions of requested data (time,stats,lyrs)
+% Data.OPT                : Structure with optional user settings used
+
 EHYs(mfilename);
+
+if ~prod([exist('sim_dir','var') exist('runid','var') exist('stat_name','var') exist('modelType','var')]) 
+    EHY_getmodeldata_interactive
+    return
+end
 
 OPT.varName = 'wl';
 OPT.t0 = '';
 OPT.tend = '';
-OPT.layer = []; % all
+OPT.layer = 0; % all
 
 OPT         = setproperty(OPT,varargin);
+
+%% modify input
 if ~isempty(OPT.t0); OPT.t0=datenum(OPT.t0); end
 if ~isempty(OPT.tend); OPT.tend=datenum(OPT.tend); end
-
-%% no stat_name specified, all stations, otherwise, stat_name is a string or a cell array of strings
+if ~isnumeric(OPT.layer); OPT.layer=str2num(OPT.layer); end
+% no stat_name specified, all stations, otherwise, stat_name is a string or a cell array of strings
 if ~isempty(stat_name)
     if ~iscell(stat_name)
         stat_name = {stat_name};
@@ -33,183 +45,240 @@ if ~isempty(stat_name)
 end
 
 %% Get station names
-%% Sobek3
-if strcmpi(modelType,'sobek3')
-    
-    sobekFile=dir([ sim_dir filesep runid '.dsproj_data\Water level (op)*.nc*']);
-    D=read_sobeknc([sim_dir filesep runid '.dsproj_data' filesep sobekFile.name]);
-    
-    Data.stationNames=strtrim(D.feature_name_points.Val);
-elseif strcmpi(modelType,'sobek3_new')
-    sobekFile=[ sim_dir filesep runid '.dsproj_data\Integrated_Model_output\dflow1d\output\observations.nc'];
-    D=read_sobeknc(sobekFile);
-    
-    Data.stationNames=strtrim(D.observation_Id.Val);
-    
-    %% Dflow-FM
-elseif strncmpi(modelType,'dflow',4)
-    mdu=dflowfm_io_mdu('read',[sim_dir filesep runid '.mdu']);
-    if isempty(mdu.output.OutputDir)
-        outputDir = [ sim_dir filesep 'DFM_OUTPUT_' runid];
-    else
-        outputDir=strrep(mdu.output.OutputDir,'/','\');
-        while strcmp(outputDir(1),filesep) || strcmp(outputDir(1),'.')
-            outputDir=outputDir(2:end);
-        end
-        outputDir = [ sim_dir filesep outputDir];
-    end
-    hisncfiles         = dir([outputDir filesep '*his*.nc']);
-    hisncfile          = [outputDir filesep hisncfiles(1).name];
-    Data.stationNames  = cellstr(strtrim(nc_varget(hisncfile,'station_name')));
-    infonc             = ncinfo(hisncfile);
-    indNC              = strmatch('laydim',{infonc.Dimensions.Name},'exact');
-    if ~isempty(indNC)
-        no_layers          = infonc.Dimensions(indNC).Length;
-    end
-    %% Waqua
-elseif strcmpi(modelType,'waqua')
-    sds= qpfopen([sim_dir filesep 'SDS-' runid]);
-    
-    Data.stationNames  = strtrim(qpread(sds,1,'water level (station)','stations'));
-    
-    %% Implic
-elseif strcmpi(modelType,'implic')
-    if exist([sim_dir filesep 'implic.mat'],'file')
-        load([sim_dir filesep 'implic.mat']);
-    else
-        D         = dir2(sim_dir,'file_incl','\.dat$');
-        files     = find(~[D.isdir]);
-        filenames = {D(files).name};
-        for i_stat = 1: length(filenames)
-            [~,name,~] = fileparts(filenames{i_stat});
-            Data.stationNames{i_stat} = name;
-        end
-    end
-end
+Data.stationNames = EHY_getStationNames(sim_dir,runid,modelType);
 
-%% No station name specified, all stations
+% No station name specified, get data from all stations
 if isempty(stat_name)
     stat_name = Data.stationNames;
 end
-Data.requestedStatNames=stat_name';
+if size(stat_name,1)<size(stat_name,2); stat_name=stat_name'; end
+Data.requestedStatNames=stat_name;
 
 %% Get the computational data
 for i_stat = 1: length(stat_name)
     disp(['EHY_getmodeldata progress - working on station: ' num2str(i_stat) '/' num2str(length(stat_name))])
     nr_stat  = find(strcmp(Data.stationNames,stat_name{i_stat}) ~= 0,1);
     if isempty(nr_stat)
-        Data.exist_stat(i_stat) = false;
-        display (['Station : ' stat_name{i_stat} ' does not exist']);
+        Data.exist_stat(i_stat,1) = false;
+        disp(['Station : ' stat_name{i_stat} ' does not exist']);
     else
-        switch OPT.varName
+        Data.exist_stat(i_stat,1) = true;
+        switch modelType
             
-            case 'wl'
-                %% Waterlevels, times and values for station nr nr_stat
-                Data.exist_stat(i_stat) = true;
-                %% Read Sobek3 data
-                if strcmpi(modelType,'sobek3')
-                    if ~isfield(Data,'times')
-                        Data.times                 =D.water_level_points.Time;
-                    end
-                    Data.val(:,i_stat)         =D.water_level_points.Val(:,nr_stat);
-                elseif strcmpi(modelType,'sobek3_new')
-                    if ~isfield(Data,'times')
-                        Data.times                 =D.Observedwaterlevel.Time;
-                    end
-                    Data.val(:,i_stat)         =D.Observedwaterlevel.Val(:,nr_stat);
-                    %% Read Dflow-FM data
-                elseif strncmpi(modelType,'dflow',4)
-                    Data.times = nc_varget(hisncfile,'time')/60/24;
-                    refdate = datenum(num2str(mdu.time.RefDate),'yyyymmdd');
-                    Data.times = Data.times/60+refdate;
-                    Data.val(:,i_stat) = nc_varget(hisncfile,'waterlevel',[0 nr_stat-1],[length(Data.times) 1]);
-                    %% Read Waqua data
-                elseif strcmpi(modelType,'waqua')
-                    if ~isfield(Data,'times')
-                        Data.times         = qpread(sds,1,'water level (station)','times');
-                    end
-                    Data.val(:,i_stat) = waquaio(sds,[],'wlstat',0,nr_stat);
-                    %% Read Implic data (write to mat file for future fast pssing
-                elseif strcmpi(modelType,'implic')
-                    if ~exist([sim_dir filesep 'implic.mat'],'file')
-                        months = {'jan' 'feb' 'mrt' 'apr' 'mei' 'jun' 'jul' 'aug' 'sep' 'okt' 'nov' 'dec'};
-                        for ii_stat = 1: length(filenames)
-                            fid   = fopen([sim_dir filesep filenames{i_stat}],'r');
-                            line  = fgetl(fid);
-                            line  = fgetl(fid);
-                            line  = fgetl(fid);
-                            i_time = 0;
-                            while ~feof(fid)
-                                i_time  = i_time + 1;
-                                line    = fgetl(fid);
-                                i_day   = str2num(line(1:2));
-                                i_month = find(~cellfun(@isempty,strfind(months,line(4:6))));
-                                i_year  = str2num(line( 8:11));
-                                i_hour  = str2num(line(13:14));
-                                i_min   = str2num(line(16:17));
-                                r_val   = str2num(line(18:end))/100.;
-                                Data.times(i_time) = datenum(i_year,i_month,i_day,i_hour,i_min,0);
-                                Data.val_tmp(i_time,ii_stat)  = r_val;
-                            end
-                            fclose(fid);
+            case {'d3dfm','dflow','dflowfm','mdu'}
+                %% Delft3D-Flexible Mesh
+                % open data file
+                if ~exist('mdu','var')
+                    mdu=dflowfm_io_mdu('read',[sim_dir filesep runid '.mdu']);
+                    if isempty(mdu.output.OutputDir)
+                        outputDir = [ sim_dir filesep 'DFM_OUTPUT_' runid];
+                    else
+                        outputDir=strrep(mdu.output.OutputDir,'/','\');
+                        while strcmp(outputDir(1),filesep) || strcmp(outputDir(1),'.')
+                            outputDir=outputDir(2:end);
                         end
-                        save([sim_dir filesep 'implic.mat'],'Data');
+                        outputDir = [sim_dir filesep outputDir];
                     end
-                    Data.val(:,i_stat) = Data.val_tmp(:,nr_stat);
-                end
-                
-            case 'uv'
-                %% Velocities, times and values for station nr nr_stat
-                %% Read Waqua data
-                if strcmpi(modelType,'waqua')
-                    if ~isfield(Data,'times')
-                        Data.times         = qpread(sds,1,'water level (station)','times');
-                        [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
+                    hisncfiles         = dir([outputDir filesep '*his*.nc']);
+                    hisncfile          = [outputDir filesep hisncfiles(1).name];
+                    infonc             = ncinfo(hisncfile);
+                    indNC              = strmatch('laydim',{infonc.Dimensions.Name},'exact');
+                    if ~isempty(indNC)
+                        no_layers          = infonc.Dimensions(indNC).Length;
+                        if prod(OPT.layer==0) %layer not specified
+                            layerNCstart=0;
+                            layerNClength=no_layers;
+                        else
+                            layerNCstart=OPT.layer(1)-1;
+                            layerNClength=length(OPT.layer);
+                        end
                     end
-                    if isempty(OPT.layer)
-                        Data.u(:,i_stat,:) = waquaio(sds,[],'u-stat',time_index,nr_stat);
-                        Data.v(:,i_stat,:) = waquaio(sds,[],'v-stat',time_index,nr_stat);
-                    else
-                        Data.u(:,i_stat,:) = waquaio(sds,[],'u-stat',time_index,nr_stat,OPT.layer);
-                        Data.v(:,i_stat,:) = waquaio(sds,[],'v-stat',time_index,nr_stat,OPT.layer);
-                    end
-                    Data.uv_dim='times,stations,layers';
-                end
-                
-            case 'sal'
-                %% Salinity, times and values for station nr nr_stat
-                %% Read Waqua data
-                if strcmpi(modelType,'waqua')
-                    if ~isfield(Data,'times')
-                        Data.times         = qpread(sds,1,'water level (station)','times');
-                        [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
-                    end
-                    if isempty(OPT.layer)
-                        Data.val(:,i_stat,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat);
-                    else
-                        Data.val(:,i_stat,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat,OPT.layer);
-                    end
-                    
-                    Data.val_dim='times,stations,layers';
-                end
-            case 'tem'
-                %% Temperature, times and values for station nr nr_stat
-                %% Read Dflow-FM data
-                if strncmpi(modelType,'dflow',4)
-                    Data.times = nc_varget(hisncfile,'time')*timeFactor('S','D'); % from seconds to days
+                    Data.times = nc_varget(hisncfile,'time')*timeFactor('S','D');
                     refdate = datenum(num2str(mdu.time.RefDate),'yyyymmdd');
                     Data.times = Data.times+refdate;
-                    if isempty(OPT.layer)
-                        Data.val(:,i_stat,:)=nc_varget(hisncfile,'temperature',[0 nr_stat-1 0],[length(Data.times) 1 no_layers]);
-                        Data.zCen(:,i_stat,:)=nc_varget(hisncfile,'zcoordinate_c',[0 nr_stat-1 0],[length(Data.times) 1 no_layers]);
+                    [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
+                    if prod(time_index==0) %times not specified
+                        timeNCstart=0;
+                        timeNClength=length(Data.times);
                     else
-                        error('to be implemented');
+                        timeNCstart=time_index(1)-1;
+                        timeNClength=length(time_index);
                     end
-                    Data.val_dim='times,stations,layers';
+                end
+                % get data
+                switch OPT.varName
+                    case 'wl'
+                        Data.val(:,i_stat) = nc_varget(hisncfile,'waterlevel',[timeNCstart nr_stat-1],[timeNClength 1]);
+                    case 'uv'
+                        if ~exist('no_layers','var') % 2DH model
+                            Data.vel_x(:,i_stat) = nc_varget(hisncfile,'x_velocity',[timeNCstart nr_stat-1],[timeNClength 1]);
+                            Data.vel_y(:,i_stat) = nc_varget(hisncfile,'y_velocity',[timeNCstart nr_stat-1],[timeNClength 1]);
+                        else % all layers or specified layer(s)
+                            Data.vel_x(:,i_stat,:) = nc_varget(hisncfile,'x_velocity',[timeNCstart nr_stat-1 layerNCstart],[timeNClength 1 layerNClength]);
+                            Data.vel_y(:,i_stat,:) = nc_varget(hisncfile,'y_velocity',[timeNCstart nr_stat-1 layerNCstart],[timeNClength 1 layerNClength]);
+                        end
+                    case 'sal'
+                        if ~exist('no_layers','var') % 2DH model
+                            Data.val(:,i_stat) = nc_varget(hisncfile,'salinity',[timeNCstart nr_stat-1],[timeNClength 1]);
+                        else % all layers or specified layer(s)
+                            Data.val(:,i_stat) = nc_varget(hisncfile,'salinity',[timeNCstart nr_stat-1 layerNCstart],[timeNClength 1 layerNClength]);
+                        end
+                    case 'tem'
+                        if ~exist('no_layers','var') % 2DH model
+                            Data.val(:,i_stat) = nc_varget(hisncfile,'temperature',[timeNCstart nr_stat-1],[timeNClength 1]);
+                        else % all layers or specified layer(s)
+                            Data.val(:,i_stat) = nc_varget(hisncfile,'temperature',[timeNCstart nr_stat-1 layerNCstart],[timeNClength 1 layerNClength]);
+                        end
+                end
+                
+            case {'d3d','d3d4','delft3d4','mdf'}
+                %% Delft3D 4
+                % open data file
+                if ~exist('trih','var')
+                    trihFile=[sim_dir filesep 'trih-' runid '.dat'];
+                    trih=vs_use(trihFile,'quiet');
+                    Data.times=qpread(trih,'water level','times');
+                    [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
+                    no_layers=vs_get(trih,'his-const',{1},'KMAX','quiet');
+                    constituents=squeeze(vs_get(trih,'his-const','NAMCON','quiet'));
+                    if size(constituents,1)>size(constituents,2); constituents=constituents'; end
+                    constituents=cellstr(constituents);
+                end
+                % get data
+                switch OPT.varName
+                    case 'wl'
+                        Data.val=cell2mat(vs_get(trih,'his-series',{time_index},'ZWL',{nr_stat},'quiet'));
+                    case 'uv'
+                        if no_layers==1
+                            data=qpread(trih,1,'depth averaged velocity','griddata',time_index,nr_stat);
+                            Data.vel_x(:,i_stat) = data.XComp;
+                            Data.vel_y(:,i_stat) = data.YComp;
+                            Data.vel_u(:,i_stat) = vs_get(trih,'his-series',{time_index},'ZCURU',{nr_stat,1},'quiet');
+                            Data.vel_v(:,i_stat) = vs_get(trih,'his-series',{time_index},'ZCURV',{nr_stat,1},'quiet');
+                        else
+                            data=qpread(trih,1,'horizontal velocity','griddata',time_index,nr_stat,OPT.layer);
+                            Data.vel_x(:,i_stat,:) = squeeze(data.XComp);
+                            Data.vel_y(:,i_stat,:) = squeeze(data.YComp);
+                            Data.vel_u(:,i_stat,:) = vs_get(trih,'his-series',{time_index},'ZCURU',{nr_stat,OPT.layer},'quiet');
+                            Data.vel_v(:,i_stat,:) = vs_get(trih,'his-series',{time_index},'ZCURV',{nr_stat,OPT.layer},'quiet');
+                        end
+                    case 'sal'
+                        nr_cons=find(strcmpi(constituents,'salinity') ~= 0,1);
+                        Data.val(:,i_stat,:) = vs_get(trih,'his-series',{time_index},'GRO',{nr_stat,OPT.layer,nr_cons},'quiet');
+                    case 'tem'
+                        nr_cons=find(strcmpi(constituents,'temperature') ~= 0,1);
+                        Data.val(:,i_stat,:) = vs_get(trih,'his-series',{time_index},'GRO',{nr_stat,OPT.layer,nr_cons},'quiet');
+                end
+                
+                 case {'waqua','simona','siminp'}
+                %% SIMONA (WAQUA/TRIWAQ)
+                % open data file
+                if ~exist('sds','var')
+                    sds=qpfopen([sim_dir filesep 'SDS-' runid]);
+                    Data.times = qpread(sds,1,'water level (station)','times');
+                    [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
+                end
+                % get data
+                switch OPT.varName
+                    case 'wl'
+                        Data.val(:,i_stat) = waquaio(sds,[],'wlstat',time_index,nr_stat);
+                    case 'uv'
+                        try
+                            Data.vel_x(:,i_stat,:) = waquaio(sds,[],'u-stat',time_index,nr_stat,OPT.layer);
+                            Data.vel_y(:,i_stat,:) = waquaio(sds,[],'v-stat',time_index,nr_stat,OPT.layer);
+                        catch
+                            Data.vel_x(:,i_stat) = waquaio(sds,[],'u-stat',time_index,nr_stat);
+                            Data.vel_y(:,i_stat) = waquaio(sds,[],'v-stat',time_index,nr_stat);
+                        end
+                    case 'sal'
+                        try
+                            Data.val(:,i_stat,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat,OPT.layer);
+                        catch
+                            Data.val(:,i_stat) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat);
+                        end
+                end
+                
+            case {'sobek3'}
+                %% SOBEK3
+                % open data file
+                if ~exist('D','var')
+                    sobekFile=dir([ sim_dir filesep runid '.dsproj_data\Water level (op)*.nc*']);
+                    D=read_sobeknc([sim_dir filesep runid '.dsproj_data' filesep sobekFile.name]);
+                end
+                % get data
+                switch OPT.varName
+                    case 'wl'
+                        if ~isfield(Data,'times')
+                            Data.times                 =D.water_level_points.Time;
+                        end
+                        Data.val(:,i_stat)         =D.water_level_points.Val(:,nr_stat);
+                end
+                
+            case {'sobek3_new'}
+                %% SOBEK3 new
+                % open data file
+                if ~exist('D','var')
+                    sobekFile=[ sim_dir filesep runid '.dsproj_data\Integrated_Model_output\dflow1d\output\observations.nc'];
+                    D=read_sobeknc(sobekFile);
+                end
+                % get data
+                switch OPT.varName
+                    case 'wl'
+                        if ~isfield(Data,'times')
+                            Data.times                 =D.Observedwaterlevel.Time;
+                        end
+                        Data.val(:,i_stat)         =D.Observedwaterlevel.Val(:,nr_stat);
+                end
+
+            case {'implic'}
+                %% IMPLIC
+                % get data
+                switch OPT.varName
+                    case 'wl'
+                        if ~exist([sim_dir filesep 'implic.mat'],'file')
+                            months = {'jan' 'feb' 'mrt' 'apr' 'mei' 'jun' 'jul' 'aug' 'sep' 'okt' 'nov' 'dec'};
+                            for ii_stat = 1: length(filenames)
+                                fid   = fopen([sim_dir filesep filenames{i_stat}],'r');
+                                line  = fgetl(fid);
+                                line  = fgetl(fid);
+                                line  = fgetl(fid);
+                                i_time = 0;
+                                while ~feof(fid)
+                                    i_time  = i_time + 1;
+                                    line    = fgetl(fid);
+                                    i_day   = str2num(line(1:2));
+                                    i_month = find(~cellfun(@isempty,strfind(months,line(4:6))));
+                                    i_year  = str2num(line( 8:11));
+                                    i_hour  = str2num(line(13:14));
+                                    i_min   = str2num(line(16:17));
+                                    r_val   = str2num(line(18:end))/100.;
+                                    Data.times(i_time) = datenum(i_year,i_month,i_day,i_hour,i_min,0);
+                                    Data.val_tmp(i_time,ii_stat)  = r_val;
+                                end
+                                fclose(fid);
+                            end
+                            save([sim_dir filesep 'implic.mat'],'Data');
+                        end
+                        Data.val(:,i_stat) = Data.val_tmp(:,nr_stat);
                 end
         end
     end
 end
+
+% dimension information
+fn=fieldnames(Data);
+if length(size(Data.(fn{end})))==2
+    Data.dimensions='[times,stations]';
+elseif length(size(Data.(fn{end})))==3
+    Data.dimensions='[times,stations,layers]';
+end
+
+Data.OPT=OPT;
+
+if nargout==1
+    varargout{1}=Data;
+end
+
 end
 
 function [Data, time_index]=EHY_getmodeldata_time_index(Data,OPT)
