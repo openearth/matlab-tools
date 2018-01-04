@@ -152,6 +152,9 @@ if ismember(xs_get(xb, 'bcfile.type'), {'jonswap' 'jonswap_mtx'})
     theta_min = phim-dtheta*0.5*OPT.nbins;
     theta_max = phim+dtheta*0.5*OPT.nbins;
 
+	% choose bin width based on directional spreading
+    thetagr = [theta_min:dtheta:theta_max];	
+	
     % get what we need as output
     xb = xs_set(xb,'thetamin',theta_min,'thetamax',theta_max','dtheta',dtheta,'thetanaut',1);
 

@@ -158,13 +158,13 @@ switch type
         fid = fopen(fullfile(OPT.path, 'jonswap.txt'),'wt');
         nconditions = length(xb.data(2).value);
         for ii = 1:nconditions
-        fprintf(fid, '%.3f ',   [xb.data(2).value(ii)]); % Hm0
-        fprintf(fid, '%.1f ',   [xb.data(3).value(ii)]); % Tp
-        fprintf(fid, '%.0f ',   [xb.data(4).value(ii)]); % main angle
-        fprintf(fid, '%.1f ',   [xb.data(5).value]);     % gamma
-        fprintf(fid, '%.0f ',   [xb.data(6).value(ii)]);     % s
-        fprintf(fid, '%.0f ',   [xb.data(8).value(ii)]); % duration
-        fprintf(fid, '1  \n');                          % dbtc
+        fprintf(fid, '%.4f ',   [xb.data(2).value(ii)]); % Hm0
+        fprintf(fid, '%.4f ',   [xb.data(3).value(ii)]); % Tp
+        fprintf(fid, '%.4f ',   [xb.data(4).value(ii)]); % main angle
+        fprintf(fid, '%.4f ',   [xb.data(5).value]);     % gamma
+        fprintf(fid, '%.4f ',   [xb.data(6).value(ii)]); % s
+        fprintf(fid, '%.4f ',   [xb.data(8).value(ii)]); % duration
+        fprintf(fid, '%.4f\n',  [xb.data(9).value(ii)]); % dtbc
         end
         fclose('all');
         

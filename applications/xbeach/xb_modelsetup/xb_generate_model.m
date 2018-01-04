@@ -107,7 +107,7 @@ settings = xb_generate_settings(OPT.settings{:});
 
 %% create boundary conditions
 
-waves = xb_generate_waves(OPT.waves{:}); waves.data(1).value = 'jons_table';
+waves = xb_generate_waves(OPT.waves{:}); % waves.data(1).value = 'jons_table';
 tide = xb_generate_tide(OPT.tide{:});
 
 %% create grid
