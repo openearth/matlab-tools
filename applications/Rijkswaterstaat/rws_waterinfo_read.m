@@ -78,7 +78,7 @@ function [Station,Time,Val,EPSG,x,y] = RWS_waterinfo_read(fname)
 %% 1) Read data
 delimiter = ';';
 startRow = 2;
-formatSpec = '%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %{dd-MM-yyyy}D %{HH:mm:ss}D %s %q %s %s %s %s %s %s %s %s %s %s %s %s %d %q %*[^\n\r]';
+formatSpec = '%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %{dd-MM-yyyy}D %{HH:mm:ss}D %s %q %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %*[^\n\r]';
 fileID = fopen(fname,'r');
 dataArray = textscan(fileID,formatSpec,...
     'Delimiter',delimiter,...
@@ -115,10 +115,15 @@ Val          = Val(IA);
 
 %% 3) Metadata
 Station         = dataArray{2}{1};
-EPSG            = unique(dataArray{36});
-RD              = strsplit(char(unique(dataArray{37})),',');
-x               = str2double(RD(1));
-y               = str2double(RD(2));
+EPSG            = str2double(unique(dataArray{36}));
+x_tmp           = strrep(unique(dataArray{37}),',','.');
+y_tmp           = strrep(unique(dataArray{38}),',','.');
+x               = str2double((x_tmp));
+y               = str2double((y_tmp));
+if size(x,1) > 1 || size(y,1) > 1
+    fprintf('\tMultiple locations (x,y) found, all are saved\n');
+end
+
 
 return
 
