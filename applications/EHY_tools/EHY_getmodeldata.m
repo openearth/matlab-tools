@@ -21,7 +21,7 @@ function varargout = EHY_getmodeldata(sim_dir,runid,stat_name,modelType,varargin
 
 EHYs(mfilename);
 
-if ~prod([exist('sim_dir','var') exist('runid','var') exist('stat_name','var') exist('modelType','var')]) 
+if ~prod([exist('sim_dir','var') exist('runid','var') exist('stat_name','var') exist('modelType','var')])
     EHY_getmodeldata_interactive
     return
 end
@@ -147,7 +147,7 @@ for i_stat = 1: length(stat_name)
                 % get data
                 switch OPT.varName
                     case 'wl'
-                        Data.val=cell2mat(vs_get(trih,'his-series',{time_index},'ZWL',{nr_stat},'quiet'));
+                        Data.val(:,i_stat)=cell2mat(vs_get(trih,'his-series',{time_index},'ZWL',{nr_stat},'quiet'));
                     case 'uv'
                         if no_layers==1
                             data=qpread(trih,1,'depth averaged velocity','griddata',time_index,nr_stat);
@@ -170,7 +170,7 @@ for i_stat = 1: length(stat_name)
                         Data.val(:,i_stat,:) = vs_get(trih,'his-series',{time_index},'GRO',{nr_stat,OPT.layer,nr_cons},'quiet');
                 end
                 
-                 case {'waqua','simona','siminp'}
+            case {'waqua','simona','siminp'}
                 %% SIMONA (WAQUA/TRIWAQ)
                 % open data file
                 if ~exist('sds','var')
@@ -204,13 +204,11 @@ for i_stat = 1: length(stat_name)
                 if ~exist('D','var')
                     sobekFile=dir([ sim_dir filesep runid '.dsproj_data\Water level (op)*.nc*']);
                     D=read_sobeknc([sim_dir filesep runid '.dsproj_data' filesep sobekFile.name]);
+                    Data.times                 =D.water_level_points.Time;
                 end
                 % get data
                 switch OPT.varName
                     case 'wl'
-                        if ~isfield(Data,'times')
-                            Data.times                 =D.water_level_points.Time;
-                        end
                         Data.val(:,i_stat)         =D.water_level_points.Val(:,nr_stat);
                 end
                 
@@ -220,16 +218,14 @@ for i_stat = 1: length(stat_name)
                 if ~exist('D','var')
                     sobekFile=[ sim_dir filesep runid '.dsproj_data\Integrated_Model_output\dflow1d\output\observations.nc'];
                     D=read_sobeknc(sobekFile);
+                    Data.times                 =D.Observedwaterlevel.Time;
                 end
                 % get data
                 switch OPT.varName
                     case 'wl'
-                        if ~isfield(Data,'times')
-                            Data.times                 =D.Observedwaterlevel.Time;
-                        end
                         Data.val(:,i_stat)         =D.Observedwaterlevel.Val(:,nr_stat);
                 end
-
+                
             case {'implic'}
                 %% IMPLIC
                 % get data

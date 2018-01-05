@@ -12,6 +12,7 @@ EHYs(mfilename);
 if nargin==0
     disp('Open a .mdu, .mdf or SIMONA file as input')
     [filename, pathname]=uigetfile({'*.mdu';'*.mdf';'*siminp*';'*.*'},'Open a .mdu, .mdf or SIMONA file as input');
+    if isnumeric(filename); disp('EHY_simulationStatus stopped by user.'); return; end
     mdFile=[pathname filename];
 elseif nargin==1
     mdFile=varargin{1};
@@ -34,7 +35,7 @@ switch modelType
             folder=[pathstr mdu.output.OutputDir filesep];
         else
             [~,name]=fileparts(mdFile);
-            folder=[pathstr 'DFM_OUTPUT_' name filesep];
+            folder=[pathstr filesep 'DFM_OUTPUT_' name filesep];
         end
 
         D=dir([folder '*_timings.txt']);

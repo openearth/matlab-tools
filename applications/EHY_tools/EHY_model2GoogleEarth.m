@@ -15,7 +15,7 @@ if nargin>0
 else
     disp('Open a .mdu or .mdf  file')
     [filename, pathname]=uigetfile({'*.mdu';'*.mdf';'*.*'},'Open a .mdu or .mdf file');
-        
+    if isnumeric(filename); disp('EHY_model2GoogleEarth stopped by user.'); return; end
     mdFile=[pathname filename];
 end
 [modelType,mdFile]=EHY_getModelType(mdFile);

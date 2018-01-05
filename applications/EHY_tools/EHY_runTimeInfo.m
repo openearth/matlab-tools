@@ -16,6 +16,7 @@ if nargin>0
 else
     disp('Open a .mdu / .mdf / siminp file')
     [filename, pathname]=uigetfile({'*.mdu';'*.mdf';'*siminp*';'*.*'},'Open a .mdu / .mdf / siminp file');
+    if isnumeric(filename); disp('EHY_runTimeInfo stopped by user.'); return; end
     mdFile=[pathname filename];
 end
 [modelType,mdFile]=EHY_getModelType(mdFile);

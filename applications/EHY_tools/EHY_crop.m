@@ -24,6 +24,7 @@ if nargin>0
 else
     disp('Open a figure')
     [filename, pathname]=uigetfile('*.*','Open a figure');
+    if isnumeric(filename); disp('EHY_crop stopped by user.'); return; end
     file=[pathname filename];
 end
 [pathstr,name,ext]=fileparts(file);

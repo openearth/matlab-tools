@@ -12,9 +12,10 @@ try % Automatic procedure
     % outputFile
     disp('Open the model output file')
     [filename, pathname]=uigetfile('*.*','Open the model output file');
+    if isnumeric(filename); disp('EHY_getmodeldata_interactive stopped by user.'); return; end
     outputFile=[pathname filename];
     
-    % modelType
+    % modelType and runid
     [modelType,mdFile]=EHY_getModelType(outputFile);
     
     % sim_dir
@@ -25,13 +26,12 @@ try % Automatic procedure
         case 'mdu'
             [~,runid]=fileparts(mdFile);
         case 'mdf'
-            expression = 'trih-(\w+).dat';
-            [runid,~] = regexp(outputFile,expression,'tokens','match');
-            runid=char(runid{1});
+            id1=strfind(outputFile,'trih-');
+            id2=strfind(outputFile,'.dat');
+            runid=outputFile(id1+5:id2-1);
         case 'siminp'
-            expression = 'SDS-(\w+)';
-            [runid,~] = regexp(outputFile,expression,'tokens','match');
-            runid=char(runid{1});
+            id=strfind(outputFile,'SDS-');
+            runid=outputFile(id+4:end);
     end
 catch % Automatic procedure failed
     disp('Automatic procedure failed. Please provide input manually.')

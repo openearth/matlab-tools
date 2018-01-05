@@ -61,6 +61,7 @@ if length(varargin)==0
     availableExt=strcat('*.',[{'*'}; listOfExt]);
     disp('Open a file that you want to convert')
     [filename, pathname]=uigetfile(availableExt,'Open a file that you want to convert');
+    if isnumeric(filename); disp('EHY_convert stopped by user.'); return; end
     varargin{1}=[pathname filename];
 end
 if length(varargin)==1

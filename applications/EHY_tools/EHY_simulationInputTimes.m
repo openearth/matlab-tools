@@ -22,6 +22,7 @@ if nargin==0
     if option==1
         disp('Open a .mdu / .mdf / siminp file')
         [filename, pathname]=uigetfile({'*.mdu';'*.mdf';'*siminp*';'*.*'},'Open a .mdu / .mdf / siminp file');
+        if isnumeric(filename); disp('EHY_simulationInputTimes stopped by user.'); return; end
         mdFile=[pathname filename];
     elseif option==2
         mdInput={};
