@@ -19,12 +19,16 @@ if ~exist('mdFile','var')
     end
 end
 
-% output file was given, try to get runid
+% output file was given, try to get runid and mdFile
 if ~exist('mdFile','var') % dflowfm
-    expression = '(\w+)_his.nc';
-    [runid,~] = regexp(path,expression,'tokens','match');
+    [~,name,ext]=fileparts(path);
+    filename=[name ext];
+    id=strfind(filename,'_his.nc');
+    runid=filename(1:id-1);
+    if length(runid)>5 && ~isempty(str2num(runid(end-3:end))) && strcmp(runid(end-4),'_')
+        runid=runid(1:end-5); % skip partitioning part
+    end
     if ~isempty(runid)
-        runid=char(runid{1});
         mdFiles=dir([fileparts(fileparts(path)) filesep '*' runid '.mdu']);
         if length(mdFiles)==1
             mdFile=[fileparts(fileparts(path)) filesep runid '.mdu'];
@@ -32,10 +36,10 @@ if ~exist('mdFile','var') % dflowfm
     end
 end
 if ~exist('mdFile','var') % delft3d4
-    expression = 'trih-(\w+).dat';
-    [runid,~] = regexp(path,expression,'tokens','match');
+    id1=strfind(path,'trih-');
+    id2=strfind(path,'.dat');
+    runid=path(id1+5:id2-1);
     if ~isempty(runid)
-        runid=char(runid{1});
         mdFiles=dir([fileparts(path) filesep '*' runid '.mdf']);
         if length(mdFiles)==1
             mdFile=[fileparts(path) filesep runid '.mdf'];
