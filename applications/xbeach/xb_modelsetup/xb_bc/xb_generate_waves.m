@@ -133,7 +133,7 @@ switch type
             'fnyq', 1 ...
         );
     
-        instat = 'jons';
+        instat = 'jons_table';
         
         xb_verbose(1,'Type','JONSWAP');
 end
