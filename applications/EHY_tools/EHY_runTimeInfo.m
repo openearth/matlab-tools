@@ -34,6 +34,12 @@ simPeriod_S=(tstop-tstart)*factor;
 try % if simulation has finished
     switch modelType
         case 'mdu'
+            % mdu
+            mdu=dflowfm_io_mdu('read',mdFile);
+            
+            % layers
+            noLayers=mdu.geometry.Kmx;
+            
             % dia
             if exist([pathstr filesep name '_0000.dia'],'file') % first check if run was done in parallel
                 diaFile=[pathstr filesep name '_0000.dia'];
@@ -49,15 +55,10 @@ try % if simulation has finished
             % average timestep
             line=findLineOrQuit(fid,'** INFO   : average timestep * (s)  :');
             line2=regexp(line,'\s+','split');
-            runTimeInfo.aveTimeStep_S=str2double(line2{end});
+            aveTimeStep_S=str2double(line2{end});
             
             % max time step
-            fid_mdu=fopen(mdFile,'r');
-            line=findLineOrQuit(fid_mdu,'DtMax');
-            [~,line]=strtok(line,'=');
-            line=strrep(strrep(line,'=',''),'.','');
-            line(strfind(line,'#'):end)='';
-            runTimeInfo.maxTimeStep_S=str2double(line);
+            maxTimeStep_S=mdu.geometry.Kmx;
             
             % realTime_S
             line=findLineOrQuit(fid,    '** INFO   : time steps*+ plots*  (s)  :');
@@ -65,6 +66,12 @@ try % if simulation has finished
             realTime_S=str2double(line2{end});
             
         case 'mdf'
+            % mdf
+            mdf=delft3d_io_mdf('read',mdFile);
+            
+            % layers
+            noLayers=mdf.keywords.mnkmax(3);
+            
             % dia
             if exist([pathstr filesep 'tri-diag.' name ],'file') % first check if run was done in parallel
                 diaFile=[pathstr filesep 'tri-diag.' name ];
@@ -119,6 +126,12 @@ runTimeInfo.mdFile = fullfile(mdFile);
 [~,name,ext] = fileparts(mdFile);
 runTimeInfo.mdName=[name ext];
 
+% number of layers
+if exist('noLayers','var')
+    if noLayers==0; noLayers=1; end
+    runTimeInfo.noLayers=noLayers;
+end
+    
 % simulation period
 runTimeInfo.startDate=datestr(startDate);
 runTimeInfo.endDate=datestr(datenum(startDate)+simPeriod_S/3600/24);
@@ -127,6 +140,13 @@ runTimeInfo.simPeriod_S=simPeriod_S;
 runTimeInfo.simPeriod_M=runTimeInfo.simPeriod_S/60;
 runTimeInfo.simPeriod_H=runTimeInfo.simPeriod_S/3600;
 runTimeInfo.simPeriod_D=runTimeInfo.simPeriod_H/24;
+
+if exist('aveTimeStep_S','var')
+    runTimeInfo.aveTimeStep_S=aveTimeStep_S;
+end
+if exist('maxTimeStep_S','var')
+    runTimeInfo.maxTimeStep_S=maxTimeStep_S;
+end
 
 if exist('realTime_S','var') % if simulation has finished
     % runtime
