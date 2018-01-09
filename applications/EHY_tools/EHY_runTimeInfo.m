@@ -58,7 +58,7 @@ try % if simulation has finished
             aveTimeStep_S=str2double(line2{end});
             
             % max time step
-            maxTimeStep_S=mdu.geometry.Kmx;
+            maxTimeStep_S=mdu.time.DtMax;
             
             % realTime_S
             line=findLineOrQuit(fid,    '** INFO   : time steps*+ plots*  (s)  :');
