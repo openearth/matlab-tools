@@ -1,9 +1,9 @@
 function varargout = readMap(ncfile,varargin)
 %readMap   Reads solution data on a D-Flow FM unstructured net.
 %
-%     D = dflowfm.readMap(ncfile,<it>) 
-%     D = dflowfm.readMap(G     ,<it>) 
-%     D = dflowfm.readMap(G     [,it [,opt, val [, opt, val ...]] ]) 
+%     D = dflowfm.readMap(ncfile,<mapformat>,<it>) 
+%     D = dflowfm.readMap(G     ,<mapformat>,<it>) 
+%     D = dflowfm.readMap(G     [,mapformat,it [,opt, val [, opt, val ...]] ]) 
 %
 %   reads flow circumcenter(cen) data from an D-Flow FM NetCDF file. 
 %   By default is the LAST timestep is read (it=last).
@@ -60,16 +60,30 @@ function varargout = readMap(ncfile,varargin)
       varargout = {OPT};
       return
    end
-
+   
    if isstruct(ncfile)
       G      = ncfile;
       ncfile = G.file.name;
    else
-      G      = dflowfm.readNet(ncfile);
+       conv = ncreadatt(ncfile,'/','Conventions');
+       if strcmp(conv,'UGRID-0.9')% mapformat 1
+           G      = dflowfm.readNetOld(ncfile);% edited by BS
+           prefix = '';
+           varname_waterdepth = 'water depth';
+       elseif strcmp(conv,'CF-1.6 UGRID-1.0/Deltares-0.8')% mapformat 4
+           G      = dflowfm.readNet(ncfile);% edited by BS
+           prefix = 'mesh2d_';
+           varname_waterdepth = 'waterdepth';
+       else 
+           sprintf('Current version of this script does not recognize mapformat %d',conv)% use default (mapformat 1)
+           G      = dflowfm.readNetOld(ncfile);% edited by BS
+           prefix = '';
+           varname_waterdepth = 'water depth';
+       end
    end
    
-   if odd(nargin)
-      tmp     = nc_getvarinfo(ncfile,'s1');
+    if odd(nargin)
+      tmp     = nc_getvarinfo(ncfile,[prefix 's1']);
       it      = tmp.Size(1);
       face.FlowElemSize   = tmp.Size(2);
       nextarg = 1;
@@ -77,6 +91,25 @@ function varargout = readMap(ncfile,varargin)
       it      = varargin{1};
       nextarg = 2;
    end
+    
+%     if nargin == 2
+%       if mapformat == 1
+%           prefix = '';
+%       elseif mapformat == 4
+%           
+%           prefix = 'mesh2d_';
+%       else
+%           sprintf('Error: current version of this script does not support mapformat %d',mapformat)
+%           return
+%       end
+%       tmp     = nc_getvarinfo(ncfile,[prefix 's1']);
+%       it      = tmp.Size(1);
+%       face.FlowElemSize   = tmp.Size(2);
+%       nextarg = 1;
+%    else
+%       it      = varargin{2};
+%       nextarg = 2;
+%    end   
 
    if nargin==0
       varargout = {OPT};
@@ -103,14 +136,15 @@ function varargout = readMap(ncfile,varargin)
 
    face.mask = G.face.FlowElemSize; % not an index array yet as nc_varget can only handle one range
 
-   if OPT.zwl && nc_isvar (ncfile, 's1');
-      D.face.zwl  = nc_varget(ncfile, 's1' ,[it-1 0],[1 face.mask]); % Waterlevel
-   end  
-   if OPT.dep && nc_isvar (ncfile, 'waterdepth');
-      D.face.dep  = nc_varget(ncfile, 'waterdepth' ,[it-1 0],[1 face.mask]); % Waterdepth
+   if OPT.zwl && nc_isvar (ncfile, [prefix 's1'])
+      D.face.zwl  = nc_varget(ncfile, [prefix 's1'] ,[it-1 0],[1 face.mask]); % Waterlevel
+   end
+   
+   if OPT.dep && nc_isvar (ncfile, [prefix varname_waterdepth])
+      D.face.dep  = nc_varget(ncfile, [prefix varname_waterdepth] ,[it-1 0],[1 face.mask]); % Waterdepth
    end
    if OPT.lyrcc && nc_isvar(ncfile, 'LayCoord_cc')
-      info=nc_getvarinfo(ncfile,'ucx');
+      info=nc_getvarinfo(ncfile,[prefix 'ucx']);
       NDIM=length(info.Size);
       if ( NDIM==2 )   % safety, in principle (see unstruc_netcdf.f90) not possible
          D.face.z_cc = (s1-0.5*waterdepth)*ones(1, face.mask);
@@ -123,47 +157,47 @@ function varargout = readMap(ncfile,varargin)
           end
       end
    end
-   if OPT.sal && nc_isvar (ncfile, 'sa1');
-       info=nc_getvarinfo(ncfile,'sa1');
+   if OPT.sal && nc_isvar (ncfile, [prefix 'sa1'])
+       info=nc_getvarinfo(ncfile,[prefix 'sa1']);
        NDIM=length(info.Size);
        if ( NDIM==2 )
-           D.face.sal  = nc_varget(ncfile, 'sa1',[it-1 0],[1 face.mask]); % Salinity
+           D.face.sal  = nc_varget(ncfile, [prefix 'sa1'],[it-1 0],[1 face.mask]); % Salinity
        else
            if ( NDIM==3 )
-              D.face.sal  = nc_varget(ncfile, 'sa1',[it-1 0 0],[1 face.mask laydim]); % Salinity
+              D.face.sal  = nc_varget(ncfile, [prefix 'sa1'],[it-1 0 0],[1 face.mask laydim]); % Salinity
            end
        end
    end
    
-   if OPT.vel && nc_isvar (ncfile, 'ucx')
-      info=nc_getvarinfo(ncfile,'ucx');
+   if OPT.vel && nc_isvar (ncfile, [prefix 'ucx'])
+      info=nc_getvarinfo(ncfile,[prefix 'ucx']);
       NDIM=length(info.Size);
       if ( NDIM==2 )
 %        2D          
-         D.face.u    = nc_varget(ncfile, 'ucx',[it-1 0],[1 face.mask]); % x velocity at cell center
-         if nc_isvar (ncfile, 'ucy');
-            D.face.v    = nc_varget(ncfile, 'ucy',[it-1 0],[1 face.mask]); % y velocity at cell center
+         D.face.u    = nc_varget(ncfile, [prefix 'ucx'],[it-1 0],[1 face.mask]); % x velocity at cell center
+         if nc_isvar (ncfile, [prefix 'ucy']);
+            D.face.v    = nc_varget(ncfile, [prefix 'ucy'],[it-1 0],[1 face.mask]); % y velocity at cell center
          end
       else
          if ( NDIM==3 )
-            D.face.u    = nc_varget(ncfile, 'ucx',[it-1 0 0],[1 face.mask laydim]); % x velocity at cell center
-            if nc_isvar (ncfile, 'ucy');
-               D.face.v    = nc_varget(ncfile, 'ucy',[it-1 0 0],[1 face.mask laydim]); % y velocity at cell center
+            D.face.u    = nc_varget(ncfile, [prefix 'ucx'],[it-1 0 0],[1 face.mask laydim]); % x velocity at cell center
+            if nc_isvar (ncfile, [prefix 'ucy']);
+               D.face.v    = nc_varget(ncfile, [prefix 'ucy'],[it-1 0 0],[1 face.mask laydim]); % y velocity at cell center
             end
-            if nc_isvar (ncfile, 'ucz');
-               D.face.w    = nc_varget(ncfile, 'ucz',[it-1 0 0],[1 face.mask laydim]); % y velocity at cell center
+            if nc_isvar (ncfile, [prefix 'ucz']);
+               D.face.w    = nc_varget(ncfile, [prefix 'ucz'],[it-1 0 0],[1 face.mask laydim]); % y velocity at cell center
             end            
          end
       end
    end
-   if OPT.spir && nc_isvar (ncfile, 'spircrv');
-      D.face.crv  = nc_varget(ncfile, 'spircrv' ,[it-1 0],[1 face.mask]); % Curvature [1/m]
+   if OPT.spir && nc_isvar (ncfile, [prefix 'spircrv']);
+      D.face.crv  = nc_varget(ncfile, [prefix 'spircrv'] ,[it-1 0],[1 face.mask]); % Curvature [1/m]
    end  
-   if OPT.spir && nc_isvar (ncfile, 'spirint');
+   if OPT.spir && nc_isvar (ncfile, [prefix 'spirint']);
       D.face.I    = nc_varget(ncfile, 'spirint' ,[it-1 0],[1 face.mask]); % Secondary flow intensity [m/s]
    end  
-   if OPT.spir && nc_isvar (ncfile, 'spirang');
-      D.face.Iang = nc_varget(ncfile, 'spirang' ,[it-1 0],[1 face.mask]); % Secondary flow intensity [m/s]
+   if OPT.spir && nc_isvar (ncfile, [prefix 'spirang']);
+      D.face.Iang = nc_varget(ncfile, [prefix 'spirang'] ,[it-1 0],[1 face.mask]); % Secondary flow intensity [m/s]
    end  
 
 %% < read face data >

@@ -68,16 +68,24 @@ function varargout = plotNet(varargin)
    OPT.edge  = {'k-'};
    OPT.face  = {'b+','markersize',10};
    OPT.idmn  = -1;   % domain to plot
-
-   ish=ishold;
-
+   
    if nargin==0
       varargout = {OPT};
       return
    else
       if ischar(varargin{1})
       ncfile   = varargin{1};
-      G        = dflowfm.readNet(ncfile);
+      
+      conv = ncreadatt(ncfile,'/','Conventions');
+       if strcmp(conv,'UGRID-0.9')% mapformat 1
+           G      = dflowfm.readNetOld(ncfile);% edited by BS
+       elseif strcmp(conv,'CF-1.6 UGRID-1.0/Deltares-0.8')% mapformat 4
+           G      = dflowfm.readNet(ncfile);% edited by BS
+       else 
+           sprintf('Current version of this script does not recognize mapformat %d',conv)% use default (mapformat 1)
+           G      = dflowfm.readNetOld(ncfile);% edited by BS
+       end
+
       else
       G        = varargin{1};
       end
@@ -147,16 +155,13 @@ function varargout = plotNet(varargin)
    end
    
 %% lay out
-if ~ish
-    hold off
-end
 
-%	hold off
-%    if ~isempty(OPT.axis)
-%        axis([OPT.axis.x(:)' OPT.axis.y(:)'])
-%    else
-%        axis equal
-%    end
+	hold off
+    if ~isempty(OPT.axis)
+        axis([OPT.axis.x(:)' OPT.axis.y(:)'])
+    else
+        axis equal
+    end
 %    grid on
    
 %% return handles

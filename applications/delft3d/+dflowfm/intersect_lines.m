@@ -7,9 +7,9 @@ function C = intersect_lines(A,B)
 % Similar to DFLOW-FM's CROSSinbox
 %
 % input: A.x1, A.y1: (vector of) coordinates of startpoint of line segment A
-%        A.x2, A.y2: (vector of) coordinates of endpoint   of line segment A
+%        A.x2, A.y1: (vector of) coordinates of endpoint   of line segment A
 %        B.x1, B.y1: (vector of) coordinates of startpoint of line segment B
-%        B.x2, B.y2: (vector of) coordinates of endpoint   of line segment B
+%        B.x2, B.y1: (vector of) coordinates of endpoint   of line segment B
 %
 % output: C.x, C.y: coordinates of intersection point(s)
 %         C.n:      number of intersections
@@ -45,40 +45,30 @@ B.ymax = max(B.y1,B.y2);
     repmat(reshape(A.xmin,NA,1),1,NB) <= repmat(reshape(B.xmax,1,NB),NA,1) &    ...
     repmat(reshape(A.xmax,NA,1),1,NB) >= repmat(reshape(B.xmin,1,NB),NA,1) &    ...
     repmat(reshape(A.ymin,NA,1),1,NB) <= repmat(reshape(B.ymax,1,NB),NA,1) &    ...
-    repmat(reshape(A.ymax,NA,1),1,NB) >= repmat(reshape(B.ymin,1,NB),NA,1));
+repmat(reshape(A.ymax,NA,1),1,NB) >= repmat(reshape(B.ymin,1,NB),NA,1));
 
-if (length(i)>0 & length(j)>0);
-    switch ( find(size(A.x1)==1 & size(B.x1==1)) )
-        case 1
-            i = reshape(i,1,[]);
-            j = reshape(j,1,[]);
-        case 2
-            i = reshape(i,[],1);
-            j = reshape(j,[],1);
-    end
-    det   = ( (A.x2(i)-A.x1(i)).*(B.y2(j)-B.y1(j)) - (A.y2(i)-A.y1(i)).*(B.x2(j)-B.x1(j)) );
-    alpha = ( (B.x1(j)-A.x1(i)).*(B.y2(j)-B.y1(j)) - (B.y1(j)-A.y1(i)).*(B.x2(j)-B.x1(j)) ) ./ det;
-    beta  = ( (B.x1(j)-A.x1(i)).*(A.y2(i)-A.y1(i)) - (B.y1(j)-A.y1(i)).*(A.x2(i)-A.x1(i)) ) ./ det;
-    
-    idx = find(alpha>=0 & alpha<=1 & beta>=0 & beta<=1);
-    
-    C.n    = length(idx);
-    C.idxA = i(idx);
-    C.idxB = j(idx);
-    C.x  = A.x1(C.idxA) + alpha(idx).*(A.x2(C.idxA)-A.x1(C.idxA));
-    C.y  = A.y1(C.idxA) + alpha(idx).*(A.y2(C.idxA)-A.y1(C.idxA));
-    C.alpha = alpha(idx);
-    C.beta  = beta(idx);
-else
-    C.n = 0;
-    C.idxA = []; 
-    C.idxB = []; 
-    C.x  = []; 
-    C.y  = []; 
-    C.alpha = []; 
-    C.beta  = []; 
+switch ( find(size(A.x1)==1 & size(B.x1==1)) )
+    case 1
+        i = reshape(i,1,[]);
+        j = reshape(j,1,[]);
+    case 2
+        i = reshape(i,[],1);
+        j = reshape(j,[],1);
 end
-%
+det   = ( (A.x2(i)-A.x1(i)).*(B.y2(j)-B.y1(j)) - (A.y2(i)-A.y1(i)).*(B.x2(j)-B.x1(j)) );
+alpha = ( (B.x1(j)-A.x1(i)).*(B.y2(j)-B.y1(j)) - (B.y1(j)-A.y1(i)).*(B.x2(j)-B.x1(j)) ) ./ det;
+beta  = ( (B.x1(j)-A.x1(i)).*(A.y2(i)-A.y1(i)) - (B.y1(j)-A.y1(i)).*(A.x2(i)-A.x1(i)) ) ./ det;
+
+idx = find(alpha>=0 & alpha<=1 & beta>=0 & beta<=1);
+
+C.n    = length(idx);
+C.idxA = i(idx);
+C.idxB = j(idx);
+C.x  = A.x1(C.idxA) + alpha(idx).*(A.x2(C.idxA)-A.x1(C.idxA));
+C.y  = A.y1(C.idxA) + alpha(idx).*(A.y2(C.idxA)-A.y1(C.idxA));
+C.alpha = alpha(idx);
+C.beta  = beta(idx);
+% 
 % hold on
 % plot([A.x1(C.idxA); A.x2(C.idxA)], [A.y1(C.idxA); A.y2(C.idxA)], 'r', [B.x1(C.idxB); B.x2(C.idxB)], [B.y1(C.idxB); B.y2(C.idxB)], 'b', 'LineWidth',2);
 % hold on

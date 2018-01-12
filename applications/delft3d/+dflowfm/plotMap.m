@@ -118,7 +118,20 @@ function varargout = plotMap(varargin)
    else
       if ischar(varargin{1})
          ncfile   = varargin{1};
-         G        = dflowfm.readNet(ncfile);
+         
+         conv = ncreadatt(ncfile,'/','Conventions');
+       if strcmp(conv,'UGRID-0.9')% mapformat 1
+           G      = dflowfm.readNetOld(ncfile);% edited by BS
+           prefix = '';
+       elseif strcmp(conv,'CF-1.6 UGRID-1.0/Deltares-0.8')% mapformat 4
+           G      = dflowfm.readNet(ncfile);% edited by BS
+           prefix = 'mesh2d_';
+       else 
+           sprintf('Current version of this script does not recognize mapformat %d',conv)% use default (mapformat 1)
+           G      = dflowfm.readNetOld(ncfile);% edited by BS
+           prefix = '';
+       end
+       
       else
          G        = varargin{1};
       end
@@ -173,7 +186,7 @@ if ~(isfield(G,'face') && isfield(G,'edge'))
 
 else
 
-   if isempty(OPT.axis)
+   if isempty(OPT.axis) %&& exist('G.face.FlowElemSize','var')
 %       cen.mask = 1:G.cen.n; % TO DO: check whether all surrounding corners are outside, instead of centers
       face.mask = true(1,G.face.FlowElemSize);
    else
