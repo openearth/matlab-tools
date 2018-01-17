@@ -39,14 +39,18 @@ xFaceContour(size(xFaceContour,1)+1,:) = NaN;
 yFaceContour(size(yFaceContour,1)+1,:) = NaN;
 
 %% prepare x and y coordinates for plotting flowlinks
-xFlowLink = grd.face.FlowElem_x(grd.edge.FlowLink);
-yFlowLink = grd.face.FlowElem_y(grd.edge.FlowLink);
-xFlowLink(3,:)=NaN;
-yFlowLink(3,:)=NaN;
-
-xFlowLinkTxt = (xFlowLink(2,:)-xFlowLink(1,:))*0.6+xFlowLink(1,:);
-yFlowLinkTxt = (yFlowLink(2,:)-yFlowLink(1,:))*0.6+yFlowLink(1,:);
-
+try
+    xFlowLink = grd.face.FlowElem_x(grd.edge.FlowLink);
+    yFlowLink = grd.face.FlowElem_y(grd.edge.FlowLink);
+    xFlowLink(3,:)=NaN;
+    yFlowLink(3,:)=NaN;
+    
+    xFlowLinkTxt = (xFlowLink(2,:)-xFlowLink(1,:))*0.6+xFlowLink(1,:);
+    yFlowLinkTxt = (yFlowLink(2,:)-yFlowLink(1,:))*0.6+yFlowLink(1,:);
+    includeFlowLinks = 1;
+catch
+    includeFlowLinks = 0;
+end
 %% define x_lim and y_lim
 if ~exist('x_lim','var')
     x_lim = [min(grd.node.x) max(grd.node.x)];
@@ -59,11 +63,13 @@ while checkNodes
     IDnodes = find(grd.node.x > x_lim(1) & grd.node.x < x_lim(2) & grd.node.y > y_lim(1) & grd.node.y < y_lim(2));
     IDfaces = find(grd.face.FlowElem_x > x_lim(1) & grd.face.FlowElem_x < x_lim(2) & grd.face.FlowElem_y > y_lim(1) & grd.face.FlowElem_y < y_lim(2));
     IDnetlink = find(xNetlinkTxt > x_lim(1) & xNetlinkTxt < x_lim(2) & yNetlinkTxt > y_lim(1) & yNetlinkTxt < y_lim(2));
-    IDflowlink = find(xFlowLinkTxt > x_lim(1) & xFlowLinkTxt < x_lim(2) & yFlowLinkTxt > y_lim(1) & yFlowLinkTxt < y_lim(2));
-    if length(IDnodes) < 1000
+    if includeFlowLinks
+        IDflowlink = find(xFlowLinkTxt > x_lim(1) & xFlowLinkTxt < x_lim(2) & yFlowLinkTxt > y_lim(1) & yFlowLinkTxt < y_lim(2));
+    end
+    if length(IDnodes) < 500
         checkNodes = 0;
     else
-        out = questdlg(['Number of nodes to be plotted > 1000 (',num2str(length(IDnodes)),'). This may take a long time. Do you want to proceed or (re)define the x and y limits?'],'Warning','Proceed','(re)define focus area','Proceed')
+        out = questdlg(['Number of nodes to be plotted > 500 (',num2str(length(IDnodes)),'). This may take a long time. Do you want to proceed or (re)define the x and y limits?'],'Warning','Proceed','(re)define focus area','Proceed')
         if strcmpi(out,'(re)define focus area')
             figure
             axis equal
@@ -72,15 +78,17 @@ while checkNodes
             x_lim = get(gca,'XLim');
             y_lim = get(gca,'YLim');
             close all
-        end        
+        else
+            checkNodes = 0;
+        end
     end
 end
 
 % check if it is a spherical or cartesian model
 if max(abs(grd.node.x))<=180 & max(abs(grd.node.y))<= 180
-    modelType = 'spherical'
+    modelType = 'spherical';
 else
-    modelType = 'cartesian'
+    modelType = 'cartesian';
 end
 
 switch modelType
@@ -102,14 +110,16 @@ for qq = 1:2
     
     hP(1) = plot(xNetlink(:),yNetlink(:),'r','LineWidth',0.5,'DisplayName','Netlinks original');
     hP(2) = plot(xFaceContour(:),yFaceContour(:),'b','LineWidth',0.5,'DisplayName','Netlinks final (after cutcellpolygon.lst)');
-    hP(3) = plot(xFlowLink(:),yFlowLink(:),'Color',[0.9 0.9 0.9],'LineWidth',0.5,'DisplayName','Flow link');
+    if includeFlowLinks
+        hP(3) = plot(xFlowLink(:),yFlowLink(:),'Color',[0.9 0.9 0.9],'LineWidth',0.5,'DisplayName','Flow link');
+    end
     
     xlim(x_lim);
     ylim(y_lim);
     
     if qq == 1
-        hP(4) = plot(grd.face.FlowElem_x,grd.face.FlowElem_y,'m.','Markersize',10,'DisplayName','Flow element');
-        hP(5) = plot(grd.node.x,grd.node.y,'k.','Markersize',10,'DisplayName','Net node');
+        hP(length(hP)+1) = plot(grd.face.FlowElem_x,grd.face.FlowElem_y,'m.','Markersize',10,'DisplayName','Flow element');
+        hP(length(hP)+1) = plot(grd.node.x,grd.node.y,'k.','Markersize',10,'DisplayName','Net node');
     else
         % plot face numbers
         for ff = 1:length(IDfaces)
@@ -127,8 +137,10 @@ for qq = 1:2
         end
         
         % plot flowlinks numbers
-        for ff = 1:length(IDflowlink)
-            text(xFlowLinkTxt(IDflowlink(ff)),yFlowLinkTxt(IDflowlink(ff)),num2str(IDflowlink(ff)),'Color',[0.5 0.5 0.5],'FontSize',fontSizeTxT,'HorizontalAlignment','center')
+        if includeFlowLinks
+            for ff = 1:length(IDflowlink)
+                text(xFlowLinkTxt(IDflowlink(ff)),yFlowLinkTxt(IDflowlink(ff)),num2str(IDflowlink(ff)),'Color',[0.5 0.5 0.5],'FontSize',fontSizeTxT,'HorizontalAlignment','center')
+            end
         end
     end
     
