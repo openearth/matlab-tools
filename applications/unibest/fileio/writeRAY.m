@@ -129,22 +129,12 @@ elseif nargin == 1
             if ~isempty(RAYdata(ii).hass)
                 % hass is not empty:
                 % whatever non-zero value is set (e.g. 1, 1000, 'on', etc.), hass is printed as 1 (except for 0):
-<<<<<<< .mine
-                fprintf(fid4,'       Xb            2 %%           20%%           50%%           80%%          100%%     high_angle_stability_switch\n');
-                fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100 ~isempty(nonzeros(RAYdata(ii).hass))]);
-=======
                 fprintf(fid4,'       Xb      2 %%      20%%      50%%      80%%     100%%     high_angle_stability_switch\n');
                 fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100 ~isempty(nonzeros(RAYdata(ii).hass))]);
->>>>>>> .r14027
             else
                 % hass is empty, ignore it (not printed as zero, as in the original file):
-<<<<<<< .mine
-                fprintf(fid4,'       Xb            2 %%           20%%           50%%           80%%          100%%\n');
-                fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100]);
-=======
                 fprintf(fid4,'       Xb      2 %%      20%%      50%%      80%%     100%%\n');
                 fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100]);
->>>>>>> .r14027
             end
         else
             if isempty(RAYdata(ii).hass)
