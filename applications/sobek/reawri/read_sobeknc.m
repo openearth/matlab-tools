@@ -17,44 +17,20 @@ if isdir(dir_or_filename)
         Info.(short_file_name{i_file}) = read_sobeknc_file(full_file_names{i_file});
     end
 else
-    Info = read_sobeknc_file(dir_or_filename);
+    Info = read_sobeknc_file_new(dir_or_filename);
 end
 
 end
 
-function Info = read_sobeknc_file(file_name)
+function Info = read_sobeknc_file_new(file_name)
 
 %% Read a single Sobek3 nc file and put everthing in a structure
-File       = qpfopen(file_name);
-Fields     = qpread(File);
-Fieldnames = transpose({Fields.Name});
+general    = nc_info(file_name);
+names      = {general.Dataset.Name};
 
-for i_field = 1: length(Fieldnames)
+for i_name = 1: length(names)
+    Info.(names{i_name}) = ncread(file_name,names{i_name});
     
-    Name_subfield = simona2mdu_replacechar(Fieldnames{i_field},' ','_');
-    Name_subfield = simona2mdu_replacechar(Name_subfield,'(','');
-    Name_subfield = simona2mdu_replacechar(Name_subfield,')','');
-    Name_subfield = simona2mdu_replacechar(Name_subfield,'.','');
-    Param =  length(Fields(i_field).DimFlag(Fields(i_field).DimFlag > 0));
-    
-    if Param == 1
-        Info.(Name_subfield) = qpread(File,Fieldnames{i_field},'data',0);
-    elseif Param == 2
-        Info.(Name_subfield) = qpread(File,Fieldnames{i_field},'data',0,0);
-    elseif Param == 3
-        Info.(Name_subfield) = qpread(File,Fieldnames{i_field},'data',0,0,0);
-    elseif Param == 4
-        Info.(Name_subfield) = qpread(File,Fieldnames{i_field},'data',0,0,0,0);
-    elseif Param == 5
-        Info.(Name_subfield) = qpread(File,Fieldnames{i_field},'data',0,0,0,0,0);
-    end
 end
 
-end 
-
- 
-    
-
-
-
-
+end
