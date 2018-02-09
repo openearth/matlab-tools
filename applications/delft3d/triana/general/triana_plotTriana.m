@@ -3,7 +3,7 @@ function s = triana_plotTriana(s);
 %% preparing plots
 
 % make directory for figures
-makedir([pwd '\Figures']);
+makedir([s.outputDir '\Figures']);
 
 % determine distances for labels and location of legend
 txt_dist_hor = (s.plot.Xmax-s.plot.Xmin)/s.plot.txtHorFraq;
@@ -18,7 +18,7 @@ if ~isfield(s.plot,'const')
 end
 
 % reading ldb
- if isfield(s.plot,'ldb')
+if isfield(s.plot,'ldb')
     ldb = landboundary('read',s.plot.ldb);
 end
 
@@ -35,7 +35,7 @@ for cc = 1:length(s.plot.const)
         end
     end
     
-    %% Plotting
+    %% Plotting standard triana plots
     
     figure
     hold on
@@ -43,7 +43,7 @@ for cc = 1:length(s.plot.const)
     set(gca,'XLim',[s.plot.Xmin s.plot.Xmax],'YLim',[s.plot.Ymin s.plot.Ymax])
     
     % plot landboundary
-     if isfield(s.plot,'ldb')
+    if isfield(s.plot,'ldb')
         plot(ldb(:,1),ldb(:,2),'Color',[0.3 0.3 0.3])
     end
     % plot measurement and model stations
@@ -98,17 +98,16 @@ for cc = 1:length(s.plot.const)
         xlabel('Latitude [^o]')
     else
         kmAxis(gca,[mean(diff(get(gca,'Xtick')))/1000 mean(diff(get(gca,'Ytick')))/1000])
-        coordinateSystem = strrep(strrep(strtok(epsg_wkt(s.model.epsg),','),'PROJCS["',''),'"','');
-        xlabel(['Easting [km; ',coordinateSystem,']'])
-        ylabel(['Northing [km; ',coordinateSystem,']'])
+        xlabel(['Easting [km; ',s.model.epsgTxT,']'])
+        ylabel(['Northing [km; ',s.model.epsgTxT,']'])
     end
     set(gca,'FontSize',7)
-    print(gcf,'-dpng','-r300',[pwd '\Figures\Triana_',s.plot.const{cc},'_',s.description,'.png'])
+    print(gcf,'-dpng','-r300',[s.outputDir '\Figures\Triana_',s.plot.const{cc},'_',s.description,'.png'])
     close all
     
-    %%  figure showing the difference in amplitude and phase
+    %%  Plotting figure showing the difference in amplitude and phase
     A_ratio = s.triana.Acomp(ID_cmpTriana,:)./s.triana.Aobs(ID_cmpTriana,:);
-    IDnan = find(A_ratio == 0) ;
+    IDnan = find(A_ratio == 0 | isinf(A_ratio));
     A_ratio(IDnan)=NaN;
     G_diff = mod(s.triana.Gcomp(ID_cmpTriana,:)-s.triana.Gobs(ID_cmpTriana,:),360);
     G_diff(G_diff>180) = G_diff(G_diff>180)-360;
@@ -125,29 +124,36 @@ for cc = 1:length(s.plot.const)
         plot(ldb(:,1),ldb(:,2),'k')
     end
     
-    colorbarLims = [max(1-max(abs(A_ratio-1)),0):max(abs(A_ratio-1))/10:1+max(abs(A_ratio-1))];
+    if ~isfield(s.plot,'A_ratio_limits') || length(s.plot.A_ratio_limits)~=2
+        colorbarLims = [max(1-max(abs(A_ratio-1)),0):max(abs(A_ratio-1))/10:1+max(abs(A_ratio-1))];
+    else
+        colorbarLims  = linspace(s.plot.A_ratio_limits(1),s.plot.A_ratio_limits(2),20);
+    end
+    
     clrmap = jet(length(colorbarLims)-1);
     for ll = 1:length(A_ratio)
         if ~isnan(A_ratio(ll))
-            IDcol = find(colorbarLims(1:end-1) <= A_ratio(ll) & colorbarLims(2:end) >= A_ratio(ll));
+            IDcol = max([1 find(colorbarLims(1:end-1)<A_ratio(ll))]);
             plot(s.triana.X(ll),s.triana.Y(ll),'k.','Color',clrmap(IDcol(end),:),'MarkerSize',20)
+            if A_ratio(ll) > colorbarLims(end) | A_ratio(ll)<colorbarLims(1)
+                text(s.triana.X(ll)+txt_dist_hor,s.triana.Y(ll),num2str(A_ratio(ll)),'FontSize',5)
+            end
         end
     end
     if ~isempty(find(isnan(colorbarLims)))
         colorbarLims = [0 1];
     end
     set(gcf,'Colormap',jet);
-    hC = colorbar;
+    hC(1) = colorbar;
     clim([colorbarLims(1) colorbarLims(end)])
-    set(get(hC,'YLabel'),'String','Hc/Ho [-]')
+    set(get(hC(1),'YLabel'),'String','Hc/Ho [-]')
     title(s.plot.const{cc})
     grid on
     if s.model.epsg == 4326
         ylabel('Longitude [^o]')
     else
         kmAxis(gca,[mean(diff(get(gca,'Xtick')))/1000 mean(diff(get(gca,'Ytick')))/1000])
-        coordinateSystem = strrep(strrep(strtok(epsg_wkt(s.model.epsg),','),'PROJCS["',''),'"','');
-        ylabel(['Northing [km; ',coordinateSystem,']'])
+        ylabel(['Northing [km; ',s.model.epsgTxT,']'])
     end
     
     hS(2) = subplot(2,1,2);
@@ -156,39 +162,49 @@ for cc = 1:length(s.plot.const)
     set(gca,'XLim',[s.plot.Xmin s.plot.Xmax],'YLim',[s.plot.Ymin s.plot.Ymax])
     
     % plot landboundary
-     if isfield(s.plot,'ldb')
+    if isfield(s.plot,'ldb')
         plot(ldb(:,1),ldb(:,2),'k')
     end
     
-    colorbarLims = [max(abs(G_diff))*-1:max(abs(G_diff))/10:max(abs(G_diff))];
+    if ~isfield(s.plot,'G_diff_limits') || length(s.plot.G_diff_limits)~=2
+        colorbarLims  = [max(abs(G_diff))*-1:max(abs(G_diff))/10:max(abs(G_diff))];
+    else
+        colorbarLims  = linspace(s.plot.G_diff_limits(1),s.plot.G_diff_limits(2),20);
+        
+    end
     clrmap = jet(length(colorbarLims)-1);
     for ll = 1:length(G_diff)
         if ~isnan(G_diff(ll))
-            IDcol = find(colorbarLims(1:end-1) <= G_diff(ll) & colorbarLims(2:end) >= G_diff(ll));
+            IDcol = max([1 find(colorbarLims(1:end-1)<G_diff(ll))]);
             plot(s.triana.X(ll),s.triana.Y(ll),'k.','Color',clrmap(IDcol(end),:),'MarkerSize',20)
+            if G_diff(ll) > colorbarLims(end) | G_diff(ll)<colorbarLims(1)
+                text(s.triana.X(ll)+txt_dist_hor,s.triana.Y(ll),num2str(G_diff(ll)),'FontSize',5)
+            end
         end
     end
     if ~isempty(find(isnan(colorbarLims)))
         colorbarLims = [0 1];
     end
-    hC = colorbar;
+    hC(2) = colorbar;
     clim([colorbarLims(1) colorbarLims(end)])
-    set(get(hC,'YLabel'),'String','Gc - Go [^o]')
+    set(get(hC(2),'YLabel'),'String','Gc - Go [^o]')
     title(['Frequency = ',num2str(s.triana.Freq(ID_cmpTriana)),'^o/hr'])
-
+    
     grid on
     if s.model.epsg == 4326
         xlabel('Longitude [^o]')
         ylabel('Latitude [^o]')
     else
         kmAxis(gca,[mean(diff(get(gca,'Xtick')))/1000 mean(diff(get(gca,'Ytick')))/1000])
-        coordinateSystem = strrep(strrep(strtok(epsg_wkt(s.model.epsg),','),'PROJCS["',''),'"','');
-        xlabel(['Easting [km; ',coordinateSystem,']'])
-        ylabel(['Northing [km; ',coordinateSystem,']'])
+        xlabel(['Easting [km; ',s.model.epsgTxT,']'])
+        ylabel(['Northing [km; ',s.model.epsgTxT,']'])
     end
     
-    set(hS(1),'FontSize',6)
-    set(hS(2),'FontSize',6)
-    print(gcf,'-dpng','-r300',[pwd '\Figures\Triana_',s.plot.const{cc},'_',s.description,'_Aratio_Gdiff.png'])
+    set(hS(1),'FontSize',6,'Position',[0.07 0.55 0.82 0.41])
+    set(hS(2),'FontSize',6,'Position',[0.07 0.08 0.82 0.41])
+    set(hC(1),'Position',[0.91 0.54 0.015 0.41]);
+    set(hC(2),'Position',[0.91 0.08 0.015 0.41]);
+    
+    print(gcf,'-dpng','-r300',[s.outputDir '\Figures\Triana_',s.plot.const{cc},'_',s.description,'_Aratio_Gdiff.png'])
     close all
 end

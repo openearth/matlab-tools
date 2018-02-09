@@ -27,7 +27,7 @@ s.model.epsg=str2num(char(inputdlg(['Specify EPSG code of the model (used to con
 if isempty(s.model.epsg)
     s.model.epsg = 4326; % WGS84 is assumed
 end
-
+s.model.epsgTxT = strrep(strrep(strtok(epsg_wkt(s.model.epsg),','),'PROJCS["',''),'"','');
 
 s.model.timeZone=str2num(char(inputdlg(['Specify Timezone of model relative to GMT'],'Enter time zone',1,{'0'})));
 if isempty(s.model.timeZone)

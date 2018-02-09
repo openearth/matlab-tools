@@ -2,13 +2,10 @@ function triana(s,meas)
 %TRIANA Function to perform a tidal analysis on observations stations in a
 %Delft3D or Delft3D-FM model and compare the results with measurements.
 %Comparison with the IHO database (from dashboard) is included in this
-%function, but also other measurements can be provided.
+%function, but also other measurements can be provided (meas).
 %
-%Important!
-% This function uses the tide_analysis.exe from Delft3D. You will need to
-% have Delft3D installed before this function can be used. Make sure you
-% select a working tide_analysis.exe executable (can be a problem if you
-% have installed multiple Delft3D versions)
+% This function uses t_tide if possible (if a signal toolbox license is 
+% available), otherwise the tide_analysis.exe from Delft3D will be used. 
 %
 %     Usage (more detailed description of settings is given below):
 %
@@ -27,17 +24,18 @@ function triana(s,meas)
 %     (which can you can generate by running the function TRIANA, see
 %     above). The measurements as specified in the array structure MEAS are
 %     used to compare the model against. MEAS is an arraw structure with
-%     size [Nx1], in which N is the number of measurements. The following
+%     size [Nx1], in which N is the number of locations. The following
 %     fields are required for MEAS:
-%         name = name of the measurementstation [string]
-%         X = X-coordinate of measurement (same epsg as model) [1x1]
-%         Y = Y-coordinate of measurement (same epsg as model) [1x1]
+%         name = name of the measurement station [string]
+%         X = X-coordinate of measurement (same coordinate system as model) [1x1]
+%         Y = Y-coordinate of measurement (same coordinate system as model) [1x1]
 %         Cmp = cell array containing the component names (e.g.
 %         {'M2','K1','K1'} [1xC]
 %         A = array containing the amplitude in meters for each tidal
 %         component (e.g. [0.5 0.2 0.1]) [1xC]
 %         G = array containing the phase in degrees for each tidal
 %         component (e.g. [350 4.5 45.9]) [1xC]
+%         OPTIONAL: timeZone = timezone in hours relative to GMT    
 %
 %     TRIANA(MEAS) starts a GUI which will help you to provide the right settings
 %     for this function (model output file, tidal analysis settings, plot
@@ -107,7 +105,7 @@ end
 
 if nargin == 1
     if  ~isfield(s,'model')
-        if isfield(s,'data') % input variable is contains measured components
+        if isfield(s,'data') % input variable contains measured components
             meas = s;
             clear s
         end
@@ -117,6 +115,9 @@ end
 
 if exist('meas','var')  % store user defined measurement in structure
     s.meas.data = meas;
+    if isfield(meas,'timeZone')
+       s = triana_convertTimeZoneMeasurements2GMT(s); 
+    end
 end
 
 %% set defaults
@@ -158,8 +159,17 @@ end
 T = toc; disp(['Finished reading model data in ',num2str(T),' seconds'])
 disp('***')
 
-%% Performing Tidal Analysis for each station
-s = triana_tidalAnalysis(s);
+%% Performing Tidal Analysis on measurement data for each station
+% s = triana_tidalAnalysis(s);
+try
+    xcov(1,1);
+    disp('T_tide will be used for the tidal analysis')
+    s = triana_tidalAnalysis_t_tide(s);
+catch
+    disp('T_tide can not be used (no signal toolbox license), therefore Delft-Tide will be used for the tidal analysis')
+    s = triana_tidalAnalysis(s);
+end
+
 
 %% Prepare Triana plot
 s = triana_plotTriana(s);

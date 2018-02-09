@@ -7,18 +7,22 @@ mkdir(s.outputDir);
 dirFiles = [fileparts(which('triana')),filesep,'toBeCopiedFiles'];
 copyfile([dirFiles,filesep,'tide_inp.ana.template'],s.outputDir);
 copyfile([dirFiles,filesep,'irpana21.dat'],s.outputDir);
+if ~exist(s.ana.exe,'file')
+    s.ana.exe = [dirFiles,filesep,'tide_analysis.exe'];
+end
 copyfile(s.ana.exe,s.outputDir);
 
-% check if a ina.template has been specified 
+
+% check if a ina.template has been specified
 if isfield(s.ana,'inputFile')
     copyfile(s.ana.inputFile,s.outputDir);
-else    
+else
     % set consituents
     ina=textread([dirFiles,filesep,'no_constituents_analyse.ina.template'],'%s','delimiter','\n');
     ina=regexprep(ina,'%NUMCONST%',num2str(length(s.ana.constituents)));
     ID_const = find(~cellfun('isempty',regexp(ina,'%CONSTITUENTS%')));
     ina = [ina(1:ID_const-1);s.ana.constituents';ina(ID_const+1:end)];
-
+    
     fid=fopen([s.outputDir,filesep,'analyse.ina.template'],'w');
     for uu=1:length(ina)
         fprintf(fid,'%s\n',ina{uu});
@@ -30,7 +34,7 @@ end
 cd(s.outputDir)
 
 % extract timeseries per station and perform analysis
-for ss = 1:length(s.modID)      
+for ss = 1:length(s.modID)
     runID = strrep([deblank(s.model.data.stats{ss}),'_',s.description,'_'],'/',' ');
     
     disp(['Processing station ',num2str(ss),' of ',num2str(length(s.modID)),': ',deblank(s.model.data.stats{ss})]);

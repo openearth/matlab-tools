@@ -2,6 +2,7 @@ function s = triana_setDefaults(s)
 
 
 k.model.epsg = 4326; % WGS84 is assumed
+k.model.epsgTxT = strrep(strrep(strtok(epsg_wkt(s.model.epsg),','),'PROJCS["',''),'"','');
 k.model.timeZone=0;
 % s.ana.timeStart = datenum(timeStart,'yyyymmdd')
 % s.ana.timeEnd = datenum(timeEnd,'yyyymmdd')
