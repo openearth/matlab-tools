@@ -10,7 +10,7 @@ txt_dist_hor = (s.plot.Xmax-s.plot.Xmin)/s.plot.txtHorFraq;
 txt_dist_ver = (s.plot.Ymax-s.plot.Ymin)/s.plot.txtVerFraq;
 X_legend =0.8*(s.plot.Xmax-s.plot.Xmin)+s.plot.Xmin;
 Y_legend =0.8*(s.plot.Ymax-s.plot.Ymin)+s.plot.Ymin;
-fontSizeTriana =3;
+% s.plot.FontSize =3;
 
 % if no constituents have been specified for plotting, take all analysed components
 if ~isfield(s.plot,'const')
@@ -63,14 +63,14 @@ for cc = 1:length(s.plot.const)
             % plot the observed values
             hTo(1) = text(s.triana.X(ll)-txt_dist_hor,s.triana.Y(ll)+txt_dist_ver,num2str(round(s.triana.Aobs(ID_cmpTriana,ll)*100)/100));
             hTo(2) = text(s.triana.X(ll)+txt_dist_hor,s.triana.Y(ll)+txt_dist_ver,num2str(round(s.triana.Gobs(ID_cmpTriana,ll))));
-            set(hTo,'FontSize',fontSizeTriana,'HorizontalAlignment','center','Color',[1 0 0],'FontWeight','Bold')
+            set(hTo,'FontSize',s.plot.FontSize,'HorizontalAlignment','center','Color',[1 0 0],'FontWeight','Bold')
         end
         
         if ~isnan(s.modID(ll))
             % plot computed values
             hTc(1) = text(s.triana.X(ll)-txt_dist_hor,s.triana.Y(ll)-txt_dist_ver,num2str(round(s.triana.Acomp(ID_cmpTriana,ll)*100)/100));
             hTc(2) = text(s.triana.X(ll)+txt_dist_hor,s.triana.Y(ll)-txt_dist_ver,num2str(round(s.triana.Gcomp(ID_cmpTriana,ll))));
-            set(hTc,'FontSize',fontSizeTriana,'HorizontalAlignment','center','Color',[0 0 1],'FontWeight','Bold')
+            set(hTc,'FontSize',s.plot.FontSize,'HorizontalAlignment','center','Color',[0 0 1],'FontWeight','Bold')
         end
         
         % plot line seperating the values
@@ -83,8 +83,8 @@ for cc = 1:length(s.plot.const)
     hTo2(2) = text(X_legend+txt_dist_hor,Y_legend+txt_dist_ver,'Go');
     hTc2(1) = text(X_legend-txt_dist_hor,Y_legend-txt_dist_ver,'Hc');
     hTc2(2) = text(X_legend+txt_dist_hor,Y_legend-txt_dist_ver,'Gc');
-    set(hTc2,'FontSize',fontSizeTriana,'HorizontalAlignment','center','Color',[0 0 1],'FontWeight','Bold')
-    set(hTo2,'FontSize',fontSizeTriana,'HorizontalAlignment','center','Color',[1 0 0],'FontWeight','Bold')
+    set(hTc2,'FontSize',s.plot.FontSize,'HorizontalAlignment','center','Color',[0 0 1],'FontWeight','Bold')
+    set(hTo2,'FontSize',s.plot.FontSize,'HorizontalAlignment','center','Color',[1 0 0],'FontWeight','Bold')
     
     plot(X_legend,Y_legend-3*txt_dist_ver,'bo','Color',[0.6 0.6 0.6],'MarkerSize',3)
     text(X_legend+txt_dist_hor,Y_legend-3*txt_dist_ver,'model station','FontSize',3)
@@ -102,6 +102,7 @@ for cc = 1:length(s.plot.const)
         xlabel(['Easting [km; ',coordinateSystem,']'])
         ylabel(['Northing [km; ',coordinateSystem,']'])
     end
+    set(gca,'FontSize',7)
     print(gcf,'-dpng','-r300',[pwd '\Figures\Triana_',s.plot.const{cc},'_',s.description,'.png'])
     close all
     
@@ -132,6 +133,10 @@ for cc = 1:length(s.plot.const)
             plot(s.triana.X(ll),s.triana.Y(ll),'k.','Color',clrmap(IDcol(end),:),'MarkerSize',20)
         end
     end
+    if ~isempty(find(isnan(colorbarLims)))
+        colorbarLims = [0 1];
+    end
+    set(gcf,'Colormap',jet);
     hC = colorbar;
     clim([colorbarLims(1) colorbarLims(end)])
     set(get(hC,'YLabel'),'String','Hc/Ho [-]')
@@ -145,7 +150,7 @@ for cc = 1:length(s.plot.const)
         ylabel(['Northing [km; ',coordinateSystem,']'])
     end
     
-    hS(1) = subplot(2,1,2);
+    hS(2) = subplot(2,1,2);
     hold on
     axis equal
     set(gca,'XLim',[s.plot.Xmin s.plot.Xmax],'YLim',[s.plot.Ymin s.plot.Ymax])
@@ -163,6 +168,9 @@ for cc = 1:length(s.plot.const)
             plot(s.triana.X(ll),s.triana.Y(ll),'k.','Color',clrmap(IDcol(end),:),'MarkerSize',20)
         end
     end
+    if ~isempty(find(isnan(colorbarLims)))
+        colorbarLims = [0 1];
+    end
     hC = colorbar;
     clim([colorbarLims(1) colorbarLims(end)])
     set(get(hC,'YLabel'),'String','Gc - Go [^o]')
@@ -179,6 +187,8 @@ for cc = 1:length(s.plot.const)
         ylabel(['Northing [km; ',coordinateSystem,']'])
     end
     
+    set(hS(1),'FontSize',6)
+    set(hS(2),'FontSize',6)
     print(gcf,'-dpng','-r300',[pwd '\Figures\Triana_',s.plot.const{cc},'_',s.description,'_Aratio_Gdiff.png'])
     close all
 end

@@ -41,11 +41,15 @@ if s.selection.opt ~= 1 & s.selection.opt~= 2
 end
 
 % set search radius
-s.selection.searchRadius=str2num(char(inputdlg(['Specify search radius (in decimal degrees). If the distance between the model station and the IHO station is smaller than this radius, the station is included in the analysis'],'Enter search radius',1,{'0.05'})));
+if s.model.epsg == 4326
+    s.selection.searchRadius=str2num(char(inputdlg(['Specify search radius (in decimal degrees). If the distance between the model station and the IHO station is smaller than this radius, the station is included in the analysis'],'Enter search radius',1,{'0.05'})));
+else
+    s.selection.searchRadius=str2num(char(inputdlg(['Specify search radius (in meters). If the distance between the model station and the IHO station is smaller than this radius, the station is included in the analysis'],'Enter search radius',1,{'0.05'})));
+end
 
 switch s.selection.opt
     case 1
-        s.selection.obs=strsplit(char(inputdlg(['Specify model stations to be analysed as follows: station1 ; station2 ; stationBla ; etc'],'selection stations',1,{''})),';');
+        s.selection.obs=strsplit(char(strrep(inputdlg(['Specify model stations to be analysed as follows: station1 ; station2 ; stationBla ; etc'],'selection stations',1,{''}),'; ',';')),';');
 end
 
 
@@ -101,7 +105,8 @@ s.plot.Ymax = axisLims(4);
 
 s.plot.txtHorFraq = 110; %fraction of (s.plot.Xmax - s.plot.Xmin) used to horizontally locate the computed and observed amplitude and phase texts
 s.plot.txtVerFraq = 110; %fraction of (s.plot.Ymax - s.plot.Ymin) used to vertically locate the computed and observed amplitude and phase texts
-
+ s.plot.FontSize = 3; % fontsize of amplitudes and phases in triana overview plot
+ 
 % filename containing IHO stations
 s.meas.file = 'p:\delta\svn.oss.deltares.nl\openearthtools\matlab\applications\DelftDashBoard\toolboxes\TideStations\data\iho.nc';
 

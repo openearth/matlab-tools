@@ -1,7 +1,8 @@
 
 function [ana res] = triana_runTidalAnalysis(runID,hdt,hdz,ana_info)
 
-
+ana = [];
+res = [];
 try
     if ana_info.fourier == 1
     end
@@ -72,6 +73,9 @@ sset(idEmpty)=[];
 
 save sset.mat sset
 
+if length(sset) == 0
+   disp('Warning: The selected period did not match the criteria: minimum duration: 30 days, maximum gap: 45 days, maximum duration: 365 days') 
+end
 
 for ii=1:length(sset)
     

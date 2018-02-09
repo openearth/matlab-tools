@@ -5,7 +5,7 @@ meas.Y = [s.meas.data.Y];
 
 switch s.selection.opt
     case 1
-        s.modID=[]
+        s.modID=[];
         for ss = 1:length(s.selection.obs)
            IDstat = find(~cellfun('isempty',regexp(s.model.data.statsAll,s.selection.obs{ss})));
            if ~isempty(IDstat)

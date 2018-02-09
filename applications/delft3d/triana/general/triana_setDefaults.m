@@ -8,6 +8,7 @@ k.model.timeZone=0;
 k.ana.fourier = 1; % 1: fourier analysis on residual is performed for each station, 0: fourier analysis is not performed on residual
 k.plot.txtHorFraq = 110; %fraction of (s.plot.Xmax - s.plot.Xmin) used to horizontally locate the computed and observed amplitude and phase texts
 k.plot.txtVerFraq = 110; %fraction of (s.plot.Ymax - s.plot.Ymin) used to vertically locate the computed and observed amplitude and phase texts
+k.plot.FontSize = 3; %fraction of (s.plot.Ymax - s.plot.Ymin) used to vertically locate the computed and observed amplitude and phase texts
 k.meas.useIHO = 1;
 k.meas.file = which('iho.nc');
 if strcmpi(k.meas.file,'')

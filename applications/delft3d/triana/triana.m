@@ -91,7 +91,6 @@ function triana(s,meas)
 %               be used for the analysis. In case the user also specified
 %               the MEAS variable as input, the IHO measurements will be
 %               used in addition to these. 
-%         <useIHO>: 0 or 1(Default). Specifies whether the IHO database will
 %     <description>: name tag which will be added to the filenames of the figures
 %               and other output data (Default: 'triana')
 %     outputDir: folder where the triana results need to be stored
