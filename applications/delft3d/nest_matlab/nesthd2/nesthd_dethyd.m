@@ -113,6 +113,25 @@ for ipnt = 1: nopnt
                     %
                 case {'c' 'p'}
                     [~,uu,vv] = nesthd_getdata_hyd(filename,ines(iwght),nfs_inf,'c');
+					
+					% In case of Zmodel, replace nodata values (-999) with above or below layer
+                    if kmax>1 && strcmp(add_inf.profile,'3d-profile')==1
+                    for itim = 1: notims
+                        for kk=kmax-1:-1:1
+                            if uu(itim,:,kk)==-999
+                                uu(itim,:,kk)=uu(itim,:,kk+1);
+                                vv(itim,:,kk)=vv(itim,:,kk+1);
+                            end
+                        end
+                        for kk=2:kmax
+                            if uu(itim,:,kk)==-999
+                                uu(itim,:,kk)=uu(itim,:,kk-1);
+                                vv(itim,:,kk)=vv(itim,:,kk-1);
+                            end
+                        end
+                    end
+                    end
+					
                     [uu,~]     = nesthd_rotate_vector(uu,vv,pi/2. - angle);
                     for itim = 1: notims
                         bndval(itim).value(ipnt,1:kmax,1) = bndval(itim).value(ipnt,1:kmax,1) +  uu(itim,:)*weight(iwght);
@@ -122,6 +141,25 @@ for ipnt = 1: nopnt
                     %
                 case {'r' 'x'}
                     [wl,uu,vv] = nesthd_getdata_hyd(filename,ines(iwght),nfs_inf,'all');
+					
+					% In case of Zmodel, replace nodata values (-999) with above or below layer
+                    if kmax>1 && strcmp(add_inf.profile,'3d-profile')==1
+                    for itim = 1: notims
+                        for kk=kmax-1:-1:1
+                            if uu(itim,:,kk)==-999
+                                uu(itim,:,kk)=uu(itim,:,kk+1);
+                                vv(itim,:,kk)=vv(itim,:,kk+1);
+                            end
+                        end
+                        for kk=2:kmax
+                            if uu(itim,:,kk)==-999
+                                uu(itim,:,kk)=uu(itim,:,kk-1);
+                                vv(itim,:,kk)=vv(itim,:,kk-1);
+                            end
+                        end
+                    end
+                    end
+					
                     [uu,~]     = nesthd_rotate_vector(uu,vv,pi/2. - angle);
                     ori = char(ori);
                     if ori(1:2) == 'in'
@@ -202,6 +240,25 @@ for ipnt = 1: nopnt
             for iwght = 1: 4
                 if ines(iwght) ~=0
                     [~,uu,vv] = nesthd_getdata_hyd(filename,ines(iwght),nfs_inf,'c');
+					
+					% In case of Zmodel, replace nodata values (-999) with above or below layer
+                    if kmax>1 && strcmp(add_inf.profile,'3d-profile')==1
+                    for itim = 1: notims
+                        for kk=kmax-1:-1:1
+                            if uu(itim,:,kk)==-999
+                                uu(itim,:,kk)=uu(itim,:,kk+1);
+                                vv(itim,:,kk)=vv(itim,:,kk+1);
+                            end
+                        end
+                        for kk=2:kmax
+                            if uu(itim,:,kk)==-999
+                                uu(itim,:,kk)=uu(itim,:,kk-1);
+                                vv(itim,:,kk)=vv(itim,:,kk-1);
+                            end
+                        end
+                    end
+                    end
+					
                     [~,vv]     = nesthd_rotate_vector(uu,vv,pi/2. - angle);
 %                    vv = -vv;
                     for itim = 1: notims

@@ -94,6 +94,22 @@ for i_pnt = 1: no_pnt
                     %
                     
                     conc = nesthd_getdata_tran(filename,ines(iwght),nfs_inf,l);
+					
+					% In case of Zmodel, replace nodata values (-999) with above or below layer
+                    if kmax>1 && strcmp(add_inf.profile,'3d-profile')==1
+                    for itim = 1: notims
+                        for kk=kmax-1:-1:1
+                            if conc(itim,:,kk)==-999
+                                conc(itim,:,kk)=conc(itim,:,kk+1);
+                            end
+                        end
+                        for kk=2:kmax
+                            if conc(itim,:,kk)==-999
+                                conc(itim,:,kk)=conc(itim,:,kk-1);
+                            end
+                        end
+                    end
+                    end
                     
                     %
                     % Determine weighed value
