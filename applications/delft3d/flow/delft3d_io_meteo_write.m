@@ -166,9 +166,9 @@ if strcmpi(OPT.filetype,'meteo_on_equidistant_grid')
         fprinteol(fid,OPT.OS);
         fprintf  (fid,['grid_unit        = ' OPT.gridunit]);
         fprinteol(fid,OPT.OS);
-        fprintf  (fid,['x_llcorner       = ',num2str(min(min(x)))]);
+        fprintf  (fid,['x_llcorner       = ',num2str(x(1,1))]);
         fprinteol(fid,OPT.OS);
-        fprintf  (fid,['y_llcorner       = ',num2str(min(min(y)))]);
+        fprintf  (fid,['y_llcorner       = ',num2str(y(1,1))]);
         fprinteol(fid,OPT.OS);
         fprintf  (fid,['dx               = ',num2str(dx)]);
         fprinteol(fid,OPT.OS);
