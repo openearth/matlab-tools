@@ -51,7 +51,11 @@ for mm = 1:length(mapFiles)
         if isfield(grd,'edge')
             % merge fields
             edgeFields = fieldnames(grd.edge);
-            edgeDim = find(size(grd.edge.FlowLinkType)>1);
+            if ~isempty(find(~cellfun('isempty',regexp(edgeFields,'NetLink'))))
+                edgeDim = find(size(grd.edge.NetLinkType)>1);
+            elseif ~isempty(find(~cellfun('isempty',regexp(edgeFields,'FlowLink'))))
+                edgeDim = find(size(grd.edge.FlowLinkType)>1);
+            end
             for ff = 1:length(edgeFields)
                 if strcmpi(edgeFields{ff},'NetLink')
                     grd.edge.NetLink = appendMatrices(grd.edge.NetLink,grdPart(mm).edge.NetLink+addNode,edgeDim);
