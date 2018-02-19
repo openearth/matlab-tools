@@ -9,7 +9,6 @@ function varargout=EHY_runTimeInfo(varargin)
 % Example2: runTimeInfo=EHY_runTimeInfo('D:\model.mdu')
 %
 % created by Julien Groenenboom, March 2017
-EHYs(mfilename);
 %%
 if nargin>0
     mdFile=varargin{1};
@@ -51,6 +50,16 @@ try % if simulation has finished
             % partitions
             diaFiles=dir([pathstr filesep name '*.dia']);
             noPartitions=max([1 length(diaFiles)-1]);
+            
+            % number of netnodes
+            grdInfo=ncinfo([fileparts(mdFile) filesep mdu.geometry.NetFile]);
+            id=strmatch('nNetNode',{grdInfo.Dimensions.Name},'exact');
+            if isempty(id)
+                id=strmatch('nmesh2d_node',{grdInfo.Dimensions.Name},'exact');
+            end
+            if ~isempty(id)
+                noNetNodes=grdInfo.Dimensions(id).Length;
+            end
             
             % average timestep
             line=findLineOrQuit(fid,'** INFO   : average timestep * (s)  :');
@@ -163,6 +172,10 @@ if exist('realTime_S','var') % if simulation has finished
     if exist('noPartitions','var')
         runTimeInfo.numberOfPartitions = noPartitions;
     end
+    % partitions
+    if exist('noNetNodes','var')
+        runTimeInfo.numberOfNetNodes = noNetNodes;
+    end
     
 else
     runTimeInfo.comment='Simulation has probably not finished yet or crashed';
@@ -176,7 +189,7 @@ runTimeInfo % disp struct with info
 if nargout==1
     varargout{1}=runTimeInfo;
 end
-
+EHYs(mfilename);
 end
 %%
 function line=findLineOrQuit(fid,wantedLine)

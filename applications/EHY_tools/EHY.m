@@ -1,6 +1,9 @@
 function EHY
-
-EHYs(mfilename);
+%% EHY
+%
+% Run this function (or 'ehy' or 'EHF') to open the GUI and interactively use the EHY_Tools
+%
+% created by Julien Groenenboom, 2017
 
 functions={};
 functions{end+1,1}='EHY_convert';
@@ -21,36 +24,53 @@ functions{end+1,1}='EHY_crop';
 functions{end  ,2}='This function crops the surrounding area of a figure based on the background color';
 functions{end+1,1}='EHY_wait';
 functions{end  ,2}='Run a selected MATLAB-script once a certain date and time is reached';
+functions{end+1,1}='EHY_findLimitingCells';
+functions{end  ,2}='Get the time step limiting cells and max. flow velocities from a Delft3D-FM run';
 
 h=findall(0,'type','figure','name','EHY_TOOLS');
 if ~isempty(h)
     uistack(h,'top');
     figure(h);
+    movegui(h,'center');
     disp('The EHY_TOOLS GUI was already open')
 else
-    EHYfig=figure('units','normalized','position',[0.2698 0.3 0.4089 0.3463],'name','EHY_TOOLS');
+    EHYfig=figure('units','centimeters','position',[12.0227 6.4982 16.8 8.8],'name','EHY_TOOLS','color',[0.94 0.94 0.94]);
+    movegui(EHYfig,'center');
 end
-height=305;
+height=9;
 for iF=1:length(functions)
     button=uicontrol('Style', 'pushbutton', 'String',functions{iF,1},...
-        'Position', [20 height-iF*30 200 20],...
+        'units','centimeters','Position',[0.5027 height-iF*0.7938 5.2917 0.5292],... % 'Position', [20 height-iF*30 200 20],... %
         'Callback', @runEHYscript);
-      uicontrol('Style','text',...
-        'Position',[240 height-iF*30-3 1000 20],...
+    uicontrol('Style','text',...
+        'units','centimeters','Position',[6 height-iF*0.7938-0.1 12 0.5292],...
         'String',functions{iF,2},'horizontalalignment','left');
 end
-%close button
-    button=uicontrol('Style', 'pushbutton', 'String','Close',...
-        'Position', [20 height-(iF+1)*30 200 20],...
-        'Callback', @closeFig);
-end
+% close button
+button=uicontrol('Style', 'pushbutton', 'String','Close',...
+    'units','centimeters','Position',[0.5027 height-(iF+1)*0.7938 5.2917 0.5292],...
+    'Callback', @closeFig);
+% status
+hStatusText=uicontrol('Style','text',...
+    'units','centimeters','Position',[6 height-(iF+1)*0.7938 12 0.5292],...
+    'String','Status:  Please select a function','horizontalalignment','left',...
+    'FontWeight','bold','foregroundcolor',[0 0.5 0],'fontSize',12);
 
-function runEHYscript(hObject,event)
-disp([char(10) 'EHY_tools: Start of running the function ''' get(hObject,'String') ''' - BUSY (even though MATLAB says it''s not)' char(10)])
-run(get(hObject,'String'))
-disp([char(10) 'EHY_tools: Finished running the ' get(hObject,'String') '-function  ' char(10)])
-end
+    function runEHYscript(hObject,event)
+        h=findall(0,'type','figure','name','EHY_TOOLS');
+        set(h, 'pointer', 'watch')
+        set(hStatusText,'String',...
+            ['Status:  BUSY running ''' get(hObject,'String') ''''],'foregroundcolor',[1 0 0],'fontSize',12);
+        try
+            run(get(hObject,'String'))
+        end
+        set(h, 'pointer', 'arrow')
+        set(hStatusText,'String',...
+            'Status:  Please select a function','foregroundcolor',[0 0.5 0],'fontSize',12);
+    end
 
-function closeFig(hObject,event)
-close(get(hObject,'Parent'))
+    function closeFig(hObject,event)
+        close(get(hObject,'Parent'))
+    end
+EHYs(mfilename);
 end

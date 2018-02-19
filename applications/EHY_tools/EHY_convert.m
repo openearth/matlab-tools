@@ -10,7 +10,6 @@ function varargout=EHY_convert(varargin)
 % Example4: ldb=EHY_convert('D:\path.kml','ldb','saveOutputFile',0)
 
 % created by Julien Groenenboom, August 2017
-EHYs(mfilename);
 %%
 OPT.saveOutputFile=1; % 0=do not save, 1=save
 OPT.outputFile=[]; % if isempty > outputFile=strrep(inputFile,inputExt,outputExt);
@@ -691,6 +690,7 @@ elseif nargout>1
     varargout{1}=output;
     varargout{2}=OPT;
 end
+EHYs(mfilename);
 end
 
 function varargout=EHY_convert_gridCheck(OPT,inputFile)
@@ -789,7 +789,21 @@ if fromEPSG~=toEPSG
         case {'.ldb','.pli','.pol'}
             output=landboundary('read',inputFile);
             [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',fromEPSG,'CS2.code',toEPSG);
-            io_polygon('write',outputFile,output);
+            if size(output,2)==2
+                io_polygon('write',outputFile,output(:,1:2));
+            elseif size(output,2)==3
+                startID=[1; find(isnan(output(:,1)))+1];
+                endID=[find(isnan(output(:,1)))-1; size(output,1)];
+                fid=fopen(outputFile,'w');
+                for iBlock=1:length(startID)
+                    fprintf(fid,'%5.0f\n',iBlock);
+                    fprintf(fid,'%10.0f%5.0f\n',[endID(iBlock)-startID(iBlock)+1 3]);
+                    for iBlock2=startID(iBlock):endID(iBlock)
+                        fprintf(fid,'%20.7f%20.7f%5.0f\n',[output(iBlock2,1:3)]);
+                    end
+                end
+                fclose(fid);
+            end
         case {'.xyz'}
             output=importdata(inputFile);
             [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',fromEPSG,'CS2.code',toEPSG);

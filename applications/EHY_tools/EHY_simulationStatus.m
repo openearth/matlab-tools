@@ -4,10 +4,9 @@ function varargout=EHY_simulationStatus(varargin)
 % This function returns the status of a D-FLOW FM, Delft3D and SIMONA simulation.
 %
 % Example1: EHY_simulationStatus
-% Example2: EHY_simulationStatus('D:\run1\model.mdu')
+% Example2: percentage=EHY_simulationStatus('D:\run1\model.mdu');
 %
 % created by Julien Groenenboom, August 2017
-EHYs(mfilename);
 %%
 if nargin==0
     disp('Open a .mdu, .mdf or SIMONA file as input')
@@ -130,3 +129,4 @@ disp(['Status of ' name ext ': ' num2str(round(runPeriod_D)) '/' num2str(round(s
 if nargout==1
     varargout{1}=percentage;
 end
+EHYs(mfilename);

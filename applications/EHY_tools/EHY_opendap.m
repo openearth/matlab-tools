@@ -18,7 +18,6 @@ function varargout = EHY_opendap (varargin)
 %                        - Location of the station,
 %                        - Measurement height, etc
 %                        Is returned in the stucture Info
-EHYs(mfilename);
 %% Initialisation
 OPT.Parameter = '';
 OPT.Station   = '';
@@ -86,8 +85,8 @@ if ~isempty(OPT.Parameter)
         %% Station name specified, return time series of the parameter at this station
         %  First find the station
         try
-            i_stat = find(~cellfun(@isempty,strfind(lower(list_stat),lower(OPT.Station))));
-            
+%JG         i_stat = find(~cellfun(@isempty,strfind(lower(list_stat),lower(OPT.Station))));
+            i_stat = find(~cellfun(@isempty,regexp(lower(list_stat),strjoin(lower(OPT.Station),'|'))));
             % Get information on the parameter name on the file
             date_tmp  = [];
             value_tmp = [];
@@ -98,16 +97,16 @@ if ~isempty(OPT.Parameter)
                     
                     %% Retrieve data
                     D           = nc_cf_timeseries(list_stat{i_stat(i_par)},param_name,'plot',0);
-                    date_tmp    = [date_tmp  D.datenum'     ];
-                    value_tmp   = [value_tmp D.(param_name)'];
+                    date_tmp    = [date_tmp;  reshape(D.datenum,[],1)];
+                    value_tmp   = [value_tmp; reshape(D.(param_name),[],1)];
                 end
                 [dates,index]   = sort(date_tmp);
                 values          = value_tmp(index);
-                varargout{1} = reshape(dates,[],1);
-                varargout{2} = reshape(values,[],1);
+                varargout{1} = dates;
+                varargout{2} = values;
                 
                 %% Retrieve general information (if requested)
-                if nargout == 3
+                if nargout == 3 
                     for i_var = 1: length(Info.Variables) - 2
                         if i_var <= 2
                             geninf.(Info.Variables(i_var).Name) = ncread(list_stat{i_stat(i_par)},Info.Variables(i_var).Name)';
@@ -134,12 +133,13 @@ if ~isempty(OPT.Parameter)
                 [dates,values,geninf] = EHY_opendap (varargin{1:end});
                 varargout{3}          = geninf;
             end
-            varargout{1} = reshape(dates,[],1);
-            varargout{2} = reshape(values,[],1);
+            varargout{1} = dates;
+            varargout{2} = values;
         end
     end
     
 end
+EHYs(mfilename);
 end
 
 function EHY_opendap_interactive
@@ -190,5 +190,5 @@ if selection==1
     ylabel(selectedParameter,'interpreter','none')
     title(['Station: ' selectedStation])
 end
-
+EHYs('EHY_opendap_interactive');
 end
