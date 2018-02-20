@@ -162,7 +162,7 @@ disp('***')
 %% Performing Tidal Analysis on measurement data for each station
 % s = triana_tidalAnalysis(s);
 try
-    xcov(1,1);
+    xcov(1,1); % checking if you have access to the signal toolbox
     disp('T_tide will be used for the tidal analysis')
     s = triana_tidalAnalysis_t_tide(s);
 catch

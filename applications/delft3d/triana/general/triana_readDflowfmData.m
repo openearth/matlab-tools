@@ -12,3 +12,4 @@ s.model.data.Time = nc_cf_time(s.model.file);
 
 % set interval of new timeseries
 s.ana.new_interval = diff(s.model.data.Time(1:2))*1440;
+s.ana.new_interval = round(s.ana.new_interval);

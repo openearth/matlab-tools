@@ -40,7 +40,11 @@ for ss = 1:length(s.modID)
     disp(['Processing station ',num2str(ss),' of ',num2str(length(s.modID)),': ',deblank(s.model.data.stats{ss})]);
     
     % construct timeseries (time and water level)
-    hdt = round(s.model.data.Time(1)*(24*60/s.ana.new_interval))/(24*60/s.ana.new_interval):s.ana.new_interval/1440:round(s.model.data.Time(end)*(24*60/s.ana.new_interval))/(24*60/s.ana.new_interval);
+    IDTime = find(s.model.data.Time>=s.ana.timeStart & s.model.data.Time<=s.ana.timeEnd);
+    s.ana.timeStart = s.model.data.Time(IDTime(1));
+    s.ana.timeEnd = s.model.data.Time(IDTime(end));
+    
+    hdt = round(s.ana.timeStart*(24*60/s.ana.new_interval))/(24*60/s.ana.new_interval):s.ana.new_interval/1440:round(s.ana.timeEnd*(24*60/s.ana.new_interval))/(24*60/s.ana.new_interval);
     hdz = interp1(s.model.data.Time,s.model.data.WL(ss,:),hdt);
     
     % take into account time zone of model
@@ -74,7 +78,9 @@ end
 
 % move files to "Analysis" folder
 makedir([pwd '\Analysis']);
-movefile(['*',datestr(s.ana.timeStart,'yyyymmdd'),'*'],[pwd '/Analysis/'])
+try
+    movefile(['*',datestr(s.ana.timeStart,'yyyymmdd'),'*'],[pwd '/Analysis/'])
+end
 
 s.triana.X = s.model.data.X;
 s.triana.Y = s.model.data.Y;
