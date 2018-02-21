@@ -4,7 +4,17 @@ function EHY
 % Run this function (or 'ehy' or 'EHF') to open the GUI and interactively use the EHY_Tools
 %
 % created by Julien Groenenboom, 2017
-
+%% Check if lastest version is used
+try
+    [~,out]=system(['svn info ' (fileparts(which('EHY.m')))]);
+    rev1 = str2num(char(regexp(out, 'Revision: (\d+)', 'tokens', 'once')));
+    rev2 = str2num(char(regexp(out, 'Last Changed Rev: (\d+)', 'tokens', 'once')));
+    if rev2<rev1
+        disp('Your EHY_tools are not up-to-date, please update the EHY_tools folder in your OET.')
+        disp('Select <strong>Update OET EHY_tools</strong> in the EHY_tools GUI.')
+    end
+end
+%%
 functions={};
 functions{end+1,1}='EHY_convert';
 functions{end  ,2}='Conversion from and to model input files. Including coordinate conversion';
@@ -51,8 +61,8 @@ button=uicontrol('Style', 'pushbutton', 'String','Update OET EHY_tools',...
     'units','centimeters','Position',[0.5027 height-(iF+1)*0.7938 5.2917 0.5292],...
     'Callback', @updateEHYtools,'FontWeight','bold','foregroundcolor',[0 0 0.5]);
 uicontrol('Style','text',...
-        'units','centimeters','Position',[6 height-(iF+1)*0.7938-0.1 12 0.5292],...
-        'String','Update the EHY_tools folder in your Open Earth Tools','horizontalalignment','left');
+    'units','centimeters','Position',[6 height-(iF+1)*0.7938-0.1 12 0.5292],...
+    'String','Update the EHY_tools folder in your Open Earth Tools','horizontalalignment','left');
 % close button
 button=uicontrol('Style', 'pushbutton', 'String','Close',...
     'units','centimeters','Position',[0.5027 height-(iF+2)*0.7938 5.2917 0.5292],...
@@ -84,7 +94,7 @@ EHYs(mfilename);
     end
     function updateEHYtools(hObject,event)
         try
-        system(['svn update ' fileparts(which('EHY.m'))]);
+            system(['svn update ' fileparts(which('EHY.m'))]);
         catch
             disp('Automatic update failed. Please update the folder yourself.')
         end
