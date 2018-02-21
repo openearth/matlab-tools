@@ -11,10 +11,15 @@ function EHY_tek2tim(filename,varargin)
 % 2) 'itdate' , matlab date of the reference date of the DFlow-FM simulation, default is first time on
 %                                                                             TEKAL data file
 %
-
+%
+% Examples:
+% EHY_tek2tim('deb-dortse_kil',);
+% EHY_tek2tim('deb-dortse_kil','sign',-1.);
+% EHY_tek2tim('deb-dortse_kil','sign',-1.,'itdate',datenum('20070101 000000','yyyymmdd  HHMMSS'));
+%
 %% Define
 OPT.sign   = +1;
-OPT.itdate = ''
+OPT.itdate = '';
 OPT        = setproperty(OPT,varargin);
 
 %% Read tekal file
