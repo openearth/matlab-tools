@@ -34,10 +34,10 @@ if ~isempty(h)
     movegui(h,'center');
     disp('The EHY_TOOLS GUI was already open')
 else
-    EHYfig=figure('units','centimeters','position',[12.0227 6.4982 16.8 8.8],'name','EHY_TOOLS','color',[0.94 0.94 0.94]);
+    EHYfig=figure('units','centimeters','position',[12.0227 6.4982 16.8 9.5],'name','EHY_TOOLS','color',[0.94 0.94 0.94]);
     movegui(EHYfig,'center');
 end
-height=9;
+height=9.6;
 for iF=1:length(functions)
     button=uicontrol('Style', 'pushbutton', 'String',functions{iF,1},...
         'units','centimeters','Position',[0.5027 height-iF*0.7938 5.2917 0.5292],... % 'Position', [20 height-iF*30 200 20],... %
@@ -46,15 +46,23 @@ for iF=1:length(functions)
         'units','centimeters','Position',[6 height-iF*0.7938-0.1 12 0.5292],...
         'String',functions{iF,2},'horizontalalignment','left');
 end
+% Update button
+button=uicontrol('Style', 'pushbutton', 'String','Update OET EHY_tools',...
+    'units','centimeters','Position',[0.5027 height-(iF+1)*0.7938 5.2917 0.5292],...
+    'Callback', @updateEHYtools,'FontWeight','bold','foregroundcolor',[0 0 0.5]);
+uicontrol('Style','text',...
+        'units','centimeters','Position',[6 height-(iF+1)*0.7938-0.1 12 0.5292],...
+        'String','Update the EHY_tools folder in your Open Earth Tools','horizontalalignment','left');
 % close button
 button=uicontrol('Style', 'pushbutton', 'String','Close',...
-    'units','centimeters','Position',[0.5027 height-(iF+1)*0.7938 5.2917 0.5292],...
+    'units','centimeters','Position',[0.5027 height-(iF+2)*0.7938 5.2917 0.5292],...
     'Callback', @closeFig);
 % status
 hStatusText=uicontrol('Style','text',...
-    'units','centimeters','Position',[6 height-(iF+1)*0.7938 12 0.5292],...
+    'units','centimeters','Position',[6 height-(iF+2)*0.7938 12 0.5292],...
     'String','Status:  Please select a function','horizontalalignment','left',...
     'FontWeight','bold','foregroundcolor',[0 0.5 0],'fontSize',12);
+EHYs(mfilename);
 
     function runEHYscript(hObject,event)
         h=findall(0,'type','figure','name','EHY_TOOLS');
@@ -63,6 +71,8 @@ hStatusText=uicontrol('Style','text',...
             ['Status:  BUSY running ''' get(hObject,'String') ''''],'foregroundcolor',[1 0 0],'fontSize',12);
         try
             run(get(hObject,'String'))
+        catch
+            disp(['Failed to execute function: ''' get(hObject,'String') ''''])
         end
         set(h, 'pointer', 'arrow')
         set(hStatusText,'String',...
@@ -72,5 +82,11 @@ hStatusText=uicontrol('Style','text',...
     function closeFig(hObject,event)
         close(get(hObject,'Parent'))
     end
-EHYs(mfilename);
+    function updateEHYtools(hObject,event)
+        try
+        system(['svn update ' fileparts(which('EHY.m'))]);
+        catch
+            disp('Automatic update failed. Please update the folder yourself.')
+        end
+    end
 end
