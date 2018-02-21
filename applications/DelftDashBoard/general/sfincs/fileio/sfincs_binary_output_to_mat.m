@@ -8,6 +8,8 @@ end
 inp=sfincs_initialize_input;
 inp=sfincs_read_input(inpfile,inp);
 
+tstart=datenum(inp.tstart,'yyyymmdd HHMMSS');
+
 [xg,yg]=meshgrid(0:inp.dx:(inp.mmax-1)*inp.dx,0:inp.dy:(inp.nmax-1)*inp.dy);
 rot=inp.rotation*pi/180;
 x=inp.x0+cos(rot)*xg-sin(rot)*yg;
@@ -68,44 +70,50 @@ if exist([folder 'cumprcp.dat'],'file')
     fclose(fid);
 end
 
-% Read Hmax file
-fid=fopen([folder inp.hmaxfile],'r');
-idummy=fread(fid,1,'integer*4');
-hmaxv=fread(fid,np,'real*4');
-idummy=fread(fid,1,'integer*4');
-fclose(fid);
-hmax=zeros(size(x));
-hmax(hmax==0)=NaN;
-hmax(indices)=hmaxv;
+if ~isempty(inp.hmaxfile)
+    % Read Hmax file
+    fid=fopen([folder inp.hmaxfile],'r');
+    idummy=fread(fid,1,'integer*4');
+    hmaxv=fread(fid,np,'real*4');
+    idummy=fread(fid,1,'integer*4');
+    fclose(fid);
+    hmax=zeros(size(x));
+    hmax(hmax==0)=NaN;
+    hmax(indices)=hmaxv;
+end
 
-% % Read vmax file
-% fid=fopen('vmaxbin.dat','r');
-% idummy=fread(fid,1,'integer*4');
-% vmaxv=fread(fid,np,'real*4');
-% idummy=fread(fid,1,'integer*4');
-% fclose(fid);
-% vmax=zeros(size(x));
-% vmax(vmax==0)=NaN;
-% vmax(indices)=vmaxv;
+if ~isempty(inp.vmaxfile)
+    % Read vmax file
+    fid=fopen([folder inp.vmaxfile],'r');
+    idummy=fread(fid,1,'integer*4');
+    vmaxv=fread(fid,np,'real*4');
+    idummy=fread(fid,1,'integer*4');
+    fclose(fid);
+    vmax=zeros(size(x));
+    vmax(vmax==0)=NaN;
+    vmax(indices)=vmaxv;
+end
 
 n=0;
 
 n=n+1;
 s.parameters(n).parameter.name='water level';
-s.parameters(n).parameter.time=tref+t/86400;
+s.parameters(n).parameter.time=tstart+t/86400;
 s.parameters(n).parameter.x=x;
 s.parameters(n).parameter.y=y;
 s.parameters(n).parameter.val=val;
 s.parameters(n).parameter.size=[it 0 size(x,1) size(x,2) 0];
 s.parameters(n).parameter.quantity='scalar';
 
-n=n+1;
-s.parameters(n).parameter.name='maximum water depth';
-s.parameters(n).parameter.x=x;
-s.parameters(n).parameter.y=y;
-s.parameters(n).parameter.val=hmax;
-s.parameters(n).parameter.size=[0 0 size(x,1) size(x,2) 0];
-s.parameters(n).parameter.quantity='scalar';
+if ~isempty(inp.hmaxfile)
+    n=n+1;
+    s.parameters(n).parameter.name='maximum water depth';
+    s.parameters(n).parameter.x=x;
+    s.parameters(n).parameter.y=y;
+    s.parameters(n).parameter.val=hmax;
+    s.parameters(n).parameter.size=[0 0 size(x,1) size(x,2) 0];
+    s.parameters(n).parameter.quantity='scalar';
+end
 
 if ~isempty(inp.vmaxfile)
     n=n+1;
@@ -120,7 +128,7 @@ end
 if exist([folder 'cumprcp.dat'],'file')
     n=n+1;
     s.parameters(n).parameter.name='cumulative precipitation';
-    s.parameters(n).parameter.time=tref+t/86400;
+    s.parameters(n).parameter.time=tstart+t/86400;
     s.parameters(n).parameter.x=x;
     s.parameters(n).parameter.y=y;
     s.parameters(n).parameter.val=cumprcp;

@@ -15,8 +15,16 @@ inp.dthisout=600;
 inp.dtwnd=1800;
 inp.alpha=0.75;
 inp.manning=0.04;
+inp.manning_land=0.04;
+inp.manning_sea=0.04;
+inp.rgh_lev_land=0;
 inp.zsini=0;
 inp.qinf=0;
+inp.igperiod=120;
+inp.rhoa=1.25;
+inp.rhow=1024;
+inp.cd_nr=0;
+
 inp.depfile='sfincs.dep';
 inp.mskfile='sfincs.msk';
 inp.geomskfile='sfincs.gms';
@@ -24,6 +32,7 @@ inp.indexfile='sfincs.ind';
 inp.cstfile='sfincs.cst';
 inp.bndfile='sfincs.bnd';
 inp.bzsfile='sfincs.bzs';
+inp.bzifile='';
 inp.bwvfile='sfincs.bwv';
 inp.bhsfile='sfincs.bhs';
 inp.btpfile='sfincs.btp';
@@ -35,5 +44,10 @@ inp.hmaxgeofile='hmaxgeo.dat';
 inp.zsfile='zs.dat';
 inp.vmaxfile='';
 inp.spwfile='';
+inp.wndfile='';
+inp.precipfile='';
+inp.obsfile='';
+
 inp.inputformat='bin';
 inp.outputformat='bin';
+
