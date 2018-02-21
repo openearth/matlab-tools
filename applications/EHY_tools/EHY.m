@@ -6,9 +6,10 @@ function EHY
 % created by Julien Groenenboom, 2017
 %% Check if lastest version is used
 try
-    [~,out]=system(['svn info ' (fileparts(which('EHY.m')))]);
-    rev1 = str2num(char(regexp(out, 'Revision: (\d+)', 'tokens', 'once')));
-    rev2 = str2num(char(regexp(out, 'Last Changed Rev: (\d+)', 'tokens', 'once')));
+    [~,out1]=system(['svn info -r HEAD ' fileparts(which('EHY.m'))]);
+    rev1 = str2num(char(regexp(out1, 'Last Changed Rev: (\d+)', 'tokens', 'once')));
+    [~,out2]=system(['svn info ' fileparts(which('EHY.m'))]);
+    rev2 = str2num(char(regexp(out2, 'Last Changed Rev: (\d+)', 'tokens', 'once')));
     if rev2<rev1
         disp('Your EHY_tools are not up-to-date, please update the EHY_tools folder in your OET.')
         disp('Select <strong>Update OET EHY_tools</strong> in the EHY_tools GUI.')
