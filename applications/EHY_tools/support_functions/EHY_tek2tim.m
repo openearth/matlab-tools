@@ -1,11 +1,11 @@
 function EHY_tek2tim(filename,varargin)
 % EHY_tek2tim converts TEKAL Time series files to tim files that can be used in DFlow-FM
 %
-% the takal file is assumed to have one block of dat with 3 columns, Date, Time and value
+% the takal file is assumed to have one block of data with 3 columns, Date, Time and Value
 %
-% filename is the name, without extension (tek assumed) of the TEKAL file
+% filename is the name, without extension (tek assumed), of the TEKAL file
 %
-% The following <keyword,value> pairs have been implemented
+% The following <keyword,value> pairs have been implemented:
 % 1) 'sign'   , value +1 (default) or -1, multiplification factor allowing for change of sign,
 %                                         can be necessary for discharge series with a different sign
 % 2) 'itdate' , matlab date of the reference date of the DFlow-FM simulation, default is first time on
@@ -16,7 +16,7 @@ function EHY_tek2tim(filename,varargin)
 % EHY_tek2tim('deb-dortse_kil',);
 % EHY_tek2tim('deb-dortse_kil','sign',-1.);
 % EHY_tek2tim('deb-dortse_kil','sign',-1.,'itdate',datenum('20070101 000000','yyyymmdd  HHMMSS'));
-%
+
 %% Define
 OPT.sign   = +1;
 OPT.itdate = '';
@@ -40,4 +40,4 @@ SERIES.Comments{3} = '* COLUMN2=Value';
 SERIES.Values(:,1) = time_tim;
 SERIES.Values(:,2) = values;
 SERIES.Values      = num2cell(SERIES.Values);
-dflowfm_io_series( 'write',[filename '.tim'],SERIES);
+dflowfm_io_series( 'write',[strtrim(filename) '.tim'],SERIES);
