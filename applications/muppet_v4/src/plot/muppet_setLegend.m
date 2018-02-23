@@ -26,8 +26,12 @@ if sum(hnd)>0
             legend boxoff;
         else
             set(leg,'Color','none');
-            set(leg,'XColor',[0.8 0.8 0.8]);
-            set(leg,'YColor',[0.8 0.8 0.8]);
+            if ~verLessThan('matlab', '8.4')
+                set(leg,'EdgeColor',[0.8 0.8 0.8]);
+            else
+                set(leg,'XColor',[0.8 0.8 0.8]);
+                set(leg,'YColor',[0.8 0.8 0.8]);
+            end
         end            
     else
         set(leg,'Color',colorlist('getrgb','color',plt.legend.color));
