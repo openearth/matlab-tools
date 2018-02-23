@@ -292,6 +292,10 @@ switch dataset.tekaltype
         icoly=strmatch(lower(dataset.parameter),lower(dataset.columnlabels),'exact');
         parameter.x=fid.Field(iblock).Data(:,icolx);
         parameter.y=fid.Field(iblock).Data(:,icoly);
+        parameter.x(parameter.x==999.999)=NaN;
+        parameter.x(parameter.x==-999)=NaN;
+        parameter.y(parameter.y==999.999)=NaN;
+        parameter.y(parameter.y==-999)=NaN;
         dataset.type='xy1dxy';
     case{'histogram'}
         icol=strmatch(lower(dataset.parameter),lower(dataset.columnlabels),'exact');
