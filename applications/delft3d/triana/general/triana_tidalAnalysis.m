@@ -41,8 +41,10 @@ for ss = 1:length(s.modID)
     
     % construct timeseries (time and water level)
     IDTime = find(s.model.data.Time>=s.ana.timeStart & s.model.data.Time<=s.ana.timeEnd);
-    s.ana.timeStart = s.model.data.Time(IDTime(1));
     s.ana.timeEnd = s.model.data.Time(IDTime(end));
+    
+    s.ana.timeStart = max(s.model.data.Time(IDTime(1)),s.ana.timeEnd-365); % maximum number of days in anylsis is 365 
+    
     
     hdt = round(s.ana.timeStart*(24*60/s.ana.new_interval))/(24*60/s.ana.new_interval):s.ana.new_interval/1440:round(s.ana.timeEnd*(24*60/s.ana.new_interval))/(24*60/s.ana.new_interval);
     hdz = interp1(s.model.data.Time,s.model.data.WL(ss,:),hdt);

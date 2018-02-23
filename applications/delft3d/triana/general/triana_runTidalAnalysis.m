@@ -84,6 +84,8 @@ for ii=1:length(sset)
     tStr=strrep(datestr(hdt(sset{ii}(1)),30),'T','_');
     eStr=strrep(datestr(hdt(sset{ii}(end)),30),'T','_');
     
+    Subperiods{1} = [hdt(sset{ii}(1)) hdt(sset{ii}(end))]; 
+
     %OBS
     fid=fopen([runID tStr '.obs'],'w');
     fprintf(fid,['+ ' sourceText '\n']);
