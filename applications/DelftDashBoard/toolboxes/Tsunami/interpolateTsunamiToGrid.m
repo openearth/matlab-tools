@@ -25,14 +25,16 @@ OPT.gridcs.name='WGS 84';
 OPT.gridcs.type='geographic';
 OPT.tsunamics.name='WGS 84';
 OPT.tsunamics.type='geographic';
+
 OPT.adjustbathymetry=0;
+OPT.oridepfile=[];
+OPT.newdepfile=[];
 
 OPT.inifile=[];
 
 OPT.xgrid=[];
 OPT.ygrid=[];
 OPT.grdfile=[];
-OPT.newdepfile=[];
 OPT.depth=[];
 
 OPT.xtsunami=[];
@@ -103,7 +105,16 @@ for k=1:OPT.kmax
     ddb_wldep('append',OPT.inifile,u,'negate','n','bndopt','n');
 end
 
+% If bathymetry needs to be adjusted
 if OPT.adjustbathymetry
-    newdepth=OPT.depth+iniwl0;
-    ddb_wldep('write',OPT.newdepfile,newdepth,'negate','y','bndopt','9');    
+    if isempty(OPT.depth)
+        % Depth NOT given in matrix so read it from file
+        depth=ddb_wldep('read',OPT.oridepfile,[mmax+1 nmax+1]);
+        depth=depth(1:end-1,1:end-1);
+        newdepth=iniwl0-depth;
+    else
+        % Depth is given in matrix so read it from file
+        newdepth=OPT.depth+iniwl0;
+    end
+    ddb_wldep('write',OPT.newdepfile,newdepth,'negate','y','bndopt','9');
 end
