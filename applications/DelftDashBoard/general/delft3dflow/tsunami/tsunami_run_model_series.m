@@ -23,7 +23,7 @@ for ii=1:length(varargin)
                 tstart=varargin{ii+1};
             case{'tstop'}
                 tstop=varargin{ii+1};
-            case{'adjustbathymetry'}
+            case{'adjustbathymetry','updatebathymetry'}
                 adjustbathymetry=varargin{ii+1};
         end                
     end
@@ -208,11 +208,12 @@ for imodel=1:nmodels
                     grd=wlgrid('read',[rundir filesep mdlname '.grd']);
                     [xz,yz]=getXZYZ(grd.X,grd.Y);
                     
-                    newdepfile=[rundir filesep mdlname '.dep'];
+                    oridepfile=[rundir filesep mdlname '.dep'];
+                    newdepfile=oridepfile; % Overwrite original depth file
                     
                     interpolateTsunamiToGrid('xgrid',xz,'ygrid',yz,'gridcs',cs,'tsunamics',newSys, ...
                         'xtsunami',xtsu,'ytsunami',ytsu,'ztsunami',ztsu,'inifile',[rundir filesep mdlname '.ini'], ...
-                        'adjustbathymetry',adjustbathymetry,'newdepfile',newdepfile);
+                        'adjustbathymetry',adjustbathymetry,'oridepfile',oridepfile,'newdepfile',newdepfile);
                     
                 end
                 
