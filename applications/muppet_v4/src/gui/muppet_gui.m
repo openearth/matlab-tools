@@ -1057,8 +1057,8 @@ function makeAnimation
 handles=getHandles;
 
 % Check animation size
-nhor=handles.figures(handles.activefigure).figure.width*handles.figures(handles.activefigure).figure.resolution/2.54;
-nver=handles.figures(handles.activefigure).figure.height*handles.figures(handles.activefigure).figure.resolution/2.54;
+nhor=floor(handles.figures(handles.activefigure).figure.width*handles.figures(handles.activefigure).figure.resolution/2.54);
+nver=floor(handles.figures(handles.activefigure).figure.height*handles.figures(handles.activefigure).figure.resolution/2.54);
 
 switch lower(handles.animationsettings.format)
     case{'mp4'}

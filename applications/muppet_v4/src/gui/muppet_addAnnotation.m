@@ -34,10 +34,13 @@ ann.position(4)=pos0(4)/fig.height;
 
 switch lower(ann.plotroutine)
     case 'text box'
+        str1{1}=ann.string(1,:);
         set(an,'position',ann.position);
-        set(an,'string',ann.string);
+        set(an,'string',ann.string(1,:));
+%        set(an,'string',str1);
         set(an,'fontname',ann.font.name);
         set(an,'fontsize',ann.font.size*fig.fontreduction);
+%        set(an,'fontsize',ann.font.size);
         set(an,'fontweight',ann.font.weight);
         set(an,'fontangle',ann.font.angle);
         set(an,'color',colorlist('getrgb','color',ann.font.color));
