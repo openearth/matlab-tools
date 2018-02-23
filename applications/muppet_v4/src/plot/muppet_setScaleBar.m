@@ -56,6 +56,8 @@ for ii=1:nb
         set(fl1,'FaceColor',[0 0 0]);
         set(fl2,'FaceColor',[1 1 1]);
     end
+%     set(fl1,'EdgeColor',[1 1 1]);
+%     set(fl2,'EdgeColor',[1 1 1]);
 end
 
 view(2);
