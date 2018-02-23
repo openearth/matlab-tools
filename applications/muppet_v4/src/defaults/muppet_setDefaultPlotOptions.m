@@ -223,6 +223,10 @@ for ii=1:n
     end
     if isfield(h.plotoption(ii).plotoption,'default')
         default=h.plotoption(ii).plotoption.default;
+        if isstruct(default)
+            default=default(1).default;
+%            shite=1
+        end
         tp='string';
         if isfield(h.plotoption(ii).plotoption,'type')
             tp=h.plotoption(ii).plotoption.type;
