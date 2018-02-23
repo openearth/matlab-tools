@@ -12,20 +12,20 @@ switch lower(plt.type)
             fac=1;
         end
         dsty=plt.subplottext.verticalmargin*fac*(plt.ymax-plt.ymin)/plt.position(4);
-        switch lower(plt.subplottext.position),
-            case {'lower-left'},
+        switch lower(plt.subplottext.position)
+            case {'lower-left'}
                 xpos=plt.xmin+dstx;
                 ypos=plt.ymin+dsty;
                 horal='left';
-            case {'lower-right'},
+            case {'lower-right'}
                 xpos=plt.xmax-dstx;
                 ypos=plt.ymin+dsty;
                 horal='right';
-            case {'upper-left'},
+            case {'upper-left'}
                 xpos=plt.xmin+dstx;
                 ypos=plt.ymax-dsty;
                 horal='left';
-            case {'upper-right'},
+            case {'upper-right'}
                 xpos=plt.xmax-dstx;
                 ypos=plt.ymax-dsty;
                 horal='right';
@@ -42,20 +42,20 @@ switch lower(plt.type)
         xmin=plt.xmin;
         dstx=plt.subplottext.horizontalmargin*(plt.xmax-plt.xmin)/plt.position(3);
         dsty=plt.subplottext.verticalmargin*(plt.ymax-plt.ymin)/plt.position(4);
-        switch lower(plt.subplottext.position),
-            case {'lower-left'},
+        switch lower(plt.subplottext.position)
+            case {'lower-left'}
                 xpos=plt.xmin+dstx;
                 ypos=plt.ymin+dsty;
                 horal='left';
-            case {'lower-right'},
+            case {'lower-right'}
                 xpos=plt.xmax-dstx;
                 ypos=plt.ymin+dsty;
                 horal='right';
-            case {'upper-left'},
+            case {'upper-left'}
                 xpos=plt.xmin+dstx;
                 ypos=plt.ymax-dsty;
                 horal='left';
-            case {'upper-right'},
+            case {'upper-right'}
                 xpos=plt.xmax-dstx;
                 ypos=plt.ymax-dsty;
                 horal='right';
@@ -65,20 +65,20 @@ switch lower(plt.type)
         xmax = datenum(plt.yearmax,plt.monthmax,plt.daymax,plt.hourmax,plt.minutemax,plt.secondmax);        
         dstx=plt.subplottext.horizontalmargin*(xmax-xmin)/plt.position(3);
         dsty=plt.subplottext.verticalmargin*(plt.ymax-plt.ymin)/plt.position(4);
-        switch lower(plt.subplottext.position),
-            case {'lower-left'},
+        switch lower(plt.subplottext.position)
+            case {'lower-left'}
                 xpos=xmin+dstx;
                 ypos=plt.ymin+dsty;
                 horal='left';
-            case {'lower-right'},
+            case {'lower-right'}
                 xpos=xmax-dstx;
                 ypos=plt.ymin+dsty;
                 horal='right';
-            case {'upper-left'},
+            case {'upper-left'}
                 xpos=xmin+dstx;
                 ypos=plt.ymax-dsty;
                 horal='left';
-            case {'upper-right'},
+            case {'upper-right'}
                 xpos=xmax-dstx;
                 ypos=plt.ymax-dsty;
                 horal='right';
@@ -87,12 +87,12 @@ end
 
 %axes(leftaxis);
 
-if strcmpi(fig.renderer,'opengl');
+if strcmpi(fig.renderer,'opengl')
 %     xback=plt.xmin;
 %     xmin=plt.xmin-xback;
 %     xmax=plt.xmax-xback;
 %    x=x-xback;
-xpos=xpos-xmin;
+%xpos=xpos-xmin;
 % else
 %     xback=0;
 end
