@@ -165,6 +165,10 @@ switch dataset.type
         % Read net
         if isempty(dataset.G)
             dataset.G = dflowfm.readNet(dataset.filename,'quiet',1);
+            if ~isfield(dataset.G,'node')
+                % try the old function
+                dataset.G = dflowfm.readNetOld(dataset.filename,'quiet',1);
+            end
         end
         
 %     case{'vector2d2duxy'}
