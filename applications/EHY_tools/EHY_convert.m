@@ -789,7 +789,9 @@ if fromEPSG~=toEPSG
         case {'.ldb','.pli','.pol'}
             output=landboundary('read',inputFile);
             [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',fromEPSG,'CS2.code',toEPSG);
-            if size(output,2)==2
+            % pol may contain 3rd column with 1 / -1's, but ignore when it
+            % contains large values
+            if size(output,2)==2 || size(char(num2str(output(:,3))),2)>3
                 io_polygon('write',outputFile,output(:,1:2));
             elseif size(output,2)==3
                 startID=[1; find(isnan(output(:,1)))+1];

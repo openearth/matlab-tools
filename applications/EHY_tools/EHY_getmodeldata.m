@@ -1,5 +1,8 @@
 function varargout = EHY_getmodeldata(sim_dir,runid,stat_name,modelType,varargin)
-% Extracts time series (of water levels), from output of different models
+% Extracts time series (of water levels/velocities/salinity/temperature) from output of different models
+%
+% Running 'EHY_getmodeldata' without any arguments opens a interactive version, that also gives 
+% feedback on how to use the EHY_getmodeldata-function with input arguments.
 %
 % Input Arguments:
 % sim_dir   : Directory with simulation results
@@ -10,16 +13,20 @@ function varargout = EHY_getmodeldata(sim_dir,runid,stat_name,modelType,varargin
 %             {'name'} cell array of strings
 % modelType : 'dflowfm','delft3d4,'waqua','sobek3','implic'
 %
+% Optional input arguments:
+% varName   : Name of variable, choose from: 'wl','uv','sal',tem'
+% t0        : Start time of dataset (e.g. '01-Jan-2018' or 737061 (Matlab date) )
+% tend      : End time of dataset (e.g. '01-Feb-2018' or 737092 (Matlab date) )
+% layer     : Model layer, e.g. 0 (all layers), [2] or [4:8]
+%
 % Output:
 % Data.stationNames       : list of ALL stations available on history file
 % Data.requestedStatNames : list of requested stations
 % Data.exist_stat         : logical if requested station exist in file
 % Data.times              : (matlab) times belonging with the series
-% Data.val/vel            : requested data
+% Data.val/vel_*          : requested data, velocity in (u,v- and )x,y-direction
 % Data.dimensions         : Dimensions of requested data (time,stats,lyrs)
 % Data.OPT                : Structure with optional user settings used
-
-EHYs(mfilename);
 
 if ~prod([exist('sim_dir','var') exist('runid','var') exist('stat_name','var') exist('modelType','var')])
     EHY_getmodeldata_interactive
@@ -274,7 +281,7 @@ Data.OPT=OPT;
 if nargout==1
     varargout{1}=Data;
 end
-
+EHYs(mfilename);
 end
 
 function [Data, time_index]=EHY_getmodeldata_time_index(Data,OPT)

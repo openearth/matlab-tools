@@ -115,12 +115,12 @@ if ~isempty(xx)
     io_polygon('write',outputFile,[xx yy])
     copyfile(outputFile,strrep(outputFile,'.pol','.ldb'))
     delft3d_io_xyn('write',strrep(outputFile,'.pol','_obs.xyn'),xx,yy,cellstr(num2str(nrOfLimiting)))
+    disp(['You can find the created files in the directory:' char(10) ,...
+    fileparts(fileparts(mapFile)) filesep OPT.outputDir filesep])
 else
     disp('No limiting cells found')
 end
 fclose all;
-disp(['You can find the created files in the directory:' char(10) ,...
-    fileparts(fileparts(mapFile)) filesep OPT.outputDir filesep])
 
 EHYs(mfilename);
 end
