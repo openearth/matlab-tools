@@ -91,7 +91,7 @@ forecasthour=(t-cycledate)*24;
 urlstr = getMeteoUrl(meteosource,cycledate,cyclehour,'forecasthour',forecasthour);
 
 switch lower(meteosource)
-    case{'gfs1p0','gfs0p5','gfs0p25','ncep_gfs_analysis','ncepncar_reanalysis','ncepncar_reanalysis_2','ncep_gfs_analysis_precip','nam_hawaiinest', ...
+    case{'gfs1p0','gfs0p5','gfs0p25','gfs0p25_1hr','ncep_gfs_analysis','ncepncar_reanalysis','ncepncar_reanalysis_2','ncep_gfs_analysis_precip','nam_hawaiinest', ...
             'gfs_anl4'}
         xlim=mod(xlim,360);
 end
