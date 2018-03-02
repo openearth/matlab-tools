@@ -11,8 +11,15 @@ try
     [~,out2]=system(['svn info ' fileparts(which('EHY.m'))]);
     rev2 = str2num(char(regexp(out2, 'Last Changed Rev: (\d+)', 'tokens', 'once')));
     if rev2<rev1
-        disp('Your EHY_tools are not up-to-date, please update the EHY_tools folder in your OET.')
-        disp('Select <strong>Update OET EHY_tools</strong> in the EHY_tools GUI.')
+        disp('Your EHY_tools are not up-to-date.')
+        disp('Status: Updating the EHY_tools folder in your OET.')
+        try
+            system(['svn update ' fileparts(which('EHY.m'))]);
+            disp('Status: <strong>Succesfully updated the EHY_tools folder in your OET.</strong>')
+        catch
+            disp('Automatic update failed. Please update the folder yourself. Location on your pc:')
+            disp([fileparts(which('EHY.m')) filesep])
+        end
     end
 end
 %%
@@ -57,13 +64,6 @@ for iF=1:length(functions)
         'units','centimeters','Position',[6 height-iF*0.7938-0.1 12 0.5292],...
         'String',functions{iF,2},'horizontalalignment','left');
 end
-% Update button
-button=uicontrol('Style', 'pushbutton', 'String','Update OET EHY_tools',...
-    'units','centimeters','Position',[0.5027 height-(iF+1)*0.7938 5.2917 0.5292],...
-    'Callback', @updateEHYtools,'FontWeight','bold','foregroundcolor',[0 0 0.5]);
-uicontrol('Style','text',...
-    'units','centimeters','Position',[6 height-(iF+1)*0.7938-0.1 12 0.5292],...
-    'String','Update the EHY_tools folder in your Open Earth Tools','horizontalalignment','left');
 % close button
 button=uicontrol('Style', 'pushbutton', 'String','Close',...
     'units','centimeters','Position',[0.5027 height-(iF+2)*0.7938 5.2917 0.5292],...
@@ -92,12 +92,5 @@ EHYs(mfilename);
 
     function closeFig(hObject,event)
         close(get(hObject,'Parent'))
-    end
-    function updateEHYtools(hObject,event)
-        try
-            system(['svn update ' fileparts(which('EHY.m'))]);
-        catch
-            disp('Automatic update failed. Please update the folder yourself.')
-        end
     end
 end

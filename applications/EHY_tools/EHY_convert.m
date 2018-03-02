@@ -7,7 +7,8 @@ function varargout=EHY_convert(varargin)
 % Example1: EHY_convert
 % Example2: EHY_convert('D:\path.kml')
 % Example3: ldb=EHY_convert('D:\path.kml','ldb')
-% Example4: ldb=EHY_convert('D:\path.kml','ldb','saveOutputFile',0)
+% Example4: pol=EHY_convert('D:\path.kml','pol','saveOutputFile',0)
+% Example5: net=EHY_convert('D:\grid_net.nc','ldb','saveOutputFile',0)
 
 % created by Julien Groenenboom, August 2017
 %%
