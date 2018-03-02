@@ -65,7 +65,7 @@ sim             = filename(1:tmp(1) - 1);
 %  General: Dimensions
 Info        = ncinfo(filename);
 nr_field    = find(~cellfun(@isempty,strfind({Info.Dimensions.Name},'laydim'))==1,1);
-laydim      = Info.Dimensions(nr_field).Length;
+laydim      = min(Info.Dimensions(nr_field).Length,1);
 nr_field    = find(~cellfun(@isempty,strfind({Info.Dimensions.Name},'stations'))==1,1);
 no_stations = Info.Dimensions(nr_field).Length;
 nr_field    = find(~cellfun(@isempty,strfind({Info.Dimensions.Name},'cross_section'))==1,1);
@@ -159,8 +159,8 @@ for i_param = 1: length(param_list)
     tmp      = ncread    (filename,param_list{i_param});
 
     % cycle over all station/cross sections
-    for i_stat = 1: length(nr);
-        tmpname = [param_list{i_param} '_' sim '_' list{nr(i_stat)}];
+    for i_stat = 1: length(nr)
+        tmpname = [param_list{i_param} '_' sim '_' list{nr(i_stat)}]  ;
         if ~threeD(i_param)
             filename_out = tmpname;
             values       = tmp(nr(i_stat),:);
@@ -183,15 +183,15 @@ fid = fopen([filename '.tek'],'w+');
 %% Comments
 fprintf (fid,'* Column  1: Date \n');
 fprintf (fid,'* Column  2: Time \n');
-fprintf (fid,'* Column  3: Values \n');
+fprintf (fid,'%s \n',['* Column  3: ' filename ] );
 
 %% Data
-fprintf(fid,'%s \n',filename);
+fprintf(fid,'%s \n','BL01');
 fprintf(fid,'%5i %5i \n',length(times),3);
 for i_time = 1: length(times)
-    fprintf(fid,'%16s %12.6f \n',datestr(times(i_time),'yyyymmdd  HHMMSS'), values(i_time));
+    fprintf(fid,' %16s %12.6f \n',datestr(times(i_time),'yyyymmdd  HHMMSS'), values(i_time));
 end
-
+display(filename)
 %% Close file
 fclose (fid);
 
