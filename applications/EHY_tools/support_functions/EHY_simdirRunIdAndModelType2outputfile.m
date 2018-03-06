@@ -28,14 +28,11 @@ switch modelType
     case {'sobek3'}
         %% SOBEK3
         sobekFile=dir([ sim_dir filesep runid '.dsproj_data\Water level (op)*.nc*']);
-        D=read_sobeknc([sim_dir filesep runid '.dsproj_data' filesep sobekFile.name]);
-        stationNames=strtrim(D.feature_name_points.Val);
+        outputfile=[sim_dir filesep runid '.dsproj_data' filesep sobekFile.name];
         
     case {'sobek3_new'}
         %% SOBEK3 new
-        sobekFile=[ sim_dir filesep runid '.dsproj_data\Integrated_Model_output\dflow1d\output\observations.nc'];
-        D=read_sobeknc(sobekFile);
-        stationNames=strtrim(D.observation_Id.Val);
+        outputfile=[ sim_dir filesep runid '.dsproj_data\Integrated_Model_output\dflow1d\output\observations.nc'];
         
     case {'implic'}
         %% IMPLIC
