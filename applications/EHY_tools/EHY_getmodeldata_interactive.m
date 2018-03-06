@@ -8,44 +8,19 @@ function EHY_getmodeldata_interactive
 %
 EHYs(mfilename);
 %%
-try % Automatic procedure
+
     % outputFile
     disp('Open the model output file')
     [filename, pathname]=uigetfile('*.*','Open the model output file');
     if isnumeric(filename); disp('EHY_getmodeldata_interactive stopped by user.'); return; end
-    outputFile=[pathname filename];
     
-    % modelType and runid
-    [modelType,mdFile]=EHY_getModelType(outputFile);
-    
-    % sim_dir
-    sim_dir=fileparts(mdFile);
-    
-    % runid
-    switch modelType
-        case 'mdu'
-            [~,runid]=fileparts(mdFile);
-        case 'mdf'
-            id1=strfind(outputFile,'trih-');
-            id2=strfind(outputFile,'.dat');
-            runid=outputFile(id1+5:id2-1);
-        case 'siminp'
-            id=strfind(outputFile,'SDS-');
-            runid=outputFile(id+4:end);
-    end
+    % outputfile
+    outputfile=[pathname filename];
+try % Automatic procedure
+    % modelType
+    [modelType,mdFile]=EHY_getModelType(outputfile);
 catch % Automatic procedure failed
     disp('Automatic procedure failed. Please provide input manually.')
-    disp('1) Specify the simulation directory')
-    % sim_dir
-    sim_dir=uigetdir('*.*','Open the simulation directory');
-    if isnumeric(sim_dir); disp('EHY_getmodeldata_interactive was stopped by user');return; end
-    
-    % runid
-    disp('2) Specify the run id')
-    runid = inputdlg('Specify the run id:');
-    runid=runid{1};
-    if isempty(runid); disp('EHY_getmodeldata_interactive was stopped by user');return; end
-    
     % modelType
     modelTypes={'Delft3D-FM / D-FLOW FM','dflowfm';...
         'Delft3D 4','delft3d4';...
@@ -70,7 +45,7 @@ if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');ret
 OPT.varName=varNames{option,2};
 
 % stat_name
-stationNames = cellstr(EHY_getStationNames(sim_dir,runid,modelType));
+stationNames = cellstr(EHY_getStationNames(outputfile,modelType));
 option=listdlg('PromptString','From which station would you like you to load the data? (Use CTRL to select multiple stations)','ListString',...
     stationNames,'ListSize',[500 200]);
 if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end
@@ -112,9 +87,9 @@ stats=strtrim(sprintf('''%s'',',stat_name{:}));
 stats2=['{' stats(1:end-1) '}'];
 disp('start retrieving the data...')
 if ~exist('OPT','var') || isempty(fieldnames(OPT))
-    Data = EHY_getmodeldata(sim_dir,runid,stat_name,modelType);
+    Data = EHY_getmodeldata(outputfile,stat_name,modelType);
 else
-    Data = EHY_getmodeldata(sim_dir,runid,stat_name,modelType,OPT);
+    Data = EHY_getmodeldata(outputfile,stat_name,modelType,OPT);
 end
 
 disp('Finished retrieving the data!')
@@ -123,5 +98,5 @@ open Data
 disp('Variable ''Data'' created by EHY_getmodeldata_interactive')
 
 disp([char(10) 'Note that next time you want to get this data, you can also use:'])
-disp(['Data = EHY_getmodeldata(''' sim_dir ''',''' runid ''',' stats2 ',''' modelType '''' extraText ')' ])
+disp(['Data = EHY_getmodeldata(''' outputfile ''',' stats2 ',''' modelType '''' extraText ');' ])
 
