@@ -116,7 +116,7 @@ switch modelType
             stationX = ncread(outputfile,'station_x_coordinate',[1 1],[Inf 1]);
             stationY = ncread(outputfile,'station_y_coordinate',[1 1],[Inf 1]);
             
-            Data.location(Data.exist_stat,:)=[stationX(find(Data.exist_stat)) stationY(find(Data.exist_stat))];
+            Data.location(Data.exist_stat,:)=[stationX(stationNr(Data.exist_stat)) stationY(stationNr(Data.exist_stat))];
             Data.location(~Data.exist_stat,1:2)=NaN;
         end
         
