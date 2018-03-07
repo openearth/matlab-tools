@@ -39,7 +39,7 @@ OPT.tend = '';
 OPT.layer = 0; % all
 
 % backward compatible - EHY_getmodeldata(sim_dir,runid,stat_name,modelType,varargin)
-if isdir(outputfile)
+if isdir(outputfile) && ~any(strcmp(modelType,'implic')) && ~any(strcmp(varargin{1},'implic'))
     outputfile=EHY_simdirRunIdAndModelType2outputfile(outputfile,stat_name,varargin{1});
     varargout={EHY_getmodeldata(outputfile,modelType,varargin{1},varargin{2:end})};
     return
@@ -332,7 +332,9 @@ switch modelType
                 % get data
                 switch OPT.varName
                     case 'wl'
-                        if ~exist([fileparts(outputfile) filesep 'implic.mat'],'file')
+                        if exist([fileparts(outputfile) filesep 'implic.mat'],'file')
+                           load([fileparts(outputfile) filesep 'implic.mat']) 
+                        else
                             months = {'jan' 'feb' 'mrt' 'apr' 'mei' 'jun' 'jul' 'aug' 'sep' 'okt' 'nov' 'dec'};
                             for ii_stat = 1: length(filenames)
                                 fid   = fopen([fileparts(outputfile) filesep filenames{i_stat}],'r');
