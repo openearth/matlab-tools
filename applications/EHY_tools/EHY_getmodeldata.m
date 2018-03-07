@@ -70,7 +70,7 @@ Data.requestedStatNames=stat_name;
 
 stationNr=[];
 for i_stat = 1:length(stat_name)
-    nr_stat  = find(strcmp(Data.stationNames,stat_name{i_stat}) ~= 0,1);
+    nr_stat  = find(strcmpi(Data.stationNames,stat_name{i_stat}) ~= 0,1);
     if isempty(nr_stat)
         Data.exist_stat(i_stat,1) = false;
         disp(['Station : ' stat_name{i_stat} ' does not exist']);
