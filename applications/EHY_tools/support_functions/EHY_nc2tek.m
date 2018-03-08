@@ -160,36 +160,45 @@ for i_param = 1: length(param_list)
 
     % cycle over all station/cross sections
     for i_stat = 1: length(nr)
-        tmpname = [param_list{i_param} '_' sim '_' list{nr(i_stat)}]  ;
+        filename_out = [strrep(param_list{i_param},'_','-') '-' sim '-' list{nr(i_stat)}];
         if ~threeD(i_param)
-            filename_out = tmpname;
             values       = tmp(nr(i_stat),:);
-            write_tekaltime    (filename_out, times, values);
         else
-            for i_lay = 1: length(layers)
-                filename_out = [tmpname '_layer' num2str(layers(i_lay),'%2.2i')];
-                values       = tmp(layers(i_lay),nr(i_stat),:);
-                write_tekaltime    (filename_out, times, values);
-            end
+            values       = squeeze(tmp(layers,nr(i_stat),:));
         end
+        write_tekaltime    (filename_out, times, values',layers);
     end
 end
 
-function write_tekaltime(filename,times,values)
+function write_tekaltime(filename,times,values,varargin)
 
 %% Open file
 fid = fopen([filename '.tek'],'w+');
 
+%% dimensions
+no_tims   = size(values,1);
+no_layers = size(values,2);
+if no_layers > 1
+    layers = varargin{1};
+end
+
 %% Comments
-fprintf (fid,'* Column  1: Date \n');
-fprintf (fid,'* Column  2: Time \n');
-fprintf (fid,'%s \n',['* Column  3: ' filename ] );
+fprintf (fid,'* Column  1 : Date \n');
+fprintf (fid,'* Column  2 : Time \n');
+if no_layers == 1
+    fprintf (fid,'%s \n',['* Column  3 : ' filename ] );
+else
+    for i_lay = 1: no_layers
+         fprintf (fid,'* Column  %i : %s \n', i_lay + 2,[filename ' layer ' num2str(layers(i_lay),'%2.2i')]);
+    end
+end
 
 %% Data
-fprintf(fid,'%s \n','BL01');
-fprintf(fid,'%5i %5i \n',length(times),3);
+fprintf(fid,'BL01 \n');
+fprintf(fid,'%5i %5i \n',length(times),no_layers + 2);
+format = ['%16s ' repmat('%12.6f ',1,no_layers) '\n'];
 for i_time = 1: length(times)
-    fprintf(fid,' %16s %12.6f \n',datestr(times(i_time),'yyyymmdd  HHMMSS'), values(i_time));
+    fprintf(fid,format,datestr(times(i_time),'yyyymmdd  HHMMSS'), values(i_time,:));
 end
 display(filename)
 %% Close file
