@@ -17,6 +17,7 @@ OPT.outputDir='EHY_findLimitingCells_OUTPUT'; % output directory
 if length(varargin)==0
     [filename, pathname]=uigetfile('*_map.nc','Open the model output file');
     if isnumeric(filename); disp('EHY_findLimitingCells stopped by user.'); return; end
+        
     mapFile=[pathname filename];
     
     [writeXyz,~]=  listdlg('PromptString','Want to write the maximum velocities to a .xyz file?',...
@@ -36,6 +37,8 @@ elseif length(varargin)>0
     end
     if length(varargin)> 1 && mod(length(varargin)-1,2)==0
         OPT = setproperty(OPT,varargin{2:end});
+    elseif length(varargin)==1
+        % that's the map file
     else
         error('Additional input arguments must be given in pairs.')
     end
@@ -60,9 +63,38 @@ elseif any(ismember({info.Variables.Name},'FlowElem_xcc'))
     col=2;
 end
 
+if ~isempty(str2num(mapFile(end-10:end-7))) && strcmp(mapFile(end-11),'_')
+    msgbox(['You are probably processing a simulation that was using multiple partitions.' char(10),...
+        'Please note that the administration of limiting cells in parallel simulations is currently not 100% correct.' char(10),...
+        'This has been reported to DSC and an issue was made for this problem. More info? > Contact Julien' char(10) char(10),...
+        'Work-around for now: Use a simulation on one partition.' char(10) char(10),...
+        'This script will now get the info from the different domains and merge the limiting cells.']);
+end
+
+mapFiles=dir([fileparts(mapFile) filesep '*_map.nc']);
+  
+X=[];
+Y=[];
+XX=[];
+YY=[];
+NUMLIMDT=[];
+MAXVEL=[];
+
+for iF=1:length(mapFiles)
+    % iF==1 ; 1 partion run > good
+    % iF>1  ; parallel run > not 100% correct at the moment
+    mapFile=[fileparts(mapFile) filesep mapFiles(iF).name];
+
+    if length(mapFiles)>1
+        disp(['working on mapFile: ' num2str(iF) '/' num2str(length(mapFiles)) ])
+        info=ncinfo(mapFile);
+    end
+        
 x=nc_varget(mapFile,vars{1,col});
 y=nc_varget(mapFile,vars{2,col});
-
+   X=[X;x];
+   Y=[Y;y];
+   
 ind=find(~cellfun(@isempty,strfind({info.Variables.Name},vars{3,col})));
 sizeucy=info.Variables(ind).Size;
 
@@ -82,9 +114,7 @@ if OPT.writeMaxVel
         mag=sqrt(u.^2+v.^2);
         maximum=max([maximum; max(mag)],[],1);
     end
-    
-    outputFile=[outputDir 'maximumVelocities.xyz'];
-    dlmwrite(outputFile,[x y maximum'],'delimiter',' ','precision','%20.7f')
+    MAXVEL=[MAXVEL maximum];
 end
 
 % numlimdt
@@ -109,16 +139,28 @@ xx=xx(I);
 yy=yy(I);
 nrOfLimiting=nrOfLimiting(I);
 
+XX=[XX;xx];
+YY=[YY;yy];
+NUMLIMDT=[NUMLIMDT;nrOfLimiting];
+end
+
 % export
-if ~isempty(xx)
+if ~isempty(XX)
     outputFile=[outputDir 'restricting_nodes.pol'];
-    io_polygon('write',outputFile,[xx yy])
+    io_polygon('write',outputFile,[XX YY])
     copyfile(outputFile,strrep(outputFile,'.pol','.ldb'))
-    delft3d_io_xyn('write',strrep(outputFile,'.pol','_obs.xyn'),xx,yy,cellstr(num2str(nrOfLimiting)))
+    delft3d_io_xyn('write',strrep(outputFile,'.pol','_obs.xyn'),XX,YY,cellstr(num2str(NUMLIMDT)))
     disp(['You can find the created files in the directory:' char(10) ,...
     fileparts(fileparts(mapFile)) filesep OPT.outputDir filesep])
 else
     disp('No limiting cells found')
+end
+if OPT.writeMaxVel
+    outputFile=[outputDir 'maximumVelocities.xyz'];
+    disp('start writing maximum velocities')
+    dlmwrite([tempdir 'maxvel.xyz'],[X Y MAXVEL'],'delimiter',' ','precision','%20.7f')
+    copyfile([tempdir 'maxvel.xyz'],outputFile);
+    disp('finished writing maximum velocities')
 end
 fclose all;
 
