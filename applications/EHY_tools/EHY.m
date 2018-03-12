@@ -83,7 +83,8 @@ EHYs(mfilename);
         try
             run(get(hObject,'String'))
         catch
-            disp(['Failed to execute function: ''' get(hObject,'String') ''''])
+            disp(['Failed to execute function: ''' get(hObject,'String') ''', last error message:'])
+            disp(lasterr)
         end
         set(h, 'pointer', 'arrow')
         set(hStatusText,'String',...

@@ -96,8 +96,17 @@ switch modelType
                 if all(OPT.layer==0)
                     OPT.layer=1:no_layers;
                 end
+            else
+                no_layers=1;
             end
-            
+            if no_layers==1 && length(OPT.layer)>1
+                warning('User selected multiple layers, but there is only 1 layer available. Setting OPT.layer=1; ')
+                OPT.layer=1;
+            elseif any(OPT.layer>no_layers)
+                warning(['User asked for layer ' num2str(max(OPT.layer)) ', but there are only ' num2str(no_layers) ' layers available. Setting OPT.layer=0; (all) '])
+                OPT.layer=1:no_layers;
+            end
+                    
             % time info
             % - to enhance speed, reconstruct time array from start time, numel and interval
             ncVarInd     = strmatch('time',{infonc.Variables.Name},'exact');
@@ -214,7 +223,10 @@ switch modelType
                     if all(OPT.layer==0)
                         OPT.layer=1:no_layers;
                     elseif no_layers==1 && length(OPT.layer)>1
-                        disp('User selected multiple layers, but there is only 1 layer available. Setting OPT.layer=1; ')
+                        warning('User selected multiple layers, but there is only 1 layer available. Setting OPT.layer=1; ')
+                        OPT.layer=1;
+                    elseif any(OPT.layer>no_layers)
+                        warning(['User asked for layer ' num2str(max(OPT.layer)) ', but there are only ' num2str(no_layers) ' layers available. Setting OPT.layer=1; '])
                         OPT.layer=1;
                     end
                     % constituents

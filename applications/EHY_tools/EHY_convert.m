@@ -382,6 +382,51 @@ end
         end
         output=ldb;
     end
+% locaties2obs
+    function [output,OPT]=EHY_convert_locaties2obs(inputFile,outputFile,OPT)
+        obs.m=[];
+        obs.n=[];
+        obs.namst=[];
+        
+        fid=fopen(inputFile,'r');
+        while feof(fid)~=1
+            line0=fgetl(fid);
+            line=line0;
+            if ~isempty(strtrim(line)) & ~strcmp(line(1),'#')
+                dmy=regexpi(line, 'm.*?=.*?(\d+)', 'tokens', 'once');
+                obs.m(end+1,1)=str2num(dmy{1});
+                dmy=regexpi(line, 'n.*?=.*?(\d+)', 'tokens', 'once');
+                obs.n(end+1,1)=str2num(dmy{1});
+                dmy=regexpi(line, '''(\S.+)''', 'tokens', 'once');
+                obs.namst{end+1,1}=dmy{1};
+            end
+        end
+        fclose(fid);
+        if OPT.saveOutputFile
+            delft3d_io_obs('write',outputFile,obs);
+        end
+        output=obs;
+    end
+% locaties2xyn
+    function [output,OPT]=EHY_convert_locaties2xyn(inputFile,outputFile,OPT)
+        OPT_user=OPT;
+        OPT.saveOutputFile=0;
+        obs=EHY_convert_locaties2obs(inputFile,outputFile,OPT);
+        OPT=OPT_user;
+        pathstr = fileparts(inputFile);
+        OPT=EHY_convert_gridCheck(OPT,inputFile);
+        [x,y]=EHY_mn2xy(obs.m,obs.n,OPT.grdFile);
+        
+        if OPT.saveOutputFile
+            fid=fopen(outputFile,'w');
+            for iM=1:length(x)
+                fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
+                fprintf(fid,'%-s\n',obs.namst{iM});
+            end
+            fclose(fid);
+        end
+        output={x y cellstr(obs.namst)};
+    end
 % nc2kml
     function [output,OPT]=EHY_convert_nc2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
