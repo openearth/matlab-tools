@@ -47,11 +47,15 @@ xll    = s{2}(strcmpi(s{1},OPT.read.xref_cell ));
 if strcmp(OPT.read.xref_cell, 'xllcorner')
     % xllcorner given
     xllcorner = xll;
-    if ~(mod(xllcorner,cellsize)==0)
-        error(['xllcorner has offset: ',num2str(mod(xllcorner,cellsize))])
-    end
     % derive xllcenter
     xllcenter = xll + cellsize/2;
+    if ~(mod(xllcorner,cellsize)==0)
+        % error(['xllcorner has offset: ',num2str(mod(xllcorner,cellsize))])
+        returnmessage(2,'in %s, WARNING: xllcorner has offset: %s. Values have been assigned to centers. \n',...
+                [fns.pathname fns.name],num2str(mod(xllcorner,cellsize)))
+        xllcorner = xll - cellsize/2;
+        xllcenter = xll;
+    end
 elseif strcmp(OPT.read.xref_cell, 'xllcenter')
     % xllcenter given
     xllcenter = xll;
@@ -64,11 +68,15 @@ yll    = s{2}(strcmpi(s{1},OPT.read.yref_cell ));
 if strcmp(OPT.read.yref_cell, 'yllcorner')
     % yllcorner given
     yllcorner = yll;
-    if ~(mod(yllcorner,cellsize)==0)
-        error(['yllcorner has offset: ',num2str(mod(xllcorner,cellsize))])
-    end
     % derive xllcenter
     yllcenter = yll + cellsize/2;
+    if ~(mod(yllcorner,cellsize)==0)
+        % error(['yllcorner has offset: ',num2str(mod(yllcorner,cellsize))])
+        returnmessage(2,'in %s, WARNING: yllcorner has offset: %s. Values have been assigned to centers.  \n',...
+                [fns.pathname fns.name],num2str(mod(yllcorner,cellsize)))
+        yllcorner = yll - cellsize/2;
+        yllcenter = yll;
+    end
 elseif strcmp(OPT.read.yref_cell, 'yllcenter')
     % yllcenter given
     yllcenter = yll;
