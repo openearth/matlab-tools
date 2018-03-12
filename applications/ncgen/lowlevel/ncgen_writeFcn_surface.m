@@ -31,6 +31,7 @@ assert(all(ismember(required_fields,fieldnames(data))),'data input must contain 
 
 %% make nc file if it does not exist
 ncfile = fullfile(OPT.main.path_netcdf,OPT.write.filenameFcn(data.x,data.y));
+
 if ~exist(ncfile,'file')
     ncwriteschema(ncfile,OPT.write.schema);
     
@@ -119,7 +120,8 @@ if existing_z % then existing nc file already has data
     z0Notnan = ~isnan(z0);
     notnan   = zNotnan&z0Notnan;
     % check if data will be overwritten
-    if any(notnan) % some values are not nan in both existing and new data
+    % if any(notnan) % some values are not nan in both existing and new data
+    if any(any(notnan)) % notnan is a matrix, so it requires a better statement    
         if isequal(z0(notnan),data.z(notnan))
             % this is ok
             returnmessage(1,'in %s, NOTICE: %d values are overwritten by identical values from a different source at %s \n',...
