@@ -5,9 +5,11 @@ function EHY_nc2tek(filename,varargin)
 %
 % stationlist = {'SARB';'CTD Fujairah';'Umm Lulu'};
 % crslist     = {'crs19'};
+% outdir      = '..\output\tek';
 % 
-% EHY_nc2tek('c05r_his.nc','stationlist',stationlist, ...
-%                          'crslist'    ,crslist    , ...
+% EHY_nc2tek('c05r_his.nc','outdir'     ,outdir     , ... 
+%                          'stationlist',stationlist, ...
+%                          'crslist'    ,crslist    , ...                            
 %                          'layers'     ,[1 10]     , ...  
 %                          'waterlevel' ,true       , ... % Hydrodynamics, station information
 %                          'salinity'   ,true       , ...
@@ -31,10 +33,21 @@ function EHY_nc2tek(filename,varargin)
 %                          'Qfreva'     ,true       , ...
 %                          'Qfrcon'     ,true       , ...
 %                          'Qtot'       ,true       ) ;
+% or:
+% paramlist ={'waterlevel' 'salinity' 'discharge'};
 %
-%  Initialise
+% EHY_nc2tek('c05r4_his.nc','outdir'     ,outdir     , ...  
+%                           'stationlist',stationlist, ...
+%                           'crslist'    ,crslist    , ...
+%                           'paramlist'  ,paramlist  , ...
+%                           'layers'     ,[1 10]     );
+%
+
+%%  Initialise
+OPT.outdir      = '.';
 OPT.stationlist = {};
 OPT.crslist     = {};
+OPT.paramlist   = {};
 OPT.layers      = [];
 OPT.waterlevel  = false;
 OPT.salinity    = false;
@@ -61,6 +74,12 @@ OPT.Qtot        = false;
 OPT             = setproperty(OPT,varargin);
 tmp             = strfind(filename,'_');
 sim             = filename(1:tmp(1) - 1);
+
+% Create output dir if it does not exist
+if ~strcmp(OPT.outdir,'.')
+    if ~exist(OPT.outdir,'dir') mkdir(OPT.outdir); end
+end
+        
 
 %  General: Dimensions
 Info        = ncinfo(filename);
@@ -116,6 +135,14 @@ end
 %% Create list of parameters to extract
 param_list    = {};
 threeD        = [];
+
+% Parameterliwst specified
+if ~isempty(OPT.paramlist)
+    for i_param = 1: length(OPT.paramlist)
+        OPT.(OPT.paramlist{i_param}) = true;
+    end
+end
+
 % Hydrodynamics station information
 if OPT.waterlevel  param_list{end + 1} = 'waterlevel'                        ; threeD(end + 1) = false; end
 if OPT.salinity    param_list{end + 1} = 'salinity'                          ; threeD(end + 1) = true ; end
@@ -166,7 +193,7 @@ for i_param = 1: length(param_list)
         else
             values       = squeeze(tmp(layers,nr(i_stat),:));
         end
-        write_tekaltime    (filename_out, times, values',layers);
+        write_tekaltime    ([OPT.outdir filesep filename_out], times, values',layers);
     end
 end
 
@@ -174,6 +201,9 @@ function write_tekaltime(filename,times,values,varargin)
 
 %% Open file
 fid = fopen([filename '.tek'],'w+');
+
+%% Get Parameter name out of the filename (skip path)
+[~,param_name,~] = fileparts(filename);
 
 %% dimensions
 no_tims   = size(values,1);
@@ -186,10 +216,10 @@ end
 fprintf (fid,'* Column  1 : Date \n');
 fprintf (fid,'* Column  2 : Time \n');
 if no_layers == 1
-    fprintf (fid,'%s \n',['* Column  3 : ' filename ] );
+    fprintf (fid,'%s \n',['* Column  3 : ' param_name ] );
 else
     for i_lay = 1: no_layers
-         fprintf (fid,'* Column  %i : %s \n', i_lay + 2,[filename ' layer ' num2str(layers(i_lay),'%2.2i')]);
+         fprintf (fid,'* Column  %i : %s \n', i_lay + 2,[param_name ' layer ' num2str(layers(i_lay),'%2.2i')]);
     end
 end
 
@@ -200,7 +230,8 @@ format = ['%16s ' repmat('%12.6f ',1,no_layers) '\n'];
 for i_time = 1: length(times)
     fprintf(fid,format,datestr(times(i_time),'yyyymmdd  HHMMSS'), values(i_time,:));
 end
-display(filename)
+fprintf(1,['Filename = ' param_name '\n']);
+
 %% Close file
 fclose (fid);
 
