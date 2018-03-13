@@ -69,6 +69,19 @@ if length(varargin)==1
     [~,~,inputExt0]= fileparts(inputFile);
     inputExt=lower(strrep(inputExt0,'.',''));
     
+    % simona model input file
+    if isempty(inputExt0)
+       [selection,~]=  listdlg('PromptString','Input file does not have an extension. What kind of file is it?',...
+            'SelectionMode','single',...
+            'ListString',{'Simona observation points file (locaties)'},...
+            'ListSize',[500 100]);
+        if selection==1
+            inputExt='locaties';
+        else
+            disp('EHY_convert stopped by user.'); return
+        end
+    end
+    
     if strcmp(inputExt,'pli'); inputExt='pol'; end
     availableInputId=strmatch(inputExt,availableConversions(:,1));
     if isempty(availableInputId)
@@ -382,17 +395,32 @@ end
         end
         output=ldb;
     end
+% locaties2kml
+    function [output,OPT]=EHY_convert_locaties2kml(inputFile,outputFile,OPT)
+        OPT_user=OPT;
+        OPT.saveOutputFile=0;
+        xyn=EHY_convert_locaties2xyn(inputFile,outputFile,OPT);
+        [xyn{1,1},xyn{1,2},OPT]=EHY_convert_coorCheck(xyn{1,1},xyn{1,2},OPT);
+        OPT=OPT_user;
+        if OPT.saveOutputFile
+            [~,name]=fileparts(inputFile);
+            tempFile=[tempdir name '.kml'];
+            KMLPlaceMark(xyn{1,2},xyn{1,1},tempFile,'name',xyn{1,3}','icon',OPT.iconFile);
+            copyfile(tempFile,outputFile);
+            delete(tempFile)
+        end
+        output=[];
+    end
 % locaties2obs
     function [output,OPT]=EHY_convert_locaties2obs(inputFile,outputFile,OPT)
         obs.m=[];
         obs.n=[];
         obs.namst=[];
-        
         fid=fopen(inputFile,'r');
         while feof(fid)~=1
             line0=fgetl(fid);
-            line=line0;
-            if ~isempty(strtrim(line)) & ~strcmp(line(1),'#')
+            line=strtrim(line0);
+            if ~isempty(line) & ~strcmp(line(1),'#')
                 dmy=regexpi(line, 'm.*?=.*?(\d+)', 'tokens', 'once');
                 obs.m(end+1,1)=str2num(dmy{1});
                 dmy=regexpi(line, 'n.*?=.*?(\d+)', 'tokens', 'once');
@@ -416,7 +444,6 @@ end
         pathstr = fileparts(inputFile);
         OPT=EHY_convert_gridCheck(OPT,inputFile);
         [x,y]=EHY_mn2xy(obs.m,obs.n,OPT.grdFile);
-        
         if OPT.saveOutputFile
             fid=fopen(outputFile,'w');
             for iM=1:length(x)
