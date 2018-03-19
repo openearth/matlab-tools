@@ -85,8 +85,8 @@ if ~isempty(OPT.Parameter)
         %% Station name specified, return time series of the parameter at this station
         %  First find the station
         try
-%JG         i_stat = find(~cellfun(@isempty,strfind(lower(list_stat),lower(OPT.Station))));
-            i_stat = find(~cellfun(@isempty,regexp(lower(list_stat),strjoin(lower(OPT.Station),'|'))));
+            i_stat = find(~cellfun(@isempty,strfind(lower(list_stat),lower(OPT.Station))));
+%tk            i_stat = find(~cellfun(@isempty,regexp(lower(list_stat),strjoin(lower(OPT.Station),'|'))));
             % Get information on the parameter name on the file
             date_tmp  = [];
             value_tmp = [];
