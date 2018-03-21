@@ -74,7 +74,7 @@ while 1
     end
     s=textscan(s0,'%s','delimiter',',');
     s=s{1};
-%    s=textscan(s0,'%s%f%f%s%s%f%s%s%f%f%s%f%s%f%f%f%f%f%f%f%f%f%s%f%s%f%f%s%s','delimiter',',');
+    %    s=textscan(s0,'%s%f%f%s%s%f%s%s%f%f%s%f%s%f%f%f%f%f%f%f%f%f%s%f%s%f%f%s%s','delimiter',',');
     tc.basin=s{1};
     tc.storm_number=s{2};
     % Read time
@@ -82,11 +82,11 @@ while 1
     try
         newtime=datenum(tstr,'yyyymmddHH');
     catch
-        tstr = tstr(1,:);    
+        tstr = tstr(1,:);
         newtime=datenum(tstr,'yyyymmddHH');
     end
     hrs=str2double(s{6});
-    newtime=newtime+hrs/24;    
+    newtime=newtime+hrs/24;
     if newtime>lasttime+1/86400
         % New time point found
         it=it+1;
@@ -109,55 +109,58 @@ while 1
     if str2double(s{9})>0
         tc.vmax(it)=str2double(s{9});
     end
-    if str2double(s{10})>0
-        tc.pc(it)=str2double(s{10});
-    end
-    tc.cat=s{11};
-    % Radii
-    r=str2double(s{12});
-    if ~isempty(r)
-        switch r
-            case{34,35}
-                tc.r35ne(it)=str2double(s{14});
-                tc.r35se(it)=str2double(s{15});
-                tc.r35sw(it)=str2double(s{16});
-                tc.r35nw(it)=str2double(s{17});
-            case 50
-                tc.r50ne(it)=str2double(s{14});
-                tc.r50se(it)=str2double(s{15});
-                tc.r50sw(it)=str2double(s{16});
-                tc.r50nw(it)=str2double(s{17});
-            case{64,65}
-                tc.r65ne(it)=str2double(s{14});
-                tc.r65se(it)=str2double(s{15});
-                tc.r65sw(it)=str2double(s{16});
-                tc.r65nw(it)=str2double(s{17});
-            case 100
-                tc.r100ne(it)=str2double(s{14});
-                tc.r100se(it)=str2double(s{15});
-                tc.r100sw(it)=str2double(s{16});
-                tc.r100nw(it)=str2double(s{17});
+    if length(s)>9
+        if str2double(s{10})>0
+            tc.pc(it)=str2double(s{10});
+        end
+        tc.cat=s{11};
+        % Radii
+        r=str2double(s{12});
+        if ~isempty(r)
+            switch r
+                case{34,35}
+                    tc.r35ne(it)=str2double(s{14});
+                    tc.r35se(it)=str2double(s{15});
+                    tc.r35sw(it)=str2double(s{16});
+                    tc.r35nw(it)=str2double(s{17});
+                case 50
+                    tc.r50ne(it)=str2double(s{14});
+                    tc.r50se(it)=str2double(s{15});
+                    tc.r50sw(it)=str2double(s{16});
+                    tc.r50nw(it)=str2double(s{17});
+                case{64,65}
+                    tc.r65ne(it)=str2double(s{14});
+                    tc.r65se(it)=str2double(s{15});
+                    tc.r65sw(it)=str2double(s{16});
+                    tc.r65nw(it)=str2double(s{17});
+                case 100
+                    tc.r100ne(it)=str2double(s{14});
+                    tc.r100se(it)=str2double(s{15});
+                    tc.r100sw(it)=str2double(s{16});
+                    tc.r100nw(it)=str2double(s{17});
+            end
+        end
+        
+        if length(s)>17
+            if ~isempty(s{18})
+                tc.pressure_last_closed_isobar(it)=str2double(s{18});
+            end
+            if ~isempty(s{19})
+                tc.radius_last_closed_isobar(it)=str2double(s{19});
+            end
+            if ~isempty(s{20})
+                if str2double(s{20})>0
+                    tc.rmax(it)=str2double(s{20});
+                end
+            end
+            if length(s)>=28
+                if ~isempty(s{28})
+                    tc.name=s{28};
+                end
+            end
         end
     end
     
-    if length(s)>17
-        if ~isempty(s{18})
-            tc.pressure_last_closed_isobar(it)=str2double(s{18});
-        end
-        if ~isempty(s{19})
-            tc.radius_last_closed_isobar(it)=str2double(s{19});
-        end
-        if ~isempty(s{20})
-            if str2double(s{20})>0
-                tc.rmax(it)=str2double(s{20});
-            end
-        end
-        if length(s)>=28
-            if ~isempty(s{28})
-                tc.name=s{28};
-            end
-        end
-    end
 end
 fclose(fid);
 
