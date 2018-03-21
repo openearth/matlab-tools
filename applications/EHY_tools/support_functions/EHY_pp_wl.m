@@ -10,6 +10,8 @@ ListOfChapters = inifile('chapters',Info);
 
 % General information
 modelType      = inifile('getstring',Info,'General'  ,'modelType   ');
+if strcmp(modelType,'dflow-fm') modelType = 'dflowfm'; end
+
 runid          = inifile('getstring',Info,'General'  ,'runid       ');
 sim_dir        = inifile('getstring',Info,'General'  ,'sim_dir     ');
 try
