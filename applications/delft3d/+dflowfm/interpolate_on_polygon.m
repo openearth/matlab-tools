@@ -29,7 +29,8 @@ for idmnp1=1:length(Gin)    % idmn + 1
         D = Din;
     end
 
-    idxAtoL=G.edge.FlowLink(1,:)<=G.face.FlowElemSize & G.edge.FlowLink(2,:)<=G.face.FlowElemSize;
+    idxAtoL=G.edge.FlowLink(1,:)<=G.face.FlowElemSize & G.edge.FlowLink(2,:)<=G.face.FlowElemSize & ...
+            G.edge.FlowLink(1,:)> 0                   & G.edge.FlowLink(2,:)>0 ;
     idxAtoL=find(idxAtoL);
     if ( isfield(G.face,'idmn')&& idmn>-1 )
 %         idxAtoL=idxAtoL(min(G.face.FlowElemDomain(G.edge.FlowLink(1,idxAtoL)),    ...
@@ -93,7 +94,7 @@ for idmnp1=1:length(Gin)    % idmn + 1
     end
 
     % interpolate bottom levels from G
-    polout.face.FlowElem_z     = interpolate(G.face.FlowElem_z );
+    polout.face.FlowElem_z     = interpolate(D.face.z_cc );
     if ( isfield(G.face,'idmn') )
         polout.face.idmn = interpolate(G.face.idmn);
     end

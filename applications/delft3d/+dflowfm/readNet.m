@@ -128,9 +128,9 @@ end % OPT.peri2cell
 
 %% < read network: links between centers too: output file >
 
-if nc_isvar(ncfile, 'mesh2d_face_nodes') && OPT.edge
+if nc_isvar(ncfile, 'mesh2d_edge_faces') && OPT.edge
     
-    G.edge.FlowLink          = nc_varget(ncfile, 'mesh2d_face_nodes')';     % link between two flownodes
+    G.edge.FlowLink          = nc_varget(ncfile, 'mesh2d_edge_faces')';     % link between two flownodes
     try
     G.edge.FlowLinkType      = nc_varget(ncfile, 'mesh2d_edge_type')'; % link between two flownodes
     end

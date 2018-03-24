@@ -70,15 +70,21 @@ function varargout = readMap(ncfile,varargin)
            G      = dflowfm.readNetOld(ncfile);% edited by BS
            prefix = '';
            varname_waterdepth = 'water depth';
+           varname_layerdim = 'laydim';
+           varname_layercoord = 'LayCoord_cc';
        elseif strcmp(conv,'CF-1.6 UGRID-1.0/Deltares-0.8')% mapformat 4
            G      = dflowfm.readNet(ncfile);% edited by BS
            prefix = 'mesh2d_';
            varname_waterdepth = 'waterdepth';
+           varname_layerdim = 'nmesh2d_layer';
+           varname_layercoord = 'mesh2d_layer_sigma';
        else 
            sprintf('Current version of this script does not recognize mapformat %d',conv)% use default (mapformat 1)
            G      = dflowfm.readNetOld(ncfile);% edited by BS
            prefix = '';
            varname_waterdepth = 'water depth';
+           varname_layerdim = 'laydim';
+           varname_layercoord = 'LayCoord_cc';
        end
    end
    
@@ -126,8 +132,8 @@ function varargout = readMap(ncfile,varargin)
    
 %% 3D: number of layers
    L3D = false;
-   if nc_isdim(ncfile, 'laydim')
-       dum = nc_getdiminfo(ncfile,'laydim');
+   if nc_isdim(ncfile, varname_layerdim)
+       dum = nc_getdiminfo(ncfile, varname_layerdim);
        laydim = dum.Length;
        D.laydim = laydim;
    end
@@ -143,14 +149,14 @@ function varargout = readMap(ncfile,varargin)
    if OPT.dep && nc_isvar (ncfile, [prefix varname_waterdepth])
       D.face.dep  = nc_varget(ncfile, [prefix varname_waterdepth] ,[it-1 0],[1 face.mask]); % Waterdepth
    end
-   if OPT.lyrcc && nc_isvar(ncfile, 'LayCoord_cc')
+   if OPT.lyrcc && nc_isvar(ncfile, varname_layercoord)
       info=nc_getvarinfo(ncfile,[prefix 'ucx']);
       NDIM=length(info.Size);
       if ( NDIM==2 )   % safety, in principle (see unstruc_netcdf.f90) not possible
          D.face.z_cc = (s1-0.5*waterdepth)*ones(1, face.mask);
       elseif (NDIM==3)
-          z_cc = nc_varget(ncfile,'LayCoord_cc',[0],[laydim]);
-          dep = repmat(squeeze(D.face.dep),1,10);
+          z_cc = flipud(abs(nc_varget(ncfile,varname_layercoord,[0],[laydim])));
+          dep = repmat(squeeze(D.face.dep),1,laydim);
           for jj = face.mask:-1:1     % dynamically pre-allocate
              res(jj,:) = z_cc'.*dep(jj,:); 
              D.face.z_cc(jj,:) = (D.face.zwl(jj)-D.face.dep(jj))+res(jj,:);
