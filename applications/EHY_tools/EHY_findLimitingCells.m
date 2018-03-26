@@ -112,7 +112,8 @@ if OPT.writeMaxVel
         u=nc_varget(mapFile,vars{4,col},[ii-1 0],[step sizeucy(1)]);
         v=nc_varget(mapFile,vars{5,col},[ii-1 0],[step sizeucy(1)]);
         mag=sqrt(u.^2+v.^2);
-        maximum=max([maximum; max(mag)],[],1);
+        if size(mag,2)==1; mag=mag'; end
+        maximum=max([maximum; max(mag,[],1)],[],1);
     end
     MAXVEL=[MAXVEL maximum];
 end
