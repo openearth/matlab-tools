@@ -314,10 +314,15 @@ end
 % kml2ldb
     function [output,OPT]=EHY_convert_kml2ldb(inputFile,outputFile,OPT)
         output=kml2ldb(OPT.saveOutputFile,inputFile);
+        fclose all;
     end
 % kml2pol
     function [output,OPT]=EHY_convert_kml2pol(inputFile,outputFile,OPT)
-        output=kml2ldb(OPT.saveOutputFile,inputFile);
+        copyfile(inputFile,[tempdir 'kmlpath.kml'])
+        output=kml2ldb(OPT.saveOutputFile,[tempdir 'kmlpath.kml']);
+        movefile([tempdir 'kmlpath.ldb'],outputFile);
+        fclose all;
+        delete([tempdir 'kmlpath.kml'])
     end
 % kml2shp
     function [output,OPT]=EHY_convert_kml2shp(inputFile,outputFile,OPT)
