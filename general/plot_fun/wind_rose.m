@@ -13,10 +13,10 @@ function varargout = wind_rose(D,F,varargin)
 %                   (i) 0-convention and (ii) visual interpetation (to/from)
 %                   direction     0			 |	90
 %                   -------------------------|---------------
-%                   meteo:        from North |  from East 
-%                   current:      to   North |  to   East
+%                   'meteo':      from North |  from East 
+%                   'current':    to   North |  to   East
 %                   otherwise:    to   East  |  to   North
-%       - nAngles   number of D subdivisons [36]
+%       - nAngles   number of Directional subdivisons [36]
 %       - Ag        intensity subdivisons, Ag(i:i+1), if data exists <Ag(i)
 %                   or >Ag(end), first resp. last bin will contain that
 %                   data, default is automatic []
@@ -43,7 +43,8 @@ function varargout = wind_rose(D,F,varargin)
 %                   When no parent is given, wind rose uses entire figure.
 %       - iflip     flip the intensities as they go outward radially, ie,
 %                   highest values are placed nearest the origin [{0} 1]
-%       - inorm     normalize intensities, means all angles will have 100%
+%       - inorm     normalize intensities, means all angles will have 100% 
+%                   [{0} 1]
 %       - IncHiLow  if 0, data outside 'Ag' limits will not be used [0 {1}]
 %       - directionLabels  put the labels North, East, South, West on the
 %                   axes (default: true) [{true} false]
@@ -474,7 +475,9 @@ set(wrAx,'children',ch);
 %% COASTLINE
 if isnumeric(OPT.coastline);
     %plots line of coastline orientation (=direction perpendicular to shoreline)
-    plot([-(g+OPT.ri)*cosd(OPT.coastline) (g+OPT.ri)*cosd(OPT.coastline)],[(g+OPT.ri)*sind(OPT.coastline) (g+OPT.ri)*-sind(OPT.coastline)],'-k','LineWidth',2);
+    for nn=1:length(OPT.coastline);
+        plot([-(g+OPT.ri)*cosd(OPT.coastline(nn)) (g+OPT.ri)*cosd(OPT.coastline(nn))],[(g+OPT.ri)*sind(OPT.coastline(nn)) (g+OPT.ri)*-sind(OPT.coastline(nn))],'-k','LineWidth',2);
+    end
 end
 
 %% N S E W labels:

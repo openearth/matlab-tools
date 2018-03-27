@@ -48,6 +48,7 @@ url = datatypes.transect.urls{find(strcmp('Jarkus Data',datatypes.transect.names
 %% read data of 10 previous years
 tkl_year_array = [targetyear - 11: targetyear - 1];
 
+%d=struct;
 for i = 1 : 11
     d(i) = jarkus_readTransectDataNetcdf(url,transectID,tkl_year_array(i));
 end
@@ -56,14 +57,14 @@ end
 
 %% prepare input (targetyear should be integer)
 years = vertcat(d.year);
-[sorted idsort]=sort(years);d = d(idsort);years=years(idsort);
+[sorted, idsort]=sort(years);d = d(idsort);years=years(idsort);
 idjaar = find(years<targetyear);
 
 %% then calculate MKL values
-dunefoot = 3;
+dunefoot = 3; % Fixed dunefoot level of +3m NAP.
 for i = min(idjaar):max(idjaar)
     if ~isempty(d(i).xe(~isnan(d(i).ze)))
-        tkldata(i,1) = datenum([num2str(d(i).year) '0101'], 'yyyyddmm');
+        tkldata(i,1) = datenum([num2str(d(i).year+1964) '0101'], 'yyyyddmm');
         tkldata(i,2) = jarkus_getMKL(d(i).xe(~isnan(d(i).ze)), d(i).ze(~isnan(d(i).ze)), dunefoot, dunefoot - 2*(dunefoot - d(i).MLW));
     else
         errordlg('No TKL could be computed because no data was found')
