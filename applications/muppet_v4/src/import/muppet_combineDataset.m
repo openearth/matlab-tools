@@ -33,7 +33,7 @@ end
     
 switch lower(datasets(nra).dataset.type)
  
-    case{'scalar2dxy','scalar2dxz','scalar2dtz'}
+    case{'scalar2dxy','scalar2dxz','scalar2dtz','scalar2duxy'}
         
         datasets(nr).dataset.x=datasets(nra).dataset.x;
         datasets(nr).dataset.y=datasets(nra).dataset.y;
@@ -276,3 +276,7 @@ else
     end 
 end
  
+switch lower(datasets(nra).dataset.type) 
+    case{'scalar2dxy','scalar2dxz','scalar2dtz','scalar2duxy'}
+        datasets(nr).dataset.G=datasets(nra).dataset.G;
+end

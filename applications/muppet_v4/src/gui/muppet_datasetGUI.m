@@ -676,6 +676,7 @@ if isempty(dataset.time) && ~isempty(dataset.times)
 end
 
 % Import data
+dataset.from_gui=1;
 
 wb = waitbox('Reading data ...');
 try

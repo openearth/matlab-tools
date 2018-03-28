@@ -190,27 +190,37 @@ switch tp
         end
 end
 
-% % % Tekal files can have multiple quantities, so ...
-% % dataset.selectedquantity='scalar';
-% % switch tp
-% %     case{'timeseries'}
-% %         if npar>1
-% %             % Set possible quantities
-% %             dataset.nrquantities=2;
-% %             dataset.quantities={'scalar','vector2d'};
-% %             dataset.ucomponent=dataset.parameters(1).parameter.name;
-% %             dataset.vcomponent=dataset.parameters(2).parameter.name;
-% %         end
-% %     case{'map'}
-% %         dataset.activeparameter=3;
-% %         if npar>3
-% %             % Set possible quantities
-% %             dataset.nrquantities=2;
-% %             dataset.quantities={'scalar','vector2d'};
-% %             dataset.ucomponent=dataset.parameters(3).parameter.name;
-% %             dataset.vcomponent=dataset.parameters(4).parameter.name;
-% %         end
-% % end
+% Tekal files can have multiple quantities, so ...
+dataset.selectedquantity='scalar';
+dataset.selectquantity=0;        
+
+dataset.scalar_or_vector=0;
+
+switch tp
+    case{'timeseries'}
+        if npar>1
+            % Set possible quantities
+            dataset.selectquantity=1;        
+            dataset.scalar_or_vector=1;
+%             dataset.nrquantities=2;
+%             dataset.quantities={'scalar','vector2d'};
+%             dataset.ucomponent=dataset.parameters(1).parameter.name;
+%             dataset.vcomponent=dataset.parameters(2).parameter.name;
+        end
+    case{'map'}
+%         dataset.activeparameter=3;
+        if npar>3
+            % Set possible quantities
+            dataset.selectquantity=1;        
+            dataset.selectuvcomponent=1;
+            dataset.scalar_or_vector=1;
+%             dataset.nrquantities=2;
+%             dataset.quantities={'scalar','vector2d'};
+%             dataset.quantity='vector2d';
+             dataset.ucomponent=dataset.parameters(3).parameter.name;
+             dataset.vcomponent=dataset.parameters(4).parameter.name;
+        end
+end
 
 %%
 function dataset=import(dataset)
@@ -222,8 +232,30 @@ fid=dataset.fid;
 
 iblock=strmatch(lower(dataset.block),lower(dataset.blocks),'exact');
 
-dataset.rawquantity=dataset.selectedquantity;
-dataset.quantity=dataset.selectedquantity;
+% Two options:
+
+dataset.rawquantity='scalar';
+dataset.quantity='scalar';
+
+if dataset.scalar_or_vector
+    if dataset.from_gui
+        % 1) we came here through GUI import
+        if strcmpi(dataset.selectedquantity,'vector2d')
+            dataset.rawquantity='vector2d';
+            dataset.quantity='vector2d';
+            dataset.parameter='';
+        else
+            dataset.ucomponent='';
+            dataset.vcomponent='';
+        end
+    else
+        % 2) we came here from loading mup file
+        if isempty(dataset.parameter) && ~isempty(dataset.ucomponent)
+            dataset.rawquantity='vector2d';
+            dataset.quantity='vector2d';            
+        end
+    end
+end
 
 switch dataset.tekaltype
     case{'timeseries'}

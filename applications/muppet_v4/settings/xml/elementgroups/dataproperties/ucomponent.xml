@@ -14,10 +14,15 @@
     <tooltipstring>Select U component</tooltipstring>
     <dependency>
       <action>enable</action>
-      <checkfor>any</checkfor>
+      <checkfor>all</checkfor>
       <check>
         <variable>selectedquantity</variable>
         <value>vector2d</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>selectuvcomponent</variable>
+        <value>1</value>
         <operator>eq</operator>
       </check>
     </dependency>

@@ -165,6 +165,7 @@ opt.scalebar.type='regular';
 opt.scalebar.position=[];
 opt.scalebar.length=0;
 opt.scalebar.text='';
+opt.scalebar.boxcolor='black';
 opt.scalebar.font.name='Helvetica';
 opt.scalebar.font.size=5;
 opt.scalebar.font.angle='normal';

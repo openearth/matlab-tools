@@ -16,8 +16,8 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>quantity</variable>
-        <value>vector2d</value>
+        <variable>selectquantity</variable>
+        <value>1</value>
         <operator>eq</operator>
       </check>
     </dependency>

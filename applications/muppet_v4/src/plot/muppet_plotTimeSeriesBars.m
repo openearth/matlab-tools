@@ -31,6 +31,7 @@ for ii=1:length(x)-1
         xx=[x(ii) x(ii+1) x(ii+1) x(ii)];
         yy=[plt.ymin plt.ymin plt.ymax plt.ymax];
         h1=patch(xx,yy,'r');
+%        h1=fill(xx,yy,'r');
         set(h1,'facecolor',colorlist('getrgb','color',opt.facecolor));
         set(h1,'Linestyle',opt.linestyle);
         set(h1,'Linewidth',opt.linewidth);

@@ -68,6 +68,10 @@ dataset.selectedquantity='scalar';
 dataset.selectxcoordinate=0;
 dataset.selectycoordinate=0;
 dataset.selectparameter=1;
+dataset.selectuvcomponent=0;
+dataset.selectquantity=0;
+dataset.scalar_or_vector=0;
+dataset.from_gui=0;
 
 dataset.activeparameter=[];
 

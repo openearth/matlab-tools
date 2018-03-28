@@ -9,11 +9,12 @@ x=data.x;
 y=data.y;
 
 if opt.fillclosedpolygons==1
-    ldb=[x y];
-    h2=filledLDB(ldb,'none',[0 1 0],opt.maxdistance,10000);
-    if iscell(h2)
-        h2=cell2mat(h2);
-    end
+%     ldb=[x y];
+%     h2=filledLDB(ldb,'none',[0 1 0],opt.maxdistance,10000);
+%     if iscell(h2)
+%         h2=cell2mat(h2);
+%     end
+    h2=patch(x,y,'r');
     set(h2,'LineStyle','none');
 end
 % z=zeros(size(x));

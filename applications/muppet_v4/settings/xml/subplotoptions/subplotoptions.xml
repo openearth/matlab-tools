@@ -839,6 +839,26 @@
     </dependency>
   </subplotoption>
   <subplotoption>
+    <name>scalebarboxcolor</name>
+    <variable>scalebar.boxcolor</variable>
+    <keyword>ScaleBarBoxColor</keyword>
+    <default>Black</default>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotscalebar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+      <check>
+        <variable>scalebar.boxcolor</variable>
+        <operator>ne</operator>
+        <value>Black</value>
+      </check>
+    </dependency>
+  </subplotoption>
+  <subplotoption>
     <name>scalebartext</name>
     <variable>scalebar.text</variable>
     <keyword>ScaleBarText</keyword>

@@ -123,7 +123,7 @@ for j=i1:i2
         par.size=qpread(fid,1,dataproperties(ii),'size');
         
         % Bug in qpread?
-        par.size=par.size.*dataproperties(ii).DimFlag;
+%        par.size=par.size.*dataproperties(ii).DimFlag;
         
         % Times
         if dataproperties(ii).DimFlag(1)>0
@@ -206,21 +206,21 @@ for j=i1:i2
             end
         end
         
-        %     % Unstructured grid
-        %     if strcmpi(fid.qp_filetype,'netcdf')
-        %         if ~isempty(dataproperties(ii).Dimension)
-        %             if strcmpi(dataproperties(ii).Dimension{3},'nFlowElem')
-        %                 % unstructured grid
-        %                 par.dataproperties(ii).Loc='z';
-        %                 par.unstructuredgrid=1;
-        %             end
-        %             if strcmpi(dataproperties(ii).Dimension{3},'nNetNode')
-        %                 % unstructured grid
-        %                 par.dataproperties(ii).Loc='d';
-        %                 par.unstructuredgrid=1;
-        %             end
-        %         end
-        %     end
+            % Unstructured grid
+            if strcmpi(fid.QP_FileType,'netcdf')
+                if ~isempty(dataproperties(ii).DimFlag)
+                    if strcmpi(dataproperties(ii).DimName{3},'nmesh2d_face')
+                        % unstructured grid
+                        par.dataproperties(ii).Loc='z';
+                        par.unstructuredgrid=1;
+                    end
+                    if strcmpi(dataproperties(ii).DimName{3},'nmesh2d_node')
+                        % unstructured grid
+                        par.dataproperties(ii).Loc='d';
+                        par.unstructuredgrid=1;
+                    end
+                end
+            end
         
         % Unstructured grid
 %        if strcmpi(fid.qp_filetype,'netcdf')

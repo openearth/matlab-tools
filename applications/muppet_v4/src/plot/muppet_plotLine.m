@@ -105,6 +105,7 @@ switch lower(opt.plotroutine)
         set(h1,'Linewidth',opt.linewidth);
         set(h1,'Marker',opt.marker,'MarkerSize',opt.markersize, ...
             'MarkerFaceColor',colorlist('getrgb','color',opt.markerfacecolor),'MarkerEdgeColor',colorlist('getrgb','color',opt.markeredgecolor));
+
     case{'area below line'}
         set(h1,'facecolor',colorlist('getrgb','color',opt.facecolor));
         set(h1,'Linestyle',opt.linestyle);
