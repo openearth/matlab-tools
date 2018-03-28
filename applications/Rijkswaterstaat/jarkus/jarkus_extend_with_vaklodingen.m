@@ -128,8 +128,10 @@ px2y = cellfun(@(xi,yi) polyfit(xi,yi,1), num2cell(x,2), num2cell(y,2),...
     'uniformoutput', false);
 
 %% retreive extent of vaklodingen
-urls = opendap_catalog('http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.html',...
+urls = opendap_catalog('http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/catalog.html',...
     'ignoreCatalogNc', true);
+
+
 
 catalogidx = ~cellfun(@isempty, regexp(urls, 'catalog.nc$', 'match'));
 
