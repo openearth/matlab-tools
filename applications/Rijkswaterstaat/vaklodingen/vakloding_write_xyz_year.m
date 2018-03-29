@@ -50,6 +50,8 @@ if ~isempty(OPT.polygon)
      ind = inpolygon(x,y,pol.Field(ip).Data(:,1),pol.Field(ip).Data(:,2));
      xyz = vertcat(xyz,[x(ind) y(ind) z(ind)]);
   end
+else
+   xyz = [x y z];
 end
 save(OPT.filout,'xyz','-ascii');
 
