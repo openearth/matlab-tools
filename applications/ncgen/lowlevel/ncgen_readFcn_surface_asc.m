@@ -68,7 +68,7 @@ yll    = s{2}(strcmpi(s{1},OPT.read.yref_cell ));
 if strcmp(OPT.read.yref_cell, 'yllcorner')
     % yllcorner given
     yllcorner = yll;
-    % derive xllcenter
+    % derive yllcenter
     yllcenter = yll + cellsize/2;
     if ~(mod(yllcorner,cellsize)==0)
         % error(['yllcorner has offset: ',num2str(mod(yllcorner,cellsize))])
