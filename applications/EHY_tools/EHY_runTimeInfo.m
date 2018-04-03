@@ -95,7 +95,9 @@ try % if simulation has finished
             fid=fopen([pathstr filesep shFiles(1).name],'r');
             lineCores=findLineOrQuit(fid,'export processes_per_node=');
             fclose(fid);
-            noPartitions=str2num(strrep(lineNodes,'#$ -pe distrib ',''))*str2num(strrep(lineCores,'export processes_per_node=',''));
+            if ~isempty(lineCores)
+                noPartitions=str2num(strrep(lineNodes,'#$ -pe distrib ',''))*str2num(strrep(lineCores,'export processes_per_node=',''));
+            end
             
             % realTime_S
             fid=fopen(diaFile,'r');

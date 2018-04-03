@@ -65,13 +65,16 @@ end
 
 if ~isempty(str2num(mapFile(end-10:end-7))) && strcmp(mapFile(end-11),'_')
     msgbox(['You are probably processing a simulation that was using multiple partitions.' char(10),...
-        'Please note that the administration of limiting cells in parallel simulations is currently not 100% correct.' char(10),...
-        'This has been reported to DSC and an issue was made for this problem. More info? > Contact Julien' char(10) char(10),...
-        'Work-around for now: Use a simulation on one partition.' char(10) char(10),...
+        'Please note that the administration of limiting cells in parallel simulations was not 100% correct in previous versions of DFM.' char(10),...
+        'This has been fixed for DFM versions >= 1.2.0.8405. More info? > Contact Julien' char(10) char(10),...
+        'Work-around for older versions: Use a simulation on one partition.' char(10) char(10),...
         'This script will now get the info from the different domains and merge the limiting cells.']);
+    
+    mapFiles=dir([fileparts(mapFile) filesep '*_map.nc']);
+else
+    [pathstr, name, ext]=fileparts(mapFile);
+    mapFiles(1).name=[name ext];
 end
-
-mapFiles=dir([fileparts(mapFile) filesep '*_map.nc']);
   
 X=[];
 Y=[];
@@ -144,6 +147,10 @@ XX=[XX;xx];
 YY=[YY;yy];
 NUMLIMDT=[NUMLIMDT;nrOfLimiting];
 end
+% sort
+[NUMLIMDT,I]=sort(NUMLIMDT,'descend');
+XX=XX(I);
+YY=YY(I);
 
 % export
 if ~isempty(XX)

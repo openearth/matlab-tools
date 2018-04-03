@@ -18,6 +18,7 @@ OPT.lineColor=[1 0 0]; % default is red
 OPT.lineWidth=1;
 OPT.fromEPSG=[]; % convert from this EPSG in case of conversion to kml (Google Earth)
 OPT.grdFile=[];  % corresponding .grd file for files like .crs / .dry / obs. / ...
+OPT.netFile=[];  % *_net.nc-file for conversion of .xyz (dry points) to dry-crosses-ldb
 OPT.grd=[]; % wlgrid('read',OPT.grdFile);
 OPT.iconFile='http://maps.google.com/mapfiles/kml/paddle/blu-stars.png'; % for PlaceMark
 
@@ -159,9 +160,13 @@ else
 end
 
 if OPT.saveOutputFile && exist(outputFile,'file')
-    if strcmp(outputExt,'nc'); 
+    if strcmp(outputExt,'nc')
         outputFile0=outputFile;
         outputFile=strrep(outputFile0,'.nc','_net.nc');
+        movefile(outputFile0,outputFile);
+    elseif ~isempty(strfind(outputExt,'.xdry'))
+        outputFile0=outputFile;
+        outputFile=strrep(outputFile0,'.xdry','_xdry.');
         movefile(outputFile0,outputFile);
     end
     disp([char(10) 'EHY_convert created the file: ' char(10) fullfile(outputFile) char(10)])
@@ -204,28 +209,39 @@ end
             io_polygon('write',outputFile,x,y,'dosplit','-1');
         end
     end
-% dry2kml
-    function [output,OPT]=EHY_convert_dry2kml(inputFile,outputFile,OPT)
+% dry2xdrykml
+    function [output,OPT]=EHY_convert_dry2xdrykml(inputFile,outputFile,OPT)
+        OPT_user.saveOutputFile=OPT.saveOutputFile;
+        OPT.saveOutputFile=0;
+        [ldb,OPT]=EHY_convert_dry2xdryldb(inputFile,outputFile,OPT);
+        OPT.saveOutputFile=OPT_user.saveOutputFile;
+        if OPT.saveOutputFile
+            [ldb(:,1),ldb(:,2),OPT]=EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
+            [~,name]=fileparts(inputFile);
+            tempFile=[tempdir name '.kml'];
+            ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
+            copyfile(tempFile,outputFile);
+            delete(tempFile);
+        end
+        output=ldb;
+    end
+% dry2xdryldb
+    function [output,OPT]=EHY_convert_dry2xdryldb(inputFile,outputFile,OPT)
         dry=delft3d_io_dry('read',inputFile);
         [OPT,grd]=EHY_convert_gridCheck(OPT,inputFile);
-        pol=[];
+        ldb=[];
         for iM=1:length(dry.m)
             mm=dry.m(iM);
             nn=dry.n(iM);
-            crossInd=[mm-1 mm-1 mm   mm mm-1 mm   mm-1 mm   ;,...
+            crossInd=[mm-1 mm-1 mm   mm mm-1 mm   mm-1 mm;,...
                 nn   nn-1 nn-1 nn nn   nn-1 nn-1 nn];
             crossInd=sub2ind(size(grd.X),crossInd(1,:),crossInd(2,:));
-            pol=[pol;grd.X(crossInd)' grd.Y(crossInd)'; NaN NaN];
+            ldb=[ldb;grd.X(crossInd)' grd.Y(crossInd)'; NaN NaN];
         end
-        [pol(:,1),pol(:,2),OPT]=EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
         if OPT.saveOutputFile
-            [~,name]=fileparts(inputFile);
-            tempFile=[tempdir name '_dry.kml'];
-            ldb2kml(pol(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
-            copyfile(tempFile,outputFile);
-            delete(tempFile)
+            io_polygon('write',outputFile,ldb);
         end
-        output=pol;
+        output=ldb;
     end
 % dry2thd
     function [output,OPT]=EHY_convert_dry2thd(inputFile,outputFile,OPT)
@@ -761,6 +777,73 @@ end
         end
         output=[lon lat];
     end
+% xyz2xdrykml
+    function [output,OPT]=EHY_convert_xyz2xdrykml(inputFile,outputFile,OPT)
+        OPT_user.saveOutputFile=OPT.saveOutputFile;
+        OPT.saveOutputFile=0;
+        [ldb,OPT]=EHY_convert_xyz2xdryldb(inputFile,outputFile,OPT)
+        OPT.saveOutputFile=OPT_user.saveOutputFile;
+        if OPT.saveOutputFile
+            [ldb(:,1),ldb(:,2),OPT]=EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
+            [~,name]=fileparts(inputFile);
+            tempFile=[tempdir name '.kml'];
+            ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
+            copyfile(tempFile,outputFile);
+            delete(tempFile);
+        end
+        output=ldb;
+    end
+% xyz2xdryldb
+    function [output,OPT]=EHY_convert_xyz2xdryldb(inputFile,outputFile,OPT)
+        OPT=EHY_convert_netCheck(OPT,inputFile);
+        try
+            NetNode_x=nc_varget(OPT.netFile,'NetNode_x');
+            NetNode_y=nc_varget(OPT.netFile,'NetNode_y');
+            NetElemNode=nc_varget(OPT.netFile,'NetElemNode');
+            nrCellCorners=sum(NetElemNode~=0,2);
+           
+            % allocate
+            face_x=ones(size(NetElemNode,1),1)*NaN;
+            face_y=face_x;
+            face_x_bnd=ones(size(NetElemNode))*NaN;
+            face_y_bnd=face_x_bnd;
+            
+            for ii=3:6 % triangles // squares // pentagons // hexogons
+                ind=find(nrCellCorners==ii);
+                if ~isempty(ind)
+                    if length(ind)~=1
+                        face_x(ind,1)=mean(NetNode_x(NetElemNode(ind,1:ii)),2);
+                        face_y(ind,1)=mean(NetNode_y(NetElemNode(ind,1:ii)),2);
+                    else
+                        face_x(ind,1)=mean(NetNode_x(NetElemNode(ind,1:ii)));
+                        face_y(ind,1)=mean(NetNode_y(NetElemNode(ind,1:ii)));
+                    end
+                    face_x_bnd(ind,1:ii)=NetNode_x(NetElemNode(ind,1:ii));
+                    face_y_bnd(ind,1:ii)=NetNode_y(NetElemNode(ind,1:ii));
+                end
+            end
+            
+            xyz=importdata(inputFile);
+            ldb0{size(xyz,1),1}=[];
+            for iXYZ=1:size(xyz,1)
+                if mod(iXYZ,10)==0; disp(['progress: ' num2str(iXYZ) '/' num2str(size(xyz,1))]); end
+                dist=sqrt((face_x-xyz(iXYZ,1)).^2+(face_y-xyz(iXYZ,2)).^2);
+                ind=find(dist==min(dist),1);
+                dmyLdb=[];
+                for ii=1:nrCellCorners(ind)
+                    dmyLdb=[dmyLdb;face_x(ind) face_y(ind); face_x_bnd(ind,ii) face_y_bnd(ind,ii)];
+                end
+                ldb0{iXYZ}=[dmyLdb;NaN NaN];
+            end
+            ldb=cell2mat(ldb0);
+            if OPT.saveOutputFile
+                io_polygon('write',outputFile,ldb);
+            end
+            output=ldb;
+        catch
+            disp('Save the network with cell info via Hermans GUI first and try again')
+        end
+    end
 %% output
 if nargout==1
     varargout{1}=output;
@@ -789,6 +872,14 @@ if nargout==2
     varargout{2}=OPT.grd;
 end
 varargout{1}=OPT;
+end
+
+function OPT=EHY_convert_netCheck(OPT,inputFile)
+if isempty(OPT.netFile)
+    disp('Open the corresponding _net.nc-file')
+    [netName,netPath]=uigetfile([fileparts(inputFile) filesep '.nc'],'Open the corresponding _net.nc-file');
+    OPT.netFile=[netPath netName];
+end
 end
 
 function [x,y,OPT]=EHY_convert_coorCheck(x,y,OPT)

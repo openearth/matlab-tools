@@ -62,10 +62,18 @@ switch modelType
         % dry points
         if isfield(mdu.geometry,'DryPointsFile') && ~isempty(mdu.geometry.DryPointsFile)
             inputFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.DryPointsFile,runDir);
-            [~,name]=fileparts(inputFile);
+            [~,name,ext]=fileparts(inputFile);
             outputFile=[outputDir name '_dry.kml'];
-            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],...
-                'iconFile','http://maps.google.com/mapfiles/kml/paddle/ylw-square.png',OPT);
+            OPT.netFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.NetFile,runDir);
+            if strcmpi(ext,'.pol')
+                [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],OPT);
+            elseif strcmpi(ext,'.xyz')
+                try
+                [~,OPT]=EHY_convert(inputFile,'xdrykml','outputFile',outputFile,'lineColor',[1 0 0],OPT);
+                catch
+                [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'iconFile','http://maps.google.com/mapfiles/kml/paddle/ylw-square.png',OPT); 
+                end
+            end
         end
         
         % Observation points
@@ -102,7 +110,7 @@ switch modelType
             inputFile=EHY_model2GoogleEarth_checkPath(mdf.keywords.fildry,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_dry.kml'];
-            [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[1 0 0],OPT);
+            [~,OPT]=EHY_convert(inputFile,'xdrykml','outputFile',outputFile,'lineColor',[1 0 0],OPT);
         end
         
         % .thd
