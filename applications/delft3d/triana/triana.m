@@ -1,4 +1,4 @@
-function triana(s,meas)
+function s = triana(s,meas)
 %TRIANA Function to perform a tidal analysis on observations stations in a
 %Delft3D or Delft3D-FM model and compare the results with measurements.
 %Comparison with the IHO database (from dashboard) is included in this
@@ -170,6 +170,7 @@ catch
     s = triana_tidalAnalysis(s);
 end
 
+save([s.outputDir,filesep,filesep,'Triana_',s.description,'.mat'],'s')
 
 %% Prepare Triana plot
 s = triana_plotTriana(s);

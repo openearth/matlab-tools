@@ -10,7 +10,6 @@ txt_dist_hor = (s.plot.Xmax-s.plot.Xmin)/s.plot.txtHorFraq;
 txt_dist_ver = (s.plot.Ymax-s.plot.Ymin)/s.plot.txtVerFraq;
 X_legend =0.8*(s.plot.Xmax-s.plot.Xmin)+s.plot.Xmin;
 Y_legend =0.8*(s.plot.Ymax-s.plot.Ymin)+s.plot.Ymin;
-% s.plot.FontSize =3;
 
 % if no constituents have been specified for plotting, take all analysed components
 if ~isfield(s.plot,'const')
@@ -27,10 +26,10 @@ meas.X = [s.meas.data.X];
 meas.Y = [s.meas.data.Y];
 
 for cc = 1:length(s.plot.const)
-    
+    ID_cmpTriana = NaN;
     %selecting correct components in triana field
     for cc2 = 1:length(s.triana.Cmp)
-        if strcmpi(s.triana.Cmp(cc2),s.plot.const(cc))
+        if strcmpi(s.triana.Cmp(cc2),strtrim(s.plot.const(cc)))
             ID_cmpTriana = cc2;
         end
     end
@@ -207,4 +206,14 @@ for cc = 1:length(s.plot.const)
     
     print(gcf,'-dpng','-r300',[s.outputDir '\Figures\Triana_',s.plot.const{cc},'_',s.description,'_Aratio_Gdiff.png'])
     close all
+    
+    xlswrite([s.outputDir '\Figures\Triana_summary.xls'],[{'Station (obs)'};s.triana.statsComp],s.plot.const{cc},'A1');
+    xlswrite([s.outputDir '\Figures\Triana_summary.xls'],[{'Station (comp)'};s.triana.statsObs'],s.plot.const{cc},'B1');
+    xlswrite([s.outputDir '\Figures\Triana_summary.xls'],{'X','Y'},s.plot.const{cc},'C1');
+    xlswrite([s.outputDir '\Figures\Triana_summary.xls'],s.triana.X,s.plot.const{cc},'C2');
+    xlswrite([s.outputDir '\Figures\Triana_summary.xls'],s.triana.Y,s.plot.const{cc},'D2');
+    xlswrite([s.outputDir '\Figures\Triana_summary.xls'],{'Hc','Ho','Hc/Ho','','Gc','Go','Gc-Go'},s.plot.const{cc},'E1');
+    xlswrite([s.outputDir '\Figures\Triana_summary.xls'],[s.triana.Acomp(ID_cmpTriana,:)' s.triana.Aobs(ID_cmpTriana,:)' A_ratio'],s.plot.const{cc},'E2');
+    xlswrite([s.outputDir '\Figures\Triana_summary.xls'],[s.triana.Gcomp(ID_cmpTriana,:)' s.triana.Gobs(ID_cmpTriana,:)' G_diff'],s.plot.const{cc},'I2');
+    
 end

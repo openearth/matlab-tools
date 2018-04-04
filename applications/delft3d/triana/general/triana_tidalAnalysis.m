@@ -87,6 +87,3 @@ end
 s.triana.X = s.model.data.X;
 s.triana.Y = s.model.data.Y;
 s.triana.statsComp = s.model.data.stats;
-
-triana = s.triana;
-save([pwd '\Analysis\Triana_',s.description,'.mat'],'triana')
