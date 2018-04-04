@@ -139,7 +139,9 @@ end
 
 if nc_isvar(ncfile, 'NetElemNode') && OPT.face
     % make sure orientation is [n x 6], just like a delaunay tri is [n x 3]
+    % Warning: the nc_varget from wlsettings produces a different result compared to the nc_varget from OETtools (NaN vs 0)
     G.face.NetElemNode             = nc_varget(ncfile, 'NetElemNode');
+    
     
     if nc_isvar(ncfile, 'BndLink')
         G.face.BndLink               = nc_varget(ncfile, 'BndLink')';
