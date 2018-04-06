@@ -32,7 +32,7 @@ function [c_ini c_end] = aggregation_get_coastline_Delft3D_4(map_file,varargin)
 % Ministry of Oceans and Fisheries and the Deltares strategic research program
 % Coastal and Offshore Engineering. This financial support is highly appreciated.
 
-OPT.z_level   = 0;
+OPT.z_level   = 0; % Default MSL
 OPT.time_inds = [];
 [OPT] = setproperty(OPT,varargin);
 
@@ -44,26 +44,30 @@ end
 
 bed_levels = qpread(d3d_handle,'bed level in water level points','griddata',[OPT.time_inds(1) OPT.time_inds(2)]);
 
-fig = figure('visible','off');
-[c_ini,~]  = contour(bed_levels.X,bed_levels.Y,squeeze(bed_levels.Val(1,:,:)),[OPT.z_level OPT.z_level]);
-[c_end,~]  = contour(bed_levels.X,bed_levels.Y,squeeze(bed_levels.Val(2,:,:)),[OPT.z_level OPT.z_level]);
-close(fig);
-c_ini = c_ini';
-c_end = c_end';
-c_ini(find(c_ini(:,1)==OPT.z_level),:)=NaN;
-c_end(find(c_end(:,1)==OPT.z_level),:)=NaN;
-% Remove start and trailing NaN's:
-if ~isempty(find(find(isnan(c_ini(:,1))) == 1))
-    c_ini = c_ini(2:end,:);
-end
-if ~isempty(find(find(isnan(c_ini(:,1))) == size(c_ini,1)))
-    c_ini = c_ini(2:end,:);
-end
-if ~isempty(find(find(isnan(c_end(:,1))) == 1))
-    c_end = c_end(2:end,:);
-end
-if ~isempty(find(find(isnan(c_end(:,1))) == size(c_end,1)))
-    c_end = c_end(2:end,:);
+tel = 0;
+for z_level = fliplr(sort(unique([min(OPT.z_level(:)) max(OPT.z_level(:))])))
+    tel = tel+1;
+    fig = figure('visible','off');
+    [c_ini{tel},~]  = contour(bed_levels.X,bed_levels.Y,squeeze(bed_levels.Val(1,:,:)),[z_level z_level]);
+    [c_end{tel},~]  = contour(bed_levels.X,bed_levels.Y,squeeze(bed_levels.Val(2,:,:)),[z_level z_level]);
+    close(fig);
+    c_ini{tel} = c_ini{tel}';
+    c_end{tel} = c_end{tel}';
+    c_ini{tel}(find(c_ini{tel}(:,1)==z_level),:)=NaN;
+    c_end{tel}(find(c_end{tel}(:,1)==z_level),:)=NaN;
+    % Remove start and trailing NaN's:
+    if ~isempty(find(find(isnan(c_ini{tel}(:,1))) == 1))
+        c_ini{tel} = c_ini{tel}(2:end,:);
+    end
+    if ~isempty(find(find(isnan(c_ini{tel}(:,1))) == size(c_ini{tel},1)))
+        c_ini{tel} = c_ini{tel}(2:end,:);
+    end
+    if ~isempty(find(find(isnan(c_end{tel}(:,1))) == 1))
+        c_end{tel} = c_end{tel}(2:end,:);
+    end
+    if ~isempty(find(find(isnan(c_end{tel}(:,1))) == size(c_end{tel},1)))
+        c_end{tel} = c_end{tel}(2:end,:);
+    end
 end
 
 end

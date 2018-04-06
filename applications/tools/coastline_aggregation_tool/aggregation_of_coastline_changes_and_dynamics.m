@@ -573,15 +573,25 @@ for ii=1:length(data)
                     disp(['   Loading and handling "' data(ii).model_name '" files: ' num2str(jj) ' out of ' num2str(length(data(ii).model_files))]);
                     eval(['[c_ini c_end] = aggregation_get_coastline_Delft3D_4(data(ii).model_files{jj}' d3d_varargin ');'])
                     % Convert coordinate systems if needed:
-                    if ~isempty(data(ii).model_EPSG)
-                        if data(ii).model_EPSG ~= coastline.EPSG
-                            [c_ini(:,1),c_ini(:,2)] = convertCoordinates(c_ini(:,1),c_ini(:,2),'CS1.code',data(ii).model_EPSG,'CS2.code',coastline.EPSG);
-                            [c_end(:,1),c_end(:,2)] = convertCoordinates(c_end(:,1),c_end(:,2),'CS1.code',data(ii).model_EPSG,'CS2.code',coastline.EPSG);
+                    for c_ind = 1:length(c_ini)
+                        if ~isempty(data(ii).model_EPSG)
+                            if data(ii).model_EPSG ~= coastline.EPSG
+                                [c_ini{c_ind}(:,1),c_ini{c_ind}(:,2)] = convertCoordinates(c_ini{c_ind}(:,1),c_ini{c_ind}(:,2),'CS1.code',data(ii).model_EPSG,'CS2.code',coastline.EPSG);
+                                [c_end{c_ind}(:,1),c_end{c_ind}(:,2)] = convertCoordinates(c_end{c_ind}(:,1),c_end{c_ind}(:,2),'CS1.code',data(ii).model_EPSG,'CS2.code',coastline.EPSG);
+                            end
                         end
+                        % Refine the data:
+                        c_ini{c_ind} = add_equidist_points(1,c_ini{c_ind},'equi'); c_ini{c_ind} = c_ini{c_ind}(2:end-1,:);
+                        c_end{c_ind} = add_equidist_points(1,c_end{c_ind},'equi'); c_end{c_ind} = c_end{c_ind}(2:end-1,:);
                     end
-                    % Refine the data:
-                    c_ini = add_equidist_points(1,c_ini,'equi'); c_ini = c_ini(2:end-1,:);
-                    c_end = add_equidist_points(1,c_end,'equi'); c_end = c_end(2:end-1,:);
+                    if length(c_ini) == 1
+                        % Simple contour approach:
+                        c_ini = c_ini{1};
+                        c_end = c_end{1};
+                    elseif length(c_ini) == 2
+                        % MKL approach:
+                        eval(['[c_ini c_end] = aggregation_MKL_for_Delft3D_4(data(ii).model_files{jj},c_ini,c_end,coastline.ldb,coastline.offshore_orientation' d3d_varargin ');']);
+                    end
                     % Now get the differences w.r.t. the landboundary
                     [ini_dist end_dist] = aggretation_cl_change_wrt_ldb(coastline.ldb,coastline.offshore_orientation,c_ini,c_end);
                     % And make it relative:
