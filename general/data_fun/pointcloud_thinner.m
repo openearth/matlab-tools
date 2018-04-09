@@ -35,8 +35,8 @@ function XY = pointcloud_thinner(XY,min_dist,split_amount)
 %
 % XY_ori = rand(200000,2);
 % XY_new = pointcloud_thinner(XY_ori,0.01);
-% plot(XY_ori(:,1),XY_ori(:,2),'k.'); hold on;
-% plot(XY_new(:,1),XY_new(:,2),'r.');
+% p_1 = plot(XY_ori(:,1),XY_ori(:,2),'k.'); hold on;
+% p_2 = plot(XY_new(:,1),XY_new(:,2),'r.');
 % set(p_2,'markersize',get(p_2,'markersize')+4);
 % legend('Original pointcloud','Thinned pointcloud');
 
