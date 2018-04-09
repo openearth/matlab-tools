@@ -122,9 +122,13 @@ switch modelType
             nr_times_clip = length(Data.times);
             
             % station info
-            stationX = ncread(outputfile,'station_x_coordinate',[1 1],[Inf 1]);
-            stationY = ncread(outputfile,'station_y_coordinate',[1 1],[Inf 1]);
-            
+            try % varying location in time
+                stationX = ncread(outputfile,'station_x_coordinate',[1 1],[Inf 1]);
+                stationY = ncread(outputfile,'station_y_coordinate',[1 1],[Inf 1]);
+            catch % older version, location not varying in time
+                stationX = ncread(outputfile,'station_x_coordinate');
+                stationY = ncread(outputfile,'station_y_coordinate');
+            end
             Data.location(Data.exist_stat,:)=[stationX(stationNr(Data.exist_stat)) stationY(stationNr(Data.exist_stat))];
             Data.location(~Data.exist_stat,1:2)=NaN;
         end
@@ -168,7 +172,7 @@ switch modelType
                 case 'wl'
                     value(bl_start:bl_stop,:) 	= ncread(outputfile,'waterlevel',[1 bl_start+offset],[Inf bl_int])';
                 case 'uv'
-                    if ~exist('no_layers','var') % 2DH model
+                    if ~exist('no_layers','var') | no_layers==1 % 2DH model
                         value_x(bl_start:bl_stop,:) 	= permute(ncread(outputfile,'x_velocity',[1 bl_start+offset],[Inf bl_int]),[2 1]);
                         value_y(bl_start:bl_stop,:) 	= permute(ncread(outputfile,'y_velocity',[1 bl_start+offset],[Inf bl_int]),[2 1]);
                     else
