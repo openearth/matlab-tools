@@ -66,6 +66,16 @@ end
 
 [ldbCell, ldbBegin, ldbEnd, ldb]=disassembleLdb(ldb);
 
+start_nan = isnan(oriLDB(1,1));
+end_nan   = isnan(oriLDB(end,1));
+
+if start_nan && end_nan
+    uiwait(warndlg({'First and last points in the ldb-file are no-data points';'Note that these are removed when saving the ldb'},'ldbTool'));
+elseif start_nan
+    uiwait(warndlg({'First point in the ldb-file is a no-data point';'Note that it is removed when saving the ldb'},'ldbTool'));
+elseif end_nan
+    uiwait(warndlg({'Last point in the ldb-file is a no-data point';'Note that it is removed when saving the ldb'},'ldbTool'));
+end
 
 data(5).ldb = ldb;
 data(5).oriLDB = oriLDB;

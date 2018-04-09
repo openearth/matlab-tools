@@ -8,7 +8,7 @@ function ldbTool
 %   - different glue-functions to connect seperate landboundaries segments
 %   - option to show georeferenced images together with landboundary
 %   - undo-option (max. 5 steps back)
-%   - several plot options, for example fill-ability of landboundary
+%   - several plot options, e.g. filling, showing indices, layers, etc.
 %   - and many more ldb-edit options....
 %
 % See the manual (accessible via the help-menu) for detailed information

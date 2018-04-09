@@ -43,7 +43,7 @@ data3=get(findobj(fig,'tag','LT_showGeoBox'),'userdata');
 
 if get(findobj(fig,'tag','LT_showGeoBox'),'value')==1
     if isempty(data3)
-        warndlg('First open image','LT');
+        uiwait(warndlg('First open image','ldbTool'));
         set(findobj(fig,'tag','LT_showGeoBox'),'value',0);
     else
         set(fig,'renderer','zbuffer');    

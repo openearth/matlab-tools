@@ -64,10 +64,10 @@ pbar=get(gca,'PlotBoxAspectRatio');
 ratio=pbar(1)/pbar(2);
 ratioXY=diff(xL)/diff(yL);
 if ratioXY < ratio
-    xL=[mean(xL)-ratio*diff(xL)/2 mean(xL)+ratio*diff(xL)/2];
+%     xL=[mean(xL)-ratio*diff(xL)/2 mean(xL)+ratio*diff(xL)/2];
     set(curAx,'YLim',yL,'XLim',xL);
 else
-    yL=[mean(yL)-diff(xL)/ratio/2 mean(yL)+diff(xL)/ratio/2];
+%     yL=[mean(yL)-diff(xL)/ratio/2 mean(yL)+diff(xL)/ratio/2];
     set(curAx,'XLim',xL,'YLim',yL);
 end
 

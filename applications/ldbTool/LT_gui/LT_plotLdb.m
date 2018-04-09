@@ -51,8 +51,15 @@ if isempty(plotHandles)
 else
     axLim=axis;
 end
-try
-    delete(plotHandles{:});
+
+for ii = 1:length(plotHandles(:))
+    try
+        delete(plotHandles{ii});
+    catch
+        try
+            delete(plotHandles{ii}{1});
+        end
+    end
 end
 
 % get data, and reduce data to only the fifth column of every layer (no need to plot the undo-memory)
@@ -75,6 +82,9 @@ hold on;
 for ii=1:numOfLayers
     eval(['plotHandles{ii}=plot(data(ii+1).ldb(:,1),data(ii+1).ldb(:,2),' plotSettings{ii} ');']);
     set(plotHandles{ii},'ZData',repmat(2,size(get(plotHandles{ii},'XData'))));
+    if get(findobj(fig,'tag','LT_ldb_pointline'),'Value')
+        set(plotHandles{ii},'marker','.','MarkerSize',10);
+    end
 end
 
 if get(findobj(fig,'tag','LT_showOriBox'),'value')==1
@@ -102,6 +112,13 @@ if get(findobj(fig,'tag','LT_showPolygonBox'),'value')==1;
     set(plotHandles{numOfLayers+4},'marker','.','linewidth',2,'color',[1 0 0.5]);
 else
     plotHandles{numOfLayers+4}=[];
+end
+
+if get(findobj(fig,'tag','LT_show_ldb_indices'),'Value')
+    for ii=1:numOfLayers
+        text_delta = max(1,10^(floor(log10(size(data(ii+1).ldb,1)))-2));
+        plotHandles{numOfLayers+4+ii} = text(data(ii+1).ldb(2:text_delta:end,1),data(ii+1).ldb(2:text_delta:end,2),cellstr([repmat(' ',length([1:text_delta:size(data(ii+1).ldb,1)-1]),1) num2str([1:text_delta:size(data(ii+1).ldb,1)-1]')]));
+    end
 end
 
 % set(gca,'DataAspectRatioMode','manual','DataAspectRatio',[1 1 1]);
