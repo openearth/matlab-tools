@@ -52,7 +52,7 @@ coastline.ldb                  = ldb;
 c_ini = nan(size(coastline.offshore_orientation,1),2);
 c_end = nan(size(coastline.offshore_orientation,1),2);
 
-disp('   Starting an MKL analysis, this may take a moment..');
+disp('   Starting an MCL analysis, this may take a moment..');
 
 for kk=find(isnan(coastline.offshore_orientation)==0)'
     

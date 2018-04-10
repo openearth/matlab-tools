@@ -63,7 +63,7 @@ function varargout = aggregation_of_coastline_changes_and_dynamics(coastline_use
 %     data.min_diff              (min. diff, if use_min_max_range is true)
 %     data.max_diff              (max. diff, if use_min_max_range is true)
 %     data.set_model_time        (manually set model time, instead of [1 end])
-%     data.set_model_vert_level  (manually set vert. level of coastline)
+%     data.set_model_vert_level  (manually set vert. level(s) of coastline)
 %
 %     Use data(1).keywords, data(2).keywords, etc. to add multiple models!
 %
@@ -116,11 +116,13 @@ function varargout = aggregation_of_coastline_changes_and_dynamics(coastline_use
 %   <<<coastline.structure_inds>>>
 %   The indices of the *.ldb file that you want to draw as structures (will
 %   also be ignored as dynamic coastline), in {[x1:x2],[x1:x2]} format (use
-%   {} to leave it empty).
+%   {} to leave it empty). You can use the function ldbTool() to find the
+%   indices of structures that you want to apply.
 %
 %   <<<coastline.ignore_inds>>>
 %   The indices of the *.ldb file ignored as a dynamic coastline, in
-%   {[x1:x2],[x1:x2]} format (use {} to leave empty).
+%   {[x1:x2],[x1:x2]} format (use {} to leave empty). You can use the
+%   function ldbTool() to find the ignore indices that you want to apply.
 %
 %   <<<coastline.EPSG>>>
 %   Coordinate system, in EPSG code, look for the EPSG code via the call:
@@ -207,6 +209,10 @@ function varargout = aggregation_of_coastline_changes_and_dynamics(coastline_use
 %   By default, the coastline is defined at the 0-line, in case you want to
 %   change this, set the vertical z-level in this keyword. This option only
 %   works for the model_name 'Delft3D 4' and will be ignored for others.
+%   Note that if you specify 2 values (e.g. [-1 1] or [-2 2]) the tool will
+%   automatically do a MCL (Momentary Coast Line) analysis. In this
+%   analysis, the sediment volume in between the 2 supplied contour lines
+%   is used to determine the position of the coastline (the 'MCL')
 %
 % (3) settings: the settings structure consists of the fields:
 %
@@ -239,16 +245,17 @@ function varargout = aggregation_of_coastline_changes_and_dynamics(coastline_use
 %   <<<settings.background_image>>>
 %   Provide a background image (jpg, epg, bmp, tif, png or gif)
 %   Must be in the same coordinate system as the coastline!
-%   Can be converted with help of e.g. QGIS
+%   Can be converted with help of e.g. QGIS, & created with DelftDashboard
 %
 %   <<<settings.background_world_file>>>
 %   World-file associated with the background image
 %   Must be in the same coordinate system as the coastline!
-%   Can be converted with help of e.g. QGIS
+%   Can be converted with help of e.g. QGIS, & created with DelftDashboard
 %
 %   <<<settings.output_folder>>>
-%   Output folder, this is where figures are stored (if save_to_file = true)
-%   and where output *.mat files are stored (if save_mat_files = true)
+%   Output folder, this is where figures are stored (if save_to_file =
+%   true), where output *.mat files are stored (if save_mat_files = true)
+%   and where *.kml files are stored (if save_kml_files = true).
 %
 %   <<<settings.save_figures_to_file>>>
 %   Switch to turn on exporting of figures to (*.png) files
@@ -267,7 +274,7 @@ function varargout = aggregation_of_coastline_changes_and_dynamics(coastline_use
 %      settings.diff_indices = [1 2;
 %                               1 3;
 %                               5 4];
-%   In this case, data/model #1 is compared to #2, #2 with #3 & #4 with #5.
+%   In this case, data/model #1 is compared to #2, #2 with #3 & #5 with #4.
 %   If the 2nd models feature more erosion, the resulting most-likely
 %   result is negative. So if the most-likely result is positive, more
 %   accretion has occured within the 2nd model, w.r.t. the 1st model.
@@ -742,8 +749,8 @@ for ii=find(plot_fig_inds)
     % Set your shades here, on a scale from 0 to 1 (0 is not visible, 1 is fully filled):
     shade_alpha = [0.5 0];
     
-    if ii==1 || ~settings.combined_fig
-        figure; set(gcf,'color','w','invertHardcopy','off','position',[9 48 1903 949],'NumberTitle','off','Tag',['Spatial plot ' num2str(ii)]); hold on;
+    if ii==min(find(plot_fig_inds)) || ~settings.combined_fig
+        figure; set(gcf,'color','w','invertHardcopy','off','position',[9 48 1903 949],'NumberTitle','off','Tag',['Spatial plot ' num2str(find(find(plot_fig_inds) == ii))]); hold on;
         if ~isempty(settings.background_image)
             plotGeoImage(settings.background_image,settings.background_world_file); view(2);
         end
@@ -766,9 +773,9 @@ for ii=find(plot_fig_inds)
             plot(coastline.ldb(coastline.ignore_inds{jj},1),coastline.ldb(coastline.ignore_inds{jj},2),'r:','linewidth',1);
         end
        
-        if settings.combined_fig & length(data)>1
+        if settings.combined_fig & sum(plot_fig_inds)>1
             set(gcf,'Name','Combined aggregation')
-            title(['Combined aggregation of ' num2str(length(coastline_changes)) ' models/datasets']);
+            title(['Combined aggregation of ' num2str(sum(plot_fig_inds)) ' models/datasets']);
         else
             set(gcf,'Name',['Aggregation: ' data(ii).name])
             title(['Aggregation of model/dataset: ' data(ii).name]);
@@ -778,7 +785,7 @@ for ii=find(plot_fig_inds)
         ylabel(['Y-Coordinate (metre ' coordinate_reference_system.coord_ref_sys_name{find(coordinate_reference_system.coord_ref_sys_code==coastline.EPSG)} ')']);
 %         view(settings.rotation,90)
 
-        figure; set(gcf,'color','w','invertHardcopy','off','position',[9 48 1903 949],'NumberTitle','off','Tag',['Alongshore plot ' num2str(ii)]);
+        figure; set(gcf,'color','w','invertHardcopy','off','position',[9 48 1903 949],'NumberTitle','off','Tag',['Alongshore plot ' num2str(find(find(plot_fig_inds) == ii))]);
         
         part_coastline_used_inds = min(find(~isnan(coastline.offshore_orientation))):max(find(~isnan(coastline.offshore_orientation)));
         part_coastline_used_ldb  = [coastline.ldb(part_coastline_used_inds,1) coastline.ldb(part_coastline_used_inds,2)];
@@ -791,7 +798,7 @@ for ii=find(plot_fig_inds)
             if settings.combined_fig
                 subplot(length(find(plot_fig_inds)),4,1:4:(length(find(plot_fig_inds))*4),'Tag','Map');
                 for jj = find(plot_fig_inds)
-                    subplot(length(find(plot_fig_inds)),4,(jj.*4)+[-2 -1 0],'Tag',['ax_' num2str(jj)]);
+                    subplot(length(find(plot_fig_inds)),4,(find(find(plot_fig_inds) == jj).*4)+[-2 -1 0],'Tag',['ax_' num2str(find(find(plot_fig_inds) == jj))]);
                 end
             else
                 subplot(1,4,1,'Tag','Map');
@@ -804,7 +811,7 @@ for ii=find(plot_fig_inds)
             if settings.combined_fig
                 subplot(length(find(plot_fig_inds))+1,1,1,'Tag','Map');
                 for jj = find(plot_fig_inds)
-                    subplot(length(find(plot_fig_inds))+1,1,jj+1,'Tag',['ax_' num2str(jj)]); 
+                    subplot(length(find(plot_fig_inds))+1,1,find(find(plot_fig_inds) == jj)+1,'Tag',['ax_' num2str(find(find(plot_fig_inds) == jj))]); 
                 end
             else
                 subplot(4,1,1,'Tag','Map');
@@ -880,7 +887,7 @@ for ii=find(plot_fig_inds)
     if settings.combined_fig
         figure(findobj(get(0,'children'),'Tag',['Spatial plot 1']));
     else
-        figure(findobj(get(0,'children'),'Tag',['Spatial plot ' num2str(ii)]))
+        figure(findobj(get(0,'children'),'Tag',['Spatial plot ' num2str(find(find(plot_fig_inds) == ii))]))
     end
     
     if strcmp(data(ii).plot_type,'lines')
@@ -984,9 +991,9 @@ for ii=find(plot_fig_inds)
     
     if settings.combined_fig
         figure(findobj(get(0,'children'),'Tag',['Alongshore plot 1']));
-        axes(findobj(get(gcf,'children'),'Tag',['ax_' num2str(ii)])); hold on;
+        axes(findobj(get(gcf,'children'),'Tag',['ax_' num2str(find(find(plot_fig_inds) == ii))])); hold on;
     else
-        figure(findobj(get(0,'children'),'Tag',['Alongshore plot ' num2str(ii)]));
+        figure(findobj(get(0,'children'),'Tag',['Alongshore plot ' num2str(find(find(plot_fig_inds) == ii))]));
         axes(findobj(get(gcf,'children'),'Tag','ax_1')); hold on;
     end
     
@@ -1012,7 +1019,7 @@ for ii=find(plot_fig_inds)
     xlabel(['Distance [km] (for reference see the ' layout_location ' panel)']);
     text(min(get(gca,'xlim')),0,' No coastline change line','verticalalignment','bottom');
     
-    if settings.cumulative_results && ii > 1
+    if settings.cumulative_results && find(find(plot_fig_inds) == ii) > 1
         title(['Coastline differences incl. uncertainty ranges for model/data: ' data(ii).name ' (w.r.t. previous model)']);
     else
         title(['Coastline differences incl. uncertainty ranges for model/data: ' data(ii).name]);
@@ -1032,12 +1039,12 @@ for ii=find(plot_fig_inds)
     if settings.combined_fig
         figure(findobj(get(0,'children'),'Tag',['Spatial plot 1']));
     else
-        figure(findobj(get(0,'children'),'Tag',['Spatial plot ' num2str(ii)]));
+        figure(findobj(get(0,'children'),'Tag',['Spatial plot ' num2str(find(find(plot_fig_inds) == ii))]));
     end
     
     if ~settings.combined_fig
         
-        if settings.cumulative_results && ii > 1
+        if settings.cumulative_results && find(find(plot_fig_inds) == ii) > 1
             leg = legend(hand(ii,1),[data(ii).name ' (w.r.t. previous model)']);
         else
             leg = legend(hand(ii,1),[data(ii).name]);
@@ -1052,14 +1059,14 @@ for ii=find(plot_fig_inds)
                 mkdir([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures'])
             end
             disp([' ']);
-            disp(['Saving figure ' num2str(ii) '-A out of ' num2str(sum(plot_fig_inds))]);
-            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_spatial_frame_' num2str(ii) '_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type settings.file_suffix '.png'],'-m3','-png');
-            if ii == length(coastline_changes)
+            disp(['Saving figure ' num2str(find(find(plot_fig_inds) == ii)) '-A out of ' num2str(sum(plot_fig_inds))]);
+            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_spatial_frame_' num2str(find(find(plot_fig_inds) == ii)) '_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type settings.file_suffix '.png'],'-m3','-png');
+            if ii == max(find(plot_fig_inds))
                 disp(['Succesfully saved a total of ' num2str(sum(plot_fig_inds)) ' figures']);
             end
         end
     else
-        if settings.cumulative_results && ii > 1
+        if settings.cumulative_results && find(find(plot_fig_inds) == ii) > 1
             leg_text = [leg_text; [data(ii).name ' (w.r.t. previous model)']];
         else
             leg_text = [leg_text; data(ii).name];
@@ -1070,9 +1077,9 @@ for ii=find(plot_fig_inds)
     
     if settings.combined_fig
         figure(findobj(get(0,'children'),'Tag',['Alongshore plot 1']));
-        axes(findobj(get(gcf,'children'),'Tag',['ax_' num2str(ii)])); hold on;
+        axes(findobj(get(gcf,'children'),'Tag',['ax_' num2str(find(find(plot_fig_inds) == ii))])); hold on;
     else
-        figure(findobj(get(0,'children'),'Tag',['Alongshore plot ' num2str(ii)]));
+        figure(findobj(get(0,'children'),'Tag',['Alongshore plot ' num2str(find(find(plot_fig_inds) == ii))]));
         axes(findobj(get(gcf,'children'),'Tag','ax_1')); hold on;
     end
     
@@ -1082,9 +1089,9 @@ for ii=find(plot_fig_inds)
                 mkdir([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures'])
             end
             disp([' ']);
-            disp(['Saving figure ' num2str(ii) '-B out of ' num2str(sum(plot_fig_inds))]);
-            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_alongshore_frame_' num2str(ii) '-B_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type settings.file_suffix '.png'],'-m3','-png');
-            if ii == length(coastline_changes)
+            disp(['Saving figure ' num2str(find(find(plot_fig_inds) == ii)) '-B out of ' num2str(sum(plot_fig_inds))]);
+            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_alongshore_frame_' num2str(find(find(plot_fig_inds) == ii)) '-B_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type settings.file_suffix '.png'],'-m3','-png');
+            if ii == max(find(plot_fig_inds))
                 disp(['Succesfully saved a total of ' num2str(sum(plot_fig_inds)) ' figures']);
                 % close figures:
                 fig_hands = findall(0,'type','figure'); close(fig_hands(find(strcmp(get(fig_hands,'Tag'),'ACDC_splash_screen')==0)));
@@ -1095,7 +1102,7 @@ end
 
 if settings.combined_fig && ~isempty(find(plot_fig_inds))
     figure(findobj(get(0,'children'),'Tag',['Spatial plot 1']));
-    legend(hand(:,1),leg_text,'color','w');
+    legend(hand(find(plot_fig_inds),1),leg_text,'color','w');
     xlim(x_lims_comb); ylim(y_lims_comb);
     if settings.save_figures_to_file
         if exist([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures']) ~= 7
@@ -1105,10 +1112,10 @@ if settings.combined_fig && ~isempty(find(plot_fig_inds))
         disp(['Saving 1/2 aggregated figures to file']);
         if length(coastline_changes) == 1
             % Only a sinlge figure 'combined'
-            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_spatial_frame_' num2str(ii) '_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type settings.file_suffix '.png'],'-m3','-png');
+            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_spatial_frame_1_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type settings.file_suffix '.png'],'-m3','-png');
         else
             % A real combined figure:
-            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') '_combined_spatial_aggregation_of_' num2str(length(coastline_changes)) '_models_and_datasets' settings.file_suffix '.png'],'-m3','-png');
+            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') '_combined_spatial_aggregation_of_' num2str(sum(plot_fig_inds)) '_models_and_datasets' settings.file_suffix '.png'],'-m3','-png');
         end
         disp(['Succesfully saved aggregated figure to file']);
         
@@ -1117,10 +1124,10 @@ if settings.combined_fig && ~isempty(find(plot_fig_inds))
         figure(findobj(get(0,'children'),'Tag',['Alongshore plot 1']));
         if length(coastline_changes) == 1
             % Only a sinlge figure 'combined'
-            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_alongshore_frame_' num2str(ii) '_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type settings.file_suffix '.png'],'-m3','-png');
+            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') strrep(['_alongshore_frame_1_' strrep(matlab.lang.makeValidName(strrep(data(ii).name,' ','_')),'__','_') '_'],'__','_') data(ii).plot_type settings.file_suffix '.png'],'-m3','-png');
         else
             % A real combined figure:
-            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') '_combined_alongshore_aggregation_of_' num2str(length(coastline_changes)) '_models_and_datasets' settings.file_suffix '.png'],'-m3','-png');
+            export_fig([strrep([settings.output_folder filesep],[filesep filesep], filesep) 'figures' filesep datestr(now,'yyyymmdd') '_combined_alongshore_aggregation_of_' num2str(sum(plot_fig_inds)) '_models_and_datasets' settings.file_suffix '.png'],'-m3','-png');
         end
         disp(['Succesfully saved aggregated figure to file']);
         % close figures:
@@ -1206,7 +1213,7 @@ if ~isempty(settings.diff_indices) || ~isempty(loaded_diff_data)
         part_coastline_used_orie = coastline.offshore_orientation(part_coastline_used_inds);
         part_coastline_used_dist = pathdistance(part_coastline_used_ldb(:,1),part_coastline_used_ldb(:,2));
         
-        figure; set(gcf,'color','w','invertHardcopy','off','position',[9 48 1903 949],'NumberTitle','off','Tag','Difference plot');
+        figure; set(gcf,'color','w','invertHardcopy','off','position',[9 48 1903 949],'NumberTitle','off','Tag',['Difference plot ' num2str(ii)]);
         
         % if x-diff / y-diff:
         if (diff([min(part_coastline_used_ldb(:,1)) max(part_coastline_used_ldb(:,1))]) ./ diff([min(part_coastline_used_ldb(:,2)) max(part_coastline_used_ldb(:,2))])) < 1.5
