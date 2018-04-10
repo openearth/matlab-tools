@@ -116,7 +116,7 @@ end;
 
 function varargout=Local_read(bcafile,BND)
 
-OPT.debug = 0;
+OPT.debug = 1;
 fid       = fopen(bcafile,'r');
 
 if fid > 0 
@@ -138,7 +138,7 @@ if fid > 0
       BCA.DATA(iset).label   = strtrim(rec(1:12));
 
       rec     = fgetl(fid); if OPT.debug;disp(rec);end
-      C       = textscan(rec,'%8c %f %f',1);
+      C       = textscan(rec,'%s %f %f',1);
 
       icomp = 0;
       while ~isempty(C{2})
@@ -154,7 +154,7 @@ if fid > 0
              
          rec     = fgetl(fid); if OPT.debug;disp(rec);end
          if ~ischar(rec), break, end % eof
-         C       = textscan(rec,'%8c %f %f',1);
+         C       = textscan(rec,'%s %f %f',1);
          
       end% while still amp + phase
    
