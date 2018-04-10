@@ -116,7 +116,7 @@ end;
 
 function varargout=Local_read(bcafile,BND)
 
-OPT.debug = 1;
+OPT.debug = 0;
 fid       = fopen(bcafile,'r');
 
 if fid > 0 
