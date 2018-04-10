@@ -32,7 +32,7 @@ switch modelType
         
     case {'sobek3_new'}
         %% SOBEK3 new
-        outputfile=[ sim_dir filesep runid '.dsproj_data\Integrated_Model_output\dflow1d\output\observations.nc'];
+        outputfile=[ sim_dir filesep 'dflow1d\output\observations.nc'];
         
     case {'implic'}
         %% IMPLIC

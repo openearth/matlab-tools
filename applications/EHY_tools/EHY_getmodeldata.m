@@ -329,13 +329,14 @@ switch modelType
                 nr_stat  = find(strcmp(Data.stationNames,stat_name{i_stat}) ~= 0,1);
                 % open data file
                 if ~exist('D','var')
-                    D=read_sobeknc(outputfile);
-                    Data.times                 =D.Observedwaterlevel.Time;
+                    D          = read_sobeknc(outputfile);
+                    refdate    = ncreadatt(outputfile, 'time','units');
+                    Data.times = D.time/1440./60. + datenum(refdate(15:end),'yyyy-mm-dd  HH:MM:SS'); ;
                 end
                 % get data
                 switch OPT.varName
                     case 'wl'
-                        Data.val(:,i_stat)         =D.Observedwaterlevel.Val(:,nr_stat);
+                        Data.val(:,i_stat)         =D.water_level(nr_stat,:);
                 end
             end
         end

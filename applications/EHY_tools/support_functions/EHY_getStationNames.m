@@ -24,8 +24,8 @@ switch modelType
         
     case {'sobek3_new'}
         %% SOBEK3 new
-        D=read_sobeknc(outputfile);
-        stationNames=strtrim(D.observation_Id.Val);
+        D           =read_sobeknc(outputfile);
+        stationNames=cellstr(D.observation_id');
         
     case {'implic'}
         %% IMPLIC
