@@ -404,8 +404,9 @@ if ~isempty(OPT.t0) && ~isempty(OPT.tend)
     if ~isempty(time_index)
         Data.times=Data.times(time_index);
     else
-        select=true(length(Data.times),1);
-        time_index=0;
+        error(['These time steps are not available in the outputfile' char(10),...
+        'requested data period: ' datestr(OPT.t0) ' - ' datestr(OPT.tend) char(10),...
+       'available model data:  ' datestr(Data.times(1)) ' - ' datestr(Data.times(end))])
     end
 else
     select=true(length(Data.times),1);
