@@ -60,14 +60,21 @@ if ~isempty(data3)&get(findobj(fig,'tag','LT_showGeoBox'),'value')==1
 end
 
 curAx=findobj(fig,'tag','LT_plotWindow');
-pbar=get(gca,'PlotBoxAspectRatio');
-ratio=pbar(1)/pbar(2);
+% pbar=get(gca,'PlotBoxAspectRatio');
+ax_unit_ori  = get(gca,'Units');
+set(gca,'Units','pixels');
+ax_pos  = get(gca,'OuterPosition');
+set(gca,'Units',ax_unit_ori);
+ratio_ax_pos = (diff(ax_pos([1 3]))./diff(ax_pos([2 4])));
+% ratio=pbar(1)/pbar(2);
 ratioXY=diff(xL)/diff(yL);
-if ratioXY < ratio
+if ratioXY < ratio_ax_pos
 %     xL=[mean(xL)-ratio*diff(xL)/2 mean(xL)+ratio*diff(xL)/2];
+    xL = mean(xL)+(((diff(xL)./2).*(ratio_ax_pos./ratioXY)).*[-1 1]);
     set(curAx,'YLim',yL,'XLim',xL);
 else
 %     yL=[mean(yL)-diff(xL)/ratio/2 mean(yL)+diff(xL)/ratio/2];
+    yL = mean(yL)+(((diff(yL)./2).*(ratioXY./ratio_ax_pos)).*[-1 1]);
     set(curAx,'XLim',xL,'YLim',yL);
 end
 
