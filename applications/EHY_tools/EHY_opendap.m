@@ -86,7 +86,7 @@ if ~isempty(OPT.Parameter)
         %  First find the station
         try
             i_stat = find(~cellfun(@isempty,strfind(lower(list_stat),lower(OPT.Station))));
-%tk            i_stat = find(~cellfun(@isempty,regexp(lower(list_stat),strjoin(lower(OPT.Station),'|'))));
+            %tk            i_stat = find(~cellfun(@isempty,regexp(lower(list_stat),strjoin(lower(OPT.Station),'|'))));
             % Get information on the parameter name on the file
             date_tmp  = [];
             value_tmp = [];
@@ -106,7 +106,7 @@ if ~isempty(OPT.Parameter)
                 varargout{2} = values;
                 
                 %% Retrieve general information (if requested)
-                if nargout == 3 
+                if nargout == 3
                     for i_var = 1: length(Info.Variables) - 2
                         if i_var <= 2
                             geninf.(Info.Variables(i_var).Name) = ncread(list_stat{i_stat(i_par)},Info.Variables(i_var).Name)';
@@ -177,7 +177,7 @@ end
 
 assignin('base','times',times);
 assignin('base','values',values);
-    
+
 [selection,~]=  listdlg('PromptString','Do you want to plot the download data?',...
     'SelectionMode','single',...
     'ListString',{'Yes','No'},...
@@ -189,6 +189,34 @@ if selection==1
     datetick('x','dd-mmm-yyyy')
     ylabel(selectedParameter,'interpreter','none')
     title(['Station: ' selectedStation])
+end
+[selection,~]=  listdlg('PromptString','Do you want to save the downloaded data to a .tek-file?',...
+    'SelectionMode','single',...
+    'ListString',{'Yes','No'},...
+    'ListSize',[500 100]); if isempty(selection); return; end
+if selection==1
+    option=inputdlg({['Want to specifiy a certain output period? (Default: all data)' char(10) char(10) 'Start date [dd-mmm-yyyy HH:MM]'],'End date   [dd-mmm-yyyy HH:MM]'},'Specify output period',1,...
+        {datestr(times(1)),datestr(times(end))});
+    if ~isempty(option)
+        timeIndex=times>=datenum(option(1)) & times<=datenum(option(2));
+        times=times(timeIndex);
+        values=values(timeIndex);
+    end
+    disp('Save file as ..')
+    [file,path] = uiputfile([ selectedStation '_' selectedParameter(4:end) '.tek']);
+    outputFile=[path file];
+    fid = fopen(outputFile,'w+');
+    fprintf (fid,'* Column  1 : Date \n');
+    fprintf (fid,'* Column  2 : Time \n');
+    fprintf (fid,'%s \n',['* Column  3 : ' selectedParameter(4:end)] );
+    fprintf(fid,[selectedStation ' \n']);
+    fprintf(fid,'%5i %5i \n',length(times),2);
+    format = ['%16s %12.6f \n'];
+    for i_time = 1: length(times)
+        fprintf(fid,format,datestr(times(i_time),'yyyymmdd  HHMMSS'), values(i_time));
+    end
+    fclose (fid);
+    disp(['EHY_opendap created file:' char(10) outputFile])
 end
 EHYs('EHY_opendap_interactive');
 end

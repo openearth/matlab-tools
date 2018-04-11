@@ -781,7 +781,7 @@ end
     function [output,OPT]=EHY_convert_xyz2xdrykml(inputFile,outputFile,OPT)
         OPT_user.saveOutputFile=OPT.saveOutputFile;
         OPT.saveOutputFile=0;
-        [ldb,OPT]=EHY_convert_xyz2xdryldb(inputFile,outputFile,OPT)
+        [ldb,OPT]=EHY_convert_xyz2xdryldb(inputFile,outputFile,OPT);
         OPT.saveOutputFile=OPT_user.saveOutputFile;
         if OPT.saveOutputFile
             [ldb(:,1),ldb(:,2),OPT]=EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);

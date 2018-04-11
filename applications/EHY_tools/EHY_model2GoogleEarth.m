@@ -38,7 +38,7 @@ switch modelType
             if selection==1
                 inputFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.NetFile,runDir);
                 [~,name]=fileparts(inputFile);
-                outputFile=[outputDir name '_net.kml'];
+                outputFile=strrep([outputDir name '_net.kml'],'_net_net','_net');
                 [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[1 0 0],OPT);
             end
         end
@@ -55,7 +55,7 @@ switch modelType
         if isfield(mdu.geometry,'ThinDamFile') && ~isempty(mdu.geometry.ThinDamFile)
             inputFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.ThinDamFile,runDir);
             [~,name]=fileparts(inputFile);
-            outputFile=[outputDir name '_pli.kml'];
+            outputFile=strrep([outputDir name '_thd.kml'],'_thd_thd','_thd');
             [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],'lineWidth',4,OPT);
         end
         
@@ -63,16 +63,16 @@ switch modelType
         if isfield(mdu.geometry,'DryPointsFile') && ~isempty(mdu.geometry.DryPointsFile)
             inputFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.DryPointsFile,runDir);
             [~,name,ext]=fileparts(inputFile);
-            outputFile=[outputDir name '_dry.kml'];
             OPT.netFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.NetFile,runDir);
             if strcmpi(ext,'.pol')
                 [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],OPT);
             elseif strcmpi(ext,'.xyz')
                 try
-                [~,OPT]=EHY_convert(inputFile,'xdrykml','outputFile',outputFile,'lineColor',[1 0 0],OPT);
-                catch
-                [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'iconFile','http://maps.google.com/mapfiles/kml/paddle/ylw-square.png',OPT); 
+                    outputFile=[outputDir name '_xdry.kml'];
+                    [~,OPT]=EHY_convert(inputFile,'xdrykml','outputFile',outputFile,'lineColor',[1 0 0],OPT);
                 end
+                outputFile=[outputDir name '_dry.kml'];
+                [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'iconFile','http://maps.google.com/mapfiles/kml/paddle/ylw-square.png',OPT);
             end
         end
         
