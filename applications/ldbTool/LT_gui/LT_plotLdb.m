@@ -57,7 +57,9 @@ for ii = 1:length(plotHandles(:))
         delete(plotHandles{ii});
     catch
         try
-            delete(plotHandles{ii}{1});
+            for jj = 1:length(plotHandles{ii})
+                delete(plotHandles{ii}{jj});
+            end
         end
     end
 end
