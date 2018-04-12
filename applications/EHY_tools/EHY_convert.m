@@ -376,10 +376,11 @@ end
     end
 % kml2xyz
     function [output,OPT]=EHY_convert_kml2xyz(inputFile,outputFile,OPT)
-        xyz=kml2ldb(OPT.saveOutputFile,inputFile);
+        xyz=kml2ldb(0,inputFile);
         xyz(isnan(xyz(:,1)),:)=[];
+        xyz(:,3)=0;
         if OPT.saveOutputFile
-            dlmwrite(outputFile,xyz);
+            dlmwrite(outputFile,xyz,'delimiter',' ','precision','%20.7f');
         end
         output=xyz;
     end
