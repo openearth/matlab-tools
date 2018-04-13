@@ -210,7 +210,7 @@ if selection==1
     fprintf (fid,'* Column  2 : Time \n');
     fprintf (fid,'%s \n',['* Column  3 : ' selectedParameter(4:end)] );
     fprintf(fid,[selectedStation ' \n']);
-    fprintf(fid,'%5i %5i \n',length(times),2);
+    fprintf(fid,'%5i %5i \n',length(times),3);
     format = ['%16s %12.6f \n'];
     for i_time = 1: length(times)
         fprintf(fid,format,datestr(times(i_time),'yyyymmdd  HHMMSS'), values(i_time));
