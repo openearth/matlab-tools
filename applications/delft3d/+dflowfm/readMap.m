@@ -149,11 +149,11 @@ function varargout = readMap(ncfile,varargin)
    if OPT.dep && nc_isvar (ncfile, [prefix varname_waterdepth])
       D.face.dep  = nc_varget(ncfile, [prefix varname_waterdepth] ,[it-1 0],[1 face.mask]); % Waterdepth
    end
-   if OPT.lyrcc && nc_isvar(ncfile, varname_layercoord)
+   if OPT.lyrcc
       info=nc_getvarinfo(ncfile,[prefix 'ucx']);
       NDIM=length(info.Size);
       if ( NDIM==2 )   % safety, in principle (see unstruc_netcdf.f90) not possible
-         D.face.z_cc = (s1-0.5*waterdepth)*ones(1, face.mask);
+         D.face.z_cc = (D.face.zwl-0.5*D.face.dep);
       elseif (NDIM==3)
           z_cc = flipud(abs(nc_varget(ncfile,varname_layercoord,[0],[laydim])));
           dep = repmat(squeeze(D.face.dep),1,laydim);
