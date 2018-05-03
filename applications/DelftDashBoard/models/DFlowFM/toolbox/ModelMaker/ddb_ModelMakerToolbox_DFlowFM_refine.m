@@ -269,7 +269,7 @@ y=handles.toolbox.modelmaker.polygonY;
 
 handles.model.dflowfm.domain(ad).netstruc=dflowfm_clip_mesh_in_polygon(handles.model.dflowfm.domain(ad).netstruc,x,y);
 
-netStruc2nc(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domain(ad).netstruc,'cstype',handles.screenParameters.coordinateSystem.type);
+netStruc2nc(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domain(ad).netstruc,'cstype',handles.screenParameters.coordinateSystem.type,'csname', handles.screenParameters.coordinateSystem.name);
 
 handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',ad);
 
@@ -288,7 +288,7 @@ handles.model.dflowfm.domain(ad).netfile=filename;
 
 handles.model.dflowfm.domain(ad).netstruc=dflowfm_clip_shallow_areas(handles.model.dflowfm.domain(ad).netstruc,handles.toolbox.modelmaker.zMax);
 
-netStruc2nc(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domain(ad).netstruc,'cstype',handles.screenParameters.coordinateSystem.type);
+netStruc2nc(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domain(ad).netstruc,'cstype',handles.screenParameters.coordinateSystem.type,'csname', handles.screenParameters.coordinateSystem.name);
 
 handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',ad);
 

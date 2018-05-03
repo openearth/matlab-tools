@@ -160,7 +160,7 @@ handles.model.dflowfm.domain(id).circumference=circ;
 % netstruc=dflowfm_clip_shallow_areas(netstruc,zmax);
 
 
-netStruc2nc(handles.model.dflowfm.domain(id).netfile,netstruc,'cstype',handles.screenParameters.coordinateSystem.type);
+netStruc2nc(handles.model.dflowfm.domain(id).netfile,netstruc,'cstype',handles.screenParameters.coordinateSystem.type, 'csname', handles.screenParameters.coordinateSystem.name);
 
 handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',id);
 

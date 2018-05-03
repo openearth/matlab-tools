@@ -149,7 +149,7 @@ switch lower(opt)
         end
         
         % Grid 
-        netStruc2nc(handles.model.dflowfm.domain.netfile,handles.model.dflowfm.domain.netstruc,'cstype',handles.screenParameters.coordinateSystem.type);
+        netStruc2nc(handles.model.dflowfm.domain.netfile,handles.model.dflowfm.domain.netstruc,'cstype',handles.screenParameters.coordinateSystem.type, 'csname', handles.screenParameters.coordinateSystem.name);
 
         % Finalize
         inp=handles.model.dflowfm.domain(ad);

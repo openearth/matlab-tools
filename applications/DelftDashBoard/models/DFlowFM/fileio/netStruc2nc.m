@@ -1,18 +1,21 @@
 function netStruc2nc(ncfile,netStruc,varargin)
 
+% Get basic information right
 cstype='geographic';
-
+csname='Unknown projected';
 for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
             case{'cstype'}
                 cstype=varargin{ii+1};
+            case{'csname'}
+                csname=varargin{ii+1};
         end
     end
 end
 
+% Get dimensions
 nnodes=length(netStruc.node.x);
-%nlinks=length(netStruc.linkType);
 nlinks=size(netStruc.edge.NetLink,1);
 if isfield(netStruc,'face')
     nelems=size(netStruc.face.NetElemNode,1);
@@ -20,13 +23,12 @@ end
 % if isfield(netStruc,'bndLink')
 %     nbndlinks=length(netStruc.bndLink);
 % end
-% 
+%
 NCid     = netcdf.create(ncfile,'NC_CLOBBER');
 globalID = netcdf.getConstant('NC_GLOBAL');
 
-grdmapping='wgs84';
 
-% Dimensions
+% Define dimensions
 nNetNodeDimId        = netcdf.defDim(NCid,          'nNetNode',           nnodes);
 nNetLinkDimId        = netcdf.defDim(NCid,          'nNetLink',           nlinks);
 nNetLinkPtsDimId     = netcdf.defDim(NCid,          'nNetLinkPts',        2);
@@ -49,7 +51,6 @@ netcdf.putAtt(NCid,globalID,'date_modified',tstr);
 netcdf.putAtt(NCid,globalID,'Conventions','UGRID-0.9');
 
 % Variables
-
 varid = netcdf.defVar(NCid,'Mesh2D','int',[]);
 netcdf.putAtt(NCid,varid,'cf_role','mesh_topology');
 netcdf.putAtt(NCid,varid,'node_coordinates','NetNode_x NetNode_y');
@@ -59,22 +60,58 @@ netcdf.putAtt(NCid,varid,'edge_dimension','nNetLink');
 netcdf.putAtt(NCid,varid,'topology_dimension',int32(1));
 netcdf.endDef(NCid);
 
-netcdf.reDef(NCid);
-varid = netcdf.defVar(NCid,'wgs84','int',[]);
-netcdf.putAtt(NCid,varid,'name','WGS84');
-netcdf.putAtt(NCid,varid,'epsg',int32(4326));
-netcdf.putAtt(NCid,varid,'grid_mapping_name','latitude_longitude');
-netcdf.putAtt(NCid,varid,'longitude_of_prime_meridian',0);
-netcdf.putAtt(NCid,varid,'semi_major_axis',6.37814e+006);
-netcdf.putAtt(NCid,varid,'semi_minor_axis',6.35675e+006);
-netcdf.putAtt(NCid,varid,'inverse_flattening',298.257);
-netcdf.putAtt(NCid,varid,'proj4_params',' ');
-netcdf.putAtt(NCid,varid,'EPSG_code','EPGS:4326');
-netcdf.putAtt(NCid,varid,'projection_name',' ');
-netcdf.putAtt(NCid,varid,'wkt',' ');
-netcdf.putAtt(NCid,varid,'comment',' ');
-netcdf.putAtt(NCid,varid,'value','value is equal to EPSG code');
-netcdf.endDef(NCid);
+% Create coordinate system
+if strcmpi(cstype,'geographic')
+    
+    % Always the same
+    netcdf.reDef(NCid);
+    grdmapping='wgs84';
+    varid = netcdf.defVar(NCid,grdmapping,'int',[]);
+    netcdf.putAtt(NCid,varid,'name','WGS84');
+    netcdf.putAtt(NCid,varid,'epsg',int32(4326));
+    netcdf.putAtt(NCid,varid,'grid_mapping_name','latitude_longitude');
+    netcdf.putAtt(NCid,varid,'longitude_of_prime_meridian',0);
+    netcdf.putAtt(NCid,varid,'semi_major_axis',6.37814e+006);
+    netcdf.putAtt(NCid,varid,'semi_minor_axis',6.35675e+006);
+    netcdf.putAtt(NCid,varid,'inverse_flattening',298.257);
+    netcdf.putAtt(NCid,varid,'proj4_params',' ');
+    netcdf.putAtt(NCid,varid,'EPSG_code','EPGS:4326');
+    netcdf.putAtt(NCid,varid,'projection_name',' ');
+    netcdf.putAtt(NCid,varid,'wkt',' ');
+    netcdf.putAtt(NCid,varid,'comment',' ');
+    netcdf.putAtt(NCid,varid,'value','value is equal to EPSG code');
+    netcdf.endDef(NCid);
+    
+else
+    
+    % Get EPGS code
+    handles=getHandles;
+    if isempty(handles)
+        handles.EPSG=load('EPSG');
+        setHandles(handles);
+    end
+    [x1,y1, logs]=convertCoordinates(0,0,handles.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.name',csname,'CS2.type','xy');
+    epgscode     = logs.CS2.code;
+    
+    % Rest
+    netcdf.reDef(NCid);
+    grdmapping='projected_coordinate_system';
+    varid = netcdf.defVar(NCid,grdmapping,'int',[]);
+    netcdf.putAtt(NCid,varid,'name',csname);
+    netcdf.putAtt(NCid,varid,'epsg',0);
+    netcdf.putAtt(NCid,varid,'grid_mapping_name','Unknown projected');
+    netcdf.putAtt(NCid,varid,'longitude_of_prime_meridian',0);
+    netcdf.putAtt(NCid,varid,'semi_major_axis',num2str(logs.CS2.ellips.semi_major_axis, '%10.5e\n'))
+    netcdf.putAtt(NCid,varid,'semi_minor_axis',num2str(logs.CS2.ellips.semi_minor_axis, '%10.5e\n'))
+    netcdf.putAtt(NCid,varid,'inverse_flattening',num2str(logs.CS2.ellips.inv_flattening))
+    netcdf.putAtt(NCid,varid,'proj4_params',' ');
+    netcdf.putAtt(NCid,varid,'EPSG_code',['EPGS:', num2str(epgscode)]);
+    netcdf.putAtt(NCid,varid,'projection_name',' ');
+    netcdf.putAtt(NCid,varid,'wkt',' ');
+    netcdf.putAtt(NCid,varid,'comment',' ');
+    netcdf.putAtt(NCid,varid,'value','value is equal to EPSG code');
+    netcdf.endDef(NCid);
+end
 
 % Node x
 netcdf.reDef(NCid);
@@ -109,9 +146,9 @@ else
 end
 netcdf.endDef(NCid);
 netcdf.putVar(NCid,varid,netStruc.node.y);
-
 netStruc.nodeLon=netStruc.node.x;
 netStruc.nodeLat=netStruc.node.y;
+
 
 % % Node lon
 % netcdf.reDef(NCid);
@@ -162,7 +199,6 @@ netcdf.putAtt(NCid,varid,'flag_values',int32([0 1 2]));
 netcdf.putAtt(NCid,varid,'flag_meanings','closed_link_between_2D_nodes link_between_1D_nodes link_between_2D_nodes');
 netcdf.endDef(NCid);
 linktype=zeros(nlinks,1)+2;
-%netcdf.putVar(NCid,varid,netStruc.linkType);
 netcdf.putVar(NCid,varid,linktype);
 
 if isfield(netStruc,'face')
@@ -173,8 +209,6 @@ if isfield(netStruc,'face')
     netcdf.endDef(NCid);
     netcdf.putVar(NCid,varid,netStruc.face.NetElemNode');
 end
-
-
 
 % if isfield(netStruc,'bndLink')
 %     % Bnd Link
