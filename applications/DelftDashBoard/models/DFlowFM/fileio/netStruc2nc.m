@@ -64,18 +64,19 @@ netcdf.endDef(NCid);
 if strcmpi(cstype,'geographic')
     
     % Always the same
+    epsgcode = 4326;
     netcdf.reDef(NCid);
     grdmapping='wgs84';
     varid = netcdf.defVar(NCid,grdmapping,'int',[]);
     netcdf.putAtt(NCid,varid,'name','WGS84');
-    netcdf.putAtt(NCid,varid,'epsg',int32(4326));
+    netcdf.putAtt(NCid,varid,'epsg',int32(epsgcode));
     netcdf.putAtt(NCid,varid,'grid_mapping_name','latitude_longitude');
     netcdf.putAtt(NCid,varid,'longitude_of_prime_meridian',0);
     netcdf.putAtt(NCid,varid,'semi_major_axis',6.37814e+006);
     netcdf.putAtt(NCid,varid,'semi_minor_axis',6.35675e+006);
     netcdf.putAtt(NCid,varid,'inverse_flattening',298.257);
     netcdf.putAtt(NCid,varid,'proj4_params',' ');
-    netcdf.putAtt(NCid,varid,'EPSG_code','EPGS:4326');
+    netcdf.putAtt(NCid,varid,'EPSG_code',['EPGS:', num2str(epsgcode)]);
     netcdf.putAtt(NCid,varid,'projection_name',' ');
     netcdf.putAtt(NCid,varid,'wkt',' ');
     netcdf.putAtt(NCid,varid,'comment',' ');
@@ -91,27 +92,28 @@ else
         setHandles(handles);
     end
     [x1,y1, logs]=convertCoordinates(0,0,handles.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.name',csname,'CS2.type','xy');
-    epgscode     = logs.CS2.code;
+    epsgcode     = logs.CS2.code;
     
     % Rest
     netcdf.reDef(NCid);
     grdmapping='projected_coordinate_system';
     varid = netcdf.defVar(NCid,grdmapping,'int',[]);
     netcdf.putAtt(NCid,varid,'name',csname);
-    netcdf.putAtt(NCid,varid,'epsg',0);
+    netcdf.putAtt(NCid,varid,'epsg',int32(epsgcode));
     netcdf.putAtt(NCid,varid,'grid_mapping_name','Unknown projected');
     netcdf.putAtt(NCid,varid,'longitude_of_prime_meridian',0);
     netcdf.putAtt(NCid,varid,'semi_major_axis',num2str(logs.CS2.ellips.semi_major_axis, '%10.5e\n'))
     netcdf.putAtt(NCid,varid,'semi_minor_axis',num2str(logs.CS2.ellips.semi_minor_axis, '%10.5e\n'))
     netcdf.putAtt(NCid,varid,'inverse_flattening',num2str(logs.CS2.ellips.inv_flattening))
     netcdf.putAtt(NCid,varid,'proj4_params',' ');
-    netcdf.putAtt(NCid,varid,'EPSG_code',['EPGS:', num2str(epgscode)]);
+    netcdf.putAtt(NCid,varid,'EPSG_code',['EPGS:', num2str(epsgcode)]);
     netcdf.putAtt(NCid,varid,'projection_name',' ');
     netcdf.putAtt(NCid,varid,'wkt',' ');
     netcdf.putAtt(NCid,varid,'comment',' ');
     netcdf.putAtt(NCid,varid,'value','value is equal to EPSG code');
     netcdf.endDef(NCid);
 end
+netcdf.putVar(NCid,varid,epsgcode);
 
 % Node x
 netcdf.reDef(NCid);
