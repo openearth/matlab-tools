@@ -79,14 +79,6 @@ for i=1:length(varargin)
     end
 end
 
-if isfield(opt,'runid')
-    runid=opt.runid;
-end
-
-if isfield(opt,'inputDir')
-    inpdir=opt.inputDir;
-end
-
 for i=1:length(varargin)
     if ischar(varargin{i})
         switch lower(varargin{i})
@@ -106,6 +98,14 @@ for i=1:length(varargin)
                 cs=varargin{i+1};
         end
     end
+end
+
+if isfield(opt,'runid')
+    runid=opt.runid;
+end
+
+if isfield(opt,'inputDir')
+    inpdir=opt.inputDir;
 end
 
 if isempty(flow)
