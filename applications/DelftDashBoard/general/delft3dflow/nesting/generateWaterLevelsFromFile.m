@@ -125,7 +125,7 @@ for it=it0:it1
     nt=nt+1;
     disp(['Reading file ' num2str(nt) ' of ' num2str(it1-it0+1)]);
     
-    s=load([opt.waterLevel.BC.datafolder filesep opt.waterLevel.BC.dataname '.waterLevel.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
+    s=load([opt.waterLevel.BC.datafolder filesep opt.waterLevel.BC.dataname '.waterlevel.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
     lon360=mod(s.lon,360);
     %%%%%%%%%%%%  j.lencart@ua.pt        14/05/2013      %%%%%%%%%%%%%%%%%%%%%%%%%%%
     % This won't work for parent grids not aligned with NS-EW (2D lon/lat).
