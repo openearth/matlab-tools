@@ -9,9 +9,10 @@ function varargout = getNCOM(fname, par, xl, yl, t, varargin)
 %   Input:
 %   fname     =
 %   par       =
-%   xl        =
-%   yl        =
-%   t         =
+%   xl        = min and max values to create a subset of the NCOM domain
+%               that envelops the Delft3D domain.
+%   yl        = same as x1.
+%   t         = 
 %   varargin  =
 %
 %   Output:
@@ -136,19 +137,30 @@ end
 % Times
 hrs=nc_varget(fname,'time');
 tn=hrs/24+datenum(2000,1,1);
-dt=tn(2)-tn(1);
 
-if length(t)>1
-    it1=find(tn>=t(1),1,'first');
-    it2=find(tn<=t(2),1,'last');
-    nt=it2-it1+1;
-    t=t(1):dt:t(2);
+%KACEY--Added the if-else statement becuase operational NCOM outpouts one
+%tau per nc-file.  We loop through the nc-files in a wrapper.  First, need to
+%define it1 and nt for the nc_varget calls for files with one tau per
+%nc-file.
+it1 = 1;
+nt = 1;
+if length(tn) > 1
+    dt=tn(2)-tn(1);
+    
+    if length(t)>1
+        it1=find(tn>=t(1),1,'first');
+        it2=find(tn<=t(2),1,'last');
+        nt=it2-it1+1;
+        t=t(1):dt:t(2);
+    else
+        it1=find(tn==t);
+        nt=1;
+    end
+    
+    s.time=t;
 else
-    it1=find(tn==t);
-    nt=1;
+    s.time = tn;
 end
-
-s.time=t;
 
 switch lower(par)
     
@@ -219,23 +231,22 @@ switch lower(par)
         s.data=single(data);
         
 end
-
-if ~isempty(outname)
-    for it=1:length(s.time)
-        fname=[outdir filesep outname '.' lower(par) '.' datestr(s.time(it),'yyyymmddHHMMSS') '.mat'];
-        s2=s;
-        s2.time=s2.time(it);
-        if ndims(s.data)==3
-            if length(s.time)==1
-                % One timestep, no need to squeeze
-            else
-                % One level
-                s2.data=squeeze(s2.data(:,:,it));
+    if ~isempty(outname)
+        for it=1:length(s.time)
+            fname=[outdir filesep outname '.' lower(par) '.' datestr(s.time(it),'yyyymmddHHMMSS') '.mat'];
+            s2=s;
+            s2.time=s2.time(it);
+            if ndims(s.data)==3
+                if length(s.time)==1
+                    % One timestep, no need to squeeze
+                else
+                    % One level
+                    s2.data=squeeze(s2.data(:,:,it));
+                end
+            elseif ndims(s.data)==4
+                s2.data=squeeze(s2.data(:,:,:,it));
             end
-        elseif ndims(s.data)==4
-            s2.data=squeeze(s2.data(:,:,:,it));
+            save(fname,'-struct','s2');
         end
-        save(fname,'-struct','s2');
     end
-end
 
