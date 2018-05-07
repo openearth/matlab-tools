@@ -45,14 +45,14 @@ functions{end  ,2}='Run a selected MATLAB-script once a certain date and time is
 functions{end+1,1}='EHY_findLimitingCells';
 functions{end  ,2}='Get the time step limiting cells and max. flow velocities from a Delft3D-FM run';
 
-h=findall(0,'type','figure','name','EHY_TOOLS');
+h=findall(0,'type','figure','name','EHY_TOOLS  - Everbody Helps You');
 if ~isempty(h)
     uistack(h,'top');
     figure(h);
     movegui(h,'center');
     disp('The EHY_TOOLS GUI was already open')
 else
-    EHYfig=figure('units','centimeters','position',[12.0227 6.4982 16.8 9.5],'name','EHY_TOOLS','color',[0.94 0.94 0.94]);
+    EHYfig=figure('units','centimeters','position',[12.0227 6.4982 16.8 9.5],'name','EHY_TOOLS  - Everbody Helps You','color',[0.94 0.94 0.94]);
     movegui(EHYfig,'center');
 end
 height=9.6;
@@ -64,6 +64,10 @@ for iF=1:length(functions)
         'units','centimeters','Position',[6 height-iF*0.7938-0.1 12 0.5292],...
         'String',functions{iF,2},'horizontalalignment','left');
 end
+% aboutEHY
+button=uicontrol('Style', 'pushbutton', 'String','About EHY_tools',...
+    'units','centimeters','Position',[0.5027 height-(iF+1)*0.7938 5.2917 0.5292],...
+    'Callback', @aboutEHY);
 % close button
 button=uicontrol('Style', 'pushbutton', 'String','Close',...
     'units','centimeters','Position',[0.5027 height-(iF+2)*0.7938 5.2917 0.5292],...
@@ -83,8 +87,8 @@ EHYs(mfilename);
         try
             run(get(hObject,'String'))
         catch
-            disp(['Failed to execute function: ''' get(hObject,'String') ''', last error message:'])
-            disp(lasterr)
+            disp(['Failed to execute function: ''' get(hObject,'String') ''', last error message:' char(10) lasterr])
+            disp('<strong>Questions / Suggestions for improvements > Julien.Groenenboom@Deltares.nl</strong>')
         end
         set(h, 'pointer', 'arrow')
         set(hStatusText,'String',...
@@ -93,5 +97,19 @@ EHYs(mfilename);
 
     function closeFig(hObject,event)
         close(get(hObject,'Parent'))
+    end
+    function aboutEHY(hObject,event)
+        msgbox({'This toolbox aims to help users of Delft3D-FM, Delft3D 4 and SIMONA',...
+                'software in pre- and post-processing of simulations. The toolbox was',...
+                'initially set-up and used within the group of Environmental',...
+                'Hydrodynamics of Deltares, but is now a tool where other modellers can',...
+                'benefit from and contribute to as well (OpenEarthTools philosophy).',...
+                '',...
+                'The scripts are created in such a way that they can be used interactively.',...
+                'More experience MATLAB-users can use the functions with input and output',...
+                'arguments to adopt the functions in their scripts.',...
+                '',...
+                'In case of questions/suggestions for improvements. Please contact:',...
+                'Julien.Groenenboom@Deltares.nl'},'About EHY_tools');
     end
 end

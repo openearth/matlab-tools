@@ -27,6 +27,8 @@ function varargout = EHY_getmodeldata(outputfile,stat_name,modelType,varargin)
 % Data.dimensions         : Dimensions of requested data (time,stats,lyrs)
 % Data.location           : Locations of requested stations (x,y or lon,lat)
 % Data.OPT                : Structure with optional user settings used
+%
+% For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
 
 if ~prod([exist('outputfile','var') exist('stat_name','var') exist('modelType','var')])
     EHY_getmodeldata_interactive
@@ -68,17 +70,18 @@ end
 if size(stat_name,1)<size(stat_name,2); stat_name=stat_name'; end
 Data.requestedStatNames=stat_name;
 
-stationNr=[];
+stationNr(1:length(stat_name),1)=NaN;
 for i_stat = 1:length(stat_name)
     nr_stat  = find(strcmpi(Data.stationNames,stat_name{i_stat}) ~= 0,1);
     if isempty(nr_stat)
         Data.exist_stat(i_stat,1) = false;
         disp(['Station : ' stat_name{i_stat} ' does not exist']);
     else
-        stationNr(end+1)=nr_stat;
+        stationNr(i_stat,1)=nr_stat;
         Data.exist_stat(i_stat,1) = true;
     end
 end
+stationNrNoNan=stationNr(~isnan(stationNr));
 
 %% Get the computational data
 switch modelType
@@ -129,8 +132,8 @@ switch modelType
                 stationX = ncread(outputfile,'station_x_coordinate');
                 stationY = ncread(outputfile,'station_y_coordinate');
             end
-            Data.location(Data.exist_stat,:)=[stationX(stationNr(Data.exist_stat)) stationY(stationNr(Data.exist_stat))];
             Data.location(~Data.exist_stat,1:2)=NaN;
+            Data.location(Data.exist_stat,1:2)=[stationX(stationNrNoNan,1) stationY(stationNrNoNan,1)];
         end
         
         % get data
@@ -147,20 +150,20 @@ switch modelType
         
         % allocate variable 'value'
         if ismember(OPT.varName,{'wl'})
-            value = zeros(nr_times_clip,length(Data.stationNames));
+            value = nan(nr_times_clip,length(Data.stationNames));
         elseif ismember(OPT.varName,'uv')
             if ~exist('no_layers','var')
-                value_x = zeros(nr_times_clip,length(Data.stationNames));
-                value_y = zeros(nr_times_clip,length(Data.stationNames));
+                value_x = nan(nr_times_clip,length(Data.stationNames));
+                value_y = nan(nr_times_clip,length(Data.stationNames));
             else
-                value_x = zeros(nr_times_clip,length(Data.stationNames),no_layers);
-                value_y = zeros(nr_times_clip,length(Data.stationNames),no_layers);
+                value_x = nan(nr_times_clip,length(Data.stationNames),no_layers);
+                value_y = nan(nr_times_clip,length(Data.stationNames),no_layers);
             end
-        elseif ismember(OPT.varName,{'sal','tem'})
+        elseif ismember(OPT.varName,{'sal','tem',infonc.Variables(:).Name})
             if ~exist('no_layers','var')
-                value = zeros(nr_times_clip,length(Data.stationNames));
+                value = nan(nr_times_clip,length(Data.stationNames));
             else
-                value = zeros(nr_times_clip,length(Data.stationNames),no_layers);
+                value = nan(nr_times_clip,length(Data.stationNames),no_layers);
             end
         end
         
@@ -191,23 +194,35 @@ switch modelType
                     else
                         value(bl_start:bl_stop,:,:) 	= permute(ncread(outputfile,'temperature',[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
                     end
+                case {infonc.Variables(:).Name}
+                    if ~exist('no_layers','var') % 2DH model
+                        value(bl_start:bl_stop,:) 	= permute(ncread(outputfile,OPT.varName,[1 bl_start+offset],[Inf bl_int]),[2 1]);
+                    else
+                        value(bl_start:bl_stop,:,:) 	= permute(ncread(outputfile,OPT.varName,[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
+                    end
             end
         end
         
         % put value(_x/_y) in output structure 'Data'
         if exist('value','var')
             if ndims(value)==2
-                Data.val(:,find(Data.exist_stat))=value(:,stationNr);
-            elseif dim(value)==3
-                Data.val(:,find(Data.exist_stat),1:length(OPT.layer))=value(:,stationNr,OPT.layer);
+                Data.val(:,Data.exist_stat)=value(:,stationNrNoNan);
+                Data.val(:,~Data.exist_stat)=NaN;
+            elseif ndims(value)==3
+                Data.val(:,Data.exist_stat,1:length(OPT.layer))=value(:,stationNrNoNan,OPT.layer);
+                Data.val(:,~Data.exist_stat,1:length(OPT.layer))=NaN;
             end
         elseif exist('value_x','var')
             if ndims(value_x)==2
-                Data.vel_x(:,find(Data.exist_stat))=value_x(:,stationNr);
-                Data.vel_y(:,find(Data.exist_stat))=value_y(:,stationNr);
+                Data.vel_x(:,Data.exist_stat)=value_x(:,stationNrNoNan);
+                Data.vel_y(:,Data.exist_stat)=value_y(:,stationNrNoNan);
+                Data.vel_x(:,~Data.exist_stat)=NaN;
+                Data.vel_y(:,~Data.exist_stat)=NaN;
             elseif ndims(value_x)==3
-                Data.vel_x(:,find(Data.exist_stat),1:length(OPT.layer))=value_x(:,stationNr,OPT.layer);
-                Data.vel_y(:,find(Data.exist_stat),1:length(OPT.layer))=value_y(:,stationNr,OPT.layer);
+                Data.vel_x(:,Data.exist_stat,1:length(OPT.layer))=value_x(:,stationNrNoNan,OPT.layer);
+                Data.vel_y(:,Data.exist_stat,1:length(OPT.layer))=value_y(:,stationNrNoNan,OPT.layer);
+                Data.vel_x(:,~Data.exist_stat,1:length(OPT.layer))=NaN;
+                Data.vel_y(:,~Data.exist_stat,1:length(OPT.layer))=NaN;
             end
         end
         
@@ -242,7 +257,7 @@ switch modelType
                     stationXY = vs_get(trih,'his-const',{1},'XYSTAT','quiet');
                 end
                 Data.locationMN(i_stat,:)=[stationMN(:,nr_stat)'];
-                Data.location(i_stat,:)=[stationXY(:,nr_stat)'];
+                Data.locationXY(i_stat,:)=[stationXY(:,nr_stat)'];
 
                 % get data
                 switch OPT.varName
@@ -271,6 +286,20 @@ switch modelType
                 end
             end
         end
+        
+        % fill data of non-existing stations with NaN's
+        Data.locationMN(~Data.exist_stat,:)=NaN;
+        Data.locationXY(~Data.exist_stat,:)=NaN;
+        if isfield(Data,'val')
+           Data.val(:,~Data.exist_stat,:)=NaN;
+        elseif isfield(Data,'vel_x')
+           Data.vel_x(:,~Data.exist_stat,:)=NaN;
+           Data.vel_y(:,~Data.exist_stat,:)=NaN;
+           Data.vel_u(:,~Data.exist_stat,:)=NaN;
+           Data.vel_v(:,~Data.exist_stat,:)=NaN;
+        end
+        
+        
     case {'waqua','simona','siminp'}
         %% SIMONA (WAQUA/TRIWAQ)
         for i_stat = 1: length(stat_name)

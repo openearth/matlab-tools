@@ -5,7 +5,8 @@ function EHY_crop(varargin)
 % background color.
 %
 % Example1: EHY_crop
-% Example2: EHY_crop('D:\output.png')
+% Example2: EHY_crop('D:\output.png');
+% Example3: EHY_crop('D:\output.png','suffix',''); % save cropped fig at same location
 %
 % created by Julien Groenenboom, April 2017
 EHYs(mfilename);
