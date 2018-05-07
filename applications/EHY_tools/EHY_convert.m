@@ -69,18 +69,8 @@ if length(varargin)==1
     inputFile=varargin{1};
     [~,~,inputExt0]= fileparts(inputFile);
     inputExt=lower(strrep(inputExt0,'.',''));
-    
-    % simona model input file
-    if isempty(inputExt0)
-       [selection,~]=  listdlg('PromptString','Input file does not have an extension. What kind of file is it?',...
-            'SelectionMode','single',...
-            'ListString',{'Simona observation points file (locaties)'},...
-            'ListSize',[500 100]);
-        if selection==1
-            inputExt='locaties';
-        else
-            disp('EHY_convert stopped by user.'); return
-        end
+    if isempty(inputExt0) % simona model input file
+        inputExt=EHY_convert_askForInputExt;
     end
     
     if strcmp(inputExt,'pli'); inputExt='pol'; end
@@ -112,6 +102,9 @@ else
     inputFile=varargin{1};
     [~,~,inputExt]= fileparts(inputFile);
     inputExt=lower(strrep(inputExt,'.',''));
+    if isempty(inputExt) % simona model input file
+        inputExt=EHY_convert_askForInputExt;
+    end
     outputExt=varargin{2};
 end
 
@@ -146,7 +139,6 @@ end
 
 inputExt=lower(inputExt);
 outputExt=lower(outputExt);
-
 
 if strcmp(inputExt,'pli'); inputExt='pol'; end
 if strcmpi(outputExt,'pli'); outputExt='pol'; end %treat as .pol, but still save as .pli
@@ -369,7 +361,7 @@ end
             fid=fopen(outputFile,'w');
             for iM=1:length(x)
                 fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
-                fprintf(fid,'%-s\n',names{iM});
+                fprintf(fid,'%-s\n',['''' names{iM} '''']);
             end
             fclose(fid);
         end
@@ -447,8 +439,8 @@ end
                 obs.m(end+1,1)=str2num(dmy{1});
                 dmy=regexpi(line, 'n.*?=.*?(\d+)', 'tokens', 'once');
                 obs.n(end+1,1)=str2num(dmy{1});
-                dmy=regexpi(line, '''(\S.+)''', 'tokens', 'once');
-                obs.namst{end+1,1}=dmy{1};
+                dmy=strfind(line,'''');
+                obs.namst{end+1,1}=line([dmy(1)+1:dmy(2)-1]);
             end
         end
         fclose(fid);
@@ -470,7 +462,7 @@ end
             fid=fopen(outputFile,'w');
             for iM=1:length(x)
                 fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
-                fprintf(fid,'%-s\n',obs.namst{iM});
+                fprintf(fid,'%-s\n',['''' obs.namst{iM} '''']);
             end
             fclose(fid);
         end
@@ -563,7 +555,7 @@ end
             fid=fopen(outputFile,'w');
             for iM=1:length(x)
                 fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
-                fprintf(fid,'%-s\n',obs.namst(iM,:));
+                fprintf(fid,'%-s\n',['''' obs.namst{iM} '''']);
             end
             fclose(fid);
         end
@@ -666,7 +658,7 @@ end
             fid=fopen(outputFile,'w');
             for iM=1:length(x)
                 fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
-                fprintf(fid,'%-s\n',src.DATA(iM).name);
+                fprintf(fid,'%-s\n',['''' src.DATA(iM).name '''']);
             end
             fclose(fid);
         end
@@ -990,5 +982,17 @@ if fromEPSG~=toEPSG
             end
             fclose(fid);
     end
+end
+end
+
+function inputExt=EHY_convert_askForInputExt
+[selection,~]=  listdlg('PromptString','Input file does not have an extension. What kind of file is it?',...
+    'SelectionMode','single',...
+    'ListString',{'Simona observation points file (locaties)'},...
+    'ListSize',[500 100]);
+if selection==1
+    inputExt='locaties';
+else
+    disp('EHY_convert stopped by user.'); return
 end
 end
