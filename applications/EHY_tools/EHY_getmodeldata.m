@@ -96,19 +96,10 @@ switch modelType
             ncVarInd              = strmatch('laydim',{infonc.Dimensions.Name},'exact');
             if ~isempty(ncVarInd)
                 no_layers          = infonc.Dimensions(ncVarInd).Length;
-                if all(OPT.layer==0)
-                    OPT.layer=1:no_layers;
-                end
             else
                 no_layers=1;
             end
-            if no_layers==1 && length(OPT.layer)>1
-                warning('User selected multiple layers, but there is only 1 layer available. Setting OPT.layer=1; ')
-                OPT.layer=1;
-            elseif any(OPT.layer>no_layers)
-                warning(['User asked for layer ' num2str(max(OPT.layer)) ', but there are only ' num2str(no_layers) ' layers available. Setting OPT.layer=0; (all) '])
-                OPT.layer=1:no_layers;
-            end
+            OPT=EHY_getmodeldata_layer_index(OPT,no_layers);
                     
             % time info
             % - to enhance speed, reconstruct time array from start time, numel and interval
@@ -239,15 +230,7 @@ switch modelType
                     [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
                     % layer info
                     no_layers=vs_get(trih,'his-const',{1},'KMAX','quiet');
-                    if all(OPT.layer==0)
-                        OPT.layer=1:no_layers;
-                    elseif no_layers==1 && length(OPT.layer)>1
-                        warning('User selected multiple layers, but there is only 1 layer available. Setting OPT.layer=1; ')
-                        OPT.layer=1;
-                    elseif any(OPT.layer>no_layers)
-                        warning(['User asked for layer ' num2str(max(OPT.layer)) ', but there are only ' num2str(no_layers) ' layers available. Setting OPT.layer=1; '])
-                        OPT.layer=1;
-                    end
+                    OPT=EHY_getmodeldata_layer_index(OPT,no_layers);
                     % constituents
                     constituents=squeeze(vs_get(trih,'his-const','NAMCON','quiet'));
                     if size(constituents,1)>size(constituents,2); constituents=constituents'; end
@@ -257,7 +240,7 @@ switch modelType
                     stationXY = vs_get(trih,'his-const',{1},'XYSTAT','quiet');
                 end
                 Data.locationMN(i_stat,:)=[stationMN(:,nr_stat)'];
-                Data.locationXY(i_stat,:)=[stationXY(:,nr_stat)'];
+                Data.location(i_stat,:)=[stationXY(:,nr_stat)'];
 
                 % get data
                 switch OPT.varName
@@ -286,20 +269,7 @@ switch modelType
                 end
             end
         end
-        
-        % fill data of non-existing stations with NaN's
-        Data.locationMN(~Data.exist_stat,:)=NaN;
-        Data.locationXY(~Data.exist_stat,:)=NaN;
-        if isfield(Data,'val')
-           Data.val(:,~Data.exist_stat,:)=NaN;
-        elseif isfield(Data,'vel_x')
-           Data.vel_x(:,~Data.exist_stat,:)=NaN;
-           Data.vel_y(:,~Data.exist_stat,:)=NaN;
-           Data.vel_u(:,~Data.exist_stat,:)=NaN;
-           Data.vel_v(:,~Data.exist_stat,:)=NaN;
-        end
-        
-        
+  
     case {'waqua','simona','siminp'}
         %% SIMONA (WAQUA/TRIWAQ)
         for i_stat = 1: length(stat_name)
@@ -310,29 +280,33 @@ switch modelType
                     sds=qpfopen(outputfile);
                     Data.times = qpread(sds,1,'water level (station)','times');
                     [Data,time_index]=EHY_getmodeldata_time_index(Data,OPT);
+                    % layer info
+                    dimen=waqua('readsds',sds,[],'MESH_IDIMEN');
+                    no_layers   =dimen(18);
+                    OPT=EHY_getmodeldata_layer_index(OPT,no_layers);
                 end
                 % get data
                 switch OPT.varName
                     case 'wl'
                         Data.val(:,i_stat) = waquaio(sds,[],'wlstat',time_index,nr_stat);
                     case 'uv'
-                        try
-                            Data.vel_x(:,i_stat,:) = waquaio(sds,[],'u-stat',time_index,nr_stat,OPT.layer);
-                            Data.vel_y(:,i_stat,:) = waquaio(sds,[],'v-stat',time_index,nr_stat,OPT.layer);
-                        catch
-                            Data.vel_x(:,i_stat) = waquaio(sds,[],'u-stat',time_index,nr_stat);
+                        if no_layers==1
+                             Data.vel_x(:,i_stat) = waquaio(sds,[],'u-stat',time_index,nr_stat);
                             Data.vel_y(:,i_stat) = waquaio(sds,[],'v-stat',time_index,nr_stat);
+                        else
+                             Data.vel_x(:,i_stat,:) = waquaio(sds,[],'u-stat',time_index,nr_stat,OPT.layer);
+                            Data.vel_y(:,i_stat,:) = waquaio(sds,[],'v-stat',time_index,nr_stat,OPT.layer);
                         end
                     case 'sal'
-                        try
-                            Data.val(:,i_stat,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat,OPT.layer);
-                        catch
+                        if no_layers==1
                             Data.val(:,i_stat) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat);
+                        else
+                            Data.val(:,i_stat,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat,OPT.layer);
                         end
                 end
             end
         end
-        
+
     case {'sobek3'}
         %% SOBEK3
         for i_stat = 1: length(stat_name)
@@ -410,6 +384,22 @@ switch modelType
         end
 end
 
+% fill data of non-existing stations with NaN's
+if isfield(Data,'locationMN')
+Data.locationMN(~Data.exist_stat,:)=NaN;
+end
+if isfield(Data,'location')
+Data.location(~Data.exist_stat,:)=NaN;
+end
+if isfield(Data,'val')
+    Data.val(:,~Data.exist_stat,:)=NaN;
+elseif isfield(Data,'vel_x')
+    Data.vel_x(:,~Data.exist_stat,:)=NaN;
+    Data.vel_y(:,~Data.exist_stat,:)=NaN;
+    Data.vel_u(:,~Data.exist_stat,:)=NaN;
+    Data.vel_v(:,~Data.exist_stat,:)=NaN;
+end
+
 % dimension information
 fn=fieldnames(Data);
 if length(size(Data.(fn{end})))==2
@@ -442,4 +432,17 @@ else
     time_index=0;
 end
 
+end
+
+function OPT=EHY_getmodeldata_layer_index(OPT,no_layers)
+if all(OPT.layer==0)
+    OPT.layer=1:no_layers;
+elseif no_layers==1 && length(OPT.layer)>1
+    warning('User selected multiple layers, but there is only 1 layer available. Setting OPT.layer=1; ')
+    OPT.layer=1;
+elseif any(OPT.layer>no_layers)
+    warning(['User asked for layer ' num2str(max(OPT.layer)) ', but there are only ' num2str(no_layers) ' layers available. Setting OPT.layer to ''all''']);
+    warning(['OPT.layer is set to [' num2str(1:no_layers) ']'])
+    OPT.layer=1:no_layers;
+end
 end

@@ -59,16 +59,17 @@ if ~strcmp(OPT.varName,'wl')
         OPT.layer = cell2mat(inputdlg('Layer nr:'));
     end
 end
+
 % t0 and tend
-[refdate,tunit,tstart,tstop]=getTimeInfoFromMdFile(mdFile);
-t0=datestr(refdate+tstart*timeFactor(tunit,'d'));
-tend=datestr(refdate+tstop*timeFactor(tunit,'d'));
-option=inputdlg({['Want to specifiy a certain output period? (Default: all data)' char(10) char(10) 'Start date [dd-mmm-yyyy HH:MM]'],'End date   [dd-mmm-yyyy HH:MM]'},'Specify output period',1,...
-    {t0,tend});
-if ~isempty(option)
-    if ~strcmp(t0,option{1}) || ~strcmp(tend,option{2})
-        OPT.t0 = option{1};
-        OPT.tend = option{2};
+if exist('mdFile','var')
+    [~,~,~,~,hisstart,hisstop]=getTimeInfoFromMdFile(mdFile);
+    option=inputdlg({['Want to specifiy a certain output period? (Default: all data)' char(10) char(10) 'Start date [dd-mmm-yyyy HH:MM]'],'End date   [dd-mmm-yyyy HH:MM]'},'Specify output period',1,...
+        {hisstart,hisstop});
+    if ~isempty(option)
+        if ~strcmp(t0,option{1}) || ~strcmp(tend,option{2})
+            OPT.t0 = option{1};
+            OPT.tend = option{2};
+        end
     end
 end
 
@@ -85,6 +86,10 @@ end
 
 stats=strtrim(sprintf('''%s'',',stat_name{:}));
 stats2=['{' stats(1:end-1) '}'];
+
+disp([char(10) 'Note that next time you want to get this data, you can also use:'])
+disp(['Data = EHY_getmodeldata(''' outputfile ''',' stats2 ',''' modelType '''' extraText ');' ])
+
 disp('start retrieving the data...')
 if ~exist('OPT','var') || isempty(fieldnames(OPT))
     Data = EHY_getmodeldata(outputfile,stat_name,modelType);
@@ -96,7 +101,4 @@ disp('Finished retrieving the data!')
 assignin('base','Data',Data);
 open Data
 disp('Variable ''Data'' created by EHY_getmodeldata_interactive')
-
-disp([char(10) 'Note that next time you want to get this data, you can also use:'])
-disp(['Data = EHY_getmodeldata(''' outputfile ''',' stats2 ',''' modelType '''' extraText ');' ])
 

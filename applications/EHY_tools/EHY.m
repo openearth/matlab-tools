@@ -84,12 +84,12 @@ EHYs(mfilename);
         set(h, 'pointer', 'watch')
         set(hStatusText,'String',...
             ['Status:  BUSY running ''' get(hObject,'String') ''''],'foregroundcolor',[1 0 0],'fontSize',12);
-        try
+%         try
             run(get(hObject,'String'))
-        catch
-            disp(['Failed to execute function: ''' get(hObject,'String') ''', last error message:' char(10) lasterr])
-            disp('<strong>Questions / Suggestions for improvements > Julien.Groenenboom@Deltares.nl</strong>')
-        end
+%         catch
+%             disp(['Failed to execute function: ''' get(hObject,'String') ''', last error message:' char(10) lasterr])
+%             disp('<strong>Questions / Suggestions for improvements > Julien.Groenenboom@Deltares.nl</strong>')
+%         end
         set(h, 'pointer', 'arrow')
         set(hStatusText,'String',...
             'Status:  Please select a function','foregroundcolor',[0 0.5 0],'fontSize',12);

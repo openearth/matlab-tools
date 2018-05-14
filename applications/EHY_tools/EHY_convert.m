@@ -173,8 +173,8 @@ end
         output=[x y];
         OPT=OPT_user;
         if OPT.saveOutputFile
-            [~,name]=fileparts(inputFile);
-            tempFile=[tempdir name '_crs.kml'];
+            [~,name]=fileparts(outputFile);
+            tempFile=[tempdir name '.kml'];
             ldb2kml(output(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
             delete(tempFile)
@@ -209,7 +209,7 @@ end
         OPT.saveOutputFile=OPT_user.saveOutputFile;
         if OPT.saveOutputFile
             [ldb(:,1),ldb(:,2),OPT]=EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
-            [~,name]=fileparts(inputFile);
+            [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
@@ -273,7 +273,7 @@ end
 % grd2kml
     function [output,OPT]=EHY_convert_grd2kml(inputFile,outputFile,OPT)
         if OPT.saveOutputFile
-            [~,name]=fileparts(inputFile);
+            [~,name]=fileparts(outputFile);
             tempFileGrd=[tempdir name '.grd'];
             tempFileKml=[tempdir name '.kml'];
             copyfile(inputFile,tempFileGrd);
@@ -361,7 +361,7 @@ end
             fid=fopen(outputFile,'w');
             for iM=1:length(x)
                 fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
-                fprintf(fid,'%-s\n',['''' names{iM} '''']);
+                fprintf(fid,'%-s\n',['''' strtrim(names{iM}) '''']);
             end
             fclose(fid);
         end
@@ -381,7 +381,7 @@ end
         ldb=landboundary('read',inputFile);
         if OPT.saveOutputFile
             [ldb(:,1),ldb(:,2),OPT]=EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
-            [~,name]=fileparts(inputFile);
+            [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
@@ -417,7 +417,7 @@ end
         [xyn{1,1},xyn{1,2},OPT]=EHY_convert_coorCheck(xyn{1,1},xyn{1,2},OPT);
         OPT=OPT_user;
         if OPT.saveOutputFile
-            [~,name]=fileparts(inputFile);
+            [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             KMLPlaceMark(xyn{1,2},xyn{1,1},tempFile,'name',xyn{1,3}','icon',OPT.iconFile);
             copyfile(tempFile,outputFile);
@@ -462,7 +462,7 @@ end
             fid=fopen(outputFile,'w');
             for iM=1:length(x)
                 fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
-                fprintf(fid,'%-s\n',['''' obs.namst{iM} '''']);
+                fprintf(fid,'%-s\n',['''' strtrim(obs.namst{iM}) '''']);
             end
             fclose(fid);
         end
@@ -477,7 +477,7 @@ end
         lines=ipGlueLDB(lines);
         if OPT.saveOutputFile
             [lines(:,1),lines(:,2),OPT]=EHY_convert_coorCheck(lines(:,1),lines(:,2),OPT);
-            [~,name]=fileparts(inputFile);
+            [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(lines,tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
@@ -536,7 +536,7 @@ end
         [xyn{1,1},xyn{1,2},OPT]=EHY_convert_coorCheck(xyn{1,1},xyn{1,2},OPT);
         OPT=OPT_user;
         if OPT.saveOutputFile
-            [~,name]=fileparts(inputFile);
+            [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             KMLPlaceMark(xyn{1,2},xyn{1,1},tempFile,'name',xyn{1,3}','icon',OPT.iconFile);
             copyfile(tempFile,outputFile);
@@ -555,7 +555,7 @@ end
             fid=fopen(outputFile,'w');
             for iM=1:length(x)
                 fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
-                fprintf(fid,'%-s\n',['''' obs.namst{iM} '''']);
+                fprintf(fid,'%-s\n',['''' strtrim(obs.namst{iM}) '''']);
             end
             fclose(fid);
         end
@@ -566,7 +566,7 @@ end
         pol=landboundary('read',inputFile);
         [pol(:,1),pol(:,2),OPT]=EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
         if OPT.saveOutputFile
-            [~,name]=fileparts(inputFile);
+            [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(pol(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
@@ -610,7 +610,7 @@ end
         ldb=shape2ldb(inputFile,0);
         if OPT.saveOutputFile
             [ldb(:,1),ldb(:,2),OPT]=EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
-            [~,name]=fileparts(inputFile);
+            [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
@@ -640,7 +640,7 @@ end
         [xyn{1,1},xyn{1,2},OPT]=EHY_convert_coorCheck(xyn{1,1},xyn{1,2},OPT);
         OPT=OPT_user;
         if OPT.saveOutputFile
-            [~,name]=fileparts(inputFile);
+            [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             KMLPlaceMark(xyn{1,2},xyn{1,1},tempFile,'name',xyn{1,3},'icon',OPT.iconFile);
             copyfile(tempFile,outputFile);
@@ -658,7 +658,7 @@ end
             fid=fopen(outputFile,'w');
             for iM=1:length(x)
                 fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
-                fprintf(fid,'%-s\n',['''' src.DATA(iM).name '''']);
+                fprintf(fid,'%-s\n',['''' strtrim(src.DATA(iM).name) '''']);
             end
             fclose(fid);
         end
@@ -673,8 +673,8 @@ end
         output=pol;
         OPT=OPT_user;
         if OPT.saveOutputFile
-            [~,name]=fileparts(inputFile);
-            tempFile=[tempdir name '_thd.kml'];
+            [~,name]=fileparts(outputFile);
+            tempFile=[tempdir name '.kml'];
             ldb2kml(output(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
             delete(tempFile)
@@ -718,7 +718,7 @@ end
         end
         [xyn.x,xyn.y,OPT]=EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
         if OPT.saveOutputFile
-            [~,name]=fileparts(inputFile);
+            [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             KMLPlaceMark(xyn.y,xyn.x,tempFile,'name',xyn.name,'icon',OPT.iconFile);
             copyfile(tempFile,outputFile);
@@ -762,7 +762,7 @@ end
         xyz=dlmread(inputFile);
         [lon,lat,OPT]=EHY_convert_coorCheck(xyz(:,1),xyz(:,2),OPT);
         if OPT.saveOutputFile
-            [~,name]=fileparts(inputFile);
+            [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             KMLPlaceMark(lat,lon,tempFile,'icon',OPT.iconFile);
             copyfile(tempFile,outputFile);
@@ -778,7 +778,7 @@ end
         OPT.saveOutputFile=OPT_user.saveOutputFile;
         if OPT.saveOutputFile
             [ldb(:,1),ldb(:,2),OPT]=EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
-            [~,name]=fileparts(inputFile);
+            [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
@@ -881,23 +881,28 @@ xx=x(~isnan(x));
 yy=y(~isnan(y));
 if isempty(OPT.fromEPSG)
     if isempty(OPT.fromEPSG) && all(all(xx>=-180)) && all(all(xx<=180)) && all(all(yy>=-90)) && all(all(yy<=90))
-        disp('Input coordinations are probably in [Longitude,Latitude] - WGS ''84')
-        yn=input('Is this correct? [Y/N]  ','s');
-        if strcmpi(yn(1),'y')
+        [outputId,~]=  listdlg('PromptString',{'Input coordinations are probably in [Longitude,Latitude] - WGS ''84, EPSG 4326',...
+            'Is this correct?'},...
+            'SelectionMode','single',...
+            'ListString',{'Yes','No'},'ListSize',[500 100]);
+        if outputId==1
             OPT.fromEPSG='4326';
         end
     end
     if isempty(OPT.fromEPSG) && all(all(xx>-7000)) && all(all(xx<300000)) && all(all(yy>289000)) && all(all(yy<629000))   % probably RD in m
-        disp('Input coordinations are probably in meter Amersfoort/RD New, EPSG 28992')
-        yn=input('Apply conversion from Amersfoort/RD New, EPSG 28992? [Y/N]  ','s');
-        if strcmpi(yn,'y')
+        [outputId,~]=  listdlg('PromptString',{'Input coordinations are probably in meter Amersfoort/RD New, EPSG 28992',...
+            'Is this correct?'},...
+            'SelectionMode','single',...
+            'ListString',{'Yes','No'},'ListSize',[500 100]);
+        if outputId==1
             OPT.fromEPSG='28992';
         end
     end
     if isempty(OPT.fromEPSG)
-        disp('Input coordinations are probably not in [Longitude,Latitude] - WGS ''84')
-        disp('common EPSG-codes: Amersfoort/RD New: 28992')
-        OPT.fromEPSG=input('What is the code of the input coordinates? EPSG: ');
+        answer=inputdlg(['Input coordinations are probably not in [Longitude,Latitude] - WGS ''84''.' char(10),...
+            'What is the code of the input coordinates? EPSG: ' char(10) char(10),...
+            '(common EPSG-code: Amersfoort/RD New: 28992)']);
+        OPT.fromEPSG=str2num(answer{1});
     end
 end
 if isempty(OPT.fromEPSG)
@@ -988,10 +993,12 @@ end
 function inputExt=EHY_convert_askForInputExt
 [selection,~]=  listdlg('PromptString','Input file does not have an extension. What kind of file is it?',...
     'SelectionMode','single',...
-    'ListString',{'Simona observation points file (locaties)'},...
+    'ListString',{'Simona observation points file (locaties)','Simona rooster/grid file (.grd)'},...
     'ListSize',[500 100]);
 if selection==1
     inputExt='locaties';
+elseif selection==2
+    inputExt='grd';
 else
     disp('EHY_convert stopped by user.'); return
 end
