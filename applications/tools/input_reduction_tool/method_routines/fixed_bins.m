@@ -44,7 +44,6 @@
 %        equi = creates equidistant bins or not
 %        equi = 1 - creates equidistant bins
 %        equi = 0 - creates non-equidistant bins (default)
-%        m  = The power on non-linearity
 %  info_dir =   Information about the range of variation of the angle
 %               info_dir = 1 means range of variation of 0 to 360
 %               info_dir = 0 means angle relative to the
@@ -63,7 +62,7 @@
 %                       P = prob per bin
 
 
-function [inds_f,v,bin_limits] = fixed_bins(data,ndir,nhs,equi,m,info_dir)
+function [inds_f,v,bin_limits] = fixed_bins(data,ndir,nhs,equi,info_dir)
 
 
 %% Initialization
@@ -76,7 +75,7 @@ make_plot = false;
 
 inds_f = zeros(size(data,1),1); tel = 0;
 if ndir==1
-    [ind_dir]=find(data(:,3)>=dirlim & data(:,3)<=dirlim);
+    [ind_dir]=find(data(:,3)>=dirlim(1) & data(:,3)<=dirlim(2));
     class=data(ind_dir,:);
     j=1;
     
@@ -98,7 +97,7 @@ if ndir==1
                 Climate_Mean(i,j,1)=nan;
             else
                 Climate_Mean(i,j,3)=mean_angle(bin(:,3));
-                Climate_Mean(i,j,1)=(nansum(bin(:,1).^m)/count).^(1/m);
+                Climate_Mean(i,j,1)=(nansum(bin(:,1))/count);
                 %                 Climate_Mean(i,j,1)=sum((bin(:,1).^m)*(1/count)).^(1/m);
             end
             Climate_Mean(i,j,2)=mean(bin(:,2));
@@ -123,7 +122,7 @@ if ndir==1
                 Climate_Mean(i,j,1)=nan;
             else
                 Climate_Mean(i,j,3)=mean_angle(bin(:,3));
-                Climate_Mean(i,j,1)=(nansum(bin(:,1).^m)/count).^(1/m);
+                Climate_Mean(i,j,1)=(nansum(bin(:,1))/count);
                 %                 Climate_Mean(i,j,1)=sum((bin(:,1).^m)*(1/count)).^(1/m);
             end
             Climate_Mean(i,j,2)=mean(bin(:,2));
@@ -157,7 +156,7 @@ else
                     Climate_Mean(i,j,1)=nan;
                 else
                     Climate_Mean(i,j,3)=mean_angle(bin(:,3));
-                    Climate_Mean(i,j,1)=(nansum(bin(:,1).^m)/count).^(1/m);
+                    Climate_Mean(i,j,1)=(nansum(bin(:,1))/count);
                     %                 Climate_Mean(i,j,1)=sum((bin(:,1).^m)*(1/count)).^(1/m);
                 end
                 Climate_Mean(i,j,2)=mean(bin(:,2));
@@ -182,7 +181,7 @@ else
                     Climate_Mean(i,j,1)=nan;
                 else
                     Climate_Mean(i,j,3)=mean_angle(bin(:,3));
-                    Climate_Mean(i,j,1)=(nansum(bin(:,1).^m)/count).^(1/m);
+                    Climate_Mean(i,j,1)=(nansum(bin(:,1))/count);
                     %                 Climate_Mean(i,j,1)=sum((bin(:,1).^m)*(1/count)).^(1/m);
                 end
                 Climate_Mean(i,j,2)=mean(bin(:,2));

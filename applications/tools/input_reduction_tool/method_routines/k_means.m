@@ -109,7 +109,7 @@ elseif ini==2
     name_ini='MDA';
 elseif ini==3
     k=ndir.*nhs;
-    [~,v,~] = fixed_bins(data,ndir,nhs,0,m,info_dir);
+    [~,v,~] = fixed_bins(data,ndir,nhs,0,info_dir);
     v=v(:,1:3);
     v=Norma_3D(v,type,data);
     name_ini='fixed_bins';

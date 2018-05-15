@@ -916,7 +916,8 @@ if strcmp('Fixed bins method',data.handles.method.method_dropdown.String{data.ha
     
     m = data.data.var_m; 
     
-        input_data   = [data.data.stored_raw_data.H_s data.data.stored_raw_data.T_p data.data.stored_raw_data.dir];
+    input_data   = [data.data.stored_raw_data.H_s data.data.stored_raw_data.T_p data.data.stored_raw_data.dir];
+    
     if ~strcmp(data.data.vars_to_plot{2},data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
         if strcmp([data.data.vars_to_plot{2} '^m'],data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
             input_data_w = [data.data.stored_raw_data.H_s.^m data.data.stored_raw_data.T_p data.data.stored_raw_data.dir];
@@ -925,35 +926,33 @@ if strcmp('Fixed bins method',data.handles.method.method_dropdown.String{data.ha
         elseif strcmp('Custom weighting',data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
             input_data_w = [abs(data.data.stored_raw_data.weight) data.data.stored_raw_data.T_p data.data.stored_raw_data.dir data.data.stored_raw_data.H_s];
         end
+        
+        [inds_f,v,bin_limits] = fixed_bins(input_data_w,ndir,nhs,equi,info_dir);
 
-
-    [inds_f,v,bin_limits] = fixed_bins(input_data_w,ndir,nhs,equi,m,info_dir);
-    
-if strcmp([data.data.vars_to_plot{2} '^m'],data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
-    % Inverse function power:
-    v(:,1) = v(:,1).^(1./m);
-    bin_limits(:,1:2)=bin_limits(:,1:2).^(1./m);
-elseif strcmp(['Wave energy E (1/8*c_g*' data.data.vars_to_plot{2} '^2*g*Rho)'],data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
-    % Inverse function wave energy:
-    v(:,1)        = (v(:,1)./v(:,2)./(9.81.*1000.*(1/8).*(1/2).*(9.81/(2*pi)))).^(1/2);
-    bin_limits=[];
-elseif strcmp('Custom weighting',data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
-    % no inverse function available, get the nearest point:
-    for ii=1:max(inds_f)
-        input_data_bin=input_data(inds_f==ii,1);   
-        [value,ind]=findnearest(input_data_w(inds_f==ii,1),v(ii,1));
-        v(ii,1)=input_data_bin(ind,1);  
-    end
-    %                 % No inverse function available, use mean of the indices:
-    %         for ii = 1:max(inds_f)
-    %             v(ii,1) = mean(input_data((find(inds_f == ii)),1));
-    %         end
-    bin_limits=[];
-end
+        if strcmp([data.data.vars_to_plot{2} '^m'],data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
+            % Inverse function power:
+            v(:,1) = v(:,1).^(1./m);
+            bin_limits(:,1:2)=bin_limits(:,1:2).^(1./m);
+        elseif strcmp(['Wave energy E (1/8*c_g*' data.data.vars_to_plot{2} '^2*g*Rho)'],data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
+            % Inverse function wave energy:
+            v(:,1)        = (v(:,1)./v(:,2)./(9.81.*1000.*(1/8).*(1/2).*(9.81/(2*pi)))).^(1/2);
+            bin_limits=[];
+        elseif strcmp('Custom weighting',data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
+            % no inverse function available, get the nearest point:
+            for ii=1:max(inds_f)
+                input_data_bin=input_data(inds_f==ii,1);   
+                [value,ind]=findnearest(input_data_w(inds_f==ii,1),v(ii,1));
+                v(ii,1)=input_data_bin(ind,1);  
+            end
+            %                 % No inverse function available, use mean of the indices:
+            %         for ii = 1:max(inds_f)
+            %             v(ii,1) = mean(input_data((find(inds_f == ii)),1));
+            %         end
+            bin_limits=[];
+        end
     
     else
-
-        [inds_f,v,bin_limits] = fixed_bins(input_data,ndir,nhs,equi,m,info_dir);
+        [inds_f,v,bin_limits] = fixed_bins(input_data,ndir,nhs,equi,info_dir);
     end
     
     tabs=array2table(flipud(sortrows(v,4)),'VariableNames',{'Hs','Tp','Dir','P'});
