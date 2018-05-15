@@ -56,15 +56,11 @@ function [U1, V1] = rotatevectord(u0,v0,a);
 % $HeadURL$
 % $Keywords: $
 
-a = deg2rad(a);
+% a = deg2rad(a);
 
 %if method==1
-disp('*****************************************************************');
-disp('**** should this not be: U1 =  cos(a) .* u0 + sin(a) .* v0 ? ****')
-disp('**** and:                V1 = -sin(a) .* u0 + cos(a) .* v0 ? ****')
-disp('*****************************************************************');
-   U1 = cos(a) .* u0 - sin(a) .* v0;
-   V1 = sin(a) .* u0 + cos(a) .* v0;
+   U1 = cosd(a) .* u0 - sind(a) .* v0;
+   V1 = sind(a) .* u0 + cosd(a) .* v0;
 
 %elseif method==2
 
