@@ -94,6 +94,10 @@ for kk=find(isnan(coastline.offshore_orientation)==0)'
             c_ini_dists(1,c_ind) = dist_ax(ind);
             c_ini_x(1,c_ind)     = dist_x(ind);
             c_ini_y(1,c_ind)     = dist_y(ind);
+        else
+            c_ini_dists(1,c_ind) = NaN;
+            c_ini_x(1,c_ind)     = NaN;
+            c_ini_y(1,c_ind)     = NaN;
         end
     end
     
@@ -117,7 +121,7 @@ for kk=find(isnan(coastline.offshore_orientation)==0)'
                 smaller = 0;
             end
         end
-
+        
         if old_dist < dist_dx
             c_end_inds(1,c_ind)  = ind;
             if diff(c_end_inds) == 0
@@ -129,11 +133,15 @@ for kk=find(isnan(coastline.offshore_orientation)==0)'
             c_end_dists(1,c_ind) = dist_ax(ind);
             c_end_x(1,c_ind)     = dist_x(ind);
             c_end_y(1,c_ind)     = dist_y(ind);
+        else
+            c_end_dists(1,c_ind) = NaN;
+            c_end_x(1,c_ind)     = NaN;
+            c_end_y(1,c_ind)     = NaN;
         end
     end
     
     % Determine c_ini locations:
-    if ~isempty(c_ini_x)
+    if ~isnan(c_ini_x(1,1)) && ~isnan(c_ini_x(1,2))
     
         MKL_num_pts = 20;
         MKL_ax.x = c_ini_x(1):diff(c_ini_x)./(MKL_num_pts-1):c_ini_x(2);
@@ -153,7 +161,7 @@ for kk=find(isnan(coastline.offshore_orientation)==0)'
     end
     
     % Determine c_end locations:
-    if ~isempty(c_end_x)
+    if ~isnan(c_end_x(1,1)) && ~isnan(c_end_x(1,2))
     
         MKL_num_pts = 20;
         MKL_ax.x = c_end_x(1):diff(c_end_x)./(MKL_num_pts-1):c_end_x(2);
