@@ -62,42 +62,123 @@ for kk=find(isnan(coastline.offshore_orientation)==0)'
     dist_x = coastline.ldb(kk,1) + (dist_ax.*sind(coastline.offshore_orientation(kk)));
     dist_y = coastline.ldb(kk,2) + (dist_ax.*cosd(coastline.offshore_orientation(kk)));
     
+    % Lets filter the contour lines:
+    
+    % First step (50 times dx to speed stuff up)
+    
+    c_ini_ori_filter_1 = []; c_ini_ori_filter_2 = [];
+    c_end_ori_filter_1 = []; c_end_ori_filter_2 = [];
+    
+    first_step_factor = 50;
+    
+    for ii = 1:first_step_factor:length(dist_ax)
+        
+        c_ini_ori_filter_1 = [c_ini_ori_filter_1; find(sqrt(((c_ini_ori{1}(:,1) - dist_x(ii)).^2) + ((c_ini_ori{1}(:,2) - dist_y(ii)).^2)) <= (dist_dx .* first_step_factor))];
+        c_ini_ori_filter_2 = [c_ini_ori_filter_2; find(sqrt(((c_ini_ori{2}(:,1) - dist_x(ii)).^2) + ((c_ini_ori{2}(:,2) - dist_y(ii)).^2)) <= (dist_dx .* first_step_factor))];
+        
+        c_end_ori_filter_1 = [c_end_ori_filter_1; find(sqrt(((c_end_ori{1}(:,1) - dist_x(ii)).^2) + ((c_end_ori{1}(:,2) - dist_y(ii)).^2)) <= (dist_dx .* first_step_factor))];
+        c_end_ori_filter_2 = [c_end_ori_filter_2; find(sqrt(((c_end_ori{2}(:,1) - dist_x(ii)).^2) + ((c_end_ori{2}(:,2) - dist_y(ii)).^2)) <= (dist_dx .* first_step_factor))];
+    end
+    
+    c_ini_ori_filter_1 = sort(unique(c_ini_ori_filter_1));
+    c_ini_ori_filter_2 = sort(unique(c_ini_ori_filter_2));
+    c_end_ori_filter_1 = sort(unique(c_end_ori_filter_1));
+    c_end_ori_filter_2 = sort(unique(c_end_ori_filter_2));
+    
+    c_ini_1st{1} = c_ini_ori{1}(c_ini_ori_filter_1,:);
+    c_ini_1st{2} = c_ini_ori{2}(c_ini_ori_filter_2,:);
+    c_end_1st{1} = c_end_ori{1}(c_end_ori_filter_1,:);
+    c_end_1st{2} = c_end_ori{2}(c_end_ori_filter_2,:);
+    
+    % Second step (full dx resolution)
+    
+    c_ini_ori_filter_1 = []; c_ini_ori_filter_2 = [];
+    c_end_ori_filter_1 = []; c_end_ori_filter_2 = [];
+    
+    for ii = 1:length(dist_ax)
+        
+        c_ini_ori_filter_1 = [c_ini_ori_filter_1; find(sqrt(((c_ini_1st{1}(:,1) - dist_x(ii)).^2) + ((c_ini_1st{1}(:,2) - dist_y(ii)).^2)) <= dist_dx)];
+        c_ini_ori_filter_2 = [c_ini_ori_filter_2; find(sqrt(((c_ini_1st{2}(:,1) - dist_x(ii)).^2) + ((c_ini_1st{2}(:,2) - dist_y(ii)).^2)) <= dist_dx)];
+        
+        c_end_ori_filter_1 = [c_end_ori_filter_1; find(sqrt(((c_end_1st{1}(:,1) - dist_x(ii)).^2) + ((c_end_1st{1}(:,2) - dist_y(ii)).^2)) <= dist_dx)];
+        c_end_ori_filter_2 = [c_end_ori_filter_2; find(sqrt(((c_end_1st{2}(:,1) - dist_x(ii)).^2) + ((c_end_1st{2}(:,2) - dist_y(ii)).^2)) <= dist_dx)];
+    end
+    
+    c_ini_ori_filter_1 = sort(unique(c_ini_ori_filter_1));
+    c_ini_ori_filter_2 = sort(unique(c_ini_ori_filter_2));
+    c_end_ori_filter_1 = sort(unique(c_end_ori_filter_1));
+    c_end_ori_filter_2 = sort(unique(c_end_ori_filter_2));
+    
+    c_ini_used{1} = c_ini_1st{1}(c_ini_ori_filter_1,:);
+    c_ini_used{2} = c_ini_1st{2}(c_ini_ori_filter_2,:);
+    c_end_used{1} = c_end_1st{1}(c_end_ori_filter_1,:);
+    c_end_used{2} = c_end_1st{2}(c_end_ori_filter_2,:);
+    
+    % Below a figure if you wish to check the filtering:
+    
+%     figure;
+%     plot(dist_x,dist_y,'k.-')
+%     hold on; grid on; box on; axis equal;
+%     plot(c_ini_ori{1}(:,1),c_ini_ori{1}(:,2),'c.-');
+%     plot(c_ini_ori{2}(:,1),c_ini_ori{2}(:,2),'c.-');
+%     plot(c_end_ori{1}(:,1),c_end_ori{1}(:,2),'y.-');
+%     plot(c_end_ori{2}(:,1),c_end_ori{2}(:,2),'y.-');
+%     
+%     plot(c_ini_1st{1}(:,1),c_ini_1st{1}(:,2),'b.-');
+%     plot(c_ini_1st{2}(:,1),c_ini_1st{2}(:,2),'b.-');
+%     plot(c_end_1st{1}(:,1),c_end_1st{1}(:,2),'g.-');
+%     plot(c_end_1st{2}(:,1),c_end_1st{2}(:,2),'g.-');
+%     
+%     plot(c_ini_used{1}(:,1),c_ini_used{1}(:,2),'k.-');
+%     plot(c_ini_used{2}(:,1),c_ini_used{2}(:,2),'k.-');
+%     plot(c_end_used{1}(:,1),c_end_used{1}(:,2),'k.-');
+%     plot(c_end_used{2}(:,1),c_end_used{2}(:,2),'k.-');
+    
     % Determine ini coastline:
     c_ini_inds = []; c_ini_dists = []; c_ini_x = []; c_ini_y = [];
     for c_ind = 1:2
         
-        smaller  = 1; ind = ((length(dist_ax)+1)/2); addition = 1;
-        old_dist = min(sqrt(((c_ini_ori{c_ind}(:,1) - dist_x(ind)).^2)+((c_ini_ori{c_ind}(:,2) - dist_y(ind)).^2)));
-        ind      = ind + addition;
-        new_dist = min(sqrt(((c_ini_ori{c_ind}(:,1) - dist_x(ind)).^2)+((c_ini_ori{c_ind}(:,2) - dist_y(ind)).^2)));
-        if new_dist > old_dist
-            addition = -1;
-        end
-        while smaller == 1
-            old_dist = new_dist;
-            ind      = ind + addition;
-            new_dist = min(sqrt(((c_ini_ori{c_ind}(:,1) - dist_x(ind)).^2)+((c_ini_ori{c_ind}(:,2) - dist_y(ind)).^2)));
-            if new_dist>old_dist
-                ind = ind - addition;
-                smaller = 0;
-            end
-        end
-
-        if old_dist < dist_dx
-            c_ini_inds(1,c_ind)  = ind;
-            if diff(c_ini_inds) == 0
-                c_ini_inds(1) = c_ini_inds(1) - 1;
-                c_ini_inds(2) = c_ini_inds(2) + 1;
-            elseif diff(c_ini_inds) < 0
-                error('Contact developer with error code 3458734598');
-            end
-            c_ini_dists(1,c_ind) = dist_ax(ind);
-            c_ini_x(1,c_ind)     = dist_x(ind);
-            c_ini_y(1,c_ind)     = dist_y(ind);
-        else
+        if isempty(c_ini_used{c_ind})
+            
             c_ini_dists(1,c_ind) = NaN;
             c_ini_x(1,c_ind)     = NaN;
             c_ini_y(1,c_ind)     = NaN;
+            
+        else
+
+            smaller  = 1; ind = ((length(dist_ax)+1)/2); addition = 1;
+            old_dist = min(sqrt(((c_ini_used{c_ind}(:,1) - dist_x(ind)).^2)+((c_ini_used{c_ind}(:,2) - dist_y(ind)).^2)));
+            ind      = ind + addition;
+            new_dist = min(sqrt(((c_ini_used{c_ind}(:,1) - dist_x(ind)).^2)+((c_ini_used{c_ind}(:,2) - dist_y(ind)).^2)));
+            if new_dist > old_dist
+                addition = -1;
+            end
+            while smaller == 1
+                old_dist = new_dist;
+                ind      = ind + addition;
+                new_dist = min(sqrt(((c_ini_used{c_ind}(:,1) - dist_x(ind)).^2)+((c_ini_used{c_ind}(:,2) - dist_y(ind)).^2)));
+                if new_dist>old_dist
+                    ind = ind - addition;
+                    smaller = 0;
+                end
+            end
+
+            if old_dist < dist_dx
+                c_ini_inds(1,c_ind)  = ind;
+                if diff(c_ini_inds) == 0
+                    c_ini_inds(1) = c_ini_inds(1) - 1;
+                    c_ini_inds(2) = c_ini_inds(2) + 1;
+                elseif diff(c_ini_inds) < 0
+                    error('Contact developer with error code 3458734598');
+                end
+                c_ini_dists(1,c_ind) = dist_ax(ind);
+                c_ini_x(1,c_ind)     = dist_x(ind);
+                c_ini_y(1,c_ind)     = dist_y(ind);
+            else
+                c_ini_dists(1,c_ind) = NaN;
+                c_ini_x(1,c_ind)     = NaN;
+                c_ini_y(1,c_ind)     = NaN;
+            end
         end
     end
     
@@ -105,38 +186,44 @@ for kk=find(isnan(coastline.offshore_orientation)==0)'
     c_end_inds = []; c_end_dists = []; c_end_x = []; c_end_y = [];
     for c_ind = 1:2
         
-        smaller  = 1; ind = ((length(dist_ax)+1)/2); addition = 1;
-        old_dist = min(sqrt(((c_end_ori{c_ind}(:,1) - dist_x(ind)).^2)+((c_end_ori{c_ind}(:,2) - dist_y(ind)).^2)));
-        ind      = ind + addition;
-        new_dist = min(sqrt(((c_end_ori{c_ind}(:,1) - dist_x(ind)).^2)+((c_end_ori{c_ind}(:,2) - dist_y(ind)).^2)));
-        if new_dist > old_dist
-            addition = -1;
-        end
-        while smaller == 1
-            old_dist = new_dist;
-            ind      = ind + addition;
-            new_dist = min(sqrt(((c_end_ori{c_ind}(:,1) - dist_x(ind)).^2)+((c_end_ori{c_ind}(:,2) - dist_y(ind)).^2)));
-            if new_dist>old_dist
-                ind = ind - addition;
-                smaller = 0;
-            end
-        end
-        
-        if old_dist < dist_dx
-            c_end_inds(1,c_ind)  = ind;
-            if diff(c_end_inds) == 0
-                c_end_inds(1) = c_end_inds(1) - 1;
-                c_end_inds(2) = c_end_inds(2) + 1;
-            elseif diff(c_end_inds) < 0
-                error('Contact developer with error code 3458734598');
-            end
-            c_end_dists(1,c_ind) = dist_ax(ind);
-            c_end_x(1,c_ind)     = dist_x(ind);
-            c_end_y(1,c_ind)     = dist_y(ind);
-        else
+        if isempty(c_end_used{c_ind})
             c_end_dists(1,c_ind) = NaN;
             c_end_x(1,c_ind)     = NaN;
             c_end_y(1,c_ind)     = NaN;
+        else
+            smaller  = 1; ind = ((length(dist_ax)+1)/2); addition = 1;
+            old_dist = min(sqrt(((c_end_used{c_ind}(:,1) - dist_x(ind)).^2)+((c_end_used{c_ind}(:,2) - dist_y(ind)).^2)));
+            ind      = ind + addition;
+            new_dist = min(sqrt(((c_end_used{c_ind}(:,1) - dist_x(ind)).^2)+((c_end_used{c_ind}(:,2) - dist_y(ind)).^2)));
+            if new_dist > old_dist
+                addition = -1;
+            end
+            while smaller == 1
+                old_dist = new_dist;
+                ind      = ind + addition;
+                new_dist = min(sqrt(((c_end_used{c_ind}(:,1) - dist_x(ind)).^2)+((c_end_used{c_ind}(:,2) - dist_y(ind)).^2)));
+                if new_dist>old_dist
+                    ind = ind - addition;
+                    smaller = 0;
+                end
+            end
+
+            if old_dist < dist_dx
+                c_end_inds(1,c_ind)  = ind;
+                if diff(c_end_inds) == 0
+                    c_end_inds(1) = c_end_inds(1) - 1;
+                    c_end_inds(2) = c_end_inds(2) + 1;
+                elseif diff(c_end_inds) < 0
+                    error('Contact developer with error code 3458734598');
+                end
+                c_end_dists(1,c_ind) = dist_ax(ind);
+                c_end_x(1,c_ind)     = dist_x(ind);
+                c_end_y(1,c_ind)     = dist_y(ind);
+            else
+                c_end_dists(1,c_ind) = NaN;
+                c_end_x(1,c_ind)     = NaN;
+                c_end_y(1,c_ind)     = NaN;
+            end
         end
     end
     
