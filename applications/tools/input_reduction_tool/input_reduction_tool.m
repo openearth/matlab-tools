@@ -128,6 +128,11 @@ end
 
 % It is only possible to open 1 instance of the tool, will be changed in the future: 
 if ishandle(findobj('Tag','IRT','type','figure'))
+    % Run a sub-function call in an existing IRT if this is requested
+    if isa(varargin{1},'function_handle')
+        feval(varargin{:});
+        return
+    end
     close(findobj('Tag','IRT','type','figure'));
 end
 data.handles.fig = figure('MenuBar','none','Name','Input reduction toolbox','NumberTitle','off','Position',[screen_size(3)./2-data.sizes.fig_size(1)./2 min(screen_size(4)-data.sizes.fig_size(2)-28 , 48 + (screen_size(4)-48-28)./2 - data.sizes.fig_size(2)./2) data.sizes.fig_size],'Resize','off','Tag','IRT','ToolBar','none');
