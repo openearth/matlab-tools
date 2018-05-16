@@ -56,16 +56,20 @@ end
 d3d_varargin = '';
 if sum(strcmp(fieldnames(data),'set_model_vert_level')) ~= 0
     if isnumeric(data.set_model_vert_level)
-        try
-            if  size(data.set_model_vert_level,1) == 1 && size(data.set_model_vert_level,2) == 1
-                d3d_varargin = [d3d_varargin ',''z_level'',' num2str(data.set_model_vert_level)];
-                disp(['   Using vertical level: ' num2str(data.set_model_vert_level) ' as the coastline in the Delft3D model']);
-            else
-                d3d_varargin = [d3d_varargin ',''z_level'',[' num2str(min(data.set_model_vert_level(:))) ' ' num2str(max(data.set_model_vert_level(:))) ']'];
-                disp(['   Using vertical levels: [' num2str(min(data.set_model_vert_level(:))) ' ' num2str(max(data.set_model_vert_level(:))) '] to define the coastline in the Delft3D model using an MKL approach']);
-            end
-        catch
+        if isempty(data.set_model_vert_level)
             disp(['   ERROR: Unknown input for data.set_model_vert_level, ignoring and using default coastline vertical level = 0'])
+        else
+            try
+                if  size(data.set_model_vert_level,1) == 1 && size(data.set_model_vert_level,2) == 1
+                    d3d_varargin = [d3d_varargin ',''z_level'',' num2str(data.set_model_vert_level)];
+                    disp(['   Using vertical level: ' num2str(data.set_model_vert_level) ' as the coastline in the Delft3D model']);
+                else
+                    d3d_varargin = [d3d_varargin ',''z_level'',[' num2str(min(data.set_model_vert_level(:))) ' ' num2str(max(data.set_model_vert_level(:))) ']'];
+                    disp(['   Using vertical levels: [' num2str(min(data.set_model_vert_level(:))) ' ' num2str(max(data.set_model_vert_level(:))) '] to define the coastline in the Delft3D model using an MKL approach']);
+                end
+            catch
+                disp(['   ERROR: Unknown input for data.set_model_vert_level, ignoring and using default coastline vertical level = 0'])
+            end
         end
     else
         disp(['   ERROR: Unknown input for data.set_model_vert_level, ignoring and using default coastline vertical level = 0'])
