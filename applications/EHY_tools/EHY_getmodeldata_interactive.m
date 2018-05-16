@@ -63,10 +63,12 @@ end
 % t0 and tend
 if exist('mdFile','var')
     [refdate,~,~,~,hisstart,hisstop]=getTimeInfoFromMdFile(mdFile);
+    hisstartStr=datestr(refdate+hisstart/1440);
+    hisstopStr=datestr(refdate+hisstop/1440); 
     option=inputdlg({['Want to specifiy a certain output period? (Default: all data)' char(10) char(10) 'Start date [dd-mmm-yyyy HH:MM]'],'End date   [dd-mmm-yyyy HH:MM]'},'Specify output period',1,...
-        {datestr(refdate+hisstart/1440),datestr(refdate+hisstop/1440)});
+        {hisstartStr,hisstopStr});
     if ~isempty(option)
-        if ~strcmp(t0,option{1}) || ~strcmp(tend,option{2})
+        if ~strcmp(hisstartStr,option{1}) || ~strcmp(hisstopStr,option{2})
             OPT.t0 = option{1};
             OPT.tend = option{2};
         end
