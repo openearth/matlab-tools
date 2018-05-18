@@ -37,25 +37,92 @@ function measDist
 
 %% Code
 % pick some boundaries
+
+[but,fig]=gcbo;
+
 uo = []; vo = []; button = [];
 
-[uo,vo,lfrt] = ginput(1);
-button = lfrt;
-hold on; hp = plot(uo,vo,'r+-');
+curAx=findall(0,'tag','LT_plotWindow');
 
-while lfrt == 1&length(uo)<2
-    [u,v,lfrt] = ginput(1);
-    uo=[uo;u]; vo=[vo;v]; button=[button;lfrt];      
-    delete(hp);
-    hp = plot(uo,vo,'r+-','linewidth',2);
+set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions: Click first point on the map, right click to cancel');
+
+set(fig,'Pointer','crosshair');
+waitforbuttonpress;
+action = guidata(curAx); guidata(curAx,[]);
+if isempty(action)
+    if ~isempty(get(fig,'ResizeFcn'));
+        % This only exists in the old version, lets continue:
+        if strcmp(get(fig,'SelectionType'),'normal')
+            pt = get(curAx,'CurrentPoint');
+            action.Button = 1;
+            action.IntersectionPoint(1) = pt(1,1);
+            action.IntersectionPoint(2) = pt(1,2);
+        else
+            set(fig,'Pointer','arrow');
+            set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+            return
+        end
+    else
+        set(fig,'Pointer','arrow');
+        set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+        return
+    end
+end
+if ~isempty(action)
+    b  = action.Button;
+    uo = action.IntersectionPoint(1);
+    vo = action.IntersectionPoint(2);
+    if b~=3
+        hold on; hp(1) = plot(uo,vo,'r+-');
+    else
+        set(fig,'Pointer','arrow');
+        set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+        return
+    end
 end
 
-% Bail out at ESCAPE = ascii character 27
-if lfrt == 27
-    delete(hp)
-    return
+set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions: Click second point on the map, right click to cancel');
+
+waitforbuttonpress;
+action = guidata(curAx); guidata(curAx,[]);
+if isempty(action)
+    if ~isempty(get(fig,'ResizeFcn'));
+        % This only exists in the old version, lets continue:
+        if strcmp(get(fig,'SelectionType'),'normal')
+            pt = get(curAx,'CurrentPoint');
+            action.Button = 1;
+            action.IntersectionPoint(1) = pt(1,1);
+            action.IntersectionPoint(2) = pt(1,2);
+        else
+            set(fig,'Pointer','arrow');
+            set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+            delete(hp);
+            return
+        end
+    else
+        sset(fig,'Pointer','arrow');
+        set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+        delete(hp);
+        return
+    end
+end
+if ~isempty(action)
+    b      = action.Button;
+    un = action.IntersectionPoint(1);
+    vn = action.IntersectionPoint(2);
+    if b~=3
+        hold on; hp(2) = plot(un,vn,'r+-');
+    else
+        set(fig,'Pointer','arrow');
+        set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+        delete(hp);
+        return
+    end
 end
 
-uiwait(msgbox(['Distance is ' num2str(sqrt(diff(uo)^2+diff(vo)^2),'%12.3f')]));
+set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+set(fig,'Pointer','arrow');
+
+uiwait(msgbox(['Distance is ' num2str(sqrt(diff([uo un])^2+diff([vo vn])^2),'%12.3f')]));
 
 delete(hp);

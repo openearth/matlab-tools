@@ -37,6 +37,11 @@ function LTPE_cutPoint(fig)
 % your own tools.
 
 %% Code
+
+[but,fig]=gcbo;
+
+curAx=findobj(fig,'tag','LT_plotWindow');
+
 set(findobj(fig,'tag','LT_zoomBut'),'String','Zoom is off','value',0);
 zoom off
 set(gcf,'pointer','arrow');
@@ -50,8 +55,37 @@ ldbBegin=data(5).ldbBegin;
 
 set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions: left click existing ldb-point to make cut, right click to cancel');
 
-[xClick, yClick, b]=ginput(1);
+set(fig,'Pointer','crosshair');
+waitforbuttonpress;
+action = guidata(curAx); guidata(curAx,[]);
+if isempty(action)
+    if ~isempty(get(fig,'ResizeFcn'));
+        % This only exists in the old version, lets continue:
+        if strcmp(get(fig,'SelectionType'),'normal')
+            pt = get(curAx,'CurrentPoint');
+            action.Button = 1;
+            action.IntersectionPoint(1) = pt(1,1);
+            action.IntersectionPoint(2) = pt(1,2);
+        else
+            set(fig,'Pointer','arrow');
+            set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+            return
+        end
+    else
+        set(fig,'Pointer','arrow');
+        set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+        return
+    end
+end
+if ~isempty(action)
+    b      = action.Button;
+    xClick = action.IntersectionPoint(1);
+    yClick = action.IntersectionPoint(2);
+    new_pt_length = (size(ldb,1)-1) - max(find(isnan(ldb(1:end-1,1))));
+end
+
 if b==3
+    set(fig,'Pointer','arrow');
     set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
     return
 end
@@ -65,22 +99,38 @@ while whileLoop==0
     tempId=find(nanId>id);
     tempId=tempId(1);
     if isempty(find(abs(nanId-id)==1)) %check of het geen eind of begin punten van segmenten zijn
-        ldbCell{tempId-1}=ldb(nanId(tempId-1)+1:id,1:2);
-        ldbBegin(tempId-1,:)=ldbCell{tempId-1}(1,:);
-        ldbEnd(tempId-1,:)=ldbCell{tempId-1}(end,:);
-        ldbCell{end+1}=ldb(id+1:nanId(tempId)-1,:);
-        ldbBegin(end+1,:)=ldbCell{end}(1,:);
-        ldbEnd(end+1,:)=ldbCell{end}(end,:);
-        ldb=[ldb(1:id,1:2) ; ldb(nanId(tempId):end,1:2); ldb(id+1:nanId(tempId)-1,1:2) ; nan nan];    
-        whileLoop=1;
-    elseif sortDist(1)==sortDist(2); %anders kijken of er een identiek punt onder ligt en het daarmee proberen
+        
+        if find(sortId == id-1) < find(sortId == id+1)
+            ldbCell{tempId-1}=ldb(nanId(tempId-1)+1:id-1,1:2);
+            ldbBegin(tempId-1,:)=ldbCell{tempId-1}(1,:);
+            ldbEnd(tempId-1,:)=ldbCell{tempId-1}(end,:);
+            ldbCell{end+1}=ldb(id:nanId(tempId)-1,:);
+            ldbBegin(end+1,:)=ldbCell{end}(1,:);
+            ldbEnd(end+1,:)=ldbCell{end}(end,:);
+            ldb=[ldb(1:id-1,1:2) ; ldb(nanId(tempId):end,1:2); ldb(id:nanId(tempId)-1,1:2) ; nan nan];    
+            whileLoop=1;
+        else
+            ldbCell{tempId-1}=ldb(nanId(tempId-1)+1:id,1:2);
+            ldbBegin(tempId-1,:)=ldbCell{tempId-1}(1,:);
+            ldbEnd(tempId-1,:)=ldbCell{tempId-1}(end,:);
+            ldbCell{end+1}=ldb(id+1:nanId(tempId)-1,:);
+            ldbBegin(end+1,:)=ldbCell{end}(1,:);
+            ldbEnd(end+1,:)=ldbCell{end}(end,:);
+            ldb=[ldb(1:id,1:2) ; ldb(nanId(tempId):end,1:2); ldb(id+1:nanId(tempId)-1,1:2) ; nan nan];    
+            whileLoop=1;
+        end
+    elseif sortDist(iid)==sortDist(iid+1); %anders kijken of er een identiek punt onder ligt en het daarmee proberen
         iid=iid+1;
     else
         whileLoop=1;
+        set(fig,'Pointer','arrow');
+        set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
         warndlg('You cannot cut a start or end point of a segment','ldbTool');
         return
     end
 end
+
+set(fig,'Pointer','arrow');
 
 LT_updateData(ldb,ldbCell,ldbBegin,ldbEnd);
 set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');

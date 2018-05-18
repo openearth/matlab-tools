@@ -21,6 +21,17 @@ function ldbTool
 
 %% Copyright notice
 %   --------------------------------------------------------------------
+%   Copyright (C) 2017-2018 Deltares
+%       Freek Scheel
+%
+%       Freek.Scheel@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%
+%
 %   Copyright (C) 2010 Deltares
 %       Arjan Mol
 %
@@ -62,15 +73,36 @@ function ldbTool
 % $Keywords: $
 
 %% Code
-basePath=strrep(which('ldbTool.m'),'ldbTool.m','');
 
+basePath=strrep(which('ldbTool.m'),[filesep 'ldbTool.m'],'');
+
+% Paths:
 if ~isdeployed
-    addpath(basePath);
-    addpath([basePath 'LT_gui']);
-    addpath([basePath 'LT_engines']);
+    pathCell = regexp(path, pathsep, 'split');
+    if ispc  % Windows is not case-sensitive:
+        if ~any(strcmpi(basePath, pathCell))
+            addpath(basePath);
+        end
+        if ~any(strcmpi([basePath 'LT_gui'], pathCell))
+            addpath([basePath 'LT_gui']);
+        end
+        if ~any(strcmpi([basePath 'LT_engines'], pathCell))
+            addpath([basePath 'LT_engines']);
+        end
+    else
+        if ~any(strcmp(basePath, pathCell))
+            addpath(basePath);
+        end
+        if ~any(strcmp([basePath 'LT_gui'], pathCell))
+            addpath([basePath 'LT_gui']);
+        end
+        if ~any(strcmp([basePath 'LT_engines'], pathCell))
+            addpath([basePath 'LT_engines']);
+        end
+    end
 end
 
-fig=openfig('ldbTool.fig','reuse');
+fig=openfig('ldbTool.fig','reuse','invisible');
 set(findobj(fig,'tag','LT_openLdbBut'),'enable','on');
 set(findobj(fig,'tag','LT_saveMenu'),'enable','off');
 set(findobj(fig,'tag','LT_save2Menu'),'enable','off');
@@ -91,3 +123,15 @@ delete(findall(fig,'tag','Exploration.DataCursor'));
 delete(findall(fig,'tag','Exploration.Rotate'));
 delete(findall(fig,'tag','Standard.EditPlot'));
 set(findobj(fig,'tag','LT_layerPlotSettingsMenu'),'userdata',{'''k-'''});
+set(findobj(fig,'tag','LT_plotWindow'),'ButtonDownFcn',@LT_mouse_click);
+try; set(fig,'SizeChangedFcn',@LT_showAll); catch; set(fig,'ResizeFcn',@LT_showAll); end;
+set(findobj(fig,'tag','LT_plotWindow'),'visible','on');
+try; set(get(findobj(fig,'tag','LT_plotWindow'),'XAxis'),'Visible','off'); catch; set(findobj(fig,'tag','LT_plotWindow'),'XColor','w'); end;
+try; set(get(findobj(fig,'tag','LT_plotWindow'),'YAxis'),'Visible','off'); catch; set(findobj(fig,'tag','LT_plotWindow'),'YColor','w'); end;
+% set(findobj(fig,'tag','LT_plotWindow'),'XGrid','on');
+% set(findobj(fig,'tag','LT_plotWindow'),'YGrid','on');
+ss = get(0,'ScreenSize');
+set(fig,'visible','on');
+set(fig,'units','pixels','position',ss+[8 47 -16 -131]);
+LT_showAll(fig);
+set(findobj(fig,'tag','LT_plotWindow'),'xlim',get(findobj(fig,'tag','LT_plotWindow'),'xlim'),'YLim',get(findobj(fig,'tag','LT_plotWindow'),'ylim'));

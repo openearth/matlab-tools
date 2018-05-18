@@ -36,6 +36,10 @@ function LTPE_replacePoint(fig)
 % your own tools.
 
 %% Code
+
+[but,fig]=gcbo;
+curAx=findobj(fig,'tag','LT_plotWindow');
+
 set(findobj(fig,'tag','LT_zoomBut'),'String','Zoom is off','value',0);
 zoom off
 set(gcf,'pointer','arrow');
@@ -51,9 +55,39 @@ replacePoints=1;
 
 while replacePoints==1
     set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions: click existing ldb-point, right click to cancel');
-    [xClick, yClick,b]=ginput(1);
-    if b~=1
+    set(fig,'Pointer','crosshair');
+    waitforbuttonpress;
+    action = guidata(curAx); guidata(curAx,[]);
+    if isempty(action)
+        if ~isempty(get(fig,'ResizeFcn'));
+            % This only exists in the old version, lets continue:
+            if strcmp(get(fig,'SelectionType'),'normal')
+                pt = get(curAx,'CurrentPoint');
+                action.Button = 1;
+                action.IntersectionPoint(1) = pt(1,1);
+                action.IntersectionPoint(2) = pt(1,2);
+            else
+                replacePoints=0;
+                set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+                set(fig,'Pointer','arrow');
+                return
+            end
+        else
+            replacePoints=0;
+            set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+            set(fig,'Pointer','arrow');
+            return
+        end
+    end
+    if ~isempty(action)
+        b      = action.Button;
+        xClick = action.IntersectionPoint(1);
+        yClick = action.IntersectionPoint(2);
+    end
+    if b==3
+        replacePoints=0;
         set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+        set(fig,'Pointer','arrow');
         return
     end
     dist=sqrt((ldb(:,1)-xClick).^2+(ldb(:,2)-yClick).^2);
@@ -68,20 +102,38 @@ while replacePoints==1
     curMotionFcn='LT_winMoveFcn(gcbf);';
     set(fig,'WindowButtonMotionFcn',[curMotionFcn 'LTPE_replaceMotion(gcbf,' num2str(id) ');']);
     LT_updateData(ldb,ldbCell,ldbBegin,ldbEnd); % beginnen met een update, zodat undo-mogelijkheid behouden blijft
-    b=waitforbuttonpress;
+    waitforbuttonpress;
     %Switch of motion
     set(fig,'WindowButtonMotionFcn',curMotionFcn);
 
-    cPos=get(findobj(fig,'tag','LT_plotWindow'),'currentPoint');
-    xClick=cPos(1,1);
-    yClick=cPos(1,2);
-    b=1;
+    action = guidata(curAx); guidata(curAx,[]);
+    if isempty(action)
+        if ~isempty(get(fig,'ResizeFcn'));
+            % This only exists in the old version, lets continue:
+            if strcmp(get(fig,'SelectionType'),'normal')
+                pt = get(curAx,'CurrentPoint');
+                action.Button = 1;
+                action.IntersectionPoint(1) = pt(1,1);
+                action.IntersectionPoint(2) = pt(1,2);
+            elseif strcmp(get(fig,'SelectionType'),'alt')
+                b      = 3;
+                xClick = NaN;
+                yClick = NaN;
+            end
+        else
+            replacePoints=0;
+            set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+            set(fig,'Pointer','arrow');
+            return
+        end
+    end
+    if ~isempty(action)
+        b      = action.Button;
+        xClick = action.IntersectionPoint(1);
+        yClick = action.IntersectionPoint(2);
+    end
 
-    %     [xClick, yClick, b]=ginput(1);
-    %     if b==3
-    %         replacePoints=0
-    %     end
-    if b==1
+    if b~=3
         ldb(id,:)=[xClick yClick];
         tempId=find(nanId>id);
         tempId=tempId(1);
@@ -90,6 +142,11 @@ while replacePoints==1
         ldbEnd(tempId-1,:)=ldbCell{tempId-1}(end,:);
         LT_updateData(ldb,ldbCell,ldbBegin,ldbEnd,'noUndo');
         nanId=find(isnan(ldb(:,1)));
+    else
+        LT_undoLdb;
     end
 end
+
+replacePoints=0;
 set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+set(fig,'Pointer','arrow');

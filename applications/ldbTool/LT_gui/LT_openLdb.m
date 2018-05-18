@@ -55,4 +55,6 @@ LT_plotLdb;
 
 axes(findobj(fig,'tag','LT_plotWindow'));
 set(gca,'DataAspectRatioMode','manual','DataAspectRatio',[1 1 1]);
+
 axis fill;
+LT_showAll;

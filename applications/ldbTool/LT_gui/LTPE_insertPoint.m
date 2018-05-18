@@ -36,6 +36,8 @@ function LTPE_insertPoint(fig)
 % your own tools.
 
 %% Code
+[but,fig]=gcbo;
+curAx=findobj(fig,'tag','LT_plotWindow');
 set(findobj(fig,'tag','LT_zoomBut'),'String','Zoom is off','value',0);
 zoom off
 set(gcf,'pointer','arrow');
@@ -49,14 +51,51 @@ ldbBegin=data(5).ldbBegin;
 
 set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions: click existing ldb-point');
 
-[xClick, yClick,b]=ginput(1);
+set(fig,'Pointer','crosshair');
+waitforbuttonpress;
+action = guidata(curAx); guidata(curAx,[]);
+if isempty(action)
+    if ~isempty(get(fig,'ResizeFcn'));
+        % This only exists in the old version, lets continue:
+        if strcmp(get(fig,'SelectionType'),'normal')
+            pt = get(curAx,'CurrentPoint');
+            action.Button = 1;
+            action.IntersectionPoint(1) = pt(1,1);
+            action.IntersectionPoint(2) = pt(1,2);
+        else
+            insertPoints=0;
+            set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+            set(fig,'Pointer','arrow');
+            return
+        end
+    else
+        insertPoints=0;
+        set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+        set(fig,'Pointer','arrow');
+        return
+    end
+end
+if ~isempty(action)
+    b      = action.Button;
+    xClick = action.IntersectionPoint(1);
+    yClick = action.IntersectionPoint(2);
+end
 if b==3
+    insertPoints=0;
     set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+    set(fig,'Pointer','arrow');
     return
 end
 
 dist=sqrt((ldb(:,1)-xClick).^2+(ldb(:,2)-yClick).^2);
-[dum, id]=min(dist);
+[sortDist, sortId]=sort(dist);
+id = sortId(1);
+
+if ~isnan(dist(id-1)) && ~isnan(dist(id+1))
+    if find(sortId == id-1) < find(sortId == id+1)
+        id = id - 1;
+    end
+end
 
 clear xClick
 clear yClick
@@ -64,18 +103,43 @@ insertPoints=1;
 set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions: click location of new points, right click when done');
 
 while insertPoints==1
-    [xClick, yClick,b]=ginput(1);
-
+    set(fig,'Pointer','crosshair');
+    waitforbuttonpress;
+    action = guidata(curAx); guidata(curAx,[]);
+    if isempty(action)
+        if ~isempty(get(fig,'ResizeFcn'));
+            % This only exists in the old version, lets continue:
+            if strcmp(get(fig,'SelectionType'),'normal')
+                pt = get(curAx,'CurrentPoint');
+                action.Button = 1;
+                action.IntersectionPoint(1) = pt(1,1);
+                action.IntersectionPoint(2) = pt(1,2);
+            else
+                insertPoints=0;
+                set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+                set(fig,'Pointer','arrow');
+                return
+            end
+        else
+            insertPoints=0;
+            set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+            set(fig,'Pointer','arrow');
+            return
+        end
+    end
+    if ~isempty(action)
+        b      = action.Button;
+        xClick = action.IntersectionPoint(1);
+        yClick = action.IntersectionPoint(2);
+    end
     if b==3
         insertPoints=0;
+        set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+        set(fig,'Pointer','arrow');
+        return
     end
 
-
-    if b==27 %Undo on Esc
-        LT_undoLdb;
-    end
-
-    if b==1
+    if b~=3
         if id<size(ldb,1)
             tempId=find(nanId>id);
             tempId=tempId(1);
@@ -91,4 +155,6 @@ while insertPoints==1
 
 end
 
+insertPoints=0;
 set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+set(fig,'Pointer','arrow');

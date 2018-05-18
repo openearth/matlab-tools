@@ -54,4 +54,3 @@ ldb=[ldb; addLdb];
 [ldbCell, ldbBegin, ldbEnd, ldb]=disassembleLdb(ldb);
 
 LT_updateData(ldb,ldbCell,ldbBegin,ldbEnd);
-LT_showAll;

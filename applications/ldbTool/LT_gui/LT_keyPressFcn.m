@@ -38,6 +38,10 @@ function LT_keyPressFcn(fig)
 %% Code
 curC=get(fig,'currentCharacter');
 
+if double(get(fig,'currentCharacter')) == 27
+    LT_undoLdb;
+end
+
 switch curC
     
     case 'z'

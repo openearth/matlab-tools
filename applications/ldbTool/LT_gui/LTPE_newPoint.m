@@ -37,11 +37,14 @@ function LTPE_newPoint
 % your own tools.
 
 %% Code
+
 [but,fig]=gcbo;
+
+curAx=findobj(fig,'tag','LT_plotWindow');
 
 set(findobj(fig,'tag','LT_zoomBut'),'String','Zoom is off','value',0);
 zoom off
-set(gcf,'pointer','arrow');
+set(fig,'pointer','arrow');
 
 data=LT_getData;
 ldb=data(5).ldb;
@@ -60,18 +63,62 @@ set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions: click location of n
 
 tempId=length(ldbCell)+1;
 while insertPoints==1
-    [xClick, yClick,b]=ginput(1);
-    if b~=3
-        ldb=[ldb(1:end-1,:) ; xClick yClick; nan nan];
-        nanId=find(isnan(ldb(:,1)));
-        ldbCell{tempId}=ldb(nanId(end-1)+1:nanId(end)-1,:);
-        ldbBegin(tempId,:)=ldbCell{tempId}(1,:);
-        ldbEnd(tempId,:)=ldbCell{tempId}(end,:);
-        LT_updateData(ldb,ldbCell,ldbBegin,ldbEnd);
-    else
-        insertPoints=0;
+    set(fig,'Pointer','crosshair');
+    waitforbuttonpress;
+    action = guidata(curAx); guidata(curAx,[]);
+    if isempty(action)
+        % Possibly, this is an old Matlab version, check this:
+        if ~isempty(get(fig,'ResizeFcn'));
+            % This only exists in the old version, lets continue:
+            if strcmp(get(fig,'SelectionType'),'extend')
+                action.Button = 1;
+                if new_pt_length > 2
+                    b = 2;
+                    action.Button = 2;
+                end
+                pt = get(curAx,'CurrentPoint');
+                action.IntersectionPoint(1) = pt(1,1);
+                action.IntersectionPoint(2) = pt(1,2);
+            elseif strcmp(get(fig,'SelectionType'),'normal')
+                pt = get(curAx,'CurrentPoint');
+                action.Button = 1;
+                action.IntersectionPoint(1) = pt(1,1);
+                action.IntersectionPoint(2) = pt(1,2);
+            else
+                insertPoints=0;
+            end
+        else
+            insertPoints=0;
+        end
+    end
+    
+    if ~isempty(action)
+        b      = action.Button;
+        xClick = action.IntersectionPoint(1);
+        yClick = action.IntersectionPoint(2);
+        new_pt_length = (size(ldb,1)-1) - max(find(isnan(ldb(1:end-1,1))));
+        if b == 2 & new_pt_length > 2
+            insertPoints=0;
+            xClick = ldb(max(find(isnan(ldb(1:end-1,1))))+1,1);
+            yClick = ldb(max(find(isnan(ldb(1:end-1,1))))+1,2);
+        end
+        if b~=3
+            ldb=[ldb(1:end-1,:) ; xClick yClick; nan nan];
+            nanId=find(isnan(ldb(:,1)));
+            ldbCell{tempId}=ldb(nanId(end-1)+1:nanId(end)-1,:);
+            ldbBegin(tempId,:)=ldbCell{tempId}(1,:);
+            ldbEnd(tempId,:)=ldbCell{tempId}(end,:);
+            LT_updateData(ldb,ldbCell,ldbBegin,ldbEnd);
+        else
+            insertPoints=0;
+        end
+        if new_pt_length == 2 & insertPoints
+            set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions: click location of new points, middle mouse to close the ldb-section, right click when done');
+        end
     end
 end
+
+set(fig,'Pointer','arrow');
 
 set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
 set(findobj(fig,'tag','LT_saveMenu'),'enable','on');

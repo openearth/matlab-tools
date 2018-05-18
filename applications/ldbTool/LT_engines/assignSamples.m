@@ -48,27 +48,15 @@ function assignSamples(x,y,zValue,dist,fileName);
 % your own tools.
 
 %% Code
-xi=[x(1)];
-yi=[y(1)];
 
 distance=sqrt((x(2:end)-x(1:end-1)).^2+(y(2:end)-y(1:end-1)).^2);
-for ii=1:length(distance)
-    steps=distance(ii)/dist-1;
-    if round(steps)>=1
-        xi=[xi ; repmat(nan,round(steps),1)];
-        yi=[yi ; repmat(nan,round(steps),1)];
-    end
-    xi=[xi ; x(ii+1)];
-    yi=[yi ; y(ii+1)];
-end
 
-if ~isempty(which('inpaint_nans'))
-    xi=inpaint_nans(xi,2);
-    yi=inpaint_nans(yi,2);
+if max(distance) > dist
+    ldb_new = add_equidist_points(dist,[x,y]);
+    ldb_new = ldb_new(2:end-1,:);
 else
-    xi=inpaintn(xi);
-    yi=inpaintn(yi);
-end    
+    ldb_new = [x,y];
+end
 
 xyz=[];
 
@@ -76,6 +64,6 @@ try
     [xyz]=samples('read',fileName);
 end
 
-xyz=[xyz;[xi yi repmat(zValue,size(xi))]];
+xyz=[xyz;[ldb_new(:,1) ldb_new(:,2) repmat(zValue,size(ldb_new,1),1)]];
 
 samples('write',fileName,xyz);

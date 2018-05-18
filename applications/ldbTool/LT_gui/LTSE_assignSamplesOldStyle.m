@@ -40,6 +40,7 @@ function LTSE_assignSamplesOldStyle
 persistent sampleSpecs
 
 [but,fig]=gcbo;
+curAx=findobj(fig,'tag','LT_plotWindow');
 
 set(findobj(fig,'tag','LT_zoomBut'),'String','Zoom is off','value',0);
 zoom off
@@ -53,10 +54,36 @@ ldbBegin=data(5).ldbBegin;
 set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions: click near start or end point of segment to show, right click to cancel');
 
 
-[xClick, yClick,b]=ginput(1);
+set(fig,'Pointer','crosshair');
+waitforbuttonpress;
+action = guidata(curAx); guidata(curAx,[]);
+if isempty(action)
+    if ~isempty(get(fig,'ResizeFcn'));
+        % This only exists in the old version, lets continue:
+        if strcmp(get(fig,'SelectionType'),'normal')
+            pt = get(curAx,'CurrentPoint');
+            action.Button = 1;
+            action.IntersectionPoint(1) = pt(1,1);
+            action.IntersectionPoint(2) = pt(1,2);
+        else
+            set(fig,'Pointer','arrow');
+            set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+            return
+        end
+    else
+        set(fig,'Pointer','arrow');
+        set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+        return
+    end
+end
+if ~isempty(action)
+    b      = action.Button;
+    xClick = action.IntersectionPoint(1);
+    yClick = action.IntersectionPoint(2);
+end
 
 allhCp=[];
-while b==1
+while b~=3
     
     disStart=sqrt((xClick(1)-ldbBegin(:,1)).^2+(yClick(1)-ldbBegin(:,2)).^2);
     disEnd=sqrt((xClick(1)-ldbEnd(:,1)).^2+(yClick(1)-ldbEnd(:,2)).^2);
@@ -90,14 +117,46 @@ while b==1
     set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
     
     if isempty(sampleSpecs)
+        set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+        set(fig,'Pointer','arrow');
         delete(allhCp);
         return
     else
         assignSamples(ldbCell{id}(:,1),ldbCell{id}(:,2),str2num(sampleSpecs{1}),str2num(sampleSpecs{2}),'samplesFromLDBTool.xyz')
     end
     
-    [xClick, yClick,b]=ginput(1);
+    set(fig,'Pointer','crosshair');
+    waitforbuttonpress;
+    action = guidata(curAx); guidata(curAx,[]);
+    if isempty(action)
+        if ~isempty(get(fig,'ResizeFcn'));
+            % This only exists in the old version, lets continue:
+            if strcmp(get(fig,'SelectionType'),'normal')
+                pt = get(curAx,'CurrentPoint');
+                action.Button = 1;
+                action.IntersectionPoint(1) = pt(1,1);
+                action.IntersectionPoint(2) = pt(1,2);
+            else
+                set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+                set(fig,'Pointer','arrow');
+                delete(allhCp);
+                return
+            end
+        else
+            set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+            set(fig,'Pointer','arrow');
+            delete(allhCp);
+            return
+        end
+    end
+    if ~isempty(action)
+        b      = action.Button;
+        xClick = action.IntersectionPoint(1);
+        yClick = action.IntersectionPoint(2);
+    end
     
 end
 
+set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+set(fig,'Pointer','arrow');
 delete(allhCp);

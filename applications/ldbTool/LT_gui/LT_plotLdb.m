@@ -40,7 +40,6 @@ function LT_plotLdb
 
 set(findobj(fig,'tag','LT_zoomBut'),'String','Zoom is off','value',0);
 zoom off
-set(gcf,'pointer','arrow');
 
 % find previous plotHandles and delete all
 axes(findobj(fig,'tag','LT_plotWindow'));
@@ -110,8 +109,12 @@ else
 end
 
 if get(findobj(fig,'tag','LT_showPolygonBox'),'value')==1;
-    plotHandles{numOfLayers+4}=plot([data(1).ldb(:,1) ; data(1).ldb(:,1)],[data(1).ldb(:,2) ; data(1).ldb(:,2)]);
-    set(plotHandles{numOfLayers+4},'marker','.','linewidth',2,'color',[1 0 0.5]);
+    plotHandles{numOfLayers+4}=plot([data(1).ldb(:,1) ; data(1).ldb(1,1)],[data(1).ldb(:,2) ; data(1).ldb(1,2)]);
+    if length(data(1).ldb(:,1))>1
+        set(plotHandles{numOfLayers+4},'linewidth',2,'color',[1 0 0.5]);
+    else
+        set(plotHandles{numOfLayers+4},'linewidth',2,'marker','.','color',[1 0 0.5]);
+    end
 else
     plotHandles{numOfLayers+4}=[];
 end
@@ -120,6 +123,20 @@ if get(findobj(fig,'tag','LT_show_ldb_indices'),'Value')
     for ii=1:numOfLayers
         text_delta = max(1,10^(floor(log10(size(data(ii+1).ldb,1)))-2));
         plotHandles{numOfLayers+4+ii} = text(data(ii+1).ldb(2:text_delta:end,1),data(ii+1).ldb(2:text_delta:end,2),cellstr([repmat(' ',length([1:text_delta:size(data(ii+1).ldb,1)-1]),1) num2str([1:text_delta:size(data(ii+1).ldb,1)-1]')]));
+    end
+end
+
+for ii = 1:length(plotHandles)
+    if isempty(plotHandles{ii})
+        % Nothing to do here
+    else
+        for jj=1:length(plotHandles{ii})
+            if ishandle(plotHandles{ii}(jj))
+                set(plotHandles{ii}(jj),'ButtonDownFcn',@LT_mouse_click);
+            elseif ishandle(plotHandles{ii}{jj})
+                set(plotHandles{ii}{jj},'ButtonDownFcn',@LT_mouse_click);
+            end
+        end
     end
 end
 

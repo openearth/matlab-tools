@@ -41,8 +41,11 @@ function LT_showAxis
 axes(findobj(fig,'tag','LT_plotWindow'));
 
 if get(findobj(fig,'tag','LT_showAxis'),'value')==1;
-    axis on;
-    box on;
+    box on; grid on;
+    try; set(get(gca,'XAxis'),'Visible','on'); catch; set(findobj(fig,'tag','LT_plotWindow'),'XColor','k'); end;
+    try; set(get(gca,'YAxis'),'Visible','on'); catch; set(findobj(fig,'tag','LT_plotWindow'),'YColor','k'); end;
 else
-    axis off;
+    box off; grid off;
+    try; set(get(gca,'XAxis'),'Visible','off'); catch; set(findobj(fig,'tag','LT_plotWindow'),'XColor','w'); end;
+    try; set(get(gca,'YAxis'),'Visible','off'); catch; set(findobj(fig,'tag','LT_plotWindow'),'YColor','w'); end;
 end

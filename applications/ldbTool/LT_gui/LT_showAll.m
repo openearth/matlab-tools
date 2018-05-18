@@ -1,4 +1,4 @@
-function LT_showAll(fig)
+function LT_showAll(fig,varargin)
 %LT_SHOWALL ldbTool GUI function to change zoom level so that all objects
 %are shown
 %
@@ -60,11 +60,31 @@ if ~isempty(data3)&get(findobj(fig,'tag','LT_showGeoBox'),'value')==1
 end
 
 curAx=findobj(fig,'tag','LT_plotWindow');
-% pbar=get(gca,'PlotBoxAspectRatio');
-ax_unit_ori  = get(gca,'Units');
-set(gca,'Units','pixels');
-ax_pos  = get(gca,'OuterPosition');
-set(gca,'Units',ax_unit_ori);
+
+if ~isempty(varargin)
+    v=version;
+    if isempty(varargin{1}) & num2str(v(1,strfind(v,'(R')+[2:5]))<2015
+        xL = get(curAx,'XLim');
+        yL = get(curAx,'YLim');
+    elseif strcmp(varargin{1}.EventName,'SizeChanged')
+        % The user has changed the size of the window, let's use the old extent
+        xL = get(curAx,'XLim');
+        yL = get(curAx,'YLim');
+    end
+end
+
+if unique(isnan(xL))
+    xL = get(curAx,'XLim');
+end
+if unique(isnan(yL))
+    yL = get(curAx,'YLim');
+end
+
+% pbar=get(curAx,'PlotBoxAspectRatio');
+ax_unit_ori  = get(curAx,'Units');
+set(curAx,'Units','pixels');
+ax_pos  = get(curAx,'OuterPosition');
+set(curAx,'Units',ax_unit_ori);
 ratio_ax_pos = (diff(ax_pos([1 3]))./diff(ax_pos([2 4])));
 % ratio=pbar(1)/pbar(2);
 ratioXY=diff(xL)/diff(yL);
@@ -78,4 +98,4 @@ else
     set(curAx,'XLim',xL,'YLim',yL);
 end
 
-zoom reset;
+zoom(curAx,'reset');

@@ -85,7 +85,7 @@ for cc=1:length(ldbCell)
         
     end
     
-    outCell{cc}=[out; in(end,:)]
+    outCell{cc}=[out; in(end,:)];
     
 end
 

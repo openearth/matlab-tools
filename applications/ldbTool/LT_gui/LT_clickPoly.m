@@ -52,33 +52,87 @@ function LT_clickPoly
 % pick some boundaries
 uo = []; vo = []; button = [];
 
+curAx=findall(0,'tag','LT_plotWindow');
+
 set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions: use left mouse button to add points, right click when done');
 set(findobj(gcf,'tag','LT_showPolygonBox'),'value',1);
 
-[uo,vo,lfrt] = ginput(1);
-button = lfrt;
-hold on;
-data=get(fig,'userdata');
-data(1,5).ldb=[uo vo];
-set(fig,'userdata',data);
-LT_plotLdb;
-
-while lfrt == 1
-    [u,v,lfrt] = ginput(1);
-    if lfrt==1;
-        uo=[uo;u]; vo=[vo;v]; button=[button;lfrt];
+set(fig,'Pointer','crosshair');
+waitforbuttonpress;
+action = guidata(curAx); guidata(curAx,[]);
+if isempty(action)
+    % Possibly, this is an old Matlab version, check this:
+    if ~isempty(get(fig,'ResizeFcn'));
+        % This only exists in the old version, lets continue:
+        if strcmp(get(fig,'SelectionType'),'normal')
+            pt = get(curAx,'CurrentPoint');
+            action.Button = 1;
+            action.IntersectionPoint(1) = pt(1,1);
+            action.IntersectionPoint(2) = pt(1,2);
+        else
+            insertPoints=0;
+        end
+    else
+        set(fig,'Pointer','arrow');
+        set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+        return
     end
-    data=get(fig,'userdata');
-    data(1,5).ldb=[uo vo];
-    set(fig,'userdata',data);
-    LT_plotLdb;
+end
+if ~isempty(action)
+    b  = action.Button;
+    uo = action.IntersectionPoint(1);
+    vo = action.IntersectionPoint(2);
+    if b~=3
+        hold on;
+        data=get(fig,'userdata');
+        data(1,5).ldb=[uo vo];
+        set(fig,'userdata',data);
+        LT_plotLdb;
+    else
+        set(fig,'Pointer','arrow');
+        set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+        return
+    end
 end
 
-% Bail out at ESCAPE = ascii character 27
-if lfrt == 27
-    return
+insertPoints = 1;
+while insertPoints==1
+    waitforbuttonpress;
+    action = guidata(curAx); guidata(curAx,[]);
+    if isempty(action)
+        if ~isempty(get(fig,'ResizeFcn'));
+            % This only exists in the old version, lets continue:
+            if strcmp(get(fig,'SelectionType'),'normal')
+                pt = get(curAx,'CurrentPoint');
+                action.Button = 1;
+                action.IntersectionPoint(1) = pt(1,1);
+                action.IntersectionPoint(2) = pt(1,2);
+            else
+                insertPoints=0;
+            end
+        else
+            set(fig,'Pointer','arrow');
+            set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+            return
+        end
+    end
+    if ~isempty(action)
+        b = action.Button;
+        u = action.IntersectionPoint(1);
+        v = action.IntersectionPoint(2);
+        if b~=3
+            uo=[uo;u]; vo=[vo;v];
+            data=get(fig,'userdata');
+            data(1,5).ldb=[uo vo];
+            set(fig,'userdata',data);
+            LT_plotLdb;
+        else
+            insertPoints=0;
+        end
+    end
 end
 
-% set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions: ');
+set(fig,'Pointer','arrow');
 
+set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
 LTSE_selectSegmentsInPoly;

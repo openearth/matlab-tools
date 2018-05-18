@@ -53,7 +53,7 @@ data(5).ldb=[nan nan];
 data(5).ldbCell=[];
 data(5).ldbBegin=[];
 data(5).ldbEnd=[];
-data(5).oriLDB=[nan nan]
+data(5).oriLDB=[nan nan];
 
 LT_setData(data);
 % set(findobj(fig,'tag','LT_showGeoBox'),'userdata',[]);

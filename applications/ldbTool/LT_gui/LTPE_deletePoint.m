@@ -36,6 +36,9 @@ function LTPE_deletePoint(fig)
 % your own tools.
 
 %% Code
+[but,fig]=gcbo;
+
+curAx=findobj(fig,'tag','LT_plotWindow');
 set(findobj(fig,'tag','LT_zoomBut'),'String','Zoom is off','value',0);
 zoom off
 set(gcf,'pointer','arrow');
@@ -53,15 +56,40 @@ deletePoints=1;
 
 while deletePoints==1
 
-    [xClick, yClick,b]=ginput(1);
+    set(fig,'Pointer','crosshair');
+    waitforbuttonpress;
+    action = guidata(curAx); guidata(curAx,[]);
+    if isempty(action)
+        if ~isempty(get(fig,'ResizeFcn'));
+            % This only exists in the old version, lets continue:
+            if strcmp(get(fig,'SelectionType'),'normal')
+                pt = get(curAx,'CurrentPoint');
+                action.Button = 1;
+                action.IntersectionPoint(1) = pt(1,1);
+                action.IntersectionPoint(2) = pt(1,2);
+            else
+                deletePoints=0;
+                set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+                set(fig,'Pointer','arrow');
+                return
+            end
+        else
+            deletePoints=0;
+            set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+            set(fig,'Pointer','arrow');
+            return
+        end
+    end
+    if ~isempty(action)
+        b      = action.Button;
+        xClick = action.IntersectionPoint(1);
+        yClick = action.IntersectionPoint(2);
+    end
     if b==3
         deletePoints=0;
         set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
-        break
-    end
-
-    if b==27 %Undo on Esc
-        LT_undoLdb;
+        set(fig,'Pointer','arrow');
+        return
     end
 
     if b==1
@@ -91,4 +119,6 @@ while deletePoints==1
 
 end
 
+deletePoints=0;
 set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+set(fig,'Pointer','arrow');

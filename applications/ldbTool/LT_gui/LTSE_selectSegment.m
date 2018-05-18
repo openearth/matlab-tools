@@ -37,6 +37,7 @@ function LTSE_selectSegment
 
 %% Code
 [but,fig]=gcbo;
+curAx=findobj(fig,'tag','LT_plotWindow');
 
 set(findobj(fig,'tag','LT_zoomBut'),'String','Zoom is off','value',0);
 zoom off
@@ -55,17 +56,39 @@ if get(but,'value')==1; % if the button 'Select segment(s)' is toggled on
     b=1;
 
     while b==1 % keep doing this as long as left mouse button is clicked
-        set(findobj(fig,'type','uicontrol'),'Enable','inactive');
+%         set(findobj(fig,'type','uicontrol'),'Enable','inactive');
         
-        [xClick, yClick,b]=ginput(1); % click segments
-        set(findobj(fig,'type','uicontrol'),'Enable','on');
+        set(fig,'Pointer','crosshair');
+        waitforbuttonpress;
+        action = guidata(curAx); guidata(curAx,[]);
 
-        % check if the 'Select segment(s)' isn't toggled off
-        if get(but,'value')==0
-            break
+        if isempty(action)
+            if ~isempty(get(fig,'ResizeFcn'));
+                % This only exists in the old version, lets continue:
+                if strcmp(get(fig,'SelectionType'),'normal')
+                    pt = get(curAx,'CurrentPoint');
+                    action.Button = 1;
+                    action.IntersectionPoint(1) = pt(1,1);
+                    action.IntersectionPoint(2) = pt(1,2);
+                else
+                    set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+                    set(fig,'Pointer','arrow');
+                    b = 3;
+                end
+            else
+                set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+                set(fig,'Pointer','arrow');
+                b = 3;
+            end
         end
-
-        if b==1; % if the left mouse button is clicked, select (or deselect) a segment and plot it blue and thick!
+        if ~isempty(action)
+            b      = action.Button;
+            xClick = action.IntersectionPoint(1);
+            yClick = action.IntersectionPoint(2);
+        end
+        set(findobj(fig,'type','uicontrol'),'Enable','on');
+        
+        if b~=3; % if the left/middle mouse button is clicked, select (or deselect) a segment and plot it blue and thick!
             disStart=sqrt((xClick(1)-ldbBegin(:,1)).^2+(yClick(1)-ldbBegin(:,2)).^2);
             disEnd=sqrt((xClick(1)-ldbEnd(:,1)).^2+(yClick(1)-ldbEnd(:,2)).^2);
 
@@ -87,12 +110,21 @@ if get(but,'value')==1; % if the button 'Select segment(s)' is toggled on
             end
 
         else % if the right mouse button is clicked, enable segment edit button and put id's and plot handles in button user data
-            set(findobj(fig,'tag','LTSE_segmentEditButton'),'Enable','on');
-            idSel=unique(idSel);
-            set(but,'userdata',{idSel,hCp});
+            set(fig,'Pointer','arrow');
+            if isempty(hCp)
+                set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
+                set(but,'value',0,'enable','on');
+                set(findobj(fig,'tag','LTSE_segmentEditButton'),'Enable','off');
+            else
+                set(findobj(fig,'tag','LTSE_segmentEditButton'),'Enable','on');
+                idSel=unique(idSel);
+                set(but,'userdata',{idSel,hCp});
+                set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions: perform action on selected segments, or click ''Select segments(s)'' button again to deselect');
+            end
         end
     end
 else %if the button 'Select segment(s)' is turned off, undo selection and remove plot handles
+    set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions:');
     LT_removeSelection
+    set(findobj(fig,'tag','LTSE_segmentEditButton'),'Enable','off');
 end
-set(findobj(fig,'tag','LT_ldbText6'),'String','Instructions: perform action on selected segments, or click button again to deselect');

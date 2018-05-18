@@ -113,7 +113,7 @@ if ~isstruct(ldb)
     
    if nargin==3
       ldbnameout = varargin{1};
-      landboundary('write',ldbnameout,ldb)
+      landboundary('write',ldbnameout,ldb);
    end   
     
 else

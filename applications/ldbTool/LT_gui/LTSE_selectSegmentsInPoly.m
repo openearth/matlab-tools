@@ -63,8 +63,12 @@ end
 
 data=LT_getData; % load ldb data from current layer
 
-idStart=find(inpolygon(data(5).ldbEnd(:,1),data(5).ldbEnd(:,2),pol(:,1),pol(:,2))); % find start points within poly
-idEnd=find(inpolygon(data(5).ldbBegin(:,1),data(5).ldbBegin(:,2),pol(:,1),pol(:,2))); % find end points within poly
+if isempty(data(5).ldbEnd)
+    return
+else
+    idStart=find(inpolygon(data(5).ldbEnd(:,1),data(5).ldbEnd(:,2),pol(:,1),pol(:,2))); % find start points within poly
+    idEnd=find(inpolygon(data(5).ldbBegin(:,1),data(5).ldbBegin(:,2),pol(:,1),pol(:,2))); % find end points within poly
+end
 
 idInPoly=intersect(idStart,idEnd); % both start and end point must be in polygon
 
