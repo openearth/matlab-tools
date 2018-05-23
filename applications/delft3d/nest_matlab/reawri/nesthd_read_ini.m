@@ -47,6 +47,10 @@ function [handles] = read_ini(handles,varargin)
             handles.files_hd1{4}=inifile('get',Info,handles.active,'Observation Points  ');
             handles.files_hd1{5}=inifile('get',Info,handles.active,'Nest Administration ');
             handles.files_hd1{6}=inifile('get',Info,handles.active,'Enclosure           ');
+            for i_file = 1: 6
+                if isempty(handles.files_hd1{i_file}) handles.files_hd1{i_file} = ''; end
+            end
+            
          case 'Nesthd2'
             handles.files_hd2{1}=inifile('get',Info,handles.active,'Boundary definition             ');
             handles.files_hd2{2}=inifile('get',Info,handles.active,'Nest administration             ');
