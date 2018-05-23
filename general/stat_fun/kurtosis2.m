@@ -1,15 +1,11 @@
-function [S]=skewness2(X)
-% skewness2 - computes skewness of a distribution
-%   [S]=skewness2(X) computes row-wise skewness
-% The unbiased Fisher's skewness for finite samples, a.k.a. G1, is used.
-%   skewness = n/(n-1)/(n-2) * sum( ((X-mean)/std)^3 ) 
+function [S]=kurtosis2(X)
+% kurtosis - computes sample kurtosis of a distribution
+%   [S]=kurtosis(X) computes row-wise kurtosis
+% The unbiased Fisher's equation for finite samples, a.k.a, G2 is used.
 % Note: 
-%   Positive skewness reflects an asymmetrical distribution with tail in positive values.
-%   Standard Error of skewness for normal distribution is: SES ~ sqrt(6/n)
-%   i.e. if abs(skew) > 2*SES, your data are significantly skewed (2 is the
-%   T value à.05)
-%   
-%   See also kurtosis2
+%   Positive kurtosis reflects sharp distribution.
+%   Standard Error of kurtosis for normal distribution is ~ sqrt(24/n)
+%   See also skewness2
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -50,16 +46,16 @@ function [S]=skewness2(X)
 % $Author$
 % $Revision$
 % $HeadURL$
-% $Keywords: skewness$
+% $Keywords: kurtosis$
 
 if isvector(X)
     X=X(:);
 end
 sz=[size(X) 1 ];
 n=sz(1);
-if n<3
-    error('Skewness needs sample of size > 2')
+if n<4
+    error('Kurtosis needs sample of size > 3')
 end
-S=sum((X-repmat(mean(X),n,1)).^3);
-S=S./(var(X).^1.5);
-S=S.*(n/(n-1)/(n-2));
+S=sum((X-repmat(mean(X),n,1)).^4);
+S=S./(var(X).^2);
+S=(n*(n+1)/(n-1)/(n-2)/(n-3)).*S - 3*(n-1).^2/(n-2)/(n-3);
