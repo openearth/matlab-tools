@@ -84,7 +84,7 @@ end
 %  General: Dimensions
 Info        = ncinfo(filename);
 nr_field    = find(~cellfun(@isempty,strfind({Info.Dimensions.Name},'laydim'))==1,1);
-laydim      = min(Info.Dimensions(nr_field).Length,1);
+laydim      = max (Info.Dimensions(nr_field).Length,1);
 nr_field    = find(~cellfun(@isempty,strfind({Info.Dimensions.Name},'stations'))==1,1);
 no_stations = Info.Dimensions(nr_field).Length;
 nr_field    = find(~cellfun(@isempty,strfind({Info.Dimensions.Name},'cross_section'))==1,1);
@@ -183,8 +183,10 @@ for i_param = 1: length(param_list)
     end
 
     % get the data
+    tic
     tmp      = ncread    (filename,param_list{i_param});
-
+    toc
+    
     % cycle over all station/cross sections
     for i_stat = 1: length(nr)
         filename_out = [strrep(param_list{i_param},'_','-') '-' sim '-' list{nr(i_stat)}];
