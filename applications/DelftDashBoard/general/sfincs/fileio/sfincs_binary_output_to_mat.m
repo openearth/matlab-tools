@@ -1,4 +1,3 @@
-function sfincs_binary_output_to_mat(matfile,infile,tref)
 function sfincs_binary_output_to_mat(matfile,inpfile,tref,version)
 
 [folder,name,ext] = fileparts(inpfile);
