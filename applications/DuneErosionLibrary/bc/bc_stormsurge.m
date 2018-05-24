@@ -143,7 +143,6 @@ if OPT.plot == 1
     Top(Top == max(Top)) = OPT.Tp_max;
 
     figure;
-    load p:\1209601-grandbassam\4.ModelSimulation\5_xbeach\1001_Animatie_Dano\tide.txt
     subplot(311); hold on; plot(t,h,'b'); plot(t,htide,'--k'); ylabel('\eta [m]'); axis([t(1) t(end) 1.1*min(htide) 1.1*max(h)]); legend('SSL', 'tide', 'orientation', 'horizontal'); box on;
     %subplot(311); hold on; plot(tide(:,1)/3600,tide(:,2),'b'); axis([t(1) t(end) 1.1*min(tide(:,2)) 1.1*max(tide(:,2))]); box on; ylabel('\eta [m]');
     subplot(312); plot(t,H,'b'); hold on; plot(twp,Hop,'r-'); ylabel('H_{m0} [m]'); axis([t(1) t(end) 0.9*min(H) 1.1*max(H)]);
