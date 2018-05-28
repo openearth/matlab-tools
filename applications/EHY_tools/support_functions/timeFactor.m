@@ -8,7 +8,8 @@ function factor=timeFactor(fromTunit,toTunit)
 % Example2: factor = timeFactor('D','M') [=1440]
 % Example3: factor = timeFactor('S','M') [=1/60=0.0166..]
 %
-% support function of the EHY_tools, Julien.Groenenboom@deltares.nl
+% support function of the EHY_tools
+% Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
 
 tunits={'S','M','H','D','Y'};
 factors=[60 60 24 365.25];

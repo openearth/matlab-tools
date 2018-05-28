@@ -9,7 +9,8 @@ function [refdate,tunit,tstart,tstop,hisstart,hisstop,mapstart,mapstop]=getTimeI
 % mapstop       : Stop time of writing map output (in minutes)
 % mdFile        : Master definition file (*.mdf, *.mdu, *siminp*)
 %
-% support function of the EHY_tools, Julien.Groenenboom@deltares.nl
+% support function of the EHY_tools
+% Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
 
 [modelType,mdFile]=EHY_getModelType(mdFile);
 

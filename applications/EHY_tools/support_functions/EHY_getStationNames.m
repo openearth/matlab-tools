@@ -1,6 +1,22 @@
-function stationNames = EHY_getStationNames(outputfile,modelType)
+function stationNames = EHY_getStationNames(outputfile,modelType,varargin)
+%% stationNames = EHY_getStationNames(outputfile,modelType,varargin)
+%
+% This function returns the station names based on a model output file
+%
+% Example1: 	stationNames=EHY_getStationNames('D:\trih-r01.dat','d3d')
+% Example2: 	stationNames=EHY_getStationNames('D:\r01_his.nc','dflowfm')
+% Example3: 	stationNames=EHY_getStationNames('D:\SDS-run1','simona','varName','uv')
+%
+% Note that SIMONA models can have different water level vs. velocity stations 
+%
+% support function of the EHY_tools
+% Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
 
-%% Sobek3
+OPT.varName = 'wl';
+
+OPT         = setproperty(OPT,varargin);
+
+%% 
 switch modelType
     
     case {'d3dfm','dflow','dflowfm','mdu','dfm'}
@@ -12,10 +28,14 @@ switch modelType
         trih=vs_use(outputfile,'quiet');
         stationNames=cellstr(strtrim(vs_get(trih,'his-const',{1},'NAMST','quiet')));
         
-    case {'waqua','simona','siminp'}
+    case {'waqua','simona','siminp','triwaq'}
         %% SIMONA (WAQUA/TRIWAQ)
         sds= qpfopen(outputfile);
-        stationNames  = strtrim(qpread(sds,1,'water level (station)','stations'));
+        if strcmp(OPT.varName,'wl')
+            stationNames  = strtrim(qpread(sds,1,'water level (station)','stations'));
+        elseif strcmp(OPT.varName,'uv')
+            stationNames  = strtrim(qpread(sds,1,'velocity (station)','stations'));
+        end
         
     case {'sobek3'}
         %% SOBEK3
