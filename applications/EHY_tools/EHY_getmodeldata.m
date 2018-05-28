@@ -61,7 +61,7 @@ if ~isempty(stat_name)
 end
 
 %% Get station names
-Data.stationNames = EHY_getStationNames(outputfile,modelType);
+Data.stationNames = EHY_getStationNames(outputfile,modelType,'varName',OPT.varName);
 
 % No station name specified, get data from all stations
 if isempty(stat_name)

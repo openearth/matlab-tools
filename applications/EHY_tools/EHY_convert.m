@@ -552,10 +552,13 @@ end
         [x,y]=EHY_mn2xy(obs.m,obs.n,OPT.grdFile);
         
         if OPT.saveOutputFile
+            if ischar(obs.namst)
+                obs.namst=cellstr(obs.namst);
+            end
             fid=fopen(outputFile,'w');
             for iM=1:length(x)
                 fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
-                fprintf(fid,'%-s\n',['''' strtrim(obs.namst{iM}) '''']);
+                fprintf(fid,'%-s\n',['''' strtrim(obs.namst{iM}) '''']); 
             end
             fclose(fid);
         end
@@ -888,8 +891,7 @@ if isempty(OPT.fromEPSG)
         if outputId==1
             OPT.fromEPSG='4326';
         end
-    end
-    if isempty(OPT.fromEPSG) && all(all(xx>-7000)) && all(all(xx<300000)) && all(all(yy>289000)) && all(all(yy<629000))   % probably RD in m
+    elseif isempty(OPT.fromEPSG) && all(all(xx>-7000)) && all(all(xx<300000)) && all(all(yy>289000)) && all(all(yy<629000))   % probably RD in m
         [outputId,~]=  listdlg('PromptString',{'Input coordinations are probably in meter Amersfoort/RD New, EPSG 28992',...
             'Is this correct?'},...
             'SelectionMode','single',...

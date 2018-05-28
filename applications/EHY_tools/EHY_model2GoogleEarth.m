@@ -36,7 +36,7 @@ switch modelType
             [selection,~]=  listdlg('PromptString','Conversion of nc to kml might take a while, you can also use Hermans GUI, choose:',...
                 'SelectionMode','single','ListString',{'Get a coffee and wait (few minutes)','Convert the nc to kml yourself'},'ListSize',[500 100]);
             if selection==1
-                inputFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.NetFile,runDir);
+                inputFile=EHY_getFullWinPath(mdu.geometry.NetFile,runDir);
                 [~,name]=fileparts(inputFile);
                 outputFile=strrep([outputDir name '_net.kml'],'_net_net','_net');
                 [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[1 0 0],OPT);
@@ -45,7 +45,7 @@ switch modelType
         
         % landboundary
         if isfield(mdu.geometry,'LandBoundaryFile') && ~isempty(mdu.geometry.LandBoundaryFile)
-            inputFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.LandBoundaryFile,runDir);
+            inputFile=EHY_getFullWinPath(mdu.geometry.LandBoundaryFile,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_ldb.kml'];
             [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],OPT);
@@ -53,7 +53,7 @@ switch modelType
         
         % thin dams
         if isfield(mdu.geometry,'ThinDamFile') && ~isempty(mdu.geometry.ThinDamFile)
-            inputFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.ThinDamFile,runDir);
+            inputFile=EHY_getFullWinPath(mdu.geometry.ThinDamFile,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=strrep([outputDir name '_thd.kml'],'_thd_thd','_thd');
             [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],'lineWidth',4,OPT);
@@ -61,9 +61,9 @@ switch modelType
         
         % dry points
         if isfield(mdu.geometry,'DryPointsFile') && ~isempty(mdu.geometry.DryPointsFile)
-            inputFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.DryPointsFile,runDir);
+            inputFile=EHY_getFullWinPath(mdu.geometry.DryPointsFile,runDir);
             [~,name,ext]=fileparts(inputFile);
-            OPT.netFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.NetFile,runDir);
+            OPT.netFile=EHY_getFullWinPath(mdu.geometry.NetFile,runDir);
             if strcmpi(ext,'.pol')
                 [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],OPT);
             elseif strcmpi(ext,'.xyz')
@@ -78,7 +78,7 @@ switch modelType
         
         % Observation points
         if isfield(mdu.output,'ObsFile') && ~isempty(mdu.output.ObsFile)
-            inputFile=EHY_model2GoogleEarth_checkPath(mdu.output.ObsFile,runDir);
+            inputFile=EHY_getFullWinPath(mdu.output.ObsFile,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_obs.kml'];
             [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 1 0],...
@@ -87,7 +87,7 @@ switch modelType
         
         % cross sections
         if isfield(mdu.geometry,'CrsFile') && ~isempty(mdu.geometry.CrsFile)
-            inputFile=EHY_model2GoogleEarth_checkPath(mdu.geometry.CrsFile,runDir);
+            inputFile=EHY_getFullWinPath(mdu.geometry.CrsFile,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_crs.kml'];
             [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[1 1 0],'lineWidth',4,OPT);
@@ -98,7 +98,7 @@ switch modelType
         
         % .grd
         if isfield(mdf.keywords,'filcco') && ~isempty(mdf.keywords.filcco)
-            inputFile=EHY_model2GoogleEarth_checkPath(mdf.keywords.filcco,runDir);
+            inputFile=EHY_getFullWinPath(mdf.keywords.filcco,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_grd.kml'];
             OPT.grdFile=inputFile;
@@ -107,7 +107,7 @@ switch modelType
         
         % .dry
         if isfield(mdf.keywords,'fildry') && ~isempty(mdf.keywords.fildry)
-            inputFile=EHY_model2GoogleEarth_checkPath(mdf.keywords.fildry,runDir);
+            inputFile=EHY_getFullWinPath(mdf.keywords.fildry,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_dry.kml'];
             [~,OPT]=EHY_convert(inputFile,'xdrykml','outputFile',outputFile,'lineColor',[1 0 0],OPT);
@@ -115,7 +115,7 @@ switch modelType
         
         % .thd
         if isfield(mdf.keywords,'filtd') && ~isempty(mdf.keywords.filtd)
-            inputFile=EHY_model2GoogleEarth_checkPath(mdf.keywords.filtd,runDir);
+            inputFile=EHY_getFullWinPath(mdf.keywords.filtd,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_thd.kml'];
             [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],'lineWidth',4,OPT);
@@ -123,7 +123,7 @@ switch modelType
         
         % .crs
         if isfield(mdf.keywords,'filcrs') && ~isempty(mdf.keywords.filcrs)
-            inputFile=EHY_model2GoogleEarth_checkPath(mdf.keywords.filcrs,runDir);
+            inputFile=EHY_getFullWinPath(mdf.keywords.filcrs,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_crs.kml'];
             [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[1 1 0],'lineWidth',4,OPT);
@@ -131,7 +131,7 @@ switch modelType
         
         % .obs
         if isfield(mdf.keywords,'filsta') && ~isempty(mdf.keywords.filsta)
-            inputFile=EHY_model2GoogleEarth_checkPath(mdf.keywords.filsta,runDir);
+            inputFile=EHY_getFullWinPath(mdf.keywords.filsta,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_obs.kml'];
             [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,...
@@ -140,19 +140,10 @@ switch modelType
         
         % .src
         if isfield(mdf.keywords,'filsrc') && ~isempty(mdf.keywords.filsrc)
-            inputFile=EHY_model2GoogleEarth_checkPath(mdf.keywords.filsrc,runDir);
+            inputFile=EHY_getFullWinPath(mdf.keywords.filsrc,runDir);
             [~,name]=fileparts(inputFile);
             outputFile=[outputDir name '_src.kml'];
             [~,OPT]=EHY_convert(inputFile,'kml','outputFile',outputFile,'iconFile','http://maps.google.com/mapfiles/kml/shapes/square.png',OPT);
         end
-end
-end
-
-function file=EHY_model2GoogleEarth_checkPath(file,runDir)
-if strcmp(file(1:3),'/p/')
-    file=['p:/' file(4:end)];
-end
-if isempty(strfind(file,':'))
-   file=[runDir filesep file]; 
 end
 end
