@@ -32,9 +32,9 @@ switch modelType
         %% SIMONA (WAQUA/TRIWAQ)
         sds= qpfopen(outputfile);
         if strcmp(OPT.varName,'wl')
-            stationNames  = strtrim(qpread(sds,1,'water level (station)','stations'));
+            stationNames  = strtrim(waquaio(sds,[],'flowstat-wl'));
         elseif strcmp(OPT.varName,'uv')
-            stationNames  = strtrim(qpread(sds,1,'velocity (station)','stations'));
+            stationNames  = strtrim(waquaio(sds,[],'flowstat-uv'));
         end
         
     case {'sobek3'}
