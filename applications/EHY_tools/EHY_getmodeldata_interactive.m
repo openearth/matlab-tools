@@ -45,7 +45,7 @@ if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');ret
 OPT.varName=varNames{option,2};
 
 % stat_name
-stationNames = cellstr(EHY_getStationNames(outputfile,modelType));
+stationNames = cellstr(EHY_getStationNames(outputfile,modelType,'varName',OPT.varName));
 option=listdlg('PromptString','From which station would you like you to load the data? (Use CTRL to select multiple stations)','ListString',...
     stationNames,'ListSize',[500 200]);
 if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end

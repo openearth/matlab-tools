@@ -100,7 +100,7 @@ switch modelType
                 no_layers=1;
             end
             OPT=EHY_getmodeldata_layer_index(OPT,no_layers);
-                    
+            
             % time info
             % - to enhance speed, reconstruct time array from start time, numel and interval
             ncVarInd     = strmatch('time',{infonc.Variables.Name},'exact');
@@ -241,7 +241,7 @@ switch modelType
                 end
                 Data.locationMN(i_stat,:)=[stationMN(:,nr_stat)'];
                 Data.location(i_stat,:)=[stationXY(:,nr_stat)'];
-
+                
                 % get data
                 switch OPT.varName
                     case 'wl'
@@ -269,7 +269,7 @@ switch modelType
                 end
             end
         end
-  
+        
     case {'waqua','simona','siminp'}
         %% SIMONA (WAQUA/TRIWAQ)
         for i_stat = 1: length(stat_name)
@@ -291,10 +291,12 @@ switch modelType
                         Data.val(:,i_stat) = waquaio(sds,[],'wlstat',time_index,nr_stat);
                     case 'uv'
                         if no_layers==1
-                             Data.vel_x(:,i_stat) = waquaio(sds,[],'u-stat',time_index,nr_stat);
-                            Data.vel_y(:,i_stat) = waquaio(sds,[],'v-stat',time_index,nr_stat);
+                            [uu,vv] = waquaio(sds,[],'uv-stat',time_index,nr_stat);
+                            Data.vel_x(:,i_stat) = uu;
+                            Data.vel_y(:,i_stat) = vv;
                         else
-                             Data.vel_x(:,i_stat,:) = waquaio(sds,[],'u-stat',time_index,nr_stat,OPT.layer);
+                            [uu,vv] = waquaio(sds,[],'uv-stat',time_index,nr_stat,OPT.layer);
+                            Data.vel_x(:,i_stat,:) = waquaio(sds,[],'u-stat',time_index,nr_stat,OPT.layer);
                             Data.vel_y(:,i_stat,:) = waquaio(sds,[],'v-stat',time_index,nr_stat,OPT.layer);
                         end
                     case 'sal'
@@ -306,7 +308,7 @@ switch modelType
                 end
             end
         end
-
+        
     case {'sobek3'}
         %% SOBEK3
         for i_stat = 1: length(stat_name)
@@ -353,7 +355,7 @@ switch modelType
                 switch OPT.varName
                     case 'wl'
                         if exist([fileparts(outputfile) filesep 'implic.mat'],'file')
-                           load([fileparts(outputfile) filesep 'implic.mat']) 
+                            load([fileparts(outputfile) filesep 'implic.mat'])
                         else
                             months = {'jan' 'feb' 'mrt' 'apr' 'mei' 'jun' 'jul' 'aug' 'sep' 'okt' 'nov' 'dec'};
                             for ii_stat = 1: length(filenames)
@@ -386,10 +388,10 @@ end
 
 % fill data of non-existing stations with NaN's
 if isfield(Data,'locationMN')
-Data.locationMN(~Data.exist_stat,:)=NaN;
+    Data.locationMN(~Data.exist_stat,:)=NaN;
 end
 if isfield(Data,'location')
-Data.location(~Data.exist_stat,:)=NaN;
+    Data.location(~Data.exist_stat,:)=NaN;
 end
 if isfield(Data,'val')
     Data.val(:,~Data.exist_stat,:)=NaN;
@@ -424,8 +426,8 @@ if ~isempty(OPT.t0) && ~isempty(OPT.tend)
         Data.times=Data.times(time_index);
     else
         error(['These time steps are not available in the outputfile' char(10),...
-        'requested data period: ' datestr(OPT.t0) ' - ' datestr(OPT.tend) char(10),...
-       'available model data:  ' datestr(Data.times(1)) ' - ' datestr(Data.times(end))])
+            'requested data period: ' datestr(OPT.t0) ' - ' datestr(OPT.tend) char(10),...
+            'available model data:  ' datestr(Data.times(1)) ' - ' datestr(Data.times(end))])
     end
 else
     select=true(length(Data.times),1);
