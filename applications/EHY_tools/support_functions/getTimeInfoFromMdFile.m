@@ -12,7 +12,11 @@ function [refdate,tunit,tstart,tstop,hisstart,hisstop,mapstart,mapstop]=getTimeI
 % support function of the EHY_tools
 % Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
 
-[modelType,mdFile]=EHY_getModelType(mdFile);
+mdFile=EHY_getMdFile(mdFile);
+if isempty(mdFile)
+    error('No .mdu, .mdf or siminp found in this folder')
+end
+modelType=EHY_getModelType(mdFile);
 
 switch modelType
     case 'mdu'
@@ -45,7 +49,7 @@ switch modelType
         hisstop=mdf.keywords.flhis(3);
         mapstart=mdf.keywords.flmap(1);
         mapstop=mdf.keywords.flmap(3);
-    case 'siminp'
+    case 'simona'
         [pathstr,name,ext]=fileparts(mdFile);
         siminp=readsiminp(pathstr,[name ext]);
         
@@ -75,7 +79,6 @@ switch modelType
             end
         end
 end
-
 
 
 
