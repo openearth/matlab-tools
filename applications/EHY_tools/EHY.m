@@ -44,6 +44,8 @@ functions{end+1,1}='EHY_wait';
 functions{end  ,2}='Run a selected MATLAB-script once a certain date and time is reached';
 functions{end+1,1}='EHY_findLimitingCells';
 functions{end  ,2}='Get the time step limiting cells and max. flow velocities from a Delft3D-FM run';
+functions{end+1,1}='EHY_getGridInfo';
+functions{end  ,2}='Get grid info from a grid file, modelinputfile (.mdf,.mdu,siminp) or modeloutputfile';
 
 h=findall(0,'type','figure','name','EHY_TOOLS  - Everbody Helps You');
 if ~isempty(h)
@@ -52,10 +54,12 @@ if ~isempty(h)
     movegui(h,'center');
     disp('The EHY_TOOLS GUI was already open')
 else
-    EHYfig=figure('units','centimeters','position',[12.0227 6.4982 16.8 9.5],'name','EHY_TOOLS  - Everbody Helps You','color',[0.94 0.94 0.94]);
+%     EHYfig=figure('units','centimeters','position',[12.0227 6.4982 16.8 9.5],'name','EHY_TOOLS  - Everbody Helps You','color',[0.94 0.94 0.94]);
+    EHYfig=figure('units','centimeters','position',[12.0227 6.4982 16.8 10.6],'name','EHY_TOOLS  - Everbody Helps You','color',[0.94 0.94 0.94]);
     movegui(EHYfig,'center');
 end
-height=9.6;
+% height=9.6;
+height=10.7;
 for iF=1:length(functions)
     button=uicontrol('Style', 'pushbutton', 'String',functions{iF,1},...
         'units','centimeters','Position',[0.5027 height-iF*0.7938 5.2917 0.5292],... % 'Position', [20 height-iF*30 200 20],... %

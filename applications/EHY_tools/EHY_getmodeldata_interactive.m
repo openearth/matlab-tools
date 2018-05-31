@@ -18,7 +18,10 @@ EHYs(mfilename);
     outputfile=[pathname filename];
 try % Automatic procedure
     % modelType
-    [modelType,mdFile]=EHY_getModelType(outputfile);
+    mdFile=EHY_getMdFile(outputfile);
+    if isempty(mdFile);error;end % stop automatic procedure
+    modelType=EHY_getModelType(outputfile);
+
 catch % Automatic procedure failed
     disp('Automatic procedure failed. Please provide input manually.')
     % modelType
@@ -36,6 +39,7 @@ end
 
 % varName
 varNames={'Water level','wl';...
+    'Water depth','water depth';...
     'Velocities','uv';
     'Salinity','sal';
     'Temperature','tem'};
@@ -52,7 +56,8 @@ if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');ret
 stat_name=stationNames(option);
 
 % layer
-if ~strcmp(OPT.varName,'wl')
+getGridInfo=EHY_getGridInfo(outputfile,'no_layers');
+if ~strcmp(OPT.varName,'wl') && getGridInfo.no_layers>1
     option=listdlg('PromptString',{'Want to load data from a specific layer?','(Default is, in case of 3D-model, all layers)'},'SelectionMode','single','ListString',...
         {'Yes','No'},'ListSize',[300 50]);
     if option==1

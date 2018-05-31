@@ -18,7 +18,11 @@ else
     if isnumeric(filename); disp('EHY_runTimeInfo stopped by user.'); return; end
     mdFile=[pathname filename];
 end
-[modelType,mdFile]=EHY_getModelType(mdFile);
+mdFile=EHY_getMdFile(mdFile);
+if isempty(mdFile)
+    error('No .mdu, .mdf or siminp found in this folder')
+end
+modelType=EHY_getModelType(mdFile);
 [pathstr,name,ext]=fileparts(mdFile);
 [refdate,tunit,tstart,tstop]=getTimeInfoFromMdFile(mdFile);
 
@@ -36,8 +40,9 @@ try % if simulation has finished
             % mdu
             mdu=dflowfm_io_mdu('read',mdFile);
             
-            % layers
-            noLayers=mdu.geometry.Kmx;
+            % grid info
+            gridInfo=EHY_getGridInfo(mdFile,'no_layers','dimensions');
+            noLayers=gridInfo.no_layers;
             
             % dia
             if exist([pathstr filesep name '_0000.dia'],'file') % first check if run was done in parallel
@@ -52,15 +57,8 @@ try % if simulation has finished
             noPartitions=max([1 length(diaFiles)-1]);
             
             % number of netnodes
-            grdInfo=ncinfo([fileparts(mdFile) filesep mdu.geometry.NetFile]);
-            id=strmatch('nNetNode',{grdInfo.Dimensions.Name},'exact');
-            if isempty(id)
-                id=strmatch('nmesh2d_node',{grdInfo.Dimensions.Name},'exact');
-            end
-            if ~isempty(id)
-                noNetNodes=grdInfo.Dimensions(id).Length;
-            end
-            
+            noNetNodes=gridInfo.no_NetNodes;
+
             % average timestep
             line=findLineOrQuit(fid,'** INFO   : average timestep * (s)  :');
             line2=regexp(line,'\s+','split');

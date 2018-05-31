@@ -165,6 +165,8 @@ switch modelType
             switch OPT.varName
                 case 'wl'
                     value(bl_start:bl_stop,:) 	= ncread(outputfile,'waterlevel',[1 bl_start+offset],[Inf bl_int])';
+                case {'wd','water depth'}
+                    value(bl_start:bl_stop,:) 	= ncread(outputfile,'Waterdepth',[1 bl_start+offset],[Inf bl_int])';
                 case 'uv'
                     if ~exist('no_layers','var') | no_layers==1 % 2DH model
                         value_x(bl_start:bl_stop,:) 	= permute(ncread(outputfile,'x_velocity',[1 bl_start+offset],[Inf bl_int]),[2 1]);
@@ -185,7 +187,7 @@ switch modelType
                     else
                         value(bl_start:bl_stop,:,:) 	= permute(ncread(outputfile,'temperature',[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
                     end
-                case {infonc.Variables(:).Name}
+                case {infonc.Variables(:).Name} % like constituents (e.g. totalN, totalP)
                     if ~exist('no_layers','var') % 2DH model
                         value(bl_start:bl_stop,:) 	= permute(ncread(outputfile,OPT.varName,[1 bl_start+offset],[Inf bl_int]),[2 1]);
                     else
@@ -246,6 +248,10 @@ switch modelType
                 switch OPT.varName
                     case 'wl'
                         Data.val(:,i_stat)=cell2mat(vs_get(trih,'his-series',{time_index},'ZWL',{nr_stat},'quiet'));
+                    case {'wd','water depth'}
+                        wl=cell2mat(vs_get(trih,'his-series',{time_index},'ZWL',{nr_stat},'quiet')); % ref to wl
+                        depth=vs_get(trih,'his-const',{1},'DPS',{nr_stat},'quiet'); % bed to ref
+                        Data.val(:,i_stat)=wl+depth;
                     case 'uv'
                         if no_layers==1
                             data=qpread(trih,1,'depth averaged velocity','griddata',time_index,nr_stat);
@@ -441,10 +447,13 @@ if all(OPT.layer==0)
     OPT.layer=1:no_layers;
 elseif no_layers==1 && length(OPT.layer)>1
     warning('User selected multiple layers, but there is only 1 layer available. Setting OPT.layer=1; ')
+    disp('User selected multiple layers, but there is only 1 layer available. Setting OPT.layer=1; ')
     OPT.layer=1;
 elseif any(OPT.layer>no_layers)
     warning(['User asked for layer ' num2str(max(OPT.layer)) ', but there are only ' num2str(no_layers) ' layers available. Setting OPT.layer to ''all''']);
     warning(['OPT.layer is set to [' num2str(1:no_layers) ']'])
+    disp(['User asked for layer ' num2str(max(OPT.layer)) ', but there are only ' num2str(no_layers) ' layers available. Setting OPT.layer to ''all''']);
+    disp(['OPT.layer is set to [' num2str(1:no_layers) ']'])
     OPT.layer=1:no_layers;
 end
 end

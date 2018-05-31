@@ -18,10 +18,12 @@ elseif nargin==1
 end
 
 %%
-[modelType,mdFile]=EHY_getModelType(mdFile);
-if strcmp(modelType,'none')
+mdFile=EHY_getMdFile(mdFile);
+if isempty(mdFile)
     error('No .mdu, .mdf or siminp found in this folder')
 end
+modelType=EHY_getModelType(mdFile);
+
 [refdate,tunit,tstart,tstop]=getTimeInfoFromMdFile(mdFile);
 simPeriod_S=(tstop-tstart)*timeFactor(tunit,'S');
 simPeriod_D=(tstop-tstart)*timeFactor(tunit,'D');

@@ -46,7 +46,8 @@ elseif nargin==1
 end
 
 if exist('mdFile','var')
-    [modelType,mdFile]=EHY_getModelType(mdFile);
+    mdFile=EHY_getMdFile(mdFile);
+    modelType=EHY_getModelType(mdFile);
     [pathstr,name,ext]=fileparts(mdFile);
     E=struct;
     [E.refdate,E.tunit,E.tstart,E.tstop]=getTimeInfoFromMdFile(mdFile);
