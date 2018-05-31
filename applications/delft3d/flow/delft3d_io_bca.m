@@ -133,11 +133,12 @@ if fid > 0
    while 1   
    
       iset    = iset + 1;
-      if ~ischar(rec), break, end % eof
+      if ~ischar(rec) || isempty(rec), break, end % eof
       rec = pad(rec,' ',12);
       BCA.DATA(iset).label   = strtrim(rec(1:12));
 
       rec     = fgetl(fid); if OPT.debug;disp(rec);end
+      if ~ischar(rec) || isempty(rec), break, end % eof
       C       = textscan(rec,'%s %f %f',1);
 
       icomp = 0;
@@ -153,7 +154,7 @@ if fid > 0
          end
              
          rec     = fgetl(fid); if OPT.debug;disp(rec);end
-         if ~ischar(rec), break, end % eof
+         if ~ischar(rec) || isempty(rec), break, end % eof
          C       = textscan(rec,'%s %f %f',1);
          
       end% while still amp + phase
