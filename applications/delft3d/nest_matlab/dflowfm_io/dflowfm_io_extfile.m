@@ -16,10 +16,17 @@ switch lower(cmd)
             ListOfChapters = inifile('chapters',Info);
             for i_chapter = 1: length(ListOfChapters);
                 i_forcing = i_forcing + 1;
+                i_val     = 0;
                 ext_force(i_forcing).Chapter = ListOfChapters{i_chapter};
                 ListOfKeywords=inifile('keywords',Info,i_chapter);
                 for i_key = 1: length(ListOfKeywords)
-                    ext_force(i_forcing).(ListOfKeywords{i_key}) = inifile('get',Info,i_chapter,ListOfKeywords{i_key});
+                    if ~isempty(ListOfKeywords{i_key})
+                        ext_force(i_forcing).Keyword.Name {i_key}  = ListOfKeywords{i_key};
+                        ext_force(i_forcing).Keyword.Value{i_key} = inifile('get',Info,i_chapter,i_key);
+                    else
+                        i_val = i_val + 1;
+                        ext_force(i_forcing).values(i_val,:) =  inifile('get',Info,i_chapter,i_key);
+                    end
                 end
             end
             type = 'ini';
@@ -90,20 +97,28 @@ switch lower(cmd)
             ext_force = OPT.ext_force;
             nr_force  = length(ext_force);
             for i_force = 1: nr_force
-                Chapter  = ext_force(i_force).Chapter;
-                Keywords = fieldnames(ext_force(i_force));
-                for i_key = 2: length(Keywords)
-                    Info     = inifile('set',Info,[Chapter '_tmp' num2str(i_force,'%2.2i')],Keywords{i_key},ext_force(i_force).(Keywords{i_key}));
+                Chapter  = ext_force(i_force).Chapter;      
+                Keyword = ext_force(i_force).Keyword.Name;
+                Value    = ext_force(i_force).Keyword.Value;
+                Info.Data{i_force,1} = Chapter;
+                for i_key = 2: length(Keyword)
+                    tmp{i_key-1,1} = Keyword{i_key};
+                    tmp{i_key-1,2} = Value  {i_key};
                 end
+                
+                if isfield(ext_force(i_force),'values')
+                    Value = ext_force(i_force).values;
+                    no_row = size(Value,1);
+                    for i_row = 1: no_row
+                        tmp{end+1,2} = '';
+                        tmp{end  ,2} = Value(i_row,:);
+                    end
+                end
+                Info.Data{i_force,2} = tmp;
+                clear tmp
             end
-            
-            % Remove tmp part from chapter names (needed because chapters need a unique name)
-            for i_force = 1: nr_force
-                index = strfind(Info.Data{i_force,1},'_tmp') - 1;
-                Info.Data{i_force,1} = Info.Data{i_force,1}(1:index);
-            end
-            
-            inifile('write',fname,Info);
+            inifile('write',fname,Info);    
         end
+
 end
 
