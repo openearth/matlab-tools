@@ -83,11 +83,11 @@ if ~isdeployed
         if ~any(strcmpi(basePath, pathCell))
             addpath(basePath);
         end
-        if ~any(strcmpi([basePath 'LT_gui'], pathCell))
-            addpath([basePath 'LT_gui']);
+        if ~any(strcmpi([basePath filesep 'LT_gui'], pathCell))
+            addpath([basePath filesep 'LT_gui']);
         end
-        if ~any(strcmpi([basePath 'LT_engines'], pathCell))
-            addpath([basePath 'LT_engines']);
+        if ~any(strcmpi([basePath filesep 'LT_engines'], pathCell))
+            addpath([basePath filesep 'LT_engines']);
         end
     else
         if ~any(strcmp(basePath, pathCell))
