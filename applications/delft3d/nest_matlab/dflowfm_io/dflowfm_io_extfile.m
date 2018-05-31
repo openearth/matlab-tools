@@ -102,8 +102,8 @@ switch lower(cmd)
                 index = strfind(Info.Data{i_force,1},'_tmp') - 1;
                 Info.Data{i_force,1} = Info.Data{i_force,1}(1:index);
             end
+            
+            inifile('write',fname,Info);
         end
-        
-        inifile('write',fname,Info);
 end
 
