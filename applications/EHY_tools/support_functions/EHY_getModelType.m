@@ -35,7 +35,7 @@ end
 
 % Delft3D 4
 if isempty(modelType)
-    if ismember(name,{'trih-','trim-'}) || ...
+    if ~isempty(strfind(name,'trih-')) || ~isempty(strfind(name,'trim-'))
             ismember(ext,{'.mdf','.bcc','.bct','.bca','.bnd','.crs','.dat','.def','.enc','.eva','.grd','.obs','.src'})
         modelType = 'd3d';
     end
@@ -43,7 +43,7 @@ end
 
 % SIMONA (WAQUA/TRIWAQ)
 if isempty(modelType)
-    if ismember(name,{'points','sds','timeser','siminp'})
+    if ~isempty(strfind(name,'sds')) || ~isempty(strfind(name,'siminp'))
         modelType = 'simona';
     end
 end
