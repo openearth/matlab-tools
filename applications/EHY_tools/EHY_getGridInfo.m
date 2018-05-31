@@ -11,7 +11,7 @@ function gridInfo=EHY_getGridInfo(varargin)
 
 %% process input from user
 if nargin==0
-    EHY_getGridInfo_interactive
+    EHY_getGridInfo_interactive;
     return
 end
 
@@ -23,17 +23,35 @@ for iV=1:length(varargin)
         wantedOutput{end+1,1}=varargin{iV};
     end
 end
-if isempty(wantedOutput); error('No wanted output specified'); end
+
+% If only an inputfile was provided
+if ~isempty(inputFile) && isempty(wantedOutput)
+    wantedOutput={'no_layers','dimensions'};
+end
 
 %% determine type of model and type of inputFile
 modelType=EHY_getModelType(inputFile);
 typeOfModelFile=EHY_getTypeOfModelFile(inputFile);
-[pathstr, name, ext] = fileparts(inputFile);
+[pathstr, name, ext] = fileparts(lower(inputFile));
 
 %% get grid info
 switch typeOfModelFile
     case {'grid','network'}
-        
+        if ismember('XY',wantedOutput)
+            if strcmp(ext,'.grd')
+                grd=delft3d_io_grd('read',inputFile);
+                E.mmax=grd.mmax;
+                E.nmax=grd.nmax;
+                E.xcor=grd.cor.x;
+                E.ycor=grd.cor.y;
+                E.xcen=grd.cen.x;
+                E.ycen=grd.cen.y;
+                E.xu=grd.u.x;
+                E.yu=grd.u.y;
+                E.xv=grd.v.x;
+                E.yv=grd.v.y;
+            end
+        end
     case 'mdFile'
         switch modelType
             case 'dfm'
@@ -57,13 +75,29 @@ switch typeOfModelFile
             case 'd3d'
                 mdf=delft3d_io_mdf('read',inputFile);
                 if ismember('no_layers',wantedOutput)
-                    E.no_layers=mdf.keywords.mnkmax(3);
+                    E.no_layers=mdf.keywords.MNKmax(3);
                 end
                 if ismember('dimensions',wantedOutput)
-                    E.mnkmax=mdf.keywords.mnkmax;
+                    E.MNKmax=mdf.keywords.MNKmax;
                 end
             case 'simona'
-                % to do
+                siminp=readsiminp(pathstr,[name ext]);
+                siminp.File=lower(siminp.File);
+                if ismember('no_layers',wantedOutput)
+                    lineInd=find(~cellfun(@isempty,strfind(siminp.File,'kmax')));
+                    line=regexp(siminp.File(lineInd),'\s+','split');
+                    lineInd2=find(~cellfun(@isempty,strfind(line{1,1},'kmax')));
+                    E.no_layers=str2num(line{1,1}{lineInd2+1});
+                end
+                if ismember('dimensions',wantedOutput)
+                    keywords={'mmax','nmax','kmax'};
+                    for iK=1:length(keywords)
+                        lineInd=find(~cellfun(@isempty,strfind(siminp.File,keywords{iK})));
+                        line=regexp(siminp.File(lineInd),'\s+','split');
+                        lineInd2=find(~cellfun(@isempty,strfind(line{1,1},keywords{iK})));
+                        E.MNKmax(1,iK)=str2num(line{1,1}{lineInd2+1});
+                    end
+                end
         end
     case 'outputfile'
         switch modelType
@@ -78,14 +112,35 @@ switch typeOfModelFile
                     end
                 end
             case 'd3d'
-                if ismember('no_layers',wantedOutput)
-                    E.no_layers=vs_get(trih,'his-const',{1},'KMAX','quiet');
+                if ~isempty(strfind(name,'trih-'))
+                    trih=vs_use(inputFile,'quiet');
+                    if ismember('no_layers',wantedOutput)
+                        E.no_layers=vs_get(trih,'his-const',{1},'KMAX','quiet');
+                    end
+                    if ismember('dimensions',wantedOutput)
+                        E.MNKmax=[vs_get(trih,'his-const',{1},'MMAX','quiet') ...
+                            vs_get(trih,'his-const',{1},'NMAX','quiet') ...
+                            vs_get(trih,'his-const',{1},'KMAX','quiet')];
+                    end
+                elseif ~isempty(strfind(name,'trim-'))
+                    trim=vs_use(inputFile,'quiet');
+                    if ismember('no_layers',wantedOutput)
+                        E.no_layers=vs_get(trih,'his-const',{1},'KMAX','quiet');
+                    end
+                    if ismember('dimensions',wantedOutput)
+                        E.MNKmax=[vs_get(trim,'map-const',{1},'MMAX','quiet') ...
+                            vs_get(trim,'map-const',{1},'NMAX','quiet') ...
+                            vs_get(trim,'map-const',{1},'KMAX','quiet')];
+                    end
                 end
             case 'simona'
+                sds=qpfopen(inputFile);
+                dimen=waqua('readsds',sds,[],'MESH_IDIMEN');
                 if ismember('no_layers',wantedOutput)
-                    sds=qpfopen(inputFile);
-                    dimen=waqua('readsds',sds,[],'MESH_IDIMEN');
                     E.no_layers   =dimen(18);
+                end
+                if ismember('dimensions',wantedOutput)
+                    E.MNKmax=[dimen(2) dimen(3) dimen(18)];
                 end
         end
 end
@@ -98,7 +153,7 @@ EHYs(mfilename);
 end
 
 function EHY_getGridInfo_interactive
-% inputFile
+% get inputFile
 disp('Open a grid, model inputfile or model outputfile')
 [filename, pathname]=uigetfile('*.*','Open a grid, model inputfile or model outputfile');
 if isnumeric(filename); disp('EHY_getGridInfo_interactive stopped by user.'); return; end
