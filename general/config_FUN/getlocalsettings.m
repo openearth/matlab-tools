@@ -61,7 +61,9 @@ else
 end
 
 % make path if necessary
-mkdir(configpath)
+if exist(configpath, 'dir') == false
+    mkdir(configpath)
+end
 
 % define config file
 configfile = fullfile(configpath, 'config');
