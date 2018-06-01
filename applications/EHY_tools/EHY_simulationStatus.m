@@ -29,7 +29,7 @@ simPeriod_S=(tstop-tstart)*timeFactor(tunit,'S');
 simPeriod_D=(tstop-tstart)*timeFactor(tunit,'D');
 
 switch modelType
-    case 'mdu'
+    case 'dfm'
         [pathstr, name, ext] = fileparts(mdFile);
         mdu=dflowfm_io_mdu('read',mdFile);
         if ~isempty(mdu.output.OutputDir)
@@ -86,7 +86,7 @@ switch modelType
         end
         runPeriod_D=runPeriod_S/3600/24;
         
-    case 'mdf'
+    case 'd3d'
         [pathstr, name, ext] = fileparts(mdFile);
         D=dir([pathstr '\*.o*']);
         [~,order] = sort([D.datenum]);
@@ -105,7 +105,7 @@ switch modelType
         
         runPeriod_S=simPeriod_S*runperiod_perc;
         runPeriod_D=runPeriod_S*timeFactor('S','D');
-    case {'siminp','SIMONA'}
+    case 'simona'
         [pathstr, name, ext] = fileparts(mdFile);
         D=dir([pathstr '\waqpro-m.*']);
         [~,order] = sort([D.datenum]);

@@ -193,21 +193,21 @@ while keepLooping
         'ListSize',[300 50]);
     if YesNoID==1
         switch modelType
-            case 'mdf'
-                disp(['Itdate = #' mdInput{1}(1:4) '-' mdInput{1}(5:6) '-' mdInput{1}(7:8)  '#'])
-                disp(['Tunit = #' mdInput{2} '#'])
-                disp(['Tstart = ' mdInput{3} ])
-                disp(['Tstop = ' mdInput{5} ])
-                disp(['Flhis = ' mdInput{7} '   ' mdInput{9} '   ' mdInput{10} ])
-                disp(['Flmap = ' mdInput{12} '   ' mdInput{14} '   ' mdInput{15} ])
-            case 'mdu'
+            case 'dfm'
                 disp(['RefDate = ' mdInput{1}])
                 disp(['Tunit = ' mdInput{2}])
                 disp(['Tstart = ' mdInput{3} ])
                 disp(['Tstop = ' mdInput{5} ])
                 disp(['HisInterval = ' mdInput{9} '   ' mdInput{7} '   ' mdInput{10} ])
                 disp(['MapInterval = ' mdInput{14} '   ' mdInput{12} '   ' mdInput{15} ])
-            case 'siminp'
+            case 'd3d'
+                disp(['Itdate = #' mdInput{1}(1:4) '-' mdInput{1}(5:6) '-' mdInput{1}(7:8)  '#'])
+                disp(['Tunit = #' mdInput{2} '#'])
+                disp(['Tstart = ' mdInput{3} ])
+                disp(['Tstop = ' mdInput{5} ])
+                disp(['Flhis = ' mdInput{7} '   ' mdInput{9} '   ' mdInput{10} ])
+                disp(['Flmap = ' mdInput{12} '   ' mdInput{14} '   ' mdInput{15} ])
+            case 'simona'
                 disp(['DATE = ''' datestr(datenum(mdInput{1},format{1}),'dd mmm yyyy') ''''])
                 disp(['TSTART = ' mdInput{3}])
                 disp(['TSTOP = ' mdInput{5} ])

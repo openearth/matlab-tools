@@ -36,7 +36,7 @@ simPeriod_S=(tstop-tstart)*factor;
 
 try % if simulation has finished
     switch modelType
-        case 'mdu'
+        case 'dfm'
             % mdu
             mdu=dflowfm_io_mdu('read',mdFile);
             
@@ -72,7 +72,7 @@ try % if simulation has finished
             line2=regexp(line,'\s+','split');
             realTime_S=str2double(line2{end});
             
-        case 'mdf'
+        case 'd3d'
             % mdf
             mdf=delft3d_io_mdf('read',mdFile);
             
@@ -103,7 +103,7 @@ try % if simulation has finished
             line2=regexp(line,'\s+','split');
             realTime_S=str2double(line2{3});
             
-        case 'siminp'
+        case 'simona'
             % dia
             directory=dir([pathstr filesep 'waqpro-m*']);
             diaFile=[pathstr filesep directory(1).name];

@@ -21,7 +21,6 @@ if nargin==0 % no input was given
 end
 
 %%
-mdFile='';
 loop=3;
 while loop>0
     loop=loop-1;
@@ -80,5 +79,6 @@ end
 
 if ~exist('mdFile','var')
     disp('<strong>Could not determine mdFile</strong>')
+    mdFile='';
 end
 

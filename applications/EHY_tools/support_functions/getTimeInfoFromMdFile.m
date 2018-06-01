@@ -19,7 +19,7 @@ end
 modelType=EHY_getModelType(mdFile);
 
 switch modelType
-    case 'mdu'
+    case 'dfm'
         mdu=dflowfm_io_mdu('read',mdFile);
         refdate=datenum(num2str(mdu.time.RefDate),'yyyymmdd');
         tunit=mdu.time.Tunit;
@@ -39,7 +39,7 @@ switch modelType
             mapstart=mdu.output.MapInterval(2)*timeFactor('S','M');
             mapstop=mdu.output.MapInterval(3)*timeFactor('S','M');
         end
-    case 'mdf'
+    case 'd3d'
         mdf=delft3d_io_mdf('read',mdFile);
         refdate=datenum(mdf.keywords.itdate,'yyyy-mm-dd');
         tunit=mdf.keywords.tunit;
