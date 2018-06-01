@@ -29,9 +29,9 @@ if nargin==0
         option=  listdlg('PromptString','modelType :','SelectionMode','single','ListString',...
             {'Delft3D','Delft3D-FM','SIMONA'},'ListSize',[300 50]);
         if option==1
-            modelType='mdf';HisMapUnit='M';
+            modelType='d3d';HisMapUnit='M';
         elseif option==2
-            modelType='mdu';HisMapUnit='S';
+            modelType='dfm';HisMapUnit='S';
         elseif option==3
             modelType='simona';HisMapUnit='M';
         end
@@ -59,7 +59,7 @@ if exist('mdFile','var')
     
     HisMapUnit='M';
     switch modelType
-        case 'mdf'
+        case 'd3d'
             mdf=delft3d_io_mdf('read',mdFile);
             if isempty(mdf.keywords.flhis)
                 mdInput{7}='';mdInput{9}='';mdInput{10}='';
@@ -75,7 +75,7 @@ if exist('mdFile','var')
                 mdInput{14}=mdf.keywords.flmap(2);
                 mdInput{15}=mdf.keywords.flmap(3);
             end
-        case 'mdu'
+        case 'dfm'
             mdu=dflowfm_io_mdu('read',mdFile);
             if length(mdu.output.HisInterval)==1
                 mdInput{9}=mdu.output.HisInterval;
@@ -92,10 +92,11 @@ if exist('mdFile','var')
                 mdInput{15}=mdu.output.MapInterval(3);
             end
             HisMapUnit='S';
-        case 'siminp'
+        case 'simona'
             [pathstr,name,ext]=fileparts(mdFile);
             siminp=readsiminp(pathstr,[name ext]);
-            keywords={'TFHIS','TIHIS','TLHIS','TFMAP','TIMAP','TLMAP'};
+            siminp.File=lower(siminp.File);
+            keywords={'tfhis','tihis','tlhis','tfmap','timap','tlmap'};
             mdInputInd=[7 9 10 12 14 15];
             for iK=1:length(keywords)
                 try
