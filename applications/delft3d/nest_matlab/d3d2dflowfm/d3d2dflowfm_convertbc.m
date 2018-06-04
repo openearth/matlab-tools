@@ -80,7 +80,7 @@ for i_pli = 1: length(filpli)
                     for i_bca=1:length(bca.DATA);
                         if strcmp(pntname,bca.DATA(i_bca).label);
                             for i_cmp=1:length(bca.DATA(i_bca).names);
-                                SERIES.Values {i_cmp,1} = bca.DATA(i_bca).names{i_cmp};
+                                SERIES.Values {i_cmp,1} = char(bca.DATA(i_bca).names{i_cmp});
                                 SERIES.Values {i_cmp,2} = sign*bca.DATA(i_bca).amp(i_cmp);
                                 SERIES.Values {i_cmp,3} = bca.DATA(i_bca).phi(i_cmp);
                             end
