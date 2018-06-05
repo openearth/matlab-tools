@@ -109,9 +109,11 @@ switch lower(cmd)
                 if isfield(ext_force(i_force),'values')
                     Value = ext_force(i_force).values;
                     no_row = size(Value,1);
+                    no_col = size(Value,2);
+                    format = ['%8i ' repmat('%12.6f ',1,no_col)];
                     for i_row = 1: no_row
                         tmp{end+1,2} = '';
-                        tmp{end  ,2} = Value(i_row,:);
+                        tmp{end  ,2} = sprintf(format,Value(i_row,:));
                     end
                 end
                 Info.Data{i_force,2} = tmp;
