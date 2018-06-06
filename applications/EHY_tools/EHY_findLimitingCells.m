@@ -103,22 +103,37 @@ sizeucy=info.Variables(ind).Size;
 
 % maximum velocities
 if OPT.writeMaxVel
+    gridInfo=EHY_getGridInfo(mapFile,'no_layers');
+    if gridInfo.no_layers==1 % 2DH model
+       no_nodes=sizeucy(1);
+       no_times=sizeucy(2);
+    else
+       no_nodes=sizeucy(2);
+       no_times=sizeucy(3);
+    end
     maximum=[];
-    step0=1000;
-    range=1:step0:sizeucy(2);
+    step0=10000;
+    range=1:step0:no_nodes;
     for ii=range
         if ii==range(end)
-            step=sizeucy(2)-ii+1;
+            step=no_nodes-ii+1;
         else
             step=step0;
         end
-        u=nc_varget(mapFile,vars{4,col},[ii-1 0],[step sizeucy(1)]);
-        v=nc_varget(mapFile,vars{5,col},[ii-1 0],[step sizeucy(1)]);
-        mag=sqrt(u.^2+v.^2);
-        if size(mag,2)==1; mag=mag'; end
-        maximum=max([maximum; max(mag,[],1)],[],1);
+        
+        if gridInfo.no_layers==1 % 2DH model
+            u=ncread(mapFile,vars{4,col},[ii 1],[step no_times]);
+            v=ncread(mapFile,vars{5,col},[ii 1],[step no_times]);
+        else % 3D model
+            u=ncread(mapFile,vars{4,col},[1 ii 1],[gridInfo.no_layers step no_times]); % lyrs,nodes,times
+            v=ncread(mapFile,vars{5,col},[1 ii 1],[gridInfo.no_layers step no_times]); % lyrs,nodes,times
+            u=squeeze(max(u,[],1)); % nodes,times
+            v=squeeze(max(v,[],1)); % nodes,times
+        end
+        mag=sqrt(u.^2+v.^2); % nodes,time
+        maximum=[maximum; max(mag,[],2)]; %maximum over time
     end
-    MAXVEL=[MAXVEL maximum];
+    MAXVEL=maximum;
 end
 
 % numlimdt
@@ -166,7 +181,7 @@ end
 if OPT.writeMaxVel
     outputFile=[outputDir 'maximumVelocities.xyz'];
     disp('start writing maximum velocities')
-    dlmwrite([tempdir 'maxvel.xyz'],[X Y MAXVEL'],'delimiter',' ','precision','%20.7f')
+    dlmwrite([tempdir 'maxvel.xyz'],[X Y MAXVEL],'delimiter',' ','precision','%20.7f')
     copyfile([tempdir 'maxvel.xyz'],outputFile);
     disp('finished writing maximum velocities')
 end
