@@ -29,7 +29,11 @@ for mm = 1:length(mapFiles)
     if mm == 1
         data = [nc_varget([mapFiles(mm).folder,filesep,mapFiles(mm).name],varName,startID,lengthID)]; % u velocity at cell center
     else
-        data = [data nc_varget([mapFiles(mm).folder,filesep,mapFiles(mm).name],varName,startID,lengthID)]; % u velocity at cell center
+        try
+            data = [data nc_varget([mapFiles(mm).folder,filesep,mapFiles(mm).name],varName,startID,lengthID)]; % u velocity at cell center
+        catch
+            error('data cannot be concatenated. Probably caused by different nc_varget function. This function is based on the nc_varget from wlsettings (p:\delta\wlsettings\dl_snctools\nc_varget.m)')
+        end
     end
 end
 
