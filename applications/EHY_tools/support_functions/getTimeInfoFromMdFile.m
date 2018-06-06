@@ -1,4 +1,4 @@
-function [refdate,tunit,tstart,tstop,hisstart,hisstop,mapstart,mapstop]=getTimeInfoFromMdFile(mdFile)
+function [refdate,tunit,tstart,tstop,hisstart,hisstop,mapstart,mapstop]=getTimeInfoFromMdFile(mdFile,modelType)
 % refdate       : Reference date in MATLAB's datenum
 % tunit         : Time unit of tstart and tstop (e.g. 'S' , 'M')
 % tstart        : Start time of simulation w.r.t. refdate (in tunit)
@@ -8,6 +8,7 @@ function [refdate,tunit,tstart,tstop,hisstart,hisstop,mapstart,mapstop]=getTimeI
 % mapstart      : Start time of writing map output (in minutes)
 % mapstop       : Stop time of writing map output (in minutes)
 % mdFile        : Master definition file (*.mdf, *.mdu, *siminp*)
+% modelType	: Model type ('dfm','d3d','simona')
 %
 % support function of the EHY_tools
 % Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
@@ -16,7 +17,12 @@ mdFile=EHY_getMdFile(mdFile);
 if isempty(mdFile)
     error('No .mdu, .mdf or siminp found in this folder')
 end
-modelType=EHY_getModelType(mdFile);
+if isempty(modelType)
+    modelType=EHY_getModelType(mdFile);
+    if isempty(modelType)
+        error('Could not determine model type')
+    end
+end
 
 switch modelType
     case 'dfm'

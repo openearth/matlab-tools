@@ -35,7 +35,7 @@ end
 
 % Delft3D 4
 if isempty(modelType)
-    if ~isempty(strfind(name,'trih-')) || ~isempty(strfind(name,'trim-'))
+    if ~isempty(strfind(name,'trih-')) || ~isempty(strfind(name,'trim-')) || ...
             ismember(ext,{'.mdf','.bcc','.bct','.bca','.bnd','.crs','.dat','.def','.enc','.eva','.grd','.obs','.src'})
         modelType = 'd3d';
     end
