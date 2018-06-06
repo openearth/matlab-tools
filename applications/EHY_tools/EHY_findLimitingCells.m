@@ -133,7 +133,7 @@ if OPT.writeMaxVel
         mag=sqrt(u.^2+v.^2); % nodes,time
         maximum=[maximum; max(mag,[],2)]; %maximum over time
     end
-    MAXVEL=maximum;
+    MAXVEL=[MAXVEL; maximum];
 end
 
 % numlimdt
