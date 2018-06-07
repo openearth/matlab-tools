@@ -1,38 +1,78 @@
 function varargout=dflowfm_io_extfile(cmd,fname,varargin)
 
-%  DFLOWFM_IO_extfile: write D-Flow FM extrnal forcing file
-%  (Wat een kut file!)
+%  DFLOWFM_IO_extfile: write D-Flow FM external forcing file
 %% Switch read/write
 
 switch lower(cmd)
 
     case 'read'
+        OPT.strip = false;
+        OPT       = setproperty(OPT,varargin);
         i_forcing = 0;
         type      = 'old';
         
         try
             % New Format
             Info           = inifile('open',fname);
+            
+            %% Cycle over the Chapters
             ListOfChapters = inifile('chapters',Info);
             for i_chapter = 1: length(ListOfChapters);
                 i_forcing = i_forcing + 1;
                 i_val     = 0;
                 ext_force(i_forcing).Chapter = ListOfChapters{i_chapter};
+                
+                %% Cycle over the keywords within a chapter
                 ListOfKeywords=inifile('keywords',Info,i_chapter);
                 for i_key = 1: length(ListOfKeywords)
+                    
+                    %% Keyword/value (not a series)
                     if ~isempty(ListOfKeywords{i_key})
                         ext_force(i_forcing).Keyword.Name {i_key}  = ListOfKeywords{i_key};
                         ext_force(i_forcing).Keyword.Value{i_key} = inifile('get',Info,i_chapter,i_key);
+                        
+                        %% remove comments (if requested)
+                        if OPT.strip
+                            index = strfind(ext_force(i_forcing).Keyword.Value{i_key},'#');
+                            if ~isempty(index)
+                                ext_force(i_forcing).Keyword.Value{i_key} = ext_force(i_forcing).Keyword.Value{i_key}(1:index(1) - 1);
+                            end
+                        end
+                        
+                        %% Convert 2 number if possible (exception for timeseries since that is a native matlab function)
+                        if isstr(ext_force(i_forcing).Keyword.Value{i_key}) && ~strcmp(ext_force(i_forcing).Keyword.Value{i_key},'timeseries')
+                            if ~isempty(str2num(ext_force(i_forcing).Keyword.Value{i_key}))
+                                % Convert string 2 number
+                                ext_force(i_forcing).Keyword.Value{i_key}= str2num(ext_force(i_forcing).Keyword.Value{i_key});
+                            else
+                                % String
+                                ext_force(i_forcing).Keyword.Value{i_key} = strtrim(ext_force(i_forcing).Keyword.Value{i_key});
+                            end
+                        end
                     else
+                        %% The series (put in cell array to allow for Astronomical foring, M2, S2 etc.
                         i_val = i_val + 1;
-                        ext_force(i_forcing).values(i_val,:) =  inifile('get',Info,i_chapter,i_key);
+                        tmp   = inifile('get',Info,i_chapter,i_key);
+                        if ~isstr(tmp)
+                            for i_col = 1: length(tmp)
+                               ext_force(i_forcing).values{i_val,i_col} =  tmp(i_col);
+                            end
+                        else
+                            index =   d3d2dflowfm_decomposestr(tmp);
+                            for i_val2 = 1: length(index) - 1;
+                                ext_force(i_forcing).values{i_val,i_val2} = strtrim(tmp(index(i_val2):index(i_val2 + 1) - 1));
+                                if ~isempty(str2num(ext_force(i_forcing).values{i_val,i_val2}))
+                                    ext_force(i_forcing).values{i_val,i_val2} = str2num(ext_force(i_forcing).values{i_val,i_val2});
+                                end
+                            end
+                        end
                     end
                 end
             end
-            type = 'ini';
+            varargout{1} = 'ini';
             
         catch
-            %Old Format
+            %% Old Format
             
             fid     = fopen(fname  );
             line = strtrim(fgetl(fid));
@@ -101,20 +141,29 @@ switch lower(cmd)
                 Keyword = ext_force(i_force).Keyword.Name;
                 Value    = ext_force(i_force).Keyword.Value;
                 Info.Data{i_force,1} = Chapter;
-                for i_key = 2: length(Keyword)
-                    tmp{i_key-1,1} = Keyword{i_key};
-                    tmp{i_key-1,2} = Value  {i_key};
+                for i_key = 1: length(Keyword)
+                    tmp{i_key,1} = Keyword{i_key};
+                    tmp{i_key,2} = Value  {i_key};
                 end
                 
                 if isfield(ext_force(i_force),'values')
                     Value = ext_force(i_force).values;
                     no_row = size(Value,1);
                     no_col = size(Value,2);
-                    format = ['%8i ' repmat('%12.6f ',1,no_col)];
+                    
+                    if isstr(Value{1,1})
+                        format = ['%8s ' repmat('%12.6f ',1,no_col - 1)];
+                    elseif isempty(strfind(num2str(Value{1,1}),'.'))
+                        format = ['%8i ' repmat('%12.6f ',1,no_col - 1)];
+                    else
+                        format = repmat('%12.6f ',1,no_col);
+                    end
+                    
                     for i_row = 1: no_row
                         tmp{end+1,2} = '';
-                        tmp{end  ,2} = sprintf(format,Value(i_row,:));
-                    end
+                        tmp{end  ,2} = sprintf(format,Value{i_row,:});
+                    end;
+                    
                 end
                 Info.Data{i_force,2} = tmp;
                 clear tmp
