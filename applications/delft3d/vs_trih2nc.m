@@ -967,7 +967,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
     end
 
     % turbulence
-
+    
     d3d_name = 'ZTUR';
     if ~isempty(vs_get_elm_def(F,d3d_name))
         ifld     = ifld + 1;clear attr
@@ -1000,49 +1000,55 @@ function varargout = vs_trih2nc(vsfile,varargin)
     end
       
     d3d_name = 'ZVICWW';
-    ifld     = ifld + 1;clear attr
-    attr(    1)  = struct('Name', 'standard_name', 'Value', 'ocean_vertical_momentum_diffusivity');
-    attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Vertical eddy viscosity-3D');
-    attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^2/s');
-    attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
-    attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
-    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN)); % this initializes at NaN rather than 9.9692e36
-    attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.viscosity_z = [Inf -Inf];
-    nc.Variables(ifld) = struct('Name'      , 'viscosity_z', ...
-                              'Datatype'  , OPT.type, ...
-                              'Dimensions', s_t_ki.dims, ...
-                              'Attributes' , attr,...
-                              'FillValue'  , []);
+    if ~isempty(vs_get_elm_def(F,d3d_name))
+        ifld     = ifld + 1;clear attr
+        attr(    1)  = struct('Name', 'standard_name', 'Value', 'ocean_vertical_momentum_diffusivity');
+        attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Vertical eddy viscosity-3D');
+        attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^2/s');
+        attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
+        attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
+        attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN)); % this initializes at NaN rather than 9.9692e36
+        attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.viscosity_z = [Inf -Inf];
+        nc.Variables(ifld) = struct('Name'      , 'viscosity_z', ...
+            'Datatype'  , OPT.type, ...
+            'Dimensions', s_t_ki.dims, ...
+            'Attributes' , attr,...
+            'FillValue'  , []);
+    end
 
     d3d_name = 'ZDICWW';
-    ifld     = ifld + 1;clear attr
-    attr(    1)  = struct('Name', 'standard_name', 'Value', 'ocean_vertical_tracer_diffusivity');
-    attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Vertical eddy diffusivity-3D');
-    attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^2/s');
-    attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
-    attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
-    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN)); % this initializes at NaN rather than 9.9692e36
-    attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.diffusivity_z = [Inf -Inf];
-    nc.Variables(ifld) = struct('Name'      , 'diffusivity_z', ...
-                              'Datatype'  , OPT.type, ...
-                              'Dimensions', s_t_ki.dims, ...
-                              'Attributes' , attr,...
-                              'FillValue'  , []);
-
+    if ~isempty(vs_get_elm_def(F,d3d_name))
+        ifld     = ifld + 1;clear attr
+        attr(    1)  = struct('Name', 'standard_name', 'Value', 'ocean_vertical_tracer_diffusivity');
+        attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Vertical eddy diffusivity-3D');
+        attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^2/s');
+        attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
+        attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
+        attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN)); % this initializes at NaN rather than 9.9692e36
+        attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.diffusivity_z = [Inf -Inf];
+        nc.Variables(ifld) = struct('Name'      , 'diffusivity_z', ...
+            'Datatype'  , OPT.type, ...
+            'Dimensions', s_t_ki.dims, ...
+            'Attributes' , attr,...
+            'FillValue'  , []);
+    end
+    
     d3d_name = 'ZRICH';
-    ifld     = ifld + 1;clear attr
-    attr(    1)  = struct('Name', 'standard_name', 'Value', 'richardson_number_in_sea_water');
-    attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Richardson number');
-    attr(end+1)  = struct('Name', 'units'        , 'Value', '-');
-    attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
-    attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
-    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN)); % this initializes at NaN rather than 9.9692e36
-    attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Ri = [Inf -Inf];
-    nc.Variables(ifld) = struct('Name'      , 'Ri', ...
-                              'Datatype'  , OPT.type, ...
-                              'Dimensions', s_t_ki.dims, ...
-                              'Attributes' , attr,...
-                              'FillValue'  , []);
+    if ~isempty(vs_get_elm_def(F,d3d_name))
+        ifld     = ifld + 1;clear attr
+        attr(    1)  = struct('Name', 'standard_name', 'Value', 'richardson_number_in_sea_water');
+        attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Richardson number');
+        attr(end+1)  = struct('Name', 'units'        , 'Value', '-');
+        attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+        attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
+        attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN)); % this initializes at NaN rather than 9.9692e36
+        attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Ri = [Inf -Inf];
+        nc.Variables(ifld) = struct('Name'      , 'Ri', ...
+            'Datatype'  , OPT.type, ...
+            'Dimensions', s_t_ki.dims, ...
+            'Attributes' , attr,...
+            'FillValue'  , []);
+    end
 
     % sediment mass
     if ~isempty(strmatch('sediment',fieldnames(I)))  
