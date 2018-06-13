@@ -17,7 +17,7 @@ mdFile=EHY_getMdFile(mdFile);
 if isempty(mdFile)
     error('No .mdu, .mdf or siminp found in this folder')
 end
-if isempty(modelType)
+if ~exist('modelType','var')
     modelType=EHY_getModelType(mdFile);
     if isempty(modelType)
         error('Could not determine model type')
