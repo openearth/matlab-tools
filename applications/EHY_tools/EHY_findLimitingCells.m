@@ -17,7 +17,7 @@ OPT.outputDir='EHY_findLimitingCells_OUTPUT'; % output directory
 if length(varargin)==0
     [filename, pathname]=uigetfile('*_map.nc','Open the model output file');
     if isnumeric(filename); disp('EHY_findLimitingCells stopped by user.'); return; end
-        
+    
     mapFile=[pathname filename];
     
     [writeXyz,~]=  listdlg('PromptString','Want to write the maximum velocities to a .xyz file?',...
@@ -75,7 +75,7 @@ else
     [pathstr, name, ext]=fileparts(mapFile);
     mapFiles(1).name=[name ext];
 end
-  
+
 X=[];
 Y=[];
 XX=[];
@@ -87,80 +87,82 @@ for iF=1:length(mapFiles)
     % iF==1 ; 1 partion run > good
     % iF>1  ; parallel run > not 100% correct at the moment
     mapFile=[fileparts(mapFile) filesep mapFiles(iF).name];
-
+    
     if length(mapFiles)>1
         disp(['working on mapFile: ' num2str(iF) '/' num2str(length(mapFiles)) ])
         info=ncinfo(mapFile);
     end
-        
-x=nc_varget(mapFile,vars{1,col});
-y=nc_varget(mapFile,vars{2,col});
-   X=[X;x];
-   Y=[Y;y];
-   
-ind=find(~cellfun(@isempty,strfind({info.Variables.Name},vars{3,col})));
-sizeucy=info.Variables(ind).Size;
-
-% maximum velocities
-if OPT.writeMaxVel
-    gridInfo=EHY_getGridInfo(mapFile,'no_layers');
-    if gridInfo.no_layers==1 % 2DH model
-       no_nodes=sizeucy(1);
-       no_times=sizeucy(2);
-    else
-       no_nodes=sizeucy(2);
-       no_times=sizeucy(3);
-    end
-    maximum=[];
-    step0=10000;
-    range=1:step0:no_nodes;
-    for ii=range
-        if ii==range(end)
-            step=no_nodes-ii+1;
-        else
-            step=step0;
+    
+    x=nc_varget(mapFile,vars{1,col});
+    y=nc_varget(mapFile,vars{2,col});
+    X=[X;x];
+    Y=[Y;y];
+    
+    ind=find(~cellfun(@isempty,strfind({info.Variables.Name},vars{3,col})));
+    sizeucy=info.Variables(ind).Size;
+    
+    % maximum velocities
+    if OPT.writeMaxVel
+        if iF==1
+            gridInfo=EHY_getGridInfo(mapFile,'no_layers');
         end
-        
         if gridInfo.no_layers==1 % 2DH model
-            u=ncread(mapFile,vars{4,col},[ii 1],[step no_times]);
-            v=ncread(mapFile,vars{5,col},[ii 1],[step no_times]);
-        else % 3D model
-            u=ncread(mapFile,vars{4,col},[1 ii 1],[gridInfo.no_layers step no_times]); % lyrs,nodes,times
-            v=ncread(mapFile,vars{5,col},[1 ii 1],[gridInfo.no_layers step no_times]); % lyrs,nodes,times
-            u=squeeze(max(u,[],1)); % nodes,times
-            v=squeeze(max(v,[],1)); % nodes,times
+            no_nodes=sizeucy(1);
+            no_times=sizeucy(2);
+        else
+            no_nodes=sizeucy(2);
+            no_times=sizeucy(3);
         end
-        mag=sqrt(u.^2+v.^2); % nodes,time
-        maximum=[maximum; max(mag,[],2)]; %maximum over time
+        maximum=[];
+        step0=10000;
+        range=1:step0:no_nodes;
+        for ii=range
+            if ii==range(end)
+                step=no_nodes-ii+1;
+            else
+                step=step0;
+            end
+            
+            if gridInfo.no_layers==1 % 2DH model
+                u=ncread(mapFile,vars{4,col},[ii 1],[step no_times]);
+                v=ncread(mapFile,vars{5,col},[ii 1],[step no_times]);
+            else % 3D model
+                u=ncread(mapFile,vars{4,col},[1 ii 1],[gridInfo.no_layers step no_times]); % lyrs,nodes,times
+                v=ncread(mapFile,vars{5,col},[1 ii 1],[gridInfo.no_layers step no_times]); % lyrs,nodes,times
+                u=squeeze(max(u,[],1)); % nodes,times
+                v=squeeze(max(v,[],1)); % nodes,times
+            end
+            mag=sqrt(u.^2+v.^2); % nodes,time
+            maximum=[maximum; max(mag,[],2)]; %maximum over time
+        end
+        MAXVEL=[MAXVEL; maximum];
     end
-    MAXVEL=[MAXVEL; maximum];
-end
-
-% numlimdt
-ind=find(~cellfun(@isempty,strfind({info.Variables.Name},vars{6,col})));
-sizeNumlimdt=info.Variables(ind).Size;
-limit=nc_varget(mapFile,vars{6,col},[sizeNumlimdt(2)-1 0],[1 sizeNumlimdt(1)]);
-
-elemIDs=find(limit>0);
-
-xx=[];
-yy=[];
-nrOfLimiting=[];
-for iE=1:length(elemIDs)
-    nrOfLimiting=[nrOfLimiting; limit(elemIDs(iE))];
-    xx=[xx; x(elemIDs(iE))];
-    yy=[yy; y(elemIDs(iE))];
-end
-
-[~,I]=sort(nrOfLimiting);
-I=flipud(I);
-xx=xx(I);
-yy=yy(I);
-nrOfLimiting=nrOfLimiting(I);
-
-XX=[XX;xx];
-YY=[YY;yy];
-NUMLIMDT=[NUMLIMDT;nrOfLimiting];
+    
+    % numlimdt
+    ind=find(~cellfun(@isempty,strfind({info.Variables.Name},vars{6,col})));
+    sizeNumlimdt=info.Variables(ind).Size;
+    limit=nc_varget(mapFile,vars{6,col},[sizeNumlimdt(2)-1 0],[1 sizeNumlimdt(1)]);
+    
+    elemIDs=find(limit>0);
+    
+    xx=[];
+    yy=[];
+    nrOfLimiting=[];
+    for iE=1:length(elemIDs)
+        nrOfLimiting=[nrOfLimiting; limit(elemIDs(iE))];
+        xx=[xx; x(elemIDs(iE))];
+        yy=[yy; y(elemIDs(iE))];
+    end
+    
+    [~,I]=sort(nrOfLimiting);
+    I=flipud(I);
+    xx=xx(I);
+    yy=yy(I);
+    nrOfLimiting=nrOfLimiting(I);
+    
+    XX=[XX;xx];
+    YY=[YY;yy];
+    NUMLIMDT=[NUMLIMDT;nrOfLimiting];
 end
 % sort
 [NUMLIMDT,I]=sort(NUMLIMDT,'descend');
@@ -174,7 +176,7 @@ if ~isempty(XX)
     copyfile(outputFile,strrep(outputFile,'.pol','.ldb'))
     delft3d_io_xyn('write',strrep(outputFile,'.pol','_obs.xyn'),XX,YY,cellstr(num2str(NUMLIMDT)))
     disp(['You can find the created files in the directory:' char(10) ,...
-    fileparts(fileparts(mapFile)) filesep OPT.outputDir filesep])
+        fileparts(fileparts(mapFile)) filesep OPT.outputDir filesep])
 else
     disp('No limiting cells found')
 end

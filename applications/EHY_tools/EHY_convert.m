@@ -164,6 +164,32 @@ if OPT.saveOutputFile && exist(outputFile,'file')
     disp([char(10) 'EHY_convert created the file: ' char(10) fullfile(outputFile) char(10)])
 end
 %% conversion functions - in alphabetical order
+% box2dep
+    function [output,OPT]=EHY_convert_box2dep(inputFile,outputFile,OPT)
+        fid=fopen(inputFile,'r');
+        line=lower(fgetl(fid));
+        while feof(fid)==0 && ~isempty(strfind(line,'box')) % new box
+            % get dimensions of box
+            dmy1=regexpi(line, '(.*?(\d+),', 'tokens', 'once');
+            dmy2=regexpi(line, ',.*?(\d+);', 'tokens', 'once');
+            dmy3=regexpi(line, ';.*?(\d+).', 'tokens', 'once');
+            dmy4=regexpi(line, '..*?(\d+))', 'tokens', 'once');
+            m=[str2num(dmy1{1}):str2num(dmy3{1})];
+            n=[str2num(dmy2{1}):str2num(dmy4{1})];
+            
+            % read this block
+            for iM=1:length(m)
+                line=lower(fgetl(fid));
+                line(strfind(line,'#'):end)=''; % delete comments
+                dep(n,m(iM))=str2num(line);
+            end
+            line=lower(fgetl(fid));
+        end
+        output=dep;
+        if OPT.saveOutputFile
+            delft3d_io_dep('write',outputFile,dep','location','cor');
+        end
+    end
 % crs2kml
     function [output,OPT]=EHY_convert_crs2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
@@ -995,12 +1021,15 @@ end
 function inputExt=EHY_convert_askForInputExt
 [selection,~]=  listdlg('PromptString','Input file does not have an extension. What kind of file is it?',...
     'SelectionMode','single',...
-    'ListString',{'Simona observation points file (locaties)','Simona rooster/grid file (.grd)'},...
+    'ListString',{'Simona observation points file (locaties)','Simona rooster/grid file (.grd)',...
+    'Simona box/depth file (bodem)'},...
     'ListSize',[500 100]);
 if selection==1
     inputExt='locaties';
 elseif selection==2
     inputExt='grd';
+elseif selection==3
+    inputExt='box';
 else
     disp('EHY_convert stopped by user.'); return
 end
