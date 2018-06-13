@@ -187,7 +187,7 @@ end
         end
         output=dep;
         if OPT.saveOutputFile
-            delft3d_io_dep('write',outputFile,dep','location','cor');
+            delft3d_io_dep('write',outputFile,dep,'location','cor');
         end
     end
 % crs2kml
