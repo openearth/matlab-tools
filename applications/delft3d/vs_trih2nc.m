@@ -1276,7 +1276,8 @@ function varargout = vs_trih2nc(vsfile,varargin)
             R.u_y(2) = max(R.u_y(2),max(matrix(:)));
             
             
-            if nc.Dimensions(2).Length > 1    
+            
+            if ~isempty(vs_get_elm_def(F,'ZCURW'))
                 matrix = vs_let(F,'his-series','ZCURW',{OPT.ind,k},OPT.quiet);
                 ncwrite(ncfile,'u_z',permute(matrix,[3 2 1]),[k 1 1]);
                 R.u_z(1) = min(R.u_z(1),min(matrix(:)));
@@ -1292,7 +1293,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
         ncwrite(ncfile,'u_y',permute(matrix,[3 2 1]));
         R.u_y = [min(matrix(:)) max(matrix(:))];
 
-        if nc.Dimensions(2).Length > 1
+        if ~isempty(vs_get_elm_def(F,'ZCURW'))
             matrix = vs_let(F,'his-series','ZCURW',{OPT.ind,0},OPT.quiet);
             ncwrite(ncfile,'u_z',permute(matrix,[3 2 1]));
             R.u_z = [min(matrix(:)) max(matrix(:))];
@@ -1408,46 +1409,52 @@ function varargout = vs_trih2nc(vsfile,varargin)
         end   
     end
     
-    disp([mfilename,': writing viscosity...'])
-    if OPT.stride    
-        for k=1:G.kmax+1
-            matrix = vs_let(F,'his-series','ZVICWW',{OPT.ind,k},OPT.quiet);
-            ncwrite(ncfile,'viscosity_z',permute(matrix,[3 2 1]),[k 1 1]);
-            R.viscosity_z(1) = min(R.viscosity_z(1),min(matrix(:)));
-            R.viscosity_z(2) = max(R.viscosity_z(2),max(matrix(:)));
+    if ~isempty(vs_get_elm_def(F,'ZVICWW'));
+        disp([mfilename,': writing viscosity...'])
+        if OPT.stride
+            for k=1:G.kmax+1
+                matrix = vs_let(F,'his-series','ZVICWW',{OPT.ind,k},OPT.quiet);
+                ncwrite(ncfile,'viscosity_z',permute(matrix,[3 2 1]),[k 1 1]);
+                R.viscosity_z(1) = min(R.viscosity_z(1),min(matrix(:)));
+                R.viscosity_z(2) = max(R.viscosity_z(2),max(matrix(:)));
+            end
+        else
+            matrix = vs_let(F,'his-series','ZVICWW',{OPT.ind,0},OPT.quiet);
+            ncwrite(ncfile,'viscosity_z',permute(matrix,[3 2 1]));
+            R.viscosity_z = [min(R.viscosity_z(1),min(matrix(:))) max(R.viscosity_z(2),max(matrix(:)))];
         end
-    else
-        matrix = vs_let(F,'his-series','ZVICWW',{OPT.ind,0},OPT.quiet);
-        ncwrite(ncfile,'viscosity_z',permute(matrix,[3 2 1]));
-        R.viscosity_z = [min(R.viscosity_z(1),min(matrix(:))) max(R.viscosity_z(2),max(matrix(:)))];
-    end 
-    
-    disp([mfilename,': writing diffusivity...'])
-    if OPT.stride    
-        for k=1:G.kmax+1
-            matrix = vs_let(F,'his-series','ZDICWW',{OPT.ind,k},OPT.quiet);
-            ncwrite(ncfile,'diffusivity_z',permute(matrix,[3 2 1]),[k 1 1]);
-            R.diffusivity_z(1) = min(R.diffusivity_z(1),min(matrix(:)));
-            R.diffusivity_z(2) = max(R.diffusivity_z(2),max(matrix(:)));
-        end
-    else
-        matrix = vs_let(F,'his-series','ZDICWW',{OPT.ind,0},OPT.quiet);
-        ncwrite(ncfile,'diffusivity_z',permute(matrix,[3 2 1]));
-        R.diffusivity_z = [min(R.diffusivity_z(1),min(matrix(:))) max(R.diffusivity_z(2),max(matrix(:)))];
     end
     
-    disp([mfilename,': writing Richardson number...'])
-    if OPT.stride    
-        for k=1:G.kmax+1
-            matrix = vs_let(F,'his-series','ZRICH',{OPT.ind,k},OPT.quiet);
-            ncwrite(ncfile,'Ri',permute(matrix,[3 2 1]),[k 1 1]);
-            R.Ri(1) = min(R.Ri(1),min(matrix(:)));
-            R.Ri(2) = max(R.Ri(2),max(matrix(:)));
+    if ~isempty(vs_get_elm_def(F,'ZDICWW'));
+        disp([mfilename,': writing diffusivity...'])
+        if OPT.stride
+            for k=1:G.kmax+1
+                matrix = vs_let(F,'his-series','ZDICWW',{OPT.ind,k},OPT.quiet);
+                ncwrite(ncfile,'diffusivity_z',permute(matrix,[3 2 1]),[k 1 1]);
+                R.diffusivity_z(1) = min(R.diffusivity_z(1),min(matrix(:)));
+                R.diffusivity_z(2) = max(R.diffusivity_z(2),max(matrix(:)));
+            end
+        else
+            matrix = vs_let(F,'his-series','ZDICWW',{OPT.ind,0},OPT.quiet);
+            ncwrite(ncfile,'diffusivity_z',permute(matrix,[3 2 1]));
+            R.diffusivity_z = [min(R.diffusivity_z(1),min(matrix(:))) max(R.diffusivity_z(2),max(matrix(:)))];
         end
-    else
-        matrix = vs_let(F,'his-series','ZRICH',{OPT.ind,0},OPT.quiet);
-        ncwrite(ncfile,'Ri',permute(matrix,[3 2 1]));
-        R.Ri = [min(R.Ri(1),min(matrix(:))) max(R.Ri(2),max(matrix(:)))];
+    end
+    
+    if ~isempty(vs_get_elm_def(F,'ZRICH'));
+        disp([mfilename,': writing Richardson number...'])
+        if OPT.stride
+            for k=1:G.kmax+1
+                matrix = vs_let(F,'his-series','ZRICH',{OPT.ind,k},OPT.quiet);
+                ncwrite(ncfile,'Ri',permute(matrix,[3 2 1]),[k 1 1]);
+                R.Ri(1) = min(R.Ri(1),min(matrix(:)));
+                R.Ri(2) = max(R.Ri(2),max(matrix(:)));
+            end
+        else
+            matrix = vs_let(F,'his-series','ZRICH',{OPT.ind,0},OPT.quiet);
+            ncwrite(ncfile,'Ri',permute(matrix,[3 2 1]));
+            R.Ri = [min(R.Ri(1),min(matrix(:))) max(R.Ri(2),max(matrix(:)))];
+        end
     end
       
     if ~isempty(strmatch('sediment',fieldnames(I)))
