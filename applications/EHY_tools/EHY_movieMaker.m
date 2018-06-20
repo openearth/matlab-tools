@@ -41,6 +41,7 @@ for iF=1:length(imageFiles)
 end
 close(writerObj);
 disp(['EHY_movieMaker created:' char(10) OPT.outputFile])
+EHYs(mfilename);
 end
 
 %% EHY_movieMaker_interactive
