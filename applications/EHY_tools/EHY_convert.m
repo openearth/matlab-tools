@@ -173,7 +173,7 @@ end
             dmy1=regexpi(line, '(.*?(\d+),', 'tokens', 'once');
             dmy2=regexpi(line, ',.*?(\d+);', 'tokens', 'once');
             dmy3=regexpi(line, ';.*?(\d+).', 'tokens', 'once');
-            dmy4=regexpi(line, '..*?(\d+))', 'tokens', 'once');
+            dmy4=regexpi(line, '.*?(\d+).)', 'tokens', 'once');
             m=[str2num(dmy1{1}):str2num(dmy3{1})];
             n=[str2num(dmy2{1}):str2num(dmy4{1})];
             
