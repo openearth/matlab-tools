@@ -6,13 +6,14 @@ function EHY_movieMaker(imageDir,varargin)
 
 % Example1: EHY_movieMaker
 % Example2: EHY_movieMaker('D:\pngFiles\')
+% Example3: EHY_movieMaker('D:\pngFiles\','outputFile','D:\animation.avi','frameRate',3)
 
 % created by Julien Groenenboom, June 2018
 %% OPT
 if nargin==0
     EHY_movieMaker_interactive;
     return
-elseif nargin>1
+else
     OPT.outputFile=[imageDir filesep 'EHY_movieMaker_OUTPUT' filesep 'movie.avi'];
     OPT.frameRate=4;
     OPT=setproperty(OPT,varargin);
@@ -41,6 +42,7 @@ for iF=1:length(imageFiles)
 end
 close(writerObj);
 disp(['EHY_movieMaker created:' char(10) OPT.outputFile])
+disp('If the resolution of the images is too large, you might not be able to play the video.')
 EHYs(mfilename);
 end
 
