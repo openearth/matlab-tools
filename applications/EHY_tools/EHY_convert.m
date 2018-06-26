@@ -14,9 +14,11 @@ function varargout=EHY_convert(varargin)
 %%
 OPT.saveOutputFile=1; % 0=do not save, 1=save
 OPT.outputFile=[]; % if isempty > outputFile=strrep(inputFile,inputExt,outputExt);
+OPT.overwrite=0; % 0=user will be asked if it's ok to overwrite, 1=overwrite existing file
 OPT.lineColor=[1 0 0]; % default is red
 OPT.lineWidth=1;
-OPT.fromEPSG=[]; % convert from this EPSG in case of conversion to kml (Google Earth)
+OPT.fromEPSG=[]; % convert from this EPSG in case of conversion to kml or same extension
+OPT.toEPSG=[]; % convert to this EPSG in case of conversion to same extension
 OPT.grdFile=[];  % corresponding .grd file for files like .crs / .dry / obs. / ...
 OPT.netFile=[];  % *_net.nc-file for conversion of .xyz (dry points) to dry-crosses-ldb
 OPT.grd=[]; % wlgrid('read',OPT.grdFile);
@@ -109,21 +111,29 @@ else
 end
 
 %% Choose and run conversion
-if isempty(OPT.outputFile)
-    [pathstr, name, ext] = fileparts(inputFile);
-    outputFile=[pathstr filesep name '.' outputExt];
-else % outputFile was specified by user
+% coordinate conversion
+if strcmp(inputExt,outputExt) 
+    OPT=EHY_selectToAndFromEPSG(OPT);
+    if ~exist('inputExt0','var'); inputExt0=['.' inputExt]; end
+    outputFile=strrep(inputFile,['.' inputExt],['_EPSG-' num2str(OPT.toEPSG) '.' outputExt]);
+end
+
+% determine outputFile
+if ~isempty(OPT.outputFile) % outputFile was specified by user
     outputFile=OPT.outputFile;
+elseif strcmp(inputExt,outputExt) % coordinate conversion
+    OPT=EHY_selectToAndFromEPSG(OPT);
+    if ~exist('inputExt0','var'); inputExt0=['.' inputExt]; end
+    outputFile=strrep(inputFile,['.' inputExt],['_EPSG-' num2str(OPT.toEPSG) '.' outputExt]);
+else % replace inputExt by outputExt
+     [pathstr, name, ext] = fileparts(inputFile);
+    outputFile=[pathstr filesep name '.' outputExt];
 end
 
 inputFile=strrep(inputFile,[filesep filesep],filesep);
 outputFile=strrep(outputFile,[filesep filesep],filesep);
 
-if strcmp(inputFile,outputFile)
-    outputFile=strrep(inputFile,inputExt0,['_converted' inputExt0]);
-end
-
-if OPT.saveOutputFile && exist(outputFile,'file')
+if OPT.saveOutputFile && exist(outputFile,'file') && ~OPT.overwrite
     [YesNoID,~]=  listdlg('PromptString',{'The outputFile already exists. Overwrite the file below?',outputFile},...
         'SelectionMode','single',...
         'ListString',{'Yes','No','No, but save as...'},...
@@ -334,10 +344,10 @@ end
             if strcmp(G.CoordinateSystem,'Spherical');
                 spher     = 1;
             end
-            zh            = -5.*ones(mmax,nmax); 
+            zh            = -5.*ones(mmax,nmax);
             netfile=outputFile;
             
-            % to avoid error of variables being created in below function 
+            % to avoid error of variables being created in below function
             X=[];Y=[];Z=[];NetNode_mask=[];nNetNode=[];vals=[];nc=[];ifld=[];attr=[];dims=[];
             ContourLink=[];NetLink=[];
             convertWriteNetcdf;
@@ -533,9 +543,9 @@ end
         else
             error('This information is not in the nc file')
         end
-       
+        
         if OPT.saveOutputFile
-             io_polygon('write',outputFile,lines);
+            io_polygon('write',outputFile,lines);
         end
         output=lines;
     end
@@ -584,7 +594,7 @@ end
             fid=fopen(outputFile,'w');
             for iM=1:length(x)
                 fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
-                fprintf(fid,'%-s\n',['''' strtrim(obs.namst{iM}) '''']); 
+                fprintf(fid,'%-s\n',['''' strtrim(obs.namst{iM}) '''']);
             end
             fclose(fid);
         end
@@ -823,7 +833,7 @@ end
             NetNode_y=nc_varget(OPT.netFile,'NetNode_y');
             NetElemNode=nc_varget(OPT.netFile,'NetElemNode');
             nrCellCorners=sum(NetElemNode~=0,2);
-           
+            
             % allocate
             face_x=ones(size(NetElemNode,1),1)*NaN;
             face_y=face_x;
@@ -941,79 +951,93 @@ elseif ~isempty(OPT.fromEPSG) && ~strcmp(OPT.fromEPSG,'4326')
 end
 end
 
-function [output,OPT]=EHY_convertCoordinates(inputFile,outputFile,OPT)
-
+function OPT=EHY_selectToAndFromEPSG(OPT)
 availableCoorSys={'EPSG: 28992, Amersfoort / RD New',28992;,...
     'EPSG:  4326, WGS ''84',4326;,...
     'Other...',-999};
 
 % coordinate system of input file
-[outputId,~]=  listdlg('PromptString','Coordinate system of the input file is: ',...
-    'SelectionMode','single',...
-    'ListString',availableCoorSys(:,1),'ListSize',[500 100]);
-if outputId~=length(availableCoorSys)
-    fromEPSG=availableCoorSys{outputId,2};
-elseif outputId==length(availableCoorSys)
-    fromEPSG=input('Coordinate system of the input file is, EPSG-code: ');
+if isempty(OPT.fromEPSG)
+    [outputId,~]=  listdlg('PromptString','Coordinate system of the input file is: ',...
+        'SelectionMode','single',...
+        'ListString',availableCoorSys(:,1),'ListSize',[500 100]);
+    if outputId~=length(availableCoorSys)
+        OPT.fromEPSG=availableCoorSys{outputId,2};
+    elseif outputId==length(availableCoorSys)
+        OPT.fromEPSG=input('Coordinate system of the input file is, EPSG-code: ');
+    end
 end
 
 % coordinate system of output file
-indExclToEPSG=find(cell2mat(availableCoorSys(:,2))~=fromEPSG);
-availableCoorSys=availableCoorSys(indExclToEPSG,:);
-[outputId,~]=  listdlg('PromptString','Convert the input file to coordinate system: ',...
-    'SelectionMode','single',...
-    'ListString',availableCoorSys(:,1),'ListSize',[500 100]);
-if outputId~=length(availableCoorSys)
-    toEPSG=availableCoorSys{outputId,2};
-elseif outputId==length(availableCoorSys)
-    toEPSG=input('Convert the input file to coordinate system of EPSG-code: ');
+if isempty(OPT.toEPSG)
+    indExclToEPSG=find(cell2mat(availableCoorSys(:,2))~=OPT.fromEPSG);
+    availableCoorSys=availableCoorSys(indExclToEPSG,:);
+    [outputId,~]=  listdlg('PromptString','Convert the input file to coordinate system: ',...
+        'SelectionMode','single',...
+        'ListString',availableCoorSys(:,1),'ListSize',[500 100]);
+    if outputId~=length(availableCoorSys)
+        OPT.toEPSG=availableCoorSys{outputId,2};
+    elseif outputId==length(availableCoorSys)
+        OPT.toEPSG=input('Convert the input file to coordinate system of EPSG-code: ');
+    end
+end
 end
 
+function [output,OPT]=EHY_convertCoordinates(inputFile,outputFile,OPT)
 % convert the file
-if fromEPSG~=toEPSG
+if OPT.fromEPSG~=OPT.toEPSG
     [~,~,ext]=fileparts(inputFile);
     switch ext
         case '.grd'
             output=wlgrid('read',inputFile);
-            [output.X,output.Y]=convertCoordinates(output.X,output.Y,'CS1.code',fromEPSG,'CS2.code',toEPSG);
-            if toEPSG==4326
-                wlgrid('write',outputFile,output,'CoordinateSystem','Spherical');
-            else
-                wlgrid('write',outputFile,output);
+            [output.X,output.Y]=convertCoordinates(output.X,output.Y,'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
+            if OPT.saveOutputFile
+                if OPT.toEPSG==4326
+                    wlgrid('write',outputFile,output,'CoordinateSystem','Spherical');
+                else
+                    wlgrid('write',outputFile,output);
+                end
             end
         case {'.ldb','.pli','.pol'}
             output=landboundary('read',inputFile);
-            [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',fromEPSG,'CS2.code',toEPSG);
+            [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
             % pol may contain 3rd column with 1 / -1's, but ignore when it
             % contains large values
-            if size(output,2)==2 || size(char(num2str(output(:,3))),2)>3
-                io_polygon('write',outputFile,output(:,1:2));
-            elseif size(output,2)==3
-                startID=[1; find(isnan(output(:,1)))+1];
-                endID=[find(isnan(output(:,1)))-1; size(output,1)];
-                fid=fopen(outputFile,'w');
-                for iBlock=1:length(startID)
-                    fprintf(fid,'%5.0f\n',iBlock);
-                    fprintf(fid,'%10.0f%5.0f\n',[endID(iBlock)-startID(iBlock)+1 3]);
-                    for iBlock2=startID(iBlock):endID(iBlock)
-                        fprintf(fid,'%20.7f%20.7f%5.0f\n',[output(iBlock2,1:3)]);
+            if OPT.saveOutputFile
+                if size(output,2)==2 || size(char(num2str(output(:,3))),2)>3
+                    io_polygon('write',outputFile,output(:,1:2));
+                elseif size(output,2)==3
+                    startID=[1; find(isnan(output(:,1)))+1];
+                    endID=[find(isnan(output(:,1)))-1; size(output,1)];
+                    fid=fopen(outputFile,'w');
+                    for iBlock=1:length(startID)
+                        fprintf(fid,'%5.0f\n',iBlock);
+                        fprintf(fid,'%10.0f%5.0f\n',[endID(iBlock)-startID(iBlock)+1 3]);
+                        for iBlock2=startID(iBlock):endID(iBlock)
+                            fprintf(fid,'%20.7f%20.7f%5.0f\n',[output(iBlock2,1:3)]);
+                        end
                     end
+                    fclose(fid);
                 end
-                fclose(fid);
             end
         case {'.xyz'}
             output=importdata(inputFile);
-            [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',fromEPSG,'CS2.code',toEPSG);
-            dlmwrite(outputFile,output,'delimiter',' ','precision','%20.7f');
-        case {'.xyn'}
-            output=delft3d_io_xyn('read',inputFile);
-            [output.x,output.y]=convertCoordinates(output.x,output.y,'CS1.code',fromEPSG,'CS2.code',toEPSG);
-            fid=fopen(outputFile,'w');
-            for iM=1:length(output.x)
-                fprintf(fid,'%20.7f%20.7f ',[output.x(iM) output.y(iM)]);
-                fprintf(fid,'%-s\n',output.name{iM});
+            [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
+            if OPT.saveOutputFile
+                dlmwrite(outputFile,output,'delimiter',' ','precision','%20.7f');
             end
-            fclose(fid);
+        case {'.xyn'}
+            xyn=delft3d_io_xyn('read',inputFile);
+            [xyn.x,xyn.y]=convertCoordinates(xyn.x,xyn.y,'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
+            output=[num2cell(xyn.x') num2cell(xyn.y') xyn.name'];
+            if OPT.saveOutputFile
+                fid=fopen(outputFile,'w');
+                for iM=1:length(xyn.x)
+                    fprintf(fid,'%20.7f%20.7f ',[xyn.x(iM) xyn.y(iM)]);
+                    fprintf(fid,'%-s\n',['''' xyn.name{iM} '''']);
+                end
+                fclose(fid);
+            end
     end
 end
 end
