@@ -22,49 +22,51 @@ if ~exist(OPT.outputDir); mkdir(OPT.outputDir); end
 oldExt=dflowfm_io_extfile('read',oldExtFile);
 
 for iE=1:length(oldExt)
-    if ~ismember(oldExt(iE).quantity,{'waterlevelbnd'})
-    disp(['Quantity ''' oldExt(iE).quantity ''' is not yet implemented in this conversion'])
-    end
-    switch oldExt(iE).quantity
-        case 'waterlevelbnd'
-            % pli file
-            pliFile=EHY_getFullWinPath(oldExt(iE).filename);
-            copyfile(pliFile,OPT.outputDir);
-            
-            WlBcFile=[OPT.outputDir filesep 'WaterLevel.bc'];
-            fidWlBc=fopen(WlBcFile,'a'); % create new or open existing
-            
-            [pathstr,name,ext]=fileparts(pliFile);
-            pli=dflowfm_io_xydata('read',pliFile);
-            if exist([pathstr filesep name '_0001.cmp']) % astro components
-                for iP=1:size(pli.DATA,1)
-                    % read cmp file
-                    cmpFile=[pathstr filesep name '_' sprintf('%04d',iP) '.cmp'];
-                    fidCmp=fopen(cmpFile,'r');
-                    cmp=textscan(fidCmp,'%s%s%s');
-                    cmp=[cmp{:}];
-                    cmp(find(~cellfun(@isempty,strfind(cmp(:,1),'*'))),:)=[]; % delete header/commented lines
-                    
-                    % write cmp data to bc file
-                    fprintf(fidWlBc,'[forcing]\n');
-                    fprintf(fidWlBc,'Name                            = %s_%04d\n',name,iP);
-                    fprintf(fidWlBc,'Function                        = astronomic\n');
-                    fprintf(fidWlBc,'Quantity                        = astronomic component\n');
-                    fprintf(fidWlBc,'Unit                            = -\n');
-                    fprintf(fidWlBc,'Quantity                        = waterlevelbnd amplitude\n');
-                    fprintf(fidWlBc,'Unit                            = m\n');
-                    fprintf(fidWlBc,'Quantity                        = waterlevelbnd phase\n');
-                    fprintf(fidWlBc,'Unit                            = deg\n');
-                    for iC = 1:size(cmp,1)
-                        fprintf(fidWlBc,'%-9s',cmp{iC,1});
-                        fprintf(fidWlBc,'%20s  %20s\n',cmp{iC,2},cmp{iC,3});
+    if ~isempty(oldExt(iE).quantity)
+        if ~ismember(oldExt(iE).quantity,{'waterlevelbnd'})
+            disp(['Quantity ''' oldExt(iE).quantity ''' is not yet implemented in this conversion'])
+        end
+        switch oldExt(iE).quantity
+            case 'waterlevelbnd'
+                % pli file
+                pliFile=EHY_getFullWinPath(oldExt(iE).filename);
+                copyfile(pliFile,OPT.outputDir);
+                
+                [pathstr,name,ext]=fileparts(pliFile);
+                WlBcFile=[OPT.outputDir filesep name '_waterlevelbnd.bc'];
+                fidWlBc=fopen(WlBcFile,'a'); % create new or open existing
+                
+                pli=dflowfm_io_xydata('read',pliFile);
+                if exist([pathstr filesep name '_0001.cmp']) % astro components
+                    for iP=1:size(pli.DATA,1)
+                        % read cmp file
+                        cmpFile=[pathstr filesep name '_' sprintf('%04d',iP) '.cmp'];
+                        fidCmp=fopen(cmpFile,'r');
+                        cmp=textscan(fidCmp,'%s%s%s');
+                        cmp=[cmp{:}];
+                        cmp(find(~cellfun(@isempty,strfind(cmp(:,1),'*'))),:)=[]; % delete header/commented lines
+                        
+                        % write cmp data to bc file
+                        fprintf(fidWlBc,'[forcing]\n');
+                        fprintf(fidWlBc,'Name                            = %s_%04d\n',name,iP);
+                        fprintf(fidWlBc,'Function                        = astronomic\n');
+                        fprintf(fidWlBc,'Quantity                        = astronomic component\n');
+                        fprintf(fidWlBc,'Unit                            = -\n');
+                        fprintf(fidWlBc,'Quantity                        = waterlevelbnd amplitude\n');
+                        fprintf(fidWlBc,'Unit                            = m\n');
+                        fprintf(fidWlBc,'Quantity                        = waterlevelbnd phase\n');
+                        fprintf(fidWlBc,'Unit                            = deg\n');
+                        for iC = 1:size(cmp,1)
+                            fprintf(fidWlBc,'%-9s',cmp{iC,1});
+                            fprintf(fidWlBc,'%20s  %20s\n',cmp{iC,2},cmp{iC,3});
+                        end
+                        fprintf(fidWlBc,'\n');
+                        fclose(fidCmp);
                     end
-                    fprintf(fidWlBc,'\n');
-                    fclose(fidCmp);
+                elseif exist([pathstr filesep name '_0001.tim']) % time series
+                    % to be implemented
                 end
-            elseif exist([pathstr filesep name '_0001.tim']) % time series
-                % to be implemented
-            end
-            fclose(fidWlBc);
+                fclose(fidWlBc);
+        end
     end
 end
