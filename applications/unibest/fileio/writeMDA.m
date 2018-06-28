@@ -545,7 +545,7 @@ function writeMDA(mda_filename_tmp, baseline_ldb, varargin)
         fprintf(fid,'%s\n',' BASISPOINTS');
         fprintf(fid,'%4.0f\n',length(N));
         fprintf(fid,'%s\n','     Xw             Yw             Y              N              Ray');
-        fprintf(fid,'%13.1f   %13.1f %11.2f %11.0f %11.0f\n',[baseline y(:) N Ray]');
+        fprintf(fid,'%18.4f   %18.4f %12.4f %11.0f %11.0f\n',[baseline y(:) N Ray]');
         fclose(fid);
         if keywords.plot_figure
             disp([mda_filename ' was saved succesfully']);
