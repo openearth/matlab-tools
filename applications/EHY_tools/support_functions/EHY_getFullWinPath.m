@@ -5,11 +5,11 @@ function fullWinPath=EHY_getFullWinPath(name_and_ext,pathstr)
 % on the name+extension of a file and a path.
 %
 % Example1: 	fullWinPath=EHY_getFullWinPath('model.mdu','/p/123-name/runs/')
-%               fullWinPath='p:\123-name\runs\'
+%               fullWinPath='p:\123-name\runs\model.mdu'
 % Example2: 	fullWinPath=EHY_getFullWinPath('/p/123-name/runs/model.mdu')
-%               fullWinPath='p:\123-name\runs\'
+%               fullWinPath='p:\123-name\runs\model.mdu'
 % Example3: 	fullWinPath=EHY_getFullWinPath('/p/123-name/runs/model.mdu','/p/123-name/runs/')
-%               fullWinPath='p:\123-name\runs\'
+%               fullWinPath='p:\123-name\runs\model.mdu'
 %
 % support function of the EHY_tools
 % Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
