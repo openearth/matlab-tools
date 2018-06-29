@@ -59,10 +59,12 @@ if isempty(answer); disp('EHY_movieMaker stopped by user.'); return; end
 OPT.frameRate=str2num(answer{1});
 
 %
-disp([char(10) 'Note that next time you want to get this data, you can also use:'])
-disp(['EHY_movieMaker(''' imageDir ''',''frameRate'',' num2str(OPT.frameRate) ');'])
-
 disp('start writing the screenplay') 
 disp('start making the movie') 
 EHY_movieMaker(imageDir,OPT);
+
+disp([char(10) 'Note that next time you want to make this movie, you can also use:'])
+disp(['EHY_movieMaker(''' imageDir ''',''frameRate'',' num2str(OPT.frameRate) ');'])
+
+
 end

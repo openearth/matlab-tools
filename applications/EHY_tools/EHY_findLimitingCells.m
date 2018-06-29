@@ -64,7 +64,7 @@ elseif any(ismember({info.Variables.Name},'FlowElem_xcc'))
 end
 
 if ~isempty(str2num(mapFile(end-10:end-7))) && strcmp(mapFile(end-11),'_')
-    msgbox(['You are probably processing a simulation that was using multiple partitions.' char(10),...
+    msgbox(['You are probably processing a simulation that used multiple partitions.' char(10),...
         'Please note that the administration of limiting cells in parallel simulations was not 100% correct in previous versions of DFM.' char(10),...
         'This has been fixed for DFM versions >= 1.2.0.8405. More info? > Contact Julien' char(10) char(10),...
         'Work-around for older versions: Use a simulation on one partition.' char(10) char(10),...
@@ -172,11 +172,18 @@ YY=YY(I);
 % export
 if ~isempty(XX)
     outputFile=[outputDir 'restricting_nodes.pol'];
+    disp(['You can find the created files in the directory:' char(10) ,...
+        fileparts(fileparts(mapFile)) filesep OPT.outputDir filesep])
     io_polygon('write',outputFile,[XX YY])
     copyfile(outputFile,strrep(outputFile,'.pol','.ldb'))
     delft3d_io_xyn('write',strrep(outputFile,'.pol','_obs.xyn'),XX,YY,cellstr(num2str(NUMLIMDT)))
-    disp(['You can find the created files in the directory:' char(10) ,...
-        fileparts(fileparts(mapFile)) filesep OPT.outputDir filesep])
+    dlmwrite(strrep(outputFile,'.pol','.xyz'),[XX YY NUMLIMDT],'delimiter',' ','precision','%20.7f')
+    try
+        mdFile=EHY_getMdFile(fileparts(fileparts(mapFile)));
+        mdu=dflowfm_io_mdu('read',mdFile);
+        fullWinPathNetwork=EHY_getFullWinPath(mdu.geometry.NetFile,fileparts(mdFile));
+        copyfile(fullWinPathNetwork,outputDir)
+    end
 else
     disp('No limiting cells found')
 end
