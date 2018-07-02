@@ -180,12 +180,13 @@ end
         line=lower(fgetl(fid));
         while feof(fid)==0 && ~isempty(strfind(line,'box')) % new box
             % get dimensions of box
-            dmy1=regexpi(line, '(.*?(\d+),', 'tokens', 'once');
-            dmy2=regexpi(line, ',.*?(\d+);', 'tokens', 'once');
-            dmy3=regexpi(line, ';.*?(\d+).', 'tokens', 'once');
-            dmy4=regexpi(line, '.*?(\d+).)', 'tokens', 'once');
-            m=[str2num(dmy1{1}):str2num(dmy3{1})];
-            n=[str2num(dmy2{1}):str2num(dmy4{1})];
+            line=line(strfind(line,'(')+1:strfind(line,')')-1);
+            line=strrep(line,';',' ');
+            line=strtrim(strrep(line,',',' '));
+            line=cellfun(@str2num,regexp(line,'\s+','split'));
+
+            m=line(1):line(3);
+            n=line(2):line(4);
             
             % read this block
             for iM=1:length(m)
@@ -236,6 +237,32 @@ end
         if OPT.saveOutputFile
             io_polygon('write',outputFile,x,y,'dosplit','-1');
         end
+    end
+% dep2box
+    function [output,OPT]=EHY_convert_dep2box(inputFile,outputFile,OPT)
+        [OPT,grd]=EHY_convert_gridCheck(OPT,inputFile);
+        msize=size(grd.X,1);
+        nsize=size(grd.X,2);
+        try
+            dep=wldep('read',inputFile,[msize+2 nsize+2]); % extra dummy's
+        catch
+            dep=wldep('read',inputFile,[msize+1 nsize+1]);
+        end
+        if OPT.saveOutputFile
+            if exist(outputFile,'file'); delete(outputFile); end
+            fid=fopen(outputFile,'a+');
+            for iN=1:10:nsize
+                nrange=[iN:iN+9];
+                nrange(nrange>nsize+1)=[];
+                fprintf(fid,'%s\n',['BOX MNMN=(' sprintf('%5.0f',1) ',' sprintf('%5.0f',nrange(1)) ';' ...
+                    sprintf('%5.0f',msize+1) ',' sprintf('%5.0f',nrange(end)) '), VARIABLE_VAL = ']);
+                for iM=1:msize+1
+                    fprintf(fid,[repmat('%8.2f',1,length(nrange)) '\n'],dep(iM,nrange));
+                end
+            end
+            fclose(fid);
+        end
+        output=dep;
     end
 % dry2xdrykml
     function [output,OPT]=EHY_convert_dry2xdrykml(inputFile,outputFile,OPT)
