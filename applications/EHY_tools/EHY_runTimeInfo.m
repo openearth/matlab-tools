@@ -87,14 +87,18 @@ try % if simulation has finished
             end
             % partitions
             shFiles=dir([pathstr filesep '*.sh']);
-            fid=fopen([pathstr filesep shFiles(1).name],'r');
-            lineNodes=findLineOrQuit(fid,'#$ -pe distrib ');
-            fclose(fid);
-            fid=fopen([pathstr filesep shFiles(1).name],'r');
-            lineCores=findLineOrQuit(fid,'export processes_per_node=');
-            fclose(fid);
-            if ~isempty(lineCores)
-                noPartitions=str2num(strrep(lineNodes,'#$ -pe distrib ',''))*str2num(strrep(lineCores,'export processes_per_node=',''));
+            if ~isempty(shFiles)
+                fid=fopen([pathstr filesep shFiles(1).name],'r');
+                lineNodes=findLineOrQuit(fid,'#$ -pe distrib ');
+                fclose(fid);
+                fid=fopen([pathstr filesep shFiles(1).name],'r');
+                lineCores=findLineOrQuit(fid,'export processes_per_node=');
+                fclose(fid);
+                if ~isempty(lineCores)
+                    noPartitions=str2num(strrep(lineNodes,'#$ -pe distrib ',''))*str2num(strrep(lineCores,'export processes_per_node=',''));
+                end
+            else
+                noPartitions=1;
             end
             
             % realTime_S

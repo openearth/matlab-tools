@@ -144,6 +144,8 @@ if OPT.saveOutputFile && exist(outputFile,'file') && ~OPT.overwrite
         [pathstr,~,ext] = fileparts(outputFile);
         [FileName,PathName] = uiputfile([pathstr filesep ext]);
         outputFile=[PathName FileName];
+    elseif isempty(YesNoID)
+      disp('EHY_convert stopped by user.'); return;
     end
 end
 

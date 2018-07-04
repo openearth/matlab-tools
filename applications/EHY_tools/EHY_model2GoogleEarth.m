@@ -27,9 +27,7 @@ end
 OPT2.saveOutputFile=OPT.saveOutputFile;
 
 %%
-if nargin>0
-    mdFile=varargin{1};
-else
+if nargin==0
     disp('Open a .mdu or .mdf  file')
     [filename, pathname]=uigetfile({'*.mdu';'*.mdf';'*.*'},'Open a .mdu or .mdf file');
     if isnumeric(filename); disp('EHY_model2GoogleEarth stopped by user.'); return; end
@@ -154,7 +152,7 @@ switch modelType
             [~,name]=fileparts(inputFile);
             OPT2.outputFile=[outputDir name '_crs.kml'];
             OPT2.lineColor=OPT.crsColor;
-            [~,OPT2]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[1 1 0],'lineWidth',4,OPT2);
+            [~,OPT2]=EHY_convert(inputFile,'kml','lineWidth',4,OPT2);
         end
         
         % .obs
