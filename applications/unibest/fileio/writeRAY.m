@@ -113,7 +113,11 @@ elseif nargin == 1
         if ~isfield(RAYdata(ii),'hass')
             RAYdata(ii).hass=[];
         end
-        fid4 = fopen([RAYdata(ii).path filesep char(RAYdata(ii).name)],'wt');
+        if ~isempty(RAYdata(ii).path);
+            fid4 = fopen([RAYdata(ii).path filesep char(RAYdata(ii).name)],'wt');
+        else
+            fid4 = fopen([char(RAYdata(ii).name)],'wt');
+        end
         for iii=1:6
             fprintf(fid4,'%s\n',RAYdata(ii).info{1,iii});
         end
@@ -129,11 +133,11 @@ elseif nargin == 1
             if ~isempty(RAYdata(ii).hass)
                 % hass is not empty:
                 % whatever non-zero value is set (e.g. 1, 1000, 'on', etc.), hass is printed as 1 (except for 0):
-                fprintf(fid4,'       Xb      2 %%      20%%      50%%      80%%     100%%     high_angle_stability_switch\n');
+                fprintf(fid4,'       Xb           2 %%          20%%           50%%          80%%          100%%     high_angle_stability_switch\n');
                 fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100 ~isempty(nonzeros(RAYdata(ii).hass))]);
             else
                 % hass is empty, ignore it (not printed as zero, as in the original file):
-                fprintf(fid4,'       Xb      2 %%      20%%      50%%      80%%     100%%\n');
+                fprintf(fid4,'       Xb           2 %%          20%%           50%%          80%%          100%%\n');
                 fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100]);
             end
         else

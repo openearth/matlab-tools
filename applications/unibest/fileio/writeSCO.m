@@ -173,13 +173,13 @@ if SCOdata.isTimeseries~=1
     fprintf(fid,'WAVM      H0            wave height   period   direction   Duration\n');
     fprintf(fid,'   %14.3f%14.3f%14.3f%14.3f%14.5f\n',[SCOdata.h0(:),SCOdata.hs(:),SCOdata.tp(:),SCOdata.xdir(:),SCOdata.dur(:)]');
     if writedummyTIDE==1
-        fprintf(fid,'  1    (Number of Tide condition\n');
+        fprintf(fid,'  1    (Number of Tide condition)\n');
         fprintf(fid,'          DH            Vgety         Ref.depth   Perc\n');
         fprintf(fid,'             0.00          0.00          3.00        100.00\n');
     elseif writedummyTIDE==0
-        fprintf(fid,' %2.0f    (Number of Tide condition\n',length(SCOdata.Htide));
+        fprintf(fid,' %2.0f    (Number of Tide condition)\n',length(SCOdata.Htide));
         fprintf(fid,'     %9s %9s %9s %9s\n','DH','Vgety','Ref.depth','Perc');
-        fprintf(fid,'     %9.3f %9.3f %9.3f %9.5f\n',[SCOdata.Htide(:), SCOdata.Vtide(:), SCOdata.RefDep(:), SCOdata.Ptide(:)]');
+        fprintf(fid,'     %9.3f %9.3f %9.3f  %10.6f\n',[SCOdata.Htide(:), SCOdata.Vtide(:), SCOdata.RefDep(:), SCOdata.Ptide(:)]');
     end
     fclose(fid);
    
