@@ -1,4 +1,4 @@
-function refine_netfile(fnamein,fnameout,xyzfile,nrref,hmin,dtmax,directional,outsidecell,connect,maxlevel,drypointsfile)
+function refine_netfile(fnamein,fnameout,xyzfile,nrref,hmin,dtmax,directional,outsidecell,connect,maxlevel,drypointsfile,exedir)
 % Refines FM grid based on Courant numbers
 %
 % e.g.
@@ -17,14 +17,9 @@ function refine_netfile(fnamein,fnameout,xyzfile,nrref,hmin,dtmax,directional,ou
 % 
 % refine_netfile(fnamein,fnameout,xyzfile,nrref,hmin,dtmax,directional,outsidecell,connect,maxlevel);
 
-exedir='d:\programs\dflowfm\dflowfm-x64-1.1.204.49395\';
-
 copyfile(fnamein,'TMP_net.nc');
-
 for iref=1:nrref
-    
     str=[exedir 'dflowfm.exe '];
-    %str=[exedir 'unstruc.exe '];
     str=[str '--refine:hmin=' num2str(hmin) ':'];
     str=[str 'dtmax=' num2str(dtmax) ':'];
     str=[str 'directional=' num2str(directional) ':'];
@@ -38,12 +33,7 @@ for iref=1:nrref
     end
     str=[str 'TMP_net.nc' ' '];
     str=[str xyzfile];
-    
     system(str);
-
     movefile('out_net.nc','TMP_net.nc');
-%    movefile('out_net.nc','test003_net.nc');
-
 end
-
 movefile('TMP_net.nc',fnameout);

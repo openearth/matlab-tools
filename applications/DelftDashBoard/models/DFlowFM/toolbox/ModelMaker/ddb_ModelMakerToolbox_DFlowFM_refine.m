@@ -110,6 +110,7 @@ handles.model.dflowfm.domain(ad).netfile=filename;
 
 % Find minimum grid resolution (in metres)
 %dmin=min(dx,dy);
+wb = waitbox('Your Delft3D-FM models is being refined');
 dmin=0.02;
 if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
     dmin = dmin*111111;
@@ -148,7 +149,6 @@ data(:,3)=zz;
 
 save('TMP.xyz','data','-ascii');
 
-% close(wb);
 
 nrref=handles.toolbox.modelmaker.dflowfm.nr_refinement_steps;
 hmin=0.001;
@@ -161,12 +161,13 @@ maxlevel=1;
 drypointsfile='testing123.pol';
 drypointsfile='';
 
-refine_netfile(filename_ori,filename,'TMP.xyz',nrref,hmin,dtmax,directional,outsidecell,connect,maxlevel,drypointsfile);
+refine_netfile(filename_ori,filename,'TMP.xyz',nrref,hmin,dtmax,directional,outsidecell,connect,maxlevel,drypointsfile, handles.model.dflowfm.exedir);
 
 handles.model.dflowfm.domain(ad).netfile=filename;
 
 handles.model.dflowfm.domain(ad).netstruc=dflowfm.readNet(filename);
 handles.model.dflowfm.domain(ad).netstruc.edge.NetLink=handles.model.dflowfm.domain(ad).netstruc.edge.NetLink';
+close(wb);
 
 %handles.model.dflowfm.domain(ad).netstruc=loadnetstruc2(filename);
 

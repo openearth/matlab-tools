@@ -1,4 +1,4 @@
-function ddb_ModelMakerToolbox_DFlowFM_refine(varargin)
+function ddb_ModelMakerToolbox_DFlowFM_quickMode(varargin)
 %DDB_MODELMAKERTOOLBOX_QUICKMODE  One line description goes here.
 %
 %   More detailed description goes here.
