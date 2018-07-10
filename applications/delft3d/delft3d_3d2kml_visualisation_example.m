@@ -5,7 +5,7 @@ function delft3d_3d2kml_visualisation_example(varargin)
 
 %% settings
 
-   OPT.fname     = 'F:\DELFT3D\ZUNO_1998\trim-hu3feb1.dat';
+   OPT.fname     = 'E:\Work\001_Rags\run_7\trim-rags_run7.dat';
    OPT.uvscale   = 1e4; % 1 m/s becomes x m
    OPT.clim      = [-1 1];
    OPT.epsg      = 28992;
@@ -43,8 +43,8 @@ for it=1:length(OPT.it)-1; %1:T.nt_storage-1 % add one extra time to specify toe
      
    %% Google Earth need lat,lon
 
-      [G.cen.cent.lon,G.cen.cent.lat] = convertcoordinates(G.cen.cent.x,G.cen.cent.y,'CS1.code',OPT.epsg,'CS2.code',4326);
-      [G.cor.cent.lon,G.cor.cent.lat] = convertcoordinates(G.cor.cent.x,G.cor.cent.y,'CS1.code',OPT.epsg,'CS2.code',4326);
+      [G.cen.cent.lon,G.cen.cent.lat] = convertCoordinates(G.cen.cent.x,G.cen.cent.y,'CS1.code',OPT.epsg,'CS2.code',4326);
+      [G.cor.cent.lon,G.cor.cent.lat] = convertCoordinates(G.cor.cent.x,G.cor.cent.y,'CS1.code',OPT.epsg,'CS2.code',4326);
       
       G.cen.cent.lon = reshape(G.cen.cent.lon,size(G.cen.cent.x));
       G.cen.cent.lat = reshape(G.cen.cent.lat,size(G.cen.cent.x));
