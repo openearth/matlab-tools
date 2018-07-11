@@ -6,7 +6,8 @@ function delft3d_trim2ini(mdffile,time,fileOut,varargin)
 %the trim file from which one wants to restart into .ini file and .sdb 
 %sediment masses or .thk and .frc files with respectively layer thicknesses
 %and mass fractions. This function does so. At this moment only water levels,
-%velocities, salinities, temperatures and constituents can be written to .ini file. 
+%velocities, salinities, temperatures, constituents and secondary flow can 
+%be written to .ini file. 
 %The depths at the boundary in the .dep file are equal to the depths in the
 %.dep file that is associated with mdffile. 
 %
@@ -34,8 +35,7 @@ function delft3d_trim2ini(mdffile,time,fileOut,varargin)
 %     mysim_L1F2.sdb,...,mysim_L2F1.sdb,...
 %     Here L gives the sedimentlayer and F the sediment fraction
 %
-% BETA VERSION. Writing secondary flow is not supported. The number of constituents that can
-% be processed is limited to 3. 
+% BETA VERSION. The number of constituents that can be processed is limited to 3. 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -122,9 +122,9 @@ end %end if isempty(time)
 
 %Water level
 if ismember('S1',elements)
-    data.zwl=vs_let(nefis,'map-series',{timestep},'S1','quiet');
+    data.waterlevel=vs_let(nefis,'map-series',{timestep},'S1','quiet');
     %permute necessary for delft3d_io_ini
-    data.zwl=permute( squeeze(data.zwl),[2 1]); 
+    data.waterlevel=permute( squeeze(data.waterlevel),[2 1]); 
 else
     error('No water level in trim file'); 
 end
@@ -158,6 +158,7 @@ if ismember('R1',elements)
     r1=reshape(r1,1,mnkmax(2),mnkmax(1),mnkmax(3),[]); 
     %permute necessary for delft3d_io_ini
     r1=permute(r1,[1 3 2 4 5]); 
+    namcon=cellstr(vs_get(nefis,'map-const','NAMCON'));
 end
 
 %salinity
@@ -178,6 +179,15 @@ for k=1:3
         flag=flag+1; 
         data.(sprintf('%s%d','constituent',k))=squeeze(r1(:,:,:,:,flag)); 
     end
+end
+
+%secondary flow
+if sum(sub1=='I')>0
+    flag=flag+1;
+    if ~strcmp(namcon{flag},'Secondary flow')
+        warning('warning: Secondary flow missing from trim file.');
+    end
+    data.secondaryflow=squeeze( r1(:,:,:,:,flag) );
 end
 
 %morphology
