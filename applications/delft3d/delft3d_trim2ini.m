@@ -88,18 +88,14 @@ OPT=setproperty(OPT,varargin);
 
 %% Open files
 
-%set working directory (=directory with mdffile)
 [fPath fName fExt]=fileparts(mdffile)
-cd(fPath);
-
-data=struct(); 
 
 %open .mdf file
-mdf=delft3d_io_mdf('read',[fName,'.mdf']); 
+mdf=delft3d_io_mdf('read',mdffile); 
 sub1=mdf.keywords.sub1;
 
 %read trim file into matlab
-nefis=sprintf('trim-%s.def',fName);
+nefis=fullfile(fPath,sprintf('trim-%s.def',fName));
 nefis=vs_use(nefis,'quiet'); 
 elements={nefis.ElmDef(:).Name}; 
 
@@ -119,6 +115,8 @@ else
 end %end if isempty(time)
 
 %% Read data from nefis file
+
+data=struct(); 
 
 %Water level
 if ismember('S1',elements)
@@ -208,12 +206,7 @@ end
 
 %% Write ini file
 
-[fPath fName fExt]=fileparts(fileOut); 
-if ~isempty(fPath)
-    cd(fPath);
-end
-
-delft3d_io_ini('write',[fName,'.ini'],data); 
+delft3d_io_ini('write',fileOut,data); 
 
 %% Write .sdb files
 
