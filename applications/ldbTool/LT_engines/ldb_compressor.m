@@ -1,7 +1,7 @@
 function varargout = ldb_compressor(varargin)
 %LDB_COMPRESSOR
 %
-%This function takes all landboundary segements, checks for identical
+%This function takes all landboundary segments, checks for identical
 %start and/or end points, and connects them accordingly. It does so in an
 %iterative fashion, and will thus automatically stop upon completion.
 %
@@ -38,7 +38,7 @@ function varargout = ldb_compressor(varargin)
 %
 %Note that ldb_data should be loaded using the function landboundary
 %
-%See also: landboundary, ldbTool, filledLDB, tekal
+%See also: landboundary, ldbTool, filledLDB, tekal, ldb_compressor_2
 
 %   --------------------------------------------------------------------
 %       Freek Scheel 2017
