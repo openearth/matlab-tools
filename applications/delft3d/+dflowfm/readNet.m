@@ -159,9 +159,14 @@ if nc_isvar(ncfile, 'mesh2d_face_nodes') && OPT.face
     end
 end
 
+%% if only 'file' field is present, .nc file is probably based on old format
+if length(fieldnames(G)) == 1
+    G = dflowfm.readNetOld(ncfile);
+end
+
 %% < read network: faces too: output file >
 
-if nc_isvar(ncfile, 'FlowLink_xu') && OPT.edge
+if ~isfield(G,'edge') && nc_isvar(ncfile, 'FlowLink_xu') && OPT.edge
     
     G.edge.FlowLink_x              = nc_varget(ncfile, 'FlowLink_xu')';
     G.edge.FlowLink_y              = nc_varget(ncfile, 'FlowLink_yu')';
@@ -170,11 +175,6 @@ if nc_isvar(ncfile, 'FlowLink_xu') && OPT.edge
     if nc_isvar(ncfile, 'FlowLinkDomain') && OPT.face
         G.edge.FlowLinkDomain     = nc_varget(ncfile, 'FlowLinkDomain')';
     end    
-end
-
-%% if only 'file' field is present, .nc file is probably based on old format
-if length(fieldnames(G)) == 1
-    G = dflowfm.readNetOld(ncfile);
 end
 
 %% out
