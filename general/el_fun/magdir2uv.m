@@ -96,7 +96,7 @@ for ii = 1:size(dir,1)
                 u(ii,jj) = mag(ii,jj);
                 v(ii,jj) = 0;
             end
-        elseif dir(ii,jj) == NaN
+        elseif isnan(dir(ii,jj))
                 u(ii,jj) = NaN;
                 v(ii,jj) = NaN;
         end
