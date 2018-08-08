@@ -33,7 +33,7 @@ switch modelType
         [pathstr, name, ext] = fileparts(mdFile);
         mdu=dflowfm_io_mdu('read',mdFile);
         if ~isempty(mdu.output.OutputDir)
-            folder=[pathstr mdu.output.OutputDir filesep];
+            folder=[pathstr filesep mdu.output.OutputDir filesep];
         else
             [~,name]=fileparts(mdFile);
             folder=[pathstr filesep 'DFM_OUTPUT_' name filesep];
