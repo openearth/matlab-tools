@@ -396,6 +396,7 @@ if keywords.plot_to_current_figure
     hold on;
     if strcmp(keywords.plot_color,'magnitude')
         output.arrows_handle = patch(output.arrows_x_values,output.arrows_y_values,arrow_lengths');
+        colormap(keywords.colormap)
         if keywords.plot_colorbar == 1
             output.colorbar_handle = colorbar;
         end
@@ -405,7 +406,7 @@ if keywords.plot_to_current_figure
     if keywords.axis_equal
         axis equal
     end
-    colormap(keywords.colormap)
+    
     set(output.arrows_handle,'EdgeColor',keywords.EdgeColor);
     if keywords.FaceAlpha~=1
         set(output.arrows_handle,'FaceAlpha',keywords.FaceAlpha);
