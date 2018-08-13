@@ -7,6 +7,7 @@ function EHY_movieMaker(imageDir,varargin)
 % Example1: EHY_movieMaker
 % Example2: EHY_movieMaker('D:\pngFiles\')
 % Example3: EHY_movieMaker('D:\pngFiles\','outputFile','D:\animation.avi','frameRate',3)
+% Example4: EHY_movieMaker('D:\pngFiles\','outputFile','D:\animation.avi','frameRate',3,'quality',90)
 
 % created by Julien Groenenboom, June 2018
 %% OPT
@@ -16,6 +17,7 @@ if nargin==0
 else
     OPT.outputFile=[imageDir filesep 'EHY_movieMaker_OUTPUT' filesep 'movie.avi'];
     OPT.frameRate=4;
+    OPT.quality=[]; % see https://nl.mathworks.com/help/matlab/ref/videowriter.html
     OPT=setproperty(OPT,varargin);
 end
 
@@ -33,10 +35,13 @@ end
 
 writerObj = VideoWriter(OPT.outputFile);
 writerObj.FrameRate = OPT.frameRate;
+if ~isempty(OPT.quality)
+    writerObj.Quality = OPT.quality;
+end
 open(writerObj);
 
 for iF=1:length(imageFiles)
-    disp(['progress: ' num2str(iF) '/' num2str(length(imageFiles))]);  
+    disp(['progress: ' num2str(iF) '/' num2str(length(imageFiles))]);
     thisimage=imread([imageDir filesep imageFiles(iF).name]);
     writeVideo(writerObj, thisimage);
 end
@@ -59,12 +64,10 @@ if isempty(answer); disp('EHY_movieMaker stopped by user.'); return; end
 OPT.frameRate=str2num(answer{1});
 
 %
-disp('start writing the screenplay') 
-disp('start making the movie') 
+disp('start writing the screenplay')
+disp('start making the movie')
 EHY_movieMaker(imageDir,OPT);
 
 disp([char(10) 'Note that next time you want to make this movie, you can also use:'])
 disp(['EHY_movieMaker(''' imageDir ''',''frameRate'',' num2str(OPT.frameRate) ');'])
-
-
 end
