@@ -609,6 +609,18 @@ end
         end
         output=[];
     end
+% obs2locaties
+    function [output,OPT]=EHY_convert_obs2locaties(inputFile,outputFile,OPT)
+        obs=delft3d_io_obs('read',inputFile);
+        if OPT.saveOutputFile
+            fid=fopen(outputFile,'w');
+            for iMN=1:length(obs.m)
+                fprintf(fid,'P %d = (M = %5d, N = %5d, NAME = ''%s'')\n',4000+iMN,obs.m(iMN),obs.n(iMN),obs.namst(iMN,:));
+            end
+            fclose(fid);
+        end
+        output=obs;
+    end
 % obs2xyn
     function [output,OPT]=EHY_convert_obs2xyn(inputFile,outputFile,OPT)
         pathstr = fileparts(inputFile);
