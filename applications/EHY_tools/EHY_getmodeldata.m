@@ -166,7 +166,7 @@ switch modelType
                 case 'wl'
                     value(bl_start:bl_stop,:) 	= ncread(outputfile,'waterlevel',[1 bl_start+offset],[Inf bl_int])';
                 case {'wd','water depth'}
-                    value(bl_start:bl_stop,:) 	= ncread(outputfile,'Waterdepth',[1 bl_start+offset],[Inf bl_int])';
+                    value(bl_start:bl_stop,:) 	= ncread(outputfile,'waterdepth',[1 bl_start+offset],[Inf bl_int])';
                 case 'uv'
                     if ~exist('no_layers','var') | no_layers==1 % 2DH model
                         value_x(bl_start:bl_stop,:) 	= permute(ncread(outputfile,'x_velocity',[1 bl_start+offset],[Inf bl_int]),[2 1]);
@@ -186,6 +186,12 @@ switch modelType
                         value(bl_start:bl_stop,:) 	= permute(ncread(outputfile,'temperature',[1 bl_start+offset],[Inf bl_int]),[2 1]);
                     else
                         value(bl_start:bl_stop,:,:) 	= permute(ncread(outputfile,'temperature',[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
+                    end
+                case 'zcoord'
+                    if ~exist('no_layers','var') % 2DH model
+                        value(bl_start:bl_stop,:) 	= permute(ncread(outputfile,'zcoordinate_c',[1 bl_start+offset],[Inf bl_int]),[2 1]);
+                    else
+                        value(bl_start:bl_stop,:,:) = permute(ncread(outputfile,'zcoordinate_c',[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
                     end
                 case {infonc.Variables(:).Name} % like constituents (e.g. totalN, totalP)
                     if ~exist('no_layers','var') % 2DH model
