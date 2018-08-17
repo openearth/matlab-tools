@@ -105,6 +105,9 @@ switch typeOfModelFile
                 if ismember('no_layers',wantedOutput)
                     infonc = ncinfo(inputFile);
                     ncVarInd = strmatch('laydim',{infonc.Dimensions.Name},'exact');
+                    if isempty(ncVarInd)
+                        ncVarInd = strmatch('nmesh2d_layer',{infonc.Dimensions.Name},'exact'); % newer dfm version
+                    end
                     if ~isempty(ncVarInd)
                         E.no_layers = infonc.Dimensions(ncVarInd).Length;
                     else
