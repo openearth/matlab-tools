@@ -24,7 +24,7 @@ if isempty(mdFile)
 end
 modelType=EHY_getModelType(mdFile);
 
-[refdate,tunit,tstart,tstop]=getTimeInfoFromMdFile(mdFile);
+[refdate,tunit,tstart,tstop]=EHY_getTimeInfoFromMdFile(mdFile);
 simPeriod_S=(tstop-tstart)*timeFactor(tunit,'S');
 simPeriod_D=(tstop-tstart)*timeFactor(tunit,'D');
 

@@ -1,4 +1,4 @@
-function gridInfo=EHY_getGridInfo(varargin)
+function gridInfo=EHY_getGridInfo(inputFile,varargin)
 
 % input parameters
 % .grd or .mdf mdu siminp file
@@ -8,25 +8,17 @@ function gridInfo=EHY_getGridInfo(varargin)
 % dimensions    % to be implemented
 % XY            % to be implemented
 % Z             % to be implemented
-
+% depth
+% projection
 %% process input from user
-if nargin==0
+if isempty(inputFile) && nargin==0
     EHY_getGridInfo_interactive;
     return
-end
-
-wantedOutput={};
-for iV=1:length(varargin)
-    if exist(varargin{iV},'file')
-        inputFile=varargin{iV};
-    else
-        wantedOutput{end+1,1}=varargin{iV};
-    end
-end
-
-% If only an inputfile was provided
-if ~isempty(inputFile) && isempty(wantedOutput)
+elseif nargin==0 % If only an inputfile was provided
+    inputFile=varargin{1};
     wantedOutput={'no_layers','dimensions'};
+else
+    wantedOutput=varargin;
 end
 
 %% determine type of model and type of inputFile
@@ -102,16 +94,47 @@ switch typeOfModelFile
     case 'outputfile'
         switch modelType
             case 'dfm'
+                infonc = ncinfo(inputFile);
                 if ismember('no_layers',wantedOutput)
-                    infonc = ncinfo(inputFile);
-                    ncVarInd = strmatch('laydim',{infonc.Dimensions.Name},'exact');
+                    ncVarInd = strmatch('laydim',{infonc.Dimensions.Name},'exact'); % old fm version
                     if isempty(ncVarInd)
-                        ncVarInd = strmatch('nmesh2d_layer',{infonc.Dimensions.Name},'exact'); % newer dfm version
+                        ncVarInd = strmatch('nmesh2d_layer',{infonc.Dimensions.Name},'exact');
                     end
                     if ~isempty(ncVarInd)
                         E.no_layers = infonc.Dimensions(ncVarInd).Length;
                     else
                         E.no_layers=1;
+                    end
+                end
+                if ismember('XY',wantedOutput)
+                    if ~isempty(strmatch('NetNode_x',{infonc.Variables.Name},'exact')) % old fm version
+                        E.node_X=ncread(inputFile,'NetNode_x');
+                        E.node_Y=ncread(inputFile,'NetNode_y');
+                    elseif  ~isempty(strmatch('mesh2d_node_x',{infonc.Variables.Name},'exact'))
+                        E.node_X=ncread(inputFile,'mesh2d_node_x');
+                        E.node_Y=ncread(inputFile,'mesh2d_node_y');
+                    end
+                end
+                if ismember('depth',wantedOutput)
+                    if ~isempty(strmatch('NetNode_z',{infonc.Variables.Name},'exact')) % old fm version
+                        E.node_depthcen=ncread(inputFile,'FlowElem_bl');
+                        E.node_depthcor=ncread(inputFile,'NetNode_z');
+                    elseif  ~isempty(strmatch('mesh2d_node_z',{infonc.Variables.Name},'exact'))
+                        E.node_Z=ncread(inputFile,'mesh2d_node_z');
+                    end
+                end
+                if ismember('Z',wantedOutput)
+                    if ~isempty(strmatch('??',{infonc.Variables.Name},'exact')) % old fm version
+                        E.node_Zcen=ncread(inputFile,'LayCoord_cc');
+                        E.node_Zcor=ncread(inputFile,'LayCoord_w');
+                    elseif  ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact'))
+                        E.node_Zcen=ncread(inputFile,'mesh2d_layer_z');
+                        E.node_Zcor=ncread(inputFile,'mesh2d_interface_z');
+                    end
+                end
+                if ismember('layer_model',wantedOutput)
+                    if ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact')) % old fm version
+                        E.layer_model='z-model';
                     end
                 end
             case 'd3d'

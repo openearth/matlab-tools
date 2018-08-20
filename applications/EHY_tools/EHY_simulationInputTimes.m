@@ -50,7 +50,7 @@ if exist('mdFile','var')
     modelType=EHY_getModelType(mdFile);
     [pathstr,name,ext]=fileparts(mdFile);
     E=struct;
-    [E.refdate,E.tunit,E.tstart,E.tstop]=getTimeInfoFromMdFile(mdFile);
+    [E.refdate,E.tunit,E.tstart,E.tstop]=EHY_getTimeInfoFromMdFile(mdFile);
     
     mdInput{1}=datestr(E.refdate,format{1});
     mdInput{2}=E.tunit;

@@ -67,7 +67,7 @@ end
 
 % t0 and tend
 if exist('mdFile','var')
-    [refdate,~,~,~,hisstart,hisstop]=getTimeInfoFromMdFile(mdFile);
+    [refdate,~,~,~,hisstart,hisstop]=EHY_getTimeInfoFromMdFile(mdFile);
     hisstartStr=datestr(refdate+hisstart/1440);
     hisstopStr=datestr(refdate+hisstop/1440); 
     option=inputdlg({['Want to specifiy a certain output period? (Default: all data)' char(10) char(10) 'Start date [dd-mmm-yyyy HH:MM]'],'End date   [dd-mmm-yyyy HH:MM]'},'Specify output period',1,...

@@ -24,7 +24,7 @@ if isempty(mdFile)
 end
 modelType=EHY_getModelType(mdFile);
 [pathstr,name,ext]=fileparts(mdFile);
-[refdate,tunit,tstart,tstop]=getTimeInfoFromMdFile(mdFile);
+[refdate,tunit,tstart,tstop]=EHY_getTimeInfoFromMdFile(mdFile);
 
 % startDate
 factor=timeFactor(tunit,'D');
