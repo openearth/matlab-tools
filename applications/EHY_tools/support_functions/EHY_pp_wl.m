@@ -275,7 +275,8 @@ for i_per = 1: size(Periods,1)
     colwidth      = [28 repmat(17,1,size(cell_arr,2) - 1)];
     format(1:4)   = {'.000'};
 
-    xlswrite_report([fig_dir filesep runid '.xls'],cell_arr,[Periods{i_per,1}(1:8) ' - ' Periods{i_per,2}(1:8)], ...
+    xlsFile=strrep([fig_dir filesep runid '.xls'],[filesep filesep],[filesep]);
+    xlswrite_report(xlsFile,cell_arr,[Periods{i_per,1}(1:8) ' - ' Periods{i_per,2}(1:8)], ...
                      'colwidth'                   ,colwidth, ...
                      'format'                     ,format  );
 
@@ -336,7 +337,8 @@ for i_per = 1: size(Periods,1)
     format(11)    = {'.000'};
     format(12)    = {'0'};
 
-    xlswrite_report([fig_dir filesep runid '_hwlw.xls'],cell_arr,[Periods{i_per,1}(1:8) ' - ' Periods{i_per,2}(1:8)], ...
+    xlsFile=strrep([fig_dir filesep runid '_hwlw.xls'],[filesep filesep],[filesep]);
+    xlswrite_report(xlsFile,cell_arr,[Periods{i_per,1}(1:8) ' - ' Periods{i_per,2}(1:8)], ...
                      'colwidth'                        ,colwidth, ...
                      'format'                          ,format  );
 end

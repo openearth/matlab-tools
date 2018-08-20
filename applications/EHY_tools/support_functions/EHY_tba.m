@@ -71,7 +71,8 @@ for i_freq = 1: no_freq
         no_values = length(values(index));
         cell_arr{no_stat + 5,i_col} = norm(values(index))/sqrt(no_values);
     end
-        
+    
+    file_name=strrep(file_name,[filesep filesep],[filesep]);
     xlswrite_report(file_name,cell_arr,Tide_cmp(1).name(i_freq,:),'Comments',Comments,...
                                                                   'colwidth',colwidth,...
                                                                   'format'  ,format  );
