@@ -106,10 +106,10 @@ function cmap = colormap_cpt(cpt,nSteps,varargin)
 % $HeadURL$
 % $Keywords: $
 
-OPT.Smooth = false;
+OPT.smooth = false;
 
 % overrule default settings by property pairs, given in varargin
-OPT = setproperty(OPT, varargin,'onExtraField','silentIgnore');
+OPT = setproperty(OPT,lower(varargin),'onExtraField','silentIgnore');
 
 %% adjust of *.cpt filename so you can copy paste it from the website
 cpt = strrep(cpt,' ','_');
@@ -155,7 +155,7 @@ cdata(5,cdata(5,:)==0) = -eps;
 xi = linspace(cdata(1,1),cdata(5,end),nSteps);
 
 %% reshape cdata
-if OPT.Smooth
+if OPT.smooth
     cdata = horzcat(cdata(1:4,:),cdata(5:8,end)) ;
 else
     cdata = reshape(cdata,size(cdata).*[.5 2]);
