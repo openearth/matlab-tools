@@ -20,7 +20,7 @@ for i=1:length(x)
         else
             ksi(i)=0;
         end
-        Asb(i)=0.05*h(i)*(D50/h(i)/delta/g/D50)^1.2;
+        Asb(i)=0.005*h(i)*(D50/h(i)/delta/g/D50)^1.2;
         Ass(i)=0.012*D50*Dstar^(-0.6)/(delta*g*D50)^1.2;
         Sbx(i)=Acal*Asb(i)*u(i)*ksi(i);
         Sby(i)=Acal*Asb(i)*v(i)*ksi(i);
