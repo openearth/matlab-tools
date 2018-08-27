@@ -1,4 +1,4 @@
-function s = distance(x,y,varargin);
+function s = distance(x,y,varargin)
 %DISTANCE   calculate distance along polygon
 %
 % s = distance(x,y) calculates distance along line. 

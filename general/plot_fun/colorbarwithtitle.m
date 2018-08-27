@@ -108,7 +108,7 @@ elseif strcmp(OPT.position,'text'  );Handles.txt = ...
     text(0.5,0.5,colorbartxt,'units','normalized',...
                           'rotation',0,...
                'horizontalalignment','center',...
-                            'Parent',Handles.axes)
+                            'Parent',Handles.axes);
 end
 
 %for i=1:length(Handles.colorbar)
@@ -118,9 +118,9 @@ end
 
 if ~isempty(ctick)
    if isempty(get(Handles.axes,'xtick'))
-   set(Handles.axes,'ytick',[ctick]);    
+   set(Handles.axes,'ytick',ctick);    
    elseif isempty(get(Handles.axes,'ytick'))
-   set(Handles.axes,'xtick',[ctick]);    
+   set(Handles.axes,'xtick',ctick);    
    end
 end
 

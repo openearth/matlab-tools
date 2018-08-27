@@ -184,7 +184,7 @@ elseif strcmp(cmd,'write')
    x  = varargin{1};
    y  = varargin{2};
    
-   if nargin>4
+   if nargin>5
       error('syntax: dep = swan_io_grd(''write'',filename,x,y,<IDLA>');
    end
    
