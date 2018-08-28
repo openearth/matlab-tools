@@ -106,9 +106,9 @@ for i=1:n1
    end
 
    if (la<0)
-       northsouth = 'S'
+       northsouth = 'S';
    else
-       northsouth = 'N'
+       northsouth = 'N';
    end
    
    a = cos(lat) * sin(deltaS);
