@@ -28,6 +28,10 @@ imageFiles=[dir([imageDir filesep '*.png']),...
 if isempty(imageFiles)
     if isnumeric(filename); disp('EHY_convert stopped by user.'); return; end
 end
+% str2num
+if ischar(OPT.frameRate); OPT.frameRate=str2num(OPT.frameRate); end
+if ischar(OPT.quality); OPT.quality=str2num(OPT.quality); end
+   
 %create output directory
 if ~exist(fileparts(OPT.outputFile))
     mkdir(fileparts(OPT.outputFile))
@@ -63,11 +67,16 @@ answer=inputdlg('Frame rate in frames per seconde (fps):','Frame rate',1,{'4'});
 if isempty(answer); disp('EHY_movieMaker stopped by user.'); return; end
 OPT.frameRate=str2num(answer{1});
 
+% get OPT.quality
+answer=inputdlg('Quality of animation (0-100), better quality also means larger filesize:','Quality',1,{'75'});
+if isempty(answer); disp('EHY_movieMaker stopped by user.'); return; end
+OPT.quality=str2num(answer{1});
+
 %
 disp('start writing the screenplay')
 disp('start making the movie')
 EHY_movieMaker(imageDir,OPT);
 
 disp([char(10) 'Note that next time you want to make this movie, you can also use:'])
-disp(['EHY_movieMaker(''' imageDir ''',''frameRate'',' num2str(OPT.frameRate) ');'])
+disp(['EHY_movieMaker(''' imageDir ''',''frameRate'',' num2str(OPT.frameRate) ''',''quality'',' num2str(OPT.quality) ');'])
 end

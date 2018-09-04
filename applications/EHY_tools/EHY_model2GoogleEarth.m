@@ -49,8 +49,8 @@ switch modelType
         
         % net
         if isfield(mdu.geometry,'NetFile') && ~isempty(mdu.geometry.NetFile)
-            [selection,~]=  listdlg('PromptString','Conversion of nc to kml might take a while, you can also use Hermans GUI, choose:',...
-                'SelectionMode','single','ListString',{'Get a coffee and wait (few minutes)','Convert the nc to kml yourself'},'ListSize',[500 100]);
+            [selection,~]=  listdlg('PromptString','Conversion of nc to kml might take a while for big models, in that case you can also use Hermans GUI, choose:',...
+                'SelectionMode','single','ListString',{'Get a coffee and wait (seconds to few minutes)','Convert the nc to kml yourself'},'ListSize',[500 100]);
             if selection==1
                 inputFile=EHY_getFullWinPath(mdu.geometry.NetFile,runDir);
                 [~,name]=fileparts(inputFile);
@@ -101,7 +101,7 @@ switch modelType
         if isfield(mdu.output,'ObsFile') && ~isempty(mdu.output.ObsFile)
             inputFile=EHY_getFullWinPath(mdu.output.ObsFile,runDir);
             [~,name]=fileparts(inputFile);
-            OPT2.outputFile=[outputDir name '_obs.kml'];
+            OPT2.outputFile=strrep([outputDir name '_obs.kml'],'_obs_obs','_obs');
             OPT2.iconFile=OPT.obsIconFile;
             [~,OPT2]=EHY_convert(inputFile,'kml',OPT2);
         end
