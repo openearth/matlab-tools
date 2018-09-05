@@ -85,13 +85,13 @@ stationNrNoNan=stationNr(~isnan(stationNr));
 
 %% Get the computational data
 switch modelType
-    
+
     case {'d3dfm','dflow','dflowfm','mdu','dfm'}
         %% Delft3D-Flexible Mesh
         % open data file
         if ~exist('infonc','var')
             infonc             = ncinfo(outputfile);
-            
+
             % layer info
             ncVarInd              = strmatch('laydim',{infonc.Dimensions.Name},'exact');
             if ~isempty(ncVarInd)
@@ -100,12 +100,12 @@ switch modelType
                 no_layers=1;
             end
             OPT=EHY_getmodeldata_layer_index(OPT,no_layers);
-            
+
             % time info
             % - to enhance speed, reconstruct time array from start time, numel and interval
             ncVarInd     = strmatch('time',{infonc.Variables.Name},'exact');
             nr_times     = infonc.Variables(ncVarInd).Size;
-            seconds_int = ncread(outputfile, 'time', 1, 2);
+            seconds_int = ncread(outputfile, 'time', 2, 2);
             interval    = seconds_int(2) - seconds_int(1);
             seconds     = seconds_int(1) + interval * [0:nr_times-1]';
             days        = seconds / (24*60*60);
@@ -114,7 +114,7 @@ switch modelType
             Data.times  = datenum(itdate, 'yyyy-mm-dd HH:MM:SS')+days;
             [Data,time_index,select]=EHY_getmodeldata_time_index(Data,OPT);
             nr_times_clip = length(Data.times);
-            
+
             % station info
             try % varying location in time
                 stationX = ncread(outputfile,'station_x_coordinate',[1 1],[Inf 1]);
@@ -126,19 +126,19 @@ switch modelType
             Data.location(~Data.exist_stat,1:2)=NaN;
             Data.location(Data.exist_stat,1:2)=[stationX(stationNrNoNan,1) stationY(stationNrNoNan,1)];
         end
-        
+
         % get data
         % - To enhance speed, read in blocks if numel is too big
         % - It is faster to read all stations and only keep the data of the
         %   wanted stations than looping over the wanted stations.
-        
+
         filesize    = dir(outputfile);
         filesize    = filesize.bytes /(1024^3); %converted to Gb
         maxblocksize= 0.5; %Gb
         nr_blocks   = ceil((nr_times_clip / nr_times) * (filesize / maxblocksize));
         bl_length   = ceil(nr_times_clip / nr_blocks);
         offset      = find(select, 1) - 1;
-        
+
         % allocate variable 'value'
         if ismember(OPT.varName,{'wl'})
             value = nan(nr_times_clip,length(Data.stationNames));
@@ -157,7 +157,7 @@ switch modelType
                 value = nan(nr_times_clip,length(Data.stationNames),no_layers);
             end
         end
-        
+
         for i = 1:nr_blocks % time blocks
             bl_start    = 1 + (i-1) * bl_length;
             bl_stop     = min(i * bl_length, nr_times_clip);
@@ -201,7 +201,7 @@ switch modelType
                     end
             end
         end
-        
+
         % put value(_x/_y) in output structure 'Data'
         if exist('value','var')
             if ndims(value)==2
@@ -224,13 +224,13 @@ switch modelType
                 Data.vel_y(:,~Data.exist_stat,1:length(OPT.layer))=NaN;
             end
         end
-        
+
     case {'d3d','d3d4','delft3d4','mdf'}
         %% Delft3D 4
         for i_stat = 1: length(stat_name)
             if Data.exist_stat(i_stat)
                 nr_stat  = find(strcmp(Data.stationNames,stat_name{i_stat}) ~= 0,1);
-                
+
                 % open data file
                 if ~exist('trih','var')
                     trih=vs_use(outputfile,'quiet');
@@ -249,7 +249,7 @@ switch modelType
                 end
                 Data.locationMN(i_stat,:)=[stationMN(:,nr_stat)'];
                 Data.location(i_stat,:)=[stationXY(:,nr_stat)'];
-                
+
                 % get data
                 switch OPT.varName
                     case 'wl'
@@ -281,7 +281,7 @@ switch modelType
                 end
             end
         end
-        
+
     case {'waqua','simona','siminp'}
         %% SIMONA (WAQUA/TRIWAQ)
         for i_stat = 1: length(stat_name)
@@ -320,7 +320,7 @@ switch modelType
                 end
             end
         end
-        
+
     case {'sobek3'}
         %% SOBEK3
         for i_stat = 1: length(stat_name)
@@ -338,7 +338,7 @@ switch modelType
                 end
             end
         end
-        
+
     case {'sobek3_new'}
         %% SOBEK3 new
         for i_stat = 1: length(stat_name)
@@ -357,7 +357,7 @@ switch modelType
                 end
             end
         end
-        
+
     case {'implic'}
         %% IMPLIC
         for i_stat = 1: length(stat_name)
