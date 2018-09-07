@@ -26,23 +26,30 @@ modelType=EHY_getModelType(inputFile);
 typeOfModelFile=EHY_getTypeOfModelFile(inputFile);
 [pathstr, name, ext] = fileparts(lower(inputFile));
 
+if strcmp(modelType,'dfm') && strcmp(typeOfModelFile,'network')
+    % info that is in grid, is probably also be in outputfile
+    typeOfModelFile='outputfile';
+end
 %% get grid info
 switch typeOfModelFile
     case {'grid','network'}
-        if ismember('XY',wantedOutput)
-            if strcmp(ext,'.grd')
-                grd=delft3d_io_grd('read',inputFile);
-                E.mmax=grd.mmax;
-                E.nmax=grd.nmax;
-                E.xcor=grd.cor.x;
-                E.ycor=grd.cor.y;
-                E.xcen=grd.cen.x;
-                E.ycen=grd.cen.y;
-                E.xu=grd.u.x;
-                E.yu=grd.u.y;
-                E.xv=grd.v.x;
-                E.yv=grd.v.y;
-            end
+        switch modelType
+            case 'd3d'
+                if ismember('XY',wantedOutput)
+                    if strcmp(ext,'.grd')
+                        grd=delft3d_io_grd('read',inputFile);
+                        E.mmax=grd.mmax;
+                        E.nmax=grd.nmax;
+                        E.xcor=grd.cor.x;
+                        E.ycor=grd.cor.y;
+                        E.xcen=grd.cen.x;
+                        E.ycen=grd.cen.y;
+                        E.xu=grd.u.x;
+                        E.yu=grd.u.y;
+                        E.xv=grd.v.x;
+                        E.yv=grd.v.y;
+                    end
+                end
         end
     case 'mdFile'
         switch modelType
@@ -135,6 +142,18 @@ switch typeOfModelFile
                 if ismember('layer_model',wantedOutput)
                     if ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact')) % old fm version
                         E.layer_model='z-model';
+                    end
+                end
+                if ismember('face_nodes_xy',wantedOutput)
+                    if ~isempty(strmatch('NetElemNode',{infonc.Variables.Name},'exact')) % old fm version
+                        NetNode_x=ncread(inputFile,'NetNode_x');
+                        NetNode_y=ncread(inputFile,'NetNode_y');
+                        NetElemNode=double(ncread(inputFile,'NetElemNode')');
+                        E.face_nodes_x=NetNode_x(NetElemNode);
+                        E.face_nodes_y=NetNode_y(NetElemNode);
+                    elseif ~isempty(strmatch('mesh2d_face_x_bnd',{infonc.Variables.Name},'exact')) % old fm version
+                        E.face_nodes_x=ncread(inputFile,'mesh2d_face_x_bnd');
+                        E.face_nodes_y=ncread(inputFile,'mesh2d_face_y_bnd');
                     end
                 end
             case 'd3d'
