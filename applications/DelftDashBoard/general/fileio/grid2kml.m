@@ -1,4 +1,4 @@
-function grid2kml(gridFile,clr)
+function grid2kml(gridFile,clr,varargin)
 
 if ~exist('gridFile')
     g=ddb_wlgrid('read');
@@ -6,6 +6,14 @@ elseif isempty(gridFile)
     g=ddb_wlgrid('read');
 else
     g=ddb_wlgrid('read',gridFile);
+end
+
+% Third argument can be EPGS code
+if length(varargin) == 1 && isnumeric(varargin{1})
+    try
+        [g.X,g.Y]=convertCoordinates(g.X,g.Y,'CS1.code',varargin{1},'CS2.code',4326);
+        g.CoordinateSystem = 'Spherical';
+    end
 end
 
 [fPat fName]=fileparts(g.FileName);
