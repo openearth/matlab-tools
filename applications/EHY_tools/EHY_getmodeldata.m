@@ -103,11 +103,16 @@ switch modelType
 
             % time info
             % - to enhance speed, reconstruct time array from start time, numel and interval
-            ncVarInd     = strmatch('time',{infonc.Variables.Name},'exact');
-            nr_times     = infonc.Variables(ncVarInd).Size;
-            seconds_int = ncread(outputfile, 'time', 2, 2);
-            interval    = seconds_int(2) - seconds_int(1);
-            seconds     = seconds_int(1) + interval * [0:nr_times-1]';
+            ncVarInd    = strmatch('time',{infonc.Variables.Name},'exact');
+            nr_times    = infonc.Variables(ncVarInd).Size;
+            seconds_int = ncread(outputfile, 'time', 1, 3);
+            interval_1  = seconds_int(2) - seconds_int(1);
+            interval_2  = seconds_int(3) - seconds_int(2);
+            if (interval_1 - interval_2) < eps
+                seconds     = seconds_int(1) + interval_2 * [0:nr_times-1]';
+            else
+                seconds     = [seconds_int(1) seconds_int(2) + interval_2 * [0:nr_times-2]]';
+            end
             days        = seconds / (24*60*60);
             attri       = infonc.Variables(ncVarInd).Attributes(1).Value;
             itdate      = attri(15:end);
