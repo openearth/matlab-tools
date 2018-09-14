@@ -120,9 +120,10 @@ function D = rws_waterbase_get_substances(varargin)
 %% save to csv
 
     if isempty(OPT.csv)
-        OPT.csv = fullfile(mfilename('fullpath'),'rws_waterbase_substances.csv');
+        [path,~,~] = fileparts (mfilename('fullpath'));
+        OPT.csv = [path filesep 'rws_waterbase_substances.csv'];
     end    
-    struct2csv(OPT.csv,D)
+    struct2csv(OPT.csv,D,'overwrite','o');
     disp('saved to')
     disp(OPT.csv)
    

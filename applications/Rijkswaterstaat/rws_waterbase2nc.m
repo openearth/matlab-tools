@@ -119,7 +119,7 @@ for ivar=[OPT.donar_wnsnum]
     end
     
     %% File loop of all files in a directory
-    mkpath(OPT.directory_nc);
+    if ~exist(OPT.directory_nc,'dir') mkdir(OPT.directory_nc); end;
 
     OPT.files          = dir([OPT.directory_raw,filesep,OPT.mask]);
     
