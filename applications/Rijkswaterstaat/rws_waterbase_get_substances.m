@@ -4,7 +4,7 @@ function D = rws_waterbase_get_substances(varargin)
 %    S = rws_waterbase_get_substances()
 %    S = rws_waterbase_get_substances(<keyword,value>)
 %
-% where keyword is 'FullName','CodeName' or 'Code' resurns only 
+% where keyword is 'FullName','CodeName' or 'Code' resurns only
 % selected substance, e.g.:
 %
 %    S = rws_waterbase_get_substances('Code',209)
@@ -47,9 +47,9 @@ function D = rws_waterbase_get_substances(varargin)
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -75,14 +75,14 @@ function D = rws_waterbase_get_substances(varargin)
    % )      29
    % '      27
    OPT.symbols  = {'%',' ','|','/','<',',','(',')',''''};  % NOTE do '%' first, as all are replaced by %hex
-   
-   OPT.FullName = ''; 
-   OPT.CodeName = ''; 
-   OPT.Code     = []; 
+
+   OPT.FullName = '';
+   OPT.CodeName = '';
+   OPT.Code     = [];
    OPT.csv      = '';
-   
+
    OPT = setproperty(OPT,varargin{:});
-   
+
    %% Get page
    url = [OPT.baseurl,'/waterbase_wns.cfm?taal=nl'];
    [s status]    = urlread(url);
@@ -94,18 +94,18 @@ function D = rws_waterbase_get_substances(varargin)
    end
 
 %% Get substances from page
-   
+
    ind0 = strfind(s,'<option value="');
    ind1 = strfind(s,'</option>');
    for ii=1:length(ind1)
       if OPT.debug
       disp([num2str(ii,'%0.3d'),'  ',s(ind0(ii)+15:ind1(ii)-1)])
       end
-      
+
       str  = s(ind0(ii)+15:ind1(ii)-1);
       sep0 = strfind(str,'|');
       sep1 = strfind(str,'">');
-      
+
       D.Code(ii)     = str2num(str(     1:sep0-1));
       D.FullName{ii} =         str(sep0+1:sep1-1);
       D.CodeName{ii} =         str(     1:sep1-1);
@@ -115,20 +115,20 @@ function D = rws_waterbase_get_substances(varargin)
       symbol = OPT.symbols{isymbol};
       D.CodeName{ii} = strrep(D.CodeName{ii},symbol,['%',dec2hex(unicode2native(symbol, 'ISO-8859-1'))]);
       end
-   end   
-      
+   end
+
 %% save to csv
 
-    if isempty(OPT.csv)
-        [path,~,~] = fileparts (mfilename('fullpath'));
-        OPT.csv = [path filesep 'rws_waterbase_substances.csv'];
-    end    
-    struct2csv(OPT.csv,D,'overwrite','o');
-    disp('saved to')
-    disp(OPT.csv)
-   
+%   if isempty(OPT.csv)
+%       [path,~,~] = fileparts (mfilename('fullpath'));
+%       OPT.csv = [path filesep 'rws_waterbase_substances.csv'];
+%   end
+%   struct2csv(OPT.csv,D,'overwrite','o');
+%   disp('saved to')
+%   disp(OPT.csv)
+
 %% check substances from website by comparing with csv file.
-   
+
    if OPT.debug
       E = rws_waterbase_get_substances_csv;
       for ii=1:length(D.Code)
@@ -143,7 +143,7 @@ function D = rws_waterbase_get_substances(varargin)
          end
       end
    end
-   
+
 %% subset (optionally)
 
    if ~isempty(OPT.Code)
@@ -162,6 +162,6 @@ function D = rws_waterbase_get_substances(varargin)
       D.FullName = D.FullName{indSub};
       D.Code     = D.Code    (indSub);
    end
-  
+
 
 %% EOF
