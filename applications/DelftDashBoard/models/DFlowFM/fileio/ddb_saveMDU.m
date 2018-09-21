@@ -159,6 +159,22 @@ s.wind.PavBnd.value  = inp.pavbnd;
 s.wind.PavBnd.type   = 'real';  
 s.wind.PavBnd.comment  = '# Background pressure (Pa)';         
 
+%% Waves
+if ~isempty(inp.wavemodelnr)
+    s.waves.Wavemodelnr.value          = inp.wavemodelnr;
+    s.waves.Wavemodelnr.type           = 'integer';
+    s.waves.Wavemodelnr.comment        = '# Wave model nr, 0=no, 1=fetch/depth limited hurdlestive,2=youngverhagen, 3 = D-Waves, 4=wave group forcing';               
+
+    s.waves.Rouwav.value                = inp.rouwav;
+    s.waves.Rouwav.comment              = ' '; 
+    
+else
+    s.waves.Wavemodelnr.value          = 0;
+    s.waves.Wavemodelnr.type           = 'real';
+    s.waves.Wavemodelnr.comment        = '# Wave model nr, 0=no, 1=fetch/depth limited hurdlestive,2=youngverhagen, 3 = D-Waves, 4=wave group forcing';               
+end
+    
+
 %% Time
 
 rfd=str2double(datestr(inp.refdate,'yyyymmdd'));
@@ -209,8 +225,8 @@ s.time.TStop.comment            = '# Stop  time w.r.t. RefDate (in TUnit)';
 %% External forcing
 
 s.external_forcing.fieldLongName='external forcing';
-s.external_forcing.ExtForceFile.value               = '';
-s.external_forcing.ExtForceFile.comment             = '# *.ext';               
+s.external_forcing.ExtForceFile.value               = inp.extforcefile;
+s.external_forcing.ExtForceFile.comment             = '# *.ext (needed for meteo (e.g. spiderweb, amu)';               
 
 s.external_forcing.ExtForceFileNew.value             = inp.extforcefilenew;
 s.external_forcing.ExtForceFileNew.comment           = '# DDB uses new format';     
