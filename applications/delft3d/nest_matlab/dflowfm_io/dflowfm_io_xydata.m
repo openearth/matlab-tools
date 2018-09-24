@@ -64,9 +64,18 @@ case 'read'
            i_row = i_row + 1;
            tline = fgetl(fid);
            index = d3d2dflowfm_decomposestr(tline);
-           LINE.DATA{i_row,1} = str2num(tline(index(1):index(2)-1));
+           if isempty(str2num(tline(index(1):index(2)-1)))
+               LINE.DATA{i_row,1} = tline(index(1):index(2)-1);
+           else
+               LINE.DATA{i_row,1} = str2num(tline(index(1):index(2)-1));
+           end
+           
            if length(index) == 2
-               LINE.DATA{i_row,2} = str2num(tline(index(2):end));
+               if isempty(str2num(tline(index(2):end)))
+                   LINE.DATA{i_row,2} = tline(index(2):end);
+               else
+                   LINE.DATA{i_row,2} = str2num(tline(index(2):end));
+               end
            else
                LINE.DATA{i_row,2} = str2num(tline(index(2):index(3) - 1));
                if ~isempty(str2num(tline(index(3):end)))
