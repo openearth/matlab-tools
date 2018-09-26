@@ -19,6 +19,8 @@ createinput=[];
 menuitem=[];
 getfcn=@gui_getUserData;
 setfcn=@gui_setUserData;
+resizefcn=[];
+closerequestfcn=[];
 rsz=1;
 
 for ii=1:length(varargin)
@@ -56,6 +58,10 @@ for ii=1:length(varargin)
                 color=varargin{ii+1};
             case{'resize'}
                 rsz=varargin{ii+1};
+            case{'resizefcn'}
+                resizefcn=varargin{ii+1};
+            case{'closerequestfcn'}
+                closerequestfcn=varargin{ii+1};
         end
     end
 end
@@ -111,6 +117,13 @@ end
 
 set(figh,'Tag',tag);
 
+if ~isempty(resizefcn)
+    set(figh,'ResizeFcn',resizefcn);
+end
+if ~isempty(closerequestfcn)
+    set(figh,'CloseRequestFcn',closerequestfcn);
+end
+    
 feval(setfcn,hin);
 
 if ~isempty(menuitem)
