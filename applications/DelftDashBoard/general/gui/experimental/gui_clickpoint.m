@@ -104,8 +104,23 @@ function moveMouse(src,eventdata)
 % if x0<=xlim(1) || x0>=xlim(2) || y0<=ylim(1) || y0>=ylim(2)
 %     ddb_updateCoordinateText('arrow');
 % else
-    ddb_updateCoordinateText('crosshair');
+try
+%    ddb_updateCoordinateText('crosshair');
+end
 % end
+
+pos = get(gca, 'CurrentPoint');
+posx=pos(1,1);
+posy=pos(1,2);
+xlim=get(gca,'xlim');
+ylim=get(gca,'ylim');
+
+if posx<=xlim(1) || posx>=xlim(2) || posy<=ylim(1) || posy>=ylim(2)
+    set(gcf,'Pointer','arrow');
+else
+    set(gcf,'Pointer','crosshair');
+end
+
 
 %%
 function click(src,eventdata,opt,xg,yg,callback,multi)
@@ -150,9 +165,12 @@ if strcmpi(mouseclick,'normal')
         feval(callback,x,y);
     end
 else
-    clearInstructions;
+    try
+        clearInstructions;
+    end
     ddb_setWindowButtonUpDownFcn;
     ddb_setWindowButtonMotionFcn;
+    set(gcf,'Pointer','arrow');
 end
 
 
