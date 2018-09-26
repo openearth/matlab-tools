@@ -61,50 +61,49 @@ function ddb_ModelMakerToolbox_XBeach_modelsetup(handles)
 
 %% Get relevant variables from input structure
 try
-
-x = handles.model.xbeach.domain(handles.activeDomain).grid.x;
-y = handles.model.xbeach.domain(handles.activeDomain).grid.y;
-zgrid = handles.model.xbeach.domain(handles.activeDomain).depth;
-
-% 
-crossshore = ((x(1,:) - x(1,1)).^2 + (y(1,:) - y(1,1)).^2.).^0.5;
-longshore = ((x(:,1) - x(1,1)).^2 + (y(:,1) - y(1,1)).^2.).^0.5;
-[XT YT]     = meshgrid(crossshore,longshore);
-[ny1 nx1] = size(XT);
-
-val = crossshore ;
-[nx ny] = size(val);
-for i = 1:(ny-1)
-dval_C(i) = val(i+1) - val(i);
-end
-
-val = longshore;
-[nx ny] = size(val);
-for i = 1:(nx-1)
-dval_L(i) = val(i+1) - val(i);
-end
-
-[n,m1] = size(dval_L);
-[n,m2] = size(dval_C);
-res2 = repmat(dval_C,m1,1) .* repmat(dval_L,m2,1)';
-
-
-figure;
-subplot(2,2,1)
-pcolor(x,y,zgrid); shading flat; caxis([-10 +5]); colormap(jet);  xlabel('X [m]'); ylabel('Y [m]'); title('Model set-up');
-colorbar
-
-subplot(2,2,2)
-pcolor(x([1:(ny1-1)],[1:(nx1-1)]),y([1:(ny1-1)],[1:(nx1-1)]),res2); shading flat; colormap(jet);  xlabel('X [m]'); ylabel('Y [m]'); title('Grid area size');
-colorbar
-
-subplot(2,2,3)
-plot(crossshore(1:(nx1-1)), dval_C); title('Variation grid cross-shore'); xlabel('Cross-shore distance [m]'); ylabel('dx [m]')
-
-subplot(2,2,4)
-plot(longshore(1:(ny1-1)), round(dval_L)); title('Variation grid longshore'); xlabel('Longshore distance [m]'); ylabel('dy [m]')
-
-
+    
+    x = handles.model.xbeach.domain(handles.activeDomain).grid.x;
+    y = handles.model.xbeach.domain(handles.activeDomain).grid.y;
+    zgrid = handles.model.xbeach.domain(handles.activeDomain).depth;
+    
+    %
+    crossshore = ((x(1,:) - x(1,1)).^2 + (y(1,:) - y(1,1)).^2.).^0.5;
+    longshore = ((x(:,1) - x(1,1)).^2 + (y(:,1) - y(1,1)).^2.).^0.5;
+    [XT YT]     = meshgrid(crossshore,longshore);
+    [ny1 nx1] = size(XT);
+    
+    val = crossshore ;
+    [nx ny] = size(val);
+    for i = 1:(ny-1)
+        dval_C(i) = val(i+1) - val(i);
+    end
+    
+    val = longshore;
+    [nx ny] = size(val);
+    for i = 1:(nx-1)
+        dval_L(i) = val(i+1) - val(i);
+    end
+    
+    [n,m1] = size(dval_L);
+    [n,m2] = size(dval_C);
+    res2 = repmat(dval_C,m1,1) .* repmat(dval_L,m2,1)';
+    
+    
+    figure;
+    subplot(2,2,1)
+    pcolor(x,y,zgrid); shading flat; caxis([-10 +5]); colormap(jet);  xlabel('X [m]'); ylabel('Y [m]'); title('Model set-up');
+    colorbar
+    
+    subplot(2,2,2)
+    pcolor(x([1:(ny1-1)],[1:(nx1-1)]),y([1:(ny1-1)],[1:(nx1-1)]),res2); shading flat; colormap(jet);  xlabel('X [m]'); ylabel('Y [m]'); title('Grid area size');
+    colorbar
+    
+    subplot(2,2,3)
+    plot(crossshore(1:(nx1-1)), dval_C); title('Variation grid cross-shore'); xlabel('Cross-shore distance [m]'); ylabel('dx [m]')
+    
+    subplot(2,2,4)
+    plot(longshore(1:(ny1-1)), round(dval_L)); title('Variation grid longshore'); xlabel('Longshore distance [m]'); ylabel('dy [m]')
+    
 catch
     'something went wrong'
 end

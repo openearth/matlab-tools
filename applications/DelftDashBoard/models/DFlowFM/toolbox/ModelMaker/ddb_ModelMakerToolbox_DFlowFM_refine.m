@@ -86,6 +86,8 @@ else
             clipMeshPolygon;
         case{'clipmeshelevation'}
             clipMeshElevation;
+        case{'clipmeshelevationbelow'}
+            clipMeshElevationbelow;
     end
 end
 
@@ -110,7 +112,7 @@ handles.model.dflowfm.domain(ad).netfile=filename;
 
 % Find minimum grid resolution (in metres)
 %dmin=min(dx,dy);
-wb = waitbox('Your Delft3D-FM models is being refined');
+wb = waitbox('Your Delft3D-FM model is being refined');
 dmin=0.02;
 if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
     dmin = dmin*111111;
@@ -287,10 +289,31 @@ if ~ok
 end
 handles.model.dflowfm.domain(ad).netfile=filename;
 
-handles.model.dflowfm.domain(ad).netstruc=dflowfm_clip_shallow_areas(handles.model.dflowfm.domain(ad).netstruc,handles.toolbox.modelmaker.zMax);
+handles.model.dflowfm.domain(ad).netstruc=dflowfm_clip_shallow_areas(handles.model.dflowfm.domain(ad).netstruc,handles.toolbox.modelmaker.zMax, 'max');
 
 netStruc2nc(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domain(ad).netstruc,'cstype',handles.screenParameters.coordinateSystem.type,'csname', handles.screenParameters.coordinateSystem.name);
 
 handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',ad);
 
 setHandles(handles);
+
+
+%%
+function clipMeshElevationbelow
+
+handles=getHandles;
+
+[filename,ok]=gui_uiputfile('*_net.nc', 'Net File Name',handles.model.dflowfm.domain(ad).netfile);
+if ~ok
+    return
+end
+handles.model.dflowfm.domain(ad).netfile=filename;
+
+handles.model.dflowfm.domain(ad).netstruc=dflowfm_clip_shallow_areas(handles.model.dflowfm.domain(ad).netstruc,handles.toolbox.modelmaker.zMax, 'min');
+
+netStruc2nc(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domain(ad).netstruc,'cstype',handles.screenParameters.coordinateSystem.type,'csname', handles.screenParameters.coordinateSystem.name);
+
+handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',ad);
+
+setHandles(handles);
+

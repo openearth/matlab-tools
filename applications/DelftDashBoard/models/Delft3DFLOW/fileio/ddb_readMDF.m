@@ -444,6 +444,11 @@ if isfield(MDF,'nudge')
     end
 end
 
+handles.model.delft3dflow.domain(id).Filwpr=MDF.filwpr;
+handles.model.delft3dflow.domain(id).Fileva=MDF.fileva;
+handles.model.delft3dflow.domain(id).Evaint=MDF.evaint;
+handles.model.delft3dflow.domain(id).Maseva=MDF.maseva;
+
 %% Z-layers
 if isfield(MDF,'zmodel')
     if strcmpi(MDF.zmodel(1),'y')

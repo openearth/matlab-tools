@@ -165,17 +165,16 @@ s.wind.PavBnd.type   = 'real';
 s.wind.PavBnd.comment  = '# Background pressure (Pa)';         
 
 %% Waves
-if ~isempty(inp.wavemodelnr)
+if isfield(inp, 'wavemodelnr')
     s.waves.Wavemodelnr.value          = inp.wavemodelnr;
     s.waves.Wavemodelnr.type           = 'integer';
     s.waves.Wavemodelnr.comment        = '# Wave model nr, 0=no, 1=fetch/depth limited hurdlestive,2=youngverhagen, 3 = D-Waves, 4=wave group forcing';               
-
     s.waves.Rouwav.value                = inp.rouwav;
     s.waves.Rouwav.comment              = ' '; 
     
 else
     s.waves.Wavemodelnr.value          = 0;
-    s.waves.Wavemodelnr.type           = 'real';
+    s.waves.Wavemodelnr.type           = 'integer';
     s.waves.Wavemodelnr.comment        = '# Wave model nr, 0=no, 1=fetch/depth limited hurdlestive,2=youngverhagen, 3 = D-Waves, 4=wave group forcing';               
 end
     
@@ -228,13 +227,25 @@ s.time.TStop.type               = 'real';
 s.time.TStop.comment            = '# Stop  time w.r.t. RefDate (in TUnit)';               
 
 %% External forcing
+s.external_forcing.fieldLongName                    = 'external forcing';
+if isfield(inp, 'extforcefile')
+    s.external_forcing.ExtForceFile.value               = inp.extforcefile;
+    s.external_forcing.ExtForceFile.comment             = '# *.ext (needed for meteo (e.g. spiderweb, amu)';       
+elseif ~isempty(inp.spiderwebfile)
+    s.external_forcing.ExtForceFile.value               = 'meteo.ext';
+    s.external_forcing.ExtForceFile.comment             = '# *.ext (needed for meteo (e.g. spiderweb, amu)';       
+else
+    s.external_forcing.ExtForceFile.value               = '';
+    s.external_forcing.ExtForceFile.comment             = '# *.ext (needed for meteo (e.g. spiderweb, amu)';       
+end
 
-s.external_forcing.fieldLongName='external forcing';
-s.external_forcing.ExtForceFile.value               = inp.extforcefile;
-s.external_forcing.ExtForceFile.comment             = '# *.ext (needed for meteo (e.g. spiderweb, amu)';               
-
-s.external_forcing.ExtForceFileNew.value             = inp.extforcefilenew;
-s.external_forcing.ExtForceFileNew.comment           = '# DDB uses new format';     
+if isfield(inp, 'extforcefilenew')
+    s.external_forcing.ExtForceFileNew.value             = inp.extforcefilenew;
+    s.external_forcing.ExtForceFileNew.comment           = '# DDB uses new format';     
+else
+    s.external_forcing.ExtForceFileNew.value             = '';
+    s.external_forcing.ExtForceFileNew.comment           = '# DDB uses new format';     
+end
 
 %% Output
 
@@ -279,11 +290,10 @@ s.output.WaqInterval.comment  = '# Interval (in s) between Delwaq file outputs';
 s.output.SnapshotDir.value        = inp.snapshotdir;
 s.output.SnapshotDir.comment      = '# Directory where snapshots/screendumps are saved.';                     
 
-if ~isempty(inp.foufile)
+if isfield(inp, 'foufile')
     s.output.FouFile.value        = inp.foufile;
     s.output.FouFile.comment      = '# Fourier file';                     
 end
-
 
 %% And now save the file ...
 ddb_saveDelft3D_keyWordFile(fname, s)

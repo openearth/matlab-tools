@@ -92,6 +92,15 @@
     <type>int</type>
     <variable>handles.toolbox.modelmaker.zMax</variable>
   </element>
+    <element>
+      <style>edit</style>
+      <position>550 85 30 20</position>
+      <tooltipstring>Minimum elevation for clipping (cells below value will be clipped)</tooltipstring>
+      <text>Zmin</text>
+      <textposition>left</textposition>
+      <type>int</type>
+      <variable>handles.toolbox.modelmaker.zMax</variable>
+  </element>
   <element>
     <style>pushbutton</style>
     <position>600 110 80 20</position>
@@ -99,5 +108,11 @@
     <callback>ddb_ModelMakerToolbox_DFlowFM_refine</callback>
     <option1>clipmeshelevation</option1>
   </element>
-
+  <element>
+    <style>pushbutton</style>
+    <position>600 85 80 20</position>
+    <text>CLIP</text>
+    <callback>ddb_ModelMakerToolbox_DFlowFM_refine</callback>
+    <option1>clipmeshelevationbelow</option1>
+  </element>
 </root>

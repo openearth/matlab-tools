@@ -148,5 +148,5 @@ fprintf(fileID,'call ');
 fprintf(fileID,'%s',handles.model.xbeach.exedir);
 fprintf(fileID,'xbeach.exe');
 fclose(fileID);
-fclose('all')
+fclose('all');
 

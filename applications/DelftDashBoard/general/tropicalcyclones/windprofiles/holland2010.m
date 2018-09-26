@@ -114,7 +114,6 @@ if length(r)> 1 && (vr(end-1) - vr(end)) < 0
     [vr,pr]=h2010(r,pc,dp,rvms,bs,rhoa,0.5,rn,a);
 end
 
-
 %% Private function: Holland et al. (2010)
 function [vr,pr]=h2010(r,pc,dp,rvms,bs,rhoa,xn,rn,a)
 if isempty(a)

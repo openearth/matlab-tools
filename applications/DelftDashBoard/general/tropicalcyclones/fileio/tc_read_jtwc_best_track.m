@@ -113,7 +113,7 @@ while 1
         if str2double(s{10})>0
             tc.pc(it)=str2double(s{10});
         end
-        tc.cat=s{11};
+        %tc.cat=s{11};
         % Radii
         r=str2double(s{12});
         if ~isempty(r)

@@ -43,16 +43,22 @@ function ddb_DFlowFM_saveExtFile(handles)
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/models/DFlowFM/fileio/ddb_DFlowFM_writeComponentsFile.m $
 % $Keywords: $
     
+% Boundaries in new ext
 fid=fopen(handles.model.dflowfm.domain.extforcefilenew,'wt');
-%fid=fopen(handles.model.dflowfm.domain.extforcefile,'wt');
-
-% Boundaries
 for ip=1:handles.model.dflowfm.domain.nrboundaries
     fprintf(fid,'%s\n','[boundary]');
     fprintf(fid,'%s\n',['quantity       = ' handles.model.dflowfm.domain.boundaries(ip).type]);
     fprintf(fid,'%s\n',['locationfile   = ' handles.model.dflowfm.domain.boundaries(ip).locationfile]);
     fprintf(fid,'%s\n',['forcingfile    = ' handles.model.dflowfm.domain.bcfile]);
     fprintf(fid,'%s\n','');
+end
+fclose(fid);
+
+% Meteo in old ext
+if isfield( handles.model.dflowfm.domain, 'extforcefile')
+    fid=fopen(handles.model.dflowfm.domain.extforcefile,'wt');
+else
+    fid=fopen('meteo.ext','wt');
 end
 
 if ~isempty(handles.model.dflowfm.domain.windufile)
@@ -91,14 +97,13 @@ if ~isempty(handles.model.dflowfm.domain.rainfile)
     fprintf(fid,'%s\n','');
 end
 
-if ~isempty(handles.model.dflowfm.domain.spiderwebfile)
-    fprintf(fid,'%s\n',['QUANTITY=spiderweb']);
+if ~isempty(handles.model.dflowfm.domain.spiderwebfile)   
+    fprintf(fid,'%s\n',['QUANTITY=airpressure_windx_windy']);
     fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.spiderwebfile]);
     fprintf(fid,'%s\n','FILETYPE=5');
     fprintf(fid,'%s\n','METHOD=1');
     fprintf(fid,'%s\n','OPERAND=O');
     fprintf(fid,'%s\n','');
 end
-
 fclose(fid);
 

@@ -12,7 +12,7 @@ yl(2)=ceil(max(y));
 dx=x(2)-x(1);
 dy=y(2)-y(1);
 
-folder=['TMP_' name '_kmz\'];
+folder=['TMP_', name '_kmz\'];
 
 xmin=xl(1);
 xmax0=xl(2);
@@ -49,4 +49,4 @@ z=max(z,d0);
 
 s(j1:j2,i1:i2)=z;
 
-superoverlay(kmlfile,s,xmin,ymin,dx,dy,'name',name,'colorlimits',colorlimits,'directory',folder,'transparency',1,'colorbarlabel',colorbarlabel,'kmz');
+superoverlay(kmlfile,s,xmin,ymin,dx,dy,'name',name,'colorlimits',colorlimits,'directory',folder,'transparency',0.5,'colorbarlabel',colorbarlabel,'kmz');

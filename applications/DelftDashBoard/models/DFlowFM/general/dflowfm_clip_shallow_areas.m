@@ -1,4 +1,4 @@
-function netstruc1=dflowfm_clip_shallow_areas(netstruc,mindep)
+function netstruc1=dflowfm_clip_shallow_areas(netstruc,mindep, type)
 
 x=netstruc.node.x;
 y=netstruc.node.y;
@@ -19,7 +19,11 @@ zz=z(netelemnode);
 
 zzmin=min(zz,[],2);
 
-imin=find(zzmin<mindep);
+if strcmp(type, 'max')
+    imin=find(zzmin<mindep);
+elseif strcmp(type, 'min')
+    imin=find(zzmin>mindep);
+end
 
 netelemnode(netelemnode==nz1)=NaN;
 

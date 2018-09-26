@@ -100,3 +100,6 @@ s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).rotation = 0;
 s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).yOri = 0; 
 s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).nY = 1;
 s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).dY = 1;
+
+s.toolbox.xbeachvegetation.listname = '';
+s.toolbox.xbeachvegetation.polyLength = 0;

@@ -1,4 +1,7 @@
-function [netStruc,circ]=curv2net(xg,yg,z)
+function [netStruc,circ]=curv2net_new(xg,yg,z)
+
+%% 
+debugmode = 1;
 
 %% Nodes
 ni=size(xg,1);
@@ -33,6 +36,8 @@ end
 netStruc.node.n=nnodes;
 
 %% Edges
+if debugmode == 1;  disp('edges'); tic; end 
+
 nlinks=0;
 for ii=1:ni
     for jj=1:nj
@@ -59,7 +64,11 @@ for ii=1:ni
     end
 end
 
+if debugmode == 1;  toc; end 
+
 %% Faces
+if debugmode == 1; disp('faces');  tic; end 
+
 nelems=0;
 for ii=1:size(xg,1)-1
     for jj=1:size(xg,2)-1
@@ -74,7 +83,12 @@ for ii=1:size(xg,1)-1
     end
 end
 
+if debugmode == 1;  toc; end 
+
 %% Find boundary links
+if debugmode == 1; disp('links');  tic; end 
+
+
 [bnd,circ,sections]=find_boundary_sections_on_regular_grid(xg,yg, z, 0);
 nbnd=length(bnd);
 for ibnd=1:nbnd
@@ -94,6 +108,10 @@ end
 
 % new pointers for chopping up into triangles to be used in plotMap
 [netStruc.tri,netStruc.map3,netStruc.ntyp] = patch2tri(netStruc.node.x,netStruc.node.y,netStruc.face.NetElemNode,'quiet',1);
+
+
+if debugmode == 1;  toc; end 
+
 
 % netStruc.nodeX=nodeX;
 % netStruc.nodeY=nodeY;

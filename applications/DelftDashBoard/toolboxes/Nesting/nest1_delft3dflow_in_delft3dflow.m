@@ -103,7 +103,8 @@ if ~strcmpi(detail.cs.name,'unspecified')
 %     cd(detail.path)
     ddb_wlgrid('write','_TMP.grd',grd);
 %    detail.grdfile= [detail.path, 'TMP.grd'];
-    detail.grdfile= '_TMP.grd';
+    detail.grdfile= [pwd '\_TMP.grd'];
+    detail.encfile= [pwd '\_TMP.enc'];
 %     cd(overall.path)
 end
 
@@ -116,20 +117,20 @@ fprintf(fid,'%s\n',detail.grdfile);
 fprintf(fid,'%s\n',detail.encfile);
 fprintf(fid,'%s\n',detail.bndfile);
 fprintf(fid,'%s\n',admfile);
-fprintf(fid,'%s\n','_TMP.obs');
+fprintf(fid,'%s\n',[pwd '\_TMP.obs']);
 fclose(fid);
 system(['"' exedir 'nesthd1" < nesthd1.inp']);
 
+%Check grids
+G1 = delft3d_io_grd('read',overall.grdfile);
+G2 = delft3d_io_grd('read',detail.grdfile);
 
-% Check grids
-% G1 = delft3d_io_grd('read',overall.grdfile);
-% G2 = delft3d_io_grd('read',detail.grdfile);
-
-% figure; hold on
-% plot(G1.cor.x, G1.cor.y,'b');
-% plot(G1.cor.x', G1.cor.y','b');
-% plot(G2.cor.x, G2.cor.y,'r');
-% plot(G2.cor.x', G2.cor.y','r');
+% Figure
+figure; hold on
+plot(G1.cor.x, G1.cor.y,'b');
+plot(G1.cor.x', G1.cor.y','b');
+plot(G2.cor.x, G2.cor.y,'r');
+plot(G2.cor.x', G2.cor.y','r');
 
 %% Read obs file
 [name,m,n] = textread('_TMP.obs','%21c%f%f');

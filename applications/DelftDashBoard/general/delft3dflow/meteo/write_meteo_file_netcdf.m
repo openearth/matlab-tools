@@ -108,7 +108,7 @@ parameter(n).precision='single';
 parameter(n).grads_name=parameter(n).name;
 
 n=n+1;
-parameter(n).name='air_pressure_fixed_height';
+parameter(n).name='air_pressure';
 parameter(n).long_name='air_pressure_fixed_height';
 parameter(n).standard_name='air_pressure_at_sea_level';
 parameter(n).standard_name='air_pressure';
@@ -126,8 +126,8 @@ x=x';
 y=y';
 
 % Store the data
-write_data_to_netcdf_file(ncfile,'lon',x);
-write_data_to_netcdf_file(ncfile,'lat',y);
+write_data_to_netcdf_file(ncfile,'x',x);
+write_data_to_netcdf_file(ncfile,'y',y);
 write_data_to_netcdf_file(ncfile,'time',t);
 
 npar=length(parameter);
@@ -153,15 +153,15 @@ ncid    = netcdf.create(ncfile,'64BIT_OFFSET');
 
 % Dimensions
 dimid_t = netcdf.defDim(ncid,'time',nt);
-dimid_x = netcdf.defDim(ncid,'lon',nx);
-dimid_y = netcdf.defDim(ncid,'lat',ny);
+dimid_x = netcdf.defDim(ncid,'x',nx);
+dimid_y = netcdf.defDim(ncid,'y',ny);
 
 % Variables
 varid_t = netcdf.defVar(ncid,'time','double',dimid_t);
 %varid_x = netcdf.defVar(ncid,'lon','double',dimid_x);
 %varid_y = netcdf.defVar(ncid,'lat','double',dimid_y);
-varid_x = netcdf.defVar(ncid,'lon','double',[dimid_x dimid_y]);
-varid_y = netcdf.defVar(ncid,'lat','double',[dimid_x dimid_y]);
+varid_x = netcdf.defVar(ncid,'x','double',[dimid_x dimid_y]);
+varid_y = netcdf.defVar(ncid,'y','double',[dimid_x dimid_y]);
 
 for ipar=1:npar
     name=parameter(ipar).grads_name;

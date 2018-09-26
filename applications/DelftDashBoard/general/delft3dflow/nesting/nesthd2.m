@@ -113,7 +113,11 @@ switch lower(opt)
         openBoundaries=nesthd2_hydro(openBoundaries,vertGrid,s,nest,zcor,cs);
         if isave
             disp('Saving bct file');
+            try
             fname=[inputdir Flow.bctFile];
+            catch
+            fname=[inputdir 'tst.bct'];
+            end
             delft3dflow_saveBctFile(Flow,openBoundaries,fname);
         end
 end

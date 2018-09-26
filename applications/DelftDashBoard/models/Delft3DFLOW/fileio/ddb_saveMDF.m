@@ -506,6 +506,7 @@ tstop=(Flow.comStopTime-Flow.itDate)*1440.0;
 tint=Flow.comInterval;
 MDF.Flpp =[tstart tint tstop];
 MDF.Flrst=Flow.rstInterval;
+
 % WAQ input
 if Flow.WAQcomInterval>0
     tstart=(Flow.WAQcomStartTime-Flow.itDate)*1440.0;
@@ -524,6 +525,25 @@ if Flow.heatOut
     MDF.HeaOut='Y';
 end
 
+% Rainfall
+try
+if Flow.Evaint
+    MDF.Evaint='Y';
+end
+if Flow.Maseva
+    MDF.Maseva='Y';
+end
+if ~isempty(Flow.Fileva)
+    MDF.Fileva=Flow.Fileva;
+    MDF.Qevap='derived';
+end
+if ~isempty(Flow.Filwpr)
+    MDF.Filwpr=Flow.Filwpr;
+end
+catch
+end
+
+        
 
 %% Z layers
 if Flow.KMax>1

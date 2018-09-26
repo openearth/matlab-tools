@@ -219,6 +219,11 @@ MDF.Filweb = '';
 MDF.TraFrm = '';
 MDF.Filz0l = '';
 
+MDF.Filwpr = '';
+MDF.Fileva = '';
+MDF.Evaint = '';
+MDF.Maseva = '';
+
 %% lower case
 fnames=fieldnames(MDF);
 for i=1:length(fnames)

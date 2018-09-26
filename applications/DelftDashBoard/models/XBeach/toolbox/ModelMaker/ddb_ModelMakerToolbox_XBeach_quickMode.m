@@ -88,7 +88,7 @@ end
 
 function fastBoundaries
 
-%% First get coordinate to 
+%% First get coordinate to
 % Location
 handles=getHandles;
 x0 = handles.toolbox.modelmaker.xOri;
@@ -103,14 +103,14 @@ NewSys.name = 'WGS 84';
 NewSys.type = 'geo';
 [x1 y1] = ddb_coordConvert(x0, y0, dataCoord, NewSys);
 
-%% Second retrieve values for waves 
+%% Second retrieve values for waves
 fname1 = [handles.toolBoxDir, '\TropicalCyclone\FAST_Hs.mat'];
 load (fname1);
 distance = ((ReturnValues.location.values(:,1) - x1).^2 + (ReturnValues.location.values(:,2) - y1).^2).^0.5;
 id       = find(distance  == min(distance));
 Hsvalue  = ReturnValues.Hs.values(id,7);    Tpvalue  = ReturnValues.Tp.values(id,7);
 
-%% Third retrieve values for tide+surge 
+%% Third retrieve values for tide+surge
 fname2 = [handles.toolBoxDir, '\TropicalCyclone\FAST_SSL.mat'];
 GTSM = load (fname2);
 distance = ((GTSM.lon - x1).^2 + (GTSM.lat - y1).^2).^0.5;
@@ -118,9 +118,9 @@ id       = find(distance  == min(distance));
 SSL      = GTSM.RP100(id);
 
 %% Save values
-handles.toolbox.modelmaker.Hs   = round(Hsvalue(1)*10)/10;		
-handles.toolbox.modelmaker.Tp   = round(Tpvalue(1)*10)/10;	
-handles.toolbox.modelmaker.SSL  = round(SSL(1)*10)/10;	
+handles.toolbox.modelmaker.Hs   = round(Hsvalue(1)*10)/10;
+handles.toolbox.modelmaker.Tp   = round(Tpvalue(1)*10)/10;
+handles.toolbox.modelmaker.SSL  = round(SSL(1)*10)/10;
 setHandles(handles);
 
 gui_updateActiveTab;
@@ -276,7 +276,7 @@ setHandles(handles);
 function updateGUI
 ddb_updateDataInScreen;
 gui_updateActiveTab;
-ddb_refreshDomainMenu; 
+ddb_refreshDomainMenu;
 
 
 function generatemodel
@@ -292,7 +292,7 @@ if ~strcmpi(lower(dataCoord.type), 'geographic')
     %% Make XBeach
     wb =   waitbox('XBeach model is being created');
     handles=ddb_ModelMakerToolbox_XBeach_generateModel(handles, []);
-
+    
     % Plotting
     handles=ddb_initializeXBeach(handles,1,'xbeach1');% Check
     pathname = pwd; filename='\params.txt';
@@ -302,13 +302,13 @@ if ~strcmpi(lower(dataCoord.type), 'geographic')
     close(wb);
     ddb_plotXBeach('plot','domain',ad); % make
     setHandles(handles);
-
+    
     ddb_updateDataInScreen;
     gui_updateActiveTab;
-    ddb_refreshDomainMenu; 
-
+    ddb_refreshDomainMenu;
+    
     % Overview
     ddb_ModelMakerToolbox_XBeach_modelsetup(handles)
 else
-	ddb_giveWarning('text',['XBeach models are ALWAYS in cartesian coordinate systems. Change your coordinate system to make a XBeach model']);
+    ddb_giveWarning('text',['XBeach models are ALWAYS in cartesian coordinate systems. Change your coordinate system to make a XBeach model']);
 end

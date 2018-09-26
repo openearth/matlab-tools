@@ -154,11 +154,14 @@ for i=1:nrp
 
         % Add some extra information for CoSMoS toolbox
         % First find station again
+        try
         ist=strmatch(stationid,handles.toolbox.observationstations.database(iac).stationids,'exact');
         handles.model.delft3dflow.domain(ad).observationPoints(nobs).longname=handles.toolbox.observationstations.database(iac).stationnames{ist};
         handles.model.delft3dflow.domain(ad).observationPoints(nobs).type='observationstation';
         handles.model.delft3dflow.domain(ad).observationPoints(nobs).source=handles.toolbox.observationstations.database(iac).name;
         handles.model.delft3dflow.domain(ad).observationPoints(nobs).id=stationid;
+        catch
+        end
         
     end
     

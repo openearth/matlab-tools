@@ -112,6 +112,8 @@ stride=1;
 
 if ~isempty(opt)
     
+    wb = waitbox('Nesting your model');
+
     % Make structure info for nesthd2
     bnd=handles.model.delft3dflow.domain(ad).openBoundaries;
     
@@ -292,7 +294,7 @@ if ~isempty(opt)
         end
     end
     
-    
+    close(wb);
 end
 
 setHandles(handles);
