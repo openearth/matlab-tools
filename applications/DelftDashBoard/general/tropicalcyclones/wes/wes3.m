@@ -1,37 +1,39 @@
 function tc=wes3(trackinput,format,spwinput,outputfile,varargin)
 
 % The tc structure contains ONLY information about the track.
-
 % The spw structure contains info of the spiderweb grid (radius, nr bins,
 % etc.) as well as the methods (spiralling angle, WPRs etc.) to create the
 % wind field.
 
-%% Read in track data (time, lat, lon, vmax, rmax etc.)
+% Note:
+% Input wind in knots -> can, assumed 1 minute-averaged
+% Input wind in m/s will not be converted + assumed to be 10 minute-averaged
+
+%% 1) Read in track data (time, lat, lon, vmax, rmax etc.)
 tc=wes_read_track_data(trackinput,format);
 
-%% Read spiderweb data (rhoa, phi_spiral, methods, etc.)
+%% 2) Read spiderweb data (rhoa, phi_spiral, methods, etc.)
 spw=wes_read_spw_input(spwinput,tc);
 
-%% Convert units in track to km and m/s
+%% 3) Convert units in track to km and m/s
 tc=wes_convert_units(tc,spw);
 
-% %% Cut off track points with low wind speeds at beginning and end of track
-% tc=wes_cut_off_low_wind_speeds(tc,spw);
+%% 4) Cut off track points with low wind speeds at beginning and end of track
+tc=wes_cut_off_low_wind_speeds(tc,spw);
 
-%% Determine forward speed vtx and vty and relative speeds at the different radii in the quadrants
+%% 5) Determine forward speed vtx and vty and relative speeds at the different radii in the quadrants
 tc=wes_compute_forward_speed(tc,spw);
 
-%% Land decay
+%% 6) Land decay
 tc=wes_land_decay(tc,spw);
 
-%% Estimate missing values for Vmax, Pc and Rmax
+%% 7) Estimate missing values for Vmax, Pc and Rmax
 tc=wes_estimate_missing_values(tc,spw);
 
-%% Compute relative wind speeds
+%% 8) Compute relative Vmax
 tc=wes_compute_relative_wind_speeds(tc,spw);
     
-%% Create spiderweb winds
-
+%% 9) Create (finally) the spiderweb winds
 dx=spw.radius/spw.nr_radial_bins;
 r=dx:dx:spw.radius;
 r=r/1000; % km
@@ -42,6 +44,17 @@ errs=[];
 
 for it=1:length(tc.track)
     
+    % A) Get values from tc and spw
+    dp   = spw.pn - tc.track(it).pc;
+    vrel = tc.track(it).vmax_rel;
+    pc   = tc.track(it).pc;
+    rmax = tc.track(it).rmax;
+    pn	 = spw.pn;
+    rhoa = spw.rhoa;
+    xn   = 0.5;
+    rn   = 150;
+    lat  = abs(tc.track(it).y);
+    vt   = (tc.track(it).vtx.^2 + tc.track(it).vty.^2).^0.5;
     
     % Initialize arrays
     wind_speed=zeros(length(phi),length(r));
@@ -49,7 +62,6 @@ for it=1:length(tc.track)
     pressure_drop=zeros(length(phi),length(r));
     
     % First compute wind speeds relative to forward motion of the cyclone
-    
     % Two options: either directionally uniform, or using R34, R50, R64, R100 
     unidir=0;
     for iq=1:length(tc.track(it).quadrant)
@@ -64,16 +76,27 @@ for it=1:length(tc.track)
         end
     end
     
-    vrel=tc.track(it).vmax_rel;
-    pc=tc.track(it).pc;
-    rmax=tc.track(it).rmax;
-    pn=spw.pn;
-    rhoa=spw.rhoa;
-    lat=tc.track(it).y;
+    % B) Pressure change in time
+    try
+        dpdt = (tc.track(it+1).pc -tc.track(it).pc) / ((tc.track(it+1).time - tc.track(it).time)*24);
+    catch
+        dpdt = (tc.track(it).pc -tc.track(it-1).pc) / ((tc.track(it).time - tc.track(it-1).time)*24);
+    end     
     
-    xn=0.5;
-    rn=150;
+    % C) Holland (2008) related
+    % If not known than we assume NOT Holland (2008) values
+    if isfield(spwinput, 'holland2008')
+        spw.holland2008 = spwinput.holland2008;
+    else
+        spw.holland2008 = 0;
+    end
 
+    % If Holland, 2008 we determine xn
+    if spw.holland2008 == 1;
+        xn  = 0.6*(1-dp/215);
+    end
+    
+    % D) Holland 2010 related: find xn fit
     if ~unidir && strcmpi(spw.wind_profile,'holland2010')
         % Try to compute average Xn from the four quadrants
         xn_fit=[NaN NaN NaN NaN];
@@ -90,29 +113,66 @@ for it=1:length(tc.track)
                 end
             end
             if ~isempty(robs)
-                [vr,pr,rn,xn,rmf]=holland2010(robs,vrel,pc,rmax,'pn',pn,'rhoa',rhoa,'robs',robs,'vobs',vobs);
+                [vr,pr,rn,xn,rmf]=holland2010(robs,vrel,pc,rmax,'pn',pn,'rhoa',rhoa,'robs',robs,'vobs',vobs, 'vt', vt, 'lat', lat, 'dpdt', dpdt, 'holland2008', spw.holland2008);
                 xn_fit(iq)=xn;
                 iok=1;
             end
         end
         if iok
-            xn=nanmean(xn_fit);
+            xn=nanmean(xn_fit); % Let's fix this later to more properly take the information in the quadrants into account
         end
     end
+    
+    % E). Modified rankine
+    xopt=[];
+    aopt=[];
+    theta0opt=[];
+    if ~unidir && strcmpi(spw.wind_profile,'modifiedrankinevortex')
+        robs=[];
+        vobs=[];
+        tobs=[];
+        n=0;
+        theta0=[45 135 225 315];
+        for iq=1:length(tc.track(it).quadrant)
+            for j=1:4 % Only use R34 and R50
+                if ~isnan(tc.track(it).quadrant(iq).radius(j))
+                    n=n+1;
+                    robs(n)=tc.track(it).quadrant(iq).radius(j);
+                    vobs(n)=tc.track(it).quadrant(iq).relative_speed(j);
+                    tobs(n)=theta0(iq);
+                end
+            end
+        end
+        [xopt,aopt,theta0opt]=fit_modified_rankine_vortex(tc.track(it).vmax,rmax,robs,tobs,vobs);
+    end
         
+    % F) Different wind profiles
     switch spw.wind_profile
         case{'holland1980'}
             [vr,pr]=holland1980(r,pn,pc,vrel,rmax,'rhoa',rhoa);
         case{'holland2010'}
-            [vr,pr]=holland2010(r,vrel,pc,rmax,'pn',pn,'rhoa',rhoa,'xn',xn,'rn',rn);
+            [vr,pr]=holland2010(r,vrel,pc,rmax,'pn',pn,'rhoa',rhoa,'xn',xn,'rn',rn, 'vt', vt, 'lat', lat, 'dpdt', dpdt, 'holland2008', spw.holland2008);
         case{'fujita1952'}
             r0=rmax; % Should adjust here to r0!!!
             c1=0.7;
             [vr,pr]=fujita(r,pn,pc,r0,abs(lat),c1,'rhoa',rhoa);
+        case{'modifiedrankinevortex'}
+            % Pr from Holland (1980), Vr ma be overwritten if observations
+            % are available
+            [vr,pr]=holland1980(r,pn,pc,vrel,rmax,'rhoa',rhoa);            
     end
     pd=pn-pr;
     
+    % F) Some standard stuff
     for iphi=1:length(phi)
+         
+        switch spw.wind_profile
+            case{'modifiedrankinevortex'}
+                if ~isempty(xopt)
+                    vr=modified_rankine_vortex(r,phi(iphi)*pi/180,tc.track(it).vmax,rmax,xopt,aopt,theta0opt);            
+                end
+        end
+        
         wind_speed(iphi,:) = vr;
         if strcmpi(tc.cs.type,'geographic')
             lat=tc.track(it).y;
@@ -123,6 +183,7 @@ for it=1:length(tc.track)
                 lat=20;
             end
         end
+        
         if lat>=0.0
             % Northern hemisphere
             dr=90+phi(iphi)+spw.phi_spiral;
@@ -131,18 +192,19 @@ for it=1:length(tc.track)
             dr=-90+phi(iphi)-spw.phi_spiral;
         end
         wind_to_direction_cart(iphi,:)=dr;
-        pressure_drop(iphi,:) = pd*100;
+        pressure_drop(iphi,:) = pd*100;     % convert from hPa to Pa
     end
 
+    % G. Asymmetry
     ux=tc.track(it).vtx;
     uy=tc.track(it).vty;    
     switch lower(spw.asymmetry_option)
         case{'schwerdt1979'}
             % Use Schwerdt (1979) to compute u_prop and v_prop
             uabs=sqrt(ux^2+uy^2);
-            c=uabs*1.944; % Convert to kts
-            a=1.5*c^0.63; % Schwerdt (1979)
-            a=a/1.944;    % Convert to m/s
+            c=uabs*1.944;   % Convert to kts
+            a=1.5*c^0.63;   % Schwerdt (1979)
+            a=a/1.944;      % Convert to m/s
             ux=a*ux/uabs;
             uy=a*uy/uabs;
         case{'jma'}
@@ -165,14 +227,10 @@ for it=1:length(tc.track)
             ux=0.0;
             uy=0.0;
     end
-    
-%    vx=wind_speed.*cos(wind_to_direction_cart*pi/180)+tc.track(it).vtx*efold;
-%    vy=wind_speed.*sin(wind_to_direction_cart*pi/180)+tc.track(it).vty*efold;
-%     vx=wind_speed.*cos(wind_to_direction_cart*pi/180)+tc.track(it).vtx;
-%     vy=wind_speed.*sin(wind_to_direction_cart*pi/180)+tc.track(it).vty;
     vx=wind_speed.*cos(wind_to_direction_cart*pi/180)+ux;
     vy=wind_speed.*sin(wind_to_direction_cart*pi/180)+uy;
 
+    % H. Save all values
     dr=atan2(vy,vx);
     dr=1.5*pi-dr;
     wind_speed=sqrt(vx.^2 + vy.^2);
@@ -186,92 +244,60 @@ for it=1:length(tc.track)
             pressure_drop=zeros(size(pressure_drop));
         end
     end
-    tc.track(it).pressure_drop=pressure_drop;
+    tc.track(it).pressure_drop  = pressure_drop;
+    tc.track(it).pressure       = spw.pn-pressure_drop/100;
 
-%     %% 
-%     wndall=wind_speed;
-%     wndall(end+1,:)=wndall(end,:);
-%     wnd1=wndall(1:10,:);
-%     wnd2=wndall(10:19,:);
-%     wnd3=wndall(19:28,:);
-%     wnd4=wndall(28:37,:);
-%     [mxwnd]=max(wnd1,[],2);
-%     imx=find(mxwnd==max(mxwnd),1,'first');
-%     w1=wnd1(imx,:);
-%     [mxwnd]=max(wnd2,[],2);
-%     imx=find(mxwnd==max(mxwnd),1,'first');
-%     w2=wnd2(imx,:);
-%     [mxwnd]=max(wnd3,[],2);
-%     imx=find(mxwnd==max(mxwnd),1,'first');
-%     w3=wnd3(imx,:);
-%     [mxwnd]=max(wnd4,[],2);
-%     imx=find(mxwnd==max(mxwnd),1,'first');
-%     w4=wnd4(imx,:);
-% %     figure(it+20)
-% %     clf
-% %     subplot(2,2,1)
-% %     plot(r,w1);hold on;
-% %     plot(tc.track(it).quadrant(1).radius,tc.radius_velocity,'ro');
-% %     plot([0 500],[tc.track(it).vmax tc.track(it).vmax],'k--');
-% %     plot([tc.track(it).rmax tc.track(it).rmax],[0 100],'k--');
-% %     title(datestr(tc.track(it).time))
-% %     set(gca,'xlim',[0 250],'ylim',[0 100]);
-%     radc=interp1(r,w1,tc.track(it).quadrant(1).radius);
-%     err=tc.radius_velocity-radc;
-%     errs=[errs err];
-%     
-% %     subplot(2,2,2)
-% %     plot(r,w2);hold on;
-% %     plot(tc.track(it).quadrant(2).radius,tc.radius_velocity,'ro');
-% %     plot([0 500],[tc.track(it).vmax tc.track(it).vmax],'k--');
-% %     plot([tc.track(it).rmax tc.track(it).rmax],[0 100],'k--');
-% %     title(datestr(tc.track(it).time))
-% %     set(gca,'xlim',[0 250],'ylim',[0 100]);
-%     radc=interp1(r,w2,tc.track(it).quadrant(2).radius);
-%     err=tc.radius_velocity-radc;
-%     errs=[errs err];
-%     
-% %     subplot(2,2,3)
-% %     plot(r,w3);hold on;
-% %     plot(tc.track(it).quadrant(3).radius,tc.radius_velocity,'ro');
-% %     plot([0 500],[tc.track(it).vmax tc.track(it).vmax],'k--');
-% %     plot([tc.track(it).rmax tc.track(it).rmax],[0 100],'k--');
-% %     title(datestr(tc.track(it).time))
-% %     set(gca,'xlim',[0 250],'ylim',[0 100]);
-%     radc=interp1(r,w3,tc.track(it).quadrant(3).radius);
-%     err=tc.radius_velocity-radc;
-%     errs=[errs err];
-%     
-% %     subplot(2,2,4)
-% %     plot(r,w4);hold on;
-% %     plot(tc.track(it).quadrant(4).radius,tc.radius_velocity,'ro');
-% %     plot([0 500],[tc.track(it).vmax tc.track(it).vmax],'k--');
-% %     plot([tc.track(it).rmax tc.track(it).rmax],[0 100],'k--');
-% %     title(datestr(tc.track(it).time))
-% %     set(gca,'xlim',[0 250],'ylim',[0 100]);
-%     radc=interp1(r,w4,tc.track(it).quadrant(4).radius);
-%     err=tc.radius_velocity-radc;
-%     errs=[errs err];
-    
 end
 
-errs=errs(~isnan(errs));
-rmserr=sqrt(mean(errs.^2));
-
+%% 10. Write spiderweb
 if ~isfield(spw,'merge_frac')
     spw.merge_frac=[];
 end
+if ~isfield(spw,'tdummy')
+    spw.tdummy=[];
+end
 if ~isempty(outputfile)
+    
+    % Coordinate system
     switch lower(spw.cs.type(1:3))
         case{'geo'}
             gridunit='degree';
         otherwise
             gridunit='m';
     end
-    write_spiderweb_file_delft3d(outputfile, tc, gridunit, spw.reference_time, spw.radius, 'merge_frac',spw.merge_frac);
+    
+    % Rainfall
+    include_precip=0;
+    if spw.rainfall>-1
+        include_precip=1;
+        rs=repmat(r,[spw.nr_directional_bins 1]);
+        R0=spw.rainfall; % mm/h
+        Rm=spw.rainfall; % mm/h
+        rm=50;  % km
+        re=250;
+        val0=R0+(Rm-R0).*(rs/rm);
+        val1=Rm*exp(-(rs-rm)/re);
+        val=val0;
+        val(rs>rm)=val1(rs>rm);
+        for it=1:length(tc.track)
+            tc.track(it).precipitation=val;
+            csold.name='WGS 84';
+            csold.type='geographic';
+            csnew.name='WGS 84 / UTM zone 17N';
+            csnew.type='projected';
+            x0=tc.track(it).x;
+            y0=tc.track(it).y;
+            [x1,y1]=ddb_coordConvert(x0,y0,csold,csnew);
+            tc.track(it).x=x1;
+            tc.track(it).y=y1;
+        end
+    end
+    
+    % Write spiderweb
+    write_spiderweb_file_delft3d(outputfile, tc, gridunit, spw.reference_time, spw.radius, 'merge_frac',spw.merge_frac,'tdummy',spw.tdummy,'include_precipitation',include_precip);
 end
 
-%%
+%% 1) Read the track data
 function tc=wes_read_track_data(tc,format)
 
 switch lower(format)
@@ -387,7 +413,7 @@ switch lower(format)
         tc=read_jtwc_best_track(tc);
 end
 
-%%
+%% 2) Read the spiderweb
 function spw=wes_read_spw_input(spwinput,tc)
 if isstruct(spwinput)
     spw=spwinput;
@@ -435,34 +461,43 @@ if ~isfield(spw,'reference_time')
     spw.reference_time=tc.track(1).time;
 end
 
-%%
+%% 3) Cut off track points with low wind speeds at beginning and end of track
 function tc=wes_cut_off_low_wind_speeds(tc,spw)
 
-%% Cut off parts of track that have a wind speed lower than 30 kts (15 m/s)
-ifirst=[];
-for it=1:length(tc.track)
-    if tc.track(it).vmax>=spw.cut_off_speed && isempty(ifirst)
-        ifirst=it;
-        break
+% Cut off parts of track that have a wind speed lower than 30 kts (15 m/s)
+if isfield(spw,'cut_off_speed')
+    if spw.cut_off_speed  > 0
+        
+    ifirst=[];
+    for it=1:length(tc.track)
+        if tc.track(it).vmax>=spw.cut_off_speed && isempty(ifirst)
+            ifirst=it;
+            break
+        end
     end
-end
-tc.track=tc.track(ifirst:end);
-ilast=[];
-for it=length(tc.track):-1:1
-    if tc.track(it).vmax>spw.cut_off_speed && isempty(ilast)
-        ilast=it;
-        break
+    tc.track=tc.track(ifirst:end);
+    ilast=[];
+    for it=length(tc.track):-1:1
+        if tc.track(it).vmax>spw.cut_off_speed && isempty(ilast)
+            ilast=it;
+            break
+        end
     end
-end
-if ~isempty(ilast)
-    tc.track=tc.track(1:ilast);
+
+    if ~isempty(ilast)
+        tc.track=tc.track(1:ilast);
+    end
+    end
 end
 
+%% 4) Convert units
 function tc=wes_convert_units(tc,spw)
-%% Convert units
+
+% Convert units
 kts2ms=0.514;
 nm2km=1.852;
 nt=length(tc.track);
+
 % Convert wind speeds to m/s
 switch lower(tc.wind_speed_unit)
     case{'kts','kt','knots'}
@@ -485,7 +520,7 @@ for it=1:nt
     end
 end
 
-%%
+%% 5) Determine forward speed vtx and vty and relative speeds at the different radii in the quadrants
 function tc=wes_compute_forward_speed(tc,spw)
 
 % Computes forward motion (in m/s) and wind speeds relative to storm motion  
@@ -557,7 +592,7 @@ else
     tc.track(2).dpcdt=(tc.track(2).pc-tc.track(1).pc)/(24*(tc.track(2).time-tc.track(1).time));
 end
 
-%%
+%% 6) Land decay
 function tc=wes_land_decay(tc,spw)
 
 if ~isfield(spw,'xland')
@@ -661,10 +696,10 @@ end
 
 
 
-%%
+%% 7) Estimate missing values for Vmax, Pc and Rmax
 function tc=wes_estimate_missing_values(tc,spw)
-%% Estimate missing values for Vmax, Pc and Rmax
 
+% Estimate missing values for Vmax, Pc and Rmax
 for it=1:length(tc.track)
 
     use_vmax=0;
@@ -760,7 +795,7 @@ for it=1:length(tc.track)
 
 end    
 
-%%
+%% 8) Compute relative Vmax
 function tc=wes_compute_relative_wind_speeds(tc,spw)
 
 % Computes forward motion (in m/s) and wind speeds relative to storm motion  
