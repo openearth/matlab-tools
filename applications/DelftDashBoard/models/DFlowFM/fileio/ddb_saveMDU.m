@@ -67,11 +67,12 @@ s.geometry.AngLat.comment      = '# Angle of latitude (deg), 0=no Coriolis';
 s.geometry.Conveyance2D.value        = inp.conveyance2d;
 s.geometry.Conveyance2D.type         = 'integer';
 s.geometry.Conveyance2D.comment      = '# -1:R=HU,0:R=H, 1:R=A/P, 2:K=analytic-1D conv, 3:K=analytic-2D conv';               
-
-s.geometry.DryPointsFile.value        = inp.drypointsfile;
-s.geometry.DryPointsFile.type         = 'string';
-s.geometry.DryPointsFile.comment      = '# ';               
-
+           
+if isfield(inp, 'drypointsfile')
+    s.geometry.DryPointsFile.value        = inp.drypointsfile;
+    s.geometry.DryPointsFile.type         = 'string';
+    s.geometry.DryPointsFile.comment      = '# ';      
+end
 
 %% Numerics
 
