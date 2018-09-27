@@ -140,6 +140,10 @@ for iF=1:length(mapFiles)
     
     % numlimdt
     ind=find(~cellfun(@isempty,strfind({info.Variables.Name},vars{6,col})));
+    if isempty(ind)
+        disp(['EHY_findLimitingCells stopped: Could not find variable ''' vars{6,col} ''' in *_map.nc file'])
+        return
+    end
     sizeNumlimdt=info.Variables(ind).Size;
     limit=nc_varget(mapFile,vars{6,col},[sizeNumlimdt(2)-1 0],[1 sizeNumlimdt(1)]);
     

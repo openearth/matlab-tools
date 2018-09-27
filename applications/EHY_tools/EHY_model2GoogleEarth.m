@@ -91,7 +91,7 @@ switch modelType
                     OPT2.lineColor=OPT.dryColor;
                     [~,OPT2]=EHY_convert(inputFile,'xdrykml',OPT2);
                 end
-                OPT2.outputFile=[outputDir name '_dry.kml'];
+                OPT2.outputFile=strrep([outputDir name '_dry.kml'],'_dry_dry','_dry');
                 OPT2.iconFile=OPT.dryIconFile;
                 [~,OPT2]=EHY_convert(inputFile,'kml',OPT2);
             end

@@ -929,7 +929,7 @@ EHYs(mfilename);
 end
 
 function varargout=EHY_convert_gridCheck(OPT,inputFile)
-if isempty(OPT.grdFile)
+if isempty(OPT.grdFile) && isempty(OPT.grd)
     disp('Open the corresponding .grd-file')
     [grdName,grdPath]=uigetfile([fileparts(inputFile) filesep '.grd'],'Open the corresponding .grd-file');
     OPT.grdFile=[grdPath grdName];
