@@ -84,7 +84,8 @@ switch modelType
             [~,name,ext]=fileparts(inputFile);
             OPT2.netFile=EHY_getFullWinPath(mdu.geometry.NetFile,runDir);
             if strcmpi(ext,'.pol')
-                [~,OPT2]=EHY_convert(inputFile,'kml','outputFile',outputFile,'lineColor',[0 0 1],OPT2);
+                OPT2.outputFile=[outputDir name '_dryPol.kml'];
+                [~,OPT2]=EHY_convert(inputFile,'kml','lineColor',[0 0 1],OPT2);
             elseif strcmpi(ext,'.xyz')
                 try
                     OPT2.outputFile=[outputDir name '_xdry.kml'];
