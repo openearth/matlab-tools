@@ -52,7 +52,7 @@ end
 if isempty(typeOfModelFile)
     if ~isempty(strfind([name ext],'_his.nc'))  || ~isempty(strfind([name ext],'_map.nc')) || ...
             ~isempty(strfind([name ext],'trih-'))  || ~isempty(strfind([name ext],'trim-')) || ...
-            ~isempty(strfind([name],'sds'))
+            ~isempty(strfind([name],'sds')) || ~isempty(strfind([name ext],'_fou.nc')) 
         typeOfModelFile = 'outputfile';
     end
 end
