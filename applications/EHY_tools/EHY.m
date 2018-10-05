@@ -27,7 +27,11 @@ functions={};
 functions{end+1,1}='EHY_convert';
 functions{end  ,2}='Conversion from and to model input files. Including coordinate conversion';
 functions{end+1,1}='EHY_getmodeldata';
-functions{end  ,2}='Interactive retrieval of model data using EHY_getmodeldata';
+functions{end  ,2}='Interactive retrieval of model data in stations using EHY_getmodeldata';
+functions{end+1,1}='EHY_getMapModelData';
+functions{end  ,2}='Interactive retrieval of top-view model data using EHY_getMapModelData';
+functions{end+1,1}='EHY_plotMapData_FM';
+functions{end  ,2}='Interactive plotting of top-view model data using EHY_plotMapData_FM';
 functions{end+1,1}='EHY_simulationStatus';
 functions{end  ,2}='Check the status of a simulation';
 functions{end+1,1}='EHY_runTimeInfo';
@@ -56,10 +60,10 @@ if ~isempty(h)
     movegui(h,'center');
     disp('The EHY_TOOLS GUI was already open')
 else
-    EHYfig=figure('units','centimeters','position',[12.0227 6.4982 16.8 11.7],'name','EHY_TOOLS  - Everbody Helps You','color',[0.94 0.94 0.94]);
+    EHYfig=figure('units','centimeters','position',[12.0227 6.4982 16.8 13],'name','EHY_TOOLS  - Everbody Helps You','color',[0.94 0.94 0.94]);
     movegui(EHYfig,'center');
 end
-height=11.8;
+height=13;
 
 for iF=1:length(functions)
     button=uicontrol('Style', 'pushbutton', 'String',functions{iF,1},...
