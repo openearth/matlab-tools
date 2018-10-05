@@ -91,32 +91,16 @@ switch modelType
         % open data file
         if ~exist('infonc','var')
             infonc             = ncinfo(outputfile);
-
+            
             % layer info
-            ncVarInd              = strmatch('laydim',{infonc.Dimensions.Name},'exact');
-            if ~isempty(ncVarInd)
-                no_layers          = infonc.Dimensions(ncVarInd).Length;
-            else
-                no_layers=1;
-            end
+            gridInfo=EHY_getGridInfo(outputfile,'no_layers');
+            no_layers=gridInfo.no_layers;
             OPT=EHY_getmodeldata_layer_index(OPT,no_layers);
 
             % time info
-            % - to enhance speed, reconstruct time array from start time, numel and interval
             ncVarInd    = strmatch('time',{infonc.Variables.Name},'exact');
             nr_times    = infonc.Variables(ncVarInd).Size;
-            seconds_int = ncread(outputfile, 'time', 1, 3);
-            interval_1  = seconds_int(2) - seconds_int(1);
-            interval_2  = seconds_int(3) - seconds_int(2);
-            if (interval_1 - interval_2) < eps
-                seconds     = seconds_int(1) + interval_2 * [0:nr_times-1]';
-            else
-                seconds     = [seconds_int(1) seconds_int(2) + interval_2 * [0:nr_times-2]]';
-            end
-            days        = seconds / (24*60*60);
-            attri       = infonc.Variables(ncVarInd).Attributes(1).Value;
-            itdate      = attri(15:end);
-            Data.times  = datenum(itdate, 'yyyy-mm-dd HH:MM:SS')+days;
+            Data.times=EHY_getmodeldata_getDatenumsFromOutputfile(outputfile);
             [Data,time_index,select]=EHY_getmodeldata_time_index(Data,OPT);
             nr_times_clip = length(Data.times);
 
@@ -433,38 +417,4 @@ if nargout==1
     varargout{1}=Data;
 end
 EHYs(mfilename);
-end
-
-function [Data,time_index,select]=EHY_getmodeldata_time_index(Data,OPT)
-if ~isempty(OPT.t0) && ~isempty(OPT.tend)
-    select=(Data.times>=OPT.t0) & (Data.times<=OPT.tend);
-    time_index=find(select);
-    if ~isempty(time_index)
-        Data.times=Data.times(time_index);
-    else
-        error(['These time steps are not available in the outputfile' char(10),...
-            'requested data period: ' datestr(OPT.t0) ' - ' datestr(OPT.tend) char(10),...
-            'available model data:  ' datestr(Data.times(1)) ' - ' datestr(Data.times(end))])
-    end
-else
-    select=true(length(Data.times),1);
-    time_index=0;
-end
-
-end
-
-function OPT=EHY_getmodeldata_layer_index(OPT,no_layers)
-if all(OPT.layer==0)
-    OPT.layer=1:no_layers;
-elseif no_layers==1 && length(OPT.layer)>1
-    warning('User selected multiple layers, but there is only 1 layer available. Setting OPT.layer=1; ')
-    disp('User selected multiple layers, but there is only 1 layer available. Setting OPT.layer=1; ')
-    OPT.layer=1;
-elseif any(OPT.layer>no_layers)
-    warning(['User asked for layer ' num2str(max(OPT.layer)) ', but there are only ' num2str(no_layers) ' layers available. Setting OPT.layer to ''all''']);
-    warning(['OPT.layer is set to [' num2str(1:no_layers) ']'])
-    disp(['User asked for layer ' num2str(max(OPT.layer)) ', but there are only ' num2str(no_layers) ' layers available. Setting OPT.layer to ''all''']);
-    disp(['OPT.layer is set to [' num2str(1:no_layers) ']'])
-    OPT.layer=1:no_layers;
-end
 end

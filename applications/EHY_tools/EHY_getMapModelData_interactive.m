@@ -1,17 +1,17 @@
-function EHY_getmodeldata_interactive
-%% EHY_getmodeldata_interactive
+function varargout=EHY_getMapModelData_interactive
+%% EHY_getMapModelData_interactive
 %
-% Interactive retrieval of model data using EHY_getmodeldata
-% Example: Data = EHY_getmodeldata_interactive
+% Interactive retrieval of model data using EHY_getMapModelData
+% Example: Data = EHY_getMapModelData_interactive
 %
-% created by Julien Groenenboom, January 2018
+% created by Julien Groenenboom, October 2018
 %
 %%
 
 % outputFile
 disp('Open the model output file')
 [filename, pathname]=uigetfile('*.*','Open the model output file');
-if isnumeric(filename); disp('EHY_getmodeldata_interactive stopped by user.'); return; end
+if isnumeric(filename); disp('EHY_getMapModelData_interactive stopped by user.'); return; end
 
 % outputfile
 outputfile=[pathname filename];
@@ -20,40 +20,30 @@ if isempty(modelType)
     % Automatic procedure failed
     disp('Automatic procedure failed. Please provide input manually.')
     % modelType
-    modelTypes={'Delft3D-FM / D-FLOW FM','dflowfm';...
-        'Delft3D 4','delft3d4';...
-        'SIMONA','simona';...
-        'SOBEK3','sobek3';...
-        'SOBEK3_new','sobek3_new';...
-        'IMPLIC','implic'};
+    modelTypes={'Delft3D-FM / D-FLOW FM','dfm';...
+        'Delft3D 4','d3d';...
+        'SIMONA','simona'};
     option=listdlg('PromptString','Choose model type:','SelectionMode','single','ListString',...
         modelTypes(:,1),'ListSize',[300 100]);
-    if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end
+    if isempty(option); disp('EHY_getMapModelData_interactive was stopped by user');return; end
     modelType=modelTypes{option,2};
 end
 
 % varName
 varNames={'Water level','wl';...
     'Water depth','wd';...
-    'Velocities','uv';
     'Salinity','sal';
     'Temperature','tem'};
 option=listdlg('PromptString','What kind of time series do you want to load?','SelectionMode','single','ListString',...
     varNames(:,1),'ListSize',[300 100]);
-if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end
+if isempty(option); disp('EHY_getMapModelData_interactive was stopped by user');return; end
 OPT.varName=varNames{option,2};
 
-% stat_name
-stationNames = cellstr(EHY_getStationNames(outputfile,modelType,'varName',OPT.varName));
-option=listdlg('PromptString','From which station would you like you to load the data? (Use CTRL to select multiple stations)','ListString',...
-    stationNames,'ListSize',[500 200]);
-if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end
-stat_name=stationNames(option);
-
 % layer
-getGridInfo=EHY_getGridInfo(outputfile,'no_layers');
-if ~strcmp(OPT.varName,'wl') && getGridInfo.no_layers>1
-    option=listdlg('PromptString',{'Want to load data from a specific layer?','(Default is, in case of 3D-model, all layers)'},'SelectionMode','single','ListString',...
+gridInfo=EHY_getGridInfo(outputfile,'no_layers');
+if ~ismember(OPT.varName,{'wl','wd'}) && gridInfo.no_layers>1
+    option=listdlg('PromptString',{['Want to load data from a specific layer? nr of layers=' num2str(gridInfo.no_layers) ],...
+        '(Default is, in case of 3D-model, all layers)'},'SelectionMode','single','ListString',...
         {'Yes','No'},'ListSize',[300 50]);
     if option==1
         OPT.layer = cell2mat(inputdlg('Layer nr:'));
@@ -84,21 +74,28 @@ if exist('OPT','var')
     end
 end
 
-stats=strtrim(sprintf('''%s'',',stat_name{:}));
-stats2=['{' stats(1:end-1) '}'];
-
 disp([char(10) 'Note that next time you want to get this data, you can also use:'])
-disp(['Data = EHY_getmodeldata(''' outputfile ''',' stats2 ',''' modelType '''' extraText ');' ])
+disp(['Data = EHY_getMapModelData(''' outputfile '''' extraText ');' ])
 
 disp('start retrieving the data...')
+gridInfo=EHY_getGridInfo(outputfile,'face_nodes_xy');
 if ~exist('OPT','var') || isempty(fieldnames(OPT))
-    Data = EHY_getmodeldata(outputfile,stat_name,modelType);
+    Data = EHY_getMapModelData(outputfile);
 else
-    Data = EHY_getmodeldata(outputfile,stat_name,modelType,OPT);
+    Data = EHY_getMapModelData(outputfile,OPT);
 end
+% add xy data of face_nodes
+Data.face_nodes_x=gridInfo.face_nodes_x;
+Data.face_nodes_y=gridInfo.face_nodes_x;
 
 disp('Finished retrieving the data!')
 assignin('base','Data',Data);
 open Data
-disp('Variable ''Data'' created by EHY_getmodeldata_interactive')
+disp('Variable ''Data'' created by EHY_getMapModelData_interactive')
+%% output
+if nargout==1
+    Data.OPT.outputfile=outputfile;
+    varargout{1}=Data;
+end
 EHYs(mfilename);
+

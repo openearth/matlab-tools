@@ -18,7 +18,10 @@ elseif nargin==0 % If only an inputfile was provided
     inputFile=varargin{1};
     wantedOutput={'no_layers','dimensions'};
 else
-    wantedOutput=varargin;
+    if isempty(varargin)
+        error('No wanted output specified')
+    end
+    wantedOutput=varargin{1};
 end
 
 %% determine type of model and type of inputFile
@@ -149,12 +152,31 @@ switch typeOfModelFile
                         NetNode_x=ncread(inputFile,'NetNode_x');
                         NetNode_y=ncread(inputFile,'NetNode_y');
                         NetElemNode=double(ncread(inputFile,'NetElemNode')');
-                        E.face_nodes_x=NetNode_x(NetElemNode);
-                        E.face_nodes_y=NetNode_y(NetElemNode);
+                        E.face_nodes_x=NetNode_x(NetElemNode)';
+                        E.face_nodes_y=NetNode_y(NetElemNode)';
                     elseif ~isempty(strmatch('mesh2d_face_x_bnd',{infonc.Variables.Name},'exact')) % old fm version
                         E.face_nodes_x=ncread(inputFile,'mesh2d_face_x_bnd');
                         E.face_nodes_y=ncread(inputFile,'mesh2d_face_y_bnd');
                     end
+                end
+                if ismember('dimensions',wantedOutput)
+                    % no_NetNodes
+                    id=strmatch('nNetNode',{infonc.Dimensions.Name},'exact');
+                    if isempty(id)
+                        id=strmatch('nmesh2d_node',{infonc.Dimensions.Name},'exact');
+                    end
+                    if ~isempty(id)
+                        E.no_NetNode=infonc.Dimensions(id).Length;
+                    end
+                    % no_NetNodes
+                    id=strmatch('nNetElem',{infonc.Dimensions.Name},'exact');
+                    if isempty(id)
+                        id=strmatch('???todo??',{infonc.Dimensions.Name},'exact');
+                    end
+                    if ~isempty(id)
+                        E.no_NetElem=infonc.Dimensions(id).Length;
+                    end
+                    
                 end
             case 'd3d'
                 if ~isempty(strfind(name,'trih-'))
