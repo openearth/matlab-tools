@@ -8,7 +8,7 @@ function varargout = EHY_getMapModelData(outputfile,varargin)
 % outputfile: Output file with simulation results
 %
 % Optional input arguments:
-% varName   : Name of variable, choose from: 'wl','sal',tem'
+% varName   : Name of variable, choose from: 'wl','wd','uv','sal',tem'
 % t0        : Start time of dataset (e.g. '01-Jan-2018' or 737061 (Matlab date) )
 % tend      : End time of dataset (e.g. '01-Feb-2018' or 737092 (Matlab date) )
 % layer     : Model layer, e.g. '0' (all layers), [2] or [4:8]
@@ -59,8 +59,16 @@ switch modelType
         % allocate variable 'value'
         if length(OPT.layer==1)
             Data.value = nan(nr_times_clip,gridInfo.no_NetElem);
+            if strcmp(OPT.varName,'uv')
+                Data.ucx=Data.value;
+                Data.ucy=Data.value;
+            end
         else
             Data.value = nan(nr_times_clip,gridInfo.no_NetElem,length(OPT.layer));
+            if strcmp(OPT.varName,'uv')
+                Data.ucx=Data.value;
+                Data.ucy=Data.value;
+            end
         end
         
         switch OPT.varName
@@ -76,6 +84,25 @@ switch modelType
                 else % old format
                     Data.value = ncread(outputfile,'waterdepth',[1 time_index(1)],[Inf nr_times_clip])';
                 end
+            case 'uv'
+                if ismember('mesh2d_ucx',{infonc.Variables.Name})
+                    if gridInfo.no_layers==1 % 2DH model
+                        Data.ucx = ncread(outputfile,'mesh2d_ucx',[1 time_index(1)],[Inf nr_times_clip])';
+                        Data.ucy = ncread(outputfile,'mesh2d_ucy',[1 time_index(1)],[Inf nr_times_clip])';
+                    else
+                        Data.ucx = permute(ncread(outputfile,'mesh2d_ucx',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                        Data.ucy = permute(ncread(outputfile,'mesh2d_ucy',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                    end
+                else % old format
+                    if gridInfo.no_layers==1 % 2DH model
+                        Data.ucx = ncread(outputfile,'ucx',[1 time_index(1)],[Inf nr_times_clip])';
+                        Data.ucy = ncread(outputfile,'ucy',[1 time_index(1)],[Inf nr_times_clip])';
+                    else
+                        Data.ucx = permute(ncread(outputfile,'ucx',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                        Data.ucy = permute(ncread(outputfile,'ucy',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                    end
+                end
+                 Data.value = sqrt( Data.ucx.^2 + Data.ucy.^2 ); 
             case 'sal'
                 if ismember('mesh2d_sa1',{infonc.Variables.Name})
                     if gridInfo.no_layers==1 % 2DH model
@@ -122,6 +149,10 @@ if length(size(Data.(fn{end})))==2
     Data.dimensions='[times,netElem]';
 elseif length(size(Data.(fn{end})))==3
     Data.dimensions='[times,netElem,layers]';
+end
+
+if strcmp(OPT.varName,'uv')
+    OPT.comment='value is magnitude of velocity';
 end
 
 Data.OPT=OPT;
