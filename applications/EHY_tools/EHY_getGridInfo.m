@@ -168,10 +168,10 @@ switch typeOfModelFile
                     if ~isempty(id)
                         E.no_NetNode=infonc.Dimensions(id).Length;
                     end
-                    % no_NetNodes
+                    % no_NetElem
                     id=strmatch('nNetElem',{infonc.Dimensions.Name},'exact');
                     if isempty(id)
-                        id=strmatch('???todo??',{infonc.Dimensions.Name},'exact');
+                        id=strmatch('nmesh2d_face',{infonc.Dimensions.Name},'exact');
                     end
                     if ~isempty(id)
                         E.no_NetElem=infonc.Dimensions(id).Length;

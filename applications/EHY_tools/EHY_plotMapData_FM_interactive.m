@@ -14,16 +14,17 @@ else
 end
 
 disp([char(10) 'Note that next time you want to plot this data, you can also use:'])
-disp(['EHY_plotMapData_FM(''' Data.OPT.outputfile ''',Data.value(1,:));' ])
+disp(['gridInfo = EHY_getGridInfo(''' Data.OPT.outputfile ''',''face_nodes_xy'');' ])
+disp(['EHY_plotMapData_FM(gridInfo,Data.value(1,:));' ])
 
 disp('start plotting the top-view data...')
 figure
-for iO=1:length(option)
-    title(datestr(Data.times(option(iO))))
+for iT=1:length(plotTimes)
+    title(datestr(plotTimes(iT)))
     if length(option)>1
-        disp(['Plotting top-views: ' num2str(iO) '/' num2str(length(option))])
+        disp(['Plotting top-views: ' num2str(iT) '/' num2str(length(option))])
     end
-    EHY_plotMapData_FM(gridInfo,Data.value(iO,:))
+    EHY_plotMapData_FM(gridInfo,Data.value(iT,:))
     pause(.2)
 end
 disp('Finished plotting the top-view data!')

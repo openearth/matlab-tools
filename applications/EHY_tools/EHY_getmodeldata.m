@@ -412,6 +412,7 @@ elseif length(size(Data.(fn{end})))==3
 end
 
 Data.OPT=OPT;
+Data.OPT.outputfile=outputfile;
 
 if nargout==1
     varargout{1}=Data;

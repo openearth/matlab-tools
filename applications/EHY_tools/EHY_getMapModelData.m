@@ -42,46 +42,70 @@ if ~isnumeric(OPT.layer); OPT.layer=str2num(OPT.layer); end
 %% Get the computational data
 modelType=EHY_getModelType(outputfile);
 switch modelType
-
+    
     case 'dfm'
         %% Delft3D-Flexible Mesh
         % open data file
         gridInfo=EHY_getGridInfo(outputfile,{'no_layers','dimensions'});
         infonc=ncinfo(outputfile);
         OPT=EHY_getmodeldata_layer_index(OPT,gridInfo.no_layers);
-
-            % time info
-            Data.times=EHY_getmodeldata_getDatenumsFromOutputfile(outputfile);
-            [Data,time_index,select]=EHY_getmodeldata_time_index(Data,OPT);
-            if time_index==0; time_index=1; end % 0 = d3d style
-            nr_times_clip = length(Data.times);
-
+        
+        % time info
+        Data.times=EHY_getmodeldata_getDatenumsFromOutputfile(outputfile);
+        [Data,time_index,select]=EHY_getmodeldata_time_index(Data,OPT);
+        if time_index==0; time_index=1; end % 0 = d3d style
+        nr_times_clip = length(Data.times);
+        
         % allocate variable 'value'
         if length(OPT.layer==1)
             Data.value = nan(nr_times_clip,gridInfo.no_NetElem);
         else
             Data.value = nan(nr_times_clip,gridInfo.no_NetElem,length(OPT.layer));
         end
-
+        
         switch OPT.varName
             case 'wl'
-                Data.value = ncread(outputfile,'s1',[1 time_index(1)],[Inf nr_times_clip])';
+                if ismember('mesh2d_s1',{infonc.Variables.Name})
+                Data.value = ncread(outputfile,'mesh2d_s1',[1 time_index(1)],[Inf nr_times_clip])';
+                else % old format
+                    Data.value = ncread(outputfile,'s1',[1 time_index(1)],[Inf nr_times_clip])';
+                end
             case {'wd','water depth'}
-                Data.value = ncread(outputfile,'waterdepth',[1 time_index(1)],[Inf nr_times_clip])';
+                if ismember('mesh2d_waterdepth',{infonc.Variables.Name})
+                    Data.value = ncread(outputfile,'mesh2d_waterdepth',[1 time_index(1)],[Inf nr_times_clip])';
+                else % old format
+                    Data.value = ncread(outputfile,'waterdepth',[1 time_index(1)],[Inf nr_times_clip])';
+                end
             case 'sal'
-                if gridInfo.no_layers==1 % 2DH model
-                    Data.value = ncread(outputfile,'sa1',[1 time_index(1)],[Inf nr_times_clip])';
-                else
-                    Data.value = permute(ncread(outputfile,'sa1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                if ismember('mesh2d_sa1',{infonc.Variables.Name})
+                    if gridInfo.no_layers==1 % 2DH model
+                        Data.value = ncread(outputfile,'mesh2d_sa1',[1 time_index(1)],[Inf nr_times_clip])';
+                    else
+                        Data.value = permute(ncread(outputfile,'mesh2d_sa1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                    end
+                else % old format
+                    if gridInfo.no_layers==1 % 2DH model
+                        Data.value = ncread(outputfile,'sa1',[1 time_index(1)],[Inf nr_times_clip])';
+                    else
+                        Data.value = permute(ncread(outputfile,'sa1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                    end
                 end
             case 'tem'
-                if gridInfo.no_layers==1 % 2DH model
-                    Data.value = ncread(outputfile,'tem1',[1 time_index(1)],[Inf nr_times_clip])';
-                else
-                    Data.value = permute(ncread(outputfile,'tem1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                if ismember('mesh2d_tem1',{infonc.Variables.Name})
+                    if gridInfo.no_layers==1 % 2DH model
+                        Data.value = ncread(outputfile,'mesh2d_tem1',[1 time_index(1)],[Inf nr_times_clip])';
+                    else
+                        Data.value = permute(ncread(outputfile,'mesh2d_tem1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                    end
+                else % old format
+                    if gridInfo.no_layers==1 % 2DH model
+                        Data.value = ncread(outputfile,'tem1',[1 time_index(1)],[Inf nr_times_clip])';
+                    else
+                        Data.value = permute(ncread(outputfile,'tem1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                    end
                 end
         end
-
+        
     case 'd3d'
         %% Delft3D 4
         % to be implemented
@@ -101,6 +125,7 @@ elseif length(size(Data.(fn{end})))==3
 end
 
 Data.OPT=OPT;
+Data.OPT.outputfile=outputfile;
 
 if nargout==1
     varargout{1}=Data;
