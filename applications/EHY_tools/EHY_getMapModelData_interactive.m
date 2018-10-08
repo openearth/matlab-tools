@@ -32,6 +32,7 @@ end
 % varName
 varNames={'Water level','wl';...
     'Water depth','wd';...
+    'Velocities','uv';...
     'Salinity','sal';
     'Temperature','tem'};
 option=listdlg('PromptString','What kind of time series do you want to load?','SelectionMode','single','ListString',...
@@ -46,7 +47,7 @@ if ~ismember(OPT.varName,{'wl','wd'}) && gridInfo.no_layers>1
         '(Default is, in case of 3D-model, all layers)'},'SelectionMode','single','ListString',...
         {'Yes','No'},'ListSize',[300 50]);
     if option==1
-        OPT.layer = cell2mat(inputdlg('Layer nr:'));
+        OPT.layer = cell2mat(inputdlg('Layer nr:',' ',1,cellstr(num2str(gridInfo.no_layers))));
     end
 end
 
