@@ -18,7 +18,6 @@ elseif iscell(path)
     end
 end
 
-EHYs(mfilename);
 end
 
 function path=EHY_path_WinLin(path)
