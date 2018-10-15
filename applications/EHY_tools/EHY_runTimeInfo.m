@@ -57,7 +57,7 @@ try % if simulation has finished
             noPartitions=max([1 length(diaFiles)-1]);
             
             % number of netnodes
-            noNetNodes=gridInfo.no_NetNodes;
+            noNetNodes=gridInfo.no_NetNode;
 
             % average timestep
             line=findLineOrQuit(fid,'** INFO   : average timestep * (s)  :');

@@ -1,27 +1,34 @@
 function gridInfo=EHY_getGridInfo(inputFile,varargin)
+%% gridInfo=EHY_getGridInfo(inputFile,varargin)
+% Get information (specified in varargin) from the provided file
+%
+% Input Arguments:
+% inputFile: 	master definition file (.mdf / .mdu), grid file, outputfile
+% varargin: 	string or cell array of strings with wanted variables
+%               available keyword       returns:
+%               no_layers               E.no_layers
+%               dimensions              E.MNKmax | no_NetNode & no_NetElem
+%               XYcor                   E.Xcor & E.Ycor (=NetNodes)
+%               XYcen                   E.Xcen & E.Ycen (=NetElem/faces)
+%               depth                   E.depth_cen & depth_cor
+%               layer_model             E.layer_model
+%               face_nodes_xy           E.face_nodes_x & E.face_nodes_y
+% For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
+% created by Julien Groenenboom, October 2018
 
-% input parameters
-% .grd or .mdf mdu siminp file
-
-% output
-% no_layers     % number of layers
-% dimensions    % to be implemented
-% XY            % to be implemented
-% Z             % to be implemented
-% depth
-% projection
 %% process input from user
-if isempty(inputFile) && nargin==0
+if nargin==0 || isempty(inputFile)
     EHY_getGridInfo_interactive;
     return
-elseif nargin==0 % If only an inputfile was provided
-    inputFile=varargin{1};
-    wantedOutput={'no_layers','dimensions'};
 else
     if isempty(varargin)
         error('No wanted output specified')
     end
-    wantedOutput=varargin{1};
+    if length(varargin)==1 && iscell(varargin{1}) % input was provided as cell
+        wantedOutput=varargin{1};
+    else
+        wantedOutput=varargin;
+    end
 end
 
 %% determine type of model and type of inputFile
@@ -33,11 +40,136 @@ if strcmp(modelType,'dfm') && strcmp(typeOfModelFile,'network')
     % info that is in grid, is probably also be in outputfile
     typeOfModelFile='outputfile';
 end
+
 %% get grid info
-switch typeOfModelFile
-    case {'grid','network'}
-        switch modelType
-            case 'd3d'
+% order modelType:          dfm, d3d, simona
+% order typeOfModelFile:    mdFile,grid/network,
+switch modelType
+    case 'dfm'
+        
+        switch typeOfModelFile
+            
+            case 'mdFile'
+                mdu=dflowfm_io_mdu('read',inputFile);
+                if ismember('no_layers',wantedOutput)
+                    E.no_layers=mdu.geometry.Kmx;
+                    if E.no_layers==0
+                        E.no_layers=1;
+                    end
+                end
+                if ismember('dimensions',wantedOutput)
+                    netFile=EHY_path([fileparts(inputFile) filesep mdu.geometry.NetFile]);
+                    F=EHY_getGridInfo(netFile,'dimensions');
+                    fldnames=fieldnames(F);
+                    for iF=1:length(fldnames)
+                        E.(fldnames{iF})=F.(fldnames{iF});
+                    end
+                end
+                if ismember('layer_model',wantedOutput)
+                    if mdu.geometry.Layertype==1
+                        E.layer_model='sigma-model';
+                    elseif mdu.geometry.Layertype==2
+                        E.layer_model='z-model';
+                    end
+                end
+            case 'outputfile'
+                infonc = ncinfo(inputFile);
+                if ismember('no_layers',wantedOutput)
+                    ncVarInd = strmatch('laydim',{infonc.Dimensions.Name},'exact'); % old fm version
+                    if isempty(ncVarInd)
+                        ncVarInd = strmatch('nmesh2d_layer',{infonc.Dimensions.Name},'exact');
+                    end
+                    if ~isempty(ncVarInd)
+                        E.no_layers = infonc.Dimensions(ncVarInd).Length;
+                    else
+                        E.no_layers=1;
+                    end
+                end
+                if ismember('XYcor',wantedOutput)
+                    if ~isempty(strmatch('NetNode_x',{infonc.Variables.Name},'exact')) % old fm version
+                        E.Xcor=ncread(inputFile,'NetNode_x');
+                        E.Ycor=ncread(inputFile,'NetNode_y');
+                    elseif  ~isempty(strmatch('mesh2d_node_x',{infonc.Variables.Name},'exact'))
+                        E.Xcor=ncread(inputFile,'mesh2d_node_x');
+                        E.Ycor=ncread(inputFile,'mesh2d_node_y');
+                    end
+                end
+                if ismember('XYcen',wantedOutput)
+                    if ~isempty(strmatch('FlowElem_xcc',{infonc.Variables.Name},'exact')) % old fm version
+                        E.Xcen=ncread(inputFile,'FlowElem_xcc');
+                        E.Ycen=ncread(inputFile,'FlowElem_ycc');
+                    elseif  ~isempty(strmatch('mesh2d_face_x',{infonc.Variables.Name},'exact'))
+                        E.Xcen=ncread(inputFile,'mesh2d_face_x');
+                        E.Ycen=ncread(inputFile,'mesh2d_face_y');
+                    end
+                end
+                if ismember('depth',wantedOutput)
+                    if ~isempty(strmatch('NetNode_z',{infonc.Variables.Name},'exact')) % old fm version
+                        E.depth_cor=ncread(inputFile,'NetNode_z');
+                        E.depth_cen=ncread(inputFile,'FlowElem_bl');
+                    elseif  ~isempty(strmatch('mesh2d_node_z',{infonc.Variables.Name},'exact'))
+                        E.depth_cor=ncread(inputFile,'mesh2d_node_z');
+                        E.depth_cen=ncread(inputFile,'mesh2d_flowelem_bl');
+                    end
+                end
+                if ismember('Z',wantedOutput)
+                    if ~isempty(strmatch('LayCoord_cc',{infonc.Variables.Name},'exact')) % old fm version
+                        E.Zcen=ncread(inputFile,'LayCoord_cc');
+                        E.Zcor=ncread(inputFile,'LayCoord_w');
+                    elseif  ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact'))
+                        E.Zcen=ncread(inputFile,'mesh2d_layer_z');
+                        E.Zcor=ncread(inputFile,'mesh2d_interface_z');
+                    end
+                end
+                if ismember('layer_model',wantedOutput)
+                    if ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact')) % old fm version
+                        E.layer_model='z-model';
+                    end
+                end
+                if ismember('face_nodes_xy',wantedOutput)
+                    if ~isempty(strmatch('FlowElemContour_x',{infonc.Variables.Name},'exact')) % *_waqgeom.nc
+                        E.face_nodes_x=ncread(inputFile,'FlowElemContour_x');
+                        E.face_nodes_y=ncread(inputFile,'FlowElemContour_y');
+                    elseif ~isempty(strmatch('mesh2d_face_x_bnd',{infonc.Variables.Name},'exact')) % old fm version
+                        E.face_nodes_x=ncread(inputFile,'mesh2d_face_x_bnd');
+                        E.face_nodes_y=ncread(inputFile,'mesh2d_face_y_bnd');
+                    end
+                end
+                if ismember('dimensions',wantedOutput)
+                    % no_NetNode
+                    id=strmatch('nNetNode',{infonc.Dimensions.Name},'exact');
+                    if isempty(id)
+                        id=strmatch('nmesh2d_node',{infonc.Dimensions.Name},'exact');
+                    end
+                    if ~isempty(id)
+                        E.no_NetNode=infonc.Dimensions(id).Length;
+                    end
+                    % no_NetElem
+                    id=strmatch('nNetElem',{infonc.Dimensions.Name},'exact');
+                    if isempty(id)
+                        id=strmatch('nmesh2d_face',{infonc.Dimensions.Name},'exact');
+                    end
+                    if ~isempty(id) && infonc.Dimensions(id).Length~=0
+                        E.no_NetElem=infonc.Dimensions(id).Length;
+                    end
+                    
+                end
+                
+        end % typeOfModelFile
+        
+    case 'd3d'
+        switch typeOfModelFile
+            
+            case 'mdFile'
+                mdf=delft3d_io_mdf('read',inputFile);
+                if ismember('no_layers',wantedOutput)
+                    E.no_layers=mdf.keywords.MNKmax(3);
+                end
+                if ismember('dimensions',wantedOutput)
+                    E.MNKmax=mdf.keywords.MNKmax;
+                end
+                
+            case {'grid','network'}
                 if ismember('XY',wantedOutput)
                     if strcmp(ext,'.grd')
                         grd=delft3d_io_grd('read',inputFile);
@@ -53,132 +185,8 @@ switch typeOfModelFile
                         E.yv=grd.v.y;
                     end
                 end
-        end
-    case 'mdFile'
-        switch modelType
-            case 'dfm'
-                mdu=dflowfm_io_mdu('read',inputFile);
-                if ismember('no_layers',wantedOutput)
-                    E.no_layers=mdu.geometry.Kmx;
-                    if E.no_layers==0
-                        E.no_layers=1;
-                    end
-                end
-                if ismember('dimensions',wantedOutput)
-                    infonc=ncinfo([fileparts(inputFile) filesep mdu.geometry.NetFile]);
-                    id=strmatch('nNetNode',{infonc.Dimensions.Name},'exact');
-                    if isempty(id)
-                        id=strmatch('nmesh2d_node',{infonc.Dimensions.Name},'exact');
-                    end
-                    if ~isempty(id)
-                        E.no_NetNodes=infonc.Dimensions(id).Length;
-                    end
-                end
-            case 'd3d'
-                mdf=delft3d_io_mdf('read',inputFile);
-                if ismember('no_layers',wantedOutput)
-                    E.no_layers=mdf.keywords.MNKmax(3);
-                end
-                if ismember('dimensions',wantedOutput)
-                    E.MNKmax=mdf.keywords.MNKmax;
-                end
-            case 'simona'
-                siminp=readsiminp(pathstr,[name ext]);
-                siminp.File=lower(siminp.File);
-                if ismember('no_layers',wantedOutput)
-                    lineInd=find(~cellfun(@isempty,strfind(siminp.File,'kmax')));
-                    line=regexp(siminp.File(lineInd),'\s+','split');
-                    lineInd2=find(~cellfun(@isempty,strfind(line{1,1},'kmax')));
-                    E.no_layers=str2num(line{1,1}{lineInd2+1});
-                end
-                if ismember('dimensions',wantedOutput)
-                    keywords={'mmax','nmax','kmax'};
-                    for iK=1:length(keywords)
-                        lineInd=find(~cellfun(@isempty,strfind(siminp.File,keywords{iK})));
-                        line=regexp(siminp.File(lineInd),'\s+','split');
-                        lineInd2=find(~cellfun(@isempty,strfind(line{1,1},keywords{iK})));
-                        E.MNKmax(1,iK)=str2num(line{1,1}{lineInd2+1});
-                    end
-                end
-        end
-    case 'outputfile'
-        switch modelType
-            case 'dfm'
-                infonc = ncinfo(inputFile);
-                if ismember('no_layers',wantedOutput)
-                    ncVarInd = strmatch('laydim',{infonc.Dimensions.Name},'exact'); % old fm version
-                    if isempty(ncVarInd)
-                        ncVarInd = strmatch('nmesh2d_layer',{infonc.Dimensions.Name},'exact');
-                    end
-                    if ~isempty(ncVarInd)
-                        E.no_layers = infonc.Dimensions(ncVarInd).Length;
-                    else
-                        E.no_layers=1;
-                    end
-                end
-                if ismember('XY',wantedOutput)
-                    if ~isempty(strmatch('NetNode_x',{infonc.Variables.Name},'exact')) % old fm version
-                        E.node_X=ncread(inputFile,'NetNode_x');
-                        E.node_Y=ncread(inputFile,'NetNode_y');
-                    elseif  ~isempty(strmatch('mesh2d_node_x',{infonc.Variables.Name},'exact'))
-                        E.node_X=ncread(inputFile,'mesh2d_node_x');
-                        E.node_Y=ncread(inputFile,'mesh2d_node_y');
-                    end
-                end
-                if ismember('depth',wantedOutput)
-                    if ~isempty(strmatch('NetNode_z',{infonc.Variables.Name},'exact')) % old fm version
-                        E.node_depthcen=ncread(inputFile,'FlowElem_bl');
-                        E.node_depthcor=ncread(inputFile,'NetNode_z');
-                    elseif  ~isempty(strmatch('mesh2d_node_z',{infonc.Variables.Name},'exact'))
-                        E.node_Z=ncread(inputFile,'mesh2d_node_z');
-                    end
-                end
-                if ismember('Z',wantedOutput)
-                    if ~isempty(strmatch('??',{infonc.Variables.Name},'exact')) % old fm version
-                        E.node_Zcen=ncread(inputFile,'LayCoord_cc');
-                        E.node_Zcor=ncread(inputFile,'LayCoord_w');
-                    elseif  ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact'))
-                        E.node_Zcen=ncread(inputFile,'mesh2d_layer_z');
-                        E.node_Zcor=ncread(inputFile,'mesh2d_interface_z');
-                    end
-                end
-                if ismember('layer_model',wantedOutput)
-                    if ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact')) % old fm version
-                        E.layer_model='z-model';
-                    end
-                end
-                if ismember('face_nodes_xy',wantedOutput)
-                    if ~isempty(strmatch('NetElemNode',{infonc.Variables.Name},'exact')) % old fm version
-                        NetNode_x=ncread(inputFile,'NetNode_x');
-                        NetNode_y=ncread(inputFile,'NetNode_y');
-                        NetElemNode=double(ncread(inputFile,'NetElemNode')');
-                        E.face_nodes_x=NetNode_x(NetElemNode)';
-                        E.face_nodes_y=NetNode_y(NetElemNode)';
-                    elseif ~isempty(strmatch('mesh2d_face_x_bnd',{infonc.Variables.Name},'exact')) % old fm version
-                        E.face_nodes_x=ncread(inputFile,'mesh2d_face_x_bnd');
-                        E.face_nodes_y=ncread(inputFile,'mesh2d_face_y_bnd');
-                    end
-                end
-                if ismember('dimensions',wantedOutput)
-                    % no_NetNodes
-                    id=strmatch('nNetNode',{infonc.Dimensions.Name},'exact');
-                    if isempty(id)
-                        id=strmatch('nmesh2d_node',{infonc.Dimensions.Name},'exact');
-                    end
-                    if ~isempty(id)
-                        E.no_NetNode=infonc.Dimensions(id).Length;
-                    end
-                    % no_NetElem
-                    id=strmatch('nNetElem',{infonc.Dimensions.Name},'exact');
-                    if isempty(id)
-                        id=strmatch('nmesh2d_face',{infonc.Dimensions.Name},'exact');
-                    end
-                    if ~isempty(id)
-                        E.no_NetElem=infonc.Dimensions(id).Length;
-                    end
-                    
-                end
-            case 'd3d'
+                
+            case 'outputfile'
                 if ~isempty(strfind(name,'trih-'))
                     trih=vs_use(inputFile,'quiet');
                     if ismember('no_layers',wantedOutput)
@@ -200,7 +208,30 @@ switch typeOfModelFile
                             vs_get(trim,'map-const',{1},'KMAX','quiet')];
                     end
                 end
-            case 'simona'
+        end % typeOfModelFile
+        
+    case 'simona'
+        switch typeOfModelFile
+            
+            case 'mdFile'
+                siminp=readsiminp(pathstr,[name ext]);
+                siminp.File=lower(siminp.File);
+                if ismember('no_layers',wantedOutput)
+                    lineInd=find(~cellfun(@isempty,strfind(siminp.File,'kmax')));
+                    line=regexp(siminp.File(lineInd),'\s+','split');
+                    lineInd2=find(~cellfun(@isempty,strfind(line{1,1},'kmax')));
+                    E.no_layers=str2num(line{1,1}{lineInd2+1});
+                end
+                if ismember('dimensions',wantedOutput)
+                    keywords={'mmax','nmax','kmax'};
+                    for iK=1:length(keywords)
+                        lineInd=find(~cellfun(@isempty,strfind(siminp.File,keywords{iK})));
+                        line=regexp(siminp.File(lineInd),'\s+','split');
+                        lineInd2=find(~cellfun(@isempty,strfind(line{1,1},keywords{iK})));
+                        E.MNKmax(1,iK)=str2num(line{1,1}{lineInd2+1});
+                    end
+                end
+            case 'outputfile'
                 sds=qpfopen(inputFile);
                 dimen=waqua('readsds',sds,[],'MESH_IDIMEN');
                 if ismember('no_layers',wantedOutput)
@@ -209,10 +240,11 @@ switch typeOfModelFile
                 if ismember('dimensions',wantedOutput)
                     E.MNKmax=[dimen(2) dimen(3) dimen(18)];
                 end
-        end
-end
+        end % typeOfModelFile
+end % modelType
+
 if ~exist('E','var')
-    disp('Could not find this data in the provided file');
+    disp('Could not find any of this data in the provided file');
     E=struct;
 end
 gridInfo=E;
