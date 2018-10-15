@@ -379,7 +379,7 @@ function fprintf_one_layer(fid,dataset,OS,fillvalue,varargin)
       for n=1:nmax
          oneline = dataset(:,n,k);
          oneline(isnan(oneline))= fillvalue;
-         fprintf (fid,'%12.8f ',oneline);
+         fprintf (fid,'%12.4f ',oneline);
          fprinteol(fid,OS);
       end
    end
