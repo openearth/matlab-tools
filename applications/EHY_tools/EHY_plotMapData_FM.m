@@ -28,12 +28,6 @@ end
 if ~all([isstruct(gridInfo) isfield(gridInfo,'face_nodes_x') isfield(gridInfo,'face_nodes_y')])
     error('Something wrong with first input argument'); 
 end
-if 0
-    gridInfo=EHY_getGridInfo('d:\Cursus materiaal\delft3dfm_hydrodynamic_modelling\exercises\exercise12\DFM_OUTPUT_cb_2d\cb_2d_map.nc','face_nodes_xy');
-    wl=ncread('d:\Cursus materiaal\delft3dfm_hydrodynamic_modelling\exercises\exercise12\DFM_OUTPUT_cb_2d\cb_2d_map.nc',...
-        's1',[1 10],[inf 1]);
-    EHY_plotMapData_FM(gridInfo,wl)
-end
 
 if size(gridInfo.face_nodes_x,2)~=length(zData)
     error('Length of face_nodes_xy and zData should be the same')
