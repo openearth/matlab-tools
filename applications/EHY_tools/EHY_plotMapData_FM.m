@@ -38,11 +38,10 @@ if isempty(zData); error('No zData to plot'); end
 %% plot figure
 for ii=1:size(gridInfo.face_nodes_x,2)
     XY{1,ii}=[gridInfo.face_nodes_x(:,ii) gridInfo.face_nodes_y(:,ii); ];
-    if isnan(XY{1,ii}(end,1))
-        XY{1,ii}(end,:)=XY{1,ii}(1,1:2);
-    else
-        XY{1,ii}(end+1,:)=XY{1,ii}(1,:);
-    end
+    % delete NaNs
+    XY{1,ii}(isnan(XY{1,ii}(:,1)),:)=[];
+    % close polygon
+    XY{1,ii}(end+1,:)=XY{1,ii}(1,:);
 end
 
 nnodes = cellfun('size',XY,1);
