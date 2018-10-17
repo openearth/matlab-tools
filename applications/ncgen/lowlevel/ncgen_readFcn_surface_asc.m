@@ -162,10 +162,10 @@ for x0      = minx : mapsizex : maxx % loop over tiles in x direction within dat
                 find(data.x  >=x(ix(1)  ),1,'first'):+1:find(data.x  <=x(ix(end)  ),1,'last' ),...
                 find(data.y  <=y(iy(1),1),1,'last' ):-1:find(data.y  >=y(iy(end),1),1,'first')) = z';
             
-            data.time             = fns.date_from_filename;
-            data.source_file_hash = fns.hash;
-            data.filename         = fns.name;
-            data.source           = double(~isnan(data.z));
+            data.time              = fns.date_from_filename;
+            data.source_file_hash  = fns.hash;
+            data.filename          = fns.name;
+            data.source            = double(~isnan(data.z));
             
             writeFcn(OPT,data)
         end
