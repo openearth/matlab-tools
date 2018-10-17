@@ -13,6 +13,8 @@ function gridInfo=EHY_getGridInfo(inputFile,varargin)
 %               depth                   E.depth_cen & depth_cor
 %               layer_model             E.layer_model
 %               face_nodes_xy           E.face_nodes_x & E.face_nodes_y
+%               area                    E.area
+%
 % For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
 % created by Julien Groenenboom, October 2018
 
@@ -113,13 +115,25 @@ switch modelType
                     end
                 end
                 if ismember('Z',wantedOutput)
-                    if ~isempty(strmatch('LayCoord_cc',{infonc.Variables.Name},'exact')) % old fm version
-                        E.Zcen=ncread(inputFile,'LayCoord_cc');
-                        E.Zcor=ncread(inputFile,'LayCoord_w');
-                    elseif  ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact'))
-                        E.Zcen=ncread(inputFile,'mesh2d_layer_z');
-                        E.Zcor=ncread(inputFile,'mesh2d_interface_z');
-                    end
+		                    % his-file
+		                    if ~isempty(strmatch('LayCoord_cc',{infonc.Variables.Name},'exact')) % old fm version
+		                        E.Zcen=ncread(inputFile,'LayCoord_cc');
+		                        E.Zcor=ncread(inputFile,'LayCoord_w');
+		                    elseif ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact'))
+		                        E.Zcen=ncread(inputFile,'mesh2d_layer_z');
+		                        E.Zcor=ncread(inputFile,'mesh2d_interface_z');
+		                    elseif ~isempty(strmatch('zcoordinate_c',{infonc.Variables.Name},'exact'))
+		                        E.Zcen=ncread(inputFile,'zcoordinate_c');
+		                        E.Zcor=ncread(inputFile,'zcoordinate_w');
+		                    end
+		                    % map
+		                    if ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact'))
+		                        perc=ncread(inputFile,'mesh2d_interface_sigma');
+		                        bl=ncread(inputFile,'mesh2d_flowelem_bl');
+		                        E.Zint=-repmat(bl,1,length(perc)).*repmat(perc',length(bl),1);
+		                        E.Zcen=(E.Zint(:,2:end)+E.Zint(:,1:end-1))/2;
+		                        E.thickness=diff(E.Zint,[],2);
+		                    end
                 end
                 if ismember('layer_model',wantedOutput)
                     if ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact')) % old fm version
@@ -152,8 +166,12 @@ switch modelType
                     if ~isempty(id) && infonc.Dimensions(id).Length~=0
                         E.no_NetElem=infonc.Dimensions(id).Length;
                     end
-                    
-                end
+               end
+               if ismember('area',wantedOutput)
+                    if ~isempty(strmatch('mesh2d_flowelem_ba',{infonc.Variables.Name},'exact'))
+                        E.area=ncread(inputFile,'mesh2d_flowelem_ba');
+                    end
+               end  
                 
         end % typeOfModelFile
         
@@ -245,8 +263,8 @@ end % modelType
 
 if ~exist('E','var')
     disp('Could not find any of this data in the provided file');
-    E=struct;
 end
+E.inputFile=inputFile;
 gridInfo=E;
 EHYs(mfilename);
 end
