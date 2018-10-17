@@ -135,10 +135,12 @@ if existing_z % then existing nc file already has data
     z0(zNotnan) = data.z(zNotnan);
     isource0(zNotnan) = isource * data.source(zNotnan);
     isource = isource0;
+    
     data.z = z0;
 else
     isource = isource * data.source;
     isource(isnan(data.z)) = nan;
+    
 end
 
 %% Write z data
@@ -147,12 +149,25 @@ try
     ncwrite(ncfile,'isource',isource,[1 1 iTimestamp]);
     flag_values = ncreadatt(ncfile, 'isource', 'flag_values');
     flag_meanings = ncreadatt(ncfile, 'isource', 'flag_meanings');
+    source = ncreadatt(ncfile, 'isource', 'source');
+    
     ncwriteatt(ncfile, 'isource', 'flag_values', [flag_values length(flag_values)])
     if isempty(flag_values)
         ncwriteatt(ncfile, 'isource', 'flag_meanings', data.filename)
+        if isempty(OPT.main.projectFcn(data.filename))
+            ncwriteatt(ncfile, 'isource', 'source', OPT.main.project);
+        else
+            ncwriteatt(ncfile, 'isource', 'source', char(OPT.main.projectFcn(data.filename)))
+        end
     else
         ncwriteatt(ncfile, 'isource', 'flag_meanings', [flag_meanings ' ' data.filename])
+        if isempty(OPT.main.projectFcn(data.filename))
+            ncwriteatt(ncfile, 'isource', 'source', [source ' ' OPT.main.project])
+        else
+            ncwriteatt(ncfile, 'isource', 'source', [source ' ' char(OPT.main.projectFcn(data.filename))])
+        end
     end
+
     if isfield(data, 'message')
         if ~isempty(data.message)
             comm = ncreadatt(ncfile,'/','comment');
