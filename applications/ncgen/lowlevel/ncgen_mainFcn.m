@@ -94,6 +94,7 @@ OPT.main.dir_depth      = inf;
 OPT.main.hash_source    = true;
 OPT.main.store_hash     = false;
 OPT.main.merge_data     = false;
+OPT.main.projectFcn     = @(s) regexp(s, '((?<=_)(...)(?=\.(?i)(asc)))', 'match'); % extract prj name from filename
 
 % path settings
 OPT.main.path_source    = ''; % path to source data. Can be a directory or a single file
