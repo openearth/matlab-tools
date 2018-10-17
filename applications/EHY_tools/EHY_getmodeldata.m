@@ -13,7 +13,7 @@ function varargout = EHY_getmodeldata(outputfile,stat_name,modelType,varargin)
 % modelType : 'dflowfm','delft3d4,'waqua','sobek3','implic'
 %
 % Optional input arguments:
-% varName   : Name of variable, choose from: 'wl','uv','sal',tem'
+% varName   : Name of variable, choose from: 'wl','wd','uv','sal',tem'
 % t0        : Start time of dataset (e.g. '01-Jan-2018' or 737061 (Matlab date) )
 % tend      : End time of dataset (e.g. '01-Feb-2018' or 737092 (Matlab date) )
 % layer     : Model layer, e.g. '0' (all layers), [2] or [4:8]
@@ -27,6 +27,12 @@ function varargout = EHY_getmodeldata(outputfile,stat_name,modelType,varargin)
 % Data.dimensions         : Dimensions of requested data (time,stats,lyrs)
 % Data.location           : Locations of requested stations (x,y or lon,lat)
 % Data.OPT                : Structure with optional user settings used
+%
+% Example1: EHY_getmodeldata % interactive
+% Example2: Data = EHY_getmodeldata('D:\trih-r01.dat',[],'d3d') % load water level (default), all stations, all times
+% Example3: Data = EHY_getmodeldata('D:\trih-r01.dat',[],'d3d','varName','uv') % load velocities, all stations, all times
+% Example4: Data = EHY_getmodeldata('D:\trih-r01.dat',[],'d3d','varName','uv','layer',5) % load velocities, all stations, all times, layer 5
+% Example5: Data = EHY_getmodeldata('D:\r01_his.nc',{'station1','station2'},'dfm','t0','01-Jan-2000','tend','01-Feb-2000') % load two stations, one month
 %
 % For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
 
