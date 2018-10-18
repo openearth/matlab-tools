@@ -390,31 +390,35 @@ function iostat=Local_write(fname,DAT,varargin),
    OPT.reftime  = []; 
    OPT.timezone = [];
    OPT.fmt='%.2f';
+   % ADDED FREEK SCHEEL (DOENS'NT DO MUCH?):
+   OPT.userfieldnames = [];
    OPT=setproperty(OPT,varargin); 
 
 
    %% Keywords
    %-------------------
 
-      H.userfieldnames = false;
-
-      if nargin>2
-         if isstruct(varargin{2})
-            H = mergestructs('overwrite',H,varargin{2});
-         else
-            iargin = 2;
-            %% remaining number of arguments is always even now
-            while iargin<=nargin-1,
-                switch lower ( varargin{iargin})
-                % all keywords lower case
-                case 'userfieldnames';iargin=iargin+1;H.parameternames = varargin{iargin};
-                otherwise
-                  error(sprintf('Invalid string argument (caps?): "%s".',varargin{iargin}));
-                end
-                iargin=iargin+1;
-            end
-         end  
-      end
+   % REMOVED FREEK SCHEEL:
+   
+%       H.userfieldnames = false;
+% 
+%       if nargin>2
+%          if isstruct(varargin{2})
+%             H = mergestructs('overwrite',H,varargin{2});
+%          else
+%             iargin = 2;
+%             %% remaining number of arguments is always even now
+%             while iargin<=nargin-1,
+%                 switch lower ( varargin{iargin})
+%                 % all keywords lower case
+%                 case 'userfieldnames';iargin=iargin+1;H.parameternames = varargin{iargin};
+%                 otherwise
+%                   error(sprintf('Invalid string argument (caps?): "%s".',varargin{iargin}));
+%                 end
+%                 iargin=iargin+1;
+%             end
+%          end  
+%       end
 
    %% Locate
    %--------------------------
@@ -463,10 +467,10 @@ function iostat=Local_write(fname,DAT,varargin),
      
      if isempty(OPT.timezone)
      	entry=regexp(DAT.time{1},'(\d+):(\d+)','tokens'); 
-     	if length(entry)~=2 | length(entry{2})~=2
-     	   error('Cannot read time zone from block 1.'); 
-     	end
-     	entry=entry{2}; entry=str2double(entry); 
+     	disp('It is hard to determine the time zone due to different formats');
+     	disp('Advised to provide the timezone as a keyword,value pair:');
+     	disp('E.g. ,''timezone'',2/24 for a case with 2 hours +UTC');
+     	entry=entry{end}; entry=str2double(entry); 
      	OPT.timezone=entry(1)+entry(2)/60; 
      end
      
@@ -497,13 +501,14 @@ fprintf(fid,'NODATA_value     = %.6f\n',DAT.keywords.NODATA_value);
 fprintf(fid,'n_cols        = %.0f\n',DAT.keywords.n_cols); 
 fprintf(fid,'n_rows        = %.0f\n',DAT.keywords.n_rows); 
 fprintf(fid,'grid_unit        = %s\n',DAT.keywords.grid_unit); 
-fprintf(fid,'x_llcorner        = %.0f\n',DAT.keywords.x_llcorner); 
-fprintf(fid,'y_llcorner        = %.0f\n',DAT.keywords.y_llcorner); 
-fprintf(fid,'dx             = %s\n',DAT.keywords.dx); 
-fprintf(fid,'dy             = %s\n',DAT.keywords.dy); 
+fprintf(fid,'x_llcorner        = %.4f\n',DAT.keywords.x_llcorner); 
+fprintf(fid,'y_llcorner        = %.4f\n',DAT.keywords.y_llcorner); 
+fprintf(fid,'dx             = %.4f\n',DAT.keywords.dx); 
+fprintf(fid,'dy             = %.4f\n',DAT.keywords.dy); 
 fprintf(fid,'n_quantity       = %d\n',DAT.keywords.n_quantity); 
 fprintf(fid,'quantity1        = %s\n',DAT.keywords.quantity1); 
 fprintf(fid,'unit1            = %s\n',DAT.keywords.unit1); 
+fprintf(fid,'###  END OF HEADER\n',DAT.keywords.unit1); 
 
 %write different time steps
 for k=1:length(DAT.datenum)
