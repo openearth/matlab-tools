@@ -377,6 +377,10 @@ end
             zh            = -5.*ones(mmax,nmax);
             netfile=outputFile;
             
+            % delete old file first in case of overwrite
+            if OPT.overwrite && exist(netfile,'file')
+                delete(netfile);
+            end
             % to avoid error of variables being created in below function
             X=[];Y=[];Z=[];NetNode_mask=[];nNetNode=[];vals=[];nc=[];ifld=[];attr=[];dims=[];
             ContourLink=[];NetLink=[];
