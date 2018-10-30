@@ -265,6 +265,12 @@ handles=getHandles;
 if ~ok
     return
 end
+
+if isnan(nanmax(handles.model.dflowfm.domain(ad).netstruc.node.z))
+    ddb_giveWarning('text','Could not clip polygon! Please generate bathymetry first.');
+    return
+end
+
 handles.model.dflowfm.domain(ad).netfile=filename;
 
 x=handles.toolbox.modelmaker.polygonX;
@@ -287,6 +293,12 @@ handles=getHandles;
 if ~ok
     return
 end
+
+if isnan(nanmax(handles.model.dflowfm.domain(ad).netstruc.node.z))
+    ddb_giveWarning('text','Could not clip maximum elevation! Please generate bathymetry first.');
+    return
+end
+
 handles.model.dflowfm.domain(ad).netfile=filename;
 
 handles.model.dflowfm.domain(ad).netstruc=dflowfm_clip_shallow_areas(handles.model.dflowfm.domain(ad).netstruc,handles.toolbox.modelmaker.zMax, 'max');
@@ -307,6 +319,12 @@ handles=getHandles;
 if ~ok
     return
 end
+
+if isnan(nanmax(handles.model.dflowfm.domain(ad).netstruc.node.z))
+    ddb_giveWarning('text','Could not clip minimum elevation! Please generate bathymetry first.');
+    return
+end
+
 handles.model.dflowfm.domain(ad).netfile=filename;
 
 handles.model.dflowfm.domain(ad).netstruc=dflowfm_clip_shallow_areas(handles.model.dflowfm.domain(ad).netstruc,handles.toolbox.modelmaker.zMax, 'min');
