@@ -110,8 +110,10 @@ switch lower(opt)
 
             % And now for the boundaries
             boundaries = handles.model.dflowfm.domain(1).boundaries;
-            ddb_DFlowFM_saveBoundaryPolygons('.\',boundaries);
-            ddb_DFlowFM_saveBCfile(boundaries);
+            ipol=length(boundaries);
+            ddb_DFlowFM_saveBoundaryPolygons('.\',boundaries,ipol); %(dr,boundaries,ipol)
+            forcingfile = handles.model.dflowfm.domain.extforcefilenew;
+            ddb_DFlowFM_saveBCfile(forcingfile,boundaries); %(forcingfile,boundaries)
         end
         
         % Observation points

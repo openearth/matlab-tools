@@ -333,5 +333,61 @@ netStruc2nc(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domai
 
 handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',ad);
 
+clipMeshElevationbelowNewboundarypoints(handles); % call new basic function to change the boundary location points and reload the boundary conditions
+
+setHandles(handles);
+
+%%
+function clipMeshElevationbelowNewboundarypoints(handles)
+% transfers current boundary points to nearest node point
+% first simply in a loop (might be time-consuming for large grids / lot of boundary points)
+
+% handles=getHandles;
+
+boundaries = handles.model.dflowfm.domain.boundaries;
+ipol=length(boundaries);
+
+xmodel = handles.model.dflowfm.domain.netstruc.node.x; %active model
+ymodel = handles.model.dflowfm.domain.netstruc.node.y;
+
+xnew = [];
+ynew = [];
+distance = [];
+
+for ii = 1:ipol
+    xtmp = boundaries(ii).x; 
+    ytmp = boundaries(ii).y;
+    
+    for jj = 1:length(xtmp) 
+        for kk = 1:length(xmodel) %loop through model nodes to get distances
+           distance(kk) = sqrt( (xtmp(jj) - xmodel(kk))^2 + (ytmp(jj) - ymodel(kk))^2);
+        end
+        [min_distance, id] = nanmin(distance); %determine closest point and take over coordinates
+        xnew(ii,jj) = xmodel(id); %temp to check
+        ynew(ii,jj) = ymodel(id);
+        
+        handles.model.dflowfm.domain.boundaries(ii).x(jj) = xmodel(id);
+        handles.model.dflowfm.domain.boundaries(ii).y(jj) = ymodel(id);
+        
+    end
+end
+
+% Plot new locations
+handles = ddb_DFlowFM_plotBoundaries(handles,'plot','Visible','on','active',1);
+
+% Save new boundary points
+boundaries = handles.model.dflowfm.domain.boundaries;
+ipol=length(boundaries);
+ddb_DFlowFM_saveBoundaryPolygons('.\',boundaries,ipol); 
+
+% Give warning
+ddb_giveWarning('text','Note; the open boundary locations are changed to their respective closest boundary point')
+
+ddb_giveWarning('text','Note; the boundary conditions are being re-calculated. Use option with care!');
+
+% Redo the generateBoundaryConditions sequence
+
+ddb_ModelMakerToolbox_DFlowFM_quickMode('generateboundaryconditions')
+
 setHandles(handles);
 
