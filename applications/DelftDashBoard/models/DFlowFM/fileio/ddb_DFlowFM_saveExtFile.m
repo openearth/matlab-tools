@@ -55,55 +55,56 @@ end
 fclose(fid);
 
 % Meteo in old ext
-if isfield( handles.model.dflowfm.domain, 'extforcefile')
-    fid=fopen(handles.model.dflowfm.domain.extforcefile,'wt');
-else
-    fid=fopen('meteo.ext','wt');
-end
+if isempty(handles.model.dflowfm.domain.extforcefilenew)
+    if isfield( handles.model.dflowfm.domain, 'extforcefile')
+        fid=fopen(handles.model.dflowfm.domain.extforcefile,'wt');
+    else
+        fid=fopen('meteo.ext','wt');
+    end
 
-if ~isempty(handles.model.dflowfm.domain.windufile)
-    fprintf(fid,'%s\n',['QUANTITY=windx']);
-    fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.windufile]);
-    fprintf(fid,'%s\n','FILETYPE=4');
-    fprintf(fid,'%s\n','METHOD=1');
-    fprintf(fid,'%s\n','OPERAND=O');
-    fprintf(fid,'%s\n','');
-end
+    if ~isempty(handles.model.dflowfm.domain.windufile)
+        fprintf(fid,'%s\n',['QUANTITY=windx']);
+        fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.windufile]);
+        fprintf(fid,'%s\n','FILETYPE=4');
+        fprintf(fid,'%s\n','METHOD=1');
+        fprintf(fid,'%s\n','OPERAND=O');
+        fprintf(fid,'%s\n','');
+    end
 
-if ~isempty(handles.model.dflowfm.domain.windvfile)
-    fprintf(fid,'%s\n',['QUANTITY=windy']);
-    fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.windvfile]);
-    fprintf(fid,'%s\n','FILETYPE=4');
-    fprintf(fid,'%s\n','METHOD=1');
-    fprintf(fid,'%s\n','OPERAND=O');
-    fprintf(fid,'%s\n','');
-end
+    if ~isempty(handles.model.dflowfm.domain.windvfile)
+        fprintf(fid,'%s\n',['QUANTITY=windy']);
+        fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.windvfile]);
+        fprintf(fid,'%s\n','FILETYPE=4');
+        fprintf(fid,'%s\n','METHOD=1');
+        fprintf(fid,'%s\n','OPERAND=O');
+        fprintf(fid,'%s\n','');
+    end
 
-if ~isempty(handles.model.dflowfm.domain.airpressurefile)
-    fprintf(fid,'%s\n',['QUANTITY=atmosphericpressure']);
-    fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.airpressurefile]);
-    fprintf(fid,'%s\n','FILETYPE=4');
-    fprintf(fid,'%s\n','METHOD=1');
-    fprintf(fid,'%s\n','OPERAND=O');
-    fprintf(fid,'%s\n','');
-end
+    if ~isempty(handles.model.dflowfm.domain.airpressurefile)
+        fprintf(fid,'%s\n',['QUANTITY=atmosphericpressure']);
+        fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.airpressurefile]);
+        fprintf(fid,'%s\n','FILETYPE=4');
+        fprintf(fid,'%s\n','METHOD=1');
+        fprintf(fid,'%s\n','OPERAND=O');
+        fprintf(fid,'%s\n','');
+    end
 
-if ~isempty(handles.model.dflowfm.domain.rainfile)
-    fprintf(fid,'%s\n',['QUANTITY=rain']);
-    fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.rainfile]);
-    fprintf(fid,'%s\n','FILETYPE=4');
-    fprintf(fid,'%s\n','METHOD=1');
-    fprintf(fid,'%s\n','OPERAND=O');
-    fprintf(fid,'%s\n','');
-end
+    if ~isempty(handles.model.dflowfm.domain.rainfile)
+        fprintf(fid,'%s\n',['QUANTITY=rain']);
+        fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.rainfile]);
+        fprintf(fid,'%s\n','FILETYPE=4');
+        fprintf(fid,'%s\n','METHOD=1');
+        fprintf(fid,'%s\n','OPERAND=O');
+        fprintf(fid,'%s\n','');
+    end
 
-if ~isempty(handles.model.dflowfm.domain.spiderwebfile)   
-    fprintf(fid,'%s\n',['QUANTITY=airpressure_windx_windy']);
-    fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.spiderwebfile]);
-    fprintf(fid,'%s\n','FILETYPE=5');
-    fprintf(fid,'%s\n','METHOD=1');
-    fprintf(fid,'%s\n','OPERAND=O');
-    fprintf(fid,'%s\n','');
+    if ~isempty(handles.model.dflowfm.domain.spiderwebfile)   
+        fprintf(fid,'%s\n',['QUANTITY=airpressure_windx_windy']);
+        fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.spiderwebfile]);
+        fprintf(fid,'%s\n','FILETYPE=5');
+        fprintf(fid,'%s\n','METHOD=1');
+        fprintf(fid,'%s\n','OPERAND=O');
+        fprintf(fid,'%s\n','');
+    end
+    fclose(fid);
 end
-fclose(fid);
-
