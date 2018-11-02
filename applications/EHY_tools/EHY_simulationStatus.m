@@ -80,7 +80,8 @@ switch modelType
             if ~isempty(hisncfiles)
                 hisncfile=[folder hisncfiles(1).name];
             else
-                error('no his file available yet, model has not started or not finished initializing yet')
+                disp('No output (*_his.nc) file available yet, model has not started or not finished initializing yet')
+                return
             end
             infonc=ncinfo(hisncfile);
             indNC=strmatch('time',{infonc.Dimensions.Name},'exact');
