@@ -77,7 +77,11 @@ switch modelType
             end
         else % get the runPeriod from the his nc file
             hisncfiles=dir([folder '*his*.nc']);
-            hisncfile=[folder hisncfiles(1).name];
+            if ~isempty(hisncfiles)
+                hisncfile=[folder hisncfiles(1).name];
+            else
+                error('no his file available yet, model has not started or not finished initializing yet')
+            end
             infonc=ncinfo(hisncfile);
             indNC=strmatch('time',{infonc.Dimensions.Name},'exact');
             no_times=infonc.Dimensions(indNC).Length;
