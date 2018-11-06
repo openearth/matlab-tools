@@ -4,16 +4,17 @@ function [Qb] = fractionbreakingwaves(Hrms,Hmax)
 % in line with Boers (2005), Eq. 3.5
 %
 %   Syntax:
-%   [Qb] = wdc_Qb(Hrms,Hmax)
+%   [Qb] = fractionbreakingwaves(Hrms,Hmax)
 %
 %   Input:
 %   Hrms = root-mean-square wave height [m]
+%   Hmax = 0.88./k.*tanh(gamma.*k.*h/0.88); [m] %maximum wave height, Bosboom et al. (2000), Eq. 3.4  
 %
 %   Output:
 %   Qb = fraction of breaking waves
 %
 %   Example
-%   [Qb] = wdc_Qb(Hrms,Hmax)
+%   [Qb] = fractionbreakingwaves(Hrms,Hmax)
 %
 %   See also
 
@@ -55,8 +56,7 @@ function [Qb] = fractionbreakingwaves(Hrms,Hmax)
 % $Author$
 % $Revision$
 % $HeadURL$
-% $Keywords: $
-
+% $Keywords: breaking waves$
 
 if Hrms>= Hmax
     Qb = 1;    
