@@ -28,7 +28,7 @@ figpath = cd;
 figure
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-plot(Ur{1},zz{1},'k-','LineWidth',1.5)
+plot(Ur(1,:),zz(1,:),'k-','LineWidth',1.5)
 hold on
 grid on
 % plot([-uda(1) -uda(1)],[0 h(1)],'r-','LineWidth',1.5)
@@ -43,11 +43,11 @@ print('-dpng','-r300',[figpath,filesep,'undertow_example'])  % print figure at 3
 figure
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-plot(Ur{1},zz{1},'k-','LineWidth',1.5)
+plot(Ur(1,:),zz(1,:),'k-','LineWidth',1.5)
 hold on
 grid on
-plot(Us{1},zz{1},'r-','LineWidth',1.5)
-plot(Us{1} + Ur{1},zz{1},'b-','LineWidth',1.5)
+plot(Us(1,:),zz(1,:),'r-','LineWidth',1.5)
+plot(Us(1,:) + Ur(1,:),zz(1,:),'b-','LineWidth',1.5)
 plot([0 0],[0 h(1)],'k-','LineWidth',1)
 xlabel('U (m/s)')
 ylabel('z (m)')
