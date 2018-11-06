@@ -1,4 +1,4 @@
-function [Qb] = wdc_Qb(Hrms,Hmax)
+function [Qb] = fractionbreakingwaves(Hrms,Hmax)
 %FRACTIONBREAKINGWAVES computes the fraction of breaking waves
 % Bosboom et al. (2000), Eq. 3.6
 % in line with Boers (2005), Eq. 3.5
