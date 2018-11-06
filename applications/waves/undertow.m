@@ -10,6 +10,11 @@ function [Ur, Us, zz] = undertow(Hm0 ,Tp ,h, Hdir, varargin)
 %   h = water depth [m]
 %   Hdir = wave direction [degrees]
 %
+%   Optional input:
+%   ksw = wave-related roughness height [m]
+%   ksc = current-related roughness height [m]
+%   ka = apparent roughness [m]
+%
 %   Output:
 %   Ur = roller drift velocity [m/s]
 %   Us = Stokes drift velocity [m/s]
@@ -65,6 +70,10 @@ function [Ur, Us, zz] = undertow(Hm0 ,Tp ,h, Hdir, varargin)
 %%
 OPT.g = 9.81;
 OPT.rhow = 1000;
+OPT.ksw = 0.02;
+OPT.ksc = 0.02;
+OPT.ka = 0.08;
+OPT.nrofsigmalevels = 200;
 % return defaults (aka introspection)
 if nargin==0
     varargout = {OPT};
@@ -75,6 +84,10 @@ OPT = setproperty(OPT, varargin);
 
 rhow = OPT.rhow;
 g = OPT.g;
+nrofsigmalevels = OPT.nrofsigmalevels;
+ksw = OPT.ksw;
+ksc = OPT.ksc;
+ka = OPT.ka;
 
 %% INPUT
 %% PREPARATIONS
@@ -96,19 +109,19 @@ s0 = Hrms./L0;                          %deepwater wave steepness [-]
 gamma = 0.75*kh+0.29;
 Hmax = 0.88./k.*tanh(gamma.*k.*h/0.88); %maximum wave height, Bosboom et al. (2000), Eq. 3.4  
 % Rayleigh wave distribution
-for i = 1:length(Hm0)
+for it = 1:length(Hm0)
 %fraction of breaking waves according to Unbest-TC model
 %Rayleigh distribution with truncated at maximum wave height, Battjes & Janssen (1978) model 
-[Qb(i)] = fractionbreakingwaves(Hrms(i),Hmax(i));
+[Qb(it)] = fractionbreakingwaves(Hrms(it),Hmax(it));
 % Qb(i) = exp(-(Hmax(i)/Hrms(i))^2);%fraction of breaking waves according to Rayleigh distribution
 %%    
 dH = 0.01;
 H = 0:dH:12;
-P = 2*H/Hrms(i)^2.*exp(-(H/Hrms(i)).^2);
+P = 2*H/Hrms(it)^2.*exp(-(H/Hrms(it)).^2);
 Pcum=cumsum(P);
 %Clipped Rayleigh distribution , Boers (2005), Eq. (3.4)
-PH = 1 - exp(-(1-Qb(i))*H.^2/Hrms(i)^2);
-PH(find(H>Hmax(i))) = 1;
+PH = 1 - exp(-(1-Qb(it))*H.^2/Hrms(it)^2);
+PH(find(H>Hmax(it))) = 1;
 % % %%
 % % % figure
 % % % plot(H,Pcum*dH,'k-')
@@ -138,9 +151,6 @@ uda = us_da + ur_da;    %total depth-average drift velocity [m/s]
 uda_vec = [wav_facx.*uda;wav_facy.*uda];
 
 %Van Rijn (2013) undertow model
-ksw = 0.02;
-ksc = 0.02;
-ka = 0.08;
 %
 z0=ksc/30;
 za=ka/30;
@@ -153,18 +163,27 @@ ar = C1./(C3 + 0.375*C2);
 Urd = -uda./(-1+log(30*h/ka)).*log(30*dm/ka);
 Urmid = ar.*-uda./(-1+log(h/za)).*log(0.5*h/za);
 
-for i = 1:length(h)
-    zz(i) = {0:0.01:h(i)};
-    Ur1(i) = {ar(i).*Urd(i)/log(dm(i)/z0)*log(zz{i}/z0)};
-    Ur2(i) = {ar(i).*-uda(i)/(-1+log(h(i)/za))*log(zz{i}/za)};
-    Ur3(i) = {Urmid(i)*(1-((zz{i}-0.5*h(i))/(0.5*h(i))).^3)};
-    id1 = max(find(zz{i} <= dm(i)));
-    id2 = max(find(zz{i} <= (0.5*h(i))));
-    Ur(i) = Ur3(i); 
-    Ur{i}(1:id1) = Ur1{i}(1:id1);
-    Ur{i}(id1+1:id2) = Ur2{i}(id1+1:id2);
-    Ur{i}(1) = 0;
-    Us(i) = {1/8*omega(i)*k(i)*Hrms(i)^2*cosh(2*k(i)*((zz{i}-h(i))+h(i)))/(sinh(k(i)*h(i))^2)};
+% initialize matrices
+zz = NaN(length(h),OPT.nrofsigmalevels+1);
+dz = h./nrofsigmalevels;
+Ur1 = NaN(length(h),OPT.nrofsigmalevels+1);
+Ur2 = NaN(length(h),OPT.nrofsigmalevels+1);
+Ur3 = NaN(length(h),OPT.nrofsigmalevels+1);
+Ur = NaN(length(h),OPT.nrofsigmalevels+1);
+Us = NaN(length(h),OPT.nrofsigmalevels+1);
+
+for it = 1:length(h)
+    zz(it,:) = 0:dz(it):h(it);
+    Ur1(it,:) = ar(it).*Urd(it)/log(dm(it)/z0)*log(zz(it,:)/z0);
+    Ur2(it,:) = ar(it).*-uda(it)/(-1+log(h(it)/za))*log(zz(it,:)/za);
+    Ur3(it,:) = Urmid(it)*(1-((zz(it,:)-0.5*h(it))/(0.5*h(it))).^3);
+    id1 = max(find(zz(it,:) <= dm(it)));
+    id2 = max(find(zz(it,:) <= (0.5*h(it))));
+    Ur(it,:) = Ur3(it,:); 
+    Ur(it,1:id1) = Ur1(it,1:id1);
+    Ur(it,id1+1:id2) = Ur2(it,id1+1:id2);
+    Ur(it,1) = 0;
+    Us(it,:) = 1/8*omega(it)*k(it)*Hrms(it)^2*cosh(2*k(it)*((zz(it,:)-h(it))+h(it)))/(sinh(k(it)*h(it))^2);
 end
 
 % figure
