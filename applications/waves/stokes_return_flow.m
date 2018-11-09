@@ -1,4 +1,4 @@
-function [Ur, Us, zz] = undertow(Hm0 ,Tp ,h, Hdir, varargin)
+function [Ur, Us, zz] = stokes_return_flow(Hm0 ,Tp ,h, Hdir, varargin)
 %UNDERTOW Computes the wave-related Stokes drift and return flow velocities
 %
 %   Syntax:
@@ -16,7 +16,7 @@ function [Ur, Us, zz] = undertow(Hm0 ,Tp ,h, Hdir, varargin)
 %   ka = apparent roughness [m]
 %
 %   Output:
-%   Ur = roller drift velocity [m/s]
+%   Ur = return flow velocity [m/s]
 %   Us = Stokes drift velocity [m/s]
 %   zz = height above the bed [m]
 %
@@ -65,7 +65,7 @@ function [Ur, Us, zz] = undertow(Hm0 ,Tp ,h, Hdir, varargin)
 % $Author$
 % $Revision$
 % $HeadURL$
-% $Keywords: undertow, dispersion, breaking waves, Van Rijn, Stokes, roller, drift$
+% $Keywords: undertow, dispersion, breaking waves, Van Rijn, Stokes, return flow, drift$
 
 %%
 OPT.g = 9.81;
@@ -85,9 +85,9 @@ OPT = setproperty(OPT, varargin);
 rhow = OPT.rhow;
 g = OPT.g;
 nrofsigmalevels = OPT.nrofsigmalevels;
-ksw = OPT.ksw;
-ksc = OPT.ksc;
-ka = OPT.ka;
+ksw = ones(size(Hm0)).*OPT.ksw;
+ksc = ones(size(Hm0)).*OPT.ksc;
+ka = ones(size(Hm0)).*OPT.ka;
 
 %% INPUT
 %% PREPARATIONS
@@ -109,15 +109,15 @@ s0 = Hrms./L0;                          %deepwater wave steepness [-]
 gamma = 0.75*kh+0.29;
 Hmax = 0.88./k.*tanh(gamma.*k.*h/0.88); %maximum wave height, Bosboom et al. (2000), Eq. 3.4
 Qb = NaN(size(Hrms));
+dH = 0.01;
+H = 0:dH:12;
+Qb = exp(-(Hmax./Hrms).^2);%fraction of breaking waves according to Rayleigh distribution
 % Rayleigh wave distribution
 for it = 1:length(Hm0)
     %fraction of breaking waves according to Unbest-TC model
     %Rayleigh distribution with truncated at maximum wave height, Battjes & Janssen (1978) model
-    Qb(it) = fractionbreakingwaves(Hrms(it),Hmax(it));
-    % Qb(i) = exp(-(Hmax(i)/Hrms(i))^2);%fraction of breaking waves according to Rayleigh distribution
+%     Qb(it) = fractionbreakingwaves(Hrms(it),Hmax(it));
     %%
-    dH = 0.01;
-    H = 0:dH:12;
     P = 2*H/Hrms(it)^2.*exp(-(H/Hrms(it)).^2);
     Pcum=cumsum(P);
     %Clipped Rayleigh distribution , Boers (2005), Eq. (3.4)
@@ -156,13 +156,13 @@ uda_vec = [wav_facx.*uda;wav_facy.*uda];
 z0=ksc/30;
 za=ka/30;
 %
-dm = 0.216*aorb.*(aorb/ksw).^-0.25;
-C1 = -1+log(h/za);
-C2 = log(0.5*h/za);
-C3 = (dm./h - 0.5) + 0.5*log(0.5*h/za) - (dm./h.*log(dm./za));
-ar = C1./(C3 + 0.375*C2);
-Urd = -uda./(-1+log(30*h/ka)).*log(30*dm/ka);
-Urmid = ar.*-uda./(-1+log(h/za)).*log(0.5*h/za);
+dm = 0.216.*aorb.*(aorb./ksw).^-0.25;
+C1 = -1+log(h./za);
+C2 = log(0.5.*h./za);
+C3 = (dm./h - 0.5) + 0.5*log(0.5.*h./za) - (dm./h.*log(dm./za));
+ar = C1./(C3 + 0.375.*C2);
+Urd = -uda./(-1+log(30.*h./ka)).*log(30.*dm./ka);
+Urmid = ar.*-uda./(-1+log(h./za)).*log(0.5.*h./za);
 
 % initialize matrices
 zz = NaN(length(h),OPT.nrofsigmalevels+1);
@@ -175,11 +175,11 @@ Us = NaN(length(h),OPT.nrofsigmalevels+1);
 
 for it = 1:length(h)
     zz(it,:) = 0:dz(it):h(it);
-    Ur1(it,:) = ar(it).*Urd(it)/log(dm(it)/z0)*log(zz(it,:)/z0);
-    Ur2(it,:) = ar(it).*-uda(it)/(-1+log(h(it)/za))*log(zz(it,:)/za);
-    Ur3(it,:) = Urmid(it)*(1-((zz(it,:)-0.5*h(it))/(0.5*h(it))).^3);
+    Ur1(it,:) = ar(it).*Urd(it)./log(dm(it)./z0(it)).*log(zz(it,:)./z0(it));
+    Ur2(it,:) = ar(it).*-uda(it)./(-1+log(h(it)./za(it)))*log(zz(it,:)./za(it));
+    Ur3(it,:) = Urmid(it).*(1-((zz(it,:)-0.5.*h(it))/(0.5.*h(it))).^3);
     id1 = max(find(zz(it,:) <= dm(it)));
-    id2 = max(find(zz(it,:) <= (0.5*h(it))));
+    id2 = max(find(zz(it,:) <= (0.5.*h(it))));
     Ur(it,:) = Ur3(it,:);
     Ur(it,1:id1) = Ur1(it,1:id1);
     Ur(it,id1+1:id2) = Ur2(it,id1+1:id2);
