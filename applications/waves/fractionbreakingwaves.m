@@ -58,8 +58,9 @@ function [Qb] = fractionbreakingwaves(Hrms,Hmax)
 % $HeadURL$
 % $Keywords: breaking waves$
 
+Qb = 1e-5.*ones(size(Hrms));
 if Hrms>= Hmax
-    Qb = 1;    
+    Qb(Hrms>= Hmax) = 1;    
 else
     Qb = 1e-5;
     r1 = (1-Qb)/log(Qb);
