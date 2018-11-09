@@ -112,12 +112,12 @@ Hmax = 0.88./k.*tanh(gamma.*k.*h/0.88); %maximum wave height, Bosboom et al. (20
 Qb = NaN(size(Hrms));
 dH = 0.01;
 H = 0:dH:12;
-Qb = exp(-(Hmax./Hrms).^2);%fraction of breaking waves according to Rayleigh distribution
+% Qb = exp(-(Hmax./Hrms).^2);%fraction of breaking waves according to Rayleigh distribution
 % Rayleigh wave distribution
 for it = 1:length(Hm0)
     %fraction of breaking waves according to Unbest-TC model
     %Rayleigh distribution with truncated at maximum wave height, Battjes & Janssen (1978) model
-%     Qb(it) = fractionbreakingwaves(Hrms(it),Hmax(it));
+    Qb(it) = fractionbreakingwaves(Hrms(it),Hmax(it));
     %%
     P = 2*H/Hrms(it)^2.*exp(-(H/Hrms(it)).^2);
     Pcum=cumsum(P);
@@ -142,7 +142,11 @@ end
 % % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %roller energy, equations from Boers (2005), based on Svensen (1984)
 Ar = 0.9*Hmax.^2;           %roller area [m2], Eq. 4.1
-Er = 0.5*rhow*c.*Ar./Tp.*Qb; %roller energy [J/m]=[kg/s2], Eq. 4.3, fraction of breaking waves added, following Uchiyama et al. (2010), see Schnitlzer (2015)
+% if Qb>1e-5
+    Er = 0.5*rhow*c.*Ar./Tp.*Qb; %roller energy [J/m]=[kg/s2], Eq. 4.3, fraction of breaking waves added, following Uchiyama et al. (2010), see Schnitlzer (2015)
+% else
+%     Er =0;
+% end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Mass fluxes and drift velocities
 Ms = Ew./c;             %mass flux due to Stokes drift, Boers (2005), Eq. (4.19)
@@ -150,6 +154,7 @@ Mr = 2*Er./c;           %mass flux due to roller, Boers (2005), Eq. (5.12), why 
 us_da = Ms/rhow./h;     %depth-averaged Stokes drift velocity [m/s], USING TOTAL WATER DEPTH
 ur_da = Mr/rhow./h;     %depth-averaged "roller drift" velocity [m/s], USING TOTAL WATER DEPTH
 uda = us_da + ur_da;    %total depth-average drift velocity [m/s]
+% uda = ur_da;    %depth-average return flow velocity [m/s]
 uda_vec = [wav_facx.*uda;wav_facy.*uda];
 
 %Van Rijn (2013) undertow model
@@ -169,253 +174,17 @@ Urmid = ar.*-uda./(-1+log(h./za)).*log(0.5.*h./za);
 % zz = NaN(length(h),OPT.nrofsigmalevels+1);
 % dz = h./nrofsigmalevels;
 %     zz(it,:) = 0:dz(it):h(it);
-    Ur1 = ar.*Urd./log(dm./z0).*log(zz./z0);
-    Ur2 = ar.*-uda./(-1+log(h./za))*log(zz./za);
-    Ur3 = Urmid.*(1-((zz-0.5.*h)/(0.5.*h)).^3);
-    id1 = max(find(zz <= dm));
-    id2 = max(find(zz <= (0.5.*h)));
-    Ur = Ur3;
-    Ur(1:id1) = Ur1(1:id1);
-    Ur(id1+1:id2) = Ur2(id1+1:id2);
-    Ur(1) = 0;
-    Us = 1/8*omega*k*Hrms^2*cosh(2*k*((zz-h)+h))/(sinh(k*h)^2);
+Ur1 = ar.*Urd./log(dm./z0).*log(zz./z0);
+Ur2 = ar.*-uda./(-1+log(h./za))*log(zz./za);
+Ur3 = Urmid.*(1-((zz-0.5.*h)/(0.5.*h)).^3);
+id1 = max(find(zz <= dm)); 
+if isempty(id1) 
+    id1=1; 
+end
+id2 = max(find(zz <= (0.5.*h)));
+Ur = Ur3;
+Ur(1:id1) = Ur1(1:id1);
+Ur(id1+1:id2) = Ur2(id1+1:id2);
+% Ur(1) = 0;
+Us = 1/8*omega*k*Hrms^2*cosh(2*k*((zz-h)+h))/(sinh(k*h)^2);
 
-
-% figure
-% plot(Ur{1},zz{1},'k-','LineWidth',1.5)
-% hold on
-% grid on
-% plot([-uda(1) -uda(1)],[0 h(1)],'r-','LineWidth',1.5)
-% xlabel('U_r (m/s)')
-% ylabel('z (m)')
-% title(['H_s = ',num2str(Hm0(1)),' m, T_p = ',num2str(Tp(1)),' s'])
-% legend('Van Rijn (2013)','depth-uniform','location','southeast');
-% print('-dpng','-r300',['undertow_example']);
-
-
-% figure
-% plot(Ur{1},zz{1},'k-','LineWidth',1.5)
-% hold on
-% grid on
-% plot(Us{1},zz{1},'r-','LineWidth',1.5)
-% plot(Us{1} + Ur{1},zz{1},'b-','LineWidth',1.5)
-% plot([0 0],[0 h(1)],'k-','LineWidth',1)
-% xlabel('U (m/s)')
-% ylabel('z (m)')
-% title(['H_s = ',num2str(Hm0(1)),' m, T_p = ',num2str(Tp(1)),' s'])
-% legend('U_r(z)','U_s(z)','U_s + U_r(z)','location','southeast');
-%  print('-dpng','-r300',['undertow_example2']);
-%
-% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % % ANALYTICAL MODEL RENIERS ET AL. (2004) to compute velocity profileok
-% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % % Input settings
-% % fdelta = 1;         %multiplication factor wave boundary layer thickness [-]
-% % fv = 0.101;         %calibration factor wave-breaking induced eddy viscosity, value taken from Reniers et al. (2004), based on calibration against Duck data
-% % ks = 0.0082;        %roughness length [m], value taken from Reniers et al. (2004), based on calibration against Duck data
-% % beta = 0.1;         %roller slope [-]
-% % ht = h;             %water depth below wave trough [m] (total water depth taken here for now)
-% % cd = 0.002;         %drag coefficent to compute wind stress [-]
-% % vtide = [0.5,0.5,0.5];    %depth-mean tidal velocity in alongshore direction [m/s] (postive = flood current to the north/east)
-% % unet = [0,0,0];% -uda_vec(1,:);           %target depth-mean crosshore current velocity [m/s]
-% % vnet = vtide;% - uda_vec(2,:);             %target depth-mean alongshore current velocity [m/s]
-% % uacc = [1e-3];            %accuracy depth-averaged cross-schore velocity [m/s]
-% % vacc = [5e-3];            %accuracy depth-averaged alongsore velocity [m/s]
-% % %%%
-% % for i = 1:length(Hm0)
-% %     [uxz(:,i),uyz(:,i),sigma(:,i)] = wdc_reniers(wnd_facx(i),wnd_facy(i),wav_facx(i),wav_facy(i),Hrms(i),T(i),kh(i),omega(i),ks,ht(i),rhow,fdelta,beta,Er(i),c(i),fv,cd,rhoa,Vwind(i),kappa,vtide(i),k,unet(i),vnet(i),uacc,vacc);
-% % end
-% % %near-bed currents [m/s]
-% % uxnb_005 = mean(uxz(1:500,:));
-% % uynb_005 = mean(uyz(1:500,:));
-% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % %WBBL STREAMINIG [m/s]
-% % %Orginal expression Longuet-Higgins (1953)
-% % ulh = 0.75*uorb.^2./c;
-% % ulh_vec = [wav_facx.*ulh;wav_facy.*ulh];
-% % %Van Rijn (2007), includes offshore streaming for rough beds
-% % rr = aorb./ks;%relative roughness [-]
-% % for i = 1:length(rr)
-% %     if rr(i) <= 1
-% %         param(i) = -1;
-% %     elseif rr(i) >= 100
-% %         param(i) = 0.75;
-% %     else
-% %         param(i) = (-1+0.875*log10(rr(i)));
-% %     end
-% % end
-% % uvr = param.*uorb.^2./c;
-% % uvr_vec = [wav_facx.*uvr;wav_facy.*uvr];
-% % %Expression streaming (m/s), Kraneburg et al. (2012), Eq. (23), includes effects of roughness and wave shape
-% % uk = uorb.^2./c.*(0.345 + 0.7*(aorb./ks).^(-0.9) - 0.25./sinh(kh).^2);
-% % uk_vec = [wav_facx.*uk;wav_facy.*uk];
-% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % save('waveheight.mat','Hm0','T','h','theta_wav','Vwind','theta_wnd','uxz','uyz','sigma','uxnb_005','uynb_005','uda_vec','ulh_vec','uvr_vec','uk_vec');
-% %
-% % %Plots
-% % % lin_col = {'b','r','g'};
-% % % % Effect wave height
-% % % figure
-% % % for i = 1:length(Hm0)
-% % % plot(uxz(:,i),sigma(:,i),'-','LineWidth',1.5,'color',lin_col{i});
-% % %     if i == 1
-% % %         hold on
-% % %         grid on
-% % %     end
-% % % end
-% % % xlabel('<u_x> (m/s)')
-% % % ylabel('z/h (-)')
-% % % plot([0 0],[0 1],'k-')
-% % % legend(['H_{m0} = ',num2str(Hm0(1),'%0.1f'),' m'],['H_{m0} = ',num2str(Hm0(2),'%0.1f'),' m'],['H_{m0} = ',num2str(Hm0(3),'%0.1f'),' m'],'location','northwest');
-% % % title(['Effect of wave height: \theta_{wav} = ',num2str(theta_wav(1),'%0.0f'),'^o, V_{wnd} = ',num2str(Vwind(1),'%0.0f'),' m/s, \theta_{wnd} = ',...
-% % %      num2str(theta_wnd(1),'%0.0f'),'^o, h = ',num2str(h(1),'%0.0f'),' m'])
-% % % print('-dpng','-r300',['figures/ux_Hm0']);
-% % % %%
-% % % figure
-% % % for i = 1:length(Hm0)
-% % % plot(uyz(:,i),sigma(:,i),'-','LineWidth',1.5,'color',lin_col{i});
-% % %     if i == 1
-% % %         hold on
-% % %         grid on
-% % %     end
-% % % end
-% % % xlabel('<u_y> (m/s)')
-% % % ylabel('z/h (-)')
-% % % plot([0 0],[0 1],'k-')
-% % % legend(['H_{m0} = ',num2str(Hm0(1),'%0.1f'),' m'],['H_{m0} = ',num2str(Hm0(2),'%0.1f'),' m'],['H_{m0} = ',num2str(Hm0(3),'%0.1f'),' m'],'location','northwest');
-% % % title(['Effect of wave height: \theta_{wav} = ',num2str(theta_wav(1),'%0.0f'),'^o, V_{wnd} = ',num2str(Vwind(1),'%0.0f'),' m/s, \theta_{wnd} = ',...
-% % %      num2str(theta_wnd(1),'%0.0f'),'^o, h = ',num2str(h(1),'%0.0f'),' m'])
-% % % print('-dpng','-r300',['figures/uy_Hm0']);
-% %
-% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % %Effect water depth
-% % % figure
-% % % for i = 1:length(Hm0)
-% % % plot(uxz(:,i),sigma(:,i),'-','LineWidth',1.5,'color',lin_col{i});
-% % %     if i == 1
-% % %         hold on
-% % %         grid on
-% % %     end
-% % % end
-% % % xlabel('<u_x> (m/s)')
-% % % ylabel('z/h (-)')
-% % % plot([0 0],[0 1],'k-')
-% % % legend(['h = ',num2str(h(1),'%0.0f'),' m'],['h = ',num2str(h(2),'%0.0f'),' m'],['h = ',num2str(h(3),'%0.0f'),' m'],'location','northwest');
-% % % title(['Effect of water depth: H_{m0} = ',num2str(Hm0(1),'%0.1f'),' m, \theta_{wav} = ',num2str(theta_wav(1),'%0.0f'),'^o, V_{wnd} = ',num2str(Vwind(1),'%0.0f'),' m/s, \theta_{wnd} = ',...
-% % %      num2str(theta_wnd(1),'%0.0f'),'^o'])
-% % % print('-dpng','-r300',['figures/ux_h']);
-% % % %%
-% % % figure
-% % % for i = 1:length(h)
-% % % plot(uyz(:,i),sigma(:,i),'-','LineWidth',1.5,'color',lin_col{i});
-% % %     if i == 1
-% % %         hold on
-% % %         grid on
-% % %     end
-% % % end
-% % % xlabel('<u_y> (m/s)')
-% % % ylabel('z/h (-)')
-% % % plot([0 0],[0 1],'k-')
-% % % legend(['h = ',num2str(h(1),'%0.0f'),' m'],['h = ',num2str(h(2),'%0.0f'),' m'],['h = ',num2str(h(3),'%0.0f'),' m'],'location','northwest');
-% % % title(['Effect of water depth: H_{m0} = ',num2str(Hm0(1),'%0.1f'),' m, \theta_{wav} = ',num2str(theta_wav(1),'%0.0f'),'^o, V_{wnd} = ',num2str(Vwind(1),'%0.0f'),' m/s, \theta_{wnd} = ',...
-% % %      num2str(theta_wnd(1),'%0.0f'),'^o'])
-% % % print('-dpng','-r300',['figures/uy_h']);
-% %
-% % % %Effect wave direction
-% % % figure
-% % % for i = 1:length(Hm0)
-% % % plot(uxz(:,i),sigma(:,i),'-','LineWidth',1.5,'color',lin_col{i});
-% % %     if i == 1
-% % %         hold on
-% % %         grid on
-% % %     end
-% % % end
-% % % xlabel('<u_x> (m/s)')
-% % % ylabel('z/h (-)')
-% % % plot([0 0],[0 1],'k-')
-% % % legend(['\theta_{wav} = ',num2str(theta_wav(1),'%0.0f'),'^o'],['\theta_{wav} = ',num2str(theta_wav(2),'%0.0f'),'^o'],['\theta_{wav} = ',num2str(theta_wav(3),'%0.0f'),' ^oN'],'location','northwest');
-% % % title(['Effect of wave direction: H_{m0} = ',num2str(Hm0(1),'%0.1f'),' m, V_{wnd} = ',num2str(Vwind(1),'%0.0f'),' m/s, \theta_{wnd} = ',...
-% % %      num2str(theta_wnd(1),'%0.0f'),' ^oN, h = ',num2str(h(1),'%0.0f'),' m'])
-% % % print('-dpng','-r300',['figures/ux_wavdir']);
-% % %
-% % % figure
-% % % for i = 1:length(Hm0)
-% % % plot(uyz(:,i),sigma(:,i),'-','LineWidth',1.5,'color',lin_col{i});
-% % %     if i == 1
-% % %         hold on
-% % %         grid on
-% % %     end
-% % % end
-% % % xlabel('<u_y> (m/s)')
-% % % ylabel('z/h (-)')
-% % % plot([0 0],[0 1],'k-')
-% % % legend(['\theta_{wav} = ',num2str(theta_wav(1),'%0.0f'),'^o'],['\theta_{wav} = ',num2str(theta_wav(2),'%0.0f'),'^o'],['\theta_{wav} = ',num2str(theta_wav(3),'%0.0f'),' ^oN'],'location','northwest');
-% % % title(['Effect of wave direction: H_{m0} = ',num2str(Hm0(1),'%0.1f'),' m, V_{wnd} = ',num2str(Vwind(1),'%0.0f'),' m/s, \theta_{wnd} = ',...
-% % %      num2str(theta_wnd(1),'%0.0f'),' ^oN, h = ',num2str(h(1),'%0.0f'),' m'])
-% % % print('-dpng','-r300',['figures/uy_wavdir']);
-% % % %
-% % %Effect wind speed
-% % % figure
-% % % for i = 1:length(Hm0)
-% % % plot(uxz(:,i),sigma(:,i),'-','LineWidth',1.5,'color',lin_col{i});
-% % %     if i == 1
-% % %         hold on
-% % %         grid on
-% % %     end
-% % % end
-% % % xlabel('<u_x> (m/s)')
-% % % ylabel('z/h (-)')
-% % % plot([0 0],[0 1],'k-')
-% % % legend(['V_{wnd} = ',num2str(Vwind(1),'%0.0f'),' m/s'],['V_{wnd} = ',num2str(Vwind(2),'%0.0f'),' m/s'],['V_{wnd} = ',num2str(Vwind(3),'%0.0f'),' m/s'],'location','northwest');
-% % % title(['Effect of wind speed: H_{m0} = ',num2str(Hm0(i),'%0.1f'),' m, \theta_{wav} = ',num2str(theta_wav(i),'%0.0f'),'^o, \theta_{wnd} = ',...
-% % %      num2str(theta_wnd(i),'%0.0f'),'^o, h = ',num2str(h(i),'%0.0f'),' m'])
-% % % print('-dpng','-r300',['figures/ux_vwind']);
-% % %
-% % % figure
-% % % for i = 1:length(Hm0)
-% % % plot(uyz(:,i),sigma(:,i),'-','LineWidth',1.5,'color',lin_col{i});
-% % %     if i == 1
-% % %         hold on
-% % %         grid on
-% % %     end
-% % % end
-% % % xlabel('<u_y> (m/s)')
-% % % ylabel('z/h (-)')
-% % % plot([0 0],[0 1],'k-')
-% % % legend(['V_{wnd} = ',num2str(Vwind(1),'%0.0f'),' m/s'],['V_{wnd} = ',num2str(Vwind(2),'%0.0f'),' m/s'],['V_{wnd} = ',num2str(Vwind(3),'%0.0f'),' m/s'],'location','northwest');
-% % % title(['Effect of wind speed: H_{m0} = ',num2str(Hm0(i),'%0.1f'),' m, \theta_{wav} = ',num2str(theta_wav(i),'%0.0f'),'^o, \theta_{wnd} = ',...
-% % %      num2str(theta_wnd(i),'%0.0f'),'^o, h = ',num2str(h(i),'%0.0f'),' m'])
-% % % print('-dpng','-r300',['figures/uy_vwind']);
-% % % %
-% % %Effect wind direction
-% % % figure
-% % % for i = 1:length(Hm0)
-% % % plot(uxz(:,i),sigma(:,i),'-','LineWidth',1.5,'color',lin_col{i});
-% % %     if i == 1
-% % %         hold on
-% % %         grid on
-% % %     end
-% % % end
-% % % xlabel('<u_x> (m/s)')
-% % % ylabel('z/h (-)')
-% % % plot([0 0],[0 1],'k-')
-% % % legend(['\theta_{wnd} = ',num2str(theta_wnd(1),'%0.0f'),'^o'],['\theta_{wnd} = ',num2str(theta_wnd(2),'%0.0f'),'^o'],['\theta_{wnd} = ',num2str(theta_wnd(3),'%0.0f'),' ^oN'],'location','northwest');
-% % % title(['Effect of wind direction: H_{m0} = ',num2str(Hm0(i),'%0.1f'),' m, \theta_{wav} = ',num2str(theta_wav(i),'%0.0f'),' ^oN, V_{wnd} = ',...
-% % %      num2str(Vwind(1),'%0.0f'),' m/s, h = ',num2str(h(i),'%0.0f'),' m'])
-% % % print('-dpng','-r300',['figures/ux_wnddir']);
-% % %
-% % % figure
-% % % for i = 1:length(Hm0)
-% % % plot(uyz(:,i),sigma(:,i),'-','LineWidth',1.5,'color',lin_col{i});
-% % %     if i == 1
-% % %         hold on
-% % %         grid on
-% % %     end
-% % % end
-% % % xlabel('<u_y> (m/s)')
-% % % ylabel('z/h (-)')
-% % % plot([0 0],[0 1],'k-')
-% % % legend(['\theta_{wnd} = ',num2str(theta_wnd(1),'%0.0f'),'^o'],['\theta_{wnd} = ',num2str(theta_wnd(2),'%0.0f'),' ^oN'],['\theta_{wnd} = ',num2str(theta_wnd(3),'%0.0f'),' ^oN'],'location','northwest');
-% % % title(['Effect of wind direction: H_{m0} = ',num2str(Hm0(i),'%0.1f'),' m, \theta_{wav} = ',num2str(theta_wav(i),'%0.0f'),'^o, V_{wnd} = ',...
-% % %      num2str(Vwind(1),'%0.0f'),' m/s, h = ',num2str(h(i),'%0.0f'),' m'])
-% % % print('-dpng','-r300',['figures/uy_wnddir']);
