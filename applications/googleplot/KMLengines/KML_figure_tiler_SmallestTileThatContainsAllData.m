@@ -5,6 +5,13 @@ function code = KML_figure_tiler_SmallestTileThatContainsAllData(D)
 %
 % where D has fields lat and lon
 %
+%  The quadtree tiling is zero-based as:
+%  +----+----+
+%  | 00 | 01 |
+%  +----+----+
+%  | 02 | 03 |
+%  +----+----+
+%
 % 0    whole world: 0
 %
 % 00    upper left  = north America
@@ -14,26 +21,26 @@ function code = KML_figure_tiler_SmallestTileThatContainsAllData(D)
 % 003   US west coast, Greenland
 %
 % 01    upper right = EurAsia + North Africa
-% 010xx <<outside world>>
-% 011xx <<outside world>>
-% 012   Europe, India, North Africa
-% 0120  NW Europe
-% 0121  central Russia
-% 0122  Southern Europe, North Africa
-% 0123  India
-% 013   China, Japan, Siberia
+%  010xx <<outside world>>
+%  011xx <<outside world>>
+%  012   Europe, India, North Africa
+%   0120  NW Europe
+%   0121  central Russia
+%   0122  Southern Europe, North Africa
+%   0123  India
+%  013   China, Japan, Siberia
 %
 % 02    lower left  = Oceania + South America
-% 020   Oceania 
-% 021   South America 
-% 022   <<outside world>>
-% 023   <<outside world>>
-
-%% 03   lower right =  Southern Africaa + Australia
-% 030   Southern Africa
-% 031   Australia
-% 032   <<outside world>>
-% 033   <<outside world>>
+%  020   Oceania 
+%  021   South America 
+%  022   <<outside world>>
+%  023   <<outside world>>
+%
+% 03   lower right =  Southern Africa + Australia
+%  030   Southern Africa
+%  031   Australia
+%  032   <<outside world>>
+%  033   <<outside world>>
 %
 %See also: KMLfigure_tiler, KML_figure_tiler_code2boundary
 

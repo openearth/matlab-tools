@@ -224,7 +224,7 @@ U.zposition = 1e12;
        %setlineprop(hn,L.neg );
 
    %% Merge handles
-
+   warning('Does not work any more in 2017')
       h = cat(2,hp(:)',h0(:)',hn(:)');
       c = cat(2,cp    ,c0    ,cn    );
       
