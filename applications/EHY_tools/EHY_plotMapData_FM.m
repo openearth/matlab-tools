@@ -6,7 +6,7 @@ function EHY_plotMapData_FM(gridInfo,zData)
 %
 % gridInfo     :   struct (with fields face_nodes_x and face_nodes_x) obtained with:
 %                  gridInfo=EHY_getGridInfo(filename,'face_nodes_xy');
-% zData        :   Data in flow elements (cell centers)
+% zData        :   Data in net elements (cell centers)
 %
 % Example1: EHY_plotMapData_FM
 % Example2: EHY_plotMapData_FM(gridInfo,zData)

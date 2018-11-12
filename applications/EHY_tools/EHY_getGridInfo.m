@@ -103,6 +103,8 @@ switch modelType
                     elseif  ~isempty(strmatch('mesh2d_face_x',{infonc.Variables.Name},'exact'))
                         E.Xcen=ncread(inputFile,'mesh2d_face_x');
                         E.Ycen=ncread(inputFile,'mesh2d_face_y');
+                    else
+                        disp('Cell center info not found in network. Import grid>export grid in RGFGRID and try again')
                     end
                 end
                 if ismember('depth',wantedOutput)

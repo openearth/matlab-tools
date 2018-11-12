@@ -103,7 +103,7 @@ switch modelType
                         Data.ucy = permute(ncread(outputfile,'ucy',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
                     end
                 end
-                 Data.value = sqrt( Data.ucx.^2 + Data.ucy.^2 ); 
+                 Data.value = sqrt( Data.ucx.^2 + Data.ucy.^2 ); % magnitude
             case 'sal'
                 if ismember('mesh2d_sa1',{infonc.Variables.Name})
                     if gridInfo.no_layers==1 % 2DH model
