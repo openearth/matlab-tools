@@ -32,7 +32,9 @@ switch modelType
         tunit=mdu.time.Tunit;
         tstart=mdu.time.TStart;
         tstop=mdu.time.TStop;
-        if length(mdu.output.HisInterval)==1 % only interval of his file
+        if length(mdu.output.HisInterval)==0 % no his output
+        
+        elseif length(mdu.output.HisInterval)==1 % only interval of his file
             hisstart=tstart;
             hisstop=tstop;
         else % his start stop, all in seconds
