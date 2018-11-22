@@ -25,7 +25,7 @@ function varargout = EHY_getmodeldata(outputfile,stat_name,modelType,varargin)
 % Data.times              : (matlab) times belonging with the series
 % Data.val/vel_*          : requested data, velocity in (u,v- and )x,y-direction
 % Data.dimensions         : Dimensions of requested data (time,stats,lyrs)
-% Data.location           : Locations of requested stations (x,y or lon,lat)
+% Data.location(XY)       : (time-varying) locations of requested stations (x,y or lon,lat)
 % Data.OPT                : Structure with optional user settings used
 %
 % Example1: EHY_getmodeldata % interactive
@@ -111,15 +111,18 @@ switch modelType
             nr_times_clip = length(Data.times);
 
             % station info
-            try % varying location in time
-                stationX = ncread(outputfile,'station_x_coordinate',[1 1],[Inf 1]);
-                stationY = ncread(outputfile,'station_y_coordinate',[1 1],[Inf 1]);
-            catch % older version, location not varying in time
+            ncVarInd    = strmatch('station_x_coordinate',{infonc.Variables.Name},'exact');
+            stationSize = infonc.Variables(ncVarInd).Size;
+            if size(stationSize,2)>1
+                movingStations=1;
+                % info will be obtained using blocks, see few lines down
+            else
                 stationX = ncread(outputfile,'station_x_coordinate');
                 stationY = ncread(outputfile,'station_y_coordinate');
+                Data.location(Data.exist_stat,1:2)=[stationX(stationNrNoNan,1) stationY(stationNrNoNan,1)];
+                Data.location(~Data.exist_stat,1:2)=NaN;
             end
-            Data.location(~Data.exist_stat,1:2)=NaN;
-            Data.location(Data.exist_stat,1:2)=[stationX(stationNrNoNan,1) stationY(stationNrNoNan,1)];
+            
         end
 
         % get data
@@ -138,7 +141,7 @@ switch modelType
         if ismember(OPT.varName,{'wl'})
             value = nan(nr_times_clip,length(Data.stationNames));
         elseif ismember(OPT.varName,'uv')
-            if ~exist('no_layers','var')
+            if no_layers==1 % 2Dh
                 value_x = nan(nr_times_clip,length(Data.stationNames));
                 value_y = nan(nr_times_clip,length(Data.stationNames));
             else
@@ -146,7 +149,7 @@ switch modelType
                 value_y = nan(nr_times_clip,length(Data.stationNames),no_layers);
             end
         elseif ismember(OPT.varName,{'sal','tem',infonc.Variables(:).Name})
-            if ~exist('no_layers','var')
+            if no_layers==1 % 2Dh
                 value = nan(nr_times_clip,length(Data.stationNames));
             else
                 value = nan(nr_times_clip,length(Data.stationNames),no_layers);
@@ -157,13 +160,29 @@ switch modelType
             bl_start    = 1 + (i-1) * bl_length;
             bl_stop     = min(i * bl_length, nr_times_clip);
             bl_int      = bl_stop-bl_start+1;
+            
+            % if needed, get time-varying station location info
+            if exist('movingStations','var')
+                if i==1 % allocate
+                    Data.locationX(1:length(Data.times),1:length(Data.stationNames))=NaN;
+                    Data.locationY(1:length(Data.times),1:length(Data.stationNames))=NaN;
+                    Data.locationXY_dimensions='[times,stations]';
+                end
+                Data.locationX(bl_start:bl_stop,:)=ncread(outputfile,'station_x_coordinate',[1 bl_start+offset],[Inf bl_int])';
+                Data.locationY(bl_start:bl_stop,:)=ncread(outputfile,'station_y_coordinate',[1 bl_start+offset],[Inf bl_int])';
+                if i==nr_blocks % only keep requested stations
+                    Data.locationX(:,~ismember(1:length(Data.stationNames),stationNrNoNan))=[];
+                    Data.locationY(:,~ismember(1:length(Data.stationNames),stationNrNoNan))=[];
+                end
+            end
+            
             switch OPT.varName
                 case 'wl'
                     value(bl_start:bl_stop,:) 	= ncread(outputfile,'waterlevel',[1 bl_start+offset],[Inf bl_int])';
                 case {'wd','water depth'}
                     value(bl_start:bl_stop,:) 	= ncread(outputfile,'waterdepth',[1 bl_start+offset],[Inf bl_int])';
                 case 'uv'
-                    if ~exist('no_layers','var') | no_layers==1 % 2DH model
+                    if no_layers==1 % 2Dh
                         value_x(bl_start:bl_stop,:) 	= permute(ncread(outputfile,'x_velocity',[1 bl_start+offset],[Inf bl_int]),[2 1]);
                         value_y(bl_start:bl_stop,:) 	= permute(ncread(outputfile,'y_velocity',[1 bl_start+offset],[Inf bl_int]),[2 1]);
                     else
@@ -171,25 +190,25 @@ switch modelType
                         value_y(bl_start:bl_stop,:,:) 	= permute(ncread(outputfile,'y_velocity',[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
                     end
                 case 'sal'
-                    if ~exist('no_layers','var') % 2DH model
+                    if no_layers==1 % 2Dh
                         value(bl_start:bl_stop,:) 	= permute(ncread(outputfile,'salinity',[1 bl_start+offset],[Inf bl_int]),[2 1]);
                     else
                         value(bl_start:bl_stop,:,:) 	= permute(ncread(outputfile,'salinity',[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
                     end
                 case 'tem'
-                    if ~exist('no_layers','var') % 2DH model
+                    if no_layers==1 % 2Dh
                         value(bl_start:bl_stop,:) 	= permute(ncread(outputfile,'temperature',[1 bl_start+offset],[Inf bl_int]),[2 1]);
                     else
                         value(bl_start:bl_stop,:,:) 	= permute(ncread(outputfile,'temperature',[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
                     end
                 case 'zcoord'
-                    if ~exist('no_layers','var') % 2DH model
+                    if no_layers==1 % 2Dh
                         value(bl_start:bl_stop,:) 	= permute(ncread(outputfile,'zcoordinate_c',[1 bl_start+offset],[Inf bl_int]),[2 1]);
                     else
                         value(bl_start:bl_stop,:,:) = permute(ncread(outputfile,'zcoordinate_c',[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
                     end
                 case {infonc.Variables(:).Name} % like constituents (e.g. totalN, totalP)
-                    if ~exist('no_layers','var') % 2DH model
+                    if no_layers==1 % 2Dh
                         value(bl_start:bl_stop,:) 	= permute(ncread(outputfile,OPT.varName,[1 bl_start+offset],[Inf bl_int]),[2 1]);
                     else
                         value(bl_start:bl_stop,:,:) 	= permute(ncread(outputfile,OPT.varName,[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
