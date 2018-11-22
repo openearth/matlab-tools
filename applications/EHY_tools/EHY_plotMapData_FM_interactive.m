@@ -8,10 +8,10 @@ if length(Data.times)>1
     option=listdlg('PromptString','Plot these time steps (as animation): (Use CTRL to select multiple time steps)','ListString',...
         datestr(Data.times),'ListSize',[300 400]);
     if isempty(option); disp('EHY_plotMapData_FM_interactive was stopped by user');return; end
-    plotTimes=Data.times(option);
 else
-    plotTimes=1;
+    option=1;
 end
+plotTimes=Data.times(option);
 
 disp([char(10) 'Note that next time you want to plot this data, you can also use:'])
 disp(['gridInfo = EHY_getGridInfo(''' Data.OPT.outputfile ''',''face_nodes_xy'');' ])

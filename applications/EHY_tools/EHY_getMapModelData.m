@@ -133,6 +133,17 @@ switch modelType
                     end
                 end
         end
+        % If partitioned run, delete ghost cells
+        [~, name]=fileparts(outputfile);
+        if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && nc_isvar(outputfile,'FlowElemDomain')
+            domainNr=str2num(name(end-7:end-4));
+            FlowElemDomain=ncread(outputfile,'FlowElemDomain');
+            Data.value(:,FlowElemDomain~=domainNr,:)=[];
+            if strcmpi(OPT.varName,'uv')
+                Data.ucx(:,FlowElemDomain~=domainNr,:)=[];
+                Data.ucy(:,FlowElemDomain~=domainNr,:)=[];
+            end
+        end
         
     case 'd3d'
         %% Delft3D 4
