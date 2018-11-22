@@ -20,7 +20,7 @@ switch modelType
     case 'd3d'
         mdFile=EHY_getMdFile(outputfile);
         [~,name] = fileparts(outputfile);
-        [refdate,tunit,tstart,tstop,hisstart,hisstop,mapstart,mapstop,hisint,mapint]=EHY_getTimeInfoFromMdFile(mdFile,modelType)
+        [refdate,tunit,tstart,tstop,hisstart,hisstop,mapstart,mapstop,hisint,mapint]=EHY_getTimeInfoFromMdFile(mdFile,modelType);
         if strcmp(name(1:4),'trih')
             datenums = refdate+(hisstart:hisint:hisstop)/1440;
         elseif strcmp(name(1:4),'trim')
