@@ -1,4 +1,4 @@
-function [refdate,tunit,tstart,tstop,hisstart,hisstop,mapstart,mapstop]=EHY_getTimeInfoFromMdFile(mdFile,modelType)
+function [refdate,tunit,tstart,tstop,hisstart,hisstop,mapstart,mapstop,hisint,mapint]=EHY_getTimeInfoFromMdFile(mdFile,modelType)
 %% EHY_getTimeInfoFromMdFile(mdFile,modelType)
 % refdate       : Reference date in MATLAB's datenum
 % tunit         : Time unit of tstart and tstop (e.g. 'S' , 'M')
@@ -8,6 +8,8 @@ function [refdate,tunit,tstart,tstop,hisstart,hisstop,mapstart,mapstop]=EHY_getT
 % hisstop       : Stop time of writing history output (in minutes)
 % mapstart      : Start time of writing map output (in minutes)
 % mapstop       : Stop time of writing map output (in minutes)
+% hisint        : interval of writing history output (in minutes)
+% mapint        : interval of writing history output (in minutes)
 % mdFile        : Master definition file (*.mdf, *.mdu, *siminp*)
 % modelType	: Model type ('dfm','d3d','simona')
 %
@@ -35,16 +37,22 @@ switch modelType
         if length(mdu.output.HisInterval)==0 % no his output
         
         elseif length(mdu.output.HisInterval)==1 % only interval of his file
+            hisint=mdu.output.HisInterval*timeFactor('S','M');
             hisstart=tstart;
             hisstop=tstop;
         else % his start stop, all in seconds
+            hisint=mdu.output.HisInterval(1)*timeFactor('S','M');
             hisstart=mdu.output.HisInterval(2)*timeFactor('S','M');
             hisstop=mdu.output.HisInterval(3)*timeFactor('S','M');
         end
-        if length(mdu.output.MapInterval)==1 % only interval of map file
+        if length(mdu.output.MapInterval)==0 % no map output
+        
+        elseif length(mdu.output.MapInterval)==1 % only interval of map file
+            mapint=mdu.output.MapInterval*timeFactor('S','M');
             mapstart=tstart;
             mapstop=tstop;
         else % his start stop, all in seconds
+            mapint=mdu.output.MapInterval(1)*timeFactor('S','M');
             mapstart=mdu.output.MapInterval(2)*timeFactor('S','M');
             mapstop=mdu.output.MapInterval(3)*timeFactor('S','M');
         end
@@ -55,8 +63,10 @@ switch modelType
         tstart=mdf.keywords.tstart;
         tstop=mdf.keywords.tstop;
         hisstart=mdf.keywords.flhis(1);
+        hisint=mdf.keywords.flhis(2);
         hisstop=mdf.keywords.flhis(3);
         mapstart=mdf.keywords.flmap(1);
+        mapint=mdf.keywords.flmap(2);
         mapstop=mdf.keywords.flmap(3);
     case 'simona'
         [pathstr,name,ext]=fileparts(mdFile);
