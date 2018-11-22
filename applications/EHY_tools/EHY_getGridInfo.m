@@ -175,6 +175,21 @@ switch modelType
                     end
                end  
                 
+               % If partitioned run, delete ghost cells
+               [~, name]=fileparts(inputFile);
+               if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && nc_isvar(inputFile,'FlowElemDomain')
+                   domainNr=str2num(name(end-7:end-4));
+                   FlowElemDomain=ncread(inputFile,'FlowElemDomain');
+                   if ismember('face_nodes_xy',wantedOutput)
+                       E.face_nodes_x(:,FlowElemDomain~=domainNr)=[];
+                       E.face_nodes_y(:,FlowElemDomain~=domainNr)=[];
+                   end
+                   if ismember('XYcen',wantedOutput)
+                       E.Xcen(:,FlowElemDomain~=domainNr)=[];
+                       E.Ycen(:,FlowElemDomain~=domainNr)=[];
+                   end
+               end
+        
         end % typeOfModelFile
         
     case 'd3d'
