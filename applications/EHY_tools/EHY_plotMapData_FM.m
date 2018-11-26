@@ -22,10 +22,12 @@ OPT.linestyle = 'none'; % other options: '-'
 OPT.edgecolor = 'k';
 
 % if pairs were given as input OPT
-if ~isempty(varargin) && mod(length(varargin),2)==0
-    OPT = setproperty(OPT,varargin);
-else
-    error('Additional input arguments must be given in pairs.')
+if ~isempty(varargin)
+    if mod(length(varargin),2)==0
+        OPT = setproperty(OPT,varargin);
+    else
+        error('Additional input arguments must be given in pairs.')
+    end
 end
 
 %% check input
@@ -73,12 +75,12 @@ for i = 1:length(unodes)
         Vpatch(ip) = zData(poly_n(ip));
     end
     
-    hPatch(i)=patch('vertices',XYvertex, ...
+    hPatch(i,1)=patch('vertices',XYvertex, ...
         'faces',reshape(1:tvertex,[nr npoly])', ...
         'facevertexcdata',Vpatch, ...
         'marker','none');
     shading flat
-    set(hPatch(i),'edgecolor',OPT.edgecolor, 'linestyle',OPT.linestyle);
+    set(hPatch(i,1),'edgecolor',OPT.edgecolor, 'linestyle',OPT.linestyle);
 end
 
 EHYs(mfilename);
