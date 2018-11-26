@@ -108,12 +108,12 @@ switch modelType
                     end
                 end
                 if ismember('depth',wantedOutput)
-                    if ~isempty(strmatch('NetNode_z',{infonc.Variables.Name},'exact')) % old fm version
+                    if nc_isvar(inputFile,'NetNode_z') % old fm version
                         E.depth_cor=ncread(inputFile,'NetNode_z');
                         E.depth_cen=ncread(inputFile,'FlowElem_bl');
-                    elseif  ~isempty(strmatch('mesh2d_node_z',{infonc.Variables.Name},'exact'))
+                    elseif nc_isvar(inputFile,'mesh2d_node_z')
                         E.depth_cor=ncread(inputFile,'mesh2d_node_z');
-                        E.depth_cen=ncread(inputFile,'mesh2d_flowelem_bl');
+                        try; E.depth_cen=ncread(inputFile,'mesh2d_flowelem_bl'); end % depth_cen not always available
                     end
                 end
                 if ismember('Z',wantedOutput)

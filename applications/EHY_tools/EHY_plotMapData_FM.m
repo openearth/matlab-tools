@@ -1,4 +1,4 @@
-function EHY_plotMapData_FM(gridInfo,zData)
+function hPatch=EHY_plotMapData_FM(gridInfo,zData,varargin)
 %% EHY_plotMapData_FM(gridInfo,zData)
 % Create top views using QuickPlot / d3d_qp functionalities
 % However, this function only plots the pcolor / patch part,
@@ -16,6 +16,17 @@ function EHY_plotMapData_FM(gridInfo,zData)
 %
 % For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
 % created by Julien Groenenboom, October 2018
+%
+%% Settings
+OPT.linestyle = 'none'; % other options: '-' 
+OPT.edgecolor = 'k';
+
+% if pairs were given as input OPT
+if ~isempty(varargin) && mod(length(varargin),2)==0
+    OPT = setproperty(OPT,varargin);
+else
+    error('Additional input arguments must be given in pairs.')
+end
 
 %% check input
 
@@ -26,7 +37,7 @@ if ~all([exist('gridInfo','var') exist('zData','var')])
 end
 
 if ~all([isstruct(gridInfo) isfield(gridInfo,'face_nodes_x') isfield(gridInfo,'face_nodes_y')])
-    error('Something wrong with first input argument'); 
+    error('Something wrong with first input argument');
 end
 
 if size(gridInfo.face_nodes_x,2)~=length(zData)
@@ -54,22 +65,21 @@ for i = 1:length(unodes)
     npoly = length(poly_n);
     tvertex = nr*npoly;
     XYvertex = NaN(tvertex,2);
-        Vpatch = NaN(npoly,1);
-        offset = 0;
-        for ip = 1:npoly
-            XYvertex(offset+(1:nr),:) = XY{poly_n(ip)}(1:nr,:);
-            offset = offset+nr;
-            Vpatch(ip) = zData(poly_n(ip));
-        end
-
-patch('vertices',XYvertex, ...
-    'faces',reshape(1:tvertex,[nr npoly])', ...
-    'facevertexcdata',Vpatch, ...
-    'edgecolor','k', ...
-    'linestyle','none', ...
-    'marker','none');
+    Vpatch = NaN(npoly,1);
+    offset = 0;
+    for ip = 1:npoly
+        XYvertex(offset+(1:nr),:) = XY{poly_n(ip)}(1:nr,:);
+        offset = offset+nr;
+        Vpatch(ip) = zData(poly_n(ip));
+    end
+    
+    hPatch(i)=patch('vertices',XYvertex, ...
+        'faces',reshape(1:tvertex,[nr npoly])', ...
+        'facevertexcdata',Vpatch, ...
+        'marker','none');
+    shading flat
+    set(hPatch(i),'edgecolor',OPT.edgecolor, 'linestyle',OPT.linestyle);
 end
-shading flat
 
 EHYs(mfilename);
 end
