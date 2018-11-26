@@ -20,6 +20,7 @@ function hPatch=EHY_plotMapData_FM(gridInfo,zData,varargin)
 %% Settings
 OPT.linestyle = 'none'; % other options: '-' 
 OPT.edgecolor = 'k';
+OPT.facecolor = 'flat';
 
 % if pairs were given as input OPT
 if ~isempty(varargin)
@@ -78,9 +79,10 @@ for i = 1:length(unodes)
     hPatch(i,1)=patch('vertices',XYvertex, ...
         'faces',reshape(1:tvertex,[nr npoly])', ...
         'facevertexcdata',Vpatch, ...
-        'marker','none');
-    shading flat
-    set(hPatch(i,1),'edgecolor',OPT.edgecolor, 'linestyle',OPT.linestyle);
+        'marker','none',...
+        'edgecolor',OPT.edgecolor,...
+        'linestyle',OPT.linestyle,...
+        'faceColor',OPT.facecolor);
 end
 
 EHYs(mfilename);
