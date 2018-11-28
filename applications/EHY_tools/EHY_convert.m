@@ -168,13 +168,19 @@ else
     eval(['[output,OPT]=EHY_convertCoordinates(''' inputFile ''',''' outputFile ''',OPT);'])
 end
 
-if OPT.saveOutputFile && exist(outputFile,'file')
+if OPT.saveOutputFile
     if ~isempty(strfind(outputExt,'.xdry'))
         outputFile0=outputFile;
         outputFile=strrep(outputFile0,'.xdry','_xdry.');
         movefile(outputFile0,outputFile);
     end
-    disp([char(10) 'EHY_convert created the file: ' char(10) fullfile(outputFile) char(10)])
+    if and(strcmp(inputExt,'crs') || strcmp(inputExt,'curves'),strcmp(outputExt,'kml'))
+        outputFile1=strrep(fullfile(outputFile),'.kml','_lines.kml');
+        outputFile2=strrep(fullfile(outputFile),'.kml','_names.kml');
+        disp([char(10) 'EHY_convert created the files: ' char(10) outputFile1 char(10) outputFile2])
+    else
+        disp([char(10) 'EHY_convert created the file: ' char(10) fullfile(outputFile) char(10)])
+    end
 end
 %% conversion functions - in alphabetical order
 % box2dep
@@ -211,13 +217,21 @@ end
         pol=EHY_convert_crs2pol(inputFile,outputFile,OPT);
         [x,y,OPT]=EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
         output=[x y];
+        % delete multiple NaN rows
+        output(find(isnan(output(2:end,1)) & isnan(output(1:end-1,1))),:)=[]; 
         OPT=OPT_user;
         if OPT.saveOutputFile
+            % lines
             [~,name]=fileparts(outputFile);
-            tempFile=[tempdir name '.kml'];
+            tempFile=[tempdir name '_lines.kml'];
             ldb2kml(output(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
-            copyfile(tempFile,outputFile);
+            copyfile(tempFile,strrep(outputFile,'.kml','_lines.kml'));
             delete(tempFile)
+            % markers with names
+            crs=delft3d_io_crs('read',inputFile);
+            nanInd=unique([1; find(isnan(output(:,1))); size(output,1)]);
+            xyInd=nanInd(1:end-1)+round(diff(nanInd)/2);
+            KMLPlaceMark(output(xyInd,2),output(xyInd,1),strrep(outputFile,'.kml','_names.kml'),'name',{crs.DATA.name},'icon',OPT.iconFile);
         end
     end
 % crs2pol
@@ -239,6 +253,74 @@ end
         output=[x y];
         if OPT.saveOutputFile
             io_polygon('write',outputFile,x,y,'dosplit','-1');
+        end
+    end
+% curves2crs
+    function [output,OPT]=EHY_convert_curves2crs(inputFile,outputFile,OPT)
+        % read curve file
+        curv.c=[];
+        curv.p=[];
+        curv.name=[];
+        fid=fopen(inputFile,'r');
+        while feof(fid)~=1
+            line0=fgetl(fid);
+            line=strtrim(line0);
+            if ~isempty(line) & ~strcmp(line(1),'#')
+                dmy=regexpi(line, 'c.*?(\d+)', 'tokens', 'once');
+                curv.c(end+1,1)=str2num(dmy{1});
+                dmy=regexpi(line, 'p.*?(\d+)', 'tokens');
+                curv.p(end+1,1)=str2num(char(dmy{1}));
+                curv.p(end,2)  =str2num(char(dmy{2}));
+                dmy=strfind(line,'''');
+                curv.name{end+1,1}=line([dmy(1)+1:dmy(2)-1]);
+            end
+        end
+        fclose(fid);
+        % Open the corresponding points/locaties-file(s)
+        disp('Open the corresponding points/locaties-file(s)')
+        [pointFileNames,pointFilePath]=uigetfile([fileparts(inputFile) filesep '*'],'Open the corresponding points/locaties-file(s)',...
+            'MultiSelect','on');
+        pointFiles=cellstr(fullfile(pointFilePath,pointFileNames));
+        % read points files
+        for iF=1:length(pointFiles)
+            copyfile(pointFiles{iF},[tempdir 'EHY_dmy.locaties'])
+            obs(iF)=EHY_convert([tempdir 'EHY_dmy.locaties'],'obs','saveOutputFile',0);
+        end
+        fclose('all');delete([tempdir 'EHY_dmy.locaties'])
+        fn=fieldnames(obs);
+        for iF=1:length(fn)
+            OBS.(fn{iF})=cat(1,obs.(fn{iF}));
+        end
+        % find corresponding points for curves
+        for iC=1:length(curv.p)
+            for jj=1:2
+                ind=find(OBS.p==curv.p(iC,jj)); 
+                if isempty(ind)
+                    error(['Can not find Point P ' num2str(curv.p(iC,jj)) 'in the provided Point-files'])
+                else
+                    ind=ind(1);
+                end
+                curv.m(iC,jj)= obs.m(ind);
+                curv.n(iC,jj)= obs.n(ind);
+            end
+        end
+        if OPT.saveOutputFile
+            % write to .crs file
+            fid=fopen(outputFile,'w+');
+            for iC=1:size(curv.m,1)
+                fprintf(fid,'%-30s %10.0f %10.0f %10.0f %10.0f\n',curv.name{iC},curv.m(iC,1),curv.n(iC,1),curv.m(iC,2),curv.n(iC,2));
+            end
+            fclose(fid);
+        end
+        output=curv;
+    end
+% curves2kml
+    function [output,OPT]=EHY_convert_curves2kml(inputFile,outputFile,OPT)
+        tempCrsFile=[fileparts(inputFile) filesep 'EHY_temporary.crs'];
+        [output,OPT]=EHY_convert_curves2crs(inputFile,tempCrsFile,OPT);
+        if OPT.saveOutputFile
+            [output,OPT]=EHY_convert_crs2kml(tempCrsFile,outputFile,OPT)
+            fclose('all');delete(tempCrsFile);
         end
     end
 % dep2box
@@ -497,6 +579,7 @@ end
     end
 % locaties2obs
     function [output,OPT]=EHY_convert_locaties2obs(inputFile,outputFile,OPT)
+        obs.p=[];
         obs.m=[];
         obs.n=[];
         obs.namst=[];
@@ -505,6 +588,8 @@ end
             line0=fgetl(fid);
             line=strtrim(line0);
             if ~isempty(line) & ~strcmp(line(1),'#')
+                dmy=regexpi(line, 'p.*?(\d+)', 'tokens', 'once');
+                obs.p(end+1,1)=str2num(dmy{1});
                 dmy=regexpi(line, 'm.*?=.*?(\d+)', 'tokens', 'once');
                 obs.m(end+1,1)=str2num(dmy{1});
                 dmy=regexpi(line, 'n.*?=.*?(\d+)', 'tokens', 'once');
@@ -1114,7 +1199,7 @@ function inputExt=EHY_convert_askForInputExt
 [selection,~]=  listdlg('PromptString','Input file does not have an extension. What kind of file is it?',...
     'SelectionMode','single',...
     'ListString',{'Simona observation points file (locaties)','Simona rooster/grid file (.grd)',...
-    'Simona box/depth file (bodem)'},...
+    'Simona box/depth file (bodem)','Simona cross-sections file (curves)'},...
     'ListSize',[500 100]);
 if selection==1
     inputExt='locaties';
@@ -1122,6 +1207,8 @@ elseif selection==2
     inputExt='grd';
 elseif selection==3
     inputExt='box';
+elseif selection==4
+    inputExt='curves';
 else
     disp('EHY_convert stopped by user.'); return
 end
