@@ -77,7 +77,7 @@ else
     rev = '';
 end
 
-txt = SVNCall(sprintf('info %s %s', varargin{1}, rev));
+txt = SVNCall(sprintf('info "%s" %s', varargin{1}, rev));
 
 s = regexp(strtrim(txt), '(: |\n)', 'split');
 

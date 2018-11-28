@@ -80,7 +80,7 @@ end
 %% code
 filelist = sprintf('"%s" ', varargin{~idx});
 
-txt = SVNCall(sprintf('commit --message %s %s', OPT.message, filelist));
+txt = SVNCall(sprintf('commit --message "%s" %s', OPT.message, filelist));
 
 if OPT.verbose
     varargout = {txt};

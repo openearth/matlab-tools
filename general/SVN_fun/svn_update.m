@@ -78,7 +78,7 @@ else
     rev = '';
 end
 
-txt = SVNCall(sprintf('update %s %s', varargin{1}, rev));
+txt = SVNCall(sprintf('update "%s" %s', varargin{1}, rev));
 
 if OPT.verbose
     varargout = {txt};

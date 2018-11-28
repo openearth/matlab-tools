@@ -79,7 +79,7 @@ else
     rev = '';
 end
 
-txt = SVNCall(sprintf('log %s %s', varargin{1}, rev));
+txt = SVNCall(sprintf('log "%s" %s', varargin{1}, rev));
 
 lines = regexp(txt, '^r\d+.*?$', 'match', 'lineanchors');
 
