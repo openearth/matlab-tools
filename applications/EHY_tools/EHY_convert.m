@@ -300,8 +300,8 @@ end
                 else
                     ind=ind(1);
                 end
-                curv.m(iC,jj)= obs.m(ind);
-                curv.n(iC,jj)= obs.n(ind);
+                curv.m(iC,jj)= OBS.m(ind);
+                curv.n(iC,jj)= OBS.n(ind);
             end
         end
         if OPT.saveOutputFile
