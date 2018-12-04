@@ -286,10 +286,10 @@ switch modelType
                             Data.vel_u(:,i_stat,:) = cell2mat(vs_get(trih,'his-series',{time_index},'ZCURU',{nr_stat,OPT.layer},'quiet'));
                             Data.vel_v(:,i_stat,:) = cell2mat(vs_get(trih,'his-series',{time_index},'ZCURV',{nr_stat,OPT.layer},'quiet'));
                         end
-                    case 'sal'
+                    case {'sal' 'salinity'}
                         nr_cons=find(strcmpi(constituents,'salinity') ~= 0,1);
                         Data.val(:,i_stat,:) = cell2mat(vs_get(trih,'his-series',{time_index},'GRO',{nr_stat,OPT.layer,nr_cons},'quiet'));
-                    case 'tem'
+                    case {'tem' 'temperature'}
                         nr_cons=find(strcmpi(constituents,'temperature') ~= 0,1);
                         Data.val(:,i_stat,:) = cell2mat(vs_get(trih,'his-series',{time_index},'GRO',{nr_stat,OPT.layer,nr_cons},'quiet'));
                 end
