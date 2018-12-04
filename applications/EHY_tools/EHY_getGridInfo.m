@@ -126,7 +126,7 @@ switch modelType
 		                        E.Zcor=ncread(inputFile,'mesh2d_interface_z');
 		                    elseif ~isempty(strmatch('zcoordinate_c',{infonc.Variables.Name},'exact'))
 		                        E.Zcen=ncread(inputFile,'zcoordinate_c');
-		                        E.Zcor=ncread(inputFile,'zcoordinate_w');
+		                        E.Zint=ncread(inputFile,'zcoordinate_w');
 		                    end
 		                    % map
 		                    if ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact'))
@@ -232,6 +232,60 @@ switch modelType
                             vs_get(trih,'his-const',{1},'NMAX','quiet') ...
                             vs_get(trih,'his-const',{1},'KMAX','quiet')];
                     end
+                    if ismember('Z',wantedOutput)
+                        % Get general information
+                        thick    = vs_let(trih,'his-const' ,'THICK','quiet');
+                        dps      = vs_let(trih,'his-const' ,'DPS'  ,'quiet');
+                        zwl      = vs_let(trih,'his-series','ZWL'  ,'quiet');
+                        kmax     = length (thick);
+                        no_times = size(zwl,1);
+                        no_stat  = size(zwl,2);
+                                                
+                        % Get layer-model
+                        % Not sure if layer-model exist on trih file if not
+                        % specified in mdf file (not a very elegant solution)
+                        E.layer_model='sigma';
+                        try  
+                            E.layer_model = strtrim(vs_get(trih,'his-const' ,'LAYER_MODEL','quiet'));
+                            if strcmpi(E.layer_model,'z-model')
+                                zk = vs_get(trih,'his-const' ,'ZK'  ,'quiet');
+                            end
+                        end
+                        
+                        % Compute layer centres and layer interfaces
+                        
+                        for i_time = 1: no_times
+                            for i_stat = 1: no_stat
+                                if strcmpi(E.layer_model,'sigma')
+                                    depth = dps(i_stat) + zwl(i_time,i_stat);
+                                    E.Zint(1     ,i_stat,i_time)      = -zwl(i_tim,i_stat) + dps(i_stat);
+                                    E.Zint(kmax+1,i_stat,i_time) =  dps(istat);
+                                    E.Zcen(1,i_stat,i_time) = -zwl(i_time,i_stat) + 0.5*thick(1)*depth;
+                                    for k = 2: kmax
+                                        E.Zint(k,i_stat,i_time)  = E.Zint(k-1,i_stat,i_time) + thick(k-1)*depth;
+                                        E.Zcen(k,i_stat,i_time)  = E.Zcen(k-1,i_stat,i_time) + 0.5*(thick(k-1) + thick(k))*depth;
+                                    end
+                                elseif strcmpi(E.layer_model,'z-model')
+                                    zk_int(1:kmax + 1) = NaN;                   
+                                    
+                                    %restrict to active computational layers
+                                    i_start = find(zk> -dps(i_stat),1,'first') - 1;
+                                    i_stop =  find(zk> zwl(i_time,i_stat),1,'first');
+                                    if isempty(i_stop) i_stop = kmax + 1; end
+                                    zk_int(i_start) = -dps(i_stat);
+                                    zk_int(i_stop)  =  zwl(i_time,i_stat);
+                                    
+                                    zk_int(i_start+1:i_stop-1) = zk(i_start+1:i_stop-1);
+                                    E.Zint(:,i_stat,i_time) = zk_int;
+                                    for k = 1: kmax
+                                        E.Zcen(k,i_stat,i_time) = 0.5*(E.Zint(k  ,i_stat,i_time) + ...
+                                                                       E.Zint(k+1,i_stat,i_time) );
+                                    end
+                                end
+                            end
+                        end
+                    end
+                       
                 elseif ~isempty(strfind(name,'trim-'))
                     trim=vs_use(inputFile,'quiet');
                     if ismember('no_layers',wantedOutput)
