@@ -51,6 +51,7 @@ try % if simulation has finished
                 diaFile=[pathstr filesep 'out.txt'];
             end
             fid=fopen(diaFile,'r');
+            % values derived from file with findLineOrQuit should be in order of rows, or it does not find it
             
             % partitions
             diaFiles=dir([pathstr filesep name '*.dia']);
@@ -67,11 +68,21 @@ try % if simulation has finished
             % max time step
             maxTimeStep_S=mdu.time.DtMax;
             
+            % initTime_S
+            line=findLineOrQuit(fid,    '** INFO   : time modelinit * (s)  :');
+            line2=regexp(line,'\s+','split');
+            initTime_S=str2double(line2{end});
+            
             % realTime_S
             line=findLineOrQuit(fid,    '** INFO   : time steps*+ plots*  (s)  :');
             line2=regexp(line,'\s+','split');
             realTime_S=str2double(line2{end});
             
+            % initextforcTime_S
+            line=findLineOrQuit(fid,    '** INFO   : time iniexternalforc. * (s)  :');
+            line2=regexp(line,'\s+','split');
+            initextforcTime_S=str2double(line2{end});
+
         case 'd3d'
             % mdf
             mdf=delft3d_io_mdf('read',mdFile);
@@ -171,7 +182,15 @@ if exist('realTime_S','var') % if simulation has finished
     % computational time
     runTimeInfo.compTime_minPerDay=(runTimeInfo.realTime_S/60)/(runTimeInfo.simPeriod_S/3600/24);
     runTimeInfo.compTime_dayPerYear=runTimeInfo.compTime_minPerDay/60/24*365;
-  
+    
+    %initialisation time
+    runTimeInfo.initTime_S=initTime_S;
+    runTimeInfo.initTime_M=runTimeInfo.initTime_S/60;
+    
+    %initialisation of external forcing time
+    runTimeInfo.initextforcTime_S=initextforcTime_S;
+    runTimeInfo.initextforcTime_M=runTimeInfo.initextforcTime_S/60;
+    
     % partitions
     if exist('noPartitions','var')
         runTimeInfo.numberOfPartitions = noPartitions;
