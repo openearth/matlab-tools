@@ -125,8 +125,8 @@ switch modelType
 		                        E.Zcen=ncread(inputFile,'mesh2d_layer_z');
 		                        E.Zcor=ncread(inputFile,'mesh2d_interface_z');
 		                    elseif ~isempty(strmatch('zcoordinate_c',{infonc.Variables.Name},'exact'))
-		                        E.Zcen=ncread(inputFile,'zcoordinate_c');
-		                        E.Zint=ncread(inputFile,'zcoordinate_w');
+		                        E.Zcen=permute(ncread(inputFile,'zcoordinate_c'),[3 2 1]);
+		                        E.Zint=permute(ncread(inputFile,'zcoordinate_w'),[3 2 1]);
 		                    end
 		                    % map
 		                    if ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact'))
@@ -258,12 +258,12 @@ switch modelType
                             for i_stat = 1: no_stat
                                 if strcmpi(E.layer_model,'sigma')
                                     depth = dps(i_stat) + zwl(i_time,i_stat);
-                                    E.Zint(1     ,i_stat,i_time)      = -zwl(i_tim,i_stat) + dps(i_stat);
-                                    E.Zint(kmax+1,i_stat,i_time) =  dps(istat);
-                                    E.Zcen(1,i_stat,i_time) = -zwl(i_time,i_stat) + 0.5*thick(1)*depth;
+                                    E.Zint(i_time,i_stat,1     ) = -zwl(i_tim,i_stat) + dps(i_stat);
+                                    E.Zint(i_time,i_stat,kmax+1) =  dps(istat);
+                                    E.Zcen(i_time,i_stat,1     ) = -zwl(i_time,i_stat) + 0.5*thick(1)*depth;
                                     for k = 2: kmax
-                                        E.Zint(k,i_stat,i_time)  = E.Zint(k-1,i_stat,i_time) + thick(k-1)*depth;
-                                        E.Zcen(k,i_stat,i_time)  = E.Zcen(k-1,i_stat,i_time) + 0.5*(thick(k-1) + thick(k))*depth;
+                                        E.Zint(i_time,i_stat,k)  = E.Zint(i_time,i_stat,k-1) + thick(k-1)*depth;
+                                        E.Zcen(i_time,i_stat,k)  = E.Zcen(i_time,i_stat,k-1) + 0.5*(thick(k-1) + thick(k))*depth;
                                     end
                                 elseif strcmpi(E.layer_model,'z-model')
                                     zk_int(1:kmax + 1) = NaN;                   
@@ -276,10 +276,10 @@ switch modelType
                                     zk_int(i_stop)  =  zwl(i_time,i_stat);
                                     
                                     zk_int(i_start+1:i_stop-1) = zk(i_start+1:i_stop-1);
-                                    E.Zint(:,i_stat,i_time) = zk_int;
+                                    E.Zint(i_time,i_stat,:) = zk_int;
                                     for k = 1: kmax
-                                        E.Zcen(k,i_stat,i_time) = 0.5*(E.Zint(k  ,i_stat,i_time) + ...
-                                                                       E.Zint(k+1,i_stat,i_time) );
+                                        E.Zcen(i_time,i_stat,k) = 0.5*(E.Zint(i_time,i_stat,k  ) + ...
+                                                                       E.Zint(i_time,i_stat,k+1) );
                                     end
                                 end
                             end
