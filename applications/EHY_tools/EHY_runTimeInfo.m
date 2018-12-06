@@ -80,8 +80,10 @@ try % if simulation has finished
             
             % initextforcTime_S
             line=findLineOrQuit(fid,    '** INFO   : time iniexternalforc. * (s)  :');
-            line2=regexp(line,'\s+','split');
-            initextforcTime_S=str2double(line2{end});
+            if ~isempty(line)
+                line2=regexp(line,'\s+','split');
+                initextforcTime_S=str2double(line2{end});
+            end
 
         case 'd3d'
             % mdf
@@ -188,8 +190,10 @@ if exist('realTime_S','var') % if simulation has finished
     runTimeInfo.initTime_M=runTimeInfo.initTime_S/60;
     
     %initialisation of external forcing time
-    runTimeInfo.initextforcTime_S=initextforcTime_S;
-    runTimeInfo.initextforcTime_M=runTimeInfo.initextforcTime_S/60;
+    if exist('initextforcTime_S','var')
+        runTimeInfo.initextforcTime_S=initextforcTime_S;
+        runTimeInfo.initextforcTime_M=runTimeInfo.initextforcTime_S/60;
+    end
     
     % partitions
     if exist('noPartitions','var')
