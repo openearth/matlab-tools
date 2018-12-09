@@ -66,7 +66,7 @@ OPT.t0       = '';
 OPT.tend     = '';
 OPT.tint     = '';
 OPT.layer    = 0; % all
-OPT.typeData = 'series';
+OPT.dataType = 'series';
 
 % backward compatible - EHY_getmodeldata(sim_dir,runid,stat_name,modelType,varargin)
 if isdir(inputFile) && ~any(strcmp(modelType,'implic')) && ~any(strcmp(varargin{1},'implic'))
@@ -87,7 +87,7 @@ Data           = EHY_getRequestedStations(inputFile,stat_name,modelType,'varName
 stationNrNoNan = Data.stationNrNoNan;
 
 %% Get the computational data
-if strcmpi(OPT.typeData,'series')
+if strcmpi(OPT.dataType,'series')
 
     %  First the series (default)
     switch modelType
@@ -437,7 +437,7 @@ if strcmpi(OPT.typeData,'series')
     end
     
     %% Profile data
-elseif strcmpi(OPT.typeData(1:7),'profile')
+elseif strcmpi(OPT.dataType(1:7),'profile')
     t0     = OPT.t0;
     tend   = OPT.tend;
     tint   = OPT.tint/1440.; % from minutes to days
