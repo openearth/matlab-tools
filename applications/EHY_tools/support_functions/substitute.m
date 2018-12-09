@@ -1,8 +1,8 @@
-      function [num_subs] = substitute (str1,str2,infile)
+      function [num_subs] = substitute (str1,str2,fileInp)
 
       num_subs   = 0;
 
-      fid_inp = fopen(infile);
+      fid_inp = fopen(fileInp);
       fid_out = fopen('scratch.scratch','w+');
 
       while 1
@@ -21,5 +21,5 @@
       [status] = fclose (fid_inp);
       [status] = fclose (fid_out);
 
-      movefile ('scratch.scratch',infile,'f');
+      movefile ('scratch.scratch',fileInp,'f');
 

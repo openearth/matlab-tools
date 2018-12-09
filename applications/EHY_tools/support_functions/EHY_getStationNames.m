@@ -1,4 +1,4 @@
-function stationNames = EHY_getStationNames(outputfile,modelType,varargin)
+function stationNames = EHY_getStationNames(inputFile,modelType,varargin)
 %% stationNames = EHY_getStationNames(outputfile,modelType,varargin)
 %
 % This function returns the station names based on a model output file
@@ -21,16 +21,16 @@ switch modelType
     
     case {'d3dfm','dflow','dflowfm','mdu','dfm'}
         %% Delft3D-Flexible Mesh
-        stationNames  = cellstr(strtrim(nc_varget(outputfile,'station_name')));
+        stationNames  = cellstr(strtrim(nc_varget(inputFile,'station_name')));
         
     case {'d3d','d3d4','delft3d4','mdf'}
         %% Delft3D 4
-        trih=vs_use(outputfile,'quiet');
+        trih=vs_use(inputFile,'quiet');
         stationNames=cellstr(strtrim(vs_get(trih,'his-const',{1},'NAMST','quiet')));
         
     case {'waqua','simona','siminp','triwaq'}
         %% SIMONA (WAQUA/TRIWAQ)
-        sds= qpfopen(outputfile);
+        sds= qpfopen(inputFile);
         if strcmp(OPT.varName,'uv')
             stationNames  = strtrim(waquaio(sds,[],'flowstat-uv'));
         else
@@ -39,20 +39,20 @@ switch modelType
         
     case {'sobek3'}
         %% SOBEK3
-        D=read_sobeknc(outputfile);
+        D=read_sobeknc(inputFile);
         stationNames=strtrim(D.feature_name_points.Val);
         
     case {'sobek3_new'}
         %% SOBEK3 new
-        D           =read_sobeknc(outputfile);
+        D           =read_sobeknc(inputFile);
         stationNames=cellstr(D.observation_id');
         
     case {'implic'}
         %% IMPLIC
-        if exist([fileparts(outputfile) filesep 'implic.mat'],'file')
-            load([fileparts(outputfile) filesep 'implic.mat']);
+        if exist([fileparts(inputFile) filesep 'implic.mat'],'file')
+            load([fileparts(inputFile) filesep 'implic.mat']);
         else
-            D         = dir2(fileparts(outputfile),'file_incl','\.dat$');
+            D         = dir2(fileparts(inputFile),'file_incl','\.dat$');
             files     = find(~[D.isdir]);
             filenames = {D(files).name};
             for i_stat = 1: length(filenames)

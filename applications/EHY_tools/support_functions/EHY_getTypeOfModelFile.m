@@ -1,4 +1,4 @@
-function typeOfModelFile=EHY_getTypeOfModelFile(filename)
+function typeOfModelFile=EHY_getTypeOfModelFile(fileInp)
 %% typeOfModelFile=EHY_getTypeOfModelFile(filename)
 %
 % This function returns the typeOfModelFile based on a filename
@@ -18,13 +18,13 @@ function typeOfModelFile=EHY_getTypeOfModelFile(filename)
 %%
 if nargin==0 % no input was given
     disp('Open a file')
-    [filename, pathname]=uigetfile('*.*','Open a file');
-    if isnumeric(filename); disp('EHY_getTypeOfModelFile stopped by user.'); return; end
-    filename=[pathname filename];
+    [fileInp, pathname]=uigetfile('*.*','Open a file');
+    if isnumeric(fileInp); disp('EHY_getTypeOfModelFile stopped by user.'); return; end
+    fileInp=[pathname fileInp];
 end
 
 %%
-[pathstr, name, ext] = fileparts(lower(filename));
+[pathstr, name, ext] = fileparts(lower(fileInp));
 typeOfModelFile='';
 
 % grid

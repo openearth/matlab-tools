@@ -1,4 +1,4 @@
-function EHY_nc2tek(filename,varargin)
+function EHY_nc2tek(fileInp,varargin)
 
 %% EHY_nc2tek: Extract data from DFLOW-FM netcdf history file and write to tekal time series file
 %  Example:
@@ -72,8 +72,8 @@ OPT.Qfreva      = false;
 OPT.Qfrcon      = false;
 OPT.Qtot        = false;
 OPT             = setproperty(OPT,varargin);
-tmp             = strfind(filename,'_');
-sim             = filename(1:tmp(1) - 1);
+tmp             = strfind(fileInp,'_');
+sim             = fileInp(1:tmp(1) - 1);
 
 % Create output dir if it does not exist
 if ~strcmp(OPT.outdir,'.')
@@ -82,7 +82,7 @@ end
         
 
 %  General: Dimensions
-Info        = ncinfo(filename);
+Info        = ncinfo(fileInp);
 nr_field    = find(~cellfun(@isempty,strfind({Info.Dimensions.Name},'laydim'))==1,1);
 laydim      = max (Info.Dimensions(nr_field).Length,1);
 nr_field    = find(~cellfun(@isempty,strfind({Info.Dimensions.Name},'stations'))==1,1);
@@ -91,17 +91,17 @@ nr_field    = find(~cellfun(@isempty,strfind({Info.Dimensions.Name},'cross_secti
 no_crs      = Info.Dimensions(nr_field).Length;
 
 %  General: times
-times     = ncread    (filename,'time');
-att_times = ncreadatt (filename,'time','units');
+times     = ncread    (fileInp,'time');
+att_times = ncreadatt (fileInp,'time','units');
 itdate    = datenum   (att_times(15:24),'yyyy-mm-dd');
 times     = itdate + times/(1440.*60.);
 
 %  General: station names
-tmp           = ncread    (filename,'station_name');
+tmp           = ncread    (fileInp,'station_name');
 station_names = deblank(char2cell(tmp'));
 
 %  General: cross section names
-tmp                 = ncread    (filename,'cross_section_name');
+tmp                 = ncread    (fileInp,'cross_section_name');
 cross_section_names = deblank(char2cell(tmp'));
 
 %% Get nr of the stations and/or cross sections to extract
@@ -184,7 +184,7 @@ for i_param = 1: length(param_list)
 
     % get the data
     tic
-    tmp      = ncread    (filename,param_list{i_param});
+    tmp      = ncread    (fileInp,param_list{i_param});
     toc
     
     % cycle over all station/cross sections

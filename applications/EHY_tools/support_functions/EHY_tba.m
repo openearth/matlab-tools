@@ -1,7 +1,7 @@
-function EHY_tba(file_name,runid,stations,Tide_cmp,Tide_obs)
+function EHY_tba(fileOut,runid,stations,Tide_cmp,Tide_obs)
 
 % Write triana tba file however as xls
-if exist(file_name,'file') delete(file_name); end
+if exist(fileOut,'file') delete(fileOut); end
 
 %% General parameters
 deg2rad  = pi()/180;
@@ -72,8 +72,8 @@ for i_freq = 1: no_freq
         cell_arr{no_stat + 5,i_col} = norm(values(index))/sqrt(no_values);
     end
     
-    file_name=strrep(file_name,[filesep filesep],[filesep]);
-    xlswrite_report(file_name,cell_arr,Tide_cmp(1).name(i_freq,:),'Comments',Comments,...
+    fileOut=strrep(fileOut,[filesep filesep],[filesep]);
+    xlswrite_report(fileOut,cell_arr,Tide_cmp(1).name(i_freq,:),'Comments',Comments,...
                                                                   'colwidth',colwidth,...
                                                                   'format'  ,format  );
 end

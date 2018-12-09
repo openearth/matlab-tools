@@ -1,4 +1,4 @@
-function [refdate,tunit,tstart,tstop,hisstart,hisstop,mapstart,mapstop,hisint,mapint]=EHY_getTimeInfoFromMdFile(mdFile,modelType)
+function [refdate,tunit,tstart,tstop,hisstart,hisstop,mapstart,mapstop,hisint,mapint]=EHY_getTimeInfoFromMdFile(fileInp,modelType)
 %% EHY_getTimeInfoFromMdFile(mdFile,modelType)
 % refdate       : Reference date in MATLAB's datenum
 % tunit         : Time unit of tstart and tstop (e.g. 'S' , 'M')
@@ -16,12 +16,12 @@ function [refdate,tunit,tstart,tstop,hisstart,hisstop,mapstart,mapstop,hisint,ma
 % support function of the EHY_tools
 % Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
 
-mdFile=EHY_getMdFile(mdFile);
-if isempty(mdFile)
+fileInp=EHY_getMdFile(fileInp);
+if isempty(fileInp)
     error('No .mdu, .mdf or siminp found in this folder')
 end
 if ~exist('modelType','var')
-    modelType=EHY_getModelType(mdFile);
+    modelType=EHY_getModelType(fileInp);
     if isempty(modelType)
         error('Could not determine model type')
     end
@@ -29,7 +29,7 @@ end
 
 switch modelType
     case 'dfm'
-        mdu=dflowfm_io_mdu('read',mdFile);
+        mdu=dflowfm_io_mdu('read',fileInp);
         refdate=datenum(num2str(mdu.time.RefDate),'yyyymmdd');
         tunit=mdu.time.Tunit;
         tstart=mdu.time.TStart;
@@ -57,7 +57,7 @@ switch modelType
             mapstop=mdu.output.MapInterval(3)*timeFactor('S','M');
         end
     case 'd3d'
-        mdf=delft3d_io_mdf('read',mdFile);
+        mdf=delft3d_io_mdf('read',fileInp);
         refdate=datenum(mdf.keywords.itdate,'yyyy-mm-dd');
         tunit=mdf.keywords.tunit;
         tstart=mdf.keywords.tstart;
@@ -69,7 +69,7 @@ switch modelType
         mapint=mdf.keywords.flmap(2);
         mapstop=mdf.keywords.flmap(3);
     case 'simona'
-        [pathstr,name,ext]=fileparts(mdFile);
+        [pathstr,name,ext]=fileparts(fileInp);
         siminp=readsiminp(pathstr,[name ext]);
         
         tunit='M';

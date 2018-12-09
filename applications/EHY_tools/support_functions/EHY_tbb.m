@@ -1,7 +1,7 @@
-function EHY_tbb(file_name,runid,stations,Tide_cmp,Tide_obs)
+function EHY_tbb(fileOut,runid,stations,Tide_cmp,Tide_obs)
 
 % Write triana tba file however as xls
-if exist(file_name,'file') delete(file_name); end
+if exist(fileOut,'file') delete(fileOut); end
 
 %% General parameters
 deg2rad  = pi()/180;
@@ -54,7 +54,7 @@ for i_stat = 1: no_stat
     
     cell_arr{no_freq + 3,9} = sum(cell2mat(cell_arr(2:no_freq + 1,9)));
         
-    xlswrite_report(file_name,cell_arr,stations{i_stat},'Comments',Comments, ...
+    xlswrite_report(fileOut,cell_arr,stations{i_stat},'Comments',Comments, ...
                                                         'colwidth',colwidth, ...
                                                         'format'  ,format  );
 end

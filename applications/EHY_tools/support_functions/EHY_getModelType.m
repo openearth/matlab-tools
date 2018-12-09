@@ -1,4 +1,4 @@
-function modelType=EHY_getModelType(filename)
+function modelType=EHY_getModelType(fileInp)
 %% modelType=EHY_getModelType(filename)
 %
 % This function returns the modelType based on a filename
@@ -17,13 +17,13 @@ function modelType=EHY_getModelType(filename)
 %%
 if nargin==0 % no input was given
     disp('Open a file')
-    [filename, pathname]=uigetfile('*.*','Open a file');
-    if isnumeric(filename); disp('EHY_getModelType stopped by user.'); return; end
-    filename=[pathname filename];
+    [fileInp, pathname]=uigetfile('*.*','Open a file');
+    if isnumeric(fileInp); disp('EHY_getModelType stopped by user.'); return; end
+    fileInp=[pathname fileInp];
 end
 
 %%
-[pathstr, name, ext] = fileparts(lower(filename));
+[pathstr, name, ext] = fileparts(lower(fileInp));
 modelType='';
 
 % Delft3D-FM

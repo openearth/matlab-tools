@@ -1,4 +1,4 @@
-function EHY_tek2tim(filename,varargin)
+function EHY_tek2tim(fileInp,varargin)
 % EHY_tek2tim converts TEKAL Time series files to tim files that can be used in DFlow-FM
 %
 % the takal file is assumed to have one block of data with 3 columns, Date, Time and Value
@@ -23,7 +23,7 @@ OPT.itdate = '';
 OPT        = setproperty(OPT,varargin);
 
 %% Read tekal file
-Info   = tekal('open',[strtrim(filename) '.tek'],'loaddata');
+Info   = tekal('open',[strtrim(fileInp) '.tek'],'loaddata');
 date   = num2str(Info.Field.Data(:,1),'%8.8i');
 time   = num2str(Info.Field.Data(:,2),'%6.6i');
 dattim = datenum([date(:,1:8) time(:,1:6)],'yyyymmddHHMMSS');
@@ -40,4 +40,4 @@ SERIES.Comments{3} = '* COLUMN2=Value';
 SERIES.Values(:,1) = time_tim;
 SERIES.Values(:,2) = values;
 SERIES.Values      = num2cell(SERIES.Values);
-dflowfm_io_series( 'write',[strtrim(filename) '.tim'],SERIES);
+dflowfm_io_series( 'write',[strtrim(fileInp) '.tim'],SERIES);
