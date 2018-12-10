@@ -1,4 +1,4 @@
-function varargout = EHY_getMapModelData(outputfile,varargin)
+function varargout = EHY_getMapModelData(fileInp,varargin)
 %% varargout = EHY_getMapModelData(outputfile,varargin)
 % Extracts top view data (of water levels/salinity/temperature) from output of different models
 %
@@ -41,18 +41,18 @@ if ~isempty(OPT.tend); OPT.tend=datenum(OPT.tend); end
 if ~isnumeric(OPT.layer); OPT.layer=str2num(OPT.layer); end
 
 %% Get the computational data
-modelType=EHY_getModelType(outputfile);
+modelType=EHY_getModelType(fileInp);
 switch modelType
     
     case 'dfm'
         %% Delft3D-Flexible Mesh
         % open data file
-        gridInfo=EHY_getGridInfo(outputfile,{'no_layers','dimensions'});
-        infonc=ncinfo(outputfile);
+        gridInfo=EHY_getGridInfo(fileInp,{'no_layers','dimensions'});
+        infonc=ncinfo(fileInp);
         OPT=EHY_getmodeldata_layer_index(OPT,gridInfo.no_layers);
         
         % time info
-        Data.times=EHY_getmodeldata_getDatenumsFromOutputfile(outputfile);
+        Data.times=EHY_getmodeldata_getDatenumsFromOutputfile(fileInp);
         [Data,time_index,select]=EHY_getmodeldata_time_index(Data,OPT);
         if time_index==0; time_index=1; end % 0 = d3d style
         nr_times_clip = length(Data.times);
@@ -75,69 +75,69 @@ switch modelType
         switch OPT.varName
             case 'wl'
                 if ismember('mesh2d_s1',{infonc.Variables.Name})
-                Data.value = ncread(outputfile,'mesh2d_s1',[1 time_index(1)],[Inf nr_times_clip])';
+                Data.value = ncread(fileInp,'mesh2d_s1',[1 time_index(1)],[Inf nr_times_clip])';
                 else % old format
-                    Data.value = ncread(outputfile,'s1',[1 time_index(1)],[Inf nr_times_clip])';
+                    Data.value = ncread(fileInp,'s1',[1 time_index(1)],[Inf nr_times_clip])';
                 end
             case {'wd','water depth'}
                 if ismember('mesh2d_waterdepth',{infonc.Variables.Name})
-                    Data.value = ncread(outputfile,'mesh2d_waterdepth',[1 time_index(1)],[Inf nr_times_clip])';
+                    Data.value = ncread(fileInp,'mesh2d_waterdepth',[1 time_index(1)],[Inf nr_times_clip])';
                 else % old format
-                    Data.value = ncread(outputfile,'waterdepth',[1 time_index(1)],[Inf nr_times_clip])';
+                    Data.value = ncread(fileInp,'waterdepth',[1 time_index(1)],[Inf nr_times_clip])';
                 end
             case 'uv'
                 if ismember('mesh2d_ucx',{infonc.Variables.Name})
                     if gridInfo.no_layers==1 % 2DH model
-                        Data.ucx = ncread(outputfile,'mesh2d_ucx',[1 time_index(1)],[Inf nr_times_clip])';
-                        Data.ucy = ncread(outputfile,'mesh2d_ucy',[1 time_index(1)],[Inf nr_times_clip])';
+                        Data.ucx = ncread(fileInp,'mesh2d_ucx',[1 time_index(1)],[Inf nr_times_clip])';
+                        Data.ucy = ncread(fileInp,'mesh2d_ucy',[1 time_index(1)],[Inf nr_times_clip])';
                     else
-                        Data.ucx = permute(ncread(outputfile,'mesh2d_ucx',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
-                        Data.ucy = permute(ncread(outputfile,'mesh2d_ucy',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                        Data.ucx = permute(ncread(fileInp,'mesh2d_ucx',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                        Data.ucy = permute(ncread(fileInp,'mesh2d_ucy',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
                     end
                 else % old format
                     if gridInfo.no_layers==1 % 2DH model
-                        Data.ucx = ncread(outputfile,'ucx',[1 time_index(1)],[Inf nr_times_clip])';
-                        Data.ucy = ncread(outputfile,'ucy',[1 time_index(1)],[Inf nr_times_clip])';
+                        Data.ucx = ncread(fileInp,'ucx',[1 time_index(1)],[Inf nr_times_clip])';
+                        Data.ucy = ncread(fileInp,'ucy',[1 time_index(1)],[Inf nr_times_clip])';
                     else
-                        Data.ucx = permute(ncread(outputfile,'ucx',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
-                        Data.ucy = permute(ncread(outputfile,'ucy',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                        Data.ucx = permute(ncread(fileInp,'ucx',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                        Data.ucy = permute(ncread(fileInp,'ucy',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
                     end
                 end
                  Data.value = sqrt( Data.ucx.^2 + Data.ucy.^2 ); % magnitude
             case 'sal'
                 if ismember('mesh2d_sa1',{infonc.Variables.Name})
                     if gridInfo.no_layers==1 % 2DH model
-                        Data.value = ncread(outputfile,'mesh2d_sa1',[1 time_index(1)],[Inf nr_times_clip])';
+                        Data.value = ncread(fileInp,'mesh2d_sa1',[1 time_index(1)],[Inf nr_times_clip])';
                     else
-                        Data.value = permute(ncread(outputfile,'mesh2d_sa1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                        Data.value = permute(ncread(fileInp,'mesh2d_sa1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
                     end
                 else % old format
                     if gridInfo.no_layers==1 % 2DH model
-                        Data.value = ncread(outputfile,'sa1',[1 time_index(1)],[Inf nr_times_clip])';
+                        Data.value = ncread(fileInp,'sa1',[1 time_index(1)],[Inf nr_times_clip])';
                     else
-                        Data.value = permute(ncread(outputfile,'sa1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                        Data.value = permute(ncread(fileInp,'sa1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
                     end
                 end
             case 'tem'
                 if ismember('mesh2d_tem1',{infonc.Variables.Name})
                     if gridInfo.no_layers==1 % 2DH model
-                        Data.value = ncread(outputfile,'mesh2d_tem1',[1 time_index(1)],[Inf nr_times_clip])';
+                        Data.value = ncread(fileInp,'mesh2d_tem1',[1 time_index(1)],[Inf nr_times_clip])';
                     else
-                        Data.value = permute(ncread(outputfile,'mesh2d_tem1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                        Data.value = permute(ncread(fileInp,'mesh2d_tem1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
                     end
                 else % old format
                     if gridInfo.no_layers==1 % 2DH model
-                        Data.value = ncread(outputfile,'tem1',[1 time_index(1)],[Inf nr_times_clip])';
+                        Data.value = ncread(fileInp,'tem1',[1 time_index(1)],[Inf nr_times_clip])';
                     else
-                        Data.value = permute(ncread(outputfile,'tem1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                        Data.value = permute(ncread(fileInp,'tem1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
                     end
                 end
         end
         % If partitioned run, delete ghost cells
-        [~, name]=fileparts(outputfile);
-        if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && nc_isvar(outputfile,'FlowElemDomain')
+        [~, name]=fileparts(fileInp);
+        if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && nc_isvar(fileInp,'FlowElemDomain')
             domainNr=str2num(name(end-7:end-4));
-            FlowElemDomain=ncread(outputfile,'FlowElemDomain');
+            FlowElemDomain=ncread(fileInp,'FlowElemDomain');
             Data.value(:,FlowElemDomain~=domainNr,:)=[];
             if strcmpi(OPT.varName,'uv')
                 Data.ucx(:,FlowElemDomain~=domainNr,:)=[];
@@ -168,7 +168,7 @@ if strcmp(OPT.varName,'uv')
 end
 
 Data.OPT=OPT;
-Data.OPT.outputfile=outputfile;
+Data.OPT.outputfile=fileInp;
 
 if nargout==1
     varargout{1}=Data;
