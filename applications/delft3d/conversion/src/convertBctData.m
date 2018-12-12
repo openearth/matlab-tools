@@ -39,7 +39,7 @@ clear filepli;
 i_pli       = 0;
 for i=1:length(readpli);
     pli     = readpli{i};
-    if strcmpi(pli(end-7:end),'_sal.pli') == 0;
+    if strcmpi(pli(end-7:end),'_sal.pli') == 0 && strcmpi(pli(end-7:end),'_tem.pli') == 0;
         i_pli          = i_pli + 1;
         filepli{i_pli} = [pathout filesep readpli{i}];
     end
@@ -47,7 +47,7 @@ end
 
 % Use general conversion routine (also works for harmonic and timeseries)
 allfiles    = [];
-allfiles    = d3d2dflowfm_convertbc(filebct,filepli,pathout,'Salinity',false,'Series',true);
+allfiles    = d3d2dflowfm_convertbc(filebct,filepli,pathout,'Salinity',false,'Temperature',false,'Series',true);
 
 % Fill listbox with tim files
 i_file      = 0;

@@ -44,14 +44,13 @@ if strcmpi(filepli,' ');
     japli   = 0;
 end
 
-% Check if salinity is active
+% Check if salinity and/or temperature is active
 filebcc     = get(handles.edit14,'String');
 filebcc     = deblank2(filebcc);
 jasal       = 1;
 if isempty(filebcc);
     jasal   = 0;
 end
-
 
 
 %%% READ POLYLINE FILES AND CHECK BOUNDARY CONDITIONS TYPE
@@ -67,6 +66,12 @@ if japli == 1;
             else
                 break;
             end
+        elseif strcmpi(fpli(end-7:end),'_tem.pli');
+            if jasal == 1;
+                typ             = 'temperaturebnd';
+            else
+                break;
+            end            
         else
             fid                 = fopen(fpli,'r');
             tline               = fgetl(fid);

@@ -108,12 +108,47 @@ if salinity == true;
     plissal           = d3d2dflowfm_bnd2pli(filegrd,filebnd,bndname,'Salinity',true);
 end
 
+%%% CHECK FOR TEMPERATURE
+
+% In case of conversion of all stuff
+if convertallstuff == 1;
+
+    % Read file
+    mdfcontents           = delft3d_io_mdf('read',filemdf);
+    mdfkeywds             = mdfcontents.keywords;
+
+    % Read the mdf file (only to check if salinity is included)
+    if isfield(mdfkeywds,'sub1') == 1;
+        finds             = find(mdfkeywds.sub1 == 'T');
+        if isempty(finds);
+            temperature      = false;
+        else
+            temperature      = true;
+        end
+    else
+        temperature          = false;
+    end
+
+    % If not: set temperature to true anyway
+else
+    temperature          = true;
+end
+
+% Build plis
+if temperature == true;
+    plistem           = d3d2dflowfm_bnd2pli(filegrd,filebnd,bndname,'Temperature',true);
+end
+
 
 
 %%% PUT PLI-FILES IN LISTBOX
 
-if salinity == true;
+if salinity == true && temperature == false;
     set(handles.listbox1,'String',[plis plissal]);
+elseif salinity == true && temperature == true;
+    set(handles.listbox1,'String',[plis plissal plistem]);
+elseif salinity == false && temperature == true;
+    set(handles.listbox1,'String',[plis plistem]);
 else
     set(handles.listbox1,'String', plis         );
 end
