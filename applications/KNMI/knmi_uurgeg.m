@@ -78,14 +78,14 @@ function varargout = knmi_uurgeg(varargin)
          'KNMI climate time series (uurgeg*.*)');
       
       if ~ischar(shortfilename) % uigetfile cancelled
-         W.filename     = [];
+         W.file.name     = [];
          iostat         = 0;
       else
-         W.filename     = [pathname, shortfilename];
+         W.file.name     = [pathname, shortfilename];
          iostat         = 1;
       end
       
-      if isempty(W.filename)
+      if isempty(W.file.name)
          iostat = 0;
          varargout= {[], iostat};
          return
@@ -113,7 +113,7 @@ function varargout = knmi_uurgeg(varargin)
    if length(tmp)==0
       
       if nargout==1
-         error(['Error finding file: ',W.filename])
+         error(['Error finding file: ',W.file.name])
       else
          iostat = -1;
       end      
