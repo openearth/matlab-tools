@@ -72,7 +72,7 @@ function Plot_S_phi(input)
 % $Keywords: $
 
 %INPUT
-color = [{'b'},{'r'}];
+color = [{'r'},{'b'}];
 markers1 = {'.','none'};
 markers2 = {'s','+'};
 linewidth = [4,2.5];
@@ -86,50 +86,54 @@ addpath(genpath(input.dir));
 for ii = 1:length(file)
     if strcmpi(file{ii}(end-3:end),'.ray')
         data(ii) = readRAY([file{ii}(1:end-4) '.RAY']);
+        if isfield(data,'QSoffset')
+            data(ii).QSoffset = data(ii).QSoffset/1000;
+        end
     elseif strcmpi(file{ii}(end-3:end),'.glo')
         data(ii) = readGLO([file{ii}(1:end-4) '.GLO']);
     end
-    for jj=1:length(data(ii).equi)
-        D(ii).equi(jj)        = data(ii).equi(jj);
-        D(ii).c1(jj)          = data(ii).c1(jj);
-        D(ii).c2(jj)          = data(ii).c2(jj);
-        D(ii).Cangle(jj)      = data(ii).hoek(jj);
-        D(ii).QSoffset(jj)    = data(ii).QSoffset(jj);
-
-        D(ii).phi_e(jj)       = D(ii).Cangle(jj)-D(ii).equi(jj);
-        D(ii).Cequi(jj)       = data(ii).Cequi(jj);
-        if strcmpi(file{ii}(end-3:end),'.glo')
-            D(ii).rota{jj}        = data(ii).rota;
-            D(ii).QScalc{jj}      = data(ii).QScalc;
+    for tt=1:length(data(ii).equi)
+        D(ii).equi(tt)        = data(ii).equi(tt); 
+        D(ii).c1(tt)          = data(ii).c1(tt); 
+        D(ii).c2(tt)          = data(ii).c2(tt); 
+        D(ii).Cangle(tt)      = data(ii).hoek(tt); 
+        D(ii).QSoffset(tt)    = data(ii).QSoffset(tt); 
+        
+        D(ii).phi_e(tt)       = D(ii).Cangle(tt)-D(ii).equi(tt); 
+        D(ii).Cequi(tt)       = data(ii).Cequi(tt); 
+        if strcmpi(file{ii}(end-3:end),'.glo') 
+            D(ii).rota{tt}        = data(ii).rota(:,tt); 
+            D(ii).QScalc{tt}      = data(ii).QScalc(:,tt); 
+            D(ii).QSapprox{tt}    = data(ii).QSapprox(:,tt); 
         end
-        D(ii).phi{jj}         = [D(ii).phi_e(jj)-70:0.1:D(ii).phi_e(jj)+70];
-        D(ii).phi_r{jj}       = D(ii).phi{jj}-D(ii).phi_e(jj);
-
-        %Process data
-        D(ii).Qs{jj}          = -D(ii).c1(jj).*D(ii).phi_r{jj}.*exp(-((D(ii).c2(jj).*D(ii).phi_r{jj}).^2)) +D(ii).QSoffset(jj)/1000;
-
-        %Transport at current angle
-        D(ii).Qc{jj}          = -D(ii).c1(jj).*(D(ii).Cangle(jj)-D(ii).phi_e(jj)).*exp(-(D(ii).c2(jj).*(D(ii).Cangle(jj)-D(ii).phi_e(jj))).^2) +D(ii).QSoffset(jj)/1000;
+        D(ii).phi{tt}         = [D(ii).phi_e(tt)-70:0.1:D(ii).phi_e(tt)+70]; 
+        D(ii).phi_r{tt}       = D(ii).phi{tt}-D(ii).phi_e(tt); 
+        
+        %Process data 
+        D(ii).Qs{tt}          = -D(ii).c1(tt).*D(ii).phi_r{tt}.*exp(-((D(ii).c2(tt).*D(ii).phi_r{tt}).^2)) +D(ii).QSoffset(tt)/1000; 
+        
+        %Transport at current angle 
+        D(ii).Qc{tt}          = -D(ii).c1(tt).*(D(ii).Cangle(tt)-D(ii).phi_e(tt)).*exp(-(D(ii).c2(tt).*(D(ii).Cangle(tt)-D(ii).phi_e(tt))).^2) +D(ii).QSoffset(tt)/1000; 
     end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% PLOT DATA                                  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-for jj=1:length(data(ii).equi)
+for tt=1:length(data(ii).equi)
     f = figure(1);set(gcf,'Position',[60 300 1000 300]);set(gcf,'Color',[1 1 1]);hold off;
     set(gcf,'PaperSize',[9.8925    3.4973],'PaperPosition',[0 0 9.8925    3.4973],'PaperUnits','centimeters','PaperType','A4','PaperPositionMode','manual');
     for ii = 1:length(file)
-        hline(ii)   = plot(D(ii).phi{jj},D(ii).Qs{jj}*1000,'LineStyle','-','Color',color{ii},'LineWidth',linewidth(ii),'Marker',markers1{ii},'MarkerSize', 6);hold on;
+        hline(ii)   = plot(D(ii).phi{tt},D(ii).Qs{tt}*1000,'LineStyle','-','Color',color{ii},'LineWidth',linewidth(ii),'Marker',markers1{ii},'MarkerSize', 6);hold on;
         if strcmpi(file{ii}(end-3:end),'.glo')
-            plot(D(ii).Cangle(jj)-D(ii).rota{jj},D(ii).QScalc{jj}*1000,'LineStyle','none','Color',color{ii},'LineWidth',linewidth(ii),'Marker',markers2{ii},'MarkerSize', 6);hold on;
+            plot(D(ii).Cangle(tt)-D(ii).rota{tt},D(ii).QScalc{tt}*1000,'LineStyle','none','Color',color{ii},'LineWidth',linewidth(ii),'Marker',markers2{ii},'MarkerSize', 6);hold on;
         end
         xl = xlim; yl = ylim;
     end
-    ii=1;plot([D(ii).Cangle(jj) D(ii).Cangle(jj)],[yl(1) yl(2)],'Color','k','LineStyle',':','Marker','None','LineWidth',1);
+    ii=1;plot([D(ii).Cangle(tt) D(ii).Cangle(tt)],[yl(1) yl(2)],'Color','k','LineStyle',':','Marker','None','LineWidth',1);
     for ii = 1:length(file)
         %% Plot equilibrium line
-        plot([D(ii).Cequi(jj) D(ii).Cequi(jj)],[yl(1) yl(2)],'Color',color{ii},'LineStyle','--','Marker','None','LineWidth',1);
+        plot([D(ii).Cequi(tt) D(ii).Cequi(tt)],[yl(1) yl(2)],'Color',color{ii},'LineStyle','--','Marker','None','LineWidth',1);
     end
     if yl(1)<=0 && yl(2)>=0
         plot([xl(1) xl(2)],[0 0],'k','LineWidth',1);
@@ -141,13 +145,13 @@ for jj=1:length(data(ii).equi)
     xlabel('Coast angle (phi [°])');
     ylabel('Total transport (Qs [10^3 m^3/yr])');
     annotation('textbox',[0.15 0.86 0.30 0.05],'String',strcat('File=',file{1}),'interpreter','none','FontSize',fontsize-1,'Edgecolor','none','FontAngle','italic'); %,'Backgroundcolor',[1 1 0.9]'Backgroundcolor',[1 1 0.5]
-    annotation('textbox',[0.15 0.82 0.30 0.05],'String',strcat('Coastangle [°N]  = ',num2str(round(D(1).Cangle(jj)*10)/10)),'FontSize',fontsize-1,'Edgecolor','none');
-    annotation('textbox',[0.15 0.78 0.30 0.05],'String',strcat('Eq. angle [°N] = ',num2str(round(mod(D(1).Cequi(jj),360)*10)/10),' (ref: ',num2str(round(mod(D(2).Cequi(jj),360)*10)/10),')'),'FontSize',fontsize-1,'Edgecolor','none');
-    annotation('textbox',[0.15 0.74 0.30 0.05],'String',strcat('Qcoast [10^3 m^3/y] = ',num2str(round(D(1).Qc{jj}*1000*10)/10),' (ref: ',num2str(round(D(2).Qc{jj}*1000*10)/10),')'),'FontSize',fontsize-1,'Edgecolor','none');
+    annotation('textbox',[0.15 0.82 0.30 0.05],'String',strcat('Coastangle [°N]  = ',num2str(round(D(1).Cangle(tt)*10)/10)),'FontSize',fontsize-1,'Edgecolor','none');
+    annotation('textbox',[0.15 0.78 0.30 0.05],'String',strcat('Eq. angle [°N] = ',num2str(round(mod(D(1).Cequi(tt),360)*10)/10),' (ref: ',num2str(round(mod(D(2).Cequi(tt),360)*10)/10),')'),'FontSize',fontsize-1,'Edgecolor','none');
+    annotation('textbox',[0.15 0.74 0.30 0.05],'String',strcat('Qcoast [10^3 m^3/y] = ',num2str(round(D(1).Qc{tt}*1000*10)/10),' (ref: ',num2str(round(D(2).Qc{tt}*1000*10)/10),')'),'FontSize',fontsize-1,'Edgecolor','none');
     if strcmpi(file{ii}(end-3:end),'.glo')
       legtext = {[file{1} '_approximated'],[file{1} '_calculated'],['Reference_approximated'],['Reference_calculated'],'current coastline'};
     else
-      legtext = {[file{1} '_approximated'],[file{1} '_calculated'],'current coastline'};
+      legtext = {[file{1} ''],[file{1} '_reference'],'current coastline'};
     end
     legend(legtext,'interpreter','none','location','SouthEast');
     set(gca,'Xticklabel',num2str(mod(str2num(get(gca,'Xticklabel')),360)));
@@ -160,7 +164,7 @@ for jj=1:length(data(ii).equi)
         pname = [input.test_id '_fig' num2str(input.fignum)];
     else
         %outputname for timeseries
-        pname = [input.test_id '_fig' num2str(input.fignum),'_',num2str(jj,'%03.0f')];
+        pname = [input.test_id '_fig' num2str(input.fignum),'_',num2str(tt,'%03.0f')];
     end
     saveplot(f, input.output_dir, pname);
     close all;

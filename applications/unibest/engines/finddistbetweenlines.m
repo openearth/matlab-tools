@@ -1,27 +1,26 @@
-function [GKLdata]=readGKL(GKLfilename)
-%read GKL : Reads a UNIBEST gkl-file
-%   
+function [Ycross,baselineNearest]=finddistbetweenlines(coastline,baseline,dx)
+%finddistbetweenlines : Function determines the nearest distance from point on coastline to the baseline (reference line of UNIBEST model)
+%
 %   Syntax:
-%     function  [GKLdata]=readGKL(GKLfilename)
-%          or : [x,y,rayfiles]=readGKL(GKLfilename)
-%   
+%     function  [Ycross,baselineNearest]=finddistbetweenlines(coastline,baseline,dx)
+% 
 %   Input:
-%     GKLfilename         String with filename of gkl-file
-%   
+%     coastline  [Nx2] ldb of coastline
+%     baseline   [Nx2] ldb of baseline
+%     dx         (optional) discretisation of baseline (default=1m)
+% 
 %   Output:
-%     GKLdata
-%             .x          X-coordinate of ray in CL-model
-%             .y          Y-coordinate of ray in CL-model
-%             .ray_file   String with reference to a ray file
+%     Ycross           nearest distance from point on coastline to the baseline (reference line of UNIBEST model)
+%     baselineNearest  find nearest point on baseline
 %   
 %   Example:
-%     [GKLdata]=readGKL('test.gkl')
-%   
+%     [Ycross,baselineNearest]=finddistbetweenlines(coastline,baseline)
+%     
 %   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2014 Deltares
+%   Copyright (C) 2008 Deltares
 %       Bas Huisman
 %
 %       bas.huisman@deltares.nl	
@@ -53,44 +52,28 @@ function [GKLdata]=readGKL(GKLfilename)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 14 Apr 2011
+% Created: 16 Sep 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: finddistbetweenlines.m 2849 2010-10-01 08:30:33Z huism_b $
+% $Date: 2010-10-01 10:30:33 +0200 (Fri, 01 Oct 2010) $
+% $Author: huism_b $
+% $Revision: 2849 $
+% $HeadURL: https://repos.deltares.nl/repos/mctools/trunk/matlab/applications/UNIBEST_CL/engines/finddistbetweenlines.m $
 % $Keywords: $
 
-fid=fopen(GKLfilename);
-
-%Read comment line
-lin=fgetl(fid);
-% Read number of locations
-lin=fgetl(fid);
-nloc=strread(lin,'%d');
-%Read comment line
-lin=fgetl(fid);
-if isempty(nloc)
-    error('Error reading 2nd line of LOC, number of locations. Reserve at least 10 characters for this number!');
+if nargin<2
+    fprintf('Error : not enough input parameters')
     return
+elseif nargin==2
+    dx=1;
 end
+baselineFine=add_equidist_points(dx,baseline);
 
-%Read data
-for i=1:nloc
-   lin = fgetl(fid);
-   [x(i) y(i) ray_file(i) ]=strread(lin,'%f%f%s');
-   ray_file{i}=regexprep(ray_file{i},'''','');
+% loop through points of coastline and find for each point the nearest point of the baseline
+baselineNearest=[];
+for ii=1:size(coastline,1)
+    dist=sqrt((baselineFine(:,1)-coastline(ii,1)).^2+(baselineFine(:,2)-coastline(ii,2)).^2);
+    [Ycross(ii,1),id]=min(dist);
+    baselineNearest(ii,:)=baselineFine(id,:);
 end
-fclose(fid);
-
-[pathnm,filenm,extnm]=fileparts(GKLfilename);
-
-GKLdata = struct;
-GKLdata.filenm = [filenm,extnm];
-GKLdata.pathnm = pathnm;
-GKLdata.x = x;
-GKLdata.y = y;
-GKLdata.ray_file = ray_file;
-

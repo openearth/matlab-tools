@@ -59,75 +59,102 @@ function [GLOdata]=readGLO(GLOfilename)
 % $HeadURL$
 % $Keywords: $
 
-%% Open file
-fid=fopen(GLOfilename);
-frewind(fid);
+    %% Open file
+    fid=fopen(GLOfilename);
+    INH = fread(fid);IDline = find(INH==10);
+    if length(IDline)<39
+        type='normal';
+        ttend = 1;
+    else
+        type='timeseries';
+        ttend = round((length(IDline)-8)/34);
+    end
+    frewind(fid);
 
-%% Read LTR file data
-line=fgetl(fid);
-line=fgetl(fid);GLOdata.LTRfilename = line(21:end);
-line=fgetl(fid);GLOdata.TransportRay = line(21:end);
-line=fgetl(fid);
+    %% Read LTR file data
+    line=fgetl(fid);
+    line=fgetl(fid);GLOdata.LTRfilename = line(21:end);
+    line=fgetl(fid);GLOdata.TransportRay = line(21:end);
+    line=fgetl(fid);
 
-%% Read file data
-line=fgetl(fid);GLOdata.PRO = line(41:end);
-line=fgetl(fid);GLOdata.CFS = line(41:end);
-line=fgetl(fid);GLOdata.CFE = line(41:end);
-line=fgetl(fid);GLOdata.SCO = line(41:end);
-line=fgetl(fid);
+    %% Read file data
+    line=fgetl(fid);GLOdata.PRO = line(41:end);
+    line=fgetl(fid);GLOdata.CFS = line(41:end);
+    line=fgetl(fid);GLOdata.CFE = line(41:end);
+    line=fgetl(fid);GLOdata.SCO = line(41:end);
 
-%% Read normalization factor
-line=fgetl(fid);GLOdata.NormFac = line(31:end);
-line=fgetl(fid);line=fgetl(fid);line=fgetl(fid);
+    %% Read normalization factor
+    for tt=1:ttend
+        if strcmpi(type,'normal')
+            % normal wave run
+            GLOdata.Timestep = 0;
+            line=fgetl(fid);
+            line=fgetl(fid); 
+            GLOdata.NormFac = str2num(line(30:end));
+        elseif strcmpi(type,'timeseries')
+            % time-series wave run
+            line=fgetl(fid);
+            line=fgetl(fid); 
+            line=fgetl(fid); 
+            GLOdata.Timestep(tt) = str2num(line(15:end));
+            line=fgetl(fid); 
+            line=fgetl(fid); 
+            line=fgetl(fid); 
+            GLOdata.NormFac(tt) = str2num(line(30:end));
+        end
+        line=fgetl(fid);line=fgetl(fid);line=fgetl(fid);
 
-%% Read current coastline properties
-line=fgetl(fid);
-part1 = str2num(line);
-GLOdata.a_equi = part1(1);
-GLOdata.dQs_da = part1(2);
-GLOdata.v_transp = part1(3);
-GLOdata.v_rotation = part1(4);
-line=fgetl(fid);line=fgetl(fid);line=fgetl(fid);
+        %% Read current coastline properties
+        line=fgetl(fid);
+        part1 = str2num(line);
+        GLOdata.a_equi(tt) = part1(1);
+        GLOdata.dQs_da(tt) = part1(2);
+        GLOdata.v_transp(tt) = part1(3);
+        GLOdata.v_rotation(tt) = part1(4);
+        line=fgetl(fid);line=fgetl(fid);line=fgetl(fid);
 
-%% Read S-Phi diagram properties
-for ii=1:11
-    part2 = str2num(fgetl(fid));
-    GLOdata.rota(ii)      = part2(1);
-    GLOdata.QScalc(ii)    = part2(2);
-    GLOdata.QSapprox(ii)  = part2(3);
+        %% Read S-Phi diagram properties
+        for ii=1:11
+            part2 = str2num(fgetl(fid));
+            GLOdata.rota(ii,tt)      = part2(1);
+            GLOdata.QScalc(ii,tt)    = part2(2);
+            GLOdata.QSapprox(ii,tt)  = part2(3);
+        end
+        line=fgetl(fid);line=fgetl(fid);line=fgetl(fid);
+
+        %% Read approximation
+        part3 = str2num(fgetl(fid));
+        if length(part3)<5; part3(:,5) = 0; end
+        part3B=[];
+        part3B(:,1)=part3(4)-part3(1);
+        part3B(:,2)=(part3(2)*(0-part3(1))*exp(-(part3(3)*(0-part3(1)))^2))*1000000;
+        GLOdata.location         = GLOfilename;
+        GLOdata.equi(tt)         = part3(:,1);
+        GLOdata.c1(tt)           = part3(:,2);
+        GLOdata.c2(tt)           = part3(:,3);
+        GLOdata.hoek(tt)         = part3(:,4);
+        GLOdata.QSoffset(tt)     = part3(:,5);
+        GLOdata.Cequi(tt)        = computeEQUI(GLOdata.equi(tt),GLOdata.c1(tt),GLOdata.c2(tt),GLOdata.hoek(tt),GLOdata.QSoffset(tt));
+        GLOdata.S(tt)            = round((part3B(:,2)+GLOdata.QSoffset(tt))*100)/100;
+
+        line=fgetl(fid);line=fgetl(fid);line=fgetl(fid);
+
+        %% Read bypass functions
+        part4 = str2num(fgetl(fid));
+        GLOdata.perc2(tt)   = part4(1);
+        GLOdata.perc20(tt)  = part4(2);
+        GLOdata.perc50(tt)  = part4(3);
+        GLOdata.perc80(tt)  = part4(4);
+        GLOdata.perc100(tt) = part4(4);
+        GLOdata.Xc(tt)      = part4(4);
+
+        line=fgetl(fid);
+        line=fgetl(fid);  
+        GLOdata.shapefactor(tt) = str2num(line(18:end));   
+    end
+    %% Close file
+    fclose(fid);
 end
-line=fgetl(fid);line=fgetl(fid);line=fgetl(fid);
-
-%% Read approximation
-part3 = str2num(fgetl(fid));
-if length(part3)<5; part3(:,5) = 0; end
-part3B=[];
-part3B(:,1)=part3(4)-part3(1);
-part3B(:,2)=(part3(2)*(0-part3(1))*exp(-(part3(3)*(0-part3(1)))^2))*1000000;
-GLOdata.location     = GLOfilename;
-GLOdata.equi         = part3(:,1);
-GLOdata.c1           = part3(:,2);
-GLOdata.c2           = part3(:,3);
-GLOdata.hoek         = part3(:,4);
-GLOdata.QSoffset     = part3(:,5);
-GLOdata.Cequi        = computeEQUI(GLOdata.equi,GLOdata.c1,GLOdata.c2,GLOdata.hoek,GLOdata.QSoffset);
-GLOdata.S            = round((part3B(:,2)+GLOdata.QSoffset)*100)/100;
-
-line=fgetl(fid);line=fgetl(fid);line=fgetl(fid);
-
-%% Read bypass functions
-part4 = str2num(fgetl(fid));
-GLOdata.perc2   = part4(1);
-GLOdata.perc20  = part4(2);
-GLOdata.perc50  = part4(3);
-GLOdata.perc80  = part4(4);
-GLOdata.perc100 = part4(4);
-GLOdata.Xc      = part4(4);
-
-%% Close file
-fclose(fid);
-end
-
 
 %% SUBFUNCTION computeEQUI
 function [Cequi]=computeEQUI(equi,c1,c2,hoek,QSoffset)

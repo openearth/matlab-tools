@@ -1,27 +1,27 @@
-function [GKLdata]=readGKL(GKLfilename)
-%read GKL : Reads a UNIBEST gkl-file
-%   
+function replaceC1andC2(filedata,C1,C2,newdir)
+%ReplaceC1andC2.m replaces the C1 and C2 coefficients of a ray file with new c1 and c2 coefficients.
+%The new ray-files are written to a new directory (newdir)
+%
 %   Syntax:
-%     function  [GKLdata]=readGKL(GKLfilename)
-%          or : [x,y,rayfiles]=readGKL(GKLfilename)
-%   
+%     function replaceC1andC2(filedata,C1,C2,newdir)
+% 
 %   Input:
-%     GKLfilename         String with filename of gkl-file
-%   
+%   filedata       cell with ray-files
+%   C1             array with new C1 values
+%   C2             array with new C2 values
+%   newdir         outputpath
+%  
 %   Output:
-%     GKLdata
-%             .x          X-coordinate of ray in CL-model
-%             .y          Y-coordinate of ray in CL-model
-%             .ray_file   String with reference to a ray file
-%   
+%     .ray file
+%
 %   Example:
-%     [GKLdata]=readGKL('test.gkl')
-%   
+%     replaceC1andC2({'test1.ray','test2.ray'},[0.02;0.01],[0.1;0.3],'newC1andC2\')
+%
 %   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2014 Deltares
+%   Copyright (C) 2008 Deltares
 %       Bas Huisman
 %
 %       bas.huisman@deltares.nl	
@@ -53,44 +53,36 @@ function [GKLdata]=readGKL(GKLfilename)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 14 Apr 2011
+% Created: 16 Sep 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: replaceC1andC2.m 2849 2010-10-01 08:30:33Z huism_b $
+% $Date: 2010-10-01 10:30:33 +0200 (Fri, 01 Oct 2010) $
+% $Author: huism_b $
+% $Revision: 2849 $
+% $HeadURL: https://repos.deltares.nl/repos/mctools/trunk/matlab/applications/UNIBEST_CL/engines/replaceC1andC2.m $
 % $Keywords: $
 
-fid=fopen(GKLfilename);
-
-%Read comment line
-lin=fgetl(fid);
-% Read number of locations
-lin=fgetl(fid);
-nloc=strread(lin,'%d');
-%Read comment line
-lin=fgetl(fid);
-if isempty(nloc)
-    error('Error reading 2nd line of LOC, number of locations. Reserve at least 10 characters for this number!');
-    return
+filedata2={};
+if isstr(filedata)
+    filedata2={filedata};
+elseif iscell(filedata)
+    filedata2=filedata;
+elseif isstruct(filedata)
+    for jj=1:length(filedata)
+        filedata2{jj}=filedata(jj).name;
+    end
 end
 
-%Read data
-for i=1:nloc
-   lin = fgetl(fid);
-   [x(i) y(i) ray_file(i) ]=strread(lin,'%f%f%s');
-   ray_file{i}=regexprep(ray_file{i},'''','');
+if ~exist(newdir,'dir')
+    mkdir(newdir);
 end
-fclose(fid);
 
-[pathnm,filenm,extnm]=fileparts(GKLfilename);
-
-GKLdata = struct;
-GKLdata.filenm = [filenm,extnm];
-GKLdata.pathnm = pathnm;
-GKLdata.x = x;
-GKLdata.y = y;
-GKLdata.ray_file = ray_file;
-
+inhoudRAY2=inhoudRAY;
+for ii=1:length(filedata)
+    inhoudRAY2 = readRAY(filedata2{ii});
+    inhoudRAY2.c1(ii) = C1(ii);
+    inhoudRAY2.c2(ii) = C2(ii);
+    inhoudRAY2.path(ii) = [inhoudRAY2.path(ii),filesep,newdir];
+    writeRAY(inhoudRAY2);
+end
