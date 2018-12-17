@@ -1,4 +1,4 @@
-function hPatch=EHY_plotMapData_FM(gridInfo,zData,varargin)
+function varargout=EHY_plotMapData_FM(gridInfo,zData,varargin)
 %% EHY_plotMapData_FM(gridInfo,zData)
 % Create top views using QuickPlot / d3d_qp functionalities
 % However, this function only plots the pcolor / patch part,
@@ -83,6 +83,10 @@ for i = 1:length(unodes)
         'edgecolor',OPT.edgecolor,...
         'linestyle',OPT.linestyle,...
         'faceColor',OPT.facecolor);
+end
+
+if nargout==1
+    varargout{1}=hPatch;
 end
 
 EHYs(mfilename);

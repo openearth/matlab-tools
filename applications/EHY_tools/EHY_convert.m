@@ -418,6 +418,27 @@ end
         end
         output=xyz;
     end
+% ext2kml
+    function [output,OPT]=EHY_convert_ext2kml(inputFile,outputFile,OPT)
+        fid=fopen(inputFile);
+        ext=textscan(fid,'%s','delimiter','\n');ext=ext{1,1};
+        fclose(fid);
+        indPli=strfind(ext,'.pli');
+        indPli = find(not(cellfun('isempty',indPli)));
+        [~,pliFiles]=strtok({ext{indPli}},'=');
+        pliFiles=strtrim(strrep(pliFiles,'=',''));
+        pliFiles=cellstr(EHY_getFullWinPath(pliFiles,fileparts(inputFile)));
+        POL=[];
+        for iF=1:length(pliFiles)
+            pol=io_polygon('read',pliFiles{iF});
+            POL=[POL;NaN NaN; pol(:,1:2)];
+        end
+        [POL(:,1),POL(:,2),OPT]=EHY_convert_coorCheck(POL(:,1),POL(:,2),OPT);
+        if OPT.saveOutputFile
+          ldb2kml(POL(:,1:2),outputFile,OPT.lineColor,OPT.lineWidth);
+        end
+        output=POL;
+    end
 % grd2kml
     function [output,OPT]=EHY_convert_grd2kml(inputFile,outputFile,OPT)
         if OPT.saveOutputFile

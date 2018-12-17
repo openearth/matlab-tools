@@ -1,5 +1,5 @@
 function varargout = EHY_getMapModelData(fileInp,varargin)
-%% varargout = EHY_getMapModelData(outputfile,varargin)
+%% varargout = EHY_getMapModelData(fileInp,varargin)
 % Extracts top view data (of water levels/salinity/temperature) from output of different models
 %
 % Running 'EHY_getMapModelData_interactive' without any arguments opens a interactive version, that also gives
@@ -23,7 +23,7 @@ function varargout = EHY_getMapModelData(fileInp,varargin)
 % For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
 % created by Julien Groenenboom, October 2018
 %%
-if ~exist('outputfile','var')
+if ~exist('fileInp','var')
     EHY_getMapModelData_interactive
     return
 end
