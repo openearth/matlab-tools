@@ -15,19 +15,33 @@ switch s.model.type
         end
         s.model.file=[pathname filename];
     case 'delft3d'
-        [filename, pathname] = uigetfile({'*trih-*.dat'},['Select history file for delft3d model'],'');
-        if filename==0
-            return
+        [filename, pathname] = uigetfile({'*trih-*.dat'},['Select history file for delft3d model'],'','MultiSelect','on');
+        
+        if iscell(filename)
+            for ff = 1:length(filename)
+                s.model.file{ff}=[pathname filename{ff}];
+            end
+        else
+            if filename==0
+                return
+            end
+            s.model.file{1}=[pathname filename];
         end
-        s.model.file=[pathname filename];
 end
 
 % Specify coordinate system of model (all results of triana will be presented in WGS84
+s.model.epsgOpt=questdlg('Does model correspond fully to an epsg, or is an additional translation required?','','EPSG','EPSG+translation','EPSG');
+
 s.model.epsg=str2num(char(inputdlg(['Specify EPSG code of the model (used to convert measurements)'],'Enter model EPSG code',1,{'4326'})));
 if isempty(s.model.epsg)
     s.model.epsg = 4326; % WGS84 is assumed
 end
 s.model.epsgTxT = strrep(strrep(strtok(epsg_wkt(s.model.epsg),','),'PROJCS["',''),'"','');
+
+if strcmpi(s.model.epsgOpt,'EPSG+translation')
+    s.model.epsgTranslation =str2num(char(inputdlg(['Specify translation additional to EPSG: Xtrans Ytranx'],'specify translation',1,{'0; 0'})));
+end
+
 
 s.model.timeZone=str2num(char(inputdlg(['Specify Timezone of model relative to GMT'],'Enter time zone',1,{'0'})));
 if isempty(s.model.timeZone)

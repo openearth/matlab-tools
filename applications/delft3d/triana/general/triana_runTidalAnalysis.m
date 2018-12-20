@@ -19,7 +19,7 @@ Subperiods{1} = [ana_info.timeStart ana_info.timeEnd];
 hddt=ana_info.new_interval/(24*60); %Time interval, if not set, it will be attempted to compute
 
 maxGap=45; %in days
-minDur=30; %in days
+minDur=14; %in days
 maxDur=366; %in days
 freqTxtFraction=.4; %fraction of maximum residual bin after fourier to plot frequency text at peaks
 
@@ -225,7 +225,7 @@ for ii=1:length(sset)
         %saveas(gcf,[runID tStr '.fig'], 'fig');
         
         %Fourier
-        fourF=[708 4248 8496]/(hddt*24);
+        fourF=[354 708 4248 8496]/(hddt*24);
         dists=length(d(:,5))-fourF;
         dists(dists<0)=[];
         [dum,mid]=min(dists);

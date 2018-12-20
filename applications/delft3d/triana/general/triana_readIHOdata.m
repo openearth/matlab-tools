@@ -12,6 +12,12 @@ if s.model.epsg ~= 4326
     [X Y] =convertCoordinates(X,Y,'CS1.code',4326,'CS2.code',s.model.epsg);
 end
 
+if isfield(s.model,'epsgTranslation')
+    X = X+s.model.epsgTranslation(1);
+    Y = Y+s.model.epsgTranslation(2);
+end
+   
+
 if isfield(s.meas,'data')    
    startID = length(s.meas.data)+1;
    if size(s.meas.data,2)>1
