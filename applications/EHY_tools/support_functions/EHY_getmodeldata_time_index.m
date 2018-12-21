@@ -12,7 +12,7 @@ if ~isempty(OPT.t0) && ~isempty(OPT.tend)
             'requested data period: ' datestr(OPT.t0) ' - ' datestr(OPT.tend) char(10),...
             'available model data:  ' datestr(Data.times(1)) ' - ' datestr(Data.times(end))])
     end
-    if ~isempty(OPT.tint)
+    if isfield(OPT,'tint') & ~isempty(OPT.tint)
         times_requested = [OPT.t0:OPT.tint:OPT.tend];
         no_times        = length(times_requested);
         index_requested = [];
