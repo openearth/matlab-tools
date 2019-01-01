@@ -36,5 +36,39 @@ switch modelType
     case 'simona'
         sds=qpfopen(inputFile);
         datenums = qpread(sds,1,'water level (station)','times');
+    case 'sobek3' 
+        D        = read_sobeknc(inputFile);
+        refdate  = ncreadatt(inputFile, 'time','units');
+        datenums = D.time/1000./1440./60. + datenum(refdate(20:end),'yyyy-mm-dd');
+    case 'sobek3_new'
+        D        = read_sobeknc(inputFile);
+        refdate  = ncreadatt(inputFile, 'time','units');
+        datenums = D.time/1440./60. + datenum(refdate(15:end),'yyyy-mm-dd  HH:MM:SS');
+    case 'implic'
+        if exist([inputFile filesep 'implic.mat'],'file')
+            load([inputFile filesep 'implic.mat']);
+            datenums = tmp.times;
+        else
+            months = {'jan' 'feb' 'mrt' 'apr' 'mei' 'jun' 'jul' 'aug' 'sep' 'okt' 'nov' 'dec'};
+            fileName = [inputFile filesep 'BDSL.dat'];
+            fid      = fopen(fileName,'r');
+            line     = fgetl(fid);
+            line     = fgetl(fid);
+            line     = fgetl(fid);
+            i_time   = 0;
+            while ~feof(fid)
+                i_time             = i_time + 1;
+                line               = fgetl(fid);
+                i_day              = str2num(line(1:2));
+                i_month            = find(~cellfun(@isempty,strfind(months,line(4:6))));
+                i_year             = str2num(line( 8:11));
+                i_hour             = str2num(line(13:14));
+                i_min              = str2num(line(16:17));
+                datenums (i_time)  = datenum(i_year,i_month,i_day,i_hour,i_min,0);
+            end
+            
+            fclose(fid);
+            
+        end
 end
 

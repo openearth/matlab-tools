@@ -36,15 +36,5 @@ switch modelType
         
     case {'implic'}
         %% IMPLIC
-        if exist([sim_dir filesep 'implic.mat'],'file')
-            load([sim_dir filesep 'implic.mat']);
-        else
-            D         = dir2(sim_dir,'file_incl','\.dat$');
-            files     = find(~[D.isdir]);
-            filenames = {D(files).name};
-            for i_stat = 1: length(filenames)
-                [~,name,~] = fileparts(filenames{i_stat});
-                stationNames{i_stat} = name;
-            end
-        end
+        outputfile = sim_dir;
 end

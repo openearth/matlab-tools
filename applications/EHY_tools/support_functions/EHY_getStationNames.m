@@ -37,27 +37,24 @@ switch modelType
             stationNames  = strtrim(waquaio(sds,[],'flowstat-wl'));
         end
         
-    case {'sobek3'}
+    case {'sobek3' 'sobek3_new'}
+        
         %% SOBEK3
         D=read_sobeknc(inputFile);
-        stationNames=strtrim(D.feature_name_points.Val);
-        
-    case {'sobek3_new'}
-        %% SOBEK3 new
-        D           =read_sobeknc(inputFile);
-        stationNames=cellstr(D.observation_id');
-        
+        % Old format
+        try
+            stationNames=cellstr(strtrim(D.feature_name'));
+        % New format
+        catch
+             stationNames=cellstr(D.observation_id');
+        end
     case {'implic'}
         %% IMPLIC
-        if exist([fileparts(inputFile) filesep 'implic.mat'],'file')
-            load([fileparts(inputFile) filesep 'implic.mat']);
-        else
-            D         = dir2(fileparts(inputFile),'file_incl','\.dat$');
-            files     = find(~[D.isdir]);
-            filenames = {D(files).name};
-            for i_stat = 1: length(filenames)
-                [~,name,~] = fileparts(filenames{i_stat});
-                stationNames{i_stat} = name;
-            end
-        end
+        D         = dir2(inputFile,'file_incl','\.dat$');
+        files     = find(~[D.isdir]);
+        filenames = {D(files).name};
+        for i_stat = 1: length(filenames)
+            [~,name,~] = fileparts(filenames{i_stat});
+            stationNames{i_stat} = name;
+        end      
 end

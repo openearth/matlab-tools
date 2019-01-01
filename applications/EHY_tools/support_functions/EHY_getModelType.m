@@ -28,7 +28,7 @@ modelType='';
 
 % Delft3D-FM
 if isempty(modelType)
-    if ismember(ext,{'.mdu','.ext','.nc','.bc','.xyn','.tim'})
+    if ismember(ext,{'.mdu','.ext','.bc','.xyn','.tim'})
         modelType = 'dfm';
     end
 end
@@ -47,3 +47,26 @@ if isempty(modelType)
         modelType = 'simona';
     end
 end
+
+% Delft3D-FM or Sobek3 netcdf outputfile
+if isempty(modelType)
+    if ismember(ext,{'.nc'})
+        if ~isempty(strfind(fileInp,'his.nc'))
+            modelType = 'dfm';
+        elseif ~isempty(strfind(name,'observations'))
+            modelType = 'sobek3_new';
+        elseif ~isempty(strfind(name,'water level (op)-'))
+            modelType = 'sobek3';
+        end
+    end
+end
+
+% Implic
+if isempty(modelType)
+    if isdir(fileInp)
+        modelType = 'implic';
+    end
+end
+
+
+

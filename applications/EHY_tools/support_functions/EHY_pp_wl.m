@@ -114,7 +114,8 @@ end
 % mkdir (fig_dir);
 
 % Read computational data for requested stations
-Data=EHY_getmodeldata(sim_dir,runid,stations_sim, modelType);
+inputFile = EHY_simdirRunIdAndModelType2outputfile(sim_dir  ,runid       ,modelType);
+Data      = EHY_getmodeldata                      (inputFile,stations_sim,modelType);
 
 % Cycle over the periods
 for i_per = 1: size(Periods,1)

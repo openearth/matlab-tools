@@ -25,8 +25,9 @@ if ~isempty(OPT.t0) && ~isempty(OPT.tend)
         varargout{1} = index_requested;
     end
 else
-    select=true(length(Data.times),1);
-    time_index=0;
+    select       = true(length(Data.times),1);
+    time_index   = find(select);
+    varargout{1} = time_index;
 end
 
 end

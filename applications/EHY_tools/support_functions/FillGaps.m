@@ -5,26 +5,18 @@ function[times_new,values_new] = FillGaps(times,values,varargin)
 %% Initialize
 OPT.interval = 2./24;
 OPT = setproperty(OPT,varargin);
-eps = 1e-6;
 
 times_new  = times;
 values_new = values;
 max_diff   = 365;
 
-%% As long as there are time differences larger than interval
+%% For difference larger than difference speccified as interval
 time_diff = times(2:end) - times(1:end-1);
-max_diff  = max(time_diff);
-while max_diff > OPT.interval + eps
-    index     = find(time_diff > OPT.interval + eps,1,'first');
-    if ~isempty(index)
-        %% add NaN in between
-        times_new  = vertcat(times (1:index), times(index) + OPT.interval, times (index + 1:end));
-        values_new = vertcat(values(1:index), NaN                        , values(index + 1:end));
-        times      = times_new;
-        values     = values_new;
-    end
-    time_diff = times(2:end) - times(1:end-1);
-    max_diff = max(time_diff);
+add       = find (time_diff > OPT.interval);
+for i_add = length(add):-1:1
+    %% add NaN in between
+    times  = vertcat(times (1:add(i_add)), times(add(i_add)) + OPT.interval, times (add(i_add) + 1:end));
+    values = vertcat(values(1:add(i_add)), NaN                             , values(add(i_add) + 1:end));
 end
 
 
