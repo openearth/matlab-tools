@@ -340,6 +340,8 @@ switch modelType
                     E.MNKmax=[dimen(2) dimen(3) dimen(18)];
                 end
         end % typeOfModelFile
+    case {'sobek3' 'sobek3_new' 'implic'}
+        E.no_layers = 1;
 end % modelType
 
 %% For vertical coordinates fill output structure E with requested stations only
