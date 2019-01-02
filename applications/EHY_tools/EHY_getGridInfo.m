@@ -1,6 +1,6 @@
 function gridInfo=EHY_getGridInfo(inputFile,varargin)
 %% gridInfo=EHY_getGridInfo(inputFile,varargin)
-% Get information (specified in varargin) from the provided file
+% Get information (specified in varargin{1}) from the provided file
 %
 % Input Arguments:
 % inputFile: 	master definition file (.mdf / .mdu), grid file, outputfile
@@ -14,18 +14,19 @@ function gridInfo=EHY_getGridInfo(inputFile,varargin)
 %               layer_model             E.layer_model
 %               face_nodes_xy           E.face_nodes_x & E.face_nodes_y
 %               area                    E.area
+%               Z                       E.Zcen & E.Zint
 % varargin{2:3) <keyword/value> pair
 %               stations                celll array of station names
 %                                       identical to specified in input for
 %                                       EHY_getmodeldata
+%
 % For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
 % created by Julien Groenenboom, October 2018
+
 %% Initialisation
 OPT.stations     = '';
 OPT.varName      = 'wl';
 OPT              = setproperty(OPT,varargin{2:end});
-stations         = OPT.stations;
-varName          = OPT.varName;
 
 %% process input from user
 if nargin==0 || isempty(inputFile)
@@ -35,11 +36,7 @@ else
     if isempty(varargin)
         error('No wanted output specified')
     end
-    if length(varargin)>=1 && iscell(varargin{1}) % input was provided as cell
-        wantedOutput=varargin{1};
-    else
-        wantedOutput=varargin(1);
-    end
+    wantedOutput=cellstr(varargin{1});
 end
 
 %% determine type of model and type of inputFile
@@ -128,14 +125,14 @@ switch modelType
                 if ismember('Z',wantedOutput)
                     % his-file
                     if ~isempty(strmatch('LayCoord_cc',{infonc.Variables.Name},'exact')) % old fm version
-                        tmp.Zcen=ncread(inputFile,'LayCoord_cc');
-                        tmp.Zcor=ncread(inputFile,'LayCoord_w');
+                        E.Zcen=ncread(inputFile,'LayCoord_cc');
+                        E.Zint=ncread(inputFile,'LayCoord_w');
                     elseif ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact'))
-                        tmp.Zcen=ncread(inputFile,'mesh2d_layer_z');
-                        tmp.Zcor=ncread(inputFile,'mesh2d_interface_z');
+                        E.Zcen=ncread(inputFile,'mesh2d_layer_z');
+                        E.Zint=ncread(inputFile,'mesh2d_interface_z');
                     elseif ~isempty(strmatch('zcoordinate_c',{infonc.Variables.Name},'exact'))
-                        tmp.Zcen=permute(ncread(inputFile,'zcoordinate_c'),[3 2 1]);
-                        tmp.Zint=permute(ncread(inputFile,'zcoordinate_w'),[3 2 1]);
+                        E.Zcen=permute(ncread(inputFile,'zcoordinate_c'),[3 2 1]);
+                        E.Zint=permute(ncread(inputFile,'zcoordinate_w'),[3 2 1]);
                     end
                     
                     % map
@@ -150,6 +147,8 @@ switch modelType
                 if ismember('layer_model',wantedOutput)
                     if ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact')) % old fm version
                         E.layer_model='z-model';
+                    elseif ~isempty(strmatch('zcoordinate_c',{infonc.Variables.Name},'exact'))
+                        E.layer_model='sigma-model';
                     end
                 end
                 if ismember('face_nodes_xy',wantedOutput)
@@ -268,12 +267,12 @@ switch modelType
                             for i_stat = 1: no_stat
                                 if strcmpi(E.layer_model,'sigma')
                                     depth = dps(i_stat) + zwl(i_time,i_stat);
-                                    tmp.Zint(i_time,i_stat,1     ) = -zwl(i_tim,i_stat) + dps(i_stat);
-                                    tmp.Zint(i_time,i_stat,kmax+1) =  dps(istat);
-                                    tmp.Zcen(i_time,i_stat,1     ) = -zwl(i_time,i_stat) + 0.5*thick(1)*depth;
+                                    E.Zint(i_time,i_stat,1     ) = -zwl(i_tim,i_stat) + dps(i_stat);
+                                    E.Zint(i_time,i_stat,kmax+1) =  dps(istat);
+                                    E.Zcen(i_time,i_stat,1     ) = -zwl(i_time,i_stat) + 0.5*thick(1)*depth;
                                     for k = 2: kmax
-                                        tmp.Zint(i_time,i_stat,k)  = tmp.Zint(i_time,i_stat,k-1) + thick(k-1)*depth;
-                                        tmp.Zcen(i_time,i_stat,k)  = tmp.Zcen(i_time,i_stat,k-1) + 0.5*(thick(k-1) + thick(k))*depth;
+                                        E.Zint(i_time,i_stat,k)  = E.Zint(i_time,i_stat,k-1) + thick(k-1)*depth;
+                                        E.Zcen(i_time,i_stat,k)  = E.Zcen(i_time,i_stat,k-1) + 0.5*(thick(k-1) + thick(k))*depth;
                                     end
                                 elseif strcmpi(E.layer_model,'z-model')
                                     zk_int(1:kmax + 1) = NaN;                   
@@ -286,10 +285,10 @@ switch modelType
                                     zk_int(i_stop)  =  zwl(i_time,i_stat);
                                     
                                     zk_int(i_start+1:i_stop-1) = zk(i_start+1:i_stop-1);
-                                    tmp.Zint(i_time,i_stat,:) = zk_int;
+                                    E.Zint(i_time,i_stat,:) = zk_int;
                                     for k = 1: kmax
-                                        tmp.Zcen(i_time,i_stat,k) = 0.5*(tmp.Zint(i_time,i_stat,k  ) + ...
-                                                                         tmp.Zint(i_time,i_stat,k+1) );
+                                        E.Zcen(i_time,i_stat,k) = 0.5*(E.Zint(i_time,i_stat,k  ) + ...
+                                                                         E.Zint(i_time,i_stat,k+1) );
                                     end
                                 end
                             end
@@ -344,20 +343,15 @@ switch modelType
         E.no_layers = 1;
 end % modelType
 
-%% For vertical coordinates fill output structure E with requested stations only
-if (strcmpi(modelType,'dfm')              || (strcmpi(modelType,'d3d')  && ~isempty(strfind(name,'trih-')))) && ...
-    strcmpi(typeOfModelFile,'outputfile') && ismember('Z',wantedOutput) && exist('tmp','var')
-
-    Data_stat      = EHY_getRequestedStations(inputFile,stations,modelType,'varName',varName);
+%% If selection of stations is specified, reduce output to specified stations only
+if ~isempty(OPT.stations) && isfield(E,'Zint')
+    Data_stat      = EHY_getRequestedStations(inputFile,OPT.stations,modelType,'varName',OPT.varName);
     stationNrNoNan = Data_stat.stationNrNoNan;
-    if isempty(stations)
-        E = tmp;
-    else
         E.Zcen = tmp.Zcen(:,stationNrNoNan,:);
         E.Zint = tmp.Zint(:,stationNrNoNan,:);
-    end
 end
 
+%% Output structure E
 if ~exist('E','var')
     disp('Could not find any of this data in the provided file');
 end
