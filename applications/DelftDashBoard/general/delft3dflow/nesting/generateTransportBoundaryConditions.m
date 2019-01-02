@@ -82,11 +82,12 @@ D = size(dplayer);
 
 switch opt.(par)(ii).BC.source
     case 4
+        
         % Constant
         pars=[0 opt.(par)(ii).BC.constant]';
     case 5
+        
         % Profile
-%        pars=opt.(par)(ii).BC.profile';
         pars=load(opt.(par)(ii).BC.profileFile);
         pars=pars';
 end
@@ -137,8 +138,8 @@ switch opt.(par)(ii).BC.source
         end
         
     case{2}
+        
         % File
-         
         for i=1:length(openBoundaries)
             x(i,1)=0.5*(openBoundaries(i).x(1) + openBoundaries(i).x(2));
             y(i,1)=0.5*(openBoundaries(i).y(1) + openBoundaries(i).y(2));

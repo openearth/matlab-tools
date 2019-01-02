@@ -120,7 +120,7 @@ if isfield(opt,'cs')
     end
 end
 
-switch flow.coordSysType
+switch flow.cs
     case{'projected'}
         % Take value from flow input
         opt.latitude=flow.latitude;
@@ -150,6 +150,7 @@ switch lower(option)
         
 end
 
+% Delete TMP waterlevels
 if exist([workdir 'TMPOCEAN_waterlevel.mat'],'file')
     delete([workdir 'TMPOCEAN_waterlevel.mat']);
 end
@@ -165,6 +166,7 @@ end
 if exist([workdir 'TMPOCEAN_temperature.mat'],'file')
     delete([workdir 'TMPOCEAN_temperature.mat']);
 end
+
 %% Output
 varargout{1} = openBoundaries;
 varargout{2} = flow;

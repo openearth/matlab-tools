@@ -82,6 +82,7 @@ if isfield(opt,par)
     switch opt.(par)(ii).IC.source
         
         case{4,5}
+            
             % Constant or profile
             depths=pars(1,:); % Depths must be defined positive up! I.e. at a level 1000 below the surface, depth must be -1000
             vals=pars(2,:);
@@ -98,8 +99,8 @@ if isfield(opt,par)
             v=data;
             
         case{2,3}
-            % File
             
+            % File
             xz=flow.gridXZ;
             xz=mod(xz,360);
             yz=flow.gridYZ;
@@ -286,10 +287,35 @@ else
     dk=1;
 end
 
+% C
 switch lower(par)
     case{'waterlevel'}
-        dd=internaldiffusion(data,'nst',5);
-        dd(dd==-999)=0;
+        
+        % If -999 we compute geoid to local msl based on HYCOM
+        if opt.waterLevel.IC.constant == -999
+            
+            % goes from -180 to +180
+            fnc         = 'p:\metocean-data\open\HYCOM\surface_level\figures\mean.nc';
+            latitude    = nc_varget(fnc, 'latitude');
+            longitude   = nc_varget(fnc, 'longitude');
+            mean        = nc_varget(fnc, 'mean');
+            
+            % goes from 0 - 360
+            id              = longitude < 0; 
+            longitudeddb    = [longitude(~id); 360 + longitude(id)];
+            meanddb         = [mean(:, ~id) mean(:, id)];
+
+            % Interpolate to model domain
+            idlon           = find(longitudeddb >= nanmin(nanmin(xz)) & longitudeddb <= nanmax(nanmax(xz)) );
+            idlat           = find(latitude >= nanmin(nanmin(yz)) & latitude <= nanmax(nanmax(yz)) );
+            [lon_TMP, lat_TMP] = meshgrid(longitudeddb(idlon), latitude(idlat));
+            geoid_msl       = internaldiffusion(griddata(lon_TMP, lat_TMP, meanddb(idlat, idlon), xz, yz), 'nst', 5);
+            dd              = internaldiffusion(data,'nst',5) - geoid_msl;
+            
+        else
+            dd=internaldiffusion(data,'nst',5);
+            dd(dd==-999)=0;
+        end
         ddb_wldep('write',fname,dd,'negate','n','bndopt','n');
     case{'current'}
         for k=k1:dk:k2

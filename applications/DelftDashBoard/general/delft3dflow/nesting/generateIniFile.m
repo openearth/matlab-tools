@@ -93,12 +93,14 @@ end
 %%%%%%%%%%%%%%%%%% Changed by j.lencart@gmail.com %%%%%%%
 disp('   Water levels ...');
 switch opt.waterLevel.IC.source
+    
     case 4
-% Constant
+        % Constant
         h=zeros(mmax,nmax)+opt.waterLevel.IC.constant;
         ddb_wldep('write',fname,h,'negate','n','bndopt','n');
+        
     case 2
-% From file
+        % From file
         h=generateInitialConditions(flow,opt,'waterLevel',1,dplayer,fname);
 end
 
@@ -111,6 +113,7 @@ if ~strcmpi(flow.vertCoord,'z')
     end
     dplayer = dplayer + h;
 end
+
 %% Velocities
 disp('   Velocities ...');
 generateInitialConditions(flow,opt,'current',1,dplayer,fname);

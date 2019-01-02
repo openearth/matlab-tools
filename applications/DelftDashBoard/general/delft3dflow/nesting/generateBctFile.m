@@ -179,7 +179,7 @@ if genWLAstro
     [twlastro,wlastro]=generateWaterLevelsFromAstro(flow,opt);
 end
 if genWLConst
-    disp('   Water levels from constant ...');
+    disp('   Water levels from constant ...');    
     wlconst=wlconst+opt.waterLevel.BC.constant;
 end
 if genWL3D
@@ -214,7 +214,73 @@ end
 % end
 
 %% Add time series from different sources
+if opt.waterLevel.BC.constant == -999
+    
+    %% PART A: determine geoid-msl
+    % goes from -180 to +180
+    fname       = 'p:\metocean-data\open\HYCOM\surface_level\figures\original\mean.nc';
+    latitude    = nc_varget(fname, 'latitude');
+    longitude   = nc_varget(fname, 'longitude');
+    mean        = nc_varget(fname, 'mean');
+    clear fname
+           
+    % goes from 0 - 360
+    id              = longitude < 0; 
+    longitudeddb    = [longitude(~id); 360 + longitude(id)];
+    meanddb         = [mean(:, ~id) mean(:, id)];
+    
+    % Interpolate to model domain
+    nr=length(openBoundaries);
+
+    for i=1:nr
+
+        % End A
+        x(i,1)=0.5*(openBoundaries(i).x(1) + openBoundaries(i).x(2));
+        y(i,1)=0.5*(openBoundaries(i).y(1) + openBoundaries(i).y(2));
+
+        % End B
+        x(i,2)=0.5*(openBoundaries(i).x(end-1) + openBoundaries(i).x(end));
+        y(i,2)=0.5*(openBoundaries(i).y(end-1) + openBoundaries(i).y(end));
+
+    end
+
+    if isfield(flow,'coordSysType')
+        if ~strcmpi(flow.coordSysType,'geographic')
+            % First convert grid to WGS 84
+            [x,y]=convertCoordinates(x,y,'persistent','CS1.name',flow.coordSysName,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
+        end
+        x=mod(x,360);
+    end
+    x=mod(x,360);
+    minx=min(min(x))-0.1;
+    maxx=max(max(x))+0.1;
+    miny=min(min(y))-0.1;
+    maxy=max(max(y))+0.1;
+    
+    % Interpolate to model domain
+    idlon           = find(longitudeddb >= minx & longitudeddb <= maxx);
+    idlat           = find(latitude >= miny & latitude <= maxy);
+    [lon_TMP, lat_TMP] = meshgrid(longitudeddb(idlon), latitude(idlat));
+    figure; pcolor(lon_TMP, lat_TMP, meanddb(idlat, idlon)); shading flat;
+    geoid_msl       = griddata(lon_TMP, lat_TMP, meanddb(idlat, idlon), x, y);
+    for ii = 1:size(geoid_msl,1)
+        for jj = 1:size(geoid_msl,2)
+            wlconst(ii,jj,[1:size(wl3d,3)])         = geoid_msl(ii,jj)*-1;
+        end
+    end
+    
+    %% PART B: CORRECT HYCOM
+    wl3d            = wl3d + 999;
+    
+end
 wl=wlconst+wlastro+wl3d;
+
+% figure; hold on;
+% plot(squeeze(wlconst(1,1,:)))
+% plot(squeeze(wlastro(1,1,:)))
+% plot(squeeze(wl3d(1,1,:)))
+% plot(squeeze(wl(1,1,:)))
+
 % switch opt.current.BC.source
 %     case 1
 %         vel=velconst+velastro;
