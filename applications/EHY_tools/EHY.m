@@ -52,6 +52,8 @@ functions{end+1,1}='EHY_getGridInfo';
 functions{end  ,2}='Get grid info from a grid file, modelinputfile (.mdf,.mdu,siminp) or modeloutputfile';
 functions{end+1,1}='EHY_movieMaker';
 functions{end  ,2}='Create animations out of multiple PNG''s or JPG''s';
+functions{end+1,1}='EHY_geoReference';
+functions{end  ,2}='Interactively georeference a figure (create world file)';
 
 h=findall(0,'type','figure','name','EHY_TOOLS  - Everbody Helps You');
 if ~isempty(h)
@@ -63,7 +65,7 @@ else
     EHYfig=figure('units','centimeters','position',[12.0227 6.4982 16.8 13],'name','EHY_TOOLS  - Everbody Helps You','color',[0.94 0.94 0.94]);
     movegui(EHYfig,'center');
 end
-height=13;
+height=13.8;
 
 for iF=1:length(functions)
     button=uicontrol('Style', 'pushbutton', 'String',functions{iF,1},...
