@@ -62,7 +62,7 @@ if ~isempty(h)
     movegui(h,'center');
     disp('The EHY_TOOLS GUI was already open')
 else
-    EHYfig=figure('units','centimeters','position',[12.0227 6.4982 16.8 13],'name','EHY_TOOLS  - Everbody Helps You','color',[0.94 0.94 0.94]);
+    EHYfig=figure('units','centimeters','position',[12.0227 6.4982 16.8 13.8],'name','EHY_TOOLS  - Everbody Helps You','color',[0.94 0.94 0.94]);
     movegui(EHYfig,'center');
 end
 height=13.8;
