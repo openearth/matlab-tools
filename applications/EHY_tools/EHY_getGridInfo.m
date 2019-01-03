@@ -15,6 +15,7 @@ function gridInfo=EHY_getGridInfo(inputFile,varargin)
 %               face_nodes_xy           E.face_nodes_x & E.face_nodes_y
 %               area                    E.area
 %               Z                       E.Zcen & E.Zint
+%               layer_perc              E.layer_perc (bed to surface)
 % varargin{2:3) <keyword/value> pair
 %               stations                celll array of station names
 %                                       identical to specified in input for
@@ -78,6 +79,15 @@ switch modelType
                         E.layer_model='sigma-model';
                     elseif mdu.geometry.Layertype==2
                         E.layer_model='z-model';
+                    end
+                end
+                if ismember('layer_perc',wantedOutput)
+                    if isfield(mdu.geometry,'StretchCoef') 
+                      E.layer_perc=mdu.geometry.StretchCoef;
+                    else
+                        % assume uniform distribution
+                        lyrs=mdu.geometry.Kmx;
+                        E.layer_perc=repmat(1/lyrs,lyrs,1);
                     end
                 end
             case 'outputfile'
@@ -145,10 +155,29 @@ switch modelType
                     end
                 end
                 if ismember('layer_model',wantedOutput)
-                    if ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact')) % old fm version
+                    if ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact')) % _map.nc
                         E.layer_model='z-model';
+                    elseif ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact')) % _map.nc
+                        E.layer_model='sigma-model';
                     elseif ~isempty(strmatch('zcoordinate_c',{infonc.Variables.Name},'exact'))
                         E.layer_model='sigma-model';
+                    else % not in merged_map.nc, try to get this info from mdFile
+                        try
+                           mdFile=EHY_getMdFile(inputFile); 
+                           gridInfo=EHY_getGridInfo(mdFile,'layer_model');
+                           E.layer_model=gridInfo.layer_model;
+                        end
+                    end
+                end
+                if ismember('layer_perc',wantedOutput)
+                    if ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact'))
+                        E.layer_perc=diff(ncread(inputFile,'mesh2d_interface_sigma'));
+                    else % not in merged_map.nc, try to get this info from mdFile
+                        try
+                            mdFile=EHY_getMdFile(inputFile);
+                            gridInfo=EHY_getGridInfo(mdFile,'layer_perc');
+                            E.layer_perc=gridInfo.layer_perc;
+                        end
                     end
                 end
                 if ismember('face_nodes_xy',wantedOutput)
@@ -183,7 +212,7 @@ switch modelType
                         E.area=ncread(inputFile,'mesh2d_flowelem_ba');
                     end
                end  
-                
+
                % If partitioned run, delete ghost cells
                [~, name]=fileparts(inputFile);
                if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && nc_isvar(inputFile,'FlowElemDomain')

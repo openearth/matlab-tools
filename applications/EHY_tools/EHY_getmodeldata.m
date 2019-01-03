@@ -103,7 +103,7 @@ OPT       = EHY_getmodeldata_layer_index(OPT,no_layers);
 %% Get list with the numbers of the requested stations
 Data           = EHY_getRequestedStations(inputFile,stat_name,modelType,'varName',OPT.varName);
 stationNrNoNan = Data.stationNrNoNan;
-if exist('tmp','var') Data.times     = tmp.times(index_requested); end
+if exist('tmp','var'); Data.times     = tmp.times(index_requested); end
 
 %% Get z-coordinates from history file in case of profiles
 if strncmpi(OPT.dataType,'prof',min(4,length(OPT.dataType)))
@@ -153,12 +153,14 @@ switch modelType
                 value_x = nan(nr_times_clip,length(Data.stationNames),no_layers);
                 value_y = nan(nr_times_clip,length(Data.stationNames),no_layers);
             end
-        elseif ismember(OPT.varName,{'salinity','temperature',infonc.Variables(:).Name})
+        elseif ismember(OPT.varName,{'salinity','temperature','Zcen',infonc.Variables(:).Name})
             if no_layers==1 % 2Dh
                 value = nan(nr_times_clip,length(Data.stationNames));
             else
                 value = nan(nr_times_clip,length(Data.stationNames),no_layers);
             end
+        elseif ismember(OPT.varName,{'Zint'})
+            value = nan(nr_times_clip,length(Data.stationNames),no_layers+1);
         end
         
         for i = 1:nr_blocks % time blocks
@@ -200,11 +202,17 @@ switch modelType
                     else
                         value(bl_start:bl_stop,:,:) 	= permute(ncread(inputFile,OPT.varName,[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
                     end
-                case 'zcoord'
+                case 'Zcen'
                     if no_layers==1 % 2Dh
                         value(bl_start:bl_stop,:) 	= permute(ncread(inputFile,'zcoordinate_c',[1 bl_start+offset],[Inf bl_int]),[2 1]);
                     else
                         value(bl_start:bl_stop,:,:) = permute(ncread(inputFile,'zcoordinate_c',[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
+                    end
+                case 'Zint'
+                    if no_layers==1 % 2Dh
+                        value(bl_start:bl_stop,:) 	= permute(ncread(inputFile,'zcoordinate_w',[1 bl_start+offset],[Inf bl_int]),[2 1]);
+                    else
+                        value(bl_start:bl_stop,:,:) = permute(ncread(inputFile,'zcoordinate_w',[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
                     end
                 case {infonc.Variables(:).Name} % like constituents (e.g. totalN, totalP)
                     if no_layers==1 % 2Dh
