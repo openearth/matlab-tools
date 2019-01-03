@@ -295,22 +295,17 @@ switch lower(par)
         if opt.waterLevel.IC.constant == -999
             
             % goes from -180 to +180
-            fnc         = 'p:\metocean-data\open\HYCOM\surface_level\figures\mean.nc';
-            latitude    = nc_varget(fnc, 'latitude');
-            longitude   = nc_varget(fnc, 'longitude');
-            mean        = nc_varget(fnc, 'mean');
-            
-            % goes from 0 - 360
-            id              = longitude < 0; 
-            longitudeddb    = [longitude(~id); 360 + longitude(id)];
-            meanddb         = [mean(:, ~id) mean(:, id)];
-
-            % Interpolate to model domain
-            idlon           = find(longitudeddb >= nanmin(nanmin(xz)) & longitudeddb <= nanmax(nanmax(xz)) );
-            idlat           = find(latitude >= nanmin(nanmin(yz)) & latitude <= nanmax(nanmax(yz)) );
-            [lon_TMP, lat_TMP] = meshgrid(longitudeddb(idlon), latitude(idlat));
-            geoid_msl       = internaldiffusion(griddata(lon_TMP, lat_TMP, meanddb(idlat, idlon), xz, yz), 'nst', 5);
-            dd              = internaldiffusion(data,'nst',5) - geoid_msl;
+            fnc             = 'p:\11201739-usgs-coop-20172018\CoralReefs\Maui\03_data\DTU\DTU10MDT_1min.nc';
+            lat             = nc_varget(fnc, 'lat');
+            lon             = nc_varget(fnc, 'lon');
+            idlat           = find(lat >= nanmin(nanmin(yz)) & lat <= nanmax(nanmax(yz)));
+            idlon           = find(lon >= nanmin(nanmin(xz)) & lon <= nanmax(nanmax(xz)));
+            mdt             = nc_varget(fnc, 'mdt', [idlat(1)-1 idlon(1)-1], [length(idlat) length(idlon)]);
+            lat             = nc_varget(fnc, 'lat', [idlat(1)-1], [length(idlat)]);
+            lon             = nc_varget(fnc, 'lon', [idlon(1)-1], [length(idlon)]);
+            [lon_TMP, lat_TMP]  = meshgrid(lon, lat);
+            geoid_msl           = internaldiffusion(griddata(lon_TMP, lat_TMP, mdt, xz, yz), 'nst', 5);
+            dd                  = internaldiffusion(data,'nst',5) - geoid_msl;
             
         else
             dd=internaldiffusion(data,'nst',5);

@@ -67,8 +67,13 @@ t1=flow.stopTime;
 dt=opt.bctTimeStep;
 times=t0:dt/1440:t1;
 
-openBoundaries=delft3dflow_readBndFile([opt.inputDir filesep opt.waterLevel.BC.bndAstroFile]);
-astronomicComponentSets=delft3dflow_readBcaFile([opt.inputDir filesep opt.waterLevel.BC.astroFile]);
+runid = '';
+if isfield(opt,'runid')
+    runid=opt.runid;
+end
+
+openBoundaries=delft3dflow_readBndFile([runid filesep opt.waterLevel.BC.bndAstroFile]);
+astronomicComponentSets=delft3dflow_readBcaFile([runid filesep opt.waterLevel.BC.astroFile]);
 
 if ~isempty(opt.waterLevel.BC.corFile)
     corrections=delft3dflow_readBcaFile(opt.waterLevel.BC.corFile);
