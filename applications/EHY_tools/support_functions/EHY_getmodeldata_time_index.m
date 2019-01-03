@@ -5,6 +5,7 @@ select       = [];
 if ~isempty(OPT.t0) && ~isempty(OPT.tend) 
     select=(Data.times>=OPT.t0) & (Data.times<=OPT.tend);
     time_index=find(select);
+    varargout{1} = 1:length(time_index);
     if ~isempty(time_index)
         Data.times=Data.times(time_index);
     else

@@ -51,7 +51,7 @@ end
 % Delft3D-FM or Sobek3 netcdf outputfile
 if isempty(modelType)
     if ismember(ext,{'.nc'})
-        if ~isempty(strfind(fileInp,'his.nc'))
+        if ~isempty(strfind(fileInp,'his.nc')) || ~isempty(strfind(fileInp,'map.nc'))
             modelType = 'dfm';
         elseif ~isempty(strfind(name,'observations'))
             modelType = 'sobek3_new';

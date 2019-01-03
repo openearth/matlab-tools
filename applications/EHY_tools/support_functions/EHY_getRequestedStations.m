@@ -1,14 +1,20 @@
 function [Data] = EHY_getRequestedStations(fileInp,requestedStations,modelType,varargin)
-
 % Gets the subset of requested stations out of the list of available stations
 OPT.varName = 'wl';
 OPT         = setproperty(OPT,varargin);
 varName     = OPT.varName;
 
-%% no requestedStations specified, all stations, otherwise, stat_name is a string or a cell array of strings
+if ~exist('modelType','var')
+    modelType=EHY_getModelType(fileInp);
+    if isempty(modelType)
+        error('Could not determine modelType, please specify the modelType yourself');
+    end
+end
+
+%% no requestedStations specified, all stations, otherwise, requestedStations is a cell array of string(s)
 if ~isempty(requestedStations)
-    if ~iscell(requestedStations)
-        stat_name = {requestedStations};
+    if ischar(requestedStations)
+        requestedStations = cellstr(requestedStations);
     end
 end
 
@@ -29,9 +35,13 @@ for i_stat = 1:length(requestedStations)
     if isempty(nr_stat)
         Data.exist_stat(i_stat,1) = false;
         disp(['Station : ' requestedStations{i_stat} ' does not exist']);
-    else
+    elseif length(nr_stat)==1
         stationNr      (i_stat,1) = nr_stat;
         Data.exist_stat(i_stat,1) = true;
+    elseif length(nr_stat)>1
+        stationNr      (i_stat,1) = nr_stat(1);
+        Data.exist_stat(i_stat,1) = true;
+        disp(['Station : ' requestedStations{i_stat} ' was found ' num2str(length(nr_stat)) ' times, using first one from obs file']);
     end
 end
 Data.stationNrNoNan=stationNr(~isnan(stationNr));

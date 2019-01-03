@@ -32,6 +32,10 @@ switch modelType
             % history output file from simulation
             trih     = qpfopen(inputFile);
             datenums = qpread(trih,'water level','times');
+        elseif ~isempty(strfind(inputFile,'trim'))
+            % history output file from simulation
+            trim     = qpfopen(inputFile);
+            datenums = qpread(trim,'water level','times');
         end
     case 'simona'
         sds=qpfopen(inputFile);
