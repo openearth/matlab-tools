@@ -1,7 +1,7 @@
-function fid = delft3d_io_meteo_write(filehandle,time,X,Y, data,varargin)
+function fid = delft3d_io_meteo_write(filehandle,time,X,Y,data,varargin)
 %DELFT3D_IO_METEO_WRITE   write meteo data file on curvilinear grid
 %
-%  <fid> = delft3d_io_meteo_write(file,time,data,x,y,<keyword,value>)
+%  <fid> = delft3d_io_meteo_write(file,time,x,y,data,<keyword,value>)
 %
 % where file can be fid (opened by previous call) or a filename (1st call
 % wipes existing file with same name), time is the time in Matlab datenumbers.
@@ -90,7 +90,7 @@ function fid = delft3d_io_meteo_write(filehandle,time,X,Y, data,varargin)
 OPT.header           = '';
 
 OPT.filetype         = 'meteo_on_curvilinear_grid';
-OPT.nodata_value     = -9;
+OPT.nodata_value     = -999;
 OPT.grid_file        = 'temp.grd';
 OPT.writegrd         = true;
 OPT.n_quantity       = 1;
@@ -120,6 +120,11 @@ end
 
 OPT = setproperty(OPT,varargin{nextarg:end});
 OPT.hr = (time - OPT.refdatenum)*24;
+
+% update properites
+OPT.quantity = cellstr(OPT.quantity);
+OPT.unit = cellstr(OPT.unit);
+OPT.n_quantity = numel(OPT.quantity);
 
 %% Open file
 
@@ -178,9 +183,9 @@ if strcmpi(OPT.filetype,'meteo_on_equidistant_grid')
         fprintf  (fid,['n_quantity       = ',num2str(OPT.n_quantity)]);
         fprinteol(fid,OPT.OS);
         for q = 1:OPT.n_quantity
-            fprintf  (fid,['quantity' num2str(q) '        = ',OPT.quantity]);
+            fprintf  (fid,['quantity' num2str(q) '        = ',OPT.quantity{q}]);
             fprinteol(fid,OPT.OS);
-            fprintf  (fid,['unit' num2str(q) '            = ',OPT.unit]);
+            fprintf  (fid,['unit' num2str(q) '            = ',OPT.unit{q}]);
             fprinteol(fid,OPT.OS);
         end
         fprintf  (fid,['NODATA_value     = ',num2str(OPT.nodata_value)]);
@@ -201,7 +206,7 @@ elseif strcmpi(OPT.filetype,'meteo_on_curvilinear_grid')
         
         % grid has to be written inside DELFT3D_IO_METEO_WRITE to ensure same shape as data block
         
-        if exist('wlgrid')==0
+        if exist('wlgrid','file')==0
             error('function wlgrid missing.')
         end
         
@@ -274,7 +279,6 @@ end
 
 %% Close files (only when 1st call AND no reuse requested)
 
-if nargout==0 & ischar(filehandle)
+if nargout==0 && ischar(filehandle)
     fclose(fid);
 end
-fclose('all');
