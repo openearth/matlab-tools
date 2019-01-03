@@ -41,7 +41,7 @@ try % if simulation has finished
             mdu=dflowfm_io_mdu('read',mdFile);
             
             % grid info
-            gridInfo=EHY_getGridInfo(mdFile,'no_layers','dimensions');
+            gridInfo=EHY_getGridInfo(mdFile,{'no_layers','dimensions'});
             noLayers=gridInfo.no_layers;
             
             % dia
