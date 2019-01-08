@@ -173,7 +173,9 @@ function print2a4(fname,varargin)
    [fileexist,action]=filecheck(fullfile(filepathstr(fname),[filename(fname),fext]),overwrite_append);
    if strcmpi(action,'o')
         if ~exist(filepathstr(fname),'dir')
-        mkdir(filepathstr(fname))
+         if ~isempty(filepathstr(fname)) % Warning: An empty directory name was given. No directory will be created. This syntax may not be supported in future releases. 
+          mkdir(filepathstr(fname))
+         end
         end
       print(printtype,fname,resolution);
    end

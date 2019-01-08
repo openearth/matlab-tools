@@ -31,7 +31,7 @@ function print2screensizeoverwrite(fname,varargin)
 % PRINT2SCREENSIZEOVERWRITE(filename, 800)
 % PRINT2SCREENSIZEOVERWRITE(filename,1024)
 %
-%%See also: PRINT, PRINT2A4, PRINT2SCREENSIZE
+%See also: PRINT, PRINT2A4, PRINT2SCREENSIZE
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-8 Delft University of Technology
@@ -133,7 +133,9 @@ Shortside   = (( height) + dh)./resolution;
   action = 'o';
    if strcmpi(action,'o')
       if ~exist(filepathstr(fname),'dir')
-      mkdir(filepathstr(fname))
+         if ~isempty(filepathstr(fname)) % Warning: An empty directory name was given. No directory will be created. This syntax may not be supported in future releases. 
+            mkdir(filepathstr(fname))
+         end
       end
       print(gcf,imageformat,['-r',num2str(resolution)],fname);
    end

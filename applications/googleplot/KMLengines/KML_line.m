@@ -22,7 +22,7 @@ function varargout = KML_line(lat,lon,varargin)
 %     S.lineAlpha = [1] ;     % transparency of the line, (0..1) with 0 transparent
 %     S.lineWidth = 1;        % line width, can be a fraction
 %
-%     kml         = KML_header('name','curl');
+%     kml         = KML_header('kmlName','curl');
 %     kml         = [kml KML_style(S)];
 %     kml         = [kml KML_line(-90:90,-180:2:180,0:1:180,'styleName',S.name)];
 %     kml         = [kml KML_footer];

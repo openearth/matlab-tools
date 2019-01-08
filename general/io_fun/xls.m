@@ -31,7 +31,7 @@ classdef xls < oop.handle_light
 %     data = X.read('sheet1','table[#Headers]') % read only headers
 %
 %     % clearing the sheet also closes the xls server
-%     clear excelsheet
+%     clear X
 %
 %   See also: xls.open,  xls.create, xls.read,     xls.write, 
 %             xls.clear, xls.save,   xls.close,    xls.closeWorkbook

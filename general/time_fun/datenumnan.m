@@ -42,6 +42,7 @@ function out = datenumnan(varargin)
 
 try
     out = datenum(varargin);
+    % out = cellfun(@(x) datenum(x,varargin{2:end}) ,varargin{1}); % faster
 catch
     in = cellstr(varargin{1});
     out = nan(size(in));
