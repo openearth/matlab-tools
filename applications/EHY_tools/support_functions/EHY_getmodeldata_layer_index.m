@@ -12,4 +12,8 @@ elseif any(OPT.layer>no_layers)
     disp(['OPT.layer is set to [' num2str(1:no_layers) ']'])
     OPT.layer=1:no_layers;
 end
+if strcmp(OPT.varName,'Zint')
+    % return all data > no_layers+1
+    OPT.layer=1:no_layers+1;
+end
 end
