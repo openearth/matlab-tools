@@ -252,7 +252,21 @@ end
         end
         output=[x y];
         if OPT.saveOutputFile
-            io_polygon('write',outputFile,x,y,'dosplit','-1');
+            if isfield(OPT,'fromEPSG') & isfield(OPT,'toEPSG') % convert if wanted
+                [x,y]=convertCoordinates(x,y,'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
+            end
+            if isnan(x(1)); x(1)=[];y(1)=[]; end; if isnan(x(end)); x(end)=[];y(end)=[]; end
+            blockStart=[1; find(isnan(x))+1];
+            blockEnd=[find(isnan(x))-1; length(x)];
+            fid=fopen(outputFile,'w');
+            for iC=1:length(crs.DATA)
+                fprintf(fid,'%s\n',[crs.DATA(iC).name]);
+                fprintf(fid,'%5i %5i \n',blockEnd(iC)-blockStart(iC)+1,2);
+                for iX=blockStart(iC):blockEnd(iC)
+                   fprintf(fid,' %20.7f %20.7f \n',x(iX),y(iX));   
+                end
+            end
+            fclose(fid);
         end
     end
 % curves2crs

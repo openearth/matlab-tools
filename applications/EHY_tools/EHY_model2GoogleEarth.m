@@ -15,6 +15,7 @@ OPT.ldbColor=[0 1 0];
 OPT.thdColor=[0 0 1];
 OPT.dryColor=[1 0 0];
 OPT.crsColor=[1 1 0];
+OPT.extColor=[0 1 1];
 OPT.dryIconFile='http://maps.google.com/mapfiles/kml/paddle/ylw-square.png';
 OPT.obsIconFile='http://maps.google.com/mapfiles/kml/paddle/blu-stars.png';
 OPT.srcIconFile='http://maps.google.com/mapfiles/kml/shapes/square.png';
@@ -113,6 +114,22 @@ switch modelType
             [~,name]=fileparts(inputFile);
             OPT2.outputFile=[outputDir name '_crs.kml'];
             OPT2.lineColor=OPT.crsColor;
+            [~,OPT2]=EHY_convert(inputFile,'kml','lineWidth',4,OPT2);
+        end
+        
+        % external forcing files
+        if isfield(mdu.external_forcing,'ExtForceFile') && ~isempty(mdu.external_forcing.ExtForceFile)
+            inputFile=EHY_getFullWinPath(mdu.external_forcing.ExtForceFile,runDir);
+            [~,name]=fileparts(inputFile);
+            OPT2.outputFile=[outputDir name '_ext.kml'];
+            OPT2.lineColor=OPT.extColor;
+            [~,OPT2]=EHY_convert(inputFile,'kml','lineWidth',4,OPT2);
+        end
+        if isfield(mdu.external_forcing,'ExtForceFileNew') && ~isempty(mdu.external_forcing.ExtForceFileNew)
+            inputFile=EHY_getFullWinPath(mdu.external_forcing.ExtForceFileNew,runDir);
+            [~,name]=fileparts(inputFile);
+            OPT2.outputFile=[outputDir name '_new_ext.kml'];
+            OPT2.lineColor=OPT.extColor;
             [~,OPT2]=EHY_convert(inputFile,'kml','lineWidth',4,OPT2);
         end
         

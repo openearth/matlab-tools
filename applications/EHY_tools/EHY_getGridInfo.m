@@ -215,9 +215,13 @@ switch modelType
 
                % If partitioned run, delete ghost cells
                [~, name]=fileparts(inputFile);
-               if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && nc_isvar(inputFile,'FlowElemDomain')
+               if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && or(nc_isvar(inputFile,'FlowElemDomain'),nc_isvar(inputFile,'mesh2d_flowelem_domain'))
                    domainNr=str2num(name(end-7:end-4));
-                   FlowElemDomain=ncread(inputFile,'FlowElemDomain');
+                   if nc_isvar(inputFile,'FlowElemDomain')
+                       FlowElemDomain=ncread(inputFile,'FlowElemDomain');
+                   elseif nc_isvar(inputFile,'mesh2d_flowelem_domain')
+                       FlowElemDomain=ncread(inputFile,'mesh2d_flowelem_domain');
+                   end
                    if ismember('face_nodes_xy',wantedOutput)
                        E.face_nodes_x(:,FlowElemDomain~=domainNr)=[];
                        E.face_nodes_y(:,FlowElemDomain~=domainNr)=[];
@@ -227,7 +231,7 @@ switch modelType
                        E.Ycen(:,FlowElemDomain~=domainNr)=[];
                    end
                end
-        
+
         end % typeOfModelFile
         
     case 'd3d'

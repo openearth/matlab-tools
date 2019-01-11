@@ -135,9 +135,13 @@ switch modelType
         end
         % If partitioned run, delete ghost cells
         [~, name]=fileparts(fileInp);
-        if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && nc_isvar(fileInp,'FlowElemDomain')
+        if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && or(nc_isvar(fileInp,'FlowElemDomain'),nc_isvar(fileInp,'mesh2d_flowelem_domain'))
             domainNr=str2num(name(end-7:end-4));
-            FlowElemDomain=ncread(fileInp,'FlowElemDomain');
+            if nc_isvar(fileInp,'FlowElemDomain')
+                FlowElemDomain=ncread(fileInp,'FlowElemDomain');
+            elseif nc_isvar(fileInp,'mesh2d_flowelem_domain')
+                FlowElemDomain=ncread(fileInp,'mesh2d_flowelem_domain');
+            end
             Data.value(:,FlowElemDomain~=domainNr,:)=[];
             if strcmpi(OPT.varName,'uv')
                 Data.ucx(:,FlowElemDomain~=domainNr,:)=[];
