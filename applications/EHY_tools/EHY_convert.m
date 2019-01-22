@@ -272,7 +272,6 @@ end
 % curves2crs
     function [output,OPT]=EHY_convert_curves2crs(inputFile,outputFile,OPT)
         % read curve file
-        curv.c=[];
         curv.p=[];
         curv.name=[];
         fid=fopen(inputFile,'r');
@@ -280,8 +279,7 @@ end
             line0=fgetl(fid);
             line=strtrim(line0);
             if ~isempty(line) & ~strcmp(line(1),'#')
-                dmy=regexpi(line, 'c.*?(\d+)', 'tokens', 'once');
-                curv.c(end+1,1)=str2num(dmy{1});
+                line=line(strfind(lower(line),'line')+4:end);
                 dmy=regexpi(line, 'p.*?(\d+)', 'tokens');
                 curv.p(end+1,1)=str2num(char(dmy{1}));
                 curv.p(end,2)  =str2num(char(dmy{2}));
@@ -310,7 +308,7 @@ end
             for jj=1:2
                 ind=find(OBS.p==curv.p(iC,jj)); 
                 if isempty(ind)
-                    error(['Can not find Point P ' num2str(curv.p(iC,jj)) 'in the provided Point-files'])
+                    error(['Can not find Point P ' num2str(curv.p(iC,jj)) ' in the provided Point-files'])
                 else
                     ind=ind(1);
                 end
