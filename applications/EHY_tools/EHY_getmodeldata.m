@@ -34,25 +34,11 @@ function varargout = EHY_getmodeldata(inputFile,stat_name,modelType,varargin)
 % Example4: Data = EHY_getmodeldata('D:\trih-r01.dat',[],'d3d','varName','uv','layer',5) % load velocities, all stations, all times, layer 5
 % Example5: Data = EHY_getmodeldata('D:\r01_his.nc',{'station1','station2'},'dfm','t0','01-Jan-2000','tend','01-Feb-2000') % load two stations, one month
 %
-% Added 08122018 (TK)
-% Extraction of profile data from a history file resulting from a DFlowFM or a Delft3D-Flow simulation
-% Required additional input argument (as <keyword,value> pair:
-% typData : default is 'series' for time-series, use 'profile' to extract profile data
-%
-% By default the profile data for time t0 results. However if tint, in minutes, is specified (as <keyword,value> pair)
-%                                                  profile data for times = [t0:tint:tend] is returned.
-% If a requested time is not found on the history file, the nearest time is taken.
-%
 % Output:
 % Data.OPT                : Structure with optional user settings used,
-% Data.time_file          : times as found on file (might differ from requested_time if not found on file),
 % Data.val                : 4-Dimensional array with dimensions (no_times,no_stat,kmax,2),
 %                           Data.val(:,:,:,1) are the z_values,
 %                           Data.val(:,:,:,2) are the varName values (salinity, temperature etc).
-%
-% Example6: Data = EHY_getmodeldata(files{i_file}, stations, 'dfm' ,'varName' ,'salinity'            , ...
-%                                   't0'    ,'17-Jul-2018 01:40:00','tend'    ,'17-Jul-2018 02:00:00', ...
-%                                   'tint'  ,10.0                  ,'typeData','profiles'            );
 %
 % For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
 
@@ -63,6 +49,8 @@ end
 
 %% Backward compatible - EHY_getmodeldata(sim_dir,runid,stat_name,modelType,varargin)
 if isdir(inputFile) && ~any(strcmp(modelType,'implic')) && ~any(strcmp(varargin{1},'implic'))
+    warning(sprintf(['Argument list EHY_getmodeldata has changes. Please adjust in your script calling this function \n' ...
+                     'Backward comatibility will be removed in future releases']));
     inputFile=EHY_simdirRunIdAndModelType2outputfile(inputFile,stat_name,varargin{1});
     varargout={EHY_getmodeldata(inputFile,modelType,varargin{1},varargin{2:end})};
     return
@@ -74,53 +62,46 @@ OPT.t0       = '';
 OPT.tend     = '';
 OPT.tint     = '';
 OPT.layer    = 0; % all
-OPT.dataType = 'series';
 OPT          = setproperty(OPT,varargin);
 
 %% modify input
-if ~isempty(OPT.t0)     ; OPT.t0   =datenum(OPT.t0)      ; end
-if ~isempty(OPT.tend)   ; OPT.tend =datenum(OPT.tend)    ; end
-if ~isempty(OPT.tint)   ; OPT.tint = OPT.tint/1440.      ; end % From minutes to days
-if ~isnumeric(OPT.layer); OPT.layer=str2num(OPT.layer)   ; end
-if strcmpi(OPT.varName,'sal') OPT.varName = 'salinity'   ; end % Easier for reading salinity    from trih file
-if strcmpi(OPT.varName,'tem') OPT.varName = 'temperature'; end % Easier for reading temperature from trih file
-if strncmpi(OPT.dataType,'prof',min(4,length(OPT.dataType)))
-    if isempty(OPT.t0) error(' You need to specify 1 time (t0) to extract profile data'); end
-end
+if ~isempty  (OPT.t0           ) OPT.t0   =datenum(OPT.t0)    ; end
+if ~isempty  (OPT.tend         ) OPT.tend =datenum(OPT.tend)  ; end
+if ~isempty  (OPT.tint         ) OPT.tint = OPT.tint/1440.    ; end % From minutes to days
+if ~isnumeric(OPT.layer        ) OPT.layer=str2num(OPT.layer) ; end
+
+%% Get name of the parameter as known on output file
+OPT.nameOnFile = nameOnFile(inputFile,OPT.varName);
 
 %% Get time information from simulation and determine index of required times
-%  (if an error occurs it is probably Sobek3 or Implic file, don't like the try contruction)
 Data.times                               = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
 nr_times                                 = length(Data.times);
 [tmp,time_index,select,index_requested]  = EHY_getmodeldata_time_index (Data,OPT);
 nr_times_clip                            = length(tmp.times);
 
-%% Get layer information
-gridInfo  = EHY_getGridInfo(inputFile,'no_layers');
-no_layers = gridInfo.no_layers;
-OPT       = EHY_getmodeldata_layer_index(OPT,no_layers);
+%% Get layer information and type of vertical schematissation
+gridInfo    = EHY_getGridInfo(inputFile,{'no_layers' 'layer_model'});
+no_layers   = gridInfo.no_layers;
+layer_model = gridInfo.layer_model;
+OPT         = EHY_getmodeldata_layer_index(OPT,no_layers);
 
 %% Get list with the numbers of the requested stations
 Data           = EHY_getRequestedStations(inputFile,stat_name,modelType,'varName',OPT.varName);
 stationNrNoNan = Data.stationNrNoNan;
 if exist('tmp','var'); Data.times     = tmp.times(index_requested); end
 
-%% Get z-coordinates from history file in case of profiles
-if strncmpi(OPT.dataType,'prof',min(4,length(OPT.dataType)))
-    Data_z          = EHY_getGridInfo (inputFile,'Z','stations',Data.requestedStatNames,'varName',OPT.varName);
-    Data_z.Zcen     = Data_z.Zcen(time_index,:,:);
-    Data_z.Zint     = Data_z.Zint(time_index,:,:);
-end
-
 %% Get the computational data
 switch modelType
     %  Delft3D-Flexible Mesh
     case {'d3dfm','dflow','dflowfm','mdu','dfm'}
+        
         % open inputfile
-        infonc      = ncinfo(inputFile);
+        infonc          = ncinfo(inputFile);
+        variablesOnFile = {infonc.Variables.Name};
+        
         % station info
-        ncVarInd    = strmatch('station_x_coordinate',{infonc.Variables.Name},'exact');
-        stationSize = infonc.Variables(ncVarInd).Size;
+        nr_var      = get_nr(variablesOnFile,'station_x_coordinate');
+        stationSize = infonc.Variables(nr_var).Size;
         if size(stationSize,2)>1
             movingStations=1;
             % info will be obtained using blocks, see few lines down
@@ -130,116 +111,57 @@ switch modelType
             Data.location( Data.exist_stat,1:2)=[stationX(stationNrNoNan,1) stationY(stationNrNoNan,1)];
             Data.location(~Data.exist_stat,1:2)=NaN;
         end
-        % get data
-        % - To enhance speed, read in blocks if numel is too big
-        % - It is faster to read all stations and only keep the data of the
-        %   wanted stations than looping over the wanted stations.
         
-        filesize    = dir(inputFile);
-        filesize    = filesize.bytes /(1024^3); %converted to Gb
-        maxblocksize= 0.5; %Gb
-        nr_blocks   = ceil((nr_times_clip / nr_times) * (filesize / maxblocksize));
-        bl_length   = ceil(nr_times_clip / nr_blocks);
-        offset      = find(select, 1) - 1;
-        
-        % allocate variable 'value'
-        if ismember(OPT.varName,{'wl'})
-            value = nan(nr_times_clip,length(Data.stationNames));
-        elseif ismember(OPT.varName,'uv')
-            if no_layers==1 % 2Dh
-                value_x = nan(nr_times_clip,length(Data.stationNames));
-                value_y = nan(nr_times_clip,length(Data.stationNames));
-            else
-                value_x = nan(nr_times_clip,length(Data.stationNames),no_layers);
-                value_y = nan(nr_times_clip,length(Data.stationNames),no_layers);
-            end
-        elseif ismember(OPT.varName,{'salinity','temperature','Zcen',infonc.Variables(:).Name})
-            if no_layers==1 % 2Dh
-                value = nan(nr_times_clip,length(Data.stationNames));
-            else
-                value = nan(nr_times_clip,length(Data.stationNames),no_layers);
-            end
-        elseif ismember(OPT.varName,{'Zint'})
-            value = nan(nr_times_clip,length(Data.stationNames),no_layers+1);
+        % Specify dimensions and initialise series data (don't think this is needed)
+        nr_var        = get_nr(variablesOnFile,OPT.nameOnFile);
+        dimensions    = fliplr(infonc.Variables(nr_var).Size);
+        dimensions(1) = nr_times_clip;
+        if ismember(OPT.varName,{'uv'})
+            value_x = EHY_inival(dimensions,NaN);
+            value_y = EHY_inival(dimensions,NaN);
+        else
+            value   = EHY_inival(dimensions,NaN);
         end
         
-        for i = 1:nr_blocks % time blocks
-            bl_start    = 1 + (i-1) * bl_length;
-            bl_stop     = min(i * bl_length, nr_times_clip);
-            bl_int      = bl_stop-bl_start+1;
-            
-            % if needed, get time-varying station location info
-            if exist('movingStations','var')
-                if i==1 % allocate
-                    Data.locationX(1:length(Data.times),1:length(Data.stationNames))=NaN;
-                    Data.locationY(1:length(Data.times),1:length(Data.stationNames))=NaN;
-                    Data.locationXY_dimensions='[times,stations]';
-                end
-                Data.locationX(bl_start:bl_stop,:)=ncread(inputFile,'station_x_coordinate',[1 bl_start+offset],[Inf bl_int])';
-                Data.locationY(bl_start:bl_stop,:)=ncread(inputFile,'station_y_coordinate',[1 bl_start+offset],[Inf bl_int])';
-                if i==nr_blocks % only keep requested stations
-                    Data.locationX(:,~ismember(1:length(Data.stationNames),stationNrNoNan))=[];
-                    Data.locationY(:,~ismember(1:length(Data.stationNames),stationNrNoNan))=[];
-                end
-            end
-            
-            switch OPT.varName
-                case 'wl'
-                    value(bl_start:bl_stop,:) 	= ncread(inputFile,'waterlevel',[1 bl_start+offset],[Inf bl_int])';
-                case {'wd','water depth'}
-                    value(bl_start:bl_stop,:) 	= ncread(inputFile,'waterdepth',[1 bl_start+offset],[Inf bl_int])';
-                case 'uv'
-                    if no_layers==1 % 2Dh
-                        value_x(bl_start:bl_stop,:) 	= permute(ncread(inputFile,'x_velocity',[1 bl_start+offset],[Inf bl_int]),[2 1]);
-                        value_y(bl_start:bl_stop,:) 	= permute(ncread(inputFile,'y_velocity',[1 bl_start+offset],[Inf bl_int]),[2 1]);
-                    else
-                        value_x(bl_start:bl_stop,:,:) 	= permute(ncread(inputFile,'x_velocity',[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
-                        value_y(bl_start:bl_stop,:,:) 	= permute(ncread(inputFile,'y_velocity',[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
-                    end
-                case {'salinity' 'temperature'}
-                    if no_layers==1 % 2Dh
-                        value(bl_start:bl_stop,:)   	= permute(ncread(inputFile,OPT.varName,[1 bl_start+offset],[Inf bl_int]),[2 1]);
-                    else
-                        value(bl_start:bl_stop,:,:) 	= permute(ncread(inputFile,OPT.varName,[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
-                    end
-                case 'Zcen'
-                    if no_layers==1 % 2Dh
-                        value(bl_start:bl_stop,:) 	= permute(ncread(inputFile,'zcoordinate_c',[1 bl_start+offset],[Inf bl_int]),[2 1]);
-                    else
-                        value(bl_start:bl_stop,:,:) = permute(ncread(inputFile,'zcoordinate_c',[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
-                    end
-                case 'Zint'
-                    if no_layers==1 % 2Dh
-                        value(bl_start:bl_stop,:) 	= permute(ncread(inputFile,'zcoordinate_w',[1 bl_start+offset],[Inf bl_int]),[2 1]);
-                    else
-                        value(bl_start:bl_stop,:,:) = permute(ncread(inputFile,'zcoordinate_w',[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
-                    end
-                case {infonc.Variables(:).Name} % like constituents (e.g. totalN, totalP)
-                    if no_layers==1 % 2Dh
-                        value(bl_start:bl_stop,:) 	= permute(ncread(inputFile,OPT.varName,[1 bl_start+offset],[Inf bl_int]),[2 1]);
-                    else
-                        value(bl_start:bl_stop,:,:) 	= permute(ncread(inputFile,OPT.varName,[1 1 bl_start+offset],[Inf Inf bl_int]),[3 2 1]);
-                    end
-            end
+        % Initialise moving stations
+        if exist('movingStations','var')
+            dimensions                 = stationSize;
+            dimensions(1)              = nr_times_clip;
+            Data.locationX             = EHY_inival(dimensions,NaN);
+            Data.locationY             = EHY_inival(dimensions,NaN);
+            Data.locationXY_dimensions = '[times,stations]';
         end
         
+        % get series data
+        nrTimeStart           =  find(select, 1);
+        if length(dimensions) == 2 start = [1   nrTimeStart]; count        = [Inf     nr_times_clip]; end 
+        if length(dimensions) == 3 start = [1 1 nrTimeStart]; count        = [Inf Inf nr_times_clip]; end 
+        order                 =  length(dimensions):-1:1;
+        
+        if ~ismember(OPT.varName,{'uv'})
+            value     =  permute(ncread_blocks(inputFile,OPT.nameOnFile,start,count),order);
+        else
+            value_x   =  permute(ncread_blocks(inputFile,'x_velocity',start,count),order);
+            value_y   =  permute(ncread_blocks(inputFile,'y_velocity',start,count),order);
+        end
+        
+        % if needed, get time-varying station location info
+        if exist('movingStations','var')
+            start = [1   nrTimeStart]; 
+            count = [Inf nr_times_clip];
+            order = [2 1];
+            Data.locationX = permute(ncread_blocks(inputFile,'station_x_coordinate',start,count),order);
+            Data.locationY = permute(ncread_blocks(inputFile,'station_y_coordinate',start,count),order);
+        end
+                      
         % put value(_x/_y) in output structure 'Data'
         if exist('value','var')
             if ndims(value)==2
-                Data.val(:,Data.exist_stat)=value(:,stationNrNoNan);
+                Data.val(:,Data.exist_stat)=value(index_requested,stationNrNoNan);
                 Data.val(:,~Data.exist_stat)=NaN;
             elseif ndims(value)==3
-                % series
-                if ~strncmpi(OPT.dataType,'prof',min(4,length(OPT.dataType)))
-                    Data.val(:,Data.exist_stat,1:length(OPT.layer))=value(:,stationNrNoNan,OPT.layer);
-                    Data.val(:,~Data.exist_stat,1:length(OPT.layer))=NaN;
-                % profiles
-                else
-                   Data.val(:, Data.exist_stat,1:length(OPT.layer),1) = Data_z.Zcen(index_requested,:             ,OPT.layer); 
-                   Data.val(:, Data.exist_stat,1:length(OPT.layer),2) = value (index_requested,stationNrNoNan,OPT.layer);
-                   Data.val(:,~Data.exist_stat,1:length(OPT.layer),1) = NaN;
-                   Data.val(:,~Data.exist_stat,1:length(OPT.layer),2) = NaN;
-                end
+                Data.val(:,Data.exist_stat,1:length(OPT.layer))=value(index_requested,stationNrNoNan,OPT.layer);
+                Data.val(:,~Data.exist_stat,1:length(OPT.layer))=NaN;
             end
         elseif exist('value_x','var')
             if ndims(value_x)==2
@@ -255,12 +177,18 @@ switch modelType
             end
         end
         
+        % Only requested moving stations (why not only the requested stations?)
+        if exist('movingStations','var')
+            Data.locationX(:,~ismember(1:length(Data.stationNames),stationNrNoNan))=[];
+            Data.locationY(:,~ismember(1:length(Data.stationNames),stationNrNoNan))=[];
+        end
+                
     % Delft3D 4    
     case {'d3d','d3d4','delft3d4','mdf'}
         % open inputfile
         trih = vs_use(inputFile,'quiet');
         % loop over stations
-        for i_stat = 1: length(stat_name)
+        for i_stat = 1: length(Data.requestedStatNames)
             if Data.exist_stat(i_stat)
                 nr_stat  = stationNrNoNan(i_stat);
                 % constituents
@@ -272,11 +200,19 @@ switch modelType
                 stationXY = vs_get(trih,'his-const',{1},'XYSTAT','quiet');
                 Data.locationMN(i_stat,:)=[stationMN(:,nr_stat)'];
                 Data.location(i_stat,:)=[stationXY(:,nr_stat)'];  
+                
+                % Get constants for profile data
+                if strcmpi(OPT.varName,'Zcen') || strcmpi(OPT.varName,'Zint')
+                    thick    = vs_let(trih,'his-const'              ,'THICK'          ,'quiet');
+                    dps      = vs_let(trih,'his-const'              ,'DPS'            ,'quiet');
+                    zk       = vs_get(trih,'his-const'              ,'ZK'             ,'quiet');
+                end
+                
                 % get data
                 switch OPT.varName
                     case 'wl'
                         Data.val(:,i_stat)=cell2mat(vs_get(trih,'his-series',{time_index},'ZWL',{nr_stat},'quiet'));
-                    case {'wd','water depth'}
+                    case {'waterdepth'}
                         wl=cell2mat(vs_get(trih,'his-series',{time_index},'ZWL',{nr_stat},'quiet')); % ref to wl
                         depth=vs_get(trih,'his-const',{1},'DPS',{nr_stat},'quiet'); % bed to ref
                         Data.val(:,i_stat)=wl+depth;
@@ -294,23 +230,47 @@ switch modelType
                             Data.vel_u(:,i_stat,:) = cell2mat(vs_get(trih,'his-series',{time_index},'ZCURU',{nr_stat,OPT.layer},'quiet'));
                             Data.vel_v(:,i_stat,:) = cell2mat(vs_get(trih,'his-series',{time_index},'ZCURV',{nr_stat,OPT.layer},'quiet'));
                         end
+                    case {'Zcen' 'Zint'}
+                        zwl      = vs_let(trih,'his-series',{time_index(index_requested)},'ZWL'  ,{nr_stat},'quiet');
+                        for i_time = 1: length(index_requested)
+                            if strcmpi(layer_model,'sigma')
+                                depth = dps(stationNrNoNaN(i_stat)) + zwl(i_time);
+                                Zint(i_time,1     )        = -zwl(i_time) + dps(nr_stat);
+                                Zint(i_time,no_layers + 1) =  dps(nr_stat);
+                                Zcen(i_time,1     )        = -zwl(i_time) + 0.5*thick(1)*depth;
+                                for k = 2: no_layers
+                                    Zint(i_time,k)  = Zint(i_time,k-1) + thick(k-1)*depth;
+                                    Zcen(i_time,k)  = Zcen(i_time,k-1) + 0.5*(thick(k-1) + thick(k))*depth;
+                                end
+                            elseif strcmpi(layer_model,'z-model')
+                                zk_int(1:no_layers + 1) = NaN;
+                                
+                                %restrict to active computational layers
+                                i_start = find(zk> -dps(nr_stat),1,'first') - 1;
+                                i_stop =  find(zk>  zwl(i_time),1,'first');
+                                if isempty(i_stop) i_stop = no_layers + 1; end
+                                zk_int(i_start) = -dps(nr_stat);
+                                zk_int(i_stop)  =  zwl(i_time);
+                                
+                                zk_int(i_start+1:i_stop-1) = zk(i_start+1:i_stop-1);
+                                Zint(i_time,:) = zk_int;
+                                for k = 1: no_layers
+                                    Zcen(i_time,k) = 0.5*(Zint(i_time,k  ) + Zint(i_time,k+1) );
+                                end
+                            end
+                        end
+                        
+                        if strcmpi(OPT.varName    ,'Zcen')
+                            Data.val(:,i_stat,:) = Zcen;
+                        elseif strcmpi(OPT.varName,'Zint')
+                            Data.val(:,i_stat,:) = Zint;
+                        end
+
                     case {'salinity' 'temperature'}
                         nr_cons            = get_nr(lower(constituents),OPT.varName);
                         value (:,i_stat,:) = cell2mat   (vs_get(trih,'his-series',{time_index(index_requested)},'GRO',{nr_stat,OPT.layer,nr_cons},'quiet'));
                         % series
-                        if ~strncmpi(OPT.dataType,'prof',min(4,length(OPT.dataType)))
-                            Data.val(:, i_stat,:)= value(:,i_stat,:);
-                        % profiles
-                        else
-                            if Data.exist_stat(i_stat)
-                                Data.val(:,i_stat,:,1) = Data_z.Zcen(index_requested,i_stat,:);
-                                Data.val(:,i_stat,:,2) = value      (:,              i_stat,:);
-
-                            else
-                                Data.val(:,i_stat,:,1) = NaN;
-                                Data.val(:,i_stat,:,2) = NaN;
-                            end
-                    end
+                        Data.val(:, i_stat,:)= value(:,i_stat,:);
                 end
             end
         end
@@ -336,7 +296,7 @@ switch modelType
                             Data.vel_x(:,i_stat,:) = waquaio(sds,[],'u-stat',time_index,nr_stat,OPT.layer);
                             Data.vel_y(:,i_stat,:) = waquaio(sds,[],'v-stat',time_index,nr_stat,OPT.layer);
                         end
-                    case 'sal'
+                    case 'salinity'
                         if no_layers==1
                             Data.val(:,i_stat) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat);
                         else
@@ -453,5 +413,31 @@ if nargout==1
 end
 
 EHYs(mfilename);
+
+end
+
+function newName = nameOnFile(inputFile,varName)
+
+%% Get the name of varName as specified on the history file of a simulation
+newName   = varName;
+
+if strcmpi(varName,'sal'         ) newName = 'salinity'   ; end
+if strcmpi(varName,'tem'         ) newName = 'temperature'; end
+
+modelType = EHY_getModelType(inputFile);
+
+switch modelType
+    case 'dfm'
+        if strcmpi(varName,'wl'         ) newName = 'waterlevel'   ; end
+        if strcmpi(varName,'wd'         ) newName = 'waterdepth'   ; end
+        if strcmpi(varName,'water depth') newName = 'waterdepth'   ; end
+        if strcmpi(varName,'uv'         ) newName = 'x_velocity'   ; end 
+        if strcmpi(varName,'Zcen'       ) newName = 'zcoordinate_c'; end
+        if strcmpi(varName,'Zint'       ) newName = 'zcoordinate_w'; end
+        
+    case 'd3d'
+        
+    case 'simona'
+end
 
 end
