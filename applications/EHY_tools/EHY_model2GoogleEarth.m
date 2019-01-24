@@ -128,7 +128,7 @@ switch modelType
         if isfield(mdu.external_forcing,'ExtForceFileNew') && ~isempty(mdu.external_forcing.ExtForceFileNew)
             inputFile=EHY_getFullWinPath(mdu.external_forcing.ExtForceFileNew,runDir);
             [~,name]=fileparts(inputFile);
-            OPT2.outputFile=[outputDir name '_new_ext.kml'];
+            OPT2.outputFile=strrep([outputDir name '_new_ext.kml'],'_new_new','_new');
             OPT2.lineColor=OPT.extColor;
             [~,OPT2]=EHY_convert(inputFile,'kml','lineWidth',4,OPT2);
         end

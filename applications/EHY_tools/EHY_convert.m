@@ -437,6 +437,10 @@ end
         fclose(fid);
         indPli=strfind(ext,'.pli');
         indPli = find(not(cellfun('isempty',indPli)));
+        % do not plot initial profiles
+        indInitialvertical=strfind(ext,'initialvertical');
+        indInitialvertical = find(not(cellfun('isempty',indInitialvertical)))+1;
+        indPli(ismember(indPli,indInitialvertical))=[];
         [~,pliFiles]=strtok({ext{indPli}},'=');
         pliFiles=strtrim(strrep(pliFiles,'=',''));
         pliFiles=cellstr(EHY_getFullWinPath(pliFiles,fileparts(inputFile)));
