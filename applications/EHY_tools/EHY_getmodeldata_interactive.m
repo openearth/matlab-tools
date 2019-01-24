@@ -73,9 +73,6 @@ if length(datenums)>1
     end
 end
 
-if strcmp(OPT.varName,'wl')
-    OPT=rmfield(OPT,'varName');
-end
 extraText='';
 if exist('OPT','var')
     fn=fieldnames(OPT);
