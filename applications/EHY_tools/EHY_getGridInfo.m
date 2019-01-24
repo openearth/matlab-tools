@@ -155,17 +155,22 @@ switch modelType
                     end
                 end
                 if ismember('layer_model',wantedOutput)
-                    if ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact')) % _map.nc
-                        E.layer_model='z-model';
-                    elseif ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact')) % _map.nc
-                        E.layer_model='sigma-model';
-                    elseif ~isempty(strmatch('zcoordinate_c',{infonc.Variables.Name},'exact'))
-                        E.layer_model='sigma-model';
-                    else % not in merged_map.nc, try to get this info from mdFile
-                        try
-                           mdFile=EHY_getMdFile(inputFile); 
-                           gridInfo=EHY_getGridInfo(mdFile,'layer_model');
-                           E.layer_model=gridInfo.layer_model;
+                    dmy=EHY_getGridInfo(inputFile,'no_layers');
+                    if dmy.no_layers==1
+                        E.layer_model='-';
+                    else
+                        if ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact')) % _map.nc
+                            E.layer_model='z-model';
+                        elseif ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact')) % _map.nc
+                            E.layer_model='sigma-model';
+                        elseif ~isempty(strmatch('zcoordinate_c',{infonc.Variables.Name},'exact'))
+                            E.layer_model='sigma-model';
+                        else % not in merged_map.nc, try to get this info from mdFile
+                            try
+                                mdFile=EHY_getMdFile(inputFile);
+                                gridInfo=EHY_getGridInfo(mdFile,'layer_model');
+                                E.layer_model=gridInfo.layer_model;
+                            end
                         end
                     end
                 end
