@@ -447,11 +447,14 @@ end
         POL=[];
         for iF=1:length(pliFiles)
             pol=io_polygon('read',pliFiles{iF});
+            xyn.x(iF)=mean(pol(:,1));xyn.y(iF)=mean(pol(:,2));
+            [~,xyn.name{iF}]=fileparts(pliFiles{iF});
             POL=[POL;NaN NaN; pol(:,1:2)];
         end
         [POL(:,1),POL(:,2),OPT]=EHY_convert_coorCheck(POL(:,1),POL(:,2),OPT);
         if OPT.saveOutputFile
-          ldb2kml(POL(:,1:2),outputFile,OPT.lineColor,OPT.lineWidth);
+            ldb2kml(POL(:,1:2),strrep(outputFile,'.kml','_lines.kml'),OPT.lineColor,OPT.lineWidth);
+            KMLPlaceMark(xyn.y,xyn.x,strrep(outputFile,'.kml','_names.kml'),'name',xyn.name,'icon',OPT.iconFile);
         end
         output=POL;
     end
@@ -895,15 +898,15 @@ end
         
         for iM=1:thd.NTables
             if strcmpi(thd.DATA(iM).direction,'U')
-                x=[x;grd.X(thd.DATA(iM).m,thd.DATA(iM).n);...
-                    grd.X(thd.DATA(iM).m,thd.DATA(iM).n-1); NaN];
-                y=[y;grd.Y(thd.DATA(iM).m,thd.DATA(iM).n);...
-                    grd.Y(thd.DATA(iM).m,thd.DATA(iM).n-1); NaN];
+                x=[x;grd.X(thd.DATA(iM).m(1),thd.DATA(iM).n(1));...
+                    grd.X(thd.DATA(iM).m(1),thd.DATA(iM).n(1)-1); NaN];
+                y=[y;grd.Y(thd.DATA(iM).m(1),thd.DATA(iM).n(1));...
+                    grd.Y(thd.DATA(iM).m(1),thd.DATA(iM).n(1)-1); NaN];
             else
-                x=[x;grd.X(thd.DATA(iM).m,thd.DATA(iM).n);...
-                    grd.X(thd.DATA(iM).m-1,thd.DATA(iM).n); NaN];
-                y=[y;grd.Y(thd.DATA(iM).m,thd.DATA(iM).n);...
-                    grd.Y(thd.DATA(iM).m-1,thd.DATA(iM).n); NaN];
+                x=[x;grd.X(thd.DATA(iM).m(1),thd.DATA(iM).n(1));...
+                    grd.X(thd.DATA(iM).m(1)-1,thd.DATA(iM).n(1)); NaN];
+                y=[y;grd.Y(thd.DATA(iM).m(1),thd.DATA(iM).n(1));...
+                    grd.Y(thd.DATA(iM).m(1)-1,thd.DATA(iM).n(1)); NaN];
             end
         end
         output=[x y];
