@@ -232,8 +232,8 @@ switch modelType
                        E.face_nodes_y(:,FlowElemDomain~=domainNr)=[];
                    end
                    if ismember('XYcen',wantedOutput)
-                       E.Xcen(:,FlowElemDomain~=domainNr)=[];
-                       E.Ycen(:,FlowElemDomain~=domainNr)=[];
+                       E.Xcen(FlowElemDomain~=domainNr)=[];
+                       E.Ycen(FlowElemDomain~=domainNr)=[];
                    end
                end
 

@@ -997,43 +997,27 @@ end
     function [output,OPT]=EHY_convert_xyz2xdryldb(inputFile,outputFile,OPT)
         OPT=EHY_convert_netCheck(OPT,inputFile);
         try
-            NetNode_x=nc_varget(OPT.netFile,'NetNode_x');
-            NetNode_y=nc_varget(OPT.netFile,'NetNode_y');
-            NetElemNode=nc_varget(OPT.netFile,'NetElemNode');
-            nrCellCorners=sum(NetElemNode~=0,2);
-            
-            % allocate
-            face_x=ones(size(NetElemNode,1),1)*NaN;
-            face_y=face_x;
-            face_x_bnd=ones(size(NetElemNode))*NaN;
-            face_y_bnd=face_x_bnd;
-            
-            for ii=3:6 % triangles // squares // pentagons // hexogons
-                ind=find(nrCellCorners==ii);
-                if ~isempty(ind)
-                    if length(ind)~=1
-                        face_x(ind,1)=mean(NetNode_x(NetElemNode(ind,1:ii)),2);
-                        face_y(ind,1)=mean(NetNode_y(NetElemNode(ind,1:ii)),2);
-                    else
-                        face_x(ind,1)=mean(NetNode_x(NetElemNode(ind,1:ii)));
-                        face_y(ind,1)=mean(NetNode_y(NetElemNode(ind,1:ii)));
-                    end
-                    face_x_bnd(ind,1:ii)=NetNode_x(NetElemNode(ind,1:ii));
-                    face_y_bnd(ind,1:ii)=NetNode_y(NetElemNode(ind,1:ii));
-                end
-            end
-            
+            gridInfo=EHY_getGridInfo(OPT.netFile,{'XYcor','XYcen','face_nodes_xy'});
+            nrCellCorners=sum(~isnan(gridInfo.face_nodes_x));
             xyz=importdata(inputFile);
+            k = dsearchn([gridInfo.Xcen gridInfo.Ycen],xyz(:,1:2));
+            
+            % check if closest point is also in grid cell
+            xBndCell=gridInfo.face_nodes_x(:,k);
+            xBndCell(end+1,:)=NaN; % close polygon
+            yBndCell=gridInfo.face_nodes_y(:,k);
+            yBndCell(end+1,:)=NaN; % close polygon
+            in= inpolygon(gridInfo.Xcen(k),gridInfo.Ycen(k),xBndCell(:),yBndCell(:));
+            k=k(in);
+            
+            % make  and cat ldb from cell center to all the corners
             ldb0{size(xyz,1),1}=[];
-            for iXYZ=1:size(xyz,1)
-                if mod(iXYZ,10)==0; disp(['progress: ' num2str(iXYZ) '/' num2str(size(xyz,1))]); end
-                dist=sqrt((face_x-xyz(iXYZ,1)).^2+(face_y-xyz(iXYZ,2)).^2);
-                ind=find(dist==min(dist),1);
+            for i_k=1:length(k)
                 dmyLdb=[];
-                for ii=1:nrCellCorners(ind)
-                    dmyLdb=[dmyLdb;face_x(ind) face_y(ind); face_x_bnd(ind,ii) face_y_bnd(ind,ii)];
+                for iCorners=1:nrCellCorners(k(i_k))
+                    dmyLdb=[dmyLdb;gridInfo.Xcen(k(i_k)) gridInfo.Ycen(k(i_k)); gridInfo.face_nodes_x(iCorners,k(i_k)) gridInfo.face_nodes_y(iCorners,k(i_k))];
                 end
-                ldb0{iXYZ}=[dmyLdb;NaN NaN];
+                ldb0{i_k}=[dmyLdb;NaN NaN];
             end
             ldb=cell2mat(ldb0);
             if OPT.saveOutputFile
