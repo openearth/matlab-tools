@@ -331,7 +331,7 @@ end
         tempCrsFile=[fileparts(inputFile) filesep 'EHY_temporary.crs'];
         [output,OPT]=EHY_convert_curves2crs(inputFile,tempCrsFile,OPT);
         if OPT.saveOutputFile
-            [output,OPT]=EHY_convert_crs2kml(tempCrsFile,outputFile,OPT)
+            [output,OPT]=EHY_convert_crs2kml(tempCrsFile,outputFile,OPT);
             fclose('all');delete(tempCrsFile);
         end
     end
