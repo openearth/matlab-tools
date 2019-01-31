@@ -203,9 +203,13 @@ switch modelType
                 
                 % Get constants for profile data
                 if strcmpi(OPT.varName,'Zcen') || strcmpi(OPT.varName,'Zint')
-                    thick    = vs_let(trih,'his-const'              ,'THICK'          ,'quiet');
-                    dps      = vs_let(trih,'his-const'              ,'DPS'            ,'quiet');
-                    zk       = vs_get(trih,'his-const'              ,'ZK'             ,'quiet');
+                    if strcmp(layer_model,'sigma-model')
+                        thick    = vs_let(trih,'his-const'              ,'THICK'          ,'quiet');
+                        dps      = vs_let(trih,'his-const'              ,'DPS'            ,'quiet');
+                    elseif strcmp(layer_model,'z-model')
+                        dps      = vs_let(trih,'his-const'              ,'DPS'            ,'quiet');
+                        zk       = vs_get(trih,'his-const'              ,'ZK'             ,'quiet');
+                    end
                 end
                 
                 % get data
@@ -233,8 +237,8 @@ switch modelType
                     case {'Zcen' 'Zint'}
                         zwl      = vs_let(trih,'his-series',{time_index(index_requested)},'ZWL'  ,{nr_stat},'quiet');
                         for i_time = 1: length(index_requested)
-                            if strcmpi(layer_model,'sigma')
-                                depth = dps(stationNrNoNaN(i_stat)) + zwl(i_time);
+                            if strcmpi(layer_model,'sigma-model')
+                                depth = dps(stationNrNoNan(i_stat)) + zwl(i_time);
                                 Zint(i_time,1     )        = -zwl(i_time) + dps(nr_stat);
                                 Zint(i_time,no_layers + 1) =  dps(nr_stat);
                                 Zcen(i_time,1     )        = -zwl(i_time) + 0.5*thick(1)*depth;

@@ -11,7 +11,7 @@ function gridInfo=EHY_getGridInfo(inputFile,varargin)
 %               XYcor                   E.Xcor & E.Ycor (=NetNodes)
 %               XYcen                   E.Xcen & E.Ycen (=NetElem/faces)
 %               depth                   E.depth_cen & depth_cor
-%               layer_model             E.layer_model
+%               layer_model             E.layer_model (sigma-model or z-model)
 %               face_nodes_xy           E.face_nodes_x & E.face_nodes_y
 %               area                    E.area
 %               Z                       E.Zcen & E.Zint
@@ -280,21 +280,9 @@ switch modelType
                             vs_get(trih,'his-const',{1},'KMAX','quiet')];
                     end
                     if ismember('layer_model', wantedOutput)
-                        % Get layer-model
-                        % Not sure if layer-model exist on trih file if not
-                        % specified in mdf file (not a very elegant solution)
-                        E.layer_model='sigma';
-                        try  
-                            E.layer_model = strtrim(vs_get(trih,'his-const' ,'LAYER_MODEL','quiet'));
-                            if strcmpi(E.layer_model,'z-model')
-                                zk = vs_get(trih,'his-const' ,'ZK'  ,'quiet');
-                            end
-                        end
+                        E.layer_model = lower(strtrim(vs_get(trih,'his-const' ,'LAYER_MODEL','quiet')));
                     end
                     
-                    if ismember('Z',wantedOutput)
-                        error('Reading of interfaces from trih file moved to EHY_getmodeldata')
-                    end
                 end
         end % typeOfModelFile
         
