@@ -183,6 +183,33 @@ if OPT.saveOutputFile
     end
 end
 %% conversion functions - in alphabetical order
+% ann2xyn
+    function [output,OPT]=EHY_convert_ann2xyn(inputFile,outputFile,OPT)
+        ann=delft3d_io_ann('read',inputFile);
+        xyn.x=ann.DATA.x;
+        xyn.y=ann.DATA.y;
+        xyn.name=ann.DATA.txt;
+        if OPT.saveOutputFile
+            delft3d_io_xyn('write',outputFile,xyn);
+        end
+        output=xyn;
+    end
+% ann2kml
+    function [output,OPT]=EHY_convert_ann2kml(inputFile,outputFile,OPT)
+        OPT_user=OPT;
+        OPT.saveOutputFile=0;
+        xyn=EHY_convert_ann2xyn(inputFile,outputFile,OPT);
+        [xyn.x,xyn.y,OPT]=EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
+        OPT=OPT_user;
+        if OPT.saveOutputFile
+            [~,name]=fileparts(outputFile);
+            tempFile=[tempdir name '.kml'];
+            KMLPlaceMark(xyn.y,xyn.x,tempFile,'name',xyn.name,'icon',OPT.iconFile);
+            copyfile(tempFile,outputFile);
+            delete(tempFile)
+        end
+        output=[];
+    end
 % box2dep
     function [output,OPT]=EHY_convert_box2dep(inputFile,outputFile,OPT)
         fid=fopen(inputFile,'r');
@@ -728,12 +755,12 @@ end
         OPT_user=OPT;
         OPT.saveOutputFile=0;
         xyn=EHY_convert_obs2xyn(inputFile,outputFile,OPT);
-        [xyn{1,1},xyn{1,2},OPT]=EHY_convert_coorCheck(xyn{1,1},xyn{1,2},OPT);
+        [xyn.x,xyn.y,OPT]=EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
         OPT=OPT_user;
         if OPT.saveOutputFile
             [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
-            KMLPlaceMark(xyn{1,2},xyn{1,1},tempFile,'name',xyn{1,3}','icon',OPT.iconFile);
+            KMLPlaceMark(xyn.y,xyn.x,tempFile,'name',xyn.name,'icon',OPT.iconFile);
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
@@ -756,20 +783,15 @@ end
         pathstr = fileparts(inputFile);
         obs=delft3d_io_obs('read',inputFile);
         OPT=EHY_convert_gridCheck(OPT,inputFile);
-        [x,y]=EHY_mn2xy(obs.m,obs.n,OPT.grdFile);
-        
-        if OPT.saveOutputFile
-            if ischar(obs.namst)
-                obs.namst=cellstr(obs.namst);
-            end
-            fid=fopen(outputFile,'w');
-            for iM=1:length(x)
-                fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
-                fprintf(fid,'%-s\n',['''' strtrim(obs.namst{iM}) '''']);
-            end
-            fclose(fid);
+        [xyn.x,xyn.y]=EHY_mn2xy(obs.m,obs.n,OPT.grdFile);
+        xyn.name=obs.namst;
+        if ischar(xyn.name)
+            xyn.name=cellstr(xyn.name);
         end
-        output={x y cellstr(obs.namst)};
+        if OPT.saveOutputFile
+            delft3d_io_xyn('write',outputFile,xyn);
+        end
+        output=xyn;
     end
 % pol2kml
     function [output,OPT]=EHY_convert_pol2kml(inputFile,outputFile,OPT)

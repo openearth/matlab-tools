@@ -109,8 +109,8 @@ switch modelType
         end
         
         % cross sections
-        if isfield(mdu.geometry,'CrsFile') && ~isempty(mdu.geometry.CrsFile)
-            inputFile=EHY_getFullWinPath(mdu.geometry.CrsFile,runDir);
+        if isfield(mdu.output,'CrsFile') && ~isempty(mdu.output.CrsFile)
+            inputFile=EHY_getFullWinPath(mdu.output.CrsFile,runDir);
             [~,name]=fileparts(inputFile);
             OPT2.outputFile=[outputDir name '_crs.kml'];
             OPT2.lineColor=OPT.crsColor;
