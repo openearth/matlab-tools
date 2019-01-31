@@ -33,11 +33,13 @@ if isempty(modelType)
 end
 
 % varName
-varNames={'Water level','wl';...
-    'Water depth','wd';...
+varNames={'Water level','wl';
+    'Water depth','wd';
     'Velocities','uv';
     'Salinity','sal';
-    'Temperature','tem'};
+    'Temperature','tem';
+    'z-coordinates (pos. up) of cell centers','Zcen';
+    'z-coordinates (pos. up) of cell interfaces','Zint'};
 option=listdlg('PromptString','What kind of time series do you want to load?','SelectionMode','single','ListString',...
     varNames(:,1),'ListSize',[300 100]);
 if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end

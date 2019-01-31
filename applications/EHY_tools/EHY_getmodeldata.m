@@ -13,7 +13,14 @@ function varargout = EHY_getmodeldata(inputFile,stat_name,modelType,varargin)
 % modelType : 'dflowfm','delft3d4,'waqua','sobek3','implic'
 %
 % Optional input arguments:
-% varName   : Name of variable, choose from: 'wl','wd','uv','sal',tem'
+% varName   : Name of variable, choose from:
+%               'wl'    water level
+%               'wd'    water depth
+%               'uv'    velocities (in (u,v,)x,y-direction)
+%               'sal'   salinity
+%               'tem'   temperature
+%               'Zcen'  z-coordinates (positive up) of cell centers 
+%               'Zint'  z-coordinates (positive up) of cell interfaces 
 % t0        : Start time of dataset (e.g. '01-Jan-2018' or 737061 (Matlab date) )
 % tend      : End time of dataset (e.g. '01-Feb-2018' or 737092 (Matlab date) )
 % layer     : Model layer, e.g. '0' (all layers), [2] or [4:8]
@@ -239,12 +246,12 @@ switch modelType
                         for i_time = 1: length(index_requested)
                             if strcmpi(layer_model,'sigma-model')
                                 depth = dps(stationNrNoNan(i_stat)) + zwl(i_time);
-                                Zint(i_time,1     )        = -zwl(i_time) + dps(nr_stat);
-                                Zint(i_time,no_layers + 1) =  dps(nr_stat);
-                                Zcen(i_time,1     )        = -zwl(i_time) + 0.5*thick(1)*depth;
+                                Zint(i_time,1     )        = zwl(i_time);
+                                Zint(i_time,no_layers + 1) = -dps(nr_stat);
+                                Zcen(i_time,1     )        = zwl(i_time) - 0.5*thick(1)*depth;
                                 for k = 2: no_layers
-                                    Zint(i_time,k)  = Zint(i_time,k-1) + thick(k-1)*depth;
-                                    Zcen(i_time,k)  = Zcen(i_time,k-1) + 0.5*(thick(k-1) + thick(k))*depth;
+                                    Zint(i_time,k)  = Zint(i_time,k-1) - thick(k-1)*depth;
+                                    Zcen(i_time,k)  = Zcen(i_time,k-1) - 0.5*(thick(k-1) + thick(k))*depth;
                                 end
                             elseif strcmpi(layer_model,'z-model')
                                 zk_int(1:no_layers + 1) = NaN;
