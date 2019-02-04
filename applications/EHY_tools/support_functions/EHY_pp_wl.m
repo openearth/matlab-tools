@@ -110,8 +110,8 @@ else
 end
 
 %% Start postprocessing, first create output directories
-% if exist(fig_dir,'dir') rmdir(fig_dir,'s'); end
-% mkdir (fig_dir);
+if exist(fig_dir,'dir') rmdir(fig_dir,'s'); end
+mkdir (fig_dir);
 
 % Read computational data for requested stations
 inputFile = EHY_simdirRunIdAndModelType2outputfile(sim_dir  ,runid       ,modelType);

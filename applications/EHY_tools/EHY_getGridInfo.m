@@ -316,6 +316,11 @@ switch modelType
                 if ismember('dimensions',wantedOutput)
                     E.MNKmax=[dimen(2) dimen(3) dimen(18)];
                 end
+                if ismember('layer_model', wantedOutput)
+                    E.layer_model = 'sigma-model';
+                end
+                
+                
         end % typeOfModelFile
     case {'sobek3' 'sobek3_new' 'implic'}
         E.no_layers = 1;
