@@ -1,4 +1,4 @@
-      function [bndval,error] = dethyd(fid_adm,bnd,nfs_inf,add_inf,filename)
+      function [bndval,error] = nesthd_dethyd(fid_adm,bnd,nfs_inf,add_inf,filename)
 
       % dethyd : determines nested hydrodynamic boundary conditions (part of nesthd2)
 
@@ -64,7 +64,7 @@ for ipnt = 1: nopnt
         return
     end
     
-    % !!!! Temporarely, for testing porposes only, remove all spavce from nfs_inf.names && mnnes
+    % !!!! Temporarely, for testing porposes only, remove all space from nfs_inf.names && mnnes
     mnnes         = simona2mdu_replacechar(mnnes        ,' ','');
     mnnes         = simona2mdu_replacechar(mnnes        ,'(M,N)=','');
     nfs_inf.names = simona2mdu_replacechar(nfs_inf.names,' ','');

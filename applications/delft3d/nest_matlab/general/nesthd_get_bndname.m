@@ -11,7 +11,7 @@ switch filetype
       filebnd = [pin filesep mdf.filbnd];
     case 'mdu'
         mdu = dflowfm_io_mdu('read',filename);
-        filebnd = [pin mdu.external_forcing.ExtForceFile];
+        filebnd = [pin filesep mdu.external_forcing.ExtForceFile];
     case 'pli'
       filebnd = filename;
     case 'Delft3D'

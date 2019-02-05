@@ -382,7 +382,7 @@ function get_hd1_grid_big_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uigetfile({'*.grd;*rgf*;*mdf*;*map.nc'},'Select grid file overall model');
+[fin,pin] = uigetfile({'*.grd;*rgf*;*mdf*;*map.nc;*.nc'},'Select grid file overall model');
 cd (handles.progdir);
 
 if fin ~= 0

@@ -35,7 +35,7 @@
       [bndval,error]      = nesthd_dethyd(fid_adm,bnd,nfs_inf,add_inf,files{3});
       if error return; end
 
-      %% Vertical interpolation, temporary, not correct place, shoud be don inside dethyd
+      %% Vertical interpolation, temporary, not correct place, should be done inside dethyd
       if isfield(add_inf,'interpolate_z')
           bndtype         = {bnd.DATA(:).bndtype};
           det_inf         = nesthd_get_general  (add_inf.interpolate_z);

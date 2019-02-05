@@ -18,7 +18,7 @@
       
       Info = ncinfo(filename);
       Vars = {Info.Variables.Name};
-      i_vel = find(strcmp(Vars,'x_velocity')==1);
+      i_vel = find(strcmp(Vars,'z_velocity')==1);
       if ~isempty(i_vel)
           sds_ini.kmax = Info.Variables(i_vel).Size(1);
       end
@@ -40,16 +40,15 @@
       %
       % Get the depth data (assumes sigma layer distribution!!!)
       %
-      tmp_zw      = ncread(filename,'zcoordinate_w',[1 1 1],[inf inf 1]);
-      tmp_zc      = ncread(filename,'zcoordinate_c',[1 1 1],[inf inf 1]);
-      sds_ini.dps = tmp_zw(1,:);                                % For now, d3d-flow convention 
-      
-      %
-      % Thicknesses (for now only works with assumes sigma layer
-      % distribution
-      %
-      
       if sds_ini.kmax > 1
+          tmp_zw      = ncread(filename,'zcoordinate_w',[1 1 1],[inf inf 1]);
+          tmp_zc      = ncread(filename,'zcoordinate_c',[1 1 1],[inf inf 1]);
+          sds_ini.dps = tmp_zw(1,:);                                % For now, d3d-flow convention 
+
+          %
+          % Thicknesses (for now only works with assumes sigma layer
+          % distribution
+          %
           sds_ini.thick(1:sds_ini.kmax) = 1.0/sds_ini.kmax;
           % create relative position cell centres, measured from the bed
           for i_stat = 1: nostat
@@ -62,6 +61,8 @@
       else
          sds_ini.thick(1)   = 1.0;
          sds_ini.rel_pos(1) = 0.5;
+         sds_ini.dps = ncread(filename,'bedlevel');
+         sds_ini.dps = -sds_ini.dps; % delft3d convention
       end
       
       sds_ini.lstci = 0; % 
@@ -70,5 +71,3 @@
       if ~isempty(i_sal) sds_ini.lstci = sds_ini.lstci + 1;sds_ini.namcon(sds_ini.lstci,1:20) = 'Salinity            '   ; end
       if ~isempty(i_tem) sds_ini.lstci = sds_ini.lstci + 1;sds_ini.namcon(sds_ini.lstci,1:20) = 'Temperature         '; end
           
-      
-      

@@ -12,7 +12,7 @@ kmax          = size(bndval(1).value,2)/2;
 [path,~,~]    = fileparts(filename);
 
 %
-% cylce over boundary points
+% cycle over boundary points
 %
 
 for i_pnt = 1: no_pnt
@@ -21,7 +21,7 @@ for i_pnt = 1: no_pnt
     % Comments
 
     SERIES.Comments{1} = '* COLUMNN=2';
-    SERIES.Comments{2} = '* COLUMN1=Time (min) since itdate';
+    SERIES.Comments{2} = ['* COLUMN1=Time (min) since ' num2str(nfs_inf.itdate)];
 
     if lower(bnd.DATA(i_pnt).bndtype) == 'z'
         SERIES.Comments{3} = '* COLUMN2=Waterlevel';
@@ -44,9 +44,9 @@ for i_pnt = 1: no_pnt
     for i_time = 1: no_times
 
         if isfield(nfs_inf,'time')
-        SERIES.Values(i_time,1) = nfs_inf.time(i_time);
+           SERIES.Values(i_time,1) = nfs_inf.time(i_time)/60;    % minutes!
         else
-        SERIES.Values(i_time,1) = nfs_inf.tstart + (i_time - 1)*nfs_inf.dtmin;
+           SERIES.Values(i_time,1) = nfs_inf.tstart + (i_time - 1)*nfs_inf.dtmin;
         end
 
         SERIES.Values(i_time,2) = bndval(i_time).value(i_pnt,1,1);
