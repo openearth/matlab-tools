@@ -134,6 +134,7 @@ OPT.starttime        = [];
 OPT.stoptime         = [];
 OPT.times            = [];
 OPT.fade             = 1;
+OPT.minarrowlength   = 0.01;
 
 if nargin==0
     varargout{1} = OPT;return
@@ -417,7 +418,7 @@ for it=1:nt
     
     %% Get rid of very short arrows
     
-    ishort=len<0.01;
+    ishort=len<OPT.minarrowlength;
     polx(:,ishort)=NaN;
     poly(isnan(polx))=NaN;
     
