@@ -112,10 +112,10 @@ end
 
 %% Choose and run conversion
 % coordinate conversion
-if strcmp(inputExt,outputExt) 
+if strcmp(inputExt0(2:end),outputExt) 
     OPT=EHY_selectToAndFromEPSG(OPT);
     if ~exist('inputExt0','var'); inputExt0=['.' inputExt]; end
-    outputFile=strrep(inputFile,['.' inputExt],['_EPSG-' num2str(OPT.toEPSG) '.' outputExt]);
+    outputFile=strrep(inputFile,inputExt0,['_EPSG-' num2str(OPT.toEPSG) '.' outputExt]);
 end
 
 % determine outputFile
@@ -125,6 +125,8 @@ elseif strcmp(inputExt,outputExt) % coordinate conversion
     OPT=EHY_selectToAndFromEPSG(OPT);
     if ~exist('inputExt0','var'); inputExt0=['.' inputExt]; end
     outputFile=strrep(inputFile,['.' inputExt],['_EPSG-' num2str(OPT.toEPSG) '.' outputExt]);
+elseif exist('outputFile','var') % outputFile was determined based on coordinate conversion
+    % do nothing
 else % replace inputExt by outputExt
      [pathstr, name, ext] = fileparts(inputFile);
     outputFile=[pathstr filesep name '.' outputExt];
@@ -1176,26 +1178,22 @@ if OPT.fromEPSG~=OPT.toEPSG
                 end
             end
         case {'.ldb','.pli','.pol'}
-            output=landboundary('read',inputFile);
-            [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
+            T=tekal('read',inputFile,'loaddata');
+            for iT=1:length(T.Field)
+                [T.Field(iT).Data(:,1),T.Field(iT).Data(:,2)]=convertCoordinates(T.Field(iT).Data(:,1),T.Field(iT).Data(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
+            end
+            output=[]; % to do
+            
             % pol may contain 3rd column with 1 / -1's, but ignore when it
             % contains large values
             if OPT.saveOutputFile
-                if size(output,2)==2 || size(char(num2str(output(:,3))),2)>3
-                    io_polygon('write',outputFile,output(:,1:2));
-                elseif size(output,2)==3
-                    startID=[1; find(isnan(output(:,1)))+1];
-                    endID=[find(isnan(output(:,1)))-1; size(output,1)];
-                    fid=fopen(outputFile,'w');
-                    for iBlock=1:length(startID)
-                        fprintf(fid,'%5.0f\n',iBlock);
-                        fprintf(fid,'%10.0f%5.0f\n',[endID(iBlock)-startID(iBlock)+1 3]);
-                        for iBlock2=startID(iBlock):endID(iBlock)
-                            fprintf(fid,'%20.7f%20.7f%5.0f\n',[output(iBlock2,1:3)]);
-                        end
-                    end
-                    fclose(fid);
+                fid=fopen(outputFile,'w');
+                for iT=1:length(T.Field)
+                    fprintf(fid,'%s\n',T.Field(iT).Name);
+                    fprintf(fid,'     %i     %i\n',size(T.Field(iT).Data));
+                    fprintf(fid,'%20.7f %20.7f\n',[T.Field(iT).Data(:,1) T.Field(iT).Data(:,2)]');
                 end
+                fclose(fid);
             end
         case '.nc'
             output=[ncread(inputFile,'NetNode_x') ncread(inputFile,'NetNode_y')];
