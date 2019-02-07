@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#PBS -S /bin/bash
+#PBS -q single
+#PBS -N test_couple
+#PBS -l nodes=1:ppn=1
+#PBS -l walltime=72:00:00
+#PBS -o /work/cjoh296/delft3d_xbeach_coupling.wd/job.out
+#PBS -e /work/cjoh296/delft3d_xbeach_coupling.wd/job.err
+#PBS -A hpc_supermic03
+#PBS -V
+#PBS -m e
+#PBS -M cjoh296@lsu.edu
+
+# configure resources
+module load matlab/r2015b
+
+cd /work/cjoh296/delft3d_xbeach_coupling.wd || exit
+matlab -nodisplay -nosplash -nodesktop -r "run('mainloop.m');exit;" > test.txt
