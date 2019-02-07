@@ -22,7 +22,7 @@ function varargout = nesthd_nest_ui(varargin)
 
 % Edit the above text to modify the response to help nesthd_nest_ui
 
-% Last Modified by GUIDE v2.5 11-Jun-2014 13:13:33
+% Last Modified by GUIDE v2.5 07-Feb-2019 15:20:54
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -651,7 +651,7 @@ function get_hd2_bct_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uiputfile('*.bct; timeser*; *.tim','Specify file name hydrodynamic boundary conditions');
+[fin,pin] = uiputfile('*.bct; timeser*; *.tim; *.bc','Specify file name hydrodynamic boundary conditions');
 cd (handles.progdir);
 
 if length(fin) >= 7
@@ -694,6 +694,20 @@ if fin ~= 0
    set_nesthd2(handles,'on');
 end
 
+guidata(hObject, handles);
+
+function timeZone_value_Callback(hObject, eventdata, handles)
+% hObject    handle to timeZone_value (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of timeZone_value as text
+%        str2double(get(hObject,'String')) returns contents of timeZone_value as a double
+
+handles.add_inf.timeZone = str2num(get(hObject,'String'));
+update_additional(handles);
+
+% Update handles structure
 guidata(hObject, handles);
 
 function a0_value_Callback(hObject, eventdata, handles)
@@ -955,6 +969,9 @@ set (handles.name_hd2_bcc      ,'String',nesthd_strippath(handles.files_hd2{5}),
 
 function add_inf_off(handles)
 
+set (handles.timeZone       ,'Visible','off');
+set (handles.timeZone_value ,'Visible','off');
+
 set (handles.a0             ,'Visible','off');
 set (handles.a0_value       ,'Visible','off');
 
@@ -981,7 +998,9 @@ function update_additional(handles)
     %
     % Update additional water level information
     %
-
+    set (handles.timeZone      ,'Visible','on','Enable','on');
+    set (handles.timeZone_value,'Visible','on','Enable','on','String',num2str(handles.add_inf.timeZone),'HorizontalAlignment','right'); 
+    
     if handles.wlev
        set (handles.a0,'Visible','on','Enable','on');
        set (handles.a0_value,'Visible','on','Enable','on','String',num2str(handles.add_inf.a0),'HorizontalAlignment','right');

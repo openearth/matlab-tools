@@ -22,7 +22,7 @@ end
 fid = fopen(filename,'w+');
 
 for ibnd = 1: no_bnd
-   i_pnt = (ibnd - 1)*2 + 1; 
+   i_pnt = (ibnd - 1)*2 + 1;
    type     = lower (bnd.DATA(i_pnt).bndtype);
 
    nolay    = 1;
@@ -40,7 +40,7 @@ for ibnd = 1: no_bnd
    end
 
    for iside = 1: 2
-      i_pnt = (ibnd - 1)*2 + iside; 
+      i_pnt = (ibnd - 1)*2 + iside;
       %
       % Set pointname
       %
@@ -63,7 +63,7 @@ for ibnd = 1: no_bnd
            Line = [Line ' Layer = ' num2str(k)];
          end
          fprintf(fid, '%s\n', Line);
-         Line = ['Frame = ' num2str(nfs_inf.tstart) ' ' num2str(nfs_inf.dtmin) ' ' num2str(nfs_inf.tend)];
+         Line = ['Frame = ' num2str(nfs_inf.tstart + add_inf.timeZone*60.)' ' num2str(nfs_inf.dtmin) ' ' num2str(nfs_inf.tend + add_inf.timeZone*60.)];
          fprintf(fid, '%s\n', Line);
          Line = 'Values = ';
          fprintf(fid, '%s\n', Line);

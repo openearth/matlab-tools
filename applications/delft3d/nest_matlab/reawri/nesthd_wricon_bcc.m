@@ -70,7 +70,7 @@ for ibnd = 1 : no_bnd
 %
 
                for itim = 1: notims
-                   Info.Table(k).Data(itim,1) = nfs_inf.tstart + (itim-1)*nfs_inf.dtmin;
+                   Info.Table(k).Data(itim,1) = nfs_inf.tstart + (itim-1)*nfs_inf.dtmin + add_inf.timeZone*60.;
                    for ilay = 1: kmax
                        Info.Table(k).Data(itim,ilay+1     ) = bndval(itim).value((ibnd - 1)*2 + 1,ilay,l,1);
                        Info.Table(k).Data(itim,ilay+kmax+1) = bndval(itim).value((ibnd - 1)*2 + 2,ilay,l,1);

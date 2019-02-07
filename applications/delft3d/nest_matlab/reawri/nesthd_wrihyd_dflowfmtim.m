@@ -44,9 +44,9 @@ for i_pnt = 1: no_pnt
     for i_time = 1: no_times
 
         if isfield(nfs_inf,'time')
-           SERIES.Values(i_time,1) = nfs_inf.time(i_time)/60;    % minutes!
+           SERIES.Values(i_time,1) = nfs_inf.time(i_time)/60 + add_inf.timeZone*60.;    % minutes!
         else
-           SERIES.Values(i_time,1) = nfs_inf.tstart + (i_time - 1)*nfs_inf.dtmin;
+           SERIES.Values(i_time,1) = nfs_inf.tstart + (i_time - 1)*nfs_inf.dtmin + add_inf.timeZone*60.;
         end
 
         SERIES.Values(i_time,2) = bndval(i_time).value(i_pnt,1,1);

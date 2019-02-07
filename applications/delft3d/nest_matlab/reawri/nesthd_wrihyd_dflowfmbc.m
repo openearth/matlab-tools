@@ -13,7 +13,7 @@ kmax          = size(bndval(1).value,2)/2;
 for i_pnt = 1: no_pnt
     %% Type of boundary
     if strcmpi(bnd.DATA(i_pnt).bndtype,'z')  quantity = 'waterlevel'; end
-    
+
     %% Header information
     ext_force(i_pnt).Chapter          = 'Forcing';
     ext_force(i_pnt).Keyword.Name {1} = 'Name';
@@ -30,15 +30,15 @@ for i_pnt = 1: no_pnt
     ext_force(i_pnt).Keyword.Value{6} = [quantity 'bnd'];
     ext_force(i_pnt).Keyword.Name {7} = 'Unit';
     ext_force(i_pnt).Keyword.Value{7} = 'm';
-    
+
     %% Series information
     for i_time = 1: no_times
         if isfield(nfs_inf,'time')
-            ext_force(i_pnt).values{i_time,1} = nfs_inf.time(i_time)/60;    % minutes!
+            ext_force(i_pnt).values{i_time,1} = nfs_inf.time(i_time)/60 + add_inf.timeZone*60.;    % minutes!
         else
-            ext_force(i_pnt).values{i_time,1} = nfs_inf.tstart + (i_time - 1)*nfs_inf.dtmin;
+            ext_force(i_pnt).values{i_time,1} = nfs_inf.tstart + (i_time - 1)*nfs_inf.dtmin + add_inf.timeZone*60.;
         end
-        
+
         ext_force(i_pnt).values(i_time,2) = {bndval(i_time).value(i_pnt,1,1)};
         if lower(bnd.DATA(i_pnt).bndtype) == 'p' || lower(bnd.DATA(i_pnt).bndtype) == 'x'
             ext_force(i_pnt).Values{i_time,3} = {bndval(i_time).value(i_pnt,2,1)};

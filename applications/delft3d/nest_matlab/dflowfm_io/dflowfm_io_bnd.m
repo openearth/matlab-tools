@@ -74,7 +74,11 @@ switch lower(cmd)
                out.DATA(no_bnd).Y        = Y(i_pnt);
                out.DATA(no_bnd).bndtype  = bndtype{i_file};
                out.DATA(no_bnd).datatype = 't';
-               out.Name{no_bnd}          = [name '_' num2str(i_pnt,'%4.4i')];
+               if size(tmp.DATA,2) == 3 
+                   out.Name{no_bnd}      = tmp.DATA{i_pnt,3};
+               else
+                   out.Name{no_bnd}      = [name '_' num2str(i_pnt,'%4.4i')];
+               end
                out.FileName{no_bnd} = name;
             end
         end

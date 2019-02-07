@@ -50,7 +50,7 @@ function [handles] = read_ini(handles,varargin)
             for i_file = 1: 6
                 if isempty(handles.files_hd1{i_file}) handles.files_hd1{i_file} = ''; end
             end
-            
+
          case 'Nesthd2'
             handles.files_hd2{1}=inifile('get',Info,handles.active,'Boundary definition             ');
             handles.files_hd2{2}=inifile('get',Info,handles.active,'Nest administration             ');
@@ -66,7 +66,13 @@ function [handles] = read_ini(handles,varargin)
                % Get additional information
                %
 
+               handles.add_inf.timeZone = 0;
+
                Chapter = 'Additional';
+               try
+                   handles.add_inf.timeZone = inifile('get',Info,Chapter,'Timezone                       ');
+               end
+
                if handles.wlev
                   handles.add_inf.a0=inifile('get',Info,Chapter,'A0                             ');
                end
