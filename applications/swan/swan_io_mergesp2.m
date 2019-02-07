@@ -5,8 +5,8 @@ function swan_io_mergesp2(dr,fout,varargin)
 %
 %   For nested Delft3D Wave models it is possible to specify the wave output of the outer grid as input
 %   for the nested grid (specified at the boundary), using 2D wave spectra (sp2-files). For non-stationary
-%   2D wave spectra (for example in a coupled Flow-Wave simulation), the sp2-files of different moments in 
-%   time have to be merged into one sp2-file. This function merges thr sp2-files in the directory 'dr' in a 
+%   2D wave spectra (for example in a coupled Flow-Wave simulation), the sp2-files of different moments in
+%   time have to be merged into one sp2-file. This function merges thr sp2-files in the directory 'dr' in a
 %   sp2-file with filename 'fout'. Default coordinate system is LONLAT.
 %
 %   Syntax:
@@ -24,11 +24,11 @@ function swan_io_mergesp2(dr,fout,varargin)
 %
 %   Examples
 %   swan_io_mergesp2('d:\test\','test.sp2')
-%   swan_io_mergesp2('d:\test\','test.sp2','CS1',CS1,'CS2',CS2) 
+%   swan_io_mergesp2('d:\test\','test.sp2','CS1',CS1,'CS2',CS2)
 %       with CS1.code = 32631, CS1.type = 'xy', CS2.code = 4326, CS2.type = 'geo'
-%   swan_io_mergesp2('d:\test\','test.sp2','fexclude',{'nest_t1.sp2','nest_t2.sp2'}) 
-%   swan_io_mergesp2('d:\test\','test.sp2','prefix','csm'}) 
-%   swan_io_mergesp2('d:\test\','test.sp2','firstpoint',5,'lastpoint',10}) 
+%   swan_io_mergesp2('d:\test\','test.sp2','fexclude',{'nest_t1.sp2','nest_t2.sp2'})
+%   swan_io_mergesp2('d:\test\','test.sp2','prefix','csm'})
+%   swan_io_mergesp2('d:\test\','test.sp2','firstpoint',5,'lastpoint',10})
 %
 %   See also SWAN
 
@@ -43,7 +43,7 @@ function swan_io_mergesp2(dr,fout,varargin)
 %       Rotterdamseweg 185
 %       PO Box Postbus 177
 %       2600MH Delft
-%       The Netherlands 
+%       The Netherlands
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ if ~isempty(OPT.fexclude)
     lst = lst(~ismember(ids,id));
     n=length(lst);
 end
-    
+
 fi2=fopen(fout,'wt');
 
 % Read sp2-files
@@ -133,7 +133,7 @@ for i=1:n
     
     fname=lst(i).name;
     fid=fopen([dr fname],'r');
-        
+    
     f=fgetl(fid);
     f=fgetl(fid);
     f=fgetl(fid);
@@ -141,11 +141,11 @@ for i=1:n
     f=fgetl(fid);
     f=fgetl(fid);
     CS = strtrim(f(1:12));
-
+    
     f=fgetl(fid);
-
+    
     spec.nPoints=str2double(f(1:12));
-
+    
     for j=1:spec.nPoints
         f=fgetl(fid);
         [spec.x(j) spec.y(j)]=strread(f);
@@ -159,9 +159,9 @@ for i=1:n
                 'CS2.name',OPT.CS2.name,'CS2.type',OPT.CS2.type);
         end
     end
-
+    
     f=fgetl(fid);
-
+    
     f=fgetl(fid);
     spec.nFreq=str2double(f(1:12));
     
@@ -169,9 +169,9 @@ for i=1:n
         f=fgetl(fid);
         spec.freqs(j)=strread(f);
     end
-
+    
     f=fgetl(fid);
-
+    
     f=fgetl(fid);
     spec.nDir=str2double(f(1:12));
     
@@ -185,7 +185,7 @@ for i=1:n
     f=fgetl(fid);
     f=fgetl(fid);
     f=fgetl(fid);
-
+    
     f=fgetl(fid);
     f=f(1:15);
     
@@ -194,23 +194,28 @@ for i=1:n
     spec.time(it).time=datenum(f,'yyyymmdd.HHMMSS');
     
     nbin=spec.nDir*spec.nFreq;
-
-    for j=1:spec.nPoints  
+    
+    for j=1:spec.nPoints
         f=fgetl(fid);
         deblank(f);
         if strcmpi(deblank(f),'factor')
-            f=fgetl(fid);
-            spec.time(it).points(j).factor=strread(f);
-            data=textscan(fid,'%f',nbin);
-            data=data{1};
-            data=reshape(data,spec.nDir,spec.nFreq);
-            data=data';
-            spec.time(it).points(j).energy=data;
-            f=fgetl(fid);
+            try
+                f=fgetl(fid);
+                spec.time(it).points(j).factor=strread(f);
+                data=textscan(fid,'%f',nbin);
+                data=data{1};
+                data=reshape(data,spec.nDir,spec.nFreq);
+                data=data';
+                spec.time(it).points(j).energy=data;
+                f=fgetl(fid);
+            catch
+                spec.time(it).points(j).factor=0;
+                spec.time(it).points(j).energy=0;
+            end
         else
             spec.time(it).points(j).factor=0;
             spec.time(it).points(j).energy=0;
-        end            
+        end
     end
     
     % Write to merged sp2-file
@@ -228,7 +233,7 @@ for i=1:n
                     fprintf(fi2,'%s\n','LONLAT                                  locations in spherical coordinates');
             end
         elseif strcmp(CS,'LOCATIONS')
-            fprintf(fi2,'%s\n','LOCATIONS');            
+            fprintf(fi2,'%s\n','LOCATIONS');
         else
             fprintf(fi2,'%s\n','LONLAT                                  locations in spherical coordinates');
         end

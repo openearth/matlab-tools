@@ -417,7 +417,6 @@ function varargout = swan_io_spectrum(varargin)
                quantity_name = DAT.quantity_names{iquant};
                fprintf  (fid,'%g ',DAT.(quantity_name)(iloc,ifreq));
                end
-               fprinteol(fid,OPT.OS);
             end
          end
 
