@@ -66,7 +66,12 @@ ddb_getToolboxData(handles.toolbox.observationstations.dataDir,'observationstati
 
 dr=handles.toolbox.observationstations.dataDir;
 
-s=xml2struct([dr 'ObservationStations.xml'],'structuretype','supershort');
+% JV: Added case-insensitive check for xml file
+tmpFiles = dir(dr);
+index = find(strcmpi({tmpFiles.name},'ObservationStations.xml') == 1, 1);
+s=xml2struct([dr tmpFiles(index).name],'structuretype','supershort');
+
+% s=xml2struct([dr 'ObservationStations.xml'],'structuretype','supershort');
 
 for k=1:length(s.database)
 
