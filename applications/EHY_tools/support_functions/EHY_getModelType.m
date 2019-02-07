@@ -1,4 +1,4 @@
-function modelType=EHY_getModelType(fileInp)
+function [modelType,varargout] = EHY_getModelType(fileInp)
 %% modelType=EHY_getModelType(filename)
 %
 % This function returns the modelType based on a filename
@@ -68,5 +68,7 @@ if isempty(modelType)
     end
 end
 
-
+%% fileType
+[~,~,ext]    = fileparts(fileInp);
+varargout{1} = ext(2:end); 
 
