@@ -68,12 +68,24 @@ handles.toolbox.navigationcharts.longName='Navigation Charts';
 handles.toolbox.navigationcharts.databases=[];
 handles.toolbox.navigationcharts.charts=[];
 
-if isdir([handles.toolBoxDir 'navigationcharts'])
+% JV: Added case-insensitive checks for directories and filenames
+%     necessary for linux/mac
+tmpDir=dir(handles.toolBoxDir);
+index = find(strcmpi({tmpDir.name},'navigationcharts') == 1, 1);
+
+%if isdir([handles.toolBoxDir 'navigationcharts'])
+if ~isempty(index)
 
     % Read xml file
-    dr=[handles.toolBoxDir 'navigationcharts' filesep'];
+    %dr=[handles.toolBoxDir 'navigationcharts' filesep'];
+    dr=[handles.toolBoxDir tmpDir(index).name filesep'];
     
-    xml=xml2struct([dr 'NavigationCharts.xml'],'structuretype','short');
+    % JV: Same fix for xml file
+    tmpFiles = dir(dr);
+    index = find(strcmpi({tmpFiles.name},'navigationcharts.xml') == 1, 1);
+    
+    %xml=xml2struct([dr 'NavigationCharts.xml'],'structuretype','short');
+    xml=xml2struct([dr tmpFiles(index).name],'structuretype','short');
 
     n=0;
     for jj=1:length(xml.file)
