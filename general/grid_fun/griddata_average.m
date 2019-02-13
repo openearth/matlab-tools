@@ -1,4 +1,4 @@
-function ZI = griddata_average(X,Y,Z,XI,YI)
+function ZI = griddata_average(X,Y,Z,XI,YI,varargin)
 %GRIDDATA_AVERAGE maps (bins) non-uniform data to regular grid by averaging
 %   
 %   A main advantage over griddata is that data is not interpolated, and
@@ -43,7 +43,7 @@ function ZI = griddata_average(X,Y,Z,XI,YI)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
+%   Copyright (C) 2010 Deltares
 %       tda
 %
 %       <EMAIL>	
@@ -79,7 +79,18 @@ function ZI = griddata_average(X,Y,Z,XI,YI)
 % $Author$
 % $Revision$
 % $HeadURL$
-% $Keywords: $
+% $Keywords: grid, griddata$
+
+OPT.messages = false;
+% return defaults (aka introspection)
+if nargin==0;
+    varargout = {OPT};
+    return
+end
+% overwrite defaults with user arguments
+OPT = setproperty(OPT, varargin);
+%% code
+
 
 %% vectorize data and sort along x (improves speed within loops)
 x=X(:);
@@ -97,11 +108,13 @@ unique_YI=unique(YI)';
 unique_XI = [2*unique_XI(1) - unique_XI(2) - 2*eps(unique_XI(1)) unique_XI 2*unique_XI(end) - unique_XI(end-1) + 2*eps(unique_XI(end))];
 unique_YI = [2*unique_YI(1) - unique_YI(2) - 2*eps(unique_YI(1)) unique_YI 2*unique_YI(end) - unique_YI(end-1) + 2*eps(unique_YI(end))];
 
+if OPT.messages, disp('griddata_average: finding unique x...');end
 for ii = find(~ismember(x,unique_XI))' 
     [dummy,nn] = min(abs(x(ii)-unique_XI));
     x(ii) = unique_XI(nn);
 end
 
+if OPT.messages, disp('griddata_average: finding unique y...');end
 for ii = find(~ismember(y,unique_YI))' 
     [dummy,nn] = min(abs(y(ii)-unique_YI));
     y(ii) = unique_YI(nn);
@@ -117,6 +130,7 @@ z(temp)=[];
 ZI = nan(length(unique_YI)-2,length(unique_XI)-2);
 unique_x = unique(x)';
 
+if OPT.messages, disp('griddata_average: mapping data...');end
 for ix=2:length(unique_XI)-1 % skip first and last ... then step through each x
     if ismember(unique_XI(ix),unique_x) % returns 1 when to-grid x-value is present in the from-x-grid
         f=find(unique_XI(ix)==x,1,'first');
