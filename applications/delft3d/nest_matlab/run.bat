@@ -1,6 +1,6 @@
-nesthd  d:\open_earth_test\matlab\applications\delft3d\nest_matlab\delft3d\milford\milford_hd1.ini 
-nesthd  d:\open_earth_test\matlab\applications\delft3d\nest_matlab\delft3d\milford\milford_hd2.ini 
-nesthd  d:\open_earth_test\matlab\applications\delft3d\nest_matlab\delft3d\shenzen\shenzen_hd1.ini 
-nesthd  d:\open_earth_test\matlab\applications\delft3d\nest_matlab\delft3d\shenzen\shenzen_hd2.ini 
-nesthd  d:\open_earth_test\matlab\applications\delft3d\nest_matlab\delft3d\zeedelta\zeedelta_hd1.ini 
-nesthd  d:\open_earth_test\matlab\applications\delft3d\nest_matlab\delft3d\zeedelta\zeedelta_hd2.ini 
+nesthd c:\checkouts_svn\open_earth_repository\matlab\applications\delft3d\nest_matlab\check\\delft3d\milford\nesthd1.ini 
+nesthd c:\checkouts_svn\open_earth_repository\matlab\applications\delft3d\nest_matlab\check\\delft3d\milford\nesthd2.ini 
+nesthd c:\checkouts_svn\open_earth_repository\matlab\applications\delft3d\nest_matlab\check\\delft3d\shenzen\nesthd1.ini 
+nesthd c:\checkouts_svn\open_earth_repository\matlab\applications\delft3d\nest_matlab\check\\delft3d\shenzen\nesthd2.ini 
+nesthd c:\checkouts_svn\open_earth_repository\matlab\applications\delft3d\nest_matlab\check\\delft3d\zeedelta\nesthd1.ini 
+nesthd c:\checkouts_svn\open_earth_repository\matlab\applications\delft3d\nest_matlab\check\\delft3d\zeedelta\nesthd2.ini 

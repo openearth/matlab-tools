@@ -38,7 +38,7 @@ if ~isempty(strfind(filename,'siminp'))
     filetype = 'siminp';
 end
 
-if ~isempty(strfind(extension,'grd')) || ~isempty(strfind(extension,'rgf'))
+if ~isempty(strfind(extension,'grd')) || ~isempty(strfind(extension,'rgf')) || ~isempty(strfind(name,'rgf'))
      filetype = 'grd';
 end
 

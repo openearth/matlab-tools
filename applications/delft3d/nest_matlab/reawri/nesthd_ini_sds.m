@@ -17,7 +17,7 @@
       times = (times - refdate)*1440.;
 
       sds_ini.notims = length(times);
-%     sds_ini.notims = 10;
+%     sds_ini.notims = 20;
 
       sds_ini.itdate = str2num(datestr(refdate,'yyyymmdd'));
       sds_ini.dtmin  = (times(2) - times(1));

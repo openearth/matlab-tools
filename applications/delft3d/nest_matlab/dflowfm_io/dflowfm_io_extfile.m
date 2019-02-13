@@ -133,18 +133,20 @@ switch lower(cmd)
                 fclose(fid);
             end
         else
-            % New format
-            Info      = inifile('new');
+            % New format (writing through function inifile does not work
+            % conveniently for series so write directly)
+            fid = fopen(fname,'w+');
+            
             ext_force = OPT.ext_force;
-            nr_force  = length(ext_force);
-            for i_force = 1: nr_force
+            no_force  = length(ext_force); 
+            for i_force = 1: no_force
                 Chapter  = ext_force(i_force).Chapter;      
-                Keyword = ext_force(i_force).Keyword.Name;
+                Keyword  = ext_force(i_force).Keyword.Name;
                 Value    = ext_force(i_force).Keyword.Value;
-                Info.Data{i_force,1} = Chapter;
+                
+                fprintf(fid,'[%s]\n',ext_force(i_force).Chapter);
                 for i_key = 1: length(Keyword)
-                    tmp{i_key,1} = Keyword{i_key};
-                    tmp{i_key,2} = Value  {i_key};
+                    fprintf (fid,'%-20s = %s\n',Keyword{i_key},Value{i_key});
                 end
                 
                 if isfield(ext_force(i_force),'values')
@@ -154,23 +156,18 @@ switch lower(cmd)
                     
                     if isstr(Value{1,1})
                         format = ['%8s ' repmat('%12.6f ',1,no_col - 1)];
-                    elseif isempty(strfind(num2str(Value{1,1}),'.'))
+                    elseif isinteger(Value{1,1})
                         format = ['%8i ' repmat('%12.6f ',1,no_col - 1)];
                     else
                         format = repmat('%12.6f ',1,no_col);
                     end
-                    
-                    for i_row = 1: no_row
-                        tmp{end+1,2} = '';
-                        tmp{end  ,2} = sprintf(format,Value{i_row,:});
-                    end;
-                    
                 end
-                Info.Data{i_force,2} = tmp;
-                clear tmp
+                
+                for i_row = 1: no_row
+                    fprintf(fid,[format '\n'],cell2mat(Value(i_row,:)));
+                end
             end
-            inifile('write',fname,Info);    
+            fclose(fid);
         end
-
 end
 

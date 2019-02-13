@@ -7,7 +7,7 @@
       
       %% Initialisation
       files   = varargin{1};
-      if nargin == 2
+      if nargin >= 2
           add_inf             = varargin{2};
           %% Temporary, set path to mdf file with NSC layer distribution
           if exist('nsc_thick.mdf','file')
@@ -15,6 +15,11 @@
           end
       else
           add_inf = nesthd_additional( );
+      end
+      
+      OPT.check = false;
+      if nargin >= 3
+          OPT = setproperty(OPT,varargin(3:end));
       end
       
       %% Administration file
@@ -26,6 +31,7 @@
       
       %% Get general information from history file
       nfs_inf = nesthd_get_general(files{3});
+      if OPT.check nfs_inf.notims = min(nfs_inf.notims,20); end
       nobnd       = length(bnd.DATA);
       kmax        = nfs_inf.kmax;
       lstci       = nfs_inf.lstci;
