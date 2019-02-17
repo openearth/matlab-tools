@@ -54,11 +54,18 @@ for i_pnt = 1: no_pnt
 end
 
 %% Merge individual files
-command    = 'copy ';
-for i_pnt = 1: no_pnt
+copyfile ([path filesep 'tmp_' num2str(1,'%4.4i') '.bc'],fileOut);
+
+for i_pnt = 2: no_pnt
     tmp_series = [path filesep 'tmp_' num2str(i_pnt,'%4.4i') '.bc'];
-    command    = [ command  tmp_series ' + '];
+    fid1       = fopen(fileOut,'a');
+    fid2       = fopen(tmp_series,'r');
+    while ~feof(fid2)
+        tline = fgetl(fid2);
+        fprintf(fid1,'%s\n',tline);
+    end
+    fclose(fid2);
+    fclose(fid1);
 end
-command =[command(1:end-2) fileOut];
-system (command);
+
 delete([path filesep 'tmp_*.bc']);   
