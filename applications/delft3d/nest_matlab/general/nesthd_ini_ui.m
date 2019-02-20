@@ -12,4 +12,6 @@ handles.bcc_onoff         = 'off';
 handles.wlev              = false;
 handles.vel               = false;
 handles.conc              = false;
+handles.add_inf.timeZone  = 0;
+handles.add_inf.a0        = 0.0;
 

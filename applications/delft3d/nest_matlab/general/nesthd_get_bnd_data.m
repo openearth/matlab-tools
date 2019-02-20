@@ -1,4 +1,4 @@
-function bnd=get_bnd_data(filename,varargin)
+function bnd=get_bnd_data(fileInp,varargin)
 
 % get_bnd_data : Gets the boundary definition
 
@@ -10,27 +10,26 @@ OPT = setproperty(OPT,varargin);
 %
 %  Determine file type
 %
-
-filetype = nesthd_det_filetype(filename);
+modelType = EHY_getModelType(fileInp);
 
 %
 % Use appropriate funtion to get the bnd data
 %
 
-switch filetype;
-   case 'Delft3D'
-      bnd = delft3d_io_bnd('read',filename);
-   case 'siminp'
-      [P,N,E] = fileparts(filename);
-      filename = [N E];
+switch modelType;
+   case 'd3d'
+      bnd = delft3d_io_bnd('read',fileInp);
+   case 'simona'
+      [P,N,E] = fileparts(fileInp);
+      fileInp = [N E];
 
       exclude = {true;true};
-      S = readsiminp(P,filename,exclude);
+      S = readsiminp(P,fileInp,exclude);
       S = all_in_one(S);
 
       bnd = simona2mdf_bnddef(S);
-    case {'pli','ext','mdu'}
-        bnd = dflowfm_io_bnd('read',filename);
+    case 'dfm'
+        bnd = dflowfm_io_bnd('read',fileInp);
 end
 
 %
@@ -39,7 +38,7 @@ end
 % use points
 %
 
-if ~strcmp(filetype,'ext') && ~strcmp(filetype,'pli') && ~strcmp(filetype,'mdu')
+if ~strcmpi(modelType,'dfm')
     if ~isempty(bnd)
         hulp   = [];
         if OPT.Points
@@ -54,7 +53,7 @@ if ~strcmp(filetype,'ext') && ~strcmp(filetype,'pli') && ~strcmp(filetype,'mdu')
                         hulp.n    (i_pnt_T)  = bnd.n     (ibnd,i_side);
                         % New structure based on names!
                         hulp.Name {i_pnt_T}  = nesthd_convertmn2string(bnd.m(ibnd,i_side),bnd.n(ibnd,i_side));
-                        if strcmpi(filetype,'siminp')
+                        if strcmpi(modelType,'simona')
                             hulp.pntnr(i_pnt_T)  = bnd.pntnr (ibnd,i_side);
                         end
                     end
@@ -72,7 +71,7 @@ if ~strcmp(filetype,'ext') && ~strcmp(filetype,'pli') && ~strcmp(filetype,'mdu')
                         hulp.n    (ibnd_T,i_side)  = bnd.n     (ibnd,i_side);
                         hulp.Name {ibnd_T,i_side}  = nesthd_convertmn2string(bnd.m(ibnd,i_side),bnd.n(ibnd,i_side));
                     end
-                    if strcmpi(filetype,'siminp')
+                    if strcmpi(modelType,'simona')
                         hulp.pntnr(ibnd_T,:)  = bnd.pntnr (ibnd,:);
                     end
                 end

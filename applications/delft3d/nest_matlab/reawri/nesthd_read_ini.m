@@ -59,7 +59,7 @@ function [handles] = read_ini(handles,varargin)
             handles.files_hd2{5}=inifile('get',Info,handles.active,'Transport Boundary Conditions   ');
 
             if ~isempty(handles.files_hd2{3}) && ~isempty(handles.files_hd2{1})
-               handles.nfs_inf = nesthd_get_general(handles.files_hd2{3});
+               handles.nfs_inf = nesthd_geninf (handles.files_hd2{3});
                [handles]       = nesthd_set_add_inf(handles);
 
                %

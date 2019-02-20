@@ -20,7 +20,6 @@ no_pnt = length(bnd.DATA);
 notims = nfs_inf.notims;
 kmax   = nfs_inf.kmax;
 lstci  = nfs_inf.lstci;
-mnstat = nfs_inf.mnstat;
 
 for itim = 1: notims
     bndval(itim).value(1:no_pnt,1:kmax,1:lstci) = 0.;

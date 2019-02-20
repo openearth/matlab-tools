@@ -8,8 +8,7 @@ function nesthd_wrihyd_dflowfmbc(fileOut,bnd,nfs_inf,bndval,add_inf)
 no_pnt        = length(bnd.DATA);
 no_times      = length(bndval);
 kmax          = size(bndval(1).value,2)/2;
-itdate        = num2str(nfs_inf.itdate,'%8.8i');
-itdate        = [itdate(1:4) '-' itdate(5:6) '-' itdate(7:8)];
+itdate        = datestr(nfs_inf.itdate,'yyyy-mm-dd  HH:MM:SS');
 [path,~,~]    = fileparts(fileOut);
 
 %% cycle over boundary points
@@ -28,7 +27,7 @@ for i_pnt = 1: no_pnt
     ext_force.Keyword.Name {4} = 'Quantity';
     ext_force.Keyword.Value{4} = 'time';
     ext_force.Keyword.Name {5} = 'Unit';
-    ext_force.Keyword.Value{5} = ['minutes since ' itdate '  00:00:00'];
+    ext_force.Keyword.Value{5} = ['minutes since ' itdate];
     ext_force.Keyword.Name {6} = 'Quantity';
     ext_force.Keyword.Value{6} = [quantity 'bnd'];
     ext_force.Keyword.Name {7} = 'Unit';
@@ -36,18 +35,13 @@ for i_pnt = 1: no_pnt
 
     %% Series information
     for i_time = 1: no_times
-        if isfield(nfs_inf,'time')
-            ext_force.values{i_time,1} = nfs_inf.time(i_time)/60 + add_inf.timeZone*60.;    % minutes!
-        else
-            ext_force.values{i_time,1} = nfs_inf.tstart + (i_time - 1)*nfs_inf.dtmin + add_inf.timeZone*60.;
-        end
-
+        ext_force.values{i_time,1} = (nfs_inf.times(i_time) - nfs_inf.itdate)*1440. + add_inf.timeZone*60.;    % minutes!
         ext_force.values(i_time,2) = {bndval(i_time).value(i_pnt,1,1)};
         if lower(bnd.DATA(i_pnt).bndtype) == 'p' || lower(bnd.DATA(i_pnt).bndtype) == 'x'
             ext_force.Values{i_time,3} = {bndval(i_time).value(i_pnt,2,1)};
         end
     end
-    
+
     %% Write the series for induvidual support point
     fileTmp = [path filesep 'tmp_' num2str(i_pnt,'%4.4i') '.bc'];
     dflowfm_io_extfile('write',fileTmp,'ext_force',ext_force,'type','ini');
@@ -68,4 +62,4 @@ for i_pnt = 2: no_pnt
     fclose(fid1);
 end
 
-delete([path filesep 'tmp_*.bc']);   
+delete([path filesep 'tmp_*.bc']);

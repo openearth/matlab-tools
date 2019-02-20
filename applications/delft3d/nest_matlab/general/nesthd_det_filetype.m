@@ -1,5 +1,7 @@
 function filetype = det_filetype (filename)
 
+error ('Functionalty of this function is covered by EHY_getModelType. Use that function instead');
+
 % det_filetype : determines, based on name/extension, whether a file is a delft3d or simona file (or DFLOWFM)
 
 filetype = 'none';

@@ -7,8 +7,8 @@ switch lower(cmd)
 
     %% Extract boundary information from the pli's
     case 'read'
-        type_bnd = nesthd_det_filetype(fname);
-        switch type_bnd
+        [~,fileType] = EHY_getModelType(fname);
+        switch fileType
             case 'pli'
                 filelist{1} = fname;
                 bndtype{1}  = 'z';
@@ -16,7 +16,7 @@ switch lower(cmd)
 
                 %% Create list of pli files out of the ext file or the mdu file
                 [path,~,~] = fileparts(fname);
-                switch type_bnd
+                switch fileType
                     case 'mdu'
                         mdu = dflowfm_io_mdu(fname);
                         if isfield(mdu.external_forcing,'ExtForceFileNew') & ~isempty(mdu.external_forcing.ExtForceFileNew)
@@ -74,7 +74,7 @@ switch lower(cmd)
                out.DATA(no_bnd).Y        = Y(i_pnt);
                out.DATA(no_bnd).bndtype  = bndtype{i_file};
                out.DATA(no_bnd).datatype = 't';
-               if size(tmp.DATA,2) == 3 
+               if size(tmp.DATA,2) == 3
                    out.Name{no_bnd}      = tmp.DATA{i_pnt,3};
                else
                    out.Name{no_bnd}      = [name '_' num2str(i_pnt,'%4.4i')];

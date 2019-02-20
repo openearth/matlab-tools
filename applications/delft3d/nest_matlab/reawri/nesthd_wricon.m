@@ -1,12 +1,12 @@
-function wricon(filename,bnd,nfs_inf,bndval,add_inf)
+function wricon(fileInp,bnd,nfs_inf,bndval,add_inf)
 
 % wricon : Write transport boundary conditions to a bcc (Delft3D) or timser (SIMONA) file
 
-filetype = nesthd_det_filetype(filename);
+modelType = EHY_getModelType(fileInp);
 
-switch filetype
-   case 'Delft3D'
-      nesthd_wricon_bcc    (filename,bnd,nfs_inf,bndval,add_inf);
-   case 'SIMONA'
-      nesthd_wricon_timeser(filename,bnd,nfs_inf,bndval,add_inf);
+switch modelType
+   case 'd3d'
+      nesthd_wricon_bcc    (fileInp,bnd,nfs_inf,bndval,add_inf);
+   case 'simona'
+      nesthd_wricon_timeser(fileInp,bnd,nfs_inf,bndval,add_inf);
 end

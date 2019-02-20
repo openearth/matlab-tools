@@ -3,8 +3,8 @@ function varargout = nesthd_nest_ui(varargin)
 %      NESTHD_NEST_UI, by itself, creates a new NESTHD_NEST_UI or raises the existing
 %      singleton*.
 %
-%      H = NESTHD_NEST_UI returns the handle to a new NESTHD_NEST_UI or the handle to
-%      the existing singleton*.
+%      H = NESTHD_NEST_UI returns the handle to a new NESTHD_NEST_UI or the
+%      handle to the existing singleton*.
 %
 %      NESTHD_NEST_UI('CALLBACK',hObject,eventData,handles,...) calls the local
 %      function named CALLBACK in NESTHD_NEST_UI.M with the given input arguments.
@@ -22,7 +22,7 @@ function varargout = nesthd_nest_ui(varargin)
 
 % Edit the above text to modify the response to help nesthd_nest_ui
 
-% Last Modified by GUIDE v2.5 07-Feb-2019 15:20:54
+% Last Modified by GUIDE v2.5 19-Feb-2019 10:49:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -429,11 +429,11 @@ function get_hd1_enclosure_Callback(hObject, eventdata, handles)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
 selection = '';
-type_nest = nesthd_det_filetype(handles.files_hd1{2});
-switch type_nest
-    case 'grd'
+modelType = EHY_getModelType(handles.files_hd1{2});
+switch modelType
+    case {'d3d' 'simona'}
         selection = {'*.enc;comgrid*'};
-    case 'DFLOWFM'
+    case 'dfm'
         selection = '';
 end
 [fin,pin] = uigetfile(selection,'Select enclosure file detailled model');
@@ -459,11 +459,11 @@ function get_hd1_bnd_Callback(hObject, eventdata, handles)
 if ~isempty (handles.filedir); cd(handles.filedir); end
 selection = {'*.bnd;*.mdf;siminp*;*.mdu;*.pli;*.ext'};
 if ~isempty(handles.files_hd1{2});
-     type_nest = nesthd_det_filetype(handles.files_hd1{2});
-     switch type_nest
-         case {'grd'}
+     modelType = EHY_getModelType(handles.files_hd1{2});
+     switch modelType
+         case {'d3d' 'simona'}
              selection = {'*.bnd;*.mdf;siminp*'};
-         case 'DFLOWFM'
+         case 'dfm'
              selection = {'*.mdu;*.pli;*.ext'};
      end
 end
@@ -495,11 +495,11 @@ function get_hd1_obs_Callback(hObject, eventdata, handles)
 if ~isempty (handles.filedir); cd(handles.filedir); end
 selection = {'*.obs;points*;*.xyn'};
 if ~isempty (handles.files_hd1{1});
-    type_coarse = nesthd_det_filetype(handles.files_hd1{1});
-    switch type_coarse
-        case {'grd'}
+    modelType = EHY_getModelType(handles.files_hd1{1});
+    switch modelType
+        case {'d3d' 'simona'}
              selection = {'*.obs;points*'};
-        case 'DFLOWFM'
+        case 'dfm'
              selection = {'*.xyn'};
     end
 end
@@ -625,7 +625,7 @@ if fin ~= 0
    handles.filedir = pin;
    handles.files_hd2{3} = [pin fin];
    set (handles.name_hd2_trih,'String',fin,'FontSize',14,'Enable','on','HorizontalAlignment','left');
-   handles.nfs_inf = nesthd_get_general([pin fin]);
+   handles.nfs_inf = nesthd_geninf([pin fin]);
 end
 
 if ~isempty(handles.files_hd2{3}) && ~isempty(handles.files_hd2{1})
@@ -998,9 +998,11 @@ function update_additional(handles)
     %
     % Update additional water level information
     %
-    set (handles.timeZone      ,'Visible','on','Enable','on');
-    set (handles.timeZone_value,'Visible','on','Enable','on','String',num2str(handles.add_inf.timeZone),'HorizontalAlignment','right'); 
-    
+    if handles.wlev || handles.vel || handles.conc
+        set (handles.timeZone      ,'Visible','on','Enable','on');
+        set (handles.timeZone_value,'Visible','on','Enable','on','String',num2str(handles.add_inf.timeZone),'HorizontalAlignment','right');
+    end
+
     if handles.wlev
        set (handles.a0,'Visible','on','Enable','on');
        set (handles.a0_value,'Visible','on','Enable','on','String',num2str(handles.add_inf.a0),'HorizontalAlignment','right');
@@ -1040,24 +1042,24 @@ function update_additional(handles)
 
     if handles.conc
         set (handles.text_transport,'Enable','on','Visible','on');
-        set (handles.list_conc     ,'Enable','on','Visible','on','String',handles.nfs_inf.namcon(1:handles.nfs_inf.lstci,:),'Value',handles.l_act);
+        set (handles.list_conc     ,'Enable','on','Visible','on','String',handles.nfs_inf.namcon,'Value',handles.l_act);
         if handles.add_inf.genconc(handles.l_act)
-           set (handles.gen_bc        ,'Enable','on','Visible','on','String',['Generate boundary conditions for ' handles.nfs_inf.namcon(handles.l_act,:)]);
-           set (handles.add_conc      ,'Enable','on','Visible','on','String',['Add to ' handles.nfs_inf.namcon(handles.l_act,:)]);
+           set (handles.gen_bc        ,'Enable','on','Visible','on','String',['Generate boundary conditions for ' handles.nfs_inf.namcon{handles.l_act}]);
+           set (handles.add_conc      ,'Enable','on','Visible','on','String',['Add to ' handles.nfs_inf.namcon{handles.l_act}]);
            set (handles.add_conc_val  ,'Enable','on','Visible','on','String',num2str(handles.add_inf.add(handles.l_act)),'HorizontalAlignment','right');
-           set (handles.min_conc      ,'Enable','on','Visible','on','String',['Minimum value of ' handles.nfs_inf.namcon(handles.l_act,:)]);
+           set (handles.min_conc      ,'Enable','on','Visible','on','String',['Minimum value of ' handles.nfs_inf.namcon{handles.l_act}]);
            set (handles.min_conc_val  ,'Enable','on','Visible','on','String',num2str(handles.add_inf.min(handles.l_act)),'HorizontalAlignment','right');
-           set (handles.max_conc      ,'Enable','on','Visible','on','String',['Maximum value of ' handles.nfs_inf.namcon(handles.l_act,:)]);
+           set (handles.max_conc      ,'Enable','on','Visible','on','String',['Maximum value of ' handles.nfs_inf.namcon{handles.l_act}]);
            set (handles.max_conc_val  ,'Enable','on','Visible','on','String',num2str(handles.add_inf.max(handles.l_act)),'HorizontalAlignment','right');
            set (handles.bc_yes        ,'Enable','on','Visible','on','Value',1);
            set (handles.bc_no         ,'Enable','on','Visible','on','Value',0);
         else
-           set (handles.gen_bc        ,'Enable','on' ,'Visible','on','String',['Generate boundary conditions for ' handles.nfs_inf.namcon(handles.l_act,:)]);
-           set (handles.add_conc      ,'Enable','off','Visible','on','String',['Add to ' handles.nfs_inf.namcon(handles.l_act,:)]);
+           set (handles.gen_bc        ,'Enable','on' ,'Visible','on','String',['Generate boundary conditions for ' handles.nfs_inf.namcon{handles.l_act}]);
+           set (handles.add_conc      ,'Enable','off','Visible','on','String',['Add to ' handles.nfs_inf.namcon{handles.l_act}]);
            set (handles.add_conc_val  ,'Enable','off','Visible','on','String',num2str(handles.add_inf.add(handles.l_act)),'HorizontalAlignment','right');
-           set (handles.min_conc      ,'Enable','off','Visible','on','String',['Minimum value of ' handles.nfs_inf.namcon(handles.l_act,:)]);
+           set (handles.min_conc      ,'Enable','off','Visible','on','String',['Minimum value of ' handles.nfs_inf.namcon{handles.l_act}]);
            set (handles.min_conc_val  ,'Enable','off','Visible','on','String',num2str(handles.add_inf.min(handles.l_act)),'HorizontalAlignment','right');
-           set (handles.max_conc      ,'Enable','off','Visible','on','String',['Maximum value of ' handles.nfs_inf.namcon(handles.l_act,:)]);
+           set (handles.max_conc      ,'Enable','off','Visible','on','String',['Maximum value of ' handles.nfs_inf.namcon{handles.l_act}]);
            set (handles.max_conc_val  ,'Enable','off','Visible','on','String',num2str(handles.add_inf.max(handles.l_act)),'HorizontalAlignment','right');
            set (handles.bc_yes        ,'Enable','on' ,'Visible','on','Value',0);
            set (handles.bc_no         ,'Enable','on' ,'Visible','on','Value',1);
@@ -1083,4 +1085,6 @@ function dav_bc_conc_no_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of dav_bc_conc_no
+
+
 

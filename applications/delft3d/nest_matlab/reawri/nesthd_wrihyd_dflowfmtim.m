@@ -21,7 +21,7 @@ for i_pnt = 1: no_pnt
     % Comments
 
     SERIES.Comments{1} = '* COLUMNN=2';
-    SERIES.Comments{2} = ['* COLUMN1=Time (min) since ' num2str(nfs_inf.itdate)];
+    SERIES.Comments{2} = ['* COLUMN1=Time (min) since ' datestr(nfs.itdate,'yyyy-mm-dd  HH:MM:SS')];
 
     if lower(bnd.DATA(i_pnt).bndtype) == 'z'
         SERIES.Comments{3} = '* COLUMN2=Waterlevel';
@@ -42,13 +42,7 @@ for i_pnt = 1: no_pnt
     % Boundary values
 
     for i_time = 1: no_times
-
-        if isfield(nfs_inf,'time')
-           SERIES.Values(i_time,1) = nfs_inf.time(i_time)/60 + add_inf.timeZone*60.;    % minutes!
-        else
-           SERIES.Values(i_time,1) = nfs_inf.tstart + (i_time - 1)*nfs_inf.dtmin + add_inf.timeZone*60.;
-        end
-
+        SERIES.Values(i_time,1) = (nfs_inf.times(i_time) - nfs_inf.itdate)*1440. + add_inf.timeZone*60.;    % minutes!
         SERIES.Values(i_time,2) = bndval(i_time).value(i_pnt,1,1);
         if lower(bnd.DATA(i_pnt).bndtype) == 'p' || lower(bnd.DATA(i_pnt).bndtype) == 'x'
             SERIES.Values(i_time,3) = bndval(i_time).value(i_pnt,2,1);

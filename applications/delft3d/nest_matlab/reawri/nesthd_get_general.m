@@ -1,17 +1,17 @@
-function nfs_inf = get_general(filename)
+function nfs_inf = get_general(fileInp)
 
 % get_general: retrieves general information from trih or SDS file
 
-filetype = nesthd_det_filetype(filename);
+modelType = EHY_getModelType(fileInp);
 
-switch filetype
+switch modelType
 
-    case ('Delft3D')
-        nfs_inf     = nesthd_ini_nfs        (filename);
-    case ('SIMONA')
-        nfs_inf     = nesthd_ini_sds        (filename);
-    case ('DFLOWFM')
-        nfs_inf     = nesthd_ini_dflowfm    (filename);
+    case ('d3d')
+        nfs_inf     = nesthd_ini_nfs        (fileInp);
+    case ('simona')
+        nfs_inf     = nesthd_ini_sds        (fileInp);
+    case ('dfm')
+        nfs_inf     = nesthd_ini_dflowfm    (fileInp);
     case ('mdf')
-        nfs_inf     = nesthd_ini_mdf        (filename);  
+        nfs_inf     = nesthd_ini_mdf        (fileInp);  
 end

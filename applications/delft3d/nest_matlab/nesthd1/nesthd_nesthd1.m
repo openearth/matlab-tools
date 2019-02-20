@@ -14,10 +14,10 @@
       h      = waitbar(0,'Generate the nest administration','Color',[0.831 0.816 0.784]);
 
       %% determine type of nesting
-      type_coarse   = nesthd_det_filetype(files{1});
-      type_nest     = nesthd_det_filetype(files{2});
-      type_bnd      = nesthd_det_filetype(files{3});
-      type_obs      = nesthd_det_filetype(files{4});
+      type_coarse   = EHY_getModelType(files{1});
+      type_nest     = EHY_getModelType(files{2});
+      type_bnd      = EHY_getModelType(files{3});
+      type_obs      = EHY_getModelType(files{4});
 
       %% Open files
       fid_obs       = fopen(files{4},'w+');
@@ -26,39 +26,42 @@
 
       %% Read overall grid; Make the icom matrix (active, inactive)
       switch type_coarse
-          case 'grd'
+          case {'d3d' 'simona'}
               grid_coarse = wlgrid  ('read',files{1});
               icom_coarse = nesthd_det_icom(grid_coarse.X,grid_coarse.MissingValue);
               [grid_coarse.Xcen,grid_coarse.Ycen] = nesthd_det_cen(grid_coarse.X,grid_coarse.Y,icom_coarse);
               if strcmpi(grid_coarse.CoordinateSystem,'Spherical');sphere = true;end
-          case 'DFLOWFM'
-              G = dflowfm.readNet   (files{1});
-              if isfield (G.face,'FlowElem_x')
+          case 'dfm'
+              try
                   %% old map file
-                  grid_coarse.Xcen = G.face.FlowElem_x;
-                  grid_coarse.Ycen = G.face.FlowElem_y;
-                  name_coarse{length(G.face.FlowElem_x)} = [];
-                  for i_node = 1: length(G.face.FlowElem_x)
-                      name_coarse{i_node} = ['FlowNode_' num2str(i_node,'%8.8i')];
+                  G = dflowfm.readNetOld(files{1});
+                  if isfield (G.face,'FlowElem_x')
+                      grid_coarse.Xcen = G.face.FlowElem_x;
+                      grid_coarse.Ycen = G.face.FlowElem_y;
+                      name_coarse{length(G.face.FlowElem_x)} = [];
+                      for i_node = 1: length(G.face.FlowElem_x)
+                          name_coarse{i_node} = ['FlowNode_' num2str(i_node,'%8.8i')];
+                      end
+                      if strncmpi(ncreadatt(files{1},'projected_coordinate_system','grid_mapping_name'),'latitu',6) sphere = true; end;
                   end
-                  if strncmpi(ncreadatt(files{1},'projected_coordinate_system','grid_mapping_name'),'latitu',6) sphere = true; end;
-              else
+              catch
                   %% new map file
+                  
               end
       end
 
       %% Read detailled grid; Make the icom matrix (active, inactive), not needed for DFLOWFM because all information is in the pli's
       switch type_nest
-          case 'grd'
+          case {'d3d' 'simona'}
               grid_fine = wlgrid   ('read',files{2});
               icom_fine = nesthd_det_icom (grid_fine.X,grid_fine.MissingValue,files{6});
       end
 
       %% Read the boundary data
       switch type_bnd
-          case {'Delft3D','siminp'}
+          case {'d3d' 'simona'}
               bnd = nesthd_get_bnd_data (files{3});
-          case {'ext','mdu','pli'}
+          case 'dfm'
               bnd = dflowfm_io_bnd      ('read',files{3});
       end
 
@@ -67,14 +70,14 @@
 
           %% Determine world coordinates of boundary support points for type{i_type}
           switch type_bnd
-              case {'Delft3D'  'siminp'}
+              case {'d3d'  'simona'}
                   [X_bnd,Y_bnd,positi]  = nesthd_detxy (grid_fine.X,grid_fine.Y,bnd,icom_fine,types{i_type});
                   % Convert to point structure
                   X_bnd        = reshape(X_bnd'    ,size(X_bnd    ,1)*2,1);
                   Y_bnd        = reshape(Y_bnd'    ,size(Y_bnd    ,1)*2,1);
                   string_mnbsp = reshape(bnd.Name' ,size(bnd.Name ,1)*2,1);
                   positi       = reshape([positi;positi],size(bnd.Name ,1)*2,1);
-              case {'ext','pli','mdu'}
+              case 'dfm'
                   X_bnd  = cell2mat({bnd.DATA.X})';
                   Y_bnd  = cell2mat({bnd.DATA.Y})';
                   string_mnbsp = (bnd.Name);
@@ -83,9 +86,9 @@
 
           %% Determine coordinates and relative weights of the required nesting stations
           switch type_coarse
-              case 'grd'
+              case {'d3d' 'simona'}
                   [string_mnnes,weight,x_nest,y_nest] = nesthd_detnst        (grid_coarse.X   ,grid_coarse.Y   ,icom_coarse,X_bnd',Y_bnd',sphere,i_type);
-              case 'DFLOWFM'
+              case 'dfm'
                   [string_mnnes,weight,x_nest,y_nest] = nesthd_detnst_dflowfm(grid_coarse.Xcen,grid_coarse.Ycen,name_coarse,X_bnd',Y_bnd',sphere,i_type);
           end
 
@@ -93,11 +96,11 @@
           angles (1:length(X_bnd)) = NaN;
           if ~strcmp (types{i_type},'WL ')
               switch type_bnd
-                  case {'Delft3D','siminp'}
+                  case {'d3d' 'simona'}
                       [help_X,help_Y,~]      = nesthd_detxy (grid_fine.X,grid_fine.Y,bnd,icom_fine,'UVp');
                       angles                 = nesthd_detang (help_X,help_Y,icom_fine,bnd,sphere);
                       angles                 = reshape([angles;angles],size(bnd.Name,1)*2,1);
-                  case {'ext','pli','mdu'}
+                  case 'dfm'
                       % todo, detrmine orientation of the boundary such
                       % that inflow is positive
                       angles(1:length(X_bnd)) = 90.;

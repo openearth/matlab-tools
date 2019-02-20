@@ -1,25 +1,25 @@
-function filebnd = get_bndname(filename)
+function filebnd = get_bndname(fileInp)
 
 % get_bndname : Get the name of teh file with boundary information (direct, from mdf or from siminp file
 
-[pin,~,~] = fileparts(filename);
-filetype = nesthd_det_filetype(filename);
+[pin,~,~]      = fileparts(fileInp);
+[ ~ ,fileType] =  EHY_getModelType(fileInp);
 
-switch filetype
-   case 'mdf'
-      mdf = ddb_readMDFText(filename);
-      filebnd = [pin filesep mdf.filbnd];
+switch fileType
+    case 'mdf'
+        mdf = ddb_readMDFText(filename);
+        filebnd = [pin filesep mdf.filbnd];
+    case 'bnd'
+        filebnd = fileInp;
     case 'mdu'
-        mdu = dflowfm_io_mdu('read',filename);
-        filebnd = [pin filesep mdu.external_forcing.ExtForceFile];
+         mdu = dflowfm_io_mdu('read',filename);
+         filebnd = [pin filesep mdu.external_forcing.ExtForceFile];
     case 'pli'
-      filebnd = filename;
-    case 'Delft3D'
-      filebnd = filename;
+         filebnd = fileInp;
     case 'siminp'
-       filebnd = filename;
+         filebnd = fileInp;
     case 'ext'
-        filebnd = filename;
+         filebnd = fileInp;
     otherwise
       filebnd = '';
 end

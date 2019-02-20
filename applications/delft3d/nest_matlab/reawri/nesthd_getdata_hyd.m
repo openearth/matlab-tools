@@ -1,4 +1,4 @@
-      function [wl,uu,vv] =  getdata_hyd(filename,istat,nfs_inf,vartype)
+      function [wl,uu,vv] =  getdata_hyd(fileInp,istat,nfs_inf,vartype)
 
       % getdata_hyd : gets water level and/or velocity data from trih or SDS file
 
@@ -6,13 +6,13 @@
       uu = [];
       vv = [];
 
-      filetype = nesthd_det_filetype(filename);
+      modelType = EHY_getModelType(fileInp);
 
-      switch filetype
-         case {'Delft3D'}
-            [wl,uu,vv] = nesthd_simhsh(filename,istat,nfs_inf,vartype);
-         case {'SIMONA'}
-            [wl,uu,vv] = nesthd_sdshsh(filename,istat,nfs_inf,vartype);
-         case {'DFLOWFM'}
-             [wl,uu,vv] = nesthd_hisnch(filename,istat,nfs_inf,vartype); 
+      switch modelType
+         case 'd3d'
+             [wl,uu,vv] = nesthd_simhsh(fileInp,istat,nfs_inf,vartype);
+         case 'simona'
+             [wl,uu,vv] = nesthd_sdshsh(fileInp,istat,nfs_inf,vartype);
+         case 'dfm'
+             [wl,uu,vv] = nesthd_hisnch(fileInp,istat,nfs_inf,vartype);
       end

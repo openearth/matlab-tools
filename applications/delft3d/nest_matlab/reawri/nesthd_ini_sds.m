@@ -1,5 +1,7 @@
       function [sds_ini] = ini_sds(filename)
 
+      error ('Functionalty of this function is covered by nesthd_geninf. Use that function instead');
+
       % ini_sds : Get some general information from an SDS file
 
       field_wlev = 'water level (station)';

@@ -1,5 +1,7 @@
       function [nfs_inf] = ini_nfs(runid)
 
+      error ('Functionalty of this function is covered by nesthd_geninf. Use that function instead');
+
       % ini_nfs : Get some general information from the nefis history file
 
       nfs = vs_use(runid,'quiet');

@@ -10,5 +10,7 @@ if isempty(files{1})
     files{2}=inifile('get',Info,'Nesthd2','Transport Boundary Conditions   ');
 end
 
-nesthd_cmpfiles(files,'Filename',['compare_' datestr(now,'yyyymmdd') '.txt']);
+[path,~,~] = fileparts(files{1});
+nesthd_cmpfiles(files,'Filename',['compare_' datestr(now,'yyyymmdd') '.txt'], ...
+                      'Refdir'  ,path                                       );
 

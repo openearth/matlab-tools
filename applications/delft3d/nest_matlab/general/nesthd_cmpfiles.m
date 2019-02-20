@@ -37,7 +37,7 @@ for itest = 1:length(files)
            end
         else
            string = ['New testcase  : ' files{itest}];
-           movefile(files{itest},[opt.Refdir filesep [name ext] '.org']);
+           copyfile(files{itest},[opt.Refdir filesep [name ext] '.org']);
         end
 
         if ~isempty(opt.Filename)

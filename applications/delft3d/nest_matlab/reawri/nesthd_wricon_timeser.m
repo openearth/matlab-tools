@@ -46,7 +46,10 @@ for l = 1: lstci
                         Line = [Line ' Layer = ' num2str(k)];
                     end
                     fprintf(fid, '%s\n', Line);
-                    Line = ['Frame = ' num2str(nfs_inf.tstart + add_inf.timeZone*60.) ' ' num2str(nfs_inf.dtmin) ' ' num2str(nfs_inf.tend + add_inf.timeZone*60.)];
+                    tstart = (nfs_inf.times( 1 ) - nfs_inf.itdate)*1440. + add_inf.timeZone*60.;
+                    tend   = (nfs_inf.times(end) - nfs_inf.itdate)*1440. + add_inf.timeZone*60.;
+                    dtmin  = (nfs_inf.times(2) - nfs_inf.times(1))*1440 ;
+                    Line = ['Frame = ' num2str(tstart) ' ' num2str(dtmin) ' ' num2str(tend)];
                     fprintf(fid, '%s\n', Line);
                     Line = 'Values = ';
                     fprintf(fid, '%s\n', Line);

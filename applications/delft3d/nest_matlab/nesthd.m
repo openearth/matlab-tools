@@ -62,7 +62,7 @@ if isempty (getenv('nesthd_path'))
    uiwait(h);
 end
 
-%% Display a waring, administration file has changed
+%% Display a warning, administration file has changed
 Gen_inf    = {'Nesthd Version 2.0:'                                                                                 ;
               ' '                                                                                                  ;
               'In addition to nesting Delft3D-Flow models and SIMONA models,'                                      ;
@@ -76,7 +76,7 @@ Gen_inf    = {'Nesthd Version 2.0:'                                             
               'If you encounter problems, please do not hesitate to contact me'                                    ;  
               'Theo.vanderkaaij@deltares.nl'                                                                      };
 
-simona2mdf_message(Gen_inf,'n_sec',15,'Window','NESTHD Message','Close',true);
+simona2mdf_message(Gen_inf,'n_sec',10,'Window','NESTHD Message','Close',true);
 
 %% Initialize
 

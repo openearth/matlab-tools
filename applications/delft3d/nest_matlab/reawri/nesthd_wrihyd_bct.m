@@ -57,7 +57,7 @@ for ibnd = 1 : no_bnd
         Info.Table(k).Contents=profile;
         Info.Table(k).Location=bnd.DATA((ibnd - 1)*2 + 1).name;
         Info.Table(k).TimeFunction='non-equidistant';
-        Info.Table(k).ReferenceTime=nfs_inf.itdate;
+        Info.Table(k).ReferenceTime=str2num(datestr(nfs_inf.itdate,'yyyymmdd'));
         Info.Table(k).TimeUnit='minutes';
         Info.Table(k).Interpolation='linear';
         Info.Table(k).Parameter(1).Name='time';
@@ -106,7 +106,7 @@ for ibnd = 1 : no_bnd
 %
 
         for itim = 1: notims
-           Info.Table(k).Data(itim,1) = nfs_inf.tstart + (itim-1)*nfs_inf.dtmin + add_inf.timeZone*60.;
+           Info.Table(k).Data(itim,1) = (nfs_inf.times(itim) - nfs_inf.itdate)*1440. + add_inf.timeZone*60.;
            switch bnd.DATA((ibnd - 1)*2 + 1).bndtype
                case{'Z' 'N'}
                   Info.Table(k).Data(itim,2) = bndval(itim).value((ibnd - 1)*2 + 1,1,1);

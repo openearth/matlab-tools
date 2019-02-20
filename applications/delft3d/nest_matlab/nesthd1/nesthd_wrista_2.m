@@ -21,7 +21,7 @@ no_pnt     = size(string_mnnes,1);
 %
 
 switch filetype
-    case {'Delft3D','SIMONA'}
+    case {'d3d','simona'}
         itel = 0;
         for i_pnt = 1: no_pnt
             for iwght = 1: 4
@@ -35,7 +35,7 @@ switch filetype
         %
         name_hulp = sort(unique(name_hulp));
         switch filetype
-            case {'Delft3D','SIMONA'}
+            case {'d3d','simona'}
                 % Remove first point if m = 0
                 m = str2num(name_hulp{1}(10:13));
                 if m == 0
@@ -52,9 +52,9 @@ switch filetype
         
         while ischar(tline)
             switch filetype
-                case 'Delft3D'
+                case 'd3d'
                     stat_name = tline(1:19);
-                case 'SIMONA'
+                case 'simona'
                     stat_name = tline(33:51);
                     last_point = sscanf(tline(2:5),'%4i');
                     
@@ -82,7 +82,7 @@ end
 
 switch filetype
     
-    case 'Delft3D'
+    case 'd3d'
         for i_pnt = 1: length(name_hulp)
             [m,n] = nesthd_convertstring2mn(name_hulp{i_pnt});
             string = [name_hulp{i_pnt} ' ???? ????'];
@@ -90,7 +90,7 @@ switch filetype
             string (26:29) = sprintf('%4i',n);
             fprintf(fid,'%s \n',string);
         end
-    case 'SIMONA'
+    case 'simona'
         for i_pnt = 1: length(name_hulp)
             [m,n] = nesthd_convertstring2mn(name_hulp{i_pnt});
             string = ['P???? =(M =???? ,N =????, NAME=','''',name_hulp{i_pnt},'''',')'];
@@ -100,7 +100,7 @@ switch filetype
             string (21:24) = sprintf('%4i',n);
             fprintf(fid,'%s \n',string);
         end
-    case'DFLOWFM'
+    case'dfm'
         x_nest = varargin{1};
         y_nest = varargin{2};
         for i_pnt = 1: size(string_mnnes,1)
@@ -111,5 +111,3 @@ switch filetype
             end
         end
 end
-
-      
