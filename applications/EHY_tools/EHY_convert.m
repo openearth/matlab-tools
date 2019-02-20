@@ -103,6 +103,7 @@ if length(varargin)==1
 else
     inputFile=varargin{1};
     [~,~,inputExt]= fileparts(inputFile);
+    inputExt0=inputExt;
     inputExt=lower(strrep(inputExt,'.',''));
     if isempty(inputExt) % simona model input file
         inputExt=EHY_convert_askForInputExt;
@@ -1196,26 +1197,35 @@ if OPT.fromEPSG~=OPT.toEPSG
                 fclose(fid);
             end
         case '.nc'
-            output=[ncread(inputFile,'NetNode_x') ncread(inputFile,'NetNode_y')];
+            if nc_isvar(inputFile,'NetNode_x')
+                output=[ncread(inputFile,'NetNode_x') ncread(inputFile,'NetNode_y')];
+            else
+                output=[ncread(inputFile,'mesh2d_node_x') ncread(inputFile,'mesh2d_node_y')];
+            end
             [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
             if OPT.saveOutputFile
                 copyfile(inputFile,outputFile)
-                nc_varput(outputFile,'NetNode_x',output(:,1));
-                nc_varput(outputFile,'NetNode_y',output(:,2));
+                if nc_isvar(inputFile,'NetNode_x')
+                    nc_varput(outputFile,'NetNode_x',output(:,1));
+                    nc_varput(outputFile,'NetNode_y',output(:,2));
+                else
+                    nc_varput(outputFile,'mesh2d_node_x',output(:,1));
+                    nc_varput(outputFile,'mesh2d_node_y',output(:,2));
+                end
                 % to do: fix setting the right EPSG code in the .nc file,
                 % not properply working yet
-                if OPT.toEPSG==4326
-                    nccreate(outputFile,'wgs84','Datatype','int32')
-                    epsgInfo={'name','WGS84';'epsg',4326;'grid_mapping_name','latitude_longitude';'longitude_of_prime_meridian',0;'semi_major_axis',6378137;'semi_minor_axis',6356752.31424500;'inverse_flattening',298.257223563000;'epsg_code','EPSG:4326';'value','value is equal to EPSG code'};
-                    for iE=1:length(epsgInfo)
-                        ncwriteatt(outputFile,'wgs84',epsgInfo{iE,1},epsgInfo{iE,2});
-                    end
-                    ncwriteatt(outputFile,'Mesh2D','topology_dimension',1);
-                    ncid = netcdf.open(outputFile,'WRITE');
-                    netcdf.reDef(ncid);
-                    netcdf.delAtt(ncid,netcdf.getConstant('GLOBAL'),'Spherical');
-                    netcdf.close(ncid);
-                end
+%                 if OPT.toEPSG==4326
+%                     nccreate(outputFile,'wgs84','Datatype','int32')
+%                     epsgInfo={'name','WGS84';'epsg',4326;'grid_mapping_name','latitude_longitude';'longitude_of_prime_meridian',0;'semi_major_axis',6378137;'semi_minor_axis',6356752.31424500;'inverse_flattening',298.257223563000;'epsg_code','EPSG:4326';'value','value is equal to EPSG code'};
+%                     for iE=1:length(epsgInfo)
+%                         ncwriteatt(outputFile,'wgs84',epsgInfo{iE,1},epsgInfo{iE,2});
+%                     end
+%                     ncwriteatt(outputFile,'Mesh2D','topology_dimension',1);
+%                     ncid = netcdf.open(outputFile,'WRITE');
+%                     netcdf.reDef(ncid);
+% %                     netcdf.delAtt(ncid,netcdf.getConstant('GLOBAL'),'Spherical');
+%                     netcdf.close(ncid);
+%                 end
             end
         case {'.xyz'}
             output=importdata(inputFile);
