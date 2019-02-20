@@ -1,4 +1,4 @@
-function datenums=EHY_getmodeldata_getDatenumsFromOutputfile(inputFile)
+function [datenums,varargout] = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile)
 
 modelType=EHY_getModelType(inputFile);
 
@@ -7,16 +7,17 @@ switch modelType
         infonc      = ncinfo(inputFile);
         
         % - to enhance speed, reconstruct time array from start time, numel and interval
-        ncVarInd    = strmatch('time',{infonc.Variables.Name},'exact');
+        ncVarInd     = strmatch('time',{infonc.Variables.Name},'exact');
         ncAttrInd    = strmatch('units',{infonc.Variables(ncVarInd).Attributes.Name},'exact');
-        nr_times    = infonc.Variables(ncVarInd).Size;
-        seconds_int = ncread(inputFile, 'time', 1, 3);
-        interval    = seconds_int(3)-seconds_int(2);
-        seconds     = [seconds_int(1) seconds_int(2) + interval*[0:nr_times-2] ]';
-        days        = seconds / (24*60*60);
-        attri       = infonc.Variables(ncVarInd).Attributes(ncAttrInd).Value;
-        itdate      = attri(15:end);
-        datenums    = datenum(itdate, 'yyyy-mm-dd HH:MM:SS')+days;
+        nr_times     = infonc.Variables(ncVarInd).Size;
+        seconds_int  = ncread(inputFile, 'time', 1, 3);
+        interval     = seconds_int(3)-seconds_int(2);
+        seconds      = [seconds_int(1) seconds_int(2) + interval*[0:nr_times-2] ]';
+        days         = seconds / (24*60*60);
+        attri        = infonc.Variables(ncVarInd).Attributes(ncAttrInd).Value;
+        itdate       = attri(15:end);
+        datenums     = datenum(itdate, 'yyyy-mm-dd HH:MM:SS')+days;
+        varargout{1} = datenum(itdate,'yyyy-mm-dd  HH:MM:SS');
     case 'd3d'
         if ~isempty(strfind(inputFile,'mdf'))
             % mdf file
@@ -30,8 +31,10 @@ switch modelType
             end
         elseif ~isempty(strfind(inputFile,'trih'))
             % history output file from simulation
-            trih     = qpfopen(inputFile);
-            datenums = qpread(trih,'water level','times');
+            trih         = qpfopen(inputFile);
+            datenums     = qpread(trih,'water level','times');
+            itdate       = vs_let(trih,'his-const','ITDATE','quiet');
+            varargout{1} = datenum([num2str(itdate(1),'%8.8i') '  ' num2str(itdate(2),'%6.6i')], 'yyyymmdd  HHMMSS');   
         elseif ~isempty(strfind(inputFile,'trim'))
             % history output file from simulation
             trim     = qpfopen(inputFile);
@@ -39,7 +42,9 @@ switch modelType
         end
     case 'simona'
         sds=qpfopen(inputFile);
-        datenums = qpread(sds,1,'water level (station)','times');
+        datenums     = qpread(sds,1,'water level (station)','times');
+        varargout{1} = waquaio(sds,'','refdate');
+        
     case 'sobek3' 
         D        = read_sobeknc(inputFile);
         refdate  = ncreadatt(inputFile, 'time','units');

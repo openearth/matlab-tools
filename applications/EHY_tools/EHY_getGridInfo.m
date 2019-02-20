@@ -27,6 +27,7 @@ function gridInfo=EHY_getGridInfo(inputFile,varargin)
 %% Initialisation
 OPT.stations     = '';
 OPT.varName      = 'wl';
+OPT.manual       = true;
 OPT              = setproperty(OPT,varargin{2:end});
 
 %% process input from user
@@ -130,6 +131,9 @@ switch modelType
                     elseif nc_isvar(inputFile,'mesh2d_node_z')
                         E.depth_cor=ncread(inputFile,'mesh2d_node_z');
                         try; E.depth_cen=ncread(inputFile,'mesh2d_flowelem_bl'); end % depth_cen not always available
+                    else
+                        E.depth_cen = NaN;
+                        E.depth_cor = NaN;
                     end
                 end
                 if ismember('Z',wantedOutput)
@@ -175,13 +179,23 @@ switch modelType
                     end
                 end
                 if ismember('layer_perc',wantedOutput)
-                    if ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact'))
-                        E.layer_perc=diff(ncread(inputFile,'mesh2d_interface_sigma'));
-                    else % not in merged_map.nc, try to get this info from mdFile
-                        try
-                            mdFile=EHY_getMdFile(inputFile);
-                            gridInfo=EHY_getGridInfo(mdFile,'layer_perc');
-                            E.layer_perc=gridInfo.layer_perc;
+                    tmp       = EHY_getGridInfo(inputFile,{'no_layers'});
+                    no_layers = tmp.no_layers;
+                    if no_layers == 1
+                        E.layer_perc = 1.0;
+                    else
+                        if ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact'))
+                            E.layer_perc=diff(ncread(inputFile,'mesh2d_interface_sigma'));
+                        else % not in merged_map.nc, try to get this info from mdFile
+                            if OPT.manual
+                                try
+                                    mdFile=EHY_getMdFile(inputFile);
+                                    gridInfo=EHY_getGridInfo(mdFile,'layer_perc');
+                                    E.layer_perc=gridInfo.layer_perc;
+                                end
+                            else
+                                E.layer_perc(1:no_layers) = NaN;
+                            end
                         end
                     end
                 end
@@ -282,7 +296,12 @@ switch modelType
                     if ismember('layer_model', wantedOutput)
                         E.layer_model = lower(strtrim(vs_get(trih,'his-const' ,'LAYER_MODEL','quiet')));
                     end
-                    
+                    if ismember('depth', wantedOutput)
+                        E.depth_cen = -1.*vs_let(trih,'his-const','DPS','quiet');
+                    end
+                    if ismember('layer_perc', wantedOutput)
+                        E.layer_perc = flipud(vs_let(trih,'his-const','THICK','quiet'));
+                    end 
                 end
         end % typeOfModelFile
         
@@ -308,20 +327,49 @@ switch modelType
                     end
                 end
             case 'outputfile'
-                sds=qpfopen(inputFile);
-                dimen=waqua('readsds',sds,[],'MESH_IDIMEN');
+                sds  = qpfopen(inputFile);
+                dimen= waqua('readsds',sds,[],'MESH_IDIMEN');
+                kmax = dimen(18);
                 if ismember('no_layers',wantedOutput)
-                    E.no_layers   =dimen(18);
+                    E.no_layers   = kmax;
                 end
                 if ismember('dimensions',wantedOutput)
-                    E.MNKmax=[dimen(2) dimen(3) dimen(18)];
+                    E.MNKmax=[dimen(2) dimen(3) kmax];
                 end
                 if ismember('layer_model', wantedOutput)
                     E.layer_model = 'sigma-model';
                 end
+                if ismember('depth', wantedOutput)
+                    mn = waquaio(sds,'','wl-mn');
+                    if kmax == 1
+                        z  = waquaio(sds,'','depth_wl_points');
+                        for i_stat = 1: size(mn,1)
+                            E.depth_cen(i_stat) = -1.*z(mn(i_stat,2),mn(i_stat,1));
+                        end
+                    else
+                        [~,~,z] = waquaio(sds,'','zgrid3di');
+                        for i_stat = 1: size(mn,1)
+                            E.depth_cen(i_stat) = z(mn(i_stat,2),mn(i_stat,1),kmax + 1);
+                        end
+                    end
+                end
                 
-                
-        end % typeOfModelFile
+                if ismember('layer_perc',wantedOutput)
+                    mn = waquaio(sds,'','wl-mn');
+                    if kmax == 1
+                        E.layer_perc = 1.;
+                    else
+                        % derive from first station
+                        [~,~,z] = waquaio(sds,'','zgrid3di');
+                        for k = 1: kmax
+                            m = mn(1,1);
+                            n = mn(2,1);
+                            E.layer_perc(k) = (z(n,m,k + 1) - z(n,m,k))/(z(n,m,kmax + 1) - z(n,m,1));
+                        end
+                        E.layer_perc = flipud(E.layer_perc);      % dfm convention, numbering from bed to surface
+                    end
+                end
+         end % typeOfModelFile
     case {'sobek3' 'sobek3_new' 'implic'}
         E.no_layers = 1;
 end % modelType

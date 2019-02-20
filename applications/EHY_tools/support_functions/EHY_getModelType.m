@@ -11,6 +11,8 @@ function [modelType,varargout] = EHY_getModelType(fileInp)
 % Example2: 	modelType=EHY_getModelType('D:\model.obs')
 % Example3: 	modelType=EHY_getModelType('D:\trih-r01.dat')
 %
+% Added 13-02-2019: varargout{1} in which fileType (mdf, mdu, bct, ext etc.) is stored
+%
 % support function of the EHY_tools
 % Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
 
@@ -43,7 +45,8 @@ end
 
 % SIMONA (WAQUA/TRIWAQ)
 if isempty(modelType)
-    if ~isempty(strfind(name,'sds')) || ~isempty(strfind(name,'siminp'))
+    if ~isempty(strfind(name,'sds'   )) || ~isempty(strfind(name,'siminp'))  || ~isempty(strfind(name,'rgf')) || ...
+       ~isempty(strfind(name,'points')) || ~isempty(strfind(name,'timeser'))    
         modelType = 'simona';
     end
 end
@@ -69,6 +72,14 @@ if isempty(modelType)
 end
 
 %% fileType
-[~,~,ext]    = fileparts(fileInp);
-varargout{1} = ext(2:end); 
-
+varargout{1}                    = ''; 
+[~,~,ext]                       = fileparts(fileInp);
+if length(ext) > 1 varargout{1} = ext(2:end); end
+if ~isempty(strfind(lower(fileInp),'siminp' ))   varargout{1} = 'siminp'; end
+if ~isempty(strfind(lower(fileInp),'sds'    ))   varargout{1} = 'sds'   ; end
+if ~isempty(strfind(lower(fileInp),'_his.nc'))   varargout{1} = 'his_nc'; end
+if ~isempty(strfind(lower(fileInp),'_map.nc'))   varargout{1} = 'map_nc'; end
+if ~isempty(strfind(lower(fileInp),'_net.nc'))   varargout{1} = 'net_nc'; end
+if ~isempty(strfind(lower(fileInp),'trih'   ))   varargout{1} = 'trih'  ; end
+if ~isempty(strfind(lower(fileInp),'trim'   ))   varargout{1} = 'trim'  ; end
+if ~isempty(strfind(lower(fileInp),'rgf'))       varargout{1} = 'grd'   ; end

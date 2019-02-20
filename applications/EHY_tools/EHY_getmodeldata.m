@@ -195,9 +195,11 @@ switch modelType
         % open inputfile
         trih = vs_use(inputFile,'quiet');
         % loop over stations
+        ii_stat = 0;
         for i_stat = 1: length(Data.requestedStatNames)
             if Data.exist_stat(i_stat)
-                nr_stat  = stationNrNoNan(i_stat);
+                ii_stat = ii_stat + 1;
+                nr_stat  = stationNrNoNan(ii_stat);
                 % constituents
                 constituents=squeeze(vs_get(trih,'his-const','NAMCON','quiet'));
                 if size(constituents,1)>size(constituents,2); constituents=constituents'; end
@@ -290,10 +292,12 @@ switch modelType
         %% SIMONA (WAQUA/TRIWAQ)
         % open data file
         sds=qpfopen(inputFile); 
-  
+        
+        ii_stat    = 0;
         for i_stat = 1: length(stat_name)
             if Data.exist_stat(i_stat)
-                nr_stat  = stationNrNoNan(i_stat);
+                ii_stat  = ii_stat + 1;
+                nr_stat  = stationNrNoNan(ii_stat);
                 switch OPT.varName
                     case 'wl'
                         Data.val(:,i_stat) = waquaio(sds,[],'wlstat',time_index,nr_stat);
