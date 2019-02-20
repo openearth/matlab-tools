@@ -12,17 +12,26 @@ function stationNames = EHY_getStationNames(inputFile,modelType,varargin)
 % support function of the EHY_tools
 % Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
 
-OPT.varName = 'wl';
+OPT.varName = 'wl'; % 'wl','uv','crs'
 
 OPT         = setproperty(OPT,varargin);
 
-%% 
+%% modify user input
+if ~isempty(strfind(OPT.varName,'cross_section_'))
+    % if cross-section data is requested, get the names of the cross-sections
+    OPT.varName='crs';
+end
+
+%%
 switch modelType
     
     case {'d3dfm','dflow','dflowfm','mdu','dfm'}
         %% Delft3D-Flexible Mesh
-        stationNames  = cellstr(strtrim(nc_varget(inputFile,'station_name')));
-        
+        if strcmp(lower(OPT.varName),'wl')
+            stationNames  = cellstr(strtrim(nc_varget(inputFile,'station_name')));
+        elseif strcmp(lower(OPT.varName),'crs')
+            stationNames  = cellstr(strtrim(nc_varget(inputFile,'cross_section_name')));
+        end
     case {'d3d','d3d4','delft3d4','mdf'}
         %% Delft3D 4
         trih=vs_use(inputFile,'quiet');
@@ -31,7 +40,7 @@ switch modelType
     case {'waqua','simona','siminp','triwaq'}
         %% SIMONA (WAQUA/TRIWAQ)
         sds= qpfopen(inputFile);
-        if strcmp(OPT.varName,'uv')
+        if strcmp(lower(OPT.varName),'uv')
             stationNames  = strtrim(waquaio(sds,[],'flowstat-uv'));
         else
             stationNames  = strtrim(waquaio(sds,[],'flowstat-wl'));
