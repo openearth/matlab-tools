@@ -112,7 +112,7 @@ switch modelType
         if isfield(mdu.output,'CrsFile') && ~isempty(mdu.output.CrsFile)
             inputFile=EHY_getFullWinPath(mdu.output.CrsFile,runDir);
             [~,name]=fileparts(inputFile);
-            OPT2.outputFile=[outputDir name '_crs.kml'];
+            OPT2.outputFile=strrep([outputDir name '_crs.kml'],'_crs_crs','_crs');
             OPT2.lineColor=OPT.crsColor;
             [~,OPT2]=EHY_convert(inputFile,'kml','lineWidth',4,OPT2);
         end
