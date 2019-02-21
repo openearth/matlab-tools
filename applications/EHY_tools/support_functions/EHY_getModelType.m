@@ -30,7 +30,7 @@ modelType='';
 
 % Delft3D-FM
 if isempty(modelType)
-    if ismember(ext,{'.mdu','.ext','.bc','.xyn','.tim'})
+    if ismember(ext,{'.mdu','.ext','.bc','.pli','.xyn','.tim'})
         modelType = 'dfm';
     end
 end
