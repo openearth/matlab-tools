@@ -495,6 +495,7 @@ if length(DAT.datenum)==1
 end
 
 %write header
+fprintf(fid,'### START OF HEADER\n',DAT.keywords.unit1); 
 fprintf(fid,'FileVersion      = %s\n',DAT.keywords.FileVersion); 
 fprintf(fid,'filetype         = %s\n',DAT.keywords.filetype); 
 fprintf(fid,'NODATA_value     = %.6f\n',DAT.keywords.NODATA_value); 
@@ -508,7 +509,7 @@ fprintf(fid,'dy             = %.4f\n',DAT.keywords.dy);
 fprintf(fid,'n_quantity       = %d\n',DAT.keywords.n_quantity); 
 fprintf(fid,'quantity1        = %s\n',DAT.keywords.quantity1); 
 fprintf(fid,'unit1            = %s\n',DAT.keywords.unit1); 
-fprintf(fid,'###  END OF HEADER\n',DAT.keywords.unit1); 
+fprintf(fid,'### END OF HEADER\n',DAT.keywords.unit1); 
 
 %write different time steps
 for k=1:length(DAT.datenum)
