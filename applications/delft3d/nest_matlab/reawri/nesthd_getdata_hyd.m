@@ -1,5 +1,7 @@
       function [wl,uu,vv] =  getdata_hyd(fileInp,istat,nfs_inf,vartype)
 
+      error ('Functionalty of this function is covered by EHY_getmodeldata. Use that function instead');
+
       % getdata_hyd : gets water level and/or velocity data from trih or SDS file
 
       wl = [];

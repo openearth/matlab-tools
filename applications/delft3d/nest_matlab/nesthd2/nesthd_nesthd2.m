@@ -30,7 +30,6 @@
       if isempty(bnd) return; end
 
       %% Get general information from history file
-%      nfs_inf = nesthd_get_general(files{3});
       gen_inf     = nesthd_geninf(files{3});
       if OPT.check gen_inf.notims = min(gen_inf.notims,20); end
       nobnd       = length(bnd.DATA);

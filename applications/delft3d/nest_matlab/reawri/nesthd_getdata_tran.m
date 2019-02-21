@@ -2,6 +2,8 @@
 
       % getdata_tran : Get concentration data out of a trih or SDS file
 
+      error ('Functionalty of this function is covered by EHY_getmodeldata. Use that function instead');
+
       conc = [];
 
       modelType = EHY_getModelType(fileInp);

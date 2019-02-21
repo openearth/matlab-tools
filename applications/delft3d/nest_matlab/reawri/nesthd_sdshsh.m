@@ -1,6 +1,7 @@
       function [wl,uu,vv] =  sdshsh(filename,istat,nfs_inf,vartype)
 
       % sdshsh : gets water level and or velocity data from an SDS file
+      error ('Functionalty of this function is covered by EHY_getmodeldata. Use that function instead');
 
 %-----------------------------------------------------------------------
 %     Function: Read time series from SDS file

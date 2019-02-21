@@ -1,6 +1,7 @@
       function [wl,uu,vv] =  nesthd_hisnch(runid,istat,nfs_inf,vartype)
 
       % nesthd_hisnch : gets water level and/or velocity data from a DFLOWFM history file
+      error ('Functionalty of this function is covered by EHY_getmodeldata. Use that function instead');
 
       %% Initialisation
       wl = [];
@@ -12,7 +13,7 @@
 
       if strcmpi(vartype,'wl') || strcmpi(vartype,'all')
 %%       Get the waterlevel data
-         
+
          wl       = ncread(runid,'waterlevel',[istat 1],[1 Inf]);
       end
 

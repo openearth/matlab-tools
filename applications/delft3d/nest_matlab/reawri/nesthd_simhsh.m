@@ -9,6 +9,8 @@
 %               2) Converts u- and v-velocities to north and south
 %                  velocities
 %----------------------------------------------------------------------
+      error ('Functionalty of this function is covered by EHY_getmodeldata. Use that function instead');
+
       wl = [];
       uu = [];
       vv = [];

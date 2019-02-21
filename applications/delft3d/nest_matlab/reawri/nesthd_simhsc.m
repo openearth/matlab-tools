@@ -2,6 +2,8 @@
 
       % simhsc : Get transport data out of a trih file
 
+      error ('Functionalty of this function is covered by EHY_getmodeldata. Use that function instead');
+
 %-----------------------------------------------------------------------
 %     Function: 1) Read constituents data from the NEFIS
 %                  history file (timestep itim)

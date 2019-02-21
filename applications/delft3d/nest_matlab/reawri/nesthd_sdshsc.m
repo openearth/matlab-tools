@@ -2,6 +2,8 @@
 
       % sdshsc : Get transport data out of an SDS file
 
+      error ('Functionalty of this function is covered by EHY_getmodeldata. Use that function instead');
+
 %----------------------------------------------------------------------
 %     Get the constituent data
 %----------------------------------------------------------------------
