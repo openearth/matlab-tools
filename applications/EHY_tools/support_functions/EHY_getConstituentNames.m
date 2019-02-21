@@ -1,0 +1,78 @@
+function [namCon] = EHY_getConstituentNames(fileInp)
+%% namcon = EHY_getConstituentNames(fileInp)
+%
+% This function returns the names of the constituents in a hydrodynamic simulation
+%
+% modelType can be:
+% dfm       Delft3D-Flexible Mesh
+% d3d       Delft3D 4
+% simona    SIMONA (WAQUA/TRIWAQ) 
+%
+% support function of the EHY_tools
+% Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
+
+%%
+namCon               = {};
+modelType            = EHY_getModelType(fileInp);
+
+%% 
+switch modelType
+    %% Dflowfm constituents (determine constituents by elimination of everything NOT a constituent, not very elegant!)
+    case 'dfm'
+        param_hyd = {'station_x_coordinate'         , 'station_y_coordinate'              , 'station_id'               , 'station_name'              , 'waterlevel'  , 'bedlevel'   , ...
+                     'x_velocity'                   , 'y_velocity'                        , 'z_velocity'               , 'R'                         , 'hwav'        , ...
+                     'twav'                         , 'phiwav'                            , 'rlabda'                   , 'uorb'                      , 'tauwav'      , ...
+                     'density'                      , 'sediment_concentration'            , 'windx'                    , 'windy'                     , 'rain'        , ...
+                     'source_sink_name'             , 'source_sink_x_coordinate'          , 'source_sink_y_coordinate'                                               , ...
+                     'source_sink_prescribed_discharge'                                   , 'source_sink_prescribed_salinity_increment'                              , ...
+                     'source_sink_prescribed_temperature_increment'                       , 'source_sink_current_discharge'                                          , ...
+                     'source_sink_cumulative_volume'                                      , 'source_sink_discharge_average'                                          , ...
+                     'general_structure_name'       , 'general_structure_discharge'       , 'general_structure_crest_level'                                          , ...
+                     'general_structure_crest_width', 'general_structure_lower_edge_level', 'general_structure_opening_width'                                        , ...
+                     'general_structure_s1up'       , 'general_structure_s1dn'            , 'pump_name'                , 'pump_xmid'                 , 'pump_ymid'   , ...
+                     'pump_discharge'               , 'pump_capacity'                     , 'pump_s1up'                , 'pump_s1dn'                 , 'gate_name'   , ...
+                     'gate_discharge'               , 'gate_lower_edge_level'             , 'gate_s1up'                , 'gate_s1dn'                 , 'gategen_name', ...
+                     'gategen_discharge'            , 'gategen_sill_level'                , 'gategen_sill_width'       , 'gategen_lower_edge_level'  , 'gategen_flow_through_height', ...
+                     'gategen_opening_width'        , 'gategen_s1up'                      , 'gategen_s1dn'             , 'cdam_name'                 , 'cdam_discharge'             , ...
+                     'cdam_crest_level'             , 'cdam_s1up'                         , 'cdam_s1dn'                , 'weirgen_name'              , 'weirgen_discharge'          , ...
+                     'weirgen_crest_level'          , 'weirgen_crest_width'               , 'weirgen_s1up'             , 'weirgen_s1dn'              , 'dambreak_name'              , ...
+                     'dambreak_s1up'                , 'dambreak_s1dn'                     , 'dambreak_breach_depth'    , 'dambreak_breach_width'     , 'dambreak_discharge'         , ...
+                     'dambreak_cumulative_discharge', 'dambreak_breach_width_derivative'  , 'dambreak_water_level_jump', 'dambreak_normal_velocity'  , 'dredge_area_name'           , ...
+                     'dump_area_name'               , 'sedfrac_name'                      , 'dred_link_discharge'      , 'dred_discharge'            , 'dump_discharge'             , ...
+                     'dred_discharge_frac'          , 'dump_discharge_frac'               , 'dred_time_frac'           , 'plough_time_frac'                          ,  ...
+                     'Waterdepth'                   , 'tke'                               , 'eps'                      , 'vicww'                                     } ;             
+        
+        handle  = ncinfo(fileInp);
+        Vars    = {handle.Variables.Name};
+        no_vars = length(Vars);
+        index (1:no_vars) = false;
+        for i_var = 1: no_vars
+            if ~ismember(Vars{i_var},param_hyd)
+                if isempty(strfind(Vars{i_var},'water_quality_output')) && isempty(strfind(Vars{i_var},'cross_section')) && ...
+                   isempty(strfind(Vars{i_var},'water_balance'       )) && isempty(strfind(Vars{i_var},'zcoordinate'  )) && ...
+                   isempty(strfind(Vars{i_var},'time'                ))
+                    index(i_var) = true;
+                end
+            end
+        end
+        
+        namCon = Vars(index);
+        
+    %% Delft3D constituents    
+    case 'd3d'
+        handle  = vs_use (fileInp,'quiet');
+        tmpName = vs_get(handle ,'his-const','NAMCON','quiet');
+        nr_con  = 0;
+        for i_cons = 1: size(tmpName,1)
+            if isempty(strfind(lower(tmpName(i_cons,:)),'energy'))
+                nr_con         = nr_con + 1;
+                namCon{nr_con} = strtrim(tmpName(i_cons,:));
+            end
+        end
+        
+    %% Simona constituents    
+    case 'simona'
+           handle = qpfopen(fileInp);
+           namCon = waquaio(handle,'','substances');
+          
+end
