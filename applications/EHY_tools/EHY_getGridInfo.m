@@ -371,7 +371,8 @@ switch modelType
                 end
          end % typeOfModelFile
     case {'sobek3' 'sobek3_new' 'implic'}
-        E.no_layers = 1;
+        E.layer_model = '';
+        E.no_layers   = 1;
 end % modelType
 
 %% If selection of stations is specified, reduce output to specified stations only
