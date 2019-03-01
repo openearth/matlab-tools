@@ -10,7 +10,7 @@ function data = godin_filter(data,varargin)
 %   data = godin_filter(data,varargin)
 %
 %   Input: 
-%   data      = timeseries data to be filtered
+%   data      = timeseries data to be filtered [values time]
 %   varargin  = plot:   generate automatic plot of original and final 
 %                       filtered signal (default = 0)
 %               plot2:  generate automatic plot of original signal and
