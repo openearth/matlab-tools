@@ -355,7 +355,11 @@ function writeMDA(mda_filename_tmp, baseline_ldb, varargin)
                 leg_text{leg_tel} = ['Baseline points (equals coastline position)'];
                 l(leg_tel) = plot(baseline(:,1),baseline(:,2),'x-','linewidth',2,'markersize',14,'color','k');
             end
-            legend(l,leg_text,'interpreter','none','location','SouthOutside');
+            try
+                legend(l,leg_text,'interpreter','none','location','SouthOutside','AutoUpdate','off');
+            catch
+                legend(l,leg_text,'interpreter','none','location','SouthOutside');
+            end
         end
     else
         max_dist_to_coast = ceil(sqrt(sum((diff([min([min(coastline(:,1)) min(baseline(:,1))]) min([min(coastline(:,2)) min(baseline(:,2))]); max([max(coastline(:,1)) max(baseline(:,1))]) max([max(coastline(:,2)) max(baseline(:,2))])])).^2)));
@@ -403,7 +407,11 @@ function writeMDA(mda_filename_tmp, baseline_ldb, varargin)
                         leg_tel = leg_tel + 1;
                         leg_text{leg_tel} = ['Coastline'];
                         l(leg_tel) = plot(coastline(:,1),coastline(:,2),'-','linewidth',3,'color',[238 201 0]/255);
-                        legend(l,leg_text,'interpreter','none','location','SouthOutside'); drawnow;
+                        try
+                            legend(l,leg_text,'interpreter','none','location','SouthOutside','AutoUpdate','off'); drawnow;
+                        catch
+                            legend(l,leg_text,'interpreter','none','location','SouthOutside'); drawnow;
+                        end
                     end
                 end
                 if size(X_crs,1)==0 && keywords.check_other_side
@@ -475,7 +483,11 @@ function writeMDA(mda_filename_tmp, baseline_ldb, varargin)
             leg_tel = leg_tel + 1;
             leg_text{leg_tel} = ['Removed (outer) baseline points'];
             l(leg_tel) = rem_handle;
-            legend(l,leg_text,'interpreter','none','location','SouthOutside');
+            try
+                legend(l,leg_text,'interpreter','none','location','SouthOutside','AutoUpdate','off');
+            catch
+                legend(l,leg_text,'interpreter','none','location','SouthOutside');
+            end
         end
 
         if sum(isnan(y))>0
@@ -486,7 +498,11 @@ function writeMDA(mda_filename_tmp, baseline_ldb, varargin)
                 leg_tel = leg_tel + 1;
                 leg_text{leg_tel} = ['Cross-sections without perpendicular coastline data'];
                 l(leg_tel) = CS_handle;
-                legend(l,leg_text,'interpreter','none','location','SouthOutside');
+                try
+                    legend(l,leg_text,'interpreter','none','location','SouthOutside','AutoUpdate','off');
+                catch
+                    legend(l,leg_text,'interpreter','none','location','SouthOutside');
+                end
                 xlim([min([baseline_ori(:,1); coastline(:,1)]) max([baseline_ori(:,1); coastline(:,1)])]);
                 ylim([min([baseline_ori(:,2); coastline(:,2)]) max([baseline_ori(:,2); coastline(:,2)])]);
                 title('The red line(s) indicate the cross-section(s) without perpendicular coastline data');
