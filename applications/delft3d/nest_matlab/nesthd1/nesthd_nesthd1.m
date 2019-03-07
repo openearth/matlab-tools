@@ -35,17 +35,23 @@
               try
                   %% old map file
                   G = dflowfm.readNetOld(files{1});
-                  if isfield (G.face,'FlowElem_x')
-                      grid_coarse.Xcen = G.face.FlowElem_x;
-                      grid_coarse.Ycen = G.face.FlowElem_y;
-                      name_coarse{length(G.face.FlowElem_x)} = [];
-                      for i_node = 1: length(G.face.FlowElem_x)
-                          name_coarse{i_node} = ['FlowNode_' num2str(i_node,'%8.8i')];
-                      end
-                      if strncmpi(ncreadatt(files{1},'projected_coordinate_system','grid_mapping_name'),'latitu',6) sphere = true; end;
+                  grid_coarse.Xcen = G.face.FlowElem_x;
+                  grid_coarse.Ycen = G.face.FlowElem_y;
+                  name_coarse{length(G.face.FlowElem_x)} = [];
+                  for i_node = 1: length(G.face.FlowElem_x)
+                      name_coarse{i_node} = ['FlowNode_' num2str(i_node,'%8.8i')];
                   end
+                  if strncmpi(ncreadatt(files{1},'projected_coordinate_system','grid_mapping_name'),'latitu',6) sphere = true; end;
               catch
                   %% new map file
+                  G = dflowfm.readNet   (files{1});
+                  grid_coarse.Xcen = G.face.FlowElem_x;
+                  grid_coarse.Ycen = G.face.FlowElem_y;
+                  name_coarse{length(G.face.FlowElem_x)} = [];
+                  for i_node = 1: length(G.face.FlowElem_x)
+                      name_coarse{i_node} = ['FlowNode_' num2str(i_node,'%8.8i')];
+                  end
+                  if strncmpi(ncreadatt(files{1},'wgs84','grid_mapping_name'),'latitu',6) sphere = true; end;
                   
               end
       end
