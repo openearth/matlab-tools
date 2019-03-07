@@ -102,7 +102,7 @@ if isempty(OPT.Tp );error('Tp  required');end
 
 %% Pierson-Moskowitz
 
-    if strcmpi(OPT.method,'Yamaguchi') | strcmpi(OPT.method,'Swan')
+    if strcmpi(OPT.method,'Yamaguchi') || strcmpi(OPT.method,'Swan')
        alpha = 1/(0.06533*OPT.gamma.^0.8015 + 0.13467)./16; % Yamaguchi (1984), used in SWAN
     elseif strcmpi(OPT.method,'Goda')
       alpha = 1/(0.23+0.03*OPT.gamma-0.185*(1.9+OPT.gamma)^-1)./16; % Goda
