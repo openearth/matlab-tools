@@ -85,8 +85,8 @@ function cdir = directional_spreading(directions,pdir,ms,varargin)
     
 %% check for ill-sampling
 
-    int = trapz(directions,cdir)
-    if ~(abs(int-1)< 1e-6) & ~(OPT.quiet)
+    int = trapz(directions,cdir);
+    if ~(abs(int-1)< 1e-6) && ~(OPT.quiet)
         disp(['integral not 1 for ms=',num2str(ms),':',num2str(int)])
     end
     
