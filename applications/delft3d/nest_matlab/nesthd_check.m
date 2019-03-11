@@ -7,7 +7,7 @@ function nesthd_check
 [path,~,~]      = fileparts(mfilename('fullpath'));
 testdir         = [path filesep 'check'];
 
-check_exe       = false;
+check_exe       = true;
 check_comprompt = true;
 check_nesthd1   = false;
 check_nesthd2   = true;
