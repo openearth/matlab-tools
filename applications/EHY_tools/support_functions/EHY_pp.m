@@ -20,7 +20,11 @@ catch
     fig_dir    = [sim_dir filesep runid '_figs'];
 end
 meas_dir       = inifile('getstring',Info,'General'  ,'meas_dir    ');
-mup_temp       = inifile('getstring',Info,'General'  ,'mup_temp    ');
+
+try
+    mup_temp   = inifile('getstring',Info,'General'  ,'mup_temp    ');
+end
+
 try
     time_zone  =  str2num(inifile('getstring',Info,'General'  ,'time_zone   '));
 catch
@@ -30,6 +34,21 @@ try
     varName    =  inifile('getstring',Info,'General'  ,'varName     ');
 catch
     varName    = 'wl';
+end
+try
+    Column     =  str2num(inifile('getstring',Info,'General'  ,'Column      '));
+catch
+    Column     = 3;
+end
+try
+    highLow_tmp =  inifile('getstring',Info,'General'  ,'highLow     ');
+    if ~strcmpi(highLow_tmp,'false')
+        highLow = true;
+    else
+        highLow = false;
+    end
+catch
+    highLow    = true;
 end
 
 
@@ -82,6 +101,17 @@ if ~strcmpi(lower(meas_dir),'opendap')
     if hlp ~= no_stat error(['Measurements inconsistent with Stations in ' varargin{1}]);end
     for i_stat = 1: no_stat
         stations_tek{i_stat} = [meas_dir filesep Info.Data{ch_stations,2}{i_stat,2}];
+    end
+end
+
+% Muppet template files
+ch_mupFile = [];
+ch_mupFile = find(~cellfun(@isempty,strfind(ListOfChapters,'mupFiles')));
+for i_stat = 1: no_stat
+    if ~isempty(ch_mupFile)
+        mupFile{i_stat} = Info.Data{ch_mupFile,2}{i_stat,2};
+    else
+        mupFile{i_stat} = mup_temp;
     end
 end
 
@@ -150,10 +180,10 @@ for i_per = 1: size(Periods,1)
             if ~strcmpi(lower(meas_dir),'opendap') && ~strcmpi(lower(stations_tek{i_stat}(end-6:end)),'opendap')
                 % tekal files at specific location
                 INFO        = tekal('open',stations_tek{i_stat},'loaddata');
-                dates_meas  = num2str(INFO.Field.Data(:,1),'%8.8i');
-                times_meas  = num2str(INFO.Field.Data(:,2),'%6.6i');
+                dates_meas  = num2str(INFO.Field(1).Data(:,1),'%8.8i');
+                times_meas  = num2str(INFO.Field(1).Data(:,2),'%6.6i');
                 dattim_meas = datenum([dates_meas(:,1:8) times_meas(:,1:6)],'yyyymmddHHMMSS');
-                wlev_meas   = INFO.Field.Data(:,3);
+                wlev_meas   = INFO.Field(1).Data(:,Column);
             else
                 % try to get the data from opendap server, only works for dutch stations
                 [dattim_meas,wlev_meas] = EHY_opendap('Parameter','waterhoogte','Station',stations_shortname{i_stat});
@@ -220,7 +250,7 @@ for i_per = 1: size(Periods,1)
 
             %% Plot simulation results
             if plot_per(i_per)
-                copyfile      (mup_temp,[per_dir filesep 'temporary.mup']);
+                copyfile      (mupFile{i_stat},[per_dir filesep 'temporary.mup']);
                 substitute    ('**runid**'           ,runid                    ,[per_dir filesep 'temporary.mup']);
                 substitute    ('**runid_name**'      ,simona2mdu_replacechar(runid,'_','-'),                ...
                     [per_dir filesep 'temporary.mup']);
@@ -247,10 +277,9 @@ for i_per = 1: size(Periods,1)
         end
     end
 
-
     %% Write statistics to xls files
-
     clear cell_arr
+   
     %  Definition
     cell_arr{1,1}  = ['Simulation : ' runid];
     cell_arr{1,2}  = 'Bias [m]';
@@ -281,87 +310,89 @@ for i_per = 1: size(Periods,1)
     % Write to excel file
     colwidth      = [28 repmat(17,1,size(cell_arr,2) - 1)];
     format(1:4)   = {'.000'};
-
+    
     xlsFile=strrep([fig_dir filesep runid '.xls'],[filesep filesep],[filesep]);
     xlswrite_report(xlsFile,cell_arr,[Periods{i_per,1}(1:8) ' - ' Periods{i_per,2}(1:8)], ...
-                     'colwidth'                   ,colwidth, ...
-                     'format'                     ,format  );
-
+        'colwidth'                   ,colwidth, ...
+        'format'                     ,format  );
+    
     % High and low water statistics
-    clear cell_arr
-
-    % Definition
-    cell_arr{1,1}  = ['Simulation : ' runid];
-    cell_arr{1,2}  = 'HW Bias [m]';
-    cell_arr{1,3}  = 'HW RMSE [m]';
-    cell_arr{1,4}  = 'timHW Bias [min]';
-    cell_arr{1,5}  = 'timHW RMSE [min]';
-    cell_arr{1,6}  = 'LW Bias  [m]';
-    cell_arr{1,7}  = 'LW RMSE  [m]';
-    cell_arr{1,8}  = 'timLW Bias [min]';
-    cell_arr{1,9}  = 'timLW RMSE [min]';
-    cell_arr{1,10} = 'difHW [m]';
-    cell_arr{1,11} = 'timHW [min]';
-    cell_arr{1,12} = 'difLW [m]';
-    cell_arr{1,13} = 'timLW [min]';
-
-    % values
-    i_row = 1;
-    for i_stat = 1: no_stat
-        if Data.exist_stat(i_stat)
-            i_row               = i_row + 1;
-            cell_arr {i_row,1}  = stations_fullname{i_stat};
-            cell_arr {i_row,2}  = Statistics(i_stat).hwlw(1).series_bias;
-            cell_arr {i_row,3}  = Statistics(i_stat).hwlw(1).series_rmse;
-            cell_arr {i_row,4}  = Statistics(i_stat).hwlw(1).time_series_bias;
-            cell_arr {i_row,5}  = Statistics(i_stat).hwlw(1).time_series_rmse;
-            cell_arr {i_row,6}  = Statistics(i_stat).hwlw(2).series_bias;
-            cell_arr {i_row,7}  = Statistics(i_stat).hwlw(2).series_rmse;
-            cell_arr {i_row,8}  = Statistics(i_stat).hwlw(2).time_series_bias;
-            cell_arr {i_row,9}  = Statistics(i_stat).hwlw(2).time_series_rmse;
-            cell_arr {i_row,10} = Statistics(i_stat).hwlw(1).diff;
-            cell_arr {i_row,11} = Statistics(i_stat).hwlw(1).time_diff;
-            cell_arr {i_row,12} = Statistics(i_stat).hwlw(2).diff;
-            cell_arr {i_row,13} = Statistics(i_stat).hwlw(2).time_diff;
+    if highLow
+        clear cell_arr
+        
+        % Definition
+        cell_arr{1,1}  = ['Simulation : ' runid];
+        cell_arr{1,2}  = 'HW Bias [m]';
+        cell_arr{1,3}  = 'HW RMSE [m]';
+        cell_arr{1,4}  = 'timHW Bias [min]';
+        cell_arr{1,5}  = 'timHW RMSE [min]';
+        cell_arr{1,6}  = 'LW Bias  [m]';
+        cell_arr{1,7}  = 'LW RMSE  [m]';
+        cell_arr{1,8}  = 'timLW Bias [min]';
+        cell_arr{1,9}  = 'timLW RMSE [min]';
+        cell_arr{1,10} = 'difHW [m]';
+        cell_arr{1,11} = 'timHW [min]';
+        cell_arr{1,12} = 'difLW [m]';
+        cell_arr{1,13} = 'timLW [min]';
+        
+        % values
+        i_row = 1;
+        for i_stat = 1: no_stat
+            if Data.exist_stat(i_stat)
+                i_row               = i_row + 1;
+                cell_arr {i_row,1}  = stations_fullname{i_stat};
+                cell_arr {i_row,2}  = Statistics(i_stat).hwlw(1).series_bias;
+                cell_arr {i_row,3}  = Statistics(i_stat).hwlw(1).series_rmse;
+                cell_arr {i_row,4}  = Statistics(i_stat).hwlw(1).time_series_bias;
+                cell_arr {i_row,5}  = Statistics(i_stat).hwlw(1).time_series_rmse;
+                cell_arr {i_row,6}  = Statistics(i_stat).hwlw(2).series_bias;
+                cell_arr {i_row,7}  = Statistics(i_stat).hwlw(2).series_rmse;
+                cell_arr {i_row,8}  = Statistics(i_stat).hwlw(2).time_series_bias;
+                cell_arr {i_row,9}  = Statistics(i_stat).hwlw(2).time_series_rmse;
+                cell_arr {i_row,10} = Statistics(i_stat).hwlw(1).diff;
+                cell_arr {i_row,11} = Statistics(i_stat).hwlw(1).time_diff;
+                cell_arr {i_row,12} = Statistics(i_stat).hwlw(2).diff;
+                cell_arr {i_row,13} = Statistics(i_stat).hwlw(2).time_diff;
+            end
         end
+        
+        % Averages
+        i_row             = i_row + 1;
+        cell_arr{i_row,1}  = 'Gemiddeld';
+        for i_col = 2: size(cell_arr,2)
+            cell_arr{i_row,i_col}  = mean(cell2mat(cell_arr(2:end-1,i_col)));
+        end
+        
+        % Write to excel file
+        colwidth      = [28 repmat(17,1,size(cell_arr,2) - 1)];
+        format(1:2)   = {'.000'};
+        format(3:4)   = {'0'};
+        format(5:6)   = {'.000'};
+        format(7:8)   = {'0'};
+        format(9)     = {'.000'};
+        format(10)    = {'0'};
+        format(11)    = {'.000'};
+        format(12)    = {'0'};
+        
+        xlsFile=strrep([fig_dir filesep runid '_hwlw.xls'],[filesep filesep],[filesep]);
+        xlswrite_report(xlsFile,cell_arr,[Periods{i_per,1}(1:8) ' - ' Periods{i_per,2}(1:8)], ...
+            'colwidth'                        ,colwidth, ...
+            'format'                          ,format  );
     end
-
-    % Averages
-    i_row             = i_row + 1;
-    cell_arr{i_row,1}  = 'Gemiddeld';
-    for i_col = 2: size(cell_arr,2)
-        cell_arr{i_row,i_col}  = mean(cell2mat(cell_arr(2:end-1,i_col)));
-    end
-
-    % Write to excel file
-    colwidth      = [28 repmat(17,1,size(cell_arr,2) - 1)];
-    format(1:2)   = {'.000'};
-    format(3:4)   = {'0'};
-    format(5:6)   = {'.000'};
-    format(7:8)   = {'0'};
-    format(9)     = {'.000'};
-    format(10)    = {'0'};
-    format(11)    = {'.000'};
-    format(12)    = {'0'};
-
-    xlsFile=strrep([fig_dir filesep runid '_hwlw.xls'],[filesep filesep],[filesep]);
-    xlswrite_report(xlsFile,cell_arr,[Periods{i_per,1}(1:8) ' - ' Periods{i_per,2}(1:8)], ...
-                     'colwidth'                        ,colwidth, ...
-                     'format'                          ,format  );
 end
 
 % Tidal analyses
 if tide
     tba_file = [fig_dir filesep runid '_tba.xls'];
     tbb_file = [fig_dir filesep runid '_tbb.xls'];
-
+    
     i_tide = 0;
     for i_stat = 1: no_stat
         if Data.exist_stat(i_stat)
             i_tide = i_tide + 1;
             dattim_cmp = Data.times + time_zone/24.;
             wlev_cmp   = Data.val(:,i_stat);
-
+            
             % Read the measurement Data
             if ~strcmpi(lower(meas_dir),'opendap') && ~strcmpi(lower(stations_tek{i_stat}(end-6:end)),'opendap')
                 % tekal files at specific location
@@ -378,7 +409,7 @@ if tide
                 dattim_meas = dattim_meas(i_start:i_stop);
                 wlev_meas   = wlev_meas  (i_start:i_stop);
             end
-
+            
             if ~isempty(find(~isnan(wlev_meas)))
                 [dattim_meas,wlev_meas] = FillGaps(dattim_meas,wlev_meas,'interval',120./1440.); % Fill with NaNs if interval between consequetive measurements is more than 2 hours
             end
