@@ -19,13 +19,16 @@ OPT.extColor=[0 1 1];
 OPT.dryIconFile='http://maps.google.com/mapfiles/kml/paddle/ylw-square.png';
 OPT.obsIconFile='http://maps.google.com/mapfiles/kml/paddle/blu-stars.png';
 OPT.srcIconFile='http://maps.google.com/mapfiles/kml/shapes/square.png';
+OPT.convertNetwork=1;
+OPT.fromEPSG=[];
 
 if nargin>1
-OPT = setproperty(OPT,varargin{2:end});
+OPT = setproperty(OPT,varargin);
 end
 
 % create OPT2 to use in EHY_convert-call
 OPT2.saveOutputFile=OPT.saveOutputFile;
+OPT2.fromEPSG=OPT.fromEPSG;
 
 %%
 if nargin==0
@@ -49,7 +52,7 @@ switch modelType
         mdu=dflowfm_io_mdu('read',mdFile);
         
         % net
-        if isfield(mdu.geometry,'NetFile') && ~isempty(mdu.geometry.NetFile)
+        if OPT.convertNetwork && isfield(mdu.geometry,'NetFile') && ~isempty(mdu.geometry.NetFile)
             [selection,~]=  listdlg('PromptString','Conversion of nc to kml might take a while for big models, in that case you can also use Hermans GUI, choose:',...
                 'SelectionMode','single','ListString',{'Get a coffee and wait (seconds to few minutes)','Convert the nc to kml yourself'},'ListSize',[500 100]);
             if selection==1
