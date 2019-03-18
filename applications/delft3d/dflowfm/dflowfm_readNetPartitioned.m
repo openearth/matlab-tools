@@ -3,10 +3,15 @@ function [grd,grdPart] = dflowfm_readNetPartitioned(mapFiles,FlagShiftNodesCutCe
 %% Reads network from partitioned Delft3D-FM files (_map.nc, _net.nc, etc.)
 %
 % required input:
-% mapFiles = structure containing the fields folder and name (resulting from e.g. mapFiles = dir([d:/temp/NCfiles/])
+% mapFiles = structure containing the fields folder and name (resulting 
+% from e.g. mapFiles = dir([d:/temp/NCfiles/])
 %
-% optional input (recommended, because otherwise plotting may take a long time):
-% FlagShiftNodesCutCellPolygonLST = 1: changes the X and Y coordinates of the nodes, which have been shifted due to the cutcellpolygon.lst routine in Delft3D-FM (if applied)
+% optional input:
+% FlagShiftNodesCutCellPolygonLST = 1: changes the X and Y coordinates of
+% the nodes, which have been shifted due to the cutcellpolygon.lst routine
+% in Delft3D-FM (if applied). This only work when the Statistics Toolbox
+% can be accessed. If no license is available, this part of the routine
+% will be skipped (a warning will be given). 
 
 if nargin < 2
     FlagShiftNodesCutCellPolygonLST = 0;
