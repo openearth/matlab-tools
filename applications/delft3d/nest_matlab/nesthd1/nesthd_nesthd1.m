@@ -80,7 +80,7 @@
 
       %% For the various types of boundary conditions
       for i_type = 1: length(types)
-
+          ii = true(length(X_bnd),1); % for d3d
           %% Determine world coordinates of boundary support points for type{i_type}
           switch type_bnd
               case {'d3d'  'simona'}
