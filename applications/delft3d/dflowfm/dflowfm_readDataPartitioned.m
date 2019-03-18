@@ -16,7 +16,7 @@ for mm = 1:length(mapFiles)
     lengthID = [];
     for dd = 1:size(varInfo.Size,2)
         if length(IDdims) >= dd
-            if IDdims{dd} == 0                
+            if IDdims{dd} == 0
                 IDdimsReal{dd} = 1:varInfo.Size(dd);
             end
         else
@@ -25,23 +25,24 @@ for mm = 1:length(mapFiles)
         startID = [startID IDdimsReal{dd}(1)-1];
         lengthID = [lengthID length(IDdimsReal{dd})];
     end
-  
+    
     if mm == 1
         data = [nc_varget([mapFiles(mm).folder,filesep,mapFiles(mm).name],varName,startID,lengthID)]; % u velocity at cell center
     else
         try
-            data = [data nc_varget([mapFiles(mm).folder,filesep,mapFiles(mm).name],varName,startID,lengthID)]; % u velocity at cell center
+            data = [data;nc_varget([mapFiles(mm).folder,filesep,mapFiles(mm).name],varName,startID,lengthID)]; % u velocity at cell center
         catch
             error('data cannot be concatenated. Probably caused by different nc_varget function. This function is based on the nc_varget from wlsettings (p:\delta\wlsettings\dl_snctools\nc_varget.m)')
         end
     end
 end
+data = data';
 
 if checkGhostCells && length(mapFiles)>1
-    if ~isempty(find(~cellfun('isempty',regexp(varInfo.Dimension,'nFlowElem'))))
-        Xcheck = grd.face.FlowElem_x';
-        Ycheck = grd.face.FlowElem_y';
-    end
+    %     if ~isempty(find(~cellfun('isempty',regexp(varInfo.Dimension,'nFlowElem'))))
+    Xcheck = grd.face.FlowElem_x';
+    Ycheck = grd.face.FlowElem_y';
+    %     end
     
     % finds cells which occur twice
     [~,IDFirst] = unique([Xcheck Ycheck],'rows','first');
