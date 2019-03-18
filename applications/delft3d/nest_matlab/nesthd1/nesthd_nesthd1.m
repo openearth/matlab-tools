@@ -7,7 +7,8 @@
       %
 
       %% Initialisation
-      types  = {'WL ','UVp','UVt'};
+      types      = {'WL ','UVp','UVt'};
+      types_conv = {'z',  'p',  'p'};   % for FM
       files  = varargin{1};
       x_nest = [];
       y_nest = [];
@@ -51,7 +52,13 @@
                   for i_node = 1: length(G.face.FlowElem_x)
                       name_coarse{i_node} = ['FlowNode_' num2str(i_node,'%8.8i')];
                   end
-                  if strncmpi(ncreadatt(files{1},'wgs84','grid_mapping_name'),'latitu',6) sphere = true; end;
+                  try     % wgs84 not guaranteed to exist
+                      if strncmpi(ncreadatt(files{1},'wgs84','grid_mapping_name'),'latitu',6)
+                          sphere = true;
+                      end
+                  catch
+                      sphere = false;  % for completeness, not necessary
+                  end
                   
               end
       end
@@ -95,7 +102,13 @@
               case {'d3d' 'simona'}
                   [string_mnnes,weight,x_nest,y_nest] = nesthd_detnst        (grid_coarse.X   ,grid_coarse.Y   ,icom_coarse,X_bnd',Y_bnd',sphere,i_type);
               case 'dfm'
-                  [string_mnnes,weight,x_nest,y_nest] = nesthd_detnst_dflowfm(grid_coarse.Xcen,grid_coarse.Ycen,name_coarse,X_bnd',Y_bnd',sphere,i_type);
+                  % to avoid a nest admin file with a lot of superfluous
+                  % points
+                  ii = false(length(X_bnd),1);
+                  for iii = 1:length(ii)          % ugly ugly
+                     ii(iii) = strcmpi(bnd.DATA(iii).bndtype,types_conv(i_type));
+                  end
+                  [string_mnnes,weight,x_nest,y_nest] = nesthd_detnst_dflowfm(grid_coarse.Xcen,grid_coarse.Ycen,name_coarse,X_bnd(ii)',Y_bnd(ii)',sphere,i_type);
           end
 
           %% Determine the orientation of the boundary (not needed for water level boundaries)
@@ -116,7 +129,7 @@
 
           %% Write to station and administration file
           nesthd_wrista_2 (fid_obs,type_obs,string_mnnes,x_nest,y_nest);
-          nesthd_wrinst_2 (fid_adm,string_mnbsp,string_mnnes,weight,types{i_type},angles,positi,x_nest,y_nest);
+          nesthd_wrinst_2 (fid_adm,string_mnbsp(ii),string_mnnes,weight,types{i_type},angles,positi,x_nest,y_nest);
 
           clear X_bnd Y_bnd positi string_mnbsp string_mnnes weight angles positi x_nest y_nest
 

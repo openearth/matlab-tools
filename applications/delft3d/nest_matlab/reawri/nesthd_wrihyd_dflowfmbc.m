@@ -15,6 +15,7 @@ itdate        = datestr(nfs_inf.itdate,'yyyy-mm-dd  HH:MM:SS');
 for i_pnt = 1: no_pnt
     %% Type of boundary
     if strcmpi(bnd.DATA(i_pnt).bndtype,'z')  quantity = 'waterlevel'; end
+    if strcmpi(bnd.DATA(i_pnt).bndtype,'p')  quantity = 'uxuyadvectionvelocity'; end
 
     %% Header information
     ext_force.Chapter          = 'forcing';
@@ -31,14 +32,18 @@ for i_pnt = 1: no_pnt
     ext_force.Keyword.Name {6} = 'Quantity';
     ext_force.Keyword.Value{6} = [quantity 'bnd'];
     ext_force.Keyword.Name {7} = 'Unit';
-    ext_force.Keyword.Value{7} = 'm';
-
+    if strcmpi(quantity,'waterlevel')
+       ext_force.Keyword.Value{7} = 'm';
+    end
+    if strcmpi(quantity,'uxuyadvectionvelocity')
+       ext_force.Keyword.Value{7} = 'm/s';
+    end
     %% Series information
     for i_time = 1: no_times
         ext_force.values{i_time,1} = (nfs_inf.times(i_time) - nfs_inf.itdate)*1440. + add_inf.timeZone*60.;    % minutes!
         ext_force.values(i_time,2) = {bndval(i_time).value(i_pnt,1,1)};
         if lower(bnd.DATA(i_pnt).bndtype) == 'p' || lower(bnd.DATA(i_pnt).bndtype) == 'x'
-            ext_force.Values{i_time,3} = {bndval(i_time).value(i_pnt,2,1)};
+            ext_force.values(i_time,3) = {bndval(i_time).value(i_pnt,2,1)};
         end
     end
 
