@@ -73,7 +73,11 @@ Gen_inf    = {'Nesthd Version 2.0:'                                             
               ' '                                                                                                  ;
               'Hence, old adminstration files will have to be re-generated'                                        ;
               ' '                                                                                                  ;
-              'If you encounter problems, please do not hesitate to contact me'                                    ;  
+              'WARNING: I do not (yet) properly take into account different'                                       ;
+              '         vertical orientations (positive up or down) of the'                                        ;
+              '         differnt simulation programs (D3D, WAQUA or DFM)'                                          ;
+              ' '                                                                                                  ;
+              'If you encounter problems, please do not hesitate to contact me'                                    ;
               'Theo.vanderkaaij@deltares.nl'                                                                      };
 
 simona2mdf_message(Gen_inf,'n_sec',10,'Window','NESTHD Message','Close',true);
