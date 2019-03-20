@@ -8,23 +8,8 @@ notims   = nfs_inf.notims;
 kmax     = nfs_inf.kmax;
 thick    = nfs_inf.thick;
 lstci    = -1;
-if length(size(bndval(1).value)) == 3 lstci = length(find(add_inf.genconc == 1)); end
-profile  = '';
-
-%% Check if velocity or Riemann boundaries are present or if constituents are avaialble
-
-for i_pnt = 1: no_pnt
-    if strcmpi(bnd.DATA(i_pnt).bndtype,'c') || strcmpi(bnd.DATA(i_pnt).bndtype,'p') || ...                                                                                                                                                                                                                                                                                                                                                        if strcmpi(lower(bnd.DATA.(ibnd).bndtype),'c') !!
-            strcmpi(bnd.DATA(i_pnt).bndtype,'r') || strcmpi(bnd.DATA(i_pnt).bndtype,'x')
-        profile = add_inf.profile;
-        break;
-    end
-end
-
-if lstci > 1
-    profile = add_inf.profile;
-end
-
+if kmax > 1                           profile  = add_inf.profile; end
+if length(size(bndval(1).value)) == 3 lstci    = nfs_inf.lstci  ; end
 
 %% Averaging needed?
 if kmax > 1 && (strcmpi(profile,'uniform') || strcmpi(profile,'logarithmic'))
@@ -34,7 +19,7 @@ if kmax > 1 && (strcmpi(profile,'uniform') || strcmpi(profile,'logarithmic'))
         type = lower(bnd.DATA(i_pnt).bndtype);
         for itim = 1: notims
             if lstci == -1
-                if strcmpi(type,'c') || strcmpi(type,'p') || strcmpi(type,'r') || strcmpi(type,'x') ||lstci > 0
+                if strcmpi(type,'c') || strcmpi(type,'p') || strcmpi(type,'r') || strcmpi(type,'x')
 
                     %% Determine depth averaged value of velocity, riemann invariant or constituent
                     hulp(itim).value(i_pnt,1) = sum(thick.*bndval(itim).value(i_pnt,1:kmax));
@@ -54,7 +39,9 @@ if kmax > 1 && (strcmpi(profile,'uniform') || strcmpi(profile,'logarithmic'))
 
                 %% Constituents
                 for l = 1: lstci
-                    hulp(itim).value(i_pnt,1,l) = sum(thick.*bndval(itim).value(i_pnt,1:kmax,l));
+                    if add_inf.genconc(l)
+                        hulp(itim).value(i_pnt,1,l) = sum(thick.*bndval(itim).value(i_pnt,1:kmax,l));
+                    end
                 end
 
             end

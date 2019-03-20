@@ -42,7 +42,7 @@ function [handles] = read_ini(handles,varargin)
       switch handles.active
          case 'Nesthd1'
             handles.files_hd1{1}=inifile('get',Info,handles.active,'Overall model grid  ');
-            handles.files_hd1{2}=inifile('get',Info,handles.active,'Detailed model grid');
+            handles.files_hd1{2}=inifile('get',Info,handles.active,'Detailed model grid ');
             handles.files_hd1{3}=inifile('get',Info,handles.active,'Boundary Definition ');
             handles.files_hd1{4}=inifile('get',Info,handles.active,'Observation Points  ');
             handles.files_hd1{5}=inifile('get',Info,handles.active,'Nest Administration ');
@@ -76,9 +76,6 @@ function [handles] = read_ini(handles,varargin)
                if handles.wlev
                   handles.add_inf.a0=inifile('get',Info,Chapter,'A0                             ');
                end
-               if handles.vel
-                  handles.add_inf.profile=inifile('get',Info,Chapter,'Profile                   ');
-               end
                if handles.conc
                   handles.add_inf.l_act=inifile('get',Info,Chapter,'Active                       ');
                   for l = 1: handles.nfs_inf.lstci
@@ -87,6 +84,13 @@ function [handles] = read_ini(handles,varargin)
                      handles.add_inf.max(l)    =inifile('get',Info,Chapter,['Max' num2str(l)]    );
                      handles.add_inf.min(l)    =inifile('get',Info,Chapter,['Min' num2str(l)]    );
                   end
+               end
+               if handles.vel || (handles.nfs_inf.lstci >= 1 && sum(handles.add_inf.genconc) > 0)
+                   try
+                       handles.add_inf.profile=inifile('get',Info,Chapter,'Profile                   ');
+                   catch
+                       handles.add_inf.profile='uniform';
+                   end
                end
             end
       end

@@ -23,7 +23,7 @@ function handles = set_add_inf(handles)
            handles.wlev = true;
            handles.add_inf.a0 = 0.0;
        end
-       if type == 'c' || type == 'p' || type == 'r' || type == 'x'
+       if type == 'c' || type == 'p' || type == 'r' || type == 'x' || handles.nfs_inf.lstci > 0
            handles.vel = true;
            handles.add_inf.profile='uniform';
            if handles.nfs_inf.kmax > 1

@@ -1012,7 +1012,7 @@ function update_additional(handles)
     % Update additional velocity profile information
     %
 
-    if handles.vel
+    if handles.vel || sum(handles.add_inf.genconc) > 0
         set (handles.vel_profile,'Visible','on','Enable','on')
         set (handles.vel_uniform,'Visible','on','Enable','on');
         if handles.nfs_inf.kmax > 1
@@ -1034,7 +1034,13 @@ function update_additional(handles)
                 set (handles.vel_3dprofile  ,'Value',1);
         end
 
+    else
+        set (handles.vel_profile    ,'Visible','off');
+        set (handles.vel_uniform    ,'Visible','off');
+        set (handles.vel_logarithmic,'Visible','off');
+        set (handles.vel_3dprofile  ,'Visible','off');
     end
+        
 
     %
     % Update additional transport information

@@ -37,7 +37,7 @@ end
 
 Chapter = 'Nesthd1';
 Info=inifile('set',Info,Chapter,'Overall model grid  ',handles.files_hd1{1});
-Info=inifile('set',Info,Chapter,'Detailled model grid',handles.files_hd1{2});
+Info=inifile('set',Info,Chapter,'Detailed model grid ',handles.files_hd1{2});
 Info=inifile('set',Info,Chapter,'Boundary Definition ',handles.files_hd1{3});
 Info=inifile('set',Info,Chapter,'Observation Points  ',handles.files_hd1{4});
 Info=inifile('set',Info,Chapter,'Nest Administration ',handles.files_hd1{5});
@@ -60,6 +60,10 @@ if isfield(handles,'add_inf');
         Info=inifile('set',Info,Chapter,'Profile                         ',handles.add_inf.profile);
     end
     if handles.conc
+        if sum(handles.add_inf.genconc > 0)
+            Info=inifile('set',Info,Chapter,'Profile                         ',handles.add_inf.profile);
+        end
+
         Info=inifile('set',Info,Chapter,'Active                          ',handles.l_act);
         for l = 1: handles.nfs_inf.lstci
             Info=inifile('set',Info,Chapter,['Genconc' num2str(l)]        ,handles.add_inf.genconc(l));

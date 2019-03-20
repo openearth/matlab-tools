@@ -7,7 +7,7 @@ function nesthd_check
 [path,~,~]      = fileparts(mfilename('fullpath'));
 testdir         = [path filesep 'check'];
 
-check_exe       = true;
+check_exe       = false;
 check_comprompt = true;
 check_nesthd1   = false;
 check_nesthd2   = true;
@@ -56,8 +56,10 @@ if check_exe
     % than run and compare with previous results
     system('run.bat');
 
-    for itest = 1: length(tests)
-        if nesthd2(i_test) nesthd_compare([tests{itest} filesep 'nesthd2.ini']); end
+    for i_test = 1: length(tests)
+        if nesthd2(i_test) 
+            nesthd_compare([tests{i_test} filesep 'nesthd2.ini']);
+        end
     end
 end
 

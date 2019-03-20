@@ -21,10 +21,11 @@
       %% layer information
       gridInfo                          = EHY_getGridInfo(fileInp,{'no_layers' 'layer_model' 'depth'});
       gen_inf.kmax                      = gridInfo.no_layers;
-      gen_inf.dps                       = -1.*gridInfo.depth_cen;           % d3d convention 
+      gen_inf.dps                       = -1.*gridInfo.depth_cen;           % d3d convention
+      gen_inf.layer_model               = gridInfo.layer_model;
       if strcmpi (gridInfo.layer_model,'sigma-model')
           gridInfo                      = EHY_getGridInfo(fileInp,{'layer_perc'},'manual',false);
-          gen_inf.thick                 = flipud(gridInfo.layer_perc);      % d3d convention
+          gen_inf.thick                 = gridInfo.layer_perc;              % follow either d3d sigma or dhydro convention
       else
           gen_inf.thick(1:gen_inf.kmax) = NaN;
       end

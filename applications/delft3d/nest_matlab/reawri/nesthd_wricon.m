@@ -9,4 +9,7 @@ switch modelType
       nesthd_wricon_bcc    (fileInp,bnd,nfs_inf,bndval,add_inf);
    case 'simona'
       nesthd_wricon_timeser(fileInp,bnd,nfs_inf,bndval,add_inf);
+   case 'dfm'
+        % New inifile format
+        nesthd_wrihyd_dflowfmbc  (fileInp,bnd,nfs_inf,bndval,add_inf);
 end
