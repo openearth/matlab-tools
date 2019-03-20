@@ -21,7 +21,7 @@ for i_pnt = 1: no_pnt
     % Comments
 
     SERIES.Comments{1} = '* COLUMNN=2';
-    SERIES.Comments{2} = ['* COLUMN1=Time (min) since ' datestr(nfs.itdate,'yyyy-mm-dd  HH:MM:SS')];
+    SERIES.Comments{2} = ['* COLUMN1=Time (min) since ' datestr(nfs_inf.itdate,'yyyy-mm-dd  HH:MM:SS')];
 
     if lower(bnd.DATA(i_pnt).bndtype) == 'z'
         SERIES.Comments{3} = '* COLUMN2=Waterlevel';

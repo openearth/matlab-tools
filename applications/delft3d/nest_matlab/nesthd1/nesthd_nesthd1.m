@@ -80,7 +80,7 @@
 
       %% For the various types of boundary conditions
       for i_type = 1: length(types)
-          ii = true(length(X_bnd),1); % for d3d
+
           %% Determine world coordinates of boundary support points for type{i_type}
           switch type_bnd
               case {'d3d'  'simona'}
@@ -102,13 +102,7 @@
               case {'d3d' 'simona'}
                   [string_mnnes,weight,x_nest,y_nest] = nesthd_detnst        (grid_coarse.X   ,grid_coarse.Y   ,icom_coarse,X_bnd',Y_bnd',sphere,i_type);
               case 'dfm'
-                  % to avoid a nest admin file with a lot of superfluous
-                  % points
-                  ii = false(length(X_bnd),1);
-                  for iii = 1:length(ii)          % ugly ugly
-                     ii(iii) = strcmpi(bnd.DATA(iii).bndtype,types_conv(i_type));
-                  end
-                  [string_mnnes,weight,x_nest,y_nest] = nesthd_detnst_dflowfm(grid_coarse.Xcen,grid_coarse.Ycen,name_coarse,X_bnd(ii)',Y_bnd(ii)',sphere,i_type);
+                  [string_mnnes,weight,x_nest,y_nest] = nesthd_detnst_dflowfm(grid_coarse.Xcen,grid_coarse.Ycen,name_coarse,X_bnd',Y_bnd',sphere,i_type);
           end
 
           %% Determine the orientation of the boundary (not needed for water level boundaries)
@@ -129,7 +123,7 @@
 
           %% Write to station and administration file
           nesthd_wrista_2 (fid_obs,type_obs,string_mnnes,x_nest,y_nest);
-          nesthd_wrinst_2 (fid_adm,string_mnbsp(ii),string_mnnes,weight,types{i_type},angles,positi,x_nest,y_nest);
+          nesthd_wrinst_2 (fid_adm,string_mnbsp,string_mnnes,weight,types{i_type},angles,positi,x_nest,y_nest);
 
           clear X_bnd Y_bnd positi string_mnbsp string_mnnes weight angles positi x_nest y_nest
 
