@@ -20,8 +20,8 @@ excelWorkbook = excelObj.workbooks.Open(fileName);
 %
 
 excelSheets    = excelWorkbook.Sheets;
-excelSheets_no = excelSheets.get('Item', isheet);
-excelSheets_no.Activate;
+% excelSheets_no = excelSheets.get('Item', isheet);
+% excelSheets_no.Activate;
 
 %
 % Set Range (cells for which to apply the format)

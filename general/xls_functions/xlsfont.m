@@ -181,6 +181,6 @@ while n<=length(options)
     end
 end
 
-invoke(Workbook, 'Save');
-invoke(Excel, 'Quit');
+Workbook.Save;
+Excel.Quit;
 delete(Excel);
