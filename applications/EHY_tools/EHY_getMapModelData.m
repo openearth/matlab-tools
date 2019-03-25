@@ -177,5 +177,5 @@ Data.OPT.outputfile=fileInp;
 if nargout==1
     varargout{1}=Data;
 end
-EHYs(mfilename);
+
 end

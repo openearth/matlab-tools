@@ -89,5 +89,4 @@ if nargout==1
     varargout{1}=hPatch;
 end
 
-EHYs(mfilename);
 end

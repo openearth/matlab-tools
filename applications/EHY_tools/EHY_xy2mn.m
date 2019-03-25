@@ -43,5 +43,4 @@ else
     end
 end
 
-EHYs(mfilename);
 end

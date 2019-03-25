@@ -100,4 +100,3 @@ disp('Finished retrieving the data!')
 assignin('base','Data',Data);
 open Data
 disp('Variable ''Data'' created by EHY_getmodeldata_interactive')
-EHYs(mfilename);

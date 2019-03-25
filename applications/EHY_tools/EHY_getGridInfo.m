@@ -389,7 +389,7 @@ if ~exist('E','var')
 end
 E.inputFile=inputFile;
 gridInfo=E;
-EHYs(mfilename);
+
 end
 
 function EHY_getGridInfo_interactive

@@ -52,7 +52,7 @@ end
 close(writerObj);
 disp(['EHY_movieMaker created:' char(10) OPT.outputFile])
 disp('If the resolution of the images is too large, you might not be able to play the video.')
-EHYs(mfilename);
+
 end
 
 %% EHY_movieMaker_interactive

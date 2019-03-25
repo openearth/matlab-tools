@@ -28,4 +28,4 @@ for iT=1:length(plotTimes)
     pause(.2)
 end
 disp('Finished plotting the top-view data!')
-EHYs(mfilename);
+

@@ -136,4 +136,4 @@ disp(['Status of ' name ext ': ' num2str(round(runPeriod_D)) '/' num2str(round(s
 if nargout==1
     varargout{1}=percentage;
 end
-EHYs(mfilename);
+

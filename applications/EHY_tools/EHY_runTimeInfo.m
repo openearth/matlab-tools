@@ -216,7 +216,7 @@ runTimeInfo % disp struct with info
 if nargout==1
     varargout{1}=runTimeInfo;
 end
-EHYs(mfilename);
+
 end
 %%
 function line=findLineOrQuit(fid,wantedLine)

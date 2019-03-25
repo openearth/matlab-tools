@@ -194,5 +194,5 @@ switch modelType
             [~,OPT2]=EHY_convert(inputFile,'kml',OPT2);
         end
 end
-EHYs(mfilename);
+
 end

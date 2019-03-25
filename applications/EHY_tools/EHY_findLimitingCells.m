@@ -191,6 +191,7 @@ if ~isempty(XX)
 else
     disp('No limiting cells found')
 end
+
 if OPT.writeMaxVel
     outputFile=[outputDir 'maximumVelocities.xyz'];
     disp('start writing maximum velocities')
@@ -200,5 +201,4 @@ if OPT.writeMaxVel
 end
 fclose all;
 
-EHYs(mfilename);
 end

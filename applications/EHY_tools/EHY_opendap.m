@@ -139,7 +139,7 @@ if ~isempty(OPT.Parameter)
     end
     
 end
-EHYs(mfilename);
+
 end
 
 function EHY_opendap_interactive
@@ -218,5 +218,5 @@ if selection==1
     fclose (fid);
     disp(['EHY_opendap created file:' char(10) outputFile])
 end
-EHYs('EHY_opendap_interactive');
+
 end

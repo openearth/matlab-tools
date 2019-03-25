@@ -1063,7 +1063,7 @@ elseif nargout>1
     varargout{1}=output;
     varargout{2}=OPT;
 end
-EHYs(mfilename);
+
 end
 
 function varargout=EHY_convert_gridCheck(OPT,inputFile)

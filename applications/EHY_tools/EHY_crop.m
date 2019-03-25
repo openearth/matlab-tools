@@ -66,4 +66,3 @@ imwrite(img_uint8(m_min:m_max,n_min:n_max,:),fileName)
 if OPT.disp
     disp(['EHY_crop created file: ' fileName])
 end
-EHYs(mfilename);

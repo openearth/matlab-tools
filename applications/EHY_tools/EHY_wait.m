@@ -8,7 +8,6 @@ function EHY_wait(varargin)
 % Example2: EHY_wait('23-Mar-2018 12:00','D:\script.m')
 %
 % created by Julien Groenenboom, March 2017
-EHYs(mfilename);
 
 if nargin==0
     disp('Select MATLAB-script to run')

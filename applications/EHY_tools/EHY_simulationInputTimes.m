@@ -10,7 +10,7 @@ function EHY_simulationInputTimes(varargin)
 % Example2: EHY_simulationInputTimes('D:\model.mdu')
 %
 % created by Julien Groenenboom, April 2017
-EHYs(mfilename);
+
 %% general settings
 format{1}='yyyymmdd';
 format{2}='yyyymmdd HHMMSS';

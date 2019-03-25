@@ -98,5 +98,4 @@ if nargout==1
     Data.OPT.outputfile=outputfile;
     varargout{1}=Data;
 end
-EHYs(mfilename);
 

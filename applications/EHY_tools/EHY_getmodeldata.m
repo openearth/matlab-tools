@@ -427,8 +427,6 @@ if nargout==1
     varargout{1}=Data;
 end
 
-EHYs(mfilename);
-
 end
 
 function newName = nameOnFile(inputFile,varName)
