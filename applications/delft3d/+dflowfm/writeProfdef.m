@@ -109,7 +109,9 @@ for i = 1:length(OPT.profnr)
     profnr  = OPT.profnr(i);
     type    = OPT.type(i);
     
-    if type <= 5
+    if type == 1
+        fprintf(fid,'PROFNR=%d\tTYPE=%d\n',OPT.profnr(i),OPT.type(i));
+    elseif type > 2 && type <= 5
         width   = OPT.width(i);
         height  = OPT.width(i);
         fprintf(fid,'PROFNR=%d\tTYPE=%d\tWIDTH=%d\tHEIGHT=%d\n',profnr,type,width,height);
@@ -118,7 +120,7 @@ for i = 1:length(OPT.profnr)
         height  = OPT.width(i);
         base    = OPT.base(i);
         fprintf(fid,'PROFNR=%d\tTYPE=%d\tWIDTH=%d\tHEIGHT=%d\tBASE=%d\n',profnr,type,width,height,base);
-    elseif profnr >= 8
+    elseif type >= 8
         fprintf(fid,'PROFNR=%d\tTYPE=%d\n',OPT.profnr(i),OPT.type(i));
     end
 end
