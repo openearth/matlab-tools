@@ -1012,7 +1012,7 @@ function update_additional(handles)
     % Update additional velocity profile information
     %
 
-    if handles.vel || sum(handles.add_inf.genconc) > 0
+    if handles.vel || (handles.conc && sum(handles.add_inf.genconc) > 0)
         set (handles.vel_profile,'Visible','on','Enable','on')
         set (handles.vel_uniform,'Visible','on','Enable','on');
         if handles.nfs_inf.kmax > 1
