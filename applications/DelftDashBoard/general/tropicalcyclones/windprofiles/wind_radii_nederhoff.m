@@ -67,11 +67,11 @@ b_value = coefficients_b(region+1, 1) *  exp(-vmax/coefficients_b(region+1, 2)).
 for ii = 1:length(a_value)
     rmax.mode(ii)               = exp(log(b_value(ii)) - a_value(ii).^2);
     if probability == 1
-        %numbers                    = sort(lognrnd(log(b_value(ii)),a_value(ii), 10000,1));       
-        numbers                     = sort(exp(randn(10000,1).*sqrt(a_value(ii))+log(b_value(ii))));  % lognormal distribution
+        numbers                     = sort(exp(randn(100000,1).*a_value(ii)+log(b_value(ii))));  % lognormal distribution
         rmax.mean(ii)               = mean(numbers);
         rmax.mean(ii)               = exp(log(b_value(ii)) + (a_value(ii).^2)/2);
         rmax.median(ii)             = median(numbers);
+        rmax.median(ii)             = b_value(ii);
         rmax.lowest(ii)             = numbers(0.05*length(numbers));
         rmax.highest(ii)            = numbers(0.95*length(numbers));
         rmax.numbers                = sort(numbers);
@@ -108,10 +108,9 @@ for ii = 1:length(a_value)
     if vmax > 20
         dr35.mode(ii)               = exp(log(b_value(ii)) - a_value(ii).^2);
         if probability == 1
-            %numbers                     = sort(lognrnd(log(b_value(ii)),a_value(ii), 10000,1));
-            numbers                     = sort(exp(randn(10000,1).*sqrt(a_value(ii))+log(b_value(ii))));  % lognormal distribution
-            dr35.mean(ii)                = mean(numbers);
-            dr35.median(ii)              = median(numbers);
+            numbers                      = sort(exp(randn(100000,1).*a_value(ii)+log(b_value(ii))));  % lognormal distribution
+            dr35.mean(ii)                = exp(log(b_value(ii)) + (a_value(ii).^2)/2);
+            dr35.median(ii)              = b_value(ii);
             dr35.lowest(ii)              = numbers(0.05*length(numbers));
             dr35.highest(ii)             = numbers(0.95*length(numbers));
             dr35.numbers                 = sort(numbers);
