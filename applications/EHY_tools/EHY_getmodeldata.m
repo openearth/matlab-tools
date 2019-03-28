@@ -93,7 +93,7 @@ layer_model = gridInfo.layer_model;
 OPT         = EHY_getmodeldata_layer_index(OPT,no_layers);
 
 %% Get list with the numbers of the requested stations
-Data           = EHY_getRequestedStations(inputFile,stat_name,modelType,'varName','wl');
+Data           = EHY_getRequestedStations(inputFile,stat_name,modelType,'varName',OPT.varName);
 stationNrNoNan = Data.stationNrNoNan;
 if exist('tmp','var'); Data.times     = tmp.times(index_requested); end
 

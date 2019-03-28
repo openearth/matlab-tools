@@ -40,10 +40,12 @@ switch modelType
     case {'waqua','simona','siminp','triwaq'}
         %% SIMONA (WAQUA/TRIWAQ)
         sds= qpfopen(inputFile);
-        if strcmp(lower(OPT.varName),'uv')
+        if strcmpi(OPT.varName,'uv')
             stationNames  = strtrim(waquaio(sds,[],'flowstat-uv'));
-        else
+        elseif strcmpi(OPT.varName,'wl')
             stationNames  = strtrim(waquaio(sds,[],'flowstat-wl'));
+        elseif strcmpi(OPT.varName,'salinity') || strcmpi(OPT.varName,'temperature')
+            stationNames  = strtrim(waquaio(sds,[],'transtat'));
         end
         
     case {'sobek3' 'sobek3_new'}

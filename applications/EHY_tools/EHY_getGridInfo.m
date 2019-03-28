@@ -184,8 +184,17 @@ switch modelType
                     if no_layers == 1
                         E.layer_perc = 1.0;
                     else
-                        if ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact'))
+                        if     ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact'))
                             E.layer_perc=diff(ncread(inputFile,'mesh2d_interface_sigma'));
+                        elseif ~isempty(strmatch('zcoordinate_w',{infonc.Variables.Name},'exact'))
+                            
+                            % reconstruct thickness based upon z coordinates first station, first timestep
+                            tmp = ncread_blocks(inputFile,'zcoordinate_w');
+                            z11 = tmp(:,1,1);
+                            for i_lay = 1: no_layers 
+                                thick(i_lay) = (z11(i_lay + 1) - z11(i_lay))/(z11(end) - z11(1));
+                            end
+                            E.layer_perc=thick;
                         else % not in merged_map.nc, try to get this info from mdFile
                             if OPT.manual
                                 try
