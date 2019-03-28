@@ -301,13 +301,15 @@ switch modelType
                 switch OPT.varName
                     case 'wl'
                         Data.val(:,i_stat) = waquaio(sds,[],'wlstat',time_index,nr_stat);
+                    case 'dps'
+                        [~,~,z_int]        = waquaio(sds,[],'z-stat',1,nr_stat);
+                        Data.val(i_stat)   = -1.*z_int(end);
                     case 'uv'
                         if no_layers==1
                             [uu,vv] = waquaio(sds,[],'uv-stat',time_index,nr_stat);
                             Data.vel_x(:,i_stat) = uu;
                             Data.vel_y(:,i_stat) = vv;
                         else
-                            [uu,vv] = waquaio(sds,[],'uv-stat',time_index,nr_stat,OPT.layer);
                             Data.vel_x(:,i_stat,:) = waquaio(sds,[],'u-stat',time_index,nr_stat,OPT.layer);
                             Data.vel_y(:,i_stat,:) = waquaio(sds,[],'v-stat',time_index,nr_stat,OPT.layer);
                         end
