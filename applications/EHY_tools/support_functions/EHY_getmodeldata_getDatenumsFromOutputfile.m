@@ -4,15 +4,17 @@ modelType=EHY_getModelType(inputFile);
 
 switch modelType
     case 'dfm'
-        infonc      = ncinfo(inputFile);
-        
-        % - to enhance speed, reconstruct time array from start time, numel and interval
+        infonc       = ncinfo(inputFile);
         ncVarInd     = strmatch('time',{infonc.Variables.Name},'exact');
         ncAttrInd    = strmatch('units',{infonc.Variables(ncVarInd).Attributes.Name},'exact');
         nr_times     = infonc.Variables(ncVarInd).Size;
-        seconds_int  = ncread(inputFile, 'time', 1, 3);
-        interval     = seconds_int(3)-seconds_int(2);
-        seconds      = [seconds_int(1) seconds_int(2) + interval*[0:nr_times-2] ]';
+        if nr_times<3
+            seconds      = ncread(inputFile, 'time');
+        else % - to enhance speed, reconstruct time array from start time, numel and interval
+            seconds_int  = ncread(inputFile, 'time', 1, 3);
+            interval     = seconds_int(3)-seconds_int(2);
+            seconds      = [seconds_int(1) seconds_int(2) + interval*[0:nr_times-2] ]';
+        end
         days         = seconds / (24*60*60);
         attri        = infonc.Variables(ncVarInd).Attributes(ncAttrInd).Value;
         itdate       = attri(15:end);
