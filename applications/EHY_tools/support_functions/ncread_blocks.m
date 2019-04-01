@@ -24,7 +24,7 @@ if all(ismember({'start','count'},who))
     if length(dimensions)==1
         values=zeros([nr_times_clip 1])*NaN;
     else
-        values=zeros([nr_times_clip dimensions(2:end)])*NaN;
+        values=zeros([fliplr(dimensions(2:end)) nr_times_clip])*NaN;
     end
     
     % cycle over blocks
