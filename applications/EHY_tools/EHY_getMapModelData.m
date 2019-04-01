@@ -132,6 +132,12 @@ switch modelType
                         Data.value = permute(ncread(fileInp,'tem1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
                     end
                 end
+            case {'mesh2d_Numlimdt','numlimdt'}
+                if ismember('mesh2d_Numlimdt',{infonc.Variables.Name})
+                        Data.value = ncread(fileInp,'mesh2d_Numlimdt',[1 time_index(1)],[Inf nr_times_clip])';
+                else % old format
+                        Data.value = ncread(fileInp,'numlimdt',[1 time_index(1)],[Inf nr_times_clip])';
+                end
         end
         % If partitioned run, delete ghost cells
         [~, name]=fileparts(fileInp);

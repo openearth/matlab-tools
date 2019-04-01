@@ -19,15 +19,15 @@ function varargout = EHY_getmodeldata(inputFile,stat_name,modelType,varargin)
 %               'uv'    velocities (in (u,v,)x,y-direction)
 %               'sal'   salinity
 %               'tem'   temperature
-%               'Zcen'  z-coordinates (positive up) of cell centers 
-%               'Zint'  z-coordinates (positive up) of cell interfaces 
+%               'Zcen'  z-coordinates (positive up) of cell centers
+%               'Zint'  z-coordinates (positive up) of cell interfaces
 % t0        : Start time of dataset (e.g. '01-Jan-2018' or 737061 (Matlab date) )
 % tend      : End time of dataset (e.g. '01-Feb-2018' or 737092 (Matlab date) )
 % layer     : Model layer, e.g. '0' (all layers), [2] or [4:8]
 %
 % Output:
 % Data.stationNames       : list of ALL stations available on history file
-% Data.requestedStatNames : list of requested stations
+% Data.requestedStations  : list of requested stations
 % Data.exist_stat         : logical if requested station exist in file
 % Data.times              : (matlab) times belonging with the series
 % Data.val/vel_*          : requested data, velocity in (u,v- and )x,y-direction
@@ -49,17 +49,8 @@ function varargout = EHY_getmodeldata(inputFile,stat_name,modelType,varargin)
 %
 % For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
 
-if ~prod([exist('inputFile','var') exist('stat_name','var') exist('modelType','var')])
+if ~all(ismember({'inputFile','stat_name','modelType'},who))
     EHY_getmodeldata_interactive
-    return
-end
-
-%% Backward compatible - EHY_getmodeldata(sim_dir,runid,stat_name,modelType,varargin)
-if isdir(inputFile) && ~any(strcmp(modelType,'implic')) && ~any(strcmp(varargin{1},'implic'))
-    warning(sprintf(['Argument list EHY_getmodeldata has changes. Please adjust in your script calling this function \n' ...
-                     'Backward comatibility will be removed in future releases']));
-    inputFile=EHY_simdirRunIdAndModelType2outputfile(inputFile,stat_name,varargin{1});
-    varargout={EHY_getmodeldata(inputFile,modelType,varargin{1},varargin{2:end})};
     return
 end
 
@@ -67,7 +58,7 @@ end
 OPT.varName  = 'wl';
 OPT.t0       = '';
 OPT.tend     = '';
-OPT.tint     = '';
+OPT.tint     = ''; % in minutes
 OPT.layer    = 0; % all
 OPT          = setproperty(OPT,varargin);
 
@@ -82,19 +73,17 @@ OPT.nameOnFile = nameOnFile(inputFile,OPT.varName);
 
 %% Get time information from simulation and determine index of required times
 Data.times                               = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
-nr_times                                 = length(Data.times);
-[tmp,time_index,select,index_requested]  = EHY_getmodeldata_time_index (Data,OPT);
+[tmp,time_index,select,index_requested]  = EHY_getmodeldata_time_index(Data,OPT);
 nr_times_clip                            = length(tmp.times);
 
-%% Get layer information and type of vertical schematissation
+%% Get layer information and type of vertical schematisation
 gridInfo    = EHY_getGridInfo(inputFile,{'no_layers' 'layer_model'});
 no_layers   = gridInfo.no_layers;
 layer_model = gridInfo.layer_model;
 OPT         = EHY_getmodeldata_layer_index(OPT,no_layers);
 
 %% Get list with the numbers of the requested stations
-Data           = EHY_getRequestedStations(inputFile,stat_name,modelType,'varName',OPT.varName);
-stationNrNoNan = Data.stationNrNoNan;
+[Data,stationNrNoNan] = EHY_getRequestedStations(inputFile,stat_name,modelType,'varName',OPT.varName);
 if exist('tmp','var'); Data.times     = tmp.times(index_requested); end
 
 %% Get the computational data
@@ -105,65 +94,48 @@ switch modelType
         % open inputfile
         infonc          = ncinfo(inputFile);
         variablesOnFile = {infonc.Variables.Name};
+        nr_var     = get_nr({infonc.Variables.Name},OPT.nameOnFile);
+        dimNames   = {infonc.Variables(nr_var).Dimensions.Name};
+        dimensions = fliplr(infonc.Variables(nr_var).Size);
         
         % station info
-        nr_var      = get_nr(variablesOnFile,'station_x_coordinate');
-        stationSize = infonc.Variables(nr_var).Size;
-        if size(stationSize,2)>1
-            movingStations=1;
-            % info will be obtained using blocks, see few lines down
-        else
+        if ismember('stations',dimNames)
             stationX = ncread(inputFile,'station_x_coordinate');
             stationY = ncread(inputFile,'station_y_coordinate');
             Data.location( Data.exist_stat,1:2)=[stationX(stationNrNoNan,1) stationY(stationNrNoNan,1)];
             Data.location(~Data.exist_stat,1:2)=NaN;
+        else % delete station-information from 'Data'
+            Data=rmfield(Data,{'stationNames','requestedStations','exist_stat'});
         end
         
-        % Specify dimensions and initialise series data (don't think this is needed)
-        nr_var        = get_nr(variablesOnFile,OPT.nameOnFile);
-        dimensions    = fliplr(infonc.Variables(nr_var).Size);
-        dimensions(1) = nr_times_clip;
-        if ismember(OPT.varName,{'uv'})
-            value_x = EHY_inival(dimensions,NaN);
-            value_y = EHY_inival(dimensions,NaN);
-        else
-            value   = EHY_inival(dimensions,NaN);
-        end
-        
-        % Initialise moving stations
-        if exist('movingStations','var')
-            dimensions                 = stationSize;
-            dimensions(1)              = nr_times_clip;
-            Data.locationX             = EHY_inival(dimensions,NaN);
-            Data.locationY             = EHY_inival(dimensions,NaN);
-            Data.locationXY_dimensions = '[times,stations]';
+        % Specify dimensions and initialise series data
+        if strcmp(dimNames(end),'time')
+            dimensions(1) = nr_times_clip;
         end
         
         % get series data
         nrTimeStart           =  find(select, 1);
-        if length(dimensions) == 2 start = [1   nrTimeStart]; count        = [Inf     nr_times_clip]; end 
-        if length(dimensions) == 3 start = [1 1 nrTimeStart]; count        = [Inf Inf nr_times_clip]; end 
+        if length(dimensions) == 1 start = [    nrTimeStart]; count        = [        nr_times_clip]; end
+        if length(dimensions) == 2 start = [1   nrTimeStart]; count        = [Inf     nr_times_clip]; end
+        if length(dimensions) == 3 start = [1 1 nrTimeStart]; count        = [Inf Inf nr_times_clip]; end
         order                 =  length(dimensions):-1:1;
         
         if ~ismember(OPT.varName,{'uv'})
-            value     =  permute(ncread_blocks(inputFile,OPT.nameOnFile,start,count),order);
+            if length(order)==1
+                value     =  ncread_blocks(inputFile,OPT.nameOnFile,start,count);
+            else
+                value     =  permute(ncread_blocks(inputFile,OPT.nameOnFile,start,count),order);
+            end
         else
             value_x   =  permute(ncread_blocks(inputFile,'x_velocity',start,count),order);
             value_y   =  permute(ncread_blocks(inputFile,'y_velocity',start,count),order);
         end
         
-        % if needed, get time-varying station location info
-        if exist('movingStations','var')
-            start = [1   nrTimeStart]; 
-            count = [Inf nr_times_clip];
-            order = [2 1];
-            Data.locationX = permute(ncread_blocks(inputFile,'station_x_coordinate',start,count),order);
-            Data.locationY = permute(ncread_blocks(inputFile,'station_y_coordinate',start,count),order);
-        end
-                      
         % put value(_x/_y) in output structure 'Data'
         if exist('value','var')
-            if ndims(value)==2
+            if size(value,2)==1
+                Data.val(:,1)=value(index_requested,:);
+            elseif ndims(value)==2
                 Data.val(:,Data.exist_stat)=value(index_requested,stationNrNoNan);
                 Data.val(:,~Data.exist_stat)=NaN;
             elseif ndims(value)==3
@@ -184,19 +156,13 @@ switch modelType
             end
         end
         
-        % Only requested moving stations (why not only the requested stations?)
-        if exist('movingStations','var')
-            Data.locationX(:,~ismember(1:length(Data.stationNames),stationNrNoNan))=[];
-            Data.locationY(:,~ismember(1:length(Data.stationNames),stationNrNoNan))=[];
-        end
-                
-    % Delft3D 4    
+        % Delft3D 4
     case {'d3d','d3d4','delft3d4','mdf'}
         % open inputfile
         trih = vs_use(inputFile,'quiet');
         % loop over stations
         ii_stat = 0;
-        for i_stat = 1: length(Data.requestedStatNames)
+        for i_stat = 1: length(Data.requestedStations)
             if Data.exist_stat(i_stat)
                 ii_stat = ii_stat + 1;
                 nr_stat  = stationNrNoNan(ii_stat);
@@ -208,7 +174,7 @@ switch modelType
                 stationMN = vs_get(trih,'his-const',{1},'MNSTAT','quiet');
                 stationXY = vs_get(trih,'his-const',{1},'XYSTAT','quiet');
                 Data.locationMN(i_stat,:)=[stationMN(:,nr_stat)'];
-                Data.location(i_stat,:)=[stationXY(:,nr_stat)'];  
+                Data.location(i_stat,:)=[stationXY(:,nr_stat)'];
                 
                 % Get constants for profile data
                 if strcmpi(OPT.varName,'Zcen') || strcmpi(OPT.varName,'Zint')
@@ -278,7 +244,7 @@ switch modelType
                         elseif strcmpi(OPT.varName,'Zint')
                             Data.val(:,i_stat,:) = Zint;
                         end
-
+                        
                     case {'salinity' 'temperature'}
                         nr_cons            = get_nr(lower(constituents),OPT.varName);
                         value (:,i_stat,:) = cell2mat   (vs_get(trih,'his-series',{time_index(index_requested)},'GRO',{nr_stat,OPT.layer,nr_cons},'quiet'));
@@ -291,7 +257,7 @@ switch modelType
     case {'waqua','simona','siminp'}
         %% SIMONA (WAQUA/TRIWAQ)
         % open data file
-        sds=qpfopen(inputFile); 
+        sds=qpfopen(inputFile);
         
         ii_stat    = 0;
         for i_stat = 1: length(stat_name)
@@ -389,39 +355,44 @@ switch modelType
                 switch OPT.varName
                     case 'wl'
                         Data.val(:,i_stat) = tmp.val_tmp(:,nr_stat);
-                 end
+                end
             end
         end
         
         clear tmp
 end
 
-% fill data of non-existing stations with NaN's
-if isfield(Data,'locationMN')
-    Data.locationMN(~Data.exist_stat,:)=NaN;
-end
-if isfield(Data,'location')
-    Data.location(~Data.exist_stat,:)=NaN;
-end
-if isfield(Data,'val')
-    Data.val(:,~Data.exist_stat,:)=NaN;
-elseif isfield(Data,'vel_x')
-    Data.vel_x(:,~Data.exist_stat,:)=NaN;
-    Data.vel_y(:,~Data.exist_stat,:)=NaN;
-    Data.vel_u(:,~Data.exist_stat,:)=NaN;
-    Data.vel_v(:,~Data.exist_stat,:)=NaN;
+if ~isfield(Data,'exist_stat')
+    % non-station info from .nc-file
+else
+    % fill data of non-existing stations with NaN's
+    if isfield(Data,'locationMN')
+        Data.locationMN(~Data.exist_stat,:)=NaN;
+    end
+    if isfield(Data,'location')
+        Data.location(~Data.exist_stat,:)=NaN;
+    end
+    if isfield(Data,'val') && isfield(Data,'exist_stat')
+        Data.val(:,~Data.exist_stat,:)=NaN;
+    elseif isfield(Data,'vel_x')
+        Data.vel_x(:,~Data.exist_stat,:)=NaN;
+        Data.vel_y(:,~Data.exist_stat,:)=NaN;
+        Data.vel_u(:,~Data.exist_stat,:)=NaN;
+        Data.vel_v(:,~Data.exist_stat,:)=NaN;
+    end
 end
 
 % dimension information
 fn=fieldnames(Data);
-if length(size(Data.(fn{end})))==2
+if length(size(Data.(fn{end})))==2 && size(Data.(fn{end}),2)==1
+    Data.dimensions='[times,-]';
+elseif length(size(Data.(fn{end})))==2
     Data.dimensions='[times,stations]';
 elseif length(size(Data.(fn{end})))==3
     Data.dimensions='[times,stations,layers]';
 end
 
 %% Fill output struct
-Data.requestedStatNames= stat_name;
 Data.OPT               = OPT;
 Data.OPT.inputFile     = inputFile;
 
@@ -446,7 +417,7 @@ switch modelType
         if strcmpi(varName,'wl'         ) newName = 'waterlevel'   ; end
         if strcmpi(varName,'wd'         ) newName = 'waterdepth'   ; end
         if strcmpi(varName,'water depth') newName = 'waterdepth'   ; end
-        if strcmpi(varName,'uv'         ) newName = 'x_velocity'   ; end 
+        if strcmpi(varName,'uv'         ) newName = 'x_velocity'   ; end
         if strcmpi(varName,'Zcen'       ) newName = 'zcoordinate_c'; end
         if strcmpi(varName,'Zint'       ) newName = 'zcoordinate_w'; end
         

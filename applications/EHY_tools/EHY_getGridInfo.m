@@ -258,6 +258,9 @@ switch modelType
                        E.Xcen(FlowElemDomain~=domainNr)=[];
                        E.Ycen(FlowElemDomain~=domainNr)=[];
                    end
+                   if ismember('depth',wantedOutput)
+                       E.depth_cen(FlowElemDomain~=domainNr)=[];
+                   end
                end
 
         end % typeOfModelFile
