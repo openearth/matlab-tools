@@ -1,10 +1,8 @@
-function values = ncread_blocks(inputFile,varName,varargin)
+function values = ncread_blocks(inputFile,varName,start,count)
 
 %% Identical to ncread however te speed up data is read in blocks
 %  Function can be removed if ncread is speeded up for large datasets 
-if nargin == 4
-    start         = varargin{1};
-    count         = varargin{2};
+if all(ismember({'start','count'},who))
     offset        = start(end) - 1;
     nr_times_clip = count(end);
     
@@ -22,6 +20,13 @@ if nargin == 4
     nr_blocks    = ceil((nr_times_clip / nr_times) * (filesize / maxblocksize));
     bl_length    = ceil(nr_times_clip / nr_blocks);
     
+    % allocate variable 'values'
+    if length(dimensions)==1
+        values=zeros([nr_times_clip 1])*NaN;
+    else
+        values=zeros([nr_times_clip dimensions(2:end)])*NaN;
+    end
+    
     % cycle over blocks
     for i_block = 1: nr_blocks
         bl_start                 = 1 + (i_block-1) * bl_length;
@@ -29,7 +34,9 @@ if nargin == 4
         bl_int                   = bl_stop-bl_start+1;
         start(end)               = bl_start + offset;
         count(end)               = bl_int;
-        if length(start)     == 2
+        if length(start)     == 1
+            values(bl_start:bl_stop,1)   = ncread(inputFile,varName,start,count);
+        elseif length(start)     == 2
             values(:,bl_start:bl_stop)   = ncread(inputFile,varName,start,count);
         elseif length(start) == 3
             values(:,:,bl_start:bl_stop) = ncread(inputFile,varName,start,count);
@@ -40,4 +47,3 @@ else
     % no start and count specified, normal reading
     values = ncread(inputFile,varName);
 end
-

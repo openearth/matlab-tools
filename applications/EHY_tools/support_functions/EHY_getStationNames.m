@@ -27,10 +27,10 @@ switch modelType
     
     case {'d3dfm','dflow','dflowfm','mdu','dfm'}
         %% Delft3D-Flexible Mesh
-        if strcmp(lower(OPT.varName),'wl')
-            stationNames  = cellstr(strtrim(nc_varget(inputFile,'station_name')));
-        elseif strcmp(lower(OPT.varName),'crs')
+        if strcmp(lower(OPT.varName),'crs')
             stationNames  = cellstr(strtrim(nc_varget(inputFile,'cross_section_name')));
+        else % 'wl' or 'uv'
+            stationNames  = cellstr(strtrim(nc_varget(inputFile,'station_name'))); 
         end
     case {'d3d','d3d4','delft3d4','mdf'}
         %% Delft3D 4

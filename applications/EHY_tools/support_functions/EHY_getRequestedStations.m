@@ -1,4 +1,4 @@
-function [Data] = EHY_getRequestedStations(fileInp,requestedStations,modelType,varargin)
+function [Data,stationNrNoNan] = EHY_getRequestedStations(fileInp,requestedStations,modelType,varargin)
 % Gets the subset of requested stations out of the list of available stations
 OPT.varName = 'wl';
 OPT         = setproperty(OPT,varargin);
@@ -26,7 +26,7 @@ if isempty(requestedStations)
     requestedStations = Data.stationNames;
 end
 if size(requestedStations,1)<size(requestedStations,2); requestedStations=requestedStations'; end
-Data.requestedStatNames=requestedStations;
+Data.requestedStations=requestedStations;
 
 %% Determine station numbers of the requested stations
 stationNr(1:length(requestedStations),1)=NaN;
@@ -44,4 +44,4 @@ for i_stat = 1:length(requestedStations)
         disp(['Station : ' requestedStations{i_stat} ' was found ' num2str(length(nr_stat)) ' times, using first one from obs file']);
     end
 end
-Data.stationNrNoNan=stationNr(~isnan(stationNr));
+stationNrNoNan=stationNr(~isnan(stationNr));
