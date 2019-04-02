@@ -1,8 +1,5 @@
 function varargout = writeProfdef(varargin)
-%writeProfdef  One line description goes here.
-%
-%   Write a profile definition text file for a Delft3D Flexible Mesh 1D
-%   simulation
+%writeProfdef  Write a profile definition text file for a Delft3D Flexible Mesh 1D simulation
 %
 %   Syntax:
 %   writeProfdef(profnr,type,varargin)
