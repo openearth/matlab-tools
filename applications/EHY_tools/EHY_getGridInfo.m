@@ -127,7 +127,7 @@ switch modelType
                 if ismember('depth',wantedOutput)
                     if nc_isvar(inputFile,'NetNode_z') % old fm version
                         E.depth_cor=ncread(inputFile,'NetNode_z');
-                        E.depth_cen=ncread(inputFile,'FlowElem_bl');
+                        try; E.depth_cen=ncread(inputFile,'FlowElem_bl'); end % depth_cen not always available
                     elseif nc_isvar(inputFile,'mesh2d_node_z')
                         E.depth_cor=ncread(inputFile,'mesh2d_node_z');
                         try; E.depth_cen=ncread(inputFile,'mesh2d_flowelem_bl'); end % depth_cen not always available

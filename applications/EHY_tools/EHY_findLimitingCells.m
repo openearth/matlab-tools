@@ -105,7 +105,11 @@ for iF=1:length(mapFiles)
     if OPT.writeMaxVel
         Data = EHY_getMapModelData(mapFile,'varName','uv');
         mag=max(sqrt(Data.ucx.^2+Data.ucy.^2),[],ndims(Data.value)); % maximum over depth
-        MAXVEL=[MAXVEL; prctile(mag,OPT.percentile)'];
+        if size(mag,1)==1
+            MAXVEL=[MAXVEL; mag'];
+        else
+            MAXVEL=[MAXVEL; prctile(mag,OPT.percentile)'];
+        end
     end
     
     % limiting cells
@@ -128,10 +132,10 @@ Ylim=Ylim(I);
 NUMLIMDT=NUMLIMDT(I);
 
 % export
+disp(['You can find the created files in the directory:' char(10) outputDir]),...
+    
 if ~isempty(Xlim)
     outputFile=[outputDir 'restricting_nodes.pol'];
-    disp(['You can find the created files in the directory:' char(10) ,...
-        fileparts(fileparts(mapFile)) filesep OPT.outputDir filesep])
     tekal('write',outputFile,[Xlim Ylim]);
     copyfile(outputFile,strrep(outputFile,'.pol','.ldb'))
     delft3d_io_xyn('write',strrep(outputFile,'.pol','_obs.xyn'),Xlim,Ylim,cellstr(num2str(NUMLIMDT)))
@@ -157,19 +161,24 @@ fclose all;
 
 %% timeseries of time step
 if OPT.timeseriesDT
+    disp('start reading timestep-info from *_his.nc file');
     hisFile=dir([fileparts(mapFile) filesep '*_his.nc']);
     hisFile=[fileparts(mapFile) filesep hisFile(1).name];
     Data = EHY_getmodeldata(hisFile,'','dfm','varName','timestep');
-    figure('visible','off')
-    hold on; grid on
+    disp('finished reading timestep-info from _his.nc file');
+    figure('visible','off');
+    hold on; grid on;
     plot(Data.times,Data.val,'b');
     plot([Data.times(1) Data.times(end)],[mean(Data.val) mean(Data.val)],'k--');
-    xlim([Data.times(1) Data.times(end)])
-    ylim([0 max(Data.val)+0.1*std(Data.val) ])
-    datetick('x','dd-mmm-yyyy','keeplimits')
-    legend({'timestep','mean(timestep)'})
-    ylabel('time-varying time step')
+    xlim([Data.times(1) Data.times(end)]);
+    ylim([0 max(Data.val)+0.1*std(Data.val) ]);
+    xtick=[get(gca,'xtick')];
+    set(gca,'xtick',[xtick(1:2:end)])
+    datetick('x','dd-mmm-''yy','keeplimits','keepticks');
+    legend({'timestep','mean(timestep)'});
+    ylabel('time-varying time step');
     saveas(gcf,[outputDir 'timestep.png']);
+    disp(['created figure: ' outputDir 'timestep.png'])
 end
 
 end
