@@ -166,6 +166,7 @@ runTimeInfo.simPeriod_S=simPeriod_S;
 runTimeInfo.simPeriod_M=runTimeInfo.simPeriod_S/60;
 runTimeInfo.simPeriod_H=runTimeInfo.simPeriod_S/3600;
 runTimeInfo.simPeriod_D=runTimeInfo.simPeriod_H/24;
+runTimeInfo.simPeriod_Y=runTimeInfo.simPeriod_D/365.25;
 
 if exist('aveTimeStep_S','var')
     runTimeInfo.aveTimeStep_S=aveTimeStep_S;
