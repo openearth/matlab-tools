@@ -3,7 +3,7 @@ function [grd,grdPart] = dflowfm_readNetPartitioned(mapFiles,FlagShiftNodesCutCe
 %% Reads network from partitioned Delft3D-FM files (_map.nc, _net.nc, etc.)
 %
 % required input:
-% mapFiles = structure containing the fields folder and name (resulting 
+% mapFiles = structure containing the fields folder and name (resulting
 % from e.g. mapFiles = dir([d:/temp/NCfiles/])
 %
 % optional input:
@@ -11,7 +11,7 @@ function [grd,grdPart] = dflowfm_readNetPartitioned(mapFiles,FlagShiftNodesCutCe
 % the nodes, which have been shifted due to the cutcellpolygon.lst routine
 % in Delft3D-FM (if applied). This only work when the Statistics Toolbox
 % can be accessed. If no license is available, this part of the routine
-% will be skipped (a warning will be given). 
+% will be skipped (a warning will be given).
 
 if nargin < 2
     FlagShiftNodesCutCellPolygonLST = 0;
@@ -23,6 +23,20 @@ for mm = 1:length(mapFiles)
         grdPart(mm) = dflowfm.readNet([mapFiles(mm).folder,filesep,mapFiles(mm).name]); % Ugrid format
     else
         grdPart(mm) = dflowfm.readNetOld([mapFiles(mm).folder,filesep,mapFiles(mm).name]); % Old Netcdf format
+    end
+    
+    % add domain number of each face (to be able to find ghost cells)
+    try
+        domainNr = str2num(mapFiles(mm).name(end-10:end-7));
+    catch
+        domainNr = median(grdPart(mm).face.FlowElemDomain);
+    end
+    
+    grdPart(mm).face.Domain = zeros(size(grdPart(mm).face.FlowElem_x))+domainNr;
+    
+    % replace 0 by NaN in grdPart(mm).face.NetElemNode
+    try
+        grdPart(mm).face.NetElemNode(grdPart(mm).face.NetElemNode==0) = NaN;
     end
     
     if mm == 1
@@ -105,6 +119,9 @@ for mm = 1:length(mapFiles)
         end
     end
 end
+
+% find activeCells 
+grd.face.FlowElemActive = find(grd.face.FlowElemDomain==grd.face.Domain);
 
 %% shift nodes which have been cut by the cutcellpolygon.lst
 if FlagShiftNodesCutCellPolygonLST

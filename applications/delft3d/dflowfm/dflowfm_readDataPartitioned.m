@@ -52,29 +52,25 @@ for mm = 1:length(mapFiles)
         lengthID = [lengthID length(IDdimsReal{dd})];
     end
     
+    dimensionsSequence = [1:length(varInfo.Dimension)];
+    if find(~cellfun('isempty',regexp(varInfo.Dimension,'time'))) == 1
+        dimensionsSequence(1:2) = [2 1];
+    end
+    
     dataPartition = nc_varget([mapFiles(mm).folder,filesep,mapFiles(mm).name],varName,startID,lengthID);
+    if min(diff(dimensionsSequence)) < 0
+        dataPartition = permute(dataPartition,dimensionsSequence);
+    end
     
     if mm == 1
-        data = [nc_varget([mapFiles(mm).folder,filesep,mapFiles(mm).name],varName,startID,lengthID)];
+        data = dataPartition;
     else
         try
-            data = [data;nc_varget([mapFiles(mm).folder,filesep,mapFiles(mm).name],varName,startID,lengthID)];
+            data = [data;dataPartition];
         catch
-            try
-                if mm == 2
-                    data = data';
-                end
-                data = [data;nc_varget([mapFiles(mm).folder,filesep,mapFiles(mm).name],varName,startID,lengthID)'];
-            catch
-                error('data cannot be concatenated. Probably caused by different nc_varget function. This function is based on the nc_varget from OEtools.')
-            end
+            error('data cannot be concatenated. Probably caused by different nc_varget function. This function is based on the nc_varget from OEtools.')
         end
     end
-end
-if length(size(data))>2
-    data = permute(data,[2 1 3]);
-else
-    data = permute(data,[2 1]);
 end
 
 if checkGhostCells && length(mapFiles)>1
@@ -91,16 +87,32 @@ if checkGhostCells && length(mapFiles)>1
     %     IDzero = find(data==0);
     %     data(IDzero) = NaN;
     if ~isempty(IDghostCells)
-        for tt = 1:size(data,1)
-            % check for the ghostcells which cell has the largest absolute value (this seems to be the correct value)
-            dataFirstLast = [data(tt,IDFirst(IDghostCells));data(tt,IDLast(IDghostCells))];
-            [~,id] = max(abs(dataFirstLast),[],1);
+        if length(size(data)) == 3
+            dataFirstLast = [data(IDFirst(IDghostCells),end,1)';data(IDLast(IDghostCells),end,1)'];
+        else
+            dataFirstLast = [data(IDFirst(IDghostCells),end)';data(IDLast(IDghostCells),end)'];
+        end
+        
+        % check for the ghostcells which cell has the largest absolute value (this seems to be the correct value)
+        [~,id] = max(abs(dataFirstLast),[],1);
+        takeFirst = find(id==1);
+        takeLast = find(id==2);
+        
+        if length(size(data)) == 3
+            for tt = 1:size(data,2)
+                for kk = 1:size(data,3)
+                    dataReal(takeFirst) = data(IDFirst(IDghostCells(takeFirst)),tt,kk);
+                    dataReal(takeLast) = data(IDLast(IDghostCells(takeLast)),tt,kk);
+                    data(IDFirst(IDghostCells),tt,kk) = dataReal';
+                end
+            end
+        else
+            for tt = 1:size(data,2)
+                dataReal(takeFirst) = data(IDFirst(IDghostCells(takeFirst)),tt);
+                dataReal(takeLast) = data(IDLast(IDghostCells(takeLast)),tt);
+                data(IDFirst(IDghostCells(takeFirst)),tt) = dataReal';
+            end
             
-            dataReal(find(id==1)) = dataFirstLast(1,find(id==1));
-            dataReal(find(id==2)) = dataFirstLast(2,find(id==2));
-            
-            data(tt,IDFirst(IDghostCells)) = dataReal;
-            data(tt,IDLast(IDghostCells)) = dataReal;
         end
     end
 end
