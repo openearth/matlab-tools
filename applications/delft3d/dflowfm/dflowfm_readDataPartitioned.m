@@ -1,19 +1,19 @@
 function data = dflowfm_readDataPartitioned(mapFiles,varName,IDdims,grd)
 
 % dflowfm_readDataPartitioned reads data from both sequential as
-% partitioned Delft3D-FM model output files. When the output is partitioned, 
-% this function also makes sure that the ghostcells are excluded from the 
+% partitioned Delft3D-FM model output files. When the output is partitioned,
+% this function also makes sure that the ghostcells are excluded from the
 % output of this function.
 %
 % The following input variables need to be specified:
 %    mapFiles: result of a dir command (only in Matlab 2016 and newer), for
 %            example mapFiles = dir([c:\Run01\FM_output\*_map.nc])
-%    varName: variable name in .nc file (check available variable names with 
+%    varName: variable name in .nc file (check available variable names with
 %            the function nc_disp)
 %    IDdims: A cell specifying for each dimension of the variable the
-%            required elements {times, faces, layers (if model is in 3D)}. 
-%            If all elements are required, one can use 0. The definition of 
-%            the dimensions can be checked using the function nc_getvarinfo. 
+%            required elements {times, faces, layers (if model is in 3D)}.
+%            If all elements are required, one can use 0. The definition of
+%            the dimensions can be checked using the function nc_getvarinfo.
 %    grd (optional): structure containing the network information, which is
 %            the result of grd = dflowfm_readNetPartitioned(mapFiles). When
 %            grd is not specified, the ghostcells cannot be removed from
@@ -71,7 +71,11 @@ for mm = 1:length(mapFiles)
         end
     end
 end
-data = data';
+if length(size(data))>2
+    data = permute(data,[2 1 3]);
+else
+    data = permute(data,[2 1]);
+end
 
 if checkGhostCells && length(mapFiles)>1
     %     if ~isempty(find(~cellfun('isempty',regexp(varInfo.Dimension,'nFlowElem'))))
