@@ -47,8 +47,10 @@ try % if simulation has finished
             % dia
             if exist([pathstr filesep name '_0000.dia'],'file') % first check if run was done in parallel
                 diaFile=[pathstr filesep name '_0000.dia'];
-            else %  not in parallel - use out.txt file
+            elseif exist([pathstr filesep 'out.txt'],'file') %  not in parallel - use out.txt file
                 diaFile=[pathstr filesep 'out.txt'];
+            else 
+                diaFile=[pathstr filesep 'output\' name '.dia'];
             end
             fid=fopen(diaFile,'r');
             % values derived from file with findLineOrQuit should be in order of rows, or it does not find it
