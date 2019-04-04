@@ -26,10 +26,14 @@ for mm = 1:length(mapFiles)
     end
     
     % add domain number of each face (to be able to find ghost cells)
-    try
-        domainNr = str2num(mapFiles(mm).name(end-10:end-7));
-    catch
-        domainNr = median(grdPart(mm).face.FlowElemDomain);
+    domainNr = str2num(mapFiles(mm).name(end-10:end-7));
+    
+    if isempty(domainNr)
+        try
+            domainNr = median(grdPart(mm).face.FlowElemDomain);
+        catch
+            domainNr = 0;
+        end
     end
     
     grdPart(mm).face.Domain = zeros(size(grdPart(mm).face.FlowElem_x))+domainNr;
@@ -120,8 +124,12 @@ for mm = 1:length(mapFiles)
     end
 end
 
-% find activeCells 
-grd.face.FlowElemActive = find(grd.face.FlowElemDomain==grd.face.Domain);
+% find activeCells
+try
+    grd.face.FlowElemActive = find(grd.face.FlowElemDomain==grd.face.Domain);
+catch
+    grd.face.FlowElemActive = zeros(size(grd.face.FlowElem_x))+1;
+end
 
 %% shift nodes which have been cut by the cutcellpolygon.lst
 if FlagShiftNodesCutCellPolygonLST
