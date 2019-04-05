@@ -1,10 +1,10 @@
-function [Station,Time,Val,EPSG,x,y] = RWS_waterinfo_read(fname)
-%RWS_WATERINFO_READ  Function to read .csv files downloaded from waterinfo
+function [Station,Time,Val,EPSG,x,y] = read_waterlevel(fname)
+%read_waterlevel  Function to read .csv files downloaded from waterinfo
 %
 %   https://waterinfo.rws.nl/. Script assumes a single station in .csv file
 %   
 %   Syntax:
-%   [Station,Time,Val,EPSG,x,y] = rws_waterinfo_read(fname)
+%   [Station,Time,Val,EPSG,x,y] = waterinfo.read_waterlevel(fname)
 %
 %   Input:
 %   fname           filename of .csv file
@@ -19,7 +19,7 @@ function [Station,Time,Val,EPSG,x,y] = RWS_waterinfo_read(fname)
 %   y               y-coordinate  of station
 %
 %   Example
-%   [Station,Time,Val,EPSG,x,y] = RWS_waterinfo_read('d:\waterinfo.csv\')
+%   [Station,Time,Val,EPSG,x,y] = waterinfo.read_waterlevel('d:\waterinfo.csv\')
 %
 %   See also
 
