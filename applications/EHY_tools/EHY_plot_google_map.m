@@ -107,6 +107,12 @@ function varargout = EHY_plot_google_map(varargin)
 %       - Set and use an API key which enables a much higher usage volume per day.
 % Version 1.1 - 25/08/2011
 
+% warning and work-around 
+disp('<strong>This function probably gives a warning like:</strong>')
+disp('  Possible reasons: no network connection, quota exceeded, or some other error.')
+disp('  work-around untill this if fixed: use EHY_plot_esri_map')
+pause(3)
+
 persistent apiKey
 if isnumeric(apiKey)
     % first run, check if API key file exists
@@ -572,5 +578,3 @@ for idx = 1:length(axes_objs)
         EHY_plot_google_map(params{:});
     end
 end
-
-    
