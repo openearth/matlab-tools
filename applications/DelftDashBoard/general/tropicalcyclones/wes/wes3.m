@@ -547,40 +547,12 @@ for it=1:nt
         dx=(tc.track(it+1).x-tc.track(it-1).x)*geofacx;
         dy=(tc.track(it+1).y-tc.track(it-1).y)*geofacy;
     end
-    
     ux=dx/dt;
     uy=dy/dt;
-    
-%     if strcmpi(spw.rmax_relation,'pagasajma')
-%         spw.asymmetry_option='jma';
-%     end
-%     
-%     switch lower(spw.asymmetry_option)
-%         case{'schwerdt1979'}
-%             % Use Schwerdt (1979) to compute u_prop and v_prop
-%             uabs=sqrt(ux^2+uy^2);
-%             c=uabs*1.944; % Convert to kts
-%             a=1.5*c^0.63; % Schwerdt (1979)
-%             a=a/1.944;    % Convert to m/s
-%             u_prop=a*ux/uabs;
-%             v_prop=a*uy/uabs;
-%             u_prop=ux;
-%             v_prop=uy;
-%         case{'jma'}
-%             c2=0.57143;
-%             u_prop=c2*ux;
-%             v_prop=c2*uy;
-%         case{'none'}
-%             u_prop=0.0;
-%             v_prop=0.0;
-%     end
-    
     tc.track(it).vtx=ux;
     tc.track(it).vty=uy;
-
 end
 
-% tc.track(it).dpcdt=zeros(size(pc));
 if length(tc.track)>2
     for it2=2:length(tc.track)-1
         tc.track(it2).dpcdt=(tc.track(it2+1).pc-tc.track(it2-1).pc)/(24*(tc.track(it2+1).time-tc.track(it2-1).time));
@@ -620,7 +592,7 @@ for ifld=1:length(fldnames)
         end
     end
         if ~strcmpi(fldname,'quadrant')
-    track.(fldname)(track.(fldname)==-999)=NaN;
+        track.(fldname)(track.(fldname)==-999)=NaN;
         end
 end
 
@@ -680,8 +652,6 @@ for ifld=1:length(fldnames)
         track.(fldname)=[track.(fldname)(1:itlast) track1.(fldname) track.(fldname)(itfirst:end)];
     end
 end
-
-%shite=1
 
 % And store data back in original track structure
 for ifld=1:length(fldnames)
@@ -803,24 +773,26 @@ nt=length(tc.track);
 
 for it=1:nt
     
+    % Compute max wind speed relative to propagation speed
     u_prop=tc.track(it).vtx;
     v_prop=tc.track(it).vty;
     
-    % Compute max wind speed relative to propagation speed
-    
+    % Different relations
     if strcmpi(spw.rmax_relation,'pagasajma')
         spw.asymmetry_option='mvo';
     end
      
+    % Different options
     switch lower(spw.asymmetry_option)
         case{'schwerdt1979'}
+            
             % Use Schwerdt (1979) to compute u_prop and v_prop
-            uabs=sqrt(ux^2+uy^2);
+            uabs=sqrt(u_prop^2+v_prop^2);
             c=uabs*1.944; % Convert to kts
             a=1.5*c^0.63; % Schwerdt (1979)
             a=a/1.944;    % Convert to m/s
-            u_prop=a*ux/uabs;
-            v_prop=a*uy/uabs;
+            u_prop=a*u_prop/uabs;
+            v_prop=a*v_prop/uabs;
         case{'jma'}
             c2=0.57143;
             u_prop=c2*ux;
@@ -833,7 +805,6 @@ for it=1:nt
             u_prop=0.0;
             v_prop=0.0;
     end
-    
     tc.track(it).vmax_rel=tc.track(it).vmax-sqrt(u_prop^2+v_prop^2);
     
     % And now compute relative speed for radii
