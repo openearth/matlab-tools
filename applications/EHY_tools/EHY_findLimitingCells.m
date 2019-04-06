@@ -104,7 +104,11 @@ for iF=1:length(mapFiles)
     % maximum velocities
     if OPT.writeMaxVel
         Data = EHY_getMapModelData(mapFile,'varName','uv');
-        mag=max(sqrt(Data.ucx.^2+Data.ucy.^2),[],ndims(Data.value)); % maximum over depth
+        if ndims(Data.ucy)==2
+            mag=sqrt(Data.ucx.^2+Data.ucy.^2);
+        else
+            mag=max(sqrt(Data.ucx.^2+Data.ucy.^2),[],3); % maximum over depth
+        end
         if size(mag,1)==1
             MAXVEL=[MAXVEL; mag'];
         else
