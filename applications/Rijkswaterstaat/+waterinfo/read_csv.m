@@ -92,7 +92,7 @@ header(ncols+1:end) = [];
 header      = strrep(header,' ',''); % Remove whitespaces in header fields
 
 %% 2) Read data
-clear OUT; clc;
+clear OUT;
 % Empty struct
 OUT        = cell2struct(num2cell(NaN(size(header))),header',1);
 
@@ -166,6 +166,7 @@ end
 
 
 
+
 %% 3) Calculations
 
 % Replace dummy values with NaN
@@ -182,11 +183,11 @@ if diff(OUT.datenum) < 0
     for j = 1:nvars
         v = sprintf('NUMERIEKEWAARDE_%d',j);
         OUT.(v) = OUT.(v)(ids);
-    
+        
         % To Do: add unique statement to find double entries on a single
         % date and average the data at the multiple time stamps
-%         OUT.datenum = unique(OUT.datenum); % Multiple date stamps in file for different variables
-%         OUT.datestr = cellstr(datestr(OUT.datenum));
+        %         OUT.datenum = unique(OUT.datenum); % Multiple date stamps in file for different variables
+        %         OUT.datestr = cellstr(datestr(OUT.datenum));
     end
 end
 
