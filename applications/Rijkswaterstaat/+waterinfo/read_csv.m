@@ -138,8 +138,6 @@ for i = 1:length(flds)
             if ~isfield(OUT,'datenum')
                 OUT.datenum = datenum([year(data{id1}),month(data{id1}),day(data{id1}),...
                     hour(data{id2}),minute(data{id2}),second(data{id2})]);
-                OUT.datenum = unique(OUT.datenum); % Multiple date stamps in file for different variables
-                OUT.datestr = cellstr(datestr(OUT.datenum));
             end
         elseif strcmp(f,'NUMERIEKEWAARDE') % Values
             flds2 = fieldnames(OUT);
@@ -184,6 +182,11 @@ if diff(OUT.datenum) < 0
     for j = 1:nvars
         v = sprintf('NUMERIEKEWAARDE_%d',j);
         OUT.(v) = OUT.(v)(ids);
+    
+        % To Do: add unique statement to find double entries on a single
+        % date and average the data at the multiple time stamps
+%         OUT.datenum = unique(OUT.datenum); % Multiple date stamps in file for different variables
+%         OUT.datestr = cellstr(datestr(OUT.datenum));
     end
 end
 
