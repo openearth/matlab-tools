@@ -23,9 +23,14 @@ function Data = EHY_interp_dfm2list (fileInp, timeRequested, list, varargin)
 % ucy_list = EHY_interp_dfm2list (fileInp, time, list, varName, 'ucy');
 %
 %% Initialisation
-OPT.varName = 'wl';
-OPT         = setproperty(OPT,varargin);
-varName     = OPT.varName;
+OPT.varName  = 'wl';
+OPT.xyminmax = [-Inf,-Inf;Inf,Inf];
+OPT          = setproperty(OPT,varargin);
+varName      = OPT.varName;
+xmin         = OPT.xyminmax(1,1);
+ymin         = OPT.xyminmax(1,2);
+xmax         = OPT.xyminmax(2,1);
+ymax         = OPT.xyminmax(2,2);
 
 %% Retrieve data from simulation
 Info      = ncinfo(fileInp);
@@ -38,17 +43,23 @@ itdate   = datenum   (att_time(15:24),'yyyy-mm-dd');
 time     = itdate + time/(1440.*60.);
 
 %% Coordinates
-xcc = ncread(fileInp,'FlowElem_xcc');
-ycc = ncread(fileInp,'FlowElem_ycc');
+try
+    xcc = ncread(fileInp,'FlowElem_xcc');
+    ycc = ncread(fileInp,'FlowElem_ycc');
+catch
+    xcc = ncread(fileInp,'mesh2d_face_x');
+    ycc = ncread(fileInp,'mesh2d_face_y');
+end
 
 %% Values for parameter param
-tmp = ncread(fileInp,varName);
-
-no_faces = size(tmp,1);
-no_times = size(tmp,2);
+i_time = find(time == timeRequested);
+tmp    = ncread(fileInp,varName,[1 i_time],[Inf 1]);
+index  = find(xcc > xmin & xcc < xmax);
+xcc    = xcc(index); ycc = ycc(index); tmp = tmp(index);
+index  = find(ycc > ymin & ycc < ymax);
+xcc    = xcc(index); ycc = ycc(index); tmp = tmp(index);
 
 %% Interpolate to (x,y) as specified in list
-i_time = find(time == timeRequested);
-F     = TriScatteredInterp(xcc, ycc, tmp(:,i_time));
+F     = TriScatteredInterp(xcc, ycc, tmp);
 Data  = F(list.x,list.y);
 

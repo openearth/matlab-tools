@@ -35,12 +35,10 @@ for i_stat = 1:length(requestedStations)
     if isempty(nr_stat)
         Data.exist_stat(i_stat,1) = false;
         disp(['Station : ' requestedStations{i_stat} ' does not exist']);
-    elseif length(nr_stat)==1
-        stationNr      (i_stat,1) = nr_stat;
-        Data.exist_stat(i_stat,1) = true;
-    elseif length(nr_stat)>1
+    elseif length(nr_stat)>=1
         stationNr      (i_stat,1) = nr_stat(1);
         Data.exist_stat(i_stat,1) = true;
+    elseif length(nr_stat)>= 2
         disp(['Station : ' requestedStations{i_stat} ' was found ' num2str(length(nr_stat)) ' times, using first one from obs file']);
     end
 end
