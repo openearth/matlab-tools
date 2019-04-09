@@ -368,14 +368,14 @@ switch modelType
                 
                 if ismember('layer_perc',wantedOutput)
                     mn = waquaio(sds,'','wl-mn');
+                    m = mn(1,1);
+                    n = mn(1,2);
                     if kmax == 1
                         E.layer_perc = 1.;
                     else
                         % derive from first station
                         [~,~,z] = waquaio(sds,'','zgrid3di');
                         for k = 1: kmax
-                            m = mn(1,1);
-                            n = mn(2,1);
                             E.layer_perc(k) = (z(n,m,k + 1) - z(n,m,k))/(z(n,m,kmax + 1) - z(n,m,1));
                         end
                         E.layer_perc = flipud(E.layer_perc);      % dfm convention, numbering from bed to surface
