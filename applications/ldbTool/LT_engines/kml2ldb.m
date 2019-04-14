@@ -40,9 +40,9 @@ function ldb=kml2ldb(saveOutput,inFile)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Code
@@ -71,12 +71,12 @@ ldb=[nan nan];
 for ii=1:length(coorsStart)
     tLdb=str2num(char(kmlFile(coorsStart(ii):coorsStop(ii)))');
     if size(tLdb,1)~=1 % J. Groenenboom - take 2 different kml formats into account
-     ldb=[ldb;tLdb(:,1:2); nan nan];
+        ldb=[ldb;tLdb(:,1:2); nan nan];
     else
-        ldb=[ldb;tLdb(1:3:end)' tLdb(2:3:end)'; nan nan];
+        ldb=[ldb;tLdb(1:2:end)' tLdb(2:2:end)'; nan nan];
     end
 end
 
 if saveOutput==1
-landboundary('write',[fPat filesep fName '.ldb'],ldb);
+    landboundary('write',[fPat filesep fName '.ldb'],ldb);
 end
