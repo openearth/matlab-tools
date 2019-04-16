@@ -55,7 +55,7 @@ error(nargchk(3, 3, nargin)); %3 arguments required
 n1=length(xx);
 n2=length(yy);
 n3=size(utmzone,1);
-if (n1~=n2 || n1~=n3)
+if (n1~=n2)% || n1~=n3)
    error('x,y and utmzone vectors should have the same number or rows');
 end
 c=size(utmzone,2);
@@ -74,10 +74,10 @@ Lon=zeros(n1,1);
 % Main Loop
 %
 for i=1:n1
-   if (utmzone(i,4)>'X' || utmzone(i,4)<'C')
+   if (utmzone(1,4)>'X' || utmzone(1,4)<'C')
       fprintf('utm2deg: Warning utmzone should be a vector of strings like "30 T", not "30 t"\n');
    end
-   if (utmzone(i,4)>'M')
+   if (utmzone(1,4)>'M')
       hemis='N';   % Northern hemisphere
    else
       hemis='S';
@@ -85,7 +85,7 @@ for i=1:n1
 
    x=xx(i);
    y=yy(i);
-   zone=str2double(utmzone(i,1:2));
+   zone=str2double(utmzone(1,1:2));
 
    sa = 6378137.000000 ; sb = 6356752.314245;
   
