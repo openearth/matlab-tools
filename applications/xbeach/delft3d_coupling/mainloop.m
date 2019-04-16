@@ -2,6 +2,7 @@
 % v1.3  Nederhoff   Aug-18
 % v1.4  Nederhoff   Sep-18
 % v1.5  Johnson     Nov-18
+% v1.5.1 Johnson    Jan-19
 
 %% prepare environment
 clear all;
@@ -49,6 +50,15 @@ mor_start         = 0                                   ;
 spinup_xb         = 600                                 ;  % [s]   model schematization dependent
 
 
+% profiling
+profile_table_fn = [path_out, '/comp_times.mat'];
+varTypes = {'int16', 'double', 'double', 'double'};
+varNames =  {'dt', 'matlab', 'XB', 'D3D'};
+comp_times        = zeros(timesteps, 4);
+T_matlab          = 0;
+T_XB              = 0;
+T_D3D             = 0;
+
 % use SuperMIC
 use_smic        = 1;
 
@@ -68,6 +78,9 @@ plink           = 'p:\11200397-lsu-xbeach-delft3d4\04_conceptual\03_running_scri
 
 disp('Beginning coupling script.') ;
 disp('Initializizing...')          ;
+
+% start initial time step matlab clock
+tic;
 
 d3d_grid_fn     = [path_d3d_in, '/barrier.grd']; 
 grd1            = wlgrid('read', d3d_grid_fn); 
@@ -141,6 +154,7 @@ for dt = 1:timesteps
 	%% Part 1: Copy D3D %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 	% A. Copy original setup files to incremental D3D run directory
 	cd(path_out)                                                                    ;
 	D3D_run_num  = ['D3D_', num2str(dt, '%04d')]                                    ;
@@ -198,6 +212,9 @@ for dt = 1:timesteps
 
 	dstr = sprintf('TTSTOP was replaced with: %18s\n', text_to_replace_stop)        ;
 	disp(dstr)                                                                      ;
+    
+    % log matlab time
+    T_matlab = T_matlab + toc;
 
 
 
@@ -206,6 +223,9 @@ for dt = 1:timesteps
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     if dt > 1
+        
+        % start Matlab clock
+        tic;
 
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -471,8 +491,11 @@ for dt = 1:timesteps
 			dstr = sprintf('Time elapsed for sediment transport processing (min): %.2f\n\n', toc/60);
 			disp(dstr)                                                                      ;
         end
+        
+        % log matlab time
+        T_matlab = T_matlab + toc;
     end
-    close all
+
 
 
 
@@ -549,7 +572,9 @@ for dt = 1:timesteps
             end
 
 		pause(1)                                                         ;
-		end
+        end
+        
+        T_D3D = T_D3D + toc;
     end
 
 
@@ -735,10 +760,19 @@ for dt = 1:timesteps
 
 					running = 0                                              ;
 				end
-			end
+            end
+            
+            T_XB = T_XB + toc;
         end
         xb_previous = 1;
     else
         xb_previous = 0;
     end
+    
+    % write compt times
+    comp_times(dt, 1) = dt;
+    comp_times(dt, 2) = T_matlab;
+    comp_times(dt, 3) = T_XB;
+    comp_times(dt, 4) = T_D3D;
+    save(profile_table_fn, 'comp_times');
 end
