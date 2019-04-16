@@ -677,7 +677,7 @@ function get_hd2_bcc_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uiputfile('*.bcc; timeser*','Specify file name transport boundary conditions');
+[fin,pin] = uiputfile('*.bc; *.bcc; timeser*','Specify file name transport boundary conditions');
 cd (handles.progdir);
 
 if length(fin) >= 7
@@ -1040,7 +1040,7 @@ function update_additional(handles)
         set (handles.vel_logarithmic,'Visible','off');
         set (handles.vel_3dprofile  ,'Visible','off');
     end
-        
+
 
     %
     % Update additional transport information
