@@ -17,6 +17,8 @@ function data = godin_filter(data,varargin)
 %                       signals obtained in every filtering step (def = 0)
 %               intnan: interpolate over nan-values if timeseries contains
 %                       any (default = 1)
+%               full  : if true fill series with last valid value at the
+%                       begin and end of the series
 %
 %   Output:
 %   data      = Godin-filtered timeseries 
@@ -82,6 +84,7 @@ end
 OPT.plot    = 0;
 OPT.plot2   = 0;
 OPT.intnan  = 1;
+OPT.full    = false;
 OPT         = setproperty(OPT, varargin{2:end});
 data        = data(:);
 
@@ -127,9 +130,14 @@ for iw = 1:length(Twin)
     clear N odd lb rb
 end
 
-% Throw away data at begin + end
-data(1:fix(25*60*60*FS))      = NaN;
-data(end-fix(25*60*60*FS):end)= NaN;
+% Throw away data at begin + end or fill with first/last valid value
+if ~OPT.full
+    data(1:fix(25*60*60*FS))      = NaN;
+    data(end-fix(25*60*60*FS):end)= NaN;
+else
+    data(1:fix(25*60*60*FS))      = data(fix(25*60*60*FS) + 1);
+    data(end-fix(25*60*60*FS):end)= data(end-fix(25*60*60*FS) - 1);
+end
 
 % Make plot (optional)
 if OPT.plot || OPT.plot2
