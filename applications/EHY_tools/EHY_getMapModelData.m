@@ -196,10 +196,14 @@ if ~OPT.mergePartitions
 end
 
 %% dimension information
-fn=fieldnames(Data);
-if length(size(Data.(fn{end})))==2
+if isfield(Data,'value')
+    fn='value';
+elseif isfield(Data,'ucx')
+    fn='ucx';
+end
+if length(size(Data.(fn)))==2
     Data.dimensions='[times,netElem]';
-elseif length(size(Data.(fn{end})))==3
+elseif length(size(Data.(fn)))==3
     Data.dimensions='[times,netElem,layers]';
 end
 

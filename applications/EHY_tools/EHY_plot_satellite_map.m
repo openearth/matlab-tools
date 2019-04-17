@@ -90,7 +90,7 @@ copyfile([fileparts(which('d3d_qp')) filesep 'private' filesep 'wms.m'],pwd)
 [IMG,lon,lat] = wms('image',wms('tms',OPT.source),'',get(gca,'xlim'),get(gca,'ylim'));
 delete([pwd filesep 'wms.m'])
 hSurf = surface(lon,lat,zeros(length(lat),length(lon)),'cdata',IMG,'facecolor','texturemap', ...
-    'edgecolor','none','cLimInclude','off');
+    'edgecolor','none','cLimInclude','off','ZData',repmat(-10^9,length(lat),2));
 set(hSurf,'FaceAlpha', OPT.FaceAlpha, 'AlphaDataMapping', 'none');
 
 end
