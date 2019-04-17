@@ -25,10 +25,11 @@ function gridInfo=EHY_getGridInfo(inputFile,varargin)
 % created by Julien Groenenboom, October 2018
 
 %% Initialisation
-OPT.stations     = '';
-OPT.varName      = 'wl';
-OPT.manual       = true;
-OPT              = setproperty(OPT,varargin{2:end});
+OPT.stations        = '';
+OPT.varName         = 'wl';
+OPT.manual          = true;
+OPT.mergePartitions = 0; % merge output from several dfm '_map.nc'-files
+OPT                 = setproperty(OPT,varargin{2:end});
 
 %% process input from user
 if nargin==0 || isempty(inputFile)
@@ -51,219 +52,245 @@ if strcmp(modelType,'dfm') && strcmp(typeOfModelFile,'network')
     typeOfModelFile='outputfile';
 end
 
+%% check if output data is in several partitions and merge if necessary
+if OPT.mergePartitions==1 && strcmp(modelType,'dfm') && strcmp(inputFile(end-6:end),'_map.nc') && ~isempty(str2num(inputFile(end-10:end-7)))
+    mapFiles=dir([inputFile(1:end-11) '*' inputFile(end-6:end)]);
+    for iM=1:length(mapFiles)
+        disp(['Reading and merging grid info data from partitions: ' num2str(iM) '/' num2str(length(mapFiles))])
+        mapFile=[fileparts(inputFile) filesep mapFiles(iM).name];
+        gridInfoPart=EHY_getGridInfo(mapFile,varargin{:},'mergePartitions',0);
+        if iM==1
+            gridInfo=gridInfoPart;
+            fn=fieldnames(gridInfoPart);
+        else
+            for iFN=1:length(fn)
+                if strcmp(fn{iFN},'face_nodes_x') || strcmp(fn{iFN},'face_nodes_y')
+                    gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
+                end
+            end
+        end
+    end
+    gridInfo.inputFile=[inputFile(1:end-11) '*' inputFile(end-6:end)];
+    return
+end
+
 %% get grid info
 % order modelType:          dfm, d3d, simona
 % order typeOfModelFile:    mdFile,grid/network,
 switch modelType
     case 'dfm'
         
-        switch typeOfModelFile
+        if ~OPT.mergePartitions
             
-            case 'mdFile'
-                mdu=dflowfm_io_mdu('read',inputFile);
-                if ismember('no_layers',wantedOutput)
-                    E.no_layers=mdu.geometry.Kmx;
-                    if E.no_layers==0
-                        E.no_layers=1;
-                    end
-                end
-                if ismember('dimensions',wantedOutput)
-                    netFile=EHY_path([fileparts(inputFile) filesep mdu.geometry.NetFile]);
-                    F=EHY_getGridInfo(netFile,'dimensions');
-                    fldnames=fieldnames(F);
-                    for iF=1:length(fldnames)
-                        E.(fldnames{iF})=F.(fldnames{iF});
-                    end
-                end
-                if ismember('layer_model',wantedOutput)
-                    if mdu.geometry.Layertype==1
-                        E.layer_model='sigma-model';
-                    elseif mdu.geometry.Layertype==2
-                        E.layer_model='z-model';
-                    end
-                end
-                if ismember('layer_perc',wantedOutput)
-                    if isfield(mdu.geometry,'StretchCoef') 
-                      E.layer_perc=mdu.geometry.StretchCoef;
-                    else
-                        % assume uniform distribution
-                        lyrs=mdu.geometry.Kmx;
-                        E.layer_perc=repmat(1/lyrs,lyrs,1);
-                    end
-                end
-            case 'outputfile'
-                infonc = ncinfo(inputFile);
-                if ismember('no_layers',wantedOutput)
-                    ncVarInd = strmatch('laydim',{infonc.Dimensions.Name},'exact'); % old fm version
-                    if isempty(ncVarInd)
-                        ncVarInd = strmatch('nmesh2d_layer',{infonc.Dimensions.Name},'exact');
-                    end
-                    if ~isempty(ncVarInd)
-                        E.no_layers = infonc.Dimensions(ncVarInd).Length;
-                    else
-                        E.no_layers=1;
-                    end
-                end
-                if ismember('XYcor',wantedOutput)
-                    if ~isempty(strmatch('NetNode_x',{infonc.Variables.Name},'exact')) % old fm version
-                        E.Xcor=ncread(inputFile,'NetNode_x');
-                        E.Ycor=ncread(inputFile,'NetNode_y');
-                    elseif  ~isempty(strmatch('mesh2d_node_x',{infonc.Variables.Name},'exact'))
-                        E.Xcor=ncread(inputFile,'mesh2d_node_x');
-                        E.Ycor=ncread(inputFile,'mesh2d_node_y');
-                    end
-                end
-                if ismember('XYcen',wantedOutput)
-                    if ~isempty(strmatch('FlowElem_xcc',{infonc.Variables.Name},'exact')) % old fm version
-                        E.Xcen=ncread(inputFile,'FlowElem_xcc');
-                        E.Ycen=ncread(inputFile,'FlowElem_ycc');
-                    elseif  ~isempty(strmatch('mesh2d_face_x',{infonc.Variables.Name},'exact'))
-                        E.Xcen=ncread(inputFile,'mesh2d_face_x');
-                        E.Ycen=ncread(inputFile,'mesh2d_face_y');
-                    else
-                        disp('Cell center info not found in network. Import grid>export grid in RGFGRID and try again')
-                    end
-                end
-                if ismember('depth',wantedOutput)
-                    if nc_isvar(inputFile,'NetNode_z') % old fm version
-                        E.depth_cor=ncread(inputFile,'NetNode_z');
-                        try; E.depth_cen=ncread(inputFile,'FlowElem_bl'); end % depth_cen not always available
-                    elseif nc_isvar(inputFile,'mesh2d_node_z')
-                        E.depth_cor=ncread(inputFile,'mesh2d_node_z');
-                        try; E.depth_cen=ncread(inputFile,'mesh2d_flowelem_bl'); end % depth_cen not always available
-                    else
-                        E.depth_cen = NaN;
-                        E.depth_cor = NaN;
-                    end
-                end
-                if ismember('Z',wantedOutput)
-                    % his-file
-                    if ~isempty(strmatch('LayCoord_cc',{infonc.Variables.Name},'exact')) % old fm version
-                        E.Zcen=ncread(inputFile,'LayCoord_cc');
-                        E.Zint=ncread(inputFile,'LayCoord_w');
-                    elseif ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact'))
-                        E.Zcen=ncread(inputFile,'mesh2d_layer_z');
-                        E.Zint=ncread(inputFile,'mesh2d_interface_z');
-                    elseif ~isempty(strmatch('zcoordinate_c',{infonc.Variables.Name},'exact'))
-                        E.Zcen=permute(ncread(inputFile,'zcoordinate_c'),[3 2 1]);
-                        E.Zint=permute(ncread(inputFile,'zcoordinate_w'),[3 2 1]);
-                    end
-                    
-                    % map
-                    if ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact'))
-                        perc=ncread(inputFile,'mesh2d_interface_sigma');
-                        bl=ncread(inputFile,'mesh2d_flowelem_bl');
-                        E.Zint=-repmat(bl,1,length(perc)).*repmat(perc',length(bl),1);
-                        E.Zcen=(E.Zint(:,2:end)+E.Zint(:,1:end-1))/2;
-                        E.thickness=diff(E.Zint,[],2);
-                    end
-                end
-                if ismember('layer_model',wantedOutput)
-                    dmy=EHY_getGridInfo(inputFile,'no_layers');
-                    if dmy.no_layers==1
-                        E.layer_model='-';
-                    else
-                        if ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact')) % _map.nc
-                            E.layer_model='z-model';
-                        elseif ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact')) % _map.nc
-                            E.layer_model='sigma-model';
-                        elseif ~isempty(strmatch('zcoordinate_c',{infonc.Variables.Name},'exact'))
-                            E.layer_model='sigma-model';
-                        else % not in merged_map.nc, try to get this info from mdFile
-                            try
-                                mdFile=EHY_getMdFile(inputFile);
-                                gridInfo=EHY_getGridInfo(mdFile,'layer_model');
-                                E.layer_model=gridInfo.layer_model;
-                            end
+            switch typeOfModelFile
+                
+                case 'mdFile'
+                    mdu=dflowfm_io_mdu('read',inputFile);
+                    if ismember('no_layers',wantedOutput)
+                        E.no_layers=mdu.geometry.Kmx;
+                        if E.no_layers==0
+                            E.no_layers=1;
                         end
                     end
-                end
-                if ismember('layer_perc',wantedOutput)
-                    tmp       = EHY_getGridInfo(inputFile,{'no_layers'});
-                    no_layers = tmp.no_layers;
-                    if no_layers == 1
-                        E.layer_perc = 1.0;
-                    else
-                        if     ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact'))
-                            E.layer_perc=diff(ncread(inputFile,'mesh2d_interface_sigma'));
-                        elseif ~isempty(strmatch('zcoordinate_w',{infonc.Variables.Name},'exact'))
-                            
-                            % reconstruct thickness based upon z coordinates first station, first timestep
-                            tmp = ncread_blocks(inputFile,'zcoordinate_w');
-                            z11 = tmp(:,1,1);
-                            for i_lay = 1: no_layers 
-                                thick(i_lay) = (z11(i_lay + 1) - z11(i_lay))/(z11(end) - z11(1));
-                            end
-                            E.layer_perc=thick;
-                        else % not in merged_map.nc, try to get this info from mdFile
-                            if OPT.manual
+                    if ismember('dimensions',wantedOutput)
+                        netFile=EHY_path([fileparts(inputFile) filesep mdu.geometry.NetFile]);
+                        F=EHY_getGridInfo(netFile,'dimensions');
+                        fldnames=fieldnames(F);
+                        for iF=1:length(fldnames)
+                            E.(fldnames{iF})=F.(fldnames{iF});
+                        end
+                    end
+                    if ismember('layer_model',wantedOutput)
+                        if mdu.geometry.Layertype==1
+                            E.layer_model='sigma-model';
+                        elseif mdu.geometry.Layertype==2
+                            E.layer_model='z-model';
+                        end
+                    end
+                    if ismember('layer_perc',wantedOutput)
+                        if isfield(mdu.geometry,'StretchCoef')
+                            E.layer_perc=mdu.geometry.StretchCoef;
+                        else
+                            % assume uniform distribution
+                            lyrs=mdu.geometry.Kmx;
+                            E.layer_perc=repmat(1/lyrs,lyrs,1);
+                        end
+                    end
+                case 'outputfile'
+                    infonc = ncinfo(inputFile);
+                    if ismember('no_layers',wantedOutput)
+                        ncVarInd = strmatch('laydim',{infonc.Dimensions.Name},'exact'); % old fm version
+                        if isempty(ncVarInd)
+                            ncVarInd = strmatch('nmesh2d_layer',{infonc.Dimensions.Name},'exact');
+                        end
+                        if ~isempty(ncVarInd)
+                            E.no_layers = infonc.Dimensions(ncVarInd).Length;
+                        else
+                            E.no_layers=1;
+                        end
+                    end
+                    if ismember('XYcor',wantedOutput)
+                        if ~isempty(strmatch('NetNode_x',{infonc.Variables.Name},'exact')) % old fm version
+                            E.Xcor=ncread(inputFile,'NetNode_x');
+                            E.Ycor=ncread(inputFile,'NetNode_y');
+                        elseif  ~isempty(strmatch('mesh2d_node_x',{infonc.Variables.Name},'exact'))
+                            E.Xcor=ncread(inputFile,'mesh2d_node_x');
+                            E.Ycor=ncread(inputFile,'mesh2d_node_y');
+                        end
+                    end
+                    if ismember('XYcen',wantedOutput)
+                        if ~isempty(strmatch('FlowElem_xcc',{infonc.Variables.Name},'exact')) % old fm version
+                            E.Xcen=ncread(inputFile,'FlowElem_xcc');
+                            E.Ycen=ncread(inputFile,'FlowElem_ycc');
+                        elseif  ~isempty(strmatch('mesh2d_face_x',{infonc.Variables.Name},'exact'))
+                            E.Xcen=ncread(inputFile,'mesh2d_face_x');
+                            E.Ycen=ncread(inputFile,'mesh2d_face_y');
+                        else
+                            disp('Cell center info not found in network. Import grid>export grid in RGFGRID and try again')
+                        end
+                    end
+                    if ismember('depth',wantedOutput)
+                        if nc_isvar(inputFile,'NetNode_z') % old fm version
+                            E.depth_cor=ncread(inputFile,'NetNode_z');
+                            try; E.depth_cen=ncread(inputFile,'FlowElem_bl'); end % depth_cen not always available
+                        elseif nc_isvar(inputFile,'mesh2d_node_z')
+                            E.depth_cor=ncread(inputFile,'mesh2d_node_z');
+                            try; E.depth_cen=ncread(inputFile,'mesh2d_flowelem_bl'); end % depth_cen not always available
+                        else
+                            E.depth_cen = NaN;
+                            E.depth_cor = NaN;
+                        end
+                    end
+                    if ismember('Z',wantedOutput)
+                        % his-file
+                        if ~isempty(strmatch('LayCoord_cc',{infonc.Variables.Name},'exact')) % old fm version
+                            E.Zcen=ncread(inputFile,'LayCoord_cc');
+                            E.Zint=ncread(inputFile,'LayCoord_w');
+                        elseif ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact'))
+                            E.Zcen=ncread(inputFile,'mesh2d_layer_z');
+                            E.Zint=ncread(inputFile,'mesh2d_interface_z');
+                        elseif ~isempty(strmatch('zcoordinate_c',{infonc.Variables.Name},'exact'))
+                            E.Zcen=permute(ncread(inputFile,'zcoordinate_c'),[3 2 1]);
+                            E.Zint=permute(ncread(inputFile,'zcoordinate_w'),[3 2 1]);
+                        end
+                        
+                        % map
+                        if ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact'))
+                            perc=ncread(inputFile,'mesh2d_interface_sigma');
+                            bl=ncread(inputFile,'mesh2d_flowelem_bl');
+                            E.Zint=-repmat(bl,1,length(perc)).*repmat(perc',length(bl),1);
+                            E.Zcen=(E.Zint(:,2:end)+E.Zint(:,1:end-1))/2;
+                            E.thickness=diff(E.Zint,[],2);
+                        end
+                    end
+                    if ismember('layer_model',wantedOutput)
+                        dmy=EHY_getGridInfo(inputFile,'no_layers');
+                        if dmy.no_layers==1
+                            E.layer_model='-';
+                        else
+                            if ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact')) % _map.nc
+                                E.layer_model='z-model';
+                            elseif ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact')) % _map.nc
+                                E.layer_model='sigma-model';
+                            elseif ~isempty(strmatch('zcoordinate_c',{infonc.Variables.Name},'exact'))
+                                E.layer_model='sigma-model';
+                            else % not in merged_map.nc, try to get this info from mdFile
                                 try
                                     mdFile=EHY_getMdFile(inputFile);
-                                    gridInfo=EHY_getGridInfo(mdFile,'layer_perc');
-                                    E.layer_perc=gridInfo.layer_perc;
+                                    gridInfo=EHY_getGridInfo(mdFile,'layer_model');
+                                    E.layer_model=gridInfo.layer_model;
                                 end
-                            else
-                                E.layer_perc(1:no_layers) = NaN;
                             end
                         end
                     end
-                end
-                if ismember('face_nodes_xy',wantedOutput)
-                    if ~isempty(strmatch('FlowElemContour_x',{infonc.Variables.Name},'exact')) % *_waqgeom.nc
-                        E.face_nodes_x=ncread(inputFile,'FlowElemContour_x');
-                        E.face_nodes_y=ncread(inputFile,'FlowElemContour_y');
-                    elseif ~isempty(strmatch('mesh2d_face_x_bnd',{infonc.Variables.Name},'exact')) % old fm version
-                        E.face_nodes_x=ncread(inputFile,'mesh2d_face_x_bnd');
-                        E.face_nodes_y=ncread(inputFile,'mesh2d_face_y_bnd');
+                    if ismember('layer_perc',wantedOutput)
+                        tmp       = EHY_getGridInfo(inputFile,{'no_layers'});
+                        no_layers = tmp.no_layers;
+                        if no_layers == 1
+                            E.layer_perc = 1.0;
+                        else
+                            if     ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact'))
+                                E.layer_perc=diff(ncread(inputFile,'mesh2d_interface_sigma'));
+                            elseif ~isempty(strmatch('zcoordinate_w',{infonc.Variables.Name},'exact'))
+                                
+                                % reconstruct thickness based upon z coordinates first station, first timestep
+                                tmp = ncread_blocks(inputFile,'zcoordinate_w');
+                                z11 = tmp(:,1,1);
+                                for i_lay = 1: no_layers
+                                    thick(i_lay) = (z11(i_lay + 1) - z11(i_lay))/(z11(end) - z11(1));
+                                end
+                                E.layer_perc=thick;
+                            else % not in merged_map.nc, try to get this info from mdFile
+                                if OPT.manual
+                                    try
+                                        mdFile=EHY_getMdFile(inputFile);
+                                        gridInfo=EHY_getGridInfo(mdFile,'layer_perc');
+                                        E.layer_perc=gridInfo.layer_perc;
+                                    end
+                                else
+                                    E.layer_perc(1:no_layers) = NaN;
+                                end
+                            end
+                        end
                     end
-                end
-                if ismember('dimensions',wantedOutput)
-                    % no_NetNode
-                    id=strmatch('nNetNode',{infonc.Dimensions.Name},'exact');
-                    if isempty(id)
-                        id=strmatch('nmesh2d_node',{infonc.Dimensions.Name},'exact');
+                    if ismember('face_nodes_xy',wantedOutput)
+                        if ~isempty(strmatch('FlowElemContour_x',{infonc.Variables.Name},'exact')) % *_waqgeom.nc
+                            E.face_nodes_x=ncread(inputFile,'FlowElemContour_x');
+                            E.face_nodes_y=ncread(inputFile,'FlowElemContour_y');
+                        elseif ~isempty(strmatch('mesh2d_face_x_bnd',{infonc.Variables.Name},'exact')) % old fm version
+                            E.face_nodes_x=ncread(inputFile,'mesh2d_face_x_bnd');
+                            E.face_nodes_y=ncread(inputFile,'mesh2d_face_y_bnd');
+                        end
                     end
-                    if ~isempty(id)
-                        E.no_NetNode=infonc.Dimensions(id).Length;
+                    if ismember('dimensions',wantedOutput)
+                        % no_NetNode
+                        id=strmatch('nNetNode',{infonc.Dimensions.Name},'exact');
+                        if isempty(id)
+                            id=strmatch('nmesh2d_node',{infonc.Dimensions.Name},'exact');
+                        end
+                        if ~isempty(id)
+                            E.no_NetNode=infonc.Dimensions(id).Length;
+                        end
+                        % no_NetElem
+                        id=strmatch('nNetElem',{infonc.Dimensions.Name},'exact');
+                        if isempty(id)
+                            id=strmatch('nmesh2d_face',{infonc.Dimensions.Name},'exact');
+                        end
+                        if ~isempty(id) && infonc.Dimensions(id).Length~=0
+                            E.no_NetElem=infonc.Dimensions(id).Length;
+                        end
                     end
-                    % no_NetElem
-                    id=strmatch('nNetElem',{infonc.Dimensions.Name},'exact');
-                    if isempty(id)
-                        id=strmatch('nmesh2d_face',{infonc.Dimensions.Name},'exact');
+                    if ismember('area',wantedOutput)
+                        if ~isempty(strmatch('mesh2d_flowelem_ba',{infonc.Variables.Name},'exact'))
+                            E.area=ncread(inputFile,'mesh2d_flowelem_ba');
+                        end
                     end
-                    if ~isempty(id) && infonc.Dimensions(id).Length~=0
-                        E.no_NetElem=infonc.Dimensions(id).Length;
+                    
+                    % If partitioned run, delete ghost cells
+                    [~, name]=fileparts(inputFile);
+                    if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && or(nc_isvar(inputFile,'FlowElemDomain'),nc_isvar(inputFile,'mesh2d_flowelem_domain'))
+                        domainNr=str2num(name(end-7:end-4));
+                        if nc_isvar(inputFile,'FlowElemDomain')
+                            FlowElemDomain=ncread(inputFile,'FlowElemDomain');
+                        elseif nc_isvar(inputFile,'mesh2d_flowelem_domain')
+                            FlowElemDomain=ncread(inputFile,'mesh2d_flowelem_domain');
+                        end
+                        if ismember('face_nodes_xy',wantedOutput)
+                            E.face_nodes_x(:,FlowElemDomain~=domainNr)=[];
+                            E.face_nodes_y(:,FlowElemDomain~=domainNr)=[];
+                        end
+                        if ismember('XYcen',wantedOutput)
+                            E.Xcen(FlowElemDomain~=domainNr)=[];
+                            E.Ycen(FlowElemDomain~=domainNr)=[];
+                        end
+                        if ismember('depth',wantedOutput)
+                            E.depth_cen(FlowElemDomain~=domainNr)=[];
+                        end
                     end
-               end
-               if ismember('area',wantedOutput)
-                    if ~isempty(strmatch('mesh2d_flowelem_ba',{infonc.Variables.Name},'exact'))
-                        E.area=ncread(inputFile,'mesh2d_flowelem_ba');
-                    end
-               end  
-
-               % If partitioned run, delete ghost cells
-               [~, name]=fileparts(inputFile);
-               if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && or(nc_isvar(inputFile,'FlowElemDomain'),nc_isvar(inputFile,'mesh2d_flowelem_domain'))
-                   domainNr=str2num(name(end-7:end-4));
-                   if nc_isvar(inputFile,'FlowElemDomain')
-                       FlowElemDomain=ncread(inputFile,'FlowElemDomain');
-                   elseif nc_isvar(inputFile,'mesh2d_flowelem_domain')
-                       FlowElemDomain=ncread(inputFile,'mesh2d_flowelem_domain');
-                   end
-                   if ismember('face_nodes_xy',wantedOutput)
-                       E.face_nodes_x(:,FlowElemDomain~=domainNr)=[];
-                       E.face_nodes_y(:,FlowElemDomain~=domainNr)=[];
-                   end
-                   if ismember('XYcen',wantedOutput)
-                       E.Xcen(FlowElemDomain~=domainNr)=[];
-                       E.Ycen(FlowElemDomain~=domainNr)=[];
-                   end
-                   if ismember('depth',wantedOutput)
-                       E.depth_cen(FlowElemDomain~=domainNr)=[];
-                   end
-               end
-
-        end % typeOfModelFile
+                    
+            end % typeOfModelFile
+            
+        end % OPT.mergePartitions
         
     case 'd3d'
         switch typeOfModelFile
@@ -313,7 +340,7 @@ switch modelType
                     end
                     if ismember('layer_perc', wantedOutput)
                         E.layer_perc = flipud(vs_let(trih,'his-const','THICK','quiet'));
-                    end 
+                    end
                 end
         end % typeOfModelFile
         
@@ -381,7 +408,7 @@ switch modelType
                         E.layer_perc = flipud(E.layer_perc);      % dfm convention, numbering from bed to surface
                     end
                 end
-         end % typeOfModelFile
+        end % typeOfModelFile
     case {'sobek3' 'sobek3_new' 'implic'}
         E.layer_model = '';
         E.no_layers   = 1;
@@ -391,8 +418,8 @@ end % modelType
 if ~isempty(OPT.stations) && isfield(E,'Zint')
     Data_stat      = EHY_getRequestedStations(inputFile,OPT.stations,modelType,'varName',OPT.varName);
     stationNrNoNan = Data_stat.stationNrNoNan;
-        E.Zcen = tmp.Zcen(:,stationNrNoNan,:);
-        E.Zint = tmp.Zint(:,stationNrNoNan,:);
+    E.Zcen = tmp.Zcen(:,stationNrNoNan,:);
+    E.Zint = tmp.Zint(:,stationNrNoNan,:);
 end
 
 %% Output structure E
