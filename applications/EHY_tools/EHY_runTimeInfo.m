@@ -44,46 +44,51 @@ try % if simulation has finished
             gridInfo=EHY_getGridInfo(mdFile,{'no_layers','dimensions'});
             noLayers=gridInfo.no_layers;
             
-            % dia
-            if exist([pathstr filesep name '_0000.dia'],'file') % first check if run was done in parallel
-                diaFile=[pathstr filesep name '_0000.dia'];
-            elseif exist([pathstr filesep 'out.txt'],'file') %  not in parallel - use out.txt file
-                diaFile=[pathstr filesep 'out.txt'];
-            else 
-                diaFile=[pathstr filesep 'output\' name '.dia'];
-            end
-            fid=fopen(diaFile,'r');
-            % values derived from file with findLineOrQuit should be in order of rows, or it does not find it
-            
+            % out.txt
+            outFile=[pathstr filesep 'out.txt'];
+
+            fid=fopen(outFile,'r');
+            fseek(fid, 0, 'eof'); % set position indicator to end of file
+            fileSize = ftell(fid);
+            HeaderLines=round(fileSize/87); % skip big part of out.txt
+            fseek(fid, 0, 'bof'); % set position indicator to begin of file
+            out=textscan(fid,'%s','delimiter','\n','HeaderLines',HeaderLines,'CommentStyle','** INFO   :  Solver converged in');
+            out=out{1,1};
+            fclose(fid);
+
             % partitions
-            diaFiles=dir([pathstr filesep name '*.dia']);
-            noPartitions=max([1 length(diaFiles)-1]);
+            mduFiles=dir([pathstr filesep name '_*.mdu']);
+            noPartitions=max([1 length(mduFiles)]);
             
             % number of netnodes
             noNetNodes=gridInfo.no_NetNode;
 
             % average timestep
-            line=findLineOrQuit(fid,'** INFO   : average timestep * (s)  :');
-            line2=regexp(line,'\s+','split');
+            wantedLine=regexptranslate('wildcard','** INFO   : average timestep * (s)  :');
+            outInd=find(~cellfun(@isempty,regexp(out,wantedLine)));
+            line2=regexp(out{outInd(1)},'\s+','split');
             aveTimeStep_S=str2double(line2{end});
             
             % max time step
             maxTimeStep_S=mdu.time.DtMax;
             
             % initTime_S
-            line=findLineOrQuit(fid,    '** INFO   : time modelinit * (s)  :');
-            line2=regexp(line,'\s+','split');
+            wantedLine=regexptranslate('wildcard','** INFO   : time modelinit * (s)  :');
+            outInd=find(~cellfun(@isempty,regexp(out,wantedLine)));
+            line2=regexp(out{outInd(1)},'\s+','split');
             initTime_S=str2double(line2{end});
             
             % realTime_S
-            line=findLineOrQuit(fid,    '** INFO   : time steps*+ plots*  (s)  :');
-            line2=regexp(line,'\s+','split');
+            wantedLine=regexptranslate('wildcard','** INFO   : time steps*+ plots*  (s)  :');
+            outInd=find(~cellfun(@isempty,regexp(out,wantedLine)));
+            line2=regexp(out{outInd(1)},'\s+','split');
             realTime_S=str2double(line2{end});
             
             % initextforcTime_S
-            line=findLineOrQuit(fid,    '** INFO   : time iniexternalforc. * (s)  :');
-            if ~isempty(line)
-                line2=regexp(line,'\s+','split');
+            wantedLine=regexptranslate('wildcard','** INFO   : time iniexternalforc. * (s)  :');
+            outInd=find(~cellfun(@isempty,regexp(out,wantedLine)));
+            if ~isempty(outInd)
+                line2=regexp(out{outInd(1)},'\s+','split');
                 initextforcTime_S=str2double(line2{end});
             end
 

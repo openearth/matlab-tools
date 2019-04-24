@@ -54,145 +54,148 @@ if OPT.mergePartitions==1 && strcmp(modelType,'dfm') && strcmp(fileInp(end-6:end
             Data=DataPart;
         else
             Data.value=horzcat(Data.value,DataPart.value);
+            if isfield(Data,'ucx')
+                Data.ucx=horzcat(Data.ucx,DataPart.ucx);
+                Data.ucy=horzcat(Data.ucy,DataPart.ucy);
+            end
         end
     end
     Data.OPT.mergePartitions=1;
+    modelType = 'Do not load new data, this was a partitioned run';
 end
 
 %% Get the computational data
-if ~OPT.mergePartitions
-    switch modelType
+switch modelType
+    
+    case 'dfm'
+        %% Delft3D-Flexible Mesh
+        % open data file
+        gridInfo=EHY_getGridInfo(fileInp,{'no_layers','dimensions'});
+        infonc=ncinfo(fileInp);
+        OPT=EHY_getmodeldata_layer_index(OPT,gridInfo.no_layers);
         
-        case 'dfm'
-            %% Delft3D-Flexible Mesh
-            % open data file
-            gridInfo=EHY_getGridInfo(fileInp,{'no_layers','dimensions'});
-            infonc=ncinfo(fileInp);
-            OPT=EHY_getmodeldata_layer_index(OPT,gridInfo.no_layers);
-            
-            % time info
-            Data.times=EHY_getmodeldata_getDatenumsFromOutputfile(fileInp);
-            [Data,time_index,select]=EHY_getmodeldata_time_index(Data,OPT);
-            if time_index==0; time_index=1; end % 0 = d3d style
-            nr_times_clip = length(Data.times);
-            
-            % allocate variable 'value'
-            if length(OPT.layer==1)
-                Data.value = nan(nr_times_clip,gridInfo.no_NetElem);
-                if strcmp(OPT.varName,'uv')
-                    Data.ucx=Data.value;
-                    Data.ucy=Data.value;
-                end
-            else
-                Data.value = nan(nr_times_clip,gridInfo.no_NetElem,length(OPT.layer));
-                if strcmp(OPT.varName,'uv')
-                    Data.ucx=Data.value;
-                    Data.ucy=Data.value;
-                end
+        % time info
+        Data.times=EHY_getmodeldata_getDatenumsFromOutputfile(fileInp);
+        [Data,time_index,select]=EHY_getmodeldata_time_index(Data,OPT);
+        if time_index==0; time_index=1; end % 0 = d3d style
+        nr_times_clip = length(Data.times);
+        
+        % allocate variable 'value'
+        if length(OPT.layer==1)
+            Data.value = nan(nr_times_clip,gridInfo.no_NetElem);
+            if strcmp(OPT.varName,'uv')
+                Data.ucx=Data.value;
+                Data.ucy=Data.value;
             end
-            
-            switch OPT.varName
-                case 'wl'
-                    if ismember('mesh2d_s1',{infonc.Variables.Name})
-                        Data.value = ncread(fileInp,'mesh2d_s1',[1 time_index(1)],[Inf nr_times_clip])';
-                    else % old format
-                        Data.value = ncread(fileInp,'s1',[1 time_index(1)],[Inf nr_times_clip])';
-                    end
-                case {'wd','water depth'}
-                    if ismember('mesh2d_waterdepth',{infonc.Variables.Name})
-                        Data.value = ncread(fileInp,'mesh2d_waterdepth',[1 time_index(1)],[Inf nr_times_clip])';
-                    else % old format
-                        Data.value = ncread(fileInp,'waterdepth',[1 time_index(1)],[Inf nr_times_clip])';
-                    end
-                case 'uv'
-                    if ismember('mesh2d_ucx',{infonc.Variables.Name})
-                        if gridInfo.no_layers==1 % 2DH model
-                            Data.ucx = ncread(fileInp,'mesh2d_ucx',[1 time_index(1)],[Inf nr_times_clip])';
-                            Data.ucy = ncread(fileInp,'mesh2d_ucy',[1 time_index(1)],[Inf nr_times_clip])';
-                        else
-                            Data.ucx = permute(ncread(fileInp,'mesh2d_ucx',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
-                            Data.ucy = permute(ncread(fileInp,'mesh2d_ucy',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
-                        end
-                    else % old format
-                        if gridInfo.no_layers==1 % 2DH model
-                            Data.ucx = ncread(fileInp,'ucx',[1 time_index(1)],[Inf nr_times_clip])';
-                            Data.ucy = ncread(fileInp,'ucy',[1 time_index(1)],[Inf nr_times_clip])';
-                        else
-                            Data.ucx = permute(ncread(fileInp,'ucx',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
-                            Data.ucy = permute(ncread(fileInp,'ucy',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
-                        end
-                    end
-                    Data.value = sqrt( Data.ucx.^2 + Data.ucy.^2 ); % magnitude
-                case 'sal'
-                    if ismember('mesh2d_sa1',{infonc.Variables.Name})
-                        if gridInfo.no_layers==1 % 2DH model
-                            Data.value = ncread(fileInp,'mesh2d_sa1',[1 time_index(1)],[Inf nr_times_clip])';
-                        else
-                            Data.value = permute(ncread(fileInp,'mesh2d_sa1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
-                        end
-                    else % old format
-                        if gridInfo.no_layers==1 % 2DH model
-                            Data.value = ncread(fileInp,'sa1',[1 time_index(1)],[Inf nr_times_clip])';
-                        else
-                            Data.value = permute(ncread(fileInp,'sa1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
-                        end
-                    end
-                case 'tem'
-                    if ismember('mesh2d_tem1',{infonc.Variables.Name})
-                        if gridInfo.no_layers==1 % 2DH model
-                            Data.value = ncread(fileInp,'mesh2d_tem1',[1 time_index(1)],[Inf nr_times_clip])';
-                        else
-                            Data.value = permute(ncread(fileInp,'mesh2d_tem1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
-                        end
-                    else % old format
-                        if gridInfo.no_layers==1 % 2DH model
-                            Data.value = ncread(fileInp,'tem1',[1 time_index(1)],[Inf nr_times_clip])';
-                        else
-                            Data.value = permute(ncread(fileInp,'tem1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
-                        end
-                    end
-                case {'mesh2d_Numlimdt','numlimdt'}
-                    if ismember('mesh2d_Numlimdt',{infonc.Variables.Name})
-                        Data.value = ncread(fileInp,'mesh2d_Numlimdt',[1 time_index(1)],[Inf nr_times_clip])';
-                    else % old format
-                        Data.value = ncread(fileInp,'numlimdt',[1 time_index(1)],[Inf nr_times_clip])';
-                    end
-                otherwise
-                    if nc_isvar(fileInp,OPT.varName)
-                        if gridInfo.no_layers==1 % 2DH model
-                            Data.value = ncread(fileInp,OPT.varName,[1 time_index(1)],[Inf nr_times_clip])';
-                        else
-                            Data.value = permute(ncread(fileInp,OPT.varName,[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
-                        end
+        else
+            Data.value = nan(nr_times_clip,gridInfo.no_NetElem,length(OPT.layer));
+            if strcmp(OPT.varName,'uv')
+                Data.ucx=Data.value;
+                Data.ucy=Data.value;
+            end
+        end
+        
+        switch OPT.varName
+            case 'wl'
+                if ismember('mesh2d_s1',{infonc.Variables.Name})
+                    Data.value = ncread(fileInp,'mesh2d_s1',[1 time_index(1)],[Inf nr_times_clip])';
+                else % old format
+                    Data.value = ncread(fileInp,'s1',[1 time_index(1)],[Inf nr_times_clip])';
+                end
+            case {'wd','water depth'}
+                if ismember('mesh2d_waterdepth',{infonc.Variables.Name})
+                    Data.value = ncread(fileInp,'mesh2d_waterdepth',[1 time_index(1)],[Inf nr_times_clip])';
+                else % old format
+                    Data.value = ncread(fileInp,'waterdepth',[1 time_index(1)],[Inf nr_times_clip])';
+                end
+            case 'uv'
+                if ismember('mesh2d_ucx',{infonc.Variables.Name})
+                    if gridInfo.no_layers==1 % 2DH model
+                        Data.ucx = ncread(fileInp,'mesh2d_ucx',[1 time_index(1)],[Inf nr_times_clip])';
+                        Data.ucy = ncread(fileInp,'mesh2d_ucy',[1 time_index(1)],[Inf nr_times_clip])';
                     else
-                        error(['Could not find variable or group ''' OPT.varName ''' in file.'])
+                        Data.ucx = permute(ncread(fileInp,'mesh2d_ucx',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                        Data.ucy = permute(ncread(fileInp,'mesh2d_ucy',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
                     end
-            end
-            % If partitioned run, delete ghost cells
-            [~, name]=fileparts(fileInp);
-            if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && or(nc_isvar(fileInp,'FlowElemDomain'),nc_isvar(fileInp,'mesh2d_flowelem_domain'))
-                domainNr=str2num(name(end-7:end-4));
-                if nc_isvar(fileInp,'FlowElemDomain')
-                    FlowElemDomain=ncread(fileInp,'FlowElemDomain');
-                elseif nc_isvar(fileInp,'mesh2d_flowelem_domain')
-                    FlowElemDomain=ncread(fileInp,'mesh2d_flowelem_domain');
+                else % old format
+                    if gridInfo.no_layers==1 % 2DH model
+                        Data.ucx = ncread(fileInp,'ucx',[1 time_index(1)],[Inf nr_times_clip])';
+                        Data.ucy = ncread(fileInp,'ucy',[1 time_index(1)],[Inf nr_times_clip])';
+                    else
+                        Data.ucx = permute(ncread(fileInp,'ucx',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                        Data.ucy = permute(ncread(fileInp,'ucy',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                    end
                 end
-                Data.value(:,FlowElemDomain~=domainNr,:)=[];
-                if strcmpi(OPT.varName,'uv')
-                    Data.ucx(:,FlowElemDomain~=domainNr,:)=[];
-                    Data.ucy(:,FlowElemDomain~=domainNr,:)=[];
+                Data.value = sqrt( Data.ucx.^2 + Data.ucy.^2 ); % magnitude
+            case 'sal'
+                if ismember('mesh2d_sa1',{infonc.Variables.Name})
+                    if gridInfo.no_layers==1 % 2DH model
+                        Data.value = ncread(fileInp,'mesh2d_sa1',[1 time_index(1)],[Inf nr_times_clip])';
+                    else
+                        Data.value = permute(ncread(fileInp,'mesh2d_sa1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                    end
+                else % old format
+                    if gridInfo.no_layers==1 % 2DH model
+                        Data.value = ncread(fileInp,'sa1',[1 time_index(1)],[Inf nr_times_clip])';
+                    else
+                        Data.value = permute(ncread(fileInp,'sa1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                    end
                 end
+            case 'tem'
+                if ismember('mesh2d_tem1',{infonc.Variables.Name})
+                    if gridInfo.no_layers==1 % 2DH model
+                        Data.value = ncread(fileInp,'mesh2d_tem1',[1 time_index(1)],[Inf nr_times_clip])';
+                    else
+                        Data.value = permute(ncread(fileInp,'mesh2d_tem1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                    end
+                else % old format
+                    if gridInfo.no_layers==1 % 2DH model
+                        Data.value = ncread(fileInp,'tem1',[1 time_index(1)],[Inf nr_times_clip])';
+                    else
+                        Data.value = permute(ncread(fileInp,'tem1',[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                    end
+                end
+            case {'mesh2d_Numlimdt','numlimdt'}
+                if ismember('mesh2d_Numlimdt',{infonc.Variables.Name})
+                    Data.value = ncread(fileInp,'mesh2d_Numlimdt',[1 time_index(1)],[Inf nr_times_clip])';
+                elseif ismember('numlimdt',{infonc.Variables.Name}) % old format
+                    Data.value = ncread(fileInp,'numlimdt',[1 time_index(1)],[Inf nr_times_clip])';
+                end
+            otherwise
+                if nc_isvar(fileInp,OPT.varName)
+                    if gridInfo.no_layers==1 % 2DH model
+                        Data.value = ncread(fileInp,OPT.varName,[1 time_index(1)],[Inf nr_times_clip])';
+                    else
+                        Data.value = permute(ncread(fileInp,OPT.varName,[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);
+                    end
+                else
+                    error(['Could not find variable or group ''' OPT.varName ''' in file.'])
+                end
+        end
+        % If partitioned run, delete ghost cells
+        [~, name]=fileparts(fileInp);
+        if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && or(nc_isvar(fileInp,'FlowElemDomain'),nc_isvar(fileInp,'mesh2d_flowelem_domain'))
+            domainNr=str2num(name(end-7:end-4));
+            if nc_isvar(fileInp,'FlowElemDomain')
+                FlowElemDomain=ncread(fileInp,'FlowElemDomain');
+            elseif nc_isvar(fileInp,'mesh2d_flowelem_domain')
+                FlowElemDomain=ncread(fileInp,'mesh2d_flowelem_domain');
             end
-            
-        case 'd3d'
-            %% Delft3D 4
-            % to be implemented
-            
-        case 'simona'
-            %% SIMONA (WAQUA/TRIWAQ)
-            % to be implemented
-            
-    end
+            Data.value(:,FlowElemDomain~=domainNr,:)=[];
+            if strcmpi(OPT.varName,'uv')
+                Data.ucx(:,FlowElemDomain~=domainNr,:)=[];
+                Data.ucy(:,FlowElemDomain~=domainNr,:)=[];
+            end
+        end
+        
+    case 'd3d'
+        %% Delft3D 4
+        % to be implemented
+        
+    case 'simona'
+        %% SIMONA (WAQUA/TRIWAQ)
+        % to be implemented
+        
 end
 
 %% dimension information

@@ -33,12 +33,12 @@ if isempty(modelType)
 end
 
 % varName
-varNames={'Water level','waterlevel';
-    'Water depth','waterdepth';
+varNames={'Water level','wl';
+    'Water depth','wd';
     'x-velocity','x_velocity';
     'y-velocity','y_velocity';
-    'Salinity','salinity';
-    'Temperature','temperature';
+    'Salinity','sal';
+    'Temperature','tem';
     'z-coordinates (pos. up) of cell centers','Zcen';
     'z-coordinates (pos. up) of cell interfaces','Zint'};
 if strcmp(modelType,'dfm'); varNames{end+1,1}='Other info from .nc-file'; end
@@ -83,7 +83,7 @@ if ~strcmp(modelType,'dfm') || ismember('laydim',dimNames) % layer
         if isempty(option)
             disp('EHY_getmodeldata_interactive was stopped by user');return;
         elseif option==1
-            OPT.layer = cell2mat(inputdlg('Layer nr:','',1,{gridInfo.no_layers}));
+            OPT.layer = cell2mat(inputdlg('Layer nr:','',1,{num2str(gridInfo.no_layers)}));
         end
     end
 end

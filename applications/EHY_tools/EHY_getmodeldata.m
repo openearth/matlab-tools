@@ -94,7 +94,7 @@ switch modelType
         % open inputfile
         infonc          = ncinfo(inputFile);
         variablesOnFile = {infonc.Variables.Name};
-        nr_var     = get_nr({infonc.Variables.Name},OPT.nameOnFile);
+        nr_var     = get_nr(lower(variablesOnFile),lower(OPT.nameOnFile));
         dimNames   = {infonc.Variables(nr_var).Dimensions.Name};
         dimensions = fliplr(infonc.Variables(nr_var).Size);
         
@@ -133,8 +133,8 @@ switch modelType
         
         % put value(_x/_y) in output structure 'Data'
         if exist('value','var')
-            if size(value,2)==1
-                Data.val(:,1)=value(index_requested,:);
+            if size(value,2)==1 || strcmp(dimNames{1},'general_structures')
+                Data.val=value(index_requested,:);
             elseif ndims(value)==2
                 Data.val(:,Data.exist_stat)=value(index_requested,stationNrNoNan);
                 Data.val(:,~Data.exist_stat)=NaN;
@@ -314,7 +314,7 @@ switch modelType
                 % get data
                 switch OPT.varName
                     case 'wl'
-                        Data.val(:,i_stat)         =D.value(nr_stat,:);
+                        Data.val(:,i_stat)         =D.value(nr_stat,time_index);
                 end
             end
         end
@@ -327,7 +327,7 @@ switch modelType
                 % open data file
                 D          = read_sobeknc(inputFile);
                 refdate    = ncreadatt(inputFile, 'time','units');
-                Data.times = D.time/1440./60. + datenum(refdate(15:end),'yyyy-mm-dd  HH:MM:SS'); ;
+                Data.times = D.time/1440./60. + datenum(refdate(15:end),'yyyy-mm-dd  HH:MM:SS');
                 % get data
                 switch OPT.varName
                     case 'wl'

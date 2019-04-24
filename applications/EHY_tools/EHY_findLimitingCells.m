@@ -6,7 +6,9 @@ function EHY_findLimitingCells(varargin)
 
 % Example1: EHY_findLimitingCells
 % Example2: EHY_findLimitingCells('D:\model_map.nc')
-% Example3: EHY_findLimitingCells('D:\model_map.nc','writeMaxVel',0)
+% Example3: EHY_findLimitingCells('D:\model_002_map.nc') % partitioned run
+% Example4: EHY_findLimitingCells('D:\model_002_map.nc','writeMaxVel',0)
+% Example5: EHY_findLimitingCells('D:\model_002_map.nc','writeMaxVel',0,'timeseriesDT',1)
 
 % created by Julien Groenenboom, February 2018
 
@@ -61,71 +63,47 @@ elseif length(varargin)>0
     end
 end
 
-%%
+%% process
 outputDir=[fileparts(mapFile) '\..\' OPT.outputDir '\'];
 if ~exist(outputDir); mkdir(outputDir); end
 
-if ~isempty(str2num(mapFile(end-10:end-7))) && strcmp(mapFile(end-11),'_')
-    disp(['  You are probably processing a simulation that used multiple partitions.' char(10),...
-        '  Please note that the administration of limiting cells in parallel simulations was not 100% correct in previous versions of DFM.' char(10),...
-        '  This has been fixed for DFM versions >= 1.2.0.8405. More info? > Contact Julien' char(10) ,...
-        '  Work-around for older versions: Use a simulation on one partition.' char(10) ,...
-        '  This script will now get the info from the different domains and merge the limiting cells.']);
-    
-    mapFiles=dir([fileparts(mapFile) filesep '*_map.nc']);
-else
-    [pathstr, name, ext]=fileparts(mapFile);
-    mapFiles(1).name=[name ext];
+% maximum velocities
+if OPT.writeMaxVel
+    Data = EHY_getMapModelData(mapFile,'varName','uv','mergePartitions',1);
+    if ndims(Data.ucy)==2
+        mag=sqrt(Data.ucx.^2+Data.ucy.^2);
+    else
+        mag=max(sqrt(Data.ucx.^2+Data.ucy.^2),[],3); % maximum over depth
+    end
+    MAXVEL=prctile(mag,OPT.percentile)';
 end
 
-% initialise ALL (merge the partitions)
-Xcen=[];
-Ycen=[];
-MAXVEL=[];
-Xlim=[];
-Ylim=[];
-NUMLIMDT=[];
-
-for iF=1:length(mapFiles)
-    mapFile=[fileparts(mapFile) filesep mapFiles(iF).name];
-    
-    if length(mapFiles)>1
-        disp(['working on mapFile: ' num2str(iF) '/' num2str(length(mapFiles)) ])
+% limiting cells
+numlimdtFiles=dir([fileparts(mapFile) filesep '*_numlimdt.xyz']);
+if ~isempty(numlimdtFiles)
+    XYZ=[];
+    for iF=1:length(numlimdtFiles)
+        XYZ=[XYZ; importdata([fileparts(mapFile) filesep numlimdtFiles(iF).name])];
     end
-    
-    gridInfo=EHY_getGridInfo(mapFile,{'XYcen','no_layers'});
-    x_part=gridInfo.Xcen; % xCen of partition
-    y_part=gridInfo.Ycen; % yCen of partition
-    
-    % ALL
-    Xcen=[Xcen;x_part];
-    Ycen=[Ycen;y_part];
-    
-    % maximum velocities
-    if OPT.writeMaxVel
-        Data = EHY_getMapModelData(mapFile,'varName','uv');
-        if ndims(Data.ucy)==2
-            mag=sqrt(Data.ucx.^2+Data.ucy.^2);
-        else
-            mag=max(sqrt(Data.ucx.^2+Data.ucy.^2),[],3); % maximum over depth
-        end
-        if size(mag,1)==1
-            MAXVEL=[MAXVEL; mag'];
-        else
-            MAXVEL=[MAXVEL; prctile(mag,OPT.percentile)'];
-        end
-    end
-    
-    % limiting cells
+    Xlim=XYZ(:,1);Ylim=XYZ(:,2);NUMLIMDT=XYZ(:,3);
+else
+    disp('Reading numlimdt from *_map.nc ...')
+    disp('To avoid this, set ''Wrimap_numlimdt = 1'' in the mdu-file')
     time=EHY_getmodeldata_getDatenumsFromOutputfile(mapFile);
     time=time(end);
-    Data = EHY_getMapModelData(mapFile,'varName','numlimdt','t0',time,'tend',time);
-    numlimdt_part=Data.value';
-    
-    limInd=find(numlimdt_part>0);
-    NUMLIMDT=[NUMLIMDT; numlimdt_part(limInd)];
-    Xlim=[Xlim; x_part(limInd)];
-    Ylim=[Ylim; y_part(limInd)];
+    Data = EHY_getMapModelData(mapFile,'varName','numlimdt','t0',time,'tend',time,'mergePartitions',1);
+    NUMLIMDT=Data.value';
+    limInd=find(NUMLIMDT>0);
+end
+
+if OPT.writeMaxVel || ~exist('Xlim','var')
+    gridInfo=EHY_getGridInfo(mapFile,{'XYcen','no_layers'},'mergePartitions',1);
+    Xcen=gridInfo.Xcen;
+    Ycen=gridInfo.Ycen;
+    if ~exist('Xlim','var')
+        Xlim=Xcen(limInd);
+        Ylim=Ycen(limInd);
+    end
 end
 
 % sort descending
@@ -143,6 +121,8 @@ if ~isempty(Xlim)
     tekal('write',outputFile,[Xlim Ylim]);
     copyfile(outputFile,strrep(outputFile,'.pol','.ldb'))
     delft3d_io_xyn('write',strrep(outputFile,'.pol','_obs.xyn'),Xlim,Ylim,cellstr(num2str(NUMLIMDT)))
+    top10ind=1:min([length(Xlim) 10]);
+    delft3d_io_xyn('write',strrep(outputFile,'.pol','_top10_obs.xyn'),Xlim(top10ind),Ylim(top10ind),cellstr(num2str(NUMLIMDT(top10ind))))
     dlmwrite(strrep(outputFile,'.pol','.xyz'),[Xlim Ylim NUMLIMDT],'delimiter',' ','precision','%20.7f')
     try % copy network to outputDir
         mdFile=EHY_getMdFile(fileparts(fileparts(mapFile)));
@@ -165,11 +145,11 @@ fclose all;
 
 %% timeseries of time step
 if OPT.timeseriesDT
-    disp('start reading timestep-info from *_his.nc file');
+    disp('start reading timestep-info from *his.nc file');
     hisFile=dir([fileparts(mapFile) filesep '*_his.nc']);
     hisFile=[fileparts(mapFile) filesep hisFile(1).name];
     Data = EHY_getmodeldata(hisFile,'','dfm','varName','timestep');
-    disp('finished reading timestep-info from _his.nc file');
+    disp('finished reading timestep-info from *his.nc file');
     figure('visible','off');
     hold on; grid on;
     plot(Data.times,Data.val,'b');
@@ -181,8 +161,11 @@ if OPT.timeseriesDT
     datetick('x','dd-mmm-''yy','keeplimits','keepticks');
     legend({'timestep','mean(timestep)'});
     ylabel('time-varying time step');
+    title(['Mean dt (from *his.nc file): ' num2str(mean(Data.val)) ' s - Max dt : ' num2str(mdu.time.DtMax) ' s'])
     saveas(gcf,[outputDir 'timestep.png']);
     disp(['created figure: ' outputDir 'timestep.png'])
+    disp('Note that the average timestep is mean(dt) from timeseries of his file,')
+    disp('check the out.txt to get the exact average timestep of the simulation.')
 end
 
 end

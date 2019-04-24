@@ -64,8 +64,12 @@ if OPT.mergePartitions==1 && strcmp(modelType,'dfm') && strcmp(inputFile(end-6:e
             fn=fieldnames(gridInfoPart);
         else
             for iFN=1:length(fn)
-                if strcmp(fn{iFN},'face_nodes_x') || strcmp(fn{iFN},'face_nodes_y')
+                if any(strcmp(fn{iFN},{'face_nodes_x','face_nodes_y'}))
                     gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
+                elseif any(strcmp(fn{iFN},{'Xcor','Ycor','Xcen','Ycen','depth_cen','depth_cor'}))
+                    gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}); gridInfoPart.(fn{iFN})];
+                else
+                    % skip, info is the same in all partitions
                 end
             end
         end
@@ -116,6 +120,7 @@ switch modelType
                             E.layer_perc=repmat(1/lyrs,lyrs,1);
                         end
                     end
+
                 case 'outputfile'
                     infonc = ncinfo(inputFile);
                     if ismember('no_layers',wantedOutput)
@@ -163,10 +168,7 @@ switch modelType
                     end
                     if ismember('Z',wantedOutput)
                         % his-file
-                        if ~isempty(strmatch('LayCoord_cc',{infonc.Variables.Name},'exact')) % old fm version
-                            E.Zcen=ncread(inputFile,'LayCoord_cc');
-                            E.Zint=ncread(inputFile,'LayCoord_w');
-                        elseif ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact'))
+                        if ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact')) 
                             E.Zcen=ncread(inputFile,'mesh2d_layer_z');
                             E.Zint=ncread(inputFile,'mesh2d_interface_z');
                         elseif ~isempty(strmatch('zcoordinate_c',{infonc.Variables.Name},'exact'))
@@ -179,8 +181,11 @@ switch modelType
                             perc=ncread(inputFile,'mesh2d_interface_sigma');
                             bl=ncread(inputFile,'mesh2d_flowelem_bl');
                             E.Zint=-repmat(bl,1,length(perc)).*repmat(perc',length(bl),1);
-                            E.Zcen=(E.Zint(:,2:end)+E.Zint(:,1:end-1))/2;
+                            E.Zcen=(E.Zint (:,2:end)+E.Zint(:,1:end-1))/2;
                             E.thickness=diff(E.Zint,[],2);
+                        elseif ~isempty(strmatch('LayCoord_cc',{infonc.Variables.Name},'exact'))
+                            E.Zcen=ncread(inputFile,'LayCoord_cc');
+                            E.Zint=ncread(inputFile,'LayCoord_w');
                         end
                     end
                     if ismember('layer_model',wantedOutput)
@@ -192,9 +197,7 @@ switch modelType
                                 E.layer_model='z-model';
                             elseif ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact')) % _map.nc
                                 E.layer_model='sigma-model';
-                            elseif ~isempty(strmatch('zcoordinate_c',{infonc.Variables.Name},'exact'))
-                                E.layer_model='sigma-model';
-                            else % not in merged_map.nc, try to get this info from mdFile
+                            else % try to get this info from mdFile
                                 try
                                     mdFile=EHY_getMdFile(inputFile);
                                     gridInfo=EHY_getGridInfo(mdFile,'layer_model');
@@ -439,9 +442,9 @@ if isnumeric(filename); disp('EHY_getGridInfo_interactive stopped by user.'); re
 varargin{1}=[pathname filename];
 
 % wanted output
-outputParameters={'no_layers','dimensions'};
+outputParameters={'no_layers','dimensions','XYcor','XYcen','depth','layer_model','face_nodes_xy','area','Z','layer_perc'};
 option=listdlg('PromptString','Choose wanted output parameters (Use CTRL to select multiple options):','ListString',...
-    outputParameters,'ListSize',[300 100]);
+    outputParameters,'ListSize',[300 200]);
 if isempty(option); disp('EHY_getGridInfo_interactive was stopped by user');return; end
 varargin(2:1+length(option))=outputParameters(option);
 
