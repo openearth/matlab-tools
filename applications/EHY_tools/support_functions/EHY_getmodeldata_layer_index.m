@@ -1,4 +1,5 @@
 function OPT=EHY_getmodeldata_layer_index(OPT,no_layers)
+
 if all(OPT.layer==0)
     OPT.layer=1:no_layers;
 elseif no_layers==1 && length(OPT.layer)>1
@@ -12,8 +13,10 @@ elseif any(OPT.layer>no_layers)
     disp(['OPT.layer is set to [' num2str(1:no_layers) ']'])
     OPT.layer=1:no_layers;
 end
-if strcmp(OPT.varName,'Zint')
+
+if strcmp(OPT.varName,'Zint') || strcmp(OPT.varName,'zcoordinate_w')
     % return all data > no_layers+1
     OPT.layer=1:no_layers+1;
 end
+
 end
