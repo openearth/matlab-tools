@@ -300,7 +300,7 @@ elseif length(tmp)>0
                 
                 %% Look for strings
                 
-                if ~strcmpi(keyword,'commnt')
+                if ~strcmpi(keyword,'commnt') && ~strncmp(keyword,'#',1)
                     [string,strstat] = strselect(value,'#');
                     if strstat ==1
                         value = string;
@@ -312,7 +312,7 @@ elseif length(tmp)>0
                 %% Assign value
                 if isempty(keyword)
                     STRUCT.keywords.(keyword_last)=[STRUCT.keywords.(keyword_last),value];
-                elseif strcmpi(keyword,'commnt')
+                elseif strcmpi(keyword,'commnt') || strncmp(keyword,'#',1)
                     count.comment  = count.comment + 1;
                     STRUCT.comments{count.comment} = value;
                 else
