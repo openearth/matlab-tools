@@ -33,12 +33,12 @@ if isempty(modelType)
 end
 
 % varName
-varNames={'Water level','wl';
-    'Water depth','wd';
+varNames={'Water level','waterlevel';
+    'Water depth','waterdepth';
     'x-velocity','x_velocity';
     'y-velocity','y_velocity';
-    'Salinity','sal';
-    'Temperature','tem';
+    'Salinity','salinity';
+    'Temperature','temperature';
     'z-coordinates (pos. up) of cell centers','Zcen';
     'z-coordinates (pos. up) of cell interfaces','Zint'};
 if strcmp(modelType,'dfm'); varNames{end+1,1}='Other info from .nc-file'; end

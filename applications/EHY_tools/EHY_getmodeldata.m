@@ -69,7 +69,7 @@ if ~isempty  (OPT.tint         ) OPT.tint = OPT.tint/1440.    ; end % From minut
 if ~isnumeric(OPT.layer        ) OPT.layer=str2num(OPT.layer) ; end
 
 %% Get name of the parameter as known on output file
-OPT.nameOnFile = nameOnFile(inputFile,OPT.varName);
+OPT.varName = nameOnFile(inputFile,OPT.varName);
 
 %% Get time information from simulation and determine index of required times
 Data.times                               = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
@@ -94,7 +94,7 @@ switch modelType
         % open inputfile
         infonc          = ncinfo(inputFile);
         variablesOnFile = {infonc.Variables.Name};
-        nr_var     = get_nr(lower(variablesOnFile),lower(OPT.nameOnFile));
+        nr_var     = get_nr(lower(variablesOnFile),lower(OPT.varName));
         dimNames   = {infonc.Variables(nr_var).Dimensions.Name};
         dimensions = fliplr(infonc.Variables(nr_var).Size);
         
@@ -122,9 +122,9 @@ switch modelType
         
         if ~ismember(OPT.varName,{'uv'})
             if length(order)==1
-                value     =  ncread_blocks(inputFile,OPT.nameOnFile,start,count);
+                value     =  ncread_blocks(inputFile,OPT.varName,start,count);
             else
-                value     =  permute(ncread_blocks(inputFile,OPT.nameOnFile,start,count),order);
+                value     =  permute(ncread_blocks(inputFile,OPT.varName,start,count),order);
             end
         else
             value_x   =  permute(ncread_blocks(inputFile,'x_velocity',start,count),order);
@@ -437,7 +437,7 @@ switch modelType
         if strcmpi(varName,'Zint'       ) newName = 'zcoordinate_w'; end
         
     case 'd3d'
-        
+
     case 'simona'
 end
 

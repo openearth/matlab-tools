@@ -15,7 +15,7 @@ function gridInfo=EHY_getGridInfo(inputFile,varargin)
 %               face_nodes_xy           E.face_nodes_x & E.face_nodes_y
 %               area                    E.area
 %               Z                       E.Zcen & E.Zint
-%               layer_perc              E.layer_perc (bed to surface)
+%               layer_perc              E.layer_perc (bed to surface), sum=100
 % varargin{2:3) <keyword/value> pair
 %               stations                celll array of station names
 %                                       identical to specified in input for
@@ -177,7 +177,10 @@ switch modelType
                         end
                         
                         % map
-                        if ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact'))
+                        if ~isempty(strmatch('mesh2d_face_z',{infonc.Variables.Name},'exact'))
+                            % z-layer model
+                            E.Zcen=ncread(inputFile,'mesh2d_face_z');
+                        elseif ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact'))
                             perc=ncread(inputFile,'mesh2d_interface_sigma');
                             bl=ncread(inputFile,'mesh2d_flowelem_bl');
                             E.Zint=-repmat(bl,1,length(perc)).*repmat(perc',length(bl),1);
@@ -300,11 +303,29 @@ switch modelType
             
             case 'mdFile'
                 mdf=delft3d_io_mdf('read',inputFile);
+               
                 if ismember('no_layers',wantedOutput)
-                    E.no_layers=mdf.keywords.MNKmax(3);
+                        E.no_layers=mdf.keywords.mnkmax(3);
                 end
                 if ismember('dimensions',wantedOutput)
-                    E.MNKmax=mdf.keywords.MNKmax;
+                        E.MNKmax=mdf.keywords.mnkmax;
+                end
+                if ismember('layer_model',wantedOutput)
+                    if isfield(mdf.keywords,'zmodel') && strcmpi(mdf.keywords.zmodel,'y')
+                        E.layer_model='z-model';
+                    else
+                        E.layer_model='sigma-model';
+                    end
+                end
+                if ismember('layer_perc',wantedOutput)
+                    E.layer_perc=mdf.keywords.thick;
+                end
+                if ismember('Z',wantedOutput)
+                    dmy=EHY_getGridInfo(inputFile,{'layer_model','layer_perc'});
+                    if strcmp(dmy.layer_model,'z-model')
+                        dh=mdf.keywords.ztop-mdf.keywords.zbot;
+                        E.Z=mdf.keywords.zbot+cumsum([0 dmy.layer_perc]/100*dh);
+                    end
                 end
                 
             case {'grid','network'}
@@ -342,8 +363,15 @@ switch modelType
                         E.depth_cen = -1.*vs_let(trih,'his-const','DPS','quiet');
                     end
                     if ismember('layer_perc', wantedOutput)
-                        E.layer_perc = flipud(vs_let(trih,'his-const','THICK','quiet'));
+                        E.layer_perc = 100*flipud(vs_let(trih,'his-const','THICK','quiet'));
                     end
+                    if ismember('Z', wantedOutput)
+                        dmy=EHY_getGridInfo(inputFile,{'layer_model'});
+                        if strcmp(dmy.layer_model,'z-model')
+                            E.Z = vs_let(trih,'his-const','ZK','quiet');
+                        end
+                    end
+                    
                 end
         end % typeOfModelFile
         
