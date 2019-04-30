@@ -1,10 +1,13 @@
-function S = datestrnan(varargin)
+function S = datestrnan(D,varargin)
 %DATESTRNAN   datestr-version that does not crash on NaNs
 %
+%    S = DATESTRNAN(D,varargin) where varargin are the 
+%    usual input arguments to DATESTR,
+%    
 %    S = DATESTRNAN(...,FillSymbol) where FillSymbol 
 %    is the symbol returned in case of NaNs,
 %
-%    S = DATESTRNAN(V) uses default FillSymbol =''
+%    S = DATESTRNAN(D) uses default FillSymbol =' ' (space)
 %
 %    Example
 %    S = datestrnan([nan now],'yyyy','*')
@@ -45,21 +48,19 @@ function S = datestrnan(varargin)
 % $HeadURL$
 % $Keywords: $
 
-   V          = varargin{1};
-   if nargin ==1
-   FillValue  = ' ';
+   if length(varargin) <=1
+       FillValue = ' ';
    else
-   FillValue  = varargin{end};
+       FillValue = varargin{end};
+       varargin  = varargin(1:end-1);
    end
    if length(FillValue)>1
        error(['FillValue should be only one character, not:',FillValue])
    end
-   mask       = ~isnan(V);
-   S2         = datestr(V(mask),varargin{2:end-1});
-   sz         = size(S2); sz(1) = length(V);
-   S          = repmat(FillValue,sz);
-   index      = find(mask);
-   S(index,:) = S2;
-   
-   
-   
+   mask      = ~isnan(D);
+   S2        = datestr(D(mask),varargin{:});
+   sz        = size(S2); sz(1) = length(D);
+   S         = repmat(FillValue,sz);
+   S(mask,:) = S2;
+end
+   %EOF
