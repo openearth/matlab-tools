@@ -205,6 +205,7 @@ switch modelType
                                     mdFile=EHY_getMdFile(inputFile);
                                     gridInfo=EHY_getGridInfo(mdFile,'layer_model');
                                     E.layer_model=gridInfo.layer_model;
+                                    disp('loaded ''layer-model'' from .mdu-file');
                                 end
                             end
                         end

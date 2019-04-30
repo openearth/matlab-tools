@@ -26,7 +26,10 @@ while loop>0
     loop=loop-1;
     %% determine mdFile
     % the mdFile itself was given
-    [~, name, ext] = fileparts(filename);
+    [pathstr, name, ext] = fileparts(filename);
+    if isempty(pathstr)
+        filename=[pwd filesep name ext];
+    end
     if ismember(ext,{'.mdu','.mdf'}) || ~isempty(strfind(lower(name),'siminp'))
         mdFile=filename;
     end
