@@ -161,11 +161,12 @@ if OPT.timeseriesDT
     datetick('x','dd-mmm-''yy','keeplimits','keepticks');
     legend({'timestep','mean(timestep)'});
     ylabel('time-varying time step');
-    title(['Mean dt (from *his.nc file): ' num2str(mean(Data.val)) ' s - Max dt : ' num2str(mdu.time.DtMax) ' s'])
+    disp('start reading end part of out.txt')
+    runTimeInfo=EHY_runTimeInfo(mapFile);
+    disp('finished end part of out.txt')
+    title(['Mean dt (from *his.nc file): ' num2str(runTimeInfo.aveTimeStep_S) ' s - Max dt : ' num2str(runTimeInfo.maxTimeStep_S) ' s'])
     saveas(gcf,[outputDir 'timestep.png']);
     disp(['created figure: ' outputDir 'timestep.png'])
-    disp('Note that the average timestep is mean(dt) from timeseries of his file,')
-    disp('check the out.txt to get the exact average timestep of the simulation.')
 end
 
 end
