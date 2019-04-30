@@ -154,7 +154,7 @@ if OPT.timeseriesDT
     disp('start reading end part of out.txt')
     runTimeInfo=EHY_runTimeInfo(mapFile);
     meandt=runTimeInfo.aveTimeStep_S;
-    disp('finished end part of out.txt')
+    disp('finished reading end part of out.txt')
     
     figure('visible','off');
     hold on; grid on;
