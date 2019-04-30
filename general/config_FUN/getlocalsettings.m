@@ -61,17 +61,9 @@ else
 end
 
 % make path if necessary
-<<<<<<< .mine
 if ~exist(configpath,'dir')
     mkdir(configpath)
 end
-||||||| .r14377
-mkdir(configpath)
-=======
-if exist(configpath, 'dir') == false
-    mkdir(configpath)
-end
->>>>>>> .r15012
 
 % define config file
 configfile = fullfile(configpath, 'config');
