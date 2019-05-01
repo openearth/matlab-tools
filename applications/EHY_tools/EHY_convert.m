@@ -384,7 +384,7 @@ end
                 fprintf(fid,'%s\n',['BOX MNMN=(' sprintf('%5.0f',1) ',' sprintf('%5.0f',nrange(1)) ';' ...
                     sprintf('%5.0f',msize+1) ',' sprintf('%5.0f',nrange(end)) '), VARIABLE_VAL = ']);
                 for iM=1:msize+1
-                    fprintf(fid,[repmat('%8.2f',1,length(nrange)) '\n'],dep(iM,nrange));
+                    fprintf(fid,[repmat('%10.4f',1,length(nrange)) '\n'],dep(iM,nrange));
                 end
             end
             fclose(fid);
