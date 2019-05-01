@@ -65,6 +65,14 @@ if OPT.mergePartitions==1 && strcmp(modelType,'dfm') && strcmp(inputFile(end-6:e
         else
             for iFN=1:length(fn)
                 if any(strcmp(fn{iFN},{'face_nodes_x','face_nodes_y'}))
+                    % some partitions only contain triangles,squares, .. 
+                    nrRows=size(gridInfo.(fn{iFN}),1);
+                    nrRowsPart=size(gridInfoPart.(fn{iFN}),1);
+                    if nrRowsPart>nrRows
+                        gridInfo.(fn{iFN})(nrRows+1:nrRowsPart,:)=NaN;
+                    elseif nrRowsPart<nrRows
+                        gridInfoPart.(fn{iFN})(nrRowsPart+1:nrRows,:)=NaN;
+                    end
                     gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'Xcor','Ycor','Xcen','Ycen','depth_cen','depth_cor'}))
                     gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}); gridInfoPart.(fn{iFN})];
@@ -90,14 +98,19 @@ switch modelType
                 
                 case 'mdFile'
                     mdu=dflowfm_io_mdu('read',inputFile);
+                    fn=fieldnames(mdu.geometry);
+                    for iFN=1:length(fn)
+                        % make all variabels names also available in lower-case
+                       mdu.geometry.(lower(fn{iFN}))=mdu.geometry.(fn{iFN});
+                    end
                     if ismember('no_layers',wantedOutput)
-                        E.no_layers=mdu.geometry.Kmx;
+                        E.no_layers=mdu.geometry.kmx;
                         if E.no_layers==0
                             E.no_layers=1;
                         end
                     end
                     if ismember('dimensions',wantedOutput)
-                        netFile=EHY_path([fileparts(inputFile) filesep mdu.geometry.NetFile]);
+                        netFile=EHY_path([fileparts(inputFile) filesep mdu.geometry.netfile]);
                         F=EHY_getGridInfo(netFile,'dimensions');
                         fldnames=fieldnames(F);
                         for iF=1:length(fldnames)
@@ -105,18 +118,18 @@ switch modelType
                         end
                     end
                     if ismember('layer_model',wantedOutput)
-                        if mdu.geometry.Layertype==1
+                        if mdu.geometry.layertype==1
                             E.layer_model='sigma-model';
-                        elseif mdu.geometry.Layertype==2
+                        elseif mdu.geometry.layertype==2
                             E.layer_model='z-model';
                         end
                     end
                     if ismember('layer_perc',wantedOutput)
                         if isfield(mdu.geometry,'StretchCoef')
-                            E.layer_perc=mdu.geometry.StretchCoef;
+                            E.layer_perc=mdu.geometry.stretchcoef;
                         else
                             % assume uniform distribution
-                            lyrs=mdu.geometry.Kmx;
+                            lyrs=mdu.geometry.kmx;
                             E.layer_perc=repmat(1/lyrs,lyrs,1);
                         end
                     end
@@ -201,11 +214,10 @@ switch modelType
                             elseif ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact')) % _map.nc
                                 E.layer_model='sigma-model';
                             else % try to get this info from mdFile
-                                try
+                                try % load 'layer-model' from .mdu-file
                                     mdFile=EHY_getMdFile(inputFile);
                                     gridInfo=EHY_getGridInfo(mdFile,'layer_model');
                                     E.layer_model=gridInfo.layer_model;
-                                    disp('loaded ''layer-model'' from .mdu-file');
                                 end
                             end
                         end

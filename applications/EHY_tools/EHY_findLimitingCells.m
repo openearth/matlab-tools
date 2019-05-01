@@ -94,6 +94,7 @@ else
     Data = EHY_getMapModelData(mapFile,'varName','numlimdt','t0',time,'tend',time,'mergePartitions',1);
     NUMLIMDT=Data.value';
     limInd=find(NUMLIMDT>0);
+    NUMLIMDT=NUMLIMDT(limInd);
 end
 
 if OPT.writeMaxVel || ~exist('Xlim','var')
