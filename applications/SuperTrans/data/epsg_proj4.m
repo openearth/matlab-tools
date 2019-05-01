@@ -94,7 +94,7 @@ else
         if epsg_code==28992 || epsg_code==7415 % here EPSG database is wrong or empty 7415=29882 + NAP!
             str = '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.999908 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.4174,50.3319,465.5542,-0.398957388243134,0.343987817378283,-1.87740163998045,4.0725 +no_defs'; % note that epsg tables are wrong for 28992, need to specify ellipsoid explicity manually !
         else
-            str = urlread(sprintf('http://spatialreference.org/ref/epsg/%d/proj4/',epsg_code));
+            str = urlreadfix(sprintf('https://spatialreference.org/ref/epsg/%d/proj4/',epsg_code));
         end
         try
             fid = fopen(fullfile(epsg_tempdir,epsg_proj4_filename),'w');
@@ -106,6 +106,6 @@ else
     catch
         str = sprintf('failed to retreive well known text of EPSG code %d',epsg_code);
         fprintf(2,'%s: cannot get proj4, please work online to be able to access %s,\n  or place a proj4 file manually at %s\n',...
-            mfilename,'http://spatialreference.org',fullfile(epsg_tempdir,epsg_proj4_filename));
+            mfilename,'https://spatialreference.org',fullfile(epsg_tempdir,epsg_proj4_filename));
     end
 end

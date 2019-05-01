@@ -89,7 +89,7 @@ if exist(fullfile(epsg_tempdir,epsg_wkt_filename),'file')
     fclose(fid);
 else
     try
-        str = urlread(sprintf('http://spatialreference.org/ref/epsg/%d/prettywkt/',epsg_code));
+        str = urlreadfix(sprintf('https://spatialreference.org/ref/epsg/%d/prettywkt/',epsg_code));
         try
             fid = fopen(fullfile(epsg_tempdir,epsg_wkt_filename),'w');
             fwrite(fid,str,'char');
@@ -100,6 +100,6 @@ else
     catch
         str = sprintf('failed to retreive well known text of EPSG code %d',epsg_code);
         fprintf(2,'%s: cannot get wkt, please work online to be able to access %s,\n  or place a wkt file manually at %s\n',...
-            mfilename,'http://spatialreference.org',fullfile(epsg_tempdir,epsg_wkt_filename));
+            mfilename,'https://spatialreference.org',fullfile(epsg_tempdir,epsg_wkt_filename));
     end
 end
