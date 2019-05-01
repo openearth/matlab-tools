@@ -69,7 +69,7 @@ function varargout = readMap(ncfile,varargin)
        if strcmp(conv,'UGRID-0.9')% mapformat 1
            G      = dflowfm.readNetOld(ncfile);% edited by BS
            prefix = '';
-           varname_waterdepth = 'water depth';
+           varname_waterdepth = 'waterdepth';
            varname_layerdim = 'laydim';
            varname_layercoord = 'LayCoord_cc';
        elseif strcmp(conv,'CF-1.6 UGRID-1.0/Deltares-0.8')% mapformat 4
