@@ -214,7 +214,15 @@ switch modelType
                             elseif ~isempty(strmatch('mesh2d_layer_sigma',{infonc.Variables.Name},'exact')) % _map.nc
                                 E.layer_model='sigma-model';
                             else % try to get this info from mdFile
-                                try % load 'layer-model' from .mdu-file
+                                try
+                                    %% Yty to retrieve the llayer model from z coordinate information
+                                    Z = EHY_getGridInfo(inputFile,'Z');
+                                    if Z.Zcen(1,1,2) -  Z.Zcen(1,1,1) ~= Z.Zcen(1,2,2) -  Z.Zcen(1,2,1)
+                                        E.layer_model = 'sigma-model';
+                                    else
+                                        E.layer_model = 'z-model';
+                                    end
+                                catch % load 'layer-model' from .mdu-file
                                     mdFile=EHY_getMdFile(inputFile);
                                     gridInfo=EHY_getGridInfo(mdFile,'layer_model');
                                     E.layer_model=gridInfo.layer_model;
