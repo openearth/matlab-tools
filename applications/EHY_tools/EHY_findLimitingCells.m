@@ -152,10 +152,18 @@ if OPT.timeseriesDT
     Data = EHY_getmodeldata(hisFile,'','dfm','varName','timestep');
     disp('finished reading timestep-info from *his.nc file');
     
-    disp('start reading end part of out.txt')
-    runTimeInfo=EHY_runTimeInfo(mapFile);
-    meandt=runTimeInfo.aveTimeStep_S;
-    disp('finished reading end part of out.txt')
+    maxdt=mdu.time.DtMax;
+    try
+        disp('start reading end part of out.txt')
+        runTimeInfo=EHY_runTimeInfo(mapFile);
+        meandt=runTimeInfo.aveTimeStep_S;
+        disp('finished reading end part of out.txt')
+        figTitle=['Mean dt (from out.txt): ' num2str(meandt) ' s - Max dt : ' num2str(maxdt) ' s'];
+    catch
+        disp('Could not get average timestep from out.txt, will now take mean(dt) from his-file')
+        meandt=mean(Data.val);
+        figTitle=['Mean dt (from *his.nc): ' num2str(meandt) ' s - Max dt : ' num2str(maxdt) ' s'];
+    end
     
     figure('visible','off');
     hold on; grid on;
@@ -168,7 +176,7 @@ if OPT.timeseriesDT
     datetick('x','dd-mmm-''yy','keeplimits','keepticks');
     legend({'timestep','mean(timestep)'});
     ylabel('time-varying time step');
-    title(['Mean dt (from out.txt): ' num2str(meandt) ' s - Max dt : ' num2str(meandt) ' s'])
+    title(figTitle)
     saveas(gcf,[outputDir 'timestep.png']);
     disp(['created figure: ' outputDir 'timestep.png'])
 end

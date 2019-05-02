@@ -2,7 +2,7 @@ function EHY_plotMapData_FM_interactive
 %% EHY_plotMapData_FM_interactive
 % get data
 Data=EHY_getMapModelData_interactive;
-gridInfo=EHY_getGridInfo(Data.OPT.outputfile,'face_nodes_xy');
+gridInfo=EHY_getGridInfo(Data.OPT.outputfile,{'face_nodes_xy'},'mergePartitions',Data.OPT.mergePartitions);
 
 if length(Data.times)>1
     option=listdlg('PromptString','Plot these time steps (as animation): (Use CTRL to select multiple time steps)','ListString',...
@@ -14,7 +14,11 @@ end
 plotTimes=Data.times(option);
 
 disp([char(10) 'Note that next time you want to plot this data, you can also use:'])
-disp(['gridInfo = EHY_getGridInfo(''' Data.OPT.outputfile ''',''face_nodes_xy'');' ])
+if Data.OPT.mergePartitions==1
+    disp(['gridInfo = EHY_getGridInfo(''' Data.OPT.outputfile ''',''face_nodes_xy'',''mergePartitions'',1);' ])
+else
+    disp(['gridInfo = EHY_getGridInfo(''' Data.OPT.outputfile ''',''face_nodes_xy'');' ])
+end
 disp(['EHY_plotMapData_FM(gridInfo,Data.value(1,:));' ])
 
 disp('start plotting the top-view data...')

@@ -64,6 +64,15 @@ if length(datenums)>1
     end
 end
 
+% mergePartitions
+if strcmp(modelType,'dfm') && strcmp(outputfile(end-6:end),'_map.nc') && ~isempty(str2num(outputfile(end-10:end-7)))
+    option=listdlg('PromptString','Do you want to merge the info from different partitions?','SelectionMode','single','ListString',...
+        {'Yes','No'},'ListSize',[300 100]);
+    if option==1
+        OPT.mergePartitions=1;
+    end
+end
+
 if strcmp(OPT.varName,'wl')
     OPT=rmfield(OPT,'varName');
 end
@@ -71,7 +80,11 @@ extraText='';
 if exist('OPT','var')
     fn=fieldnames(OPT);
     for iF=1:length(fn)
-        extraText=[extraText ',''' fn{iF} ''',''' OPT.(fn{iF}) ''''];
+        if ischar(OPT.(fn{iF}))
+            extraText=[extraText ',''' fn{iF} ''',''' OPT.(fn{iF}) ''''];
+        elseif isnumeric(OPT.(fn{iF}))
+            extraText=[extraText ',''' fn{iF} ''',' num2str(OPT.(fn{iF}))];
+        end
     end
 end
 
