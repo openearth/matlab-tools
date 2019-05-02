@@ -120,7 +120,7 @@ switch modelType
         if length(dimensions) == 3 start = [1 1 nrTimeStart]; count        = [Inf Inf nr_times_clip]; end
         order                 =  length(dimensions):-1:1;
         
-        if ~ismember(OPT.varName,{'uv'})
+        if ~ismember(OPT.varName,{'x_velocity'})
             if length(order)==1
                 value     =  ncread_blocks(inputFile,OPT.varName,start,count);
             else
