@@ -53,8 +53,11 @@ for mm = 1:length(mapFiles)
     end
     
     dimensionsSequence = [1:length(varInfo.Dimension)];
-    if find(~cellfun('isempty',regexp(varInfo.Dimension,'time'))) == 1
-        dimensionsSequence(1:2) = [2 1];
+    if find(~cellfun('isempty',regexp(varInfo.Dimension,'time')))
+        IDtime = find(~cellfun('isempty',regexp(varInfo.Dimension,'time')));
+        if lengthID(IDtime) > 1
+            dimensionsSequence(1:2) = [2 1];
+        end
     end
     
     dataPartition = nc_varget([mapFiles(mm).folder,filesep,mapFiles(mm).name],varName,startID,lengthID);
