@@ -65,7 +65,7 @@ if strcmp(modelType,'dfm')
     dimLengths=[infonc.Variables(nr_var).Dimensions.Length];
 end
 
-if ~strcmp(modelType,'dfm') || ismember('stations',dimNames) % stat_name
+if ~strcmp(modelType,'dfm') || ismember('stations',dimNames) || ismember('cross_section',dimNames) % stat_name
     stationNames = cellstr(EHY_getStationNames(outputfile,modelType,'varName',OPT.varName));
     option=listdlg('PromptString','From which station would you like you to load the data? (Use CTRL to select multiple stations)','ListString',...
         stationNames,'ListSize',[500 200]);

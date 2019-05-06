@@ -99,7 +99,7 @@ switch modelType
         dimensions = fliplr(infonc.Variables(nr_var).Size);
         
         % station info
-        if ismember('stations',dimNames)
+        if ismember('stations',dimNames) || ismember('cross_section',dimNames)
             stationX = ncread(inputFile,'station_x_coordinate');
             stationY = ncread(inputFile,'station_y_coordinate');
             Data.location( Data.exist_stat,1:2)=[stationX(stationNrNoNan,1) stationY(stationNrNoNan,1)];
