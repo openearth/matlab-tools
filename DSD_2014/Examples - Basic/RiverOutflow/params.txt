@@ -1,0 +1,123 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% XBeach parameter settings input file                                     %%%
+%%%                                                                          %%%
+%%% date:     21-Sep-2011 03:08:51                                           %%%
+%%% function: xb_write_params                                                %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% Discharge boundary conditions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+disch_loc_file        = discharge_locations.txt
+disch_timeseries_file = discharge_timeseries.txt
+
+%%% Flow boundary condition parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+back                  = 0
+epsi                  = 1
+
+%%% Flow numerics parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+hmin                  = 0.050000
+
+%%% Flow parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+smag                  = 0
+
+%%% Grid parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+gridform              = delft3d
+depfile               = outflow.dep
+xyfile                = outflow.grd
+posdwn                = 1
+alfa                  = 0
+xori                  = 0
+yori                  = 0
+thetamin              = 190
+thetamax              = 350
+dtheta                = 10
+thetanaut             = 1
+
+%%% Initial conditions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+zs0                   = 0
+
+%%% Model time %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+tstop                 = 360000
+CFL                   = 0.500000
+
+%%% Morphology parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+morfac                = 100
+morstart              = 20000
+wetslp                = 0.100000
+
+%%% Physical constants %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+g                     = 9.810000
+rho                   = 1025
+
+%%% Sediment transport parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+facsl                 = 1.600000
+facua                 = 0.200000
+bulk                  = 0
+
+%%% Wave boundary condition parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+instat                = 0
+taper                 = 0.000001
+Hrms                  = 2
+Tm01                  = 8
+dir0                  = 240
+m                     = 64
+
+%%% Wave breaking parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+break                 = 2
+gamma                 = 0.800000
+alpha                 = 1
+
+%%% Wave numerics parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+wavint                = 6000
+maxerror              = 0.001000
+
+%%% Wave-current interaction parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+wci                   = 0
+
+%%% Output variables %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ncfilename            = xboutput.nc
+outputformat          = netcdf
+tint                  = 6000
+tstart                = 0
+
+nglobalvar            = 17
+thetamean
+Fx
+Fy
+H
+ccg
+hh
+urms
+DR
+u
+v
+zb
+zs
+sedero
+Subg
+Svbg
+Susg
+Svsg
+
+npoints               = 7
+100. 800. 4
+200. 800. 4
+300. 800. 4 
+400. 800. 4 
+500. 800. 4 
+600. 800. 4 
+700. 800. 4 
