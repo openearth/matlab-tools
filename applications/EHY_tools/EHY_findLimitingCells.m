@@ -117,6 +117,11 @@ NUMLIMDT=NUMLIMDT(I);
 % export
 disp(['You can find the created files in the directory:' char(10) outputDir]),...
     
+try
+    mdFile=EHY_getMdFile(fileparts(fileparts(mapFile)));
+    mdu=dflowfm_io_mdu('read',mdFile);
+end
+
 if ~isempty(Xlim)
     outputFile=[outputDir 'restricting_nodes.pol'];
     tekal('write',outputFile,[Xlim Ylim]);
@@ -126,8 +131,6 @@ if ~isempty(Xlim)
     delft3d_io_xyn('write',strrep(outputFile,'.pol','_top10_obs.xyn'),Xlim(top10ind),Ylim(top10ind),cellstr(num2str(NUMLIMDT(top10ind))))
     dlmwrite(strrep(outputFile,'.pol','.xyz'),[Xlim Ylim NUMLIMDT],'delimiter',' ','precision','%20.7f')
     try % copy network to outputDir
-        mdFile=EHY_getMdFile(fileparts(fileparts(mapFile)));
-        mdu=dflowfm_io_mdu('read',mdFile);
         fullWinPathNetwork=EHY_getFullWinPath(mdu.geometry.NetFile,fileparts(mdFile));
         copyfile(fullWinPathNetwork,outputDir)
     end
@@ -152,17 +155,22 @@ if OPT.timeseriesDT
     Data = EHY_getmodeldata(hisFile,'','dfm','varName','timestep');
     disp('finished reading timestep-info from *his.nc file');
     
-    maxdt=mdu.time.DtMax;
+    try % if mdFile was found
+        maxdt=num2str(mdu.time.DtMax);
+    catch
+        maxdt='???';
+    end
+    
     try
         disp('start reading end part of out.txt')
         runTimeInfo=EHY_runTimeInfo(mapFile);
         meandt=runTimeInfo.aveTimeStep_S;
         disp('finished reading end part of out.txt')
-        figTitle=['Mean dt (from out.txt): ' num2str(meandt) ' s - Max dt : ' num2str(maxdt) ' s'];
+        figTitle=['Mean dt (from out.txt): ' num2str(meandt) ' s - Max dt : ' maxdt ' s'];
     catch
         disp('Could not get average timestep from out.txt, will now take mean(dt) from his-file')
         meandt=mean(Data.val);
-        figTitle=['Mean dt (from *his.nc): ' num2str(meandt) ' s - Max dt : ' num2str(maxdt) ' s'];
+        figTitle=['Mean dt (from *his.nc): ' num2str(meandt) ' s - Max dt : ' maxdt ' s'];
     end
     
     figure('visible','off');
