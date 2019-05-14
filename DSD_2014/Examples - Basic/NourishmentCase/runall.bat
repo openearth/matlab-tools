@@ -1,9 +1,0 @@
-cd reference
-call run_model.bat
-cd ..
-cd shoreface
-call run_model.bat
-cd ..
-cd beach
-call run_model.bat
-cd ..
