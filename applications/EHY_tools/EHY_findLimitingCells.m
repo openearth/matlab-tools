@@ -89,6 +89,7 @@ if ~isempty(numlimdtFiles)
 else
     disp('Reading numlimdt from *_map.nc ...')
     disp('To avoid this, set ''Wrimap_numlimdt = 1'' in the mdu-file')
+    disp('and/or wait untill the simulation has finished.')
     time=EHY_getmodeldata_getDatenumsFromOutputfile(mapFile);
     time=time(end);
     Data = EHY_getMapModelData(mapFile,'varName','numlimdt','t0',time,'tend',time,'mergePartitions',1);

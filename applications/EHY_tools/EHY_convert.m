@@ -999,6 +999,11 @@ end
         if OPT.saveOutputFile
             [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
+            skipIndex=find(max(lat) > 90 | min(lat) < -90 | max(lon) > 180 | min(lon) < -180);
+            if ~isempty(skipIndex)
+                disp('Some points outside [lat,lon]-range of [-90:90,-180:180]. These points will be skipped')
+                lat(skipIndex)=[];lon(skipIndex)=[];
+            end
             KMLPlaceMark(lat,lon,tempFile,'icon',OPT.iconFile);
             copyfile(tempFile,outputFile);
             delete(tempFile)

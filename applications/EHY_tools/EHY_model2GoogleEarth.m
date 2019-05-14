@@ -21,6 +21,7 @@ OPT.obsIconFile='http://maps.google.com/mapfiles/kml/paddle/blu-stars.png';
 OPT.srcIconFile='http://maps.google.com/mapfiles/kml/shapes/square.png';
 OPT.convertNetwork=1;
 OPT.fromEPSG=[];
+OPT.overwrite=0; % 0=user will be asked if it's ok to overwrite, 1=overwrite existing file
 
 if nargin>1
 OPT = setproperty(OPT,varargin);
@@ -29,6 +30,7 @@ end
 % create OPT2 to use in EHY_convert-call
 OPT2.saveOutputFile=OPT.saveOutputFile;
 OPT2.fromEPSG=OPT.fromEPSG;
+OPT2.overwrite=OPT.overwrite;
 
 %%
 if nargin==0
