@@ -110,7 +110,7 @@ function varargout = EHY_plot_google_map(varargin)
 % warning and work-around 
 disp('<strong>This function probably gives a warning like:</strong>')
 disp('  Possible reasons: no network connection, quota exceeded, or some other error.')
-disp('  work-around untill this if fixed: use EHY_plot_esri_map')
+disp('  work-around untill this if fixed: use EHY_plot_satellite_map')
 pause(3)
 
 persistent apiKey
