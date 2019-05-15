@@ -45,7 +45,12 @@ case 'read'
             else
                 var = tmp.Data{igroup,2}{ipar,2};
             end
-            mdu.(grpnam).(parnam) = var;
+            if isletter(parnam(1)) % first char is a letter
+                mdu.(grpnam).(parnam) = var;
+            else  % first char is number (not allowed in MATLAB)
+                % e.g. mdu.particles.3Dtype > mdu.particles.mdu_3Dtype
+                mdu.(grpnam).(['mdu_' parnam]) = var;
+            end
        end
    end
 
