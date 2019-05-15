@@ -97,7 +97,7 @@ mult_x  = [1  ; i_start; i_stop; no_freq];
 mult_y  = [1.0; 1.0    ; 0.       ; 0.0 ];
 mult    = interp1(mult_x,mult_y,linspace(1,no_freq,no_freq));
 amp                 = amp.*mult;
-data (1:no_times) = 0.;
+data (1:no_times,1) = 0.;
 for i_freq = 1: i_stop
     data = data + amp(i_freq)*cos(2*pi*freq(i_freq)*times + phase(i_freq));
 end
