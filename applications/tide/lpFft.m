@@ -74,6 +74,10 @@ no_times  = length(times);
 
 %% Determine amplitudes, phases and frequencies
 [freq,amp,phase] = simpleFFT(data,fsam);
+if size(freq ,1) ~= 1 freq  = freq' ; end
+if size(amp  ,1) ~= 1 amp   = amp'  ; end
+if size(phase,1) ~= 1 phase = phase'; end 
+
 no_freq          = length(freq);
 clear data
 
@@ -93,7 +97,7 @@ mult_x  = [1  ; i_start; i_stop; no_freq];
 mult_y  = [1.0; 1.0    ; 0.       ; 0.0 ];
 mult    = interp1(mult_x,mult_y,linspace(1,no_freq,no_freq));
 amp                 = amp.*mult;
-data (1:no_times,1) = 0.;
+data (1:no_times) = 0.;
 for i_freq = 1: i_stop
     data = data + amp(i_freq)*cos(2*pi*freq(i_freq)*times + phase(i_freq));
 end
