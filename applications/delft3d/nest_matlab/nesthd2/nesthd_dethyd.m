@@ -14,14 +14,21 @@
 %                      (time-series)
 % limitations        :
 % subroutines called : getwgh, check, getwcr
+%
 %***********************************************************************
+      % temporary: to ensure that old shenzen history file keeps working
+      shenzen = false;
+      [~,name,~] = fileparts(fileInp);
+      if strcmpi(name,'trih-w41_2') shenzen = true; end
+
+      %% Initialisation
       error = false;
 
       h = waitbar(0,'Generating Hydrodynamic boundary conditions','Color',[0.831 0.816 0.784]);
 
       nopnt  = length(bnd.DATA);
       notims = nfs_inf.notims;
-      t0     = nfs_inf.times(1); 
+      t0     = nfs_inf.times(1);
       tend   = nfs_inf.times(notims);
       kmax   = nfs_inf.kmax;
       names  = nfs_inf.names;
@@ -33,16 +40,16 @@
       end
 
       modelType = EHY_getModelType(fileInp);
-      
+
       %% -----cycle over all boundary support points
       for ipnt = 1: nopnt
           type = lower(bnd.DATA(ipnt).bndtype);
           waitbar(ipnt/nopnt);
-          
+
           wl = [];
           uu = [];
           vv = [];
-          
+
           %% -----------first get nesting stations, weights and orientation
           mnbcsp = bnd.Name{ipnt};
           switch type
@@ -55,7 +62,7 @@
               case 'n'
                   [mnnes,weight,angle,ori,x,y] = nesthd_getwgh2 (fid_adm,mnbcsp,'n');
           end
-          
+
           %% Error if no nesting stations are found
           if isempty(mnnes)
               error = true;
@@ -63,16 +70,16 @@
               simona2mdf_message({'Inconsistancy between boundary definition and' 'administration file'},'Window','Nesthd2 Error','Close',true,'n_sec',10);
               return
           end
-          
+
           %% Temporary for testing with old hong kong model
-          if strcmpi(modelType,'d3d')
+          if shenzen
               for i_stat = 1: length(mnnes)
                   i_start = strfind(mnnes{i_stat},'(');
                   i_com   = strfind(mnnes{i_stat},',');
                   mnnes{i_stat} = [mnnes{i_stat}(1:i_start(2)) mnnes{i_stat}(i_start(2) + 2:i_com(2))  mnnes{i_stat}(i_com(2) + 2:end)];
               end
           end
-          
+
           %% Get the needed data
           if ismember(type,{'z' 'r' 'x' 'n'})
               data      = EHY_getmodeldata(fileInp,mnnes,modelType,'varName','wl','t0',t0,'tend',tend);
@@ -83,7 +90,7 @@
                   index = find(wl(:,i_stat) == wl(1,i_stat));
                   if length(index) == notims
                       data.exist_stat(i_stat) = false;
-                      weight         (i_stat) = 0.; 
+                      weight         (i_stat) = 0.;
                   end
               end
           end
@@ -92,17 +99,17 @@
               uu        = data.vel_x;
               vv        = data.vel_y;
               [uu,vv]   = nesthd_rotate_vector(uu,vv,pi/2. - angle);
-              
+
               %% Exclude permanently dry points
               for i_stat = 1: 4
                   index_u = find(uu(:,i_stat,1) == uu(1,i_stat,1));
                   index_v = find(vv(:,i_stat,1) == vv(1,i_stat,1));
                   if length(index_u) == notims && length(index_v) == notims
                       data.exist_stat(i_stat) = false;
-                      weight         (i_stat) = 0.; 
+                      weight         (i_stat) = 0.;
                   end
               end
-              
+
               % In case of Zmodel, replace nodata values (-999) with above or below layer
               if kmax>1 && strcmp(add_inf.profile,'3d-profile')==1
                   for itim = 1: notims
@@ -121,11 +128,11 @@
                   end
               end
           end
-          
+
           %% Normalise weights
           wghttot = sum(data.exist_stat.*weight');
           weight  = weight/wghttot;
-          
+
           %% Generate boundary conditions
           for iwght = 1: 4
               nr_key = get_nr(nfs_inf.names,mnnes{iwght});
@@ -138,14 +145,14 @@
                               bndval(itim).value(ipnt,1,1) = bndval(itim).value(ipnt,1,1) + ...
                                                              weight(iwght)*(wl(itim,iwght) + add_inf.a0);
                           end
-                          
+
                           %% Velocity boundaries (perpendicular component)
                       case {'c' 'p'}
                           for itim = 1: notims
                               bndval(itim).value(ipnt,1:kmax,1) = bndval(itim).value(ipnt,1:kmax,1)      + ...
                                                                   squeeze(uu(itim,iwght,:)*weight(iwght))';
                           end
-                          
+
                           %% Rieman boundaries
                       case {'r' 'x'}
                           ori = char(ori);
@@ -162,17 +169,17 @@
                   end
               end
           end
-          
+
           %% Neumann boundaries (still to adjust, hardly ever used)
           switch type
               case 'n'
                   x     = x     (data.exist_stat);
                   y     = y     (data.exist_stat);
-                  mnnes = mnnes (data.exist_stat); 
-                  
+                  mnnes = mnnes (data.exist_stat);
+
                   % Neumann boundaries require 3 surrounding support points
                   if length(x) >= 3
-                      
+
                       % Determine water level gradient
                       for itim = 1: notims
                           gradient_global              = nesthd_tri_grad      (x(1:3),y(1:3),wl(itim,1:3));
@@ -183,17 +190,17 @@
                       bndval(itim).value(ipnt,1,1) = NaN;
                   end
           end
-          
+
           %% Determine time series for the parallel velocity component
           switch type
               case {'x' 'p'}
                   [mnnes,weight,angle]         = nesthd_getwgh2 (fid_adm,mnbcsp,'p');
-                  
+
                   data      = EHY_getmodeldata(fileInp,mnnes,modelType,'varName','uv','t0',t0,'tend',tend);
                   uu        = data.vel_x;
                   vv        = data.vel_y;
                   [uu,vv]   = nesthd_rotate_vector(uu,vv,pi/2. - angle);
-                  
+
                   %% Exclude permanently dry points
                   for i_stat = 1: 4
                       index_u = find(uu(:,i_stat,1) == uu(1,i_stat,1));
@@ -203,8 +210,8 @@
                           weight         (i_stat) = 0.;
                       end
                   end
-                  
-                  
+
+
                   %% Error if no nesting stations are found
                   if isempty(mnnes)
                       error = true;
@@ -212,7 +219,7 @@
                       simona2mdf_message({'Inconsistancy between boundary definition and' 'administration file'},'Window','Nesthd2 Error','Close',true,'n_sec',10);
                       return
                   end
-                  
+
                   %% Temporary for testing with old hong kong model
                   if strcmpi(modelType,'d3d')
                       for i_stat = 1: length(mnnes)
@@ -221,11 +228,11 @@
                           mnnes{i_stat} = [mnnes{i_stat}(1:i_start(2)) mnnes{i_stat}(i_start(2) + 2:i_com(2))  mnnes{i_stat}(i_com(2) + 2:end)];
                       end
                   end
-                                  
+
                   %% Normalise weights
                   wghttot = sum(data.exist_stat.*weight');
                   weight  = weight/wghttot;
-          
+
                   for iwght = 1: 4
                       if data.exist_stat(iwght)
                           for itim = 1: notims
@@ -236,5 +243,5 @@
                   end
           end
       end
-      
+
       close(h);
