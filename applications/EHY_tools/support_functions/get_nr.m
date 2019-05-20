@@ -6,4 +6,4 @@ for i_cell = 1: length(cell_str)
 end
 
 %% Get the index of str in the cell array of strings cell_str
-nr = find(strcmp(str,cell_str) == 1);
+nr = find(strcmpi(str,cell_str) == 1);
