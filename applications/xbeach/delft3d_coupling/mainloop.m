@@ -11,7 +11,6 @@ close all;
 clc;
 addpath('/work/cjoh296/matlab/oet');
 oetsettings;
-addpath('/home/cjoh296/matlab'); %overide oet functions xb_swan_write, xb_swan_coords, trirst
 warning off;
 
 
