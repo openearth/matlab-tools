@@ -77,7 +77,7 @@ for n = 1:length(sp2)
     % create spectrum file
     if length(sp2) > 1
         [fd fn fe] = fileparts(fname);
-        fnames{n} = sprintf('%s%03d%s', fullfile(fd, fn), n, fe);
+        fnames{n} = sprintf('%s%03d%s.sp2', fullfile(fd, fn), n, fe);
         fid = fopen(fnames{n}, 'wt');
     else
         fnames = fname;
@@ -180,9 +180,14 @@ for n = 1:length(sp2)
                 fprintf(fid,'FACTOR\n');
                 fprintf(fid,'%20.8e\n',factor);
 
-                % write data
+				% format field width based on order of magnitude
+				maximum_quantity = max(max(data));
+				ord = floor( log10(maximum_quantity));
+				field_fmt = ['%' num2str(ord+2) 'u'];
+                
+				% write data
                 for k = 1:size(data,1)
-                    fprintf(fid,[repmat('%7d',1,size(data,2)) '\n'],round(data(k,:)));
+                    fprintf(fid,[repmat(field_fmt, 1, size(data,2)) '\n'], round(data(k,:)));
                 end
             end
         end

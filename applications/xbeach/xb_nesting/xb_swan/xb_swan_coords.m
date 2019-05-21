@@ -73,20 +73,27 @@ OPT = setproperty(OPT, varargin{:});
 %% convert coordinates
 
 if ~isempty(cs_in) && ~isempty(cs_out) && ~isempty(ct_in) && ~isempty(ct_out)
-    
-    load('CoordinateSystems.mat');
-    load('Operations.mat');
-    
+
+
     for n = 1:length(sp2)
 
         % convert coordinates
         if ~strcmpi(cs_in, cs_out) || ~strcmpi(ct_in, ct_out)
             data = sp2(n).location.data;
-            for i = 1:size(data, 1)
-                data(i,:) = ConvertCoordinates(data(i,1), data(i,2), ...
-                    cs_in, ct_in, cs_out, ct_out, CoordinateSystems, Operations);
-            end
-            sp2(n).location.data = data;
+            [data(:,1), data(:,2), ~] = convertCoordinates(data(:,1), data(:,2), ...
+                    'CS1.name', cs_in, 'CS1.type', ct_in, ...
+                    'CS2.name', cs_out, 'CS2.type', ct_out);
         end
-    end
+
+		sp2(n).location.data = data;
+
+		switch ct_out
+		case 'geo'
+			sp2(n).location.type = 'latlon'
+		case 'xy'
+			sp2(n).location.type = 'xy'
+		end
+
+     end
+end
 end
