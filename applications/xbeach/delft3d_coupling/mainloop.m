@@ -3,6 +3,7 @@
 % v1.4  Nederhoff   Sep-18
 % v1.5  Johnson     Nov-18
 % v1.5.1 Johnson    Jan-19
+% v1.5.2 Johnson    May-13
 
 %% prepare environment
 clear all;
@@ -22,9 +23,9 @@ warning off;
 home_dir        = pwd                                                           ;
 d3d_mdf         = 'barrier'                                                     ;
 restart_name    = 'tri-rst.barrier'                                             ;
-path_d3d_in     = '/work/cjoh296/delft3d_xbeach_coupling.wd/testing/01_delft3d' ;
-path_XB_in      = '/work/cjoh296/delft3d_xbeach_coupling.wd/testing/02_xbeach'  ;
-path_out        = '/work/cjoh296/delft3d_xbeach_coupling.wd/testing/output'     ;
+path_d3d_in     = '/work/cjoh296/coupled_delft3d_xbeach.wd/models/delft3d/setup' ;
+path_XB_in      = '/work/cjoh296/coupled_delft3d_xbeach.wd/models/xbeach'  ;
+path_out        = '/work/cjoh296/coupled_delft3d_xbeach.wd/testing/output' ; 
 
 delft3d_CRS     = 'WGS 84'                                                      ;
 xbeach_CRS      = 'WGS 84 / UTM zone 15N'                                       ;
@@ -38,17 +39,20 @@ HS_XB_threshold = 0 ; % this is wave height in meters. when delft3d results exce
 
 % Time management
 Itdate_jd         = datenum(2008, 7, 25)                ;  % julian day for Itdate
-simulation_dur    = 11520*60                            ;  % [s] simulation duration
-dt_coupling       = 10*60                               ;  % [s] coupling xbeach/delft3d timestep
+simulation_dur    = 1*24*60*60 + 21*60*60               ;  % [s] simulation duration
+dt_coupling       = 30*60                               ;  % [s] coupling xbeach/delft3d timestep
 timesteps         = simulation_dur / dt_coupling        ;  % number of delft3d runs
-time_start        = '20080828.000000'                   ;  % yyyymmdd
-time_start_offset = 48960*60                            ;  % [s] start of delft3d from Itdate
 dt_times          = ones(timesteps, 1) * dt_coupling    ;  % [s]   so 10 minutes = 10 x 60 = 600 s
 %dt_times(1)       = 60*60*6                             ;  % [s]   spin-up time for Delft3D. inputs/BCs need to reflect this
 %mor_start         = dt_times(1)                         ;  % [s]   D3D spinup
-mor_start         = 0                                   ;
-spinup_xb         = 600                                 ;  % [s]   model schematization dependent
 
+%timesteps         = 243 ;                                  % ad-hoc to optimize run time based on maximum bed level change -- CJ
+%dt_times          = 60*[ones(1,24)*30 ones(1,36)*10 ones(1,144)*5 ones(1,30)*30]; % ad-hoc as above -- CJ
+mor_start         = 0                                   ;
+spinup_xb         = 1200                                 ;  % [s]  model schematization dependent. using an ad-hoc number for now
+
+time_start        = '20080831.150000'                   ;  % yyyymmdd
+time_start_offset = 54180*60                            ;  % [s] start of delft3d from Itdate
 
 % profiling
 profile_table_fn = [path_out, '/comp_times.mat'];
@@ -100,21 +104,25 @@ xb_grid_fn      = [path_XB_in, '/xy.grd'];
 [xb_x, xb_y]    = wlgrid('read', xb_grid_fn);
 xb_x            = xb_x';
 xb_y            = xb_y';
-for jj = 1:(nx-2)
-	for ii = 1:(ny-2)
 
-		% check for valid grid cell
-		if ~isnan(cen.x(jj,ii)) && ~isnan(cen.y(jj,ii))
-		
-			% Check distance
-			[index, distance(jj,ii), twoout] = nearxy(xb_x(:), xb_y(:), cen.x(jj,ii), cen.y(jj,ii));
+% check for cached data in our test case
+if exist('./init_cache.mat', 'file') == 2
+	disp('Initialization cache found. Loading data...') ;
+	load('init_cache.mat') ;
 
+else
+	for jj = 1:(nx-2)
+		for ii = 1:(ny-2)
+			% check for valid grid cell
+			if ~isnan(cen.x(jj,ii)) && ~isnan(cen.y(jj,ii))
+				
+				% Check distance
+				[index, distance(jj,ii), twoout] = nearxy(xb_x(:), xb_y(:), cen.x(jj,ii), cen.y(jj,ii));
+			
+			end
 		end
-
 	end
-
 end
-
 
 
 
@@ -607,7 +615,7 @@ for dt = 1:timesteps
 		tide_file = [path_XB_new, '/tide.txt'];
 		fid       = fopen(tide_file, 'wb');
 		fprintf(fid, '%f %f %f %f %f\n', 0, SE, SW, NW, NE);
-		fprintf(fid, '%f %f %f %f %f\n', spinup_xb + dt_coupling, SE, SW, NW, NE);
+		fprintf(fid, '%f %f %f %f %f\n', spinup_xb + dt_time, SE, SW, NW, NE);
 		fclose(fid);
 
         % B. Copy D3D waves (only possible when known, otherwise use 'old'
