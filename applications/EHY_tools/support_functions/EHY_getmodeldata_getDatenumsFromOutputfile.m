@@ -35,6 +35,7 @@ switch modelType
             % history output file from simulation
             trih         = qpfopen(inputFile);
             datenums     = qpread(trih,'water level','times');
+            datenums     = datenums([true;diff(datenums)>0]); %JV: delete invalid time steps in unfinished D3D simulation
             itdate       = vs_let(trih,'his-const','ITDATE','quiet');
             varargout{1} = datenum([num2str(itdate(1),'%8.8i') '  ' num2str(itdate(2),'%6.6i')], 'yyyymmdd  HHMMSS');   
         elseif ~isempty(strfind(inputFile,'trim'))
