@@ -70,10 +70,16 @@ coorsStop=findstr('</coordinates>',char(kmlFile)')-1;
 ldb=[nan nan];
 for ii=1:length(coorsStart)
     tLdb=str2num(char(kmlFile(coorsStart(ii):coorsStop(ii)))');
-    if size(tLdb,1)~=1 % J. Groenenboom - take 2 different kml formats into account
-        ldb=[ldb;tLdb(:,1:2); nan nan];
-    else
-        ldb=[ldb;tLdb(1:2:end)' tLdb(2:2:end)'; nan nan];
+    if mod(size(tLdb,2),3)==0 && mod(size(tLdb,2),2)~=0 % J. Groenenboom - take 2 different kml formats into account
+        ldb=[ldb;tLdb(1:3:end)' tLdb(2:3:end)'; nan nan]; % kml consist of [lon,lat,z]-coordinates
+    elseif mod(size(tLdb,2),3)~=0 && mod(size(tLdb,2),2)==0
+        ldb=[ldb;tLdb(1:2:end)' tLdb(2:2:end)'; nan nan]; % kml consist of [lon,lat]-coordinates
+    else % if size(tLdb,2) is a multiple of 2,3 and factor n
+        if length(unique(tLdb(3:3:end)))==1 % z-value is always the same
+            ldb=[ldb;tLdb(1:3:end)' tLdb(2:3:end)'; nan nan]; % kml consist of [lon,lat,z]-coordinates
+        else
+            ldb=[ldb;tLdb(1:2:end)' tLdb(2:2:end)'; nan nan]; % kml consist of [lon,lat]-coordinates
+        end
     end
 end
 
