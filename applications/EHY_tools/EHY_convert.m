@@ -572,11 +572,23 @@ end
 % kml2xyn
     function [output,OPT]=EHY_convert_kml2xyn(inputFile,outputFile,OPT)
         kml = xml_read(inputFile);
+        if any(contains(fieldnames(kml),'Document')) %JV: remove unwanted kml level
+            kml = kml.Document;
+        end
+        if any(contains(fieldnames(kml),'Folder')) %JV: remove unwanted kml level
+            kml.Placemark = kml.Folder.Placemark;
+        end
         for ii=1:length(kml.Placemark)
             names{ii,1}=kml.Placemark(ii).name;
-            coords=regexp(kml.Placemark(ii).Point.coordinates,',','split');
-            x(ii,1)=str2num(coords{1});
-            y(ii,1)=str2num(coords{2});
+            if ischar(kml.Placemark(ii).Point.coordinates) %for normal kml files
+                coords=regexp(kml.Placemark(ii).Point.coordinates,',','split');
+                x(ii,1)=str2num(coords{1});
+                y(ii,1)=str2num(coords{2});
+            else %JV: for kml files written with ldb2kml
+                coords=kml.Placemark(ii).Point.coordinates;
+                x(ii,1)=coords(1);
+                y(ii,1)=coords(2);
+            end
         end
         output={x y names};
         if OPT.saveOutputFile
