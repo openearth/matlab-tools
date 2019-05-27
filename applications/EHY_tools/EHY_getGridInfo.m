@@ -16,6 +16,8 @@ function gridInfo=EHY_getGridInfo(inputFile,varargin)
 %               area                    E.area
 %               Z                       E.Zcen & E.Zint
 %               layer_perc              E.layer_perc (bed to surface), sum=100
+%               spherical               E.spherical (0=cartesian,1=spherical)
+%
 % varargin{2:3) <keyword/value> pair
 %               stations                celll array of station names
 %                                       identical to specified in input for
@@ -62,10 +64,13 @@ if OPT.mergePartitions==1 && strcmp(modelType,'dfm') && strcmp(inputFile(end-6:e
         if iM==1
             gridInfo=gridInfoPart;
             fn=fieldnames(gridInfoPart);
+            ind=strmatch('face_nodes',fn,'exact');
+            fn=[fn(ind); fn];
+            fn(ind+1)=[];
         else
             for iFN=1:length(fn)
                 if any(strcmp(fn{iFN},{'face_nodes_x','face_nodes_y'}))
-                    % some partitions only contain triangles,squares, .. 
+                    % some partitions only contain triangles,squares, ..
                     nrRows=size(gridInfo.(fn{iFN}),1);
                     nrRowsPart=size(gridInfoPart.(fn{iFN}),1);
                     if nrRowsPart>nrRows
@@ -74,6 +79,8 @@ if OPT.mergePartitions==1 && strcmp(modelType,'dfm') && strcmp(inputFile(end-6:e
                         gridInfoPart.(fn{iFN})(nrRowsPart+1:nrRows,:)=NaN;
                     end
                     gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
+                elseif any(strcmp(fn{iFN},{'face_nodes'}))
+                    gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) length(gridInfo.Xcor)+gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'Xcor','Ycor','Xcen','Ycen','depth_cen','depth_cor'}))
                     gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}); gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'no_NetNode','no_NetElem'}))
@@ -103,7 +110,7 @@ switch modelType
                     fn=fieldnames(mdu.geometry);
                     for iFN=1:length(fn)
                         % make all variabels names also available in lower-case
-                       mdu.geometry.(lower(fn{iFN}))=mdu.geometry.(fn{iFN});
+                        mdu.geometry.(lower(fn{iFN}))=mdu.geometry.(fn{iFN});
                     end
                     if ismember('no_layers',wantedOutput)
                         E.no_layers=mdu.geometry.kmx;
@@ -135,7 +142,7 @@ switch modelType
                             E.layer_perc=repmat(1/lyrs,lyrs,1);
                         end
                     end
-
+                    
                 case 'outputfile'
                     infonc = ncinfo(inputFile);
                     if ismember('no_layers',wantedOutput)
@@ -183,7 +190,7 @@ switch modelType
                     end
                     if ismember('Z',wantedOutput)
                         % his-file
-                        if ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact')) 
+                        if ~isempty(strmatch('mesh2d_layer_z',{infonc.Variables.Name},'exact'))
                             E.Zcen=ncread(inputFile,'mesh2d_layer_z');
                             E.Zint=ncread(inputFile,'mesh2d_interface_z');
                         elseif ~isempty(strmatch('zcoordinate_c',{infonc.Variables.Name},'exact'))
@@ -267,6 +274,7 @@ switch modelType
                             E.face_nodes_x=ncread(inputFile,'FlowElemContour_x');
                             E.face_nodes_y=ncread(inputFile,'FlowElemContour_y');
                         elseif ~isempty(strmatch('mesh2d_face_x_bnd',{infonc.Variables.Name},'exact')) % old fm version
+                            E.face_nodes=ncread(inputFile,'mesh2d_face_nodes');
                             E.face_nodes_x=ncread(inputFile,'mesh2d_face_x_bnd');
                             E.face_nodes_y=ncread(inputFile,'mesh2d_face_y_bnd');
                         end
@@ -294,6 +302,13 @@ switch modelType
                             E.area=ncread(inputFile,'mesh2d_flowelem_ba');
                         end
                     end
+                    if ismember('spherical', wantedOutput)
+                        if nc_isvar(inputFile,'wgs84')
+                            E.spherical = 1;
+                        else
+                            E.spherical = 0;
+                        end
+                    end
                     
                     % If partitioned run, delete ghost cells
                     [~, name]=fileparts(inputFile);
@@ -304,22 +319,35 @@ switch modelType
                         elseif nc_isvar(inputFile,'mesh2d_flowelem_domain')
                             FlowElemDomain=ncread(inputFile,'mesh2d_flowelem_domain');
                         end
+                        % FlowElemGlobal(ghostCellsCenter)
+                        ghostCellsCenter=FlowElemDomain~=domainNr;
+                        % to be implemenetd for ghostCellsCorner
+%                         face_nodes=ncread(inputFile,'mesh2d_face_nodes')';
+%                         ghostCellsCorner=unique(face_nodes(ghostCellsCenter,:));
+%                         % delete ghostCellsCorner
+%                         if ismember('XYcor',wantedOutput)
+%                             E.Xcor(ghostCellsCorner)=[];
+%                             E.Ycor(ghostCellsCorner)=[];
+%                         end
+                                               
+                        % delete ghostCellsCenter
                         if ismember('face_nodes_xy',wantedOutput)
-                            E.face_nodes_x(:,FlowElemDomain~=domainNr)=[];
-                            E.face_nodes_y(:,FlowElemDomain~=domainNr)=[];
+                            E.face_nodes(:,ghostCellsCenter)=[];
+                            E.face_nodes_x(:,ghostCellsCenter)=[];
+                            E.face_nodes_y(:,ghostCellsCenter)=[];
                         end
                         if ismember('XYcen',wantedOutput)
-                            E.Xcen(FlowElemDomain~=domainNr)=[];
-                            E.Ycen(FlowElemDomain~=domainNr)=[];
+                            E.Xcen(ghostCellsCenter)=[];
+                            E.Ycen(ghostCellsCenter)=[];
                         end
                         if ismember('depth',wantedOutput)
-                            E.depth_cen(FlowElemDomain~=domainNr)=[];
+                            E.depth_cen(ghostCellsCenter)=[];
                         end
                         if isfield(E,'no_NetElem')
                             E.no_NetElem=sum(FlowElemDomain==domainNr);
                         end
                         if isfield(E,'no_NetNode')
-%                             'warning: Number of NetNodes is prob. too large due to flowlinks in ghostcells'
+                            % warning: Number of NetNodes is prob. too large due to flowlinks in ghostcells
                         end
                     end
                     
@@ -332,12 +360,12 @@ switch modelType
             
             case 'mdFile'
                 mdf=delft3d_io_mdf('read',inputFile);
-               
+                
                 if ismember('no_layers',wantedOutput)
-                        E.no_layers=mdf.keywords.mnkmax(3);
+                    E.no_layers=mdf.keywords.mnkmax(3);
                 end
                 if ismember('dimensions',wantedOutput)
-                        E.MNKmax=mdf.keywords.mnkmax;
+                    E.MNKmax=mdf.keywords.mnkmax;
                 end
                 if ismember('layer_model',wantedOutput)
                     if isfield(mdf.keywords,'zmodel') && strcmpi(mdf.keywords.zmodel,'y')
@@ -375,29 +403,94 @@ switch modelType
                 end
                 
             case 'outputfile'
+                
                 if ~isempty(strfind(name,'trih-'))
+                    % TRIH
+                    
                     trih=vs_use(inputFile,'quiet');
                     if ismember('no_layers',wantedOutput)
                         E.no_layers=vs_get(trih,'his-const',{1},'KMAX','quiet');
                     end
+                    
                     if ismember('dimensions',wantedOutput)
                         E.MNKmax=[vs_get(trih,'his-const',{1},'MMAX','quiet') ...
                             vs_get(trih,'his-const',{1},'NMAX','quiet') ...
                             vs_get(trih,'his-const',{1},'KMAX','quiet')];
                     end
+                    
                     if ismember('layer_model', wantedOutput)
                         E.layer_model = lower(strtrim(vs_get(trih,'his-const' ,'LAYER_MODEL','quiet')));
                     end
+                    
                     if ismember('depth', wantedOutput)
                         E.depth_cen = -1.*vs_let(trih,'his-const','DPS','quiet');
                     end
+                    
                     if ismember('layer_perc', wantedOutput)
                         E.layer_perc = 100*flipud(vs_let(trih,'his-const','THICK','quiet'));
                     end
+                    
                     if ismember('Z', wantedOutput)
                         dmy=EHY_getGridInfo(inputFile,{'layer_model'});
                         if strcmp(dmy.layer_model,'z-model')
                             E.Z = vs_let(trih,'his-const','ZK','quiet');
+                        end
+                    end
+                    
+                elseif ~isempty(strfind(name,'trim-'))
+                    % TRIM
+                    trim=vs_use(inputFile,'quiet');
+
+                    if ismember('no_layers',wantedOutput)
+                        E.no_layers=vs_let(trim, 'map-const' ,'KMAX','quiet');
+                    end
+                    
+                    if ismember('dimensions',wantedOutput)
+                        E.MNKmax=[vs_get(trim,'map-const',{1},'MMAX','quiet') ...
+                            vs_get(trim,'map-const',{1},'NMAX','quiet') ...
+                            vs_get(trim,'map-const',{1},'KMAX','quiet')];
+                    end
+                    
+                    if any(ismember({'XYcor','XYcen','depth'},wantedOutput))
+                        G = vs_meshgrid2dcorcen(trim);
+                    end
+                    
+                    if ismember('XYcor',wantedOutput)
+                        E.Xcor = G.cor.x;
+                        E.Ycor = G.cor.y;
+                    end
+                    
+                    if ismember('XYcen',wantedOutput)
+                        E.Xcen = G.cen.x;
+                        E.Ycen = G.cen.y;
+                    end
+                    
+                    if ismember('depth',wantedOutput)
+                        E.depth_cor = -G.cor.dep;
+                        E.depth_cen = -G.cen.dep;
+                    end
+                    
+                    if ismember('layer_model', wantedOutput)
+                        E.layer_model=lower(strtrim(squeeze(vs_let(trim, 'map-const' ,'LAYER_MODEL','quiet'))'));
+                    end
+                    
+                    if ismember('Z', wantedOutput)
+                        dmy=EHY_getGridInfo(inputFile,{'layer_model'});
+                        if strcmp(dmy.layer_model,'z-model')
+                            E.Zint = vs_let(trim,'map-const','ZK','quiet');
+                        end
+                    end
+                    
+                    if ismember('layer_perc',wantedOutput)
+                         E.layer_perc = vs_let(trim,'map-const','THICK','quiet');
+                    end
+                    
+                    if ismember('spherical', wantedOutput)
+                        coordinates = vs_let(trim, 'map-const' ,'COORDINATES'       ,'quiet');
+                        if strcmp(deblank(squeeze(coordinates)'), 'CARTESIAN') || strcmp(deblank(squeeze(coordinates)'), 'CARTHESIAN')
+                            E.spherical = 0;
+                        else
+                            E.spherical = 1;
                         end
                     end
                     
@@ -536,7 +629,7 @@ if exist('OPT','var')
     end
 end
 vararginStr=[vararginStr extraText];
- 
+
 % disp output
 disp([char(10) 'Note that next time you want to get this data, you can also use:'])
 disp(['gridInfo = EHY_getGridInfo(''' inputFile ''',' vararginStr ');'])
