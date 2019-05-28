@@ -250,6 +250,9 @@ for dt = 1:timesteps
         % if there are waves in it!
         d3d_nc      = ['trih-', d3d_mdf , '.dat'];
         Fil         = qpfopen(d3d_nc);
+
+		% I think there is a bug here. Each new SWAN timestep starts with a wave field smaller than
+		% the last output of the previous timestep -- CJ Thu 23 May 2019 05:30:30 PM CDT
         tmp5        = qpread(Fil,'significant wave height','data',0,[1]);
 
         if mean(tmp5.Val) > 0.5
