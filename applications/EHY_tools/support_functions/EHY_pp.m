@@ -184,6 +184,7 @@ for i_per = 1: size(Periods,1)
                 times_meas  = num2str(INFO.Field(1).Data(:,2),'%6.6i');
                 dattim_meas = datenum([dates_meas(:,1:8) times_meas(:,1:6)],'yyyymmddHHMMSS');
                 wlev_meas   = INFO.Field(1).Data(:,Column);
+                wlev_meas(wlev_meas == 999.999) = NaN;     % Skip default values in measurement files
             else
                 % try to get the data from opendap server, only works for dutch stations
                 [dattim_meas,wlev_meas] = EHY_opendap('Parameter','waterhoogte','Station',stations_shortname{i_stat});
