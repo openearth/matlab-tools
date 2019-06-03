@@ -193,7 +193,9 @@ switch modelType
                         end
                     end
                     if ismember('depth',wantedOutput)
-disp('Note : variable ''depth'' will be replaced by ''z'' in next version of EHY_getGridInfo')
+disp('Note : variable ''depth'' will be replaced by ''z'' in next version of EHY_getGridInfo');
+st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_name).name); end  
+
                         if nc_isvar(inputFile,'NetNode_z') % old fm version
                             E.depth_cor=ncread(inputFile,'NetNode_z');
                             try; E.depth_cen=ncread(inputFile,'FlowElem_bl'); end % depth_cen not always available
@@ -567,8 +569,12 @@ disp('Note : variable ''depth'' will be replaced by ''z'' in next version of EHY
                 if ismember('layer_model', wantedOutput)
                     E.layer_model = 'sigma-model';
                 end
-                if ismember('depth', wantedOutput)
+                if ismember('depth', wantedOutput) || ismember('Z', wantedOutput)
+                    if ismember('depth', wantedOutput)
 disp('Note : variable ''depth'' will be replaced by ''z'' in next version of EHY_getGridInfo')
+st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_name).name); end  
+                    end
+                    
                     mn = waquaio(sds,'','wl-mn');
                     if kmax == 1
                         z  = waquaio(sds,'','depth_wl_points');
