@@ -496,13 +496,13 @@ disp('Note : variable ''depth'' will be replaced by ''z'' in next version of EHY
                     end
                     
                     if ismember('XYcor',wantedOutput)
-                        E.Xcor = G.cor.x;
-                        E.Ycor = G.cor.y;
+                        E.Xcor = G.cor.x.*G.cor.mask;
+                        E.Ycor = G.cor.y.*G.cor.mask;
                     end
                     
                     if ismember('XYcen',wantedOutput)
-                        E.Xcen = G.cen.x;
-                        E.Ycen = G.cen.y;
+                        E.Xcen = G.cen.x.*G.cen.mask;
+                        E.Ycen = G.cen.y.*G.cen.mask;
                     end
                     
                     if ismember('layer_model', wantedOutput)
