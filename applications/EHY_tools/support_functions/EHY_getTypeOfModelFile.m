@@ -1,5 +1,5 @@
-function typeOfModelFile=EHY_getTypeOfModelFile(fileInp)
-%% typeOfModelFile=EHY_getTypeOfModelFile(filename)
+function [typeOfModelFile, typeOfModelFileDetail] = EHY_getTypeOfModelFile(fileInp)
+%% [typeOfModelFile, typeOfModelFileDetail] = EHY_getTypeOfModelFile(fileInp)
 %
 % This function returns the typeOfModelFile based on a filename
 % typeOfModelFile can be:
@@ -8,22 +8,18 @@ function typeOfModelFile=EHY_getTypeOfModelFile(fileInp)
 % mdFile
 % outputfile
 %
-% Example1: 	typeOfModelFile=EHY_getTypeOfModelFile('D:\model.mdu')
-% Example2: 	typeOfModelFile=EHY_getTypeOfModelFile('D:\model.obs')
-% Example3: 	typeOfModelFile=EHY_getTypeOfModelFile('D:\trih-r01.dat')
+% Example1: 	typeOfModelFile = EHY_getTypeOfModelFile('D:\model.mdu')
+%                   returns:	typeOfModelFile = 'mdFile'
+% Example2: 	typeOfModelFile = EHY_getTypeOfModelFile('D:\sea_net.nc')
+%                   returns:    typeOfModelFile = 'network'
+% Example3: 	[typeOfModelFile, typeOfModelFileDetail] = EHY_getTypeOfModelFile('D:\trih-r01.dat')
+%                   returns:    typeOfModelFile       = 'outputfile'
+%                               typeOfModelFileDetail = 'trih'
 %
 % support function of the EHY_tools
 % Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
 
-%%
-if nargin==0 % no input was given
-    disp('Open a file')
-    [fileInp, pathname]=uigetfile('*.*','Open a file');
-    if isnumeric(fileInp); disp('EHY_getTypeOfModelFile stopped by user.'); return; end
-    fileInp=[pathname fileInp];
-end
-
-%%
+%% typeOfModelFile
 [pathstr, name, ext] = fileparts(lower(fileInp));
 typeOfModelFile='';
 
@@ -53,7 +49,23 @@ if isempty(typeOfModelFile)
     if ~isempty(strfind([name ext],'_his.nc'))  || ~isempty(strfind([name ext],'_map.nc')) || ...
             ~isempty(strfind([name ext],'trih-'))  || ~isempty(strfind([name ext],'trim-')) || ...
             ~isempty(strfind([name],'sds')) || ~isempty(strfind([name ext],'_fou.nc')) || ...
-             ~isempty(strfind([name ext],'_waqgeom.nc')) 
+            ~isempty(strfind([name ext],'_waqgeom.nc'))
         typeOfModelFile = 'outputfile';
     end
 end
+
+%% typeOfModelFileDetail
+if nargout==2
+    typeOfModelFileDetail='';
+    [~,~,ext]                       = fileparts(fileInp);
+    if length(ext) > 1                            ;  typeOfModelFileDetail = ext(2:end); end
+    if ~isempty(strfind(lower(fileInp),'siminp' ));  typeOfModelFileDetail = 'siminp'; end
+    if ~isempty(strfind(lower(fileInp),'sds'    ));  typeOfModelFileDetail = 'sds'   ; end
+    if ~isempty(strfind(lower(fileInp),'_his.nc'));  typeOfModelFileDetail = 'his_nc'; end
+    if ~isempty(strfind(lower(fileInp),'_map.nc'));  typeOfModelFileDetail = 'map_nc'; end
+    if ~isempty(strfind(lower(fileInp),'_net.nc'));  typeOfModelFileDetail = 'net_nc'; end
+    if ~isempty(strfind(lower(fileInp),'trih'   ));  typeOfModelFileDetail = 'trih'  ; end
+    if ~isempty(strfind(lower(fileInp),'trim'   ));  typeOfModelFileDetail = 'trim'  ; end
+    if ~isempty(strfind(lower(fileInp),'rgf'))    ;  typeOfModelFileDetail = 'grd'   ; end
+end
+
