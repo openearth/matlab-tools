@@ -3,7 +3,7 @@ function filebnd = get_bndname(fileInp)
 % get_bndname : Get the name of teh file with boundary information (direct, from mdf or from siminp file
 
 [pin,~,~]      = fileparts(fileInp);
-[ ~ ,fileType] =  EHY_getModelType(fileInp);
+[ ~ ,fileType] =  EHY_getTypeOfModelFile(fileInp);
 
 switch fileType
     case 'mdf'
