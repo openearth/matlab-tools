@@ -216,11 +216,20 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                             end
 
                             % side-view information
-                            try % try to get this info from mdFile
-                                mdFile=EHY_getMdFile(inputFile);
-                                tmp = EHY_getGridInfo(mdFile,'Z');
-                                E.Zcen_int = tmp.Zcen_int;
-                                E.Zcen_cen = tmp.Zcen_cen;
+                            if nc_isvar(inputFile,'zcoordinate_c')
+                                E.Zcen_cen = ncread_blocks(inputFile,'zcoordinate_c',[1 1 1],[Inf Inf Inf]);
+                            end
+                            if nc_isvar(inputFile,'zcoordinate_w')
+                                E.Zcen_int = ncread_blocks(inputFile,'zcoordinate_w',[1 1 1],[Inf Inf Inf]);
+                            end
+                            
+                            if ~isfield(E,'Zcen_cen')
+                                try % try to get this info from mdFile
+                                    mdFile=EHY_getMdFile(inputFile);
+                                    tmp = EHY_getGridInfo(mdFile,'Z');
+                                    E.Zcen_int = tmp.Zcen_int;
+                                    E.Zcen_cen = tmp.Zcen_cen;
+                                end
                             end
 
                         elseif ~isempty(strfind(inputFile,'map.nc')) % map file
@@ -265,10 +274,11 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                                     gridInfo=EHY_getGridInfo(mdFile,'layer_model');
                                     E.layer_model=gridInfo.layer_model;
                                 end
-                                % word-around2: try to retrieve layer_model from z coordinate information
+                                % word-around2: try to retrieve layer_model
+                                % from z coordinate information (first 2 stations, first time step)
                                 if ~isfield(E,'layer_model')
-                                    Z = EHY_getGridInfo(inputFile,'Z');
-                                    if Z.Zcen_cen(1,1,2) -  Z.Zcen_cen(1,1,1) ~= Z.Zcen_cen(1,2,2) -  Z.Zcen_cen(1,2,1)
+                                    tmp_c  = ncread(inputFile,'zcoordinate_c',[1 1 1],[inf 2 1]);
+                                    if tmp_c(2,1) -  tmp_c(1,1) ~= tmp_c(2,2) -  tmp_c(1,2)
                                         E.layer_model = 'sigma-model';
                                     else
                                         E.layer_model = 'z-model';
@@ -293,6 +303,21 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                                 for i_lay = 1: no_layers
                                     E.layer_perc(i_lay) = (tmp(i_lay + 1) - tmp(i_lay))/(tmp(end) - tmp(1));
                                 end
+                            elseif nc_isvar(inputFile,'zcoordinate_c') && strcmp(layer_model,'sigma-model')
+                                
+                                % Reconstruct interfaces
+                                tmp_c  = ncread(inputFile,'zcoordinate_c',[1 1 1],[inf 1 1]);
+                                surf   = ncread(inputFile,'waterlevel'   ,[1 1  ],[  1 1  ]);
+                                tmp_i(no_layers+1) = surf;
+                                for i_lay = no_layers:-1:1
+                                    tmp_i(i_lay) = tmp_c(i_lay) - (tmp_i(i_lay + 1) - tmp_c(i_lay));
+                                end
+                                
+                                % determine layer percentages
+                                for i_lay = 1: no_layers
+                                    E.layer_perc(i_lay) = (tmp_i(i_lay + 1) - tmp_i(i_lay))/(tmp_i(end) - tmp_i(1));
+                                end
+                                                         
                             else % try to get this info from mdFile
                                 mdFile=EHY_getMdFile(inputFile);
                                 if ~isempty(mdFile)

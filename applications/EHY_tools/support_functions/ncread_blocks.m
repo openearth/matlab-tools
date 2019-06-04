@@ -12,6 +12,7 @@ if all(ismember({'start','count'},who))
     nr_var          = get_nr(variablesOnFile,varName);
     dimensions      = fliplr(infonc.Variables(nr_var).Size);
     nr_times        = dimensions(1);
+    if isinf(nr_times_clip) nr_times_clip = nr_times; end
     
     % devide in blocks
     filesize     = dir(inputFile);
