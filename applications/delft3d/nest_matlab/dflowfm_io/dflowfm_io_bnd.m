@@ -7,7 +7,7 @@ switch lower(cmd)
 
     %% Extract boundary information from the pli's
     case 'read'
-        [~,fileType] = EHY_getModelType(fname);
+        [~,fileType] = EHY_getTypeOfModelFile(fname);
         switch fileType
             case 'pli'
                 filelist{1} = fname;
