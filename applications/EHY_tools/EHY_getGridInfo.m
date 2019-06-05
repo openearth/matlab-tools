@@ -15,7 +15,7 @@ function gridInfo=EHY_getGridInfo(inputFile,varargin)
 %               face_nodes_xy           E.face_nodes_x & E.face_nodes_y
 %               area                    E.area
 %               Z (his-file)            E.Zcen_cen & E.Zcen_int(in NetElem/faces)
-%               Z (map-file)            E.Zcor & E.Zcen
+%               Z (his-/map-file)       E.Zcen (& E.Zcor)
 %               layer_perc              E.layer_perc (bed to surface), sum=100
 %               spherical               E.spherical (0=cartesian,1=spherical)
 %
@@ -251,11 +251,11 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                                 bl=ncread(inputFile,'mesh2d_flowelem_bl');
                                 E.Zcen_int=-repmat(bl,1,length(perc)).*repmat(perc',length(bl),1);
                                 E.Zcen_cen=(E.Zcen_int (:,2:end)+E.Zcen_int(:,1:end-1))/2;
-                                E.thickness=diff(E.Zint,[],2);
                             elseif nc_isvar(inputFile,'LayCoord_cc')
                                 E.Zcen_cen=ncread(inputFile,'LayCoord_cc');
                                 E.Zcen_int=ncread(inputFile,'LayCoord_w');
                             end
+                            E.thickness=diff(E.Zint,[],2);
                         end
                     end
                     if ismember('layer_model',wantedOutput)
@@ -490,7 +490,7 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                     end
                     
                     if ismember('depth', wantedOutput)
-                        E.depth_cen = -1.*vs_let(trih,'his-const','DPS','quiet');
+                        E.depth_cen = -1*vs_let(trih,'his-const','DPS','quiet');
                     end
                     
                     if ismember('layer_perc', wantedOutput)
@@ -498,9 +498,13 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                     end
                     
                     if ismember('Z', wantedOutput)
+                        % top-view information
+                        E.Zcen = -1*vs_let(trih,'his-const','DPS');
+                        
+                        % side-view information
                         tmp=EHY_getGridInfo(inputFile,{'layer_model'});
                         if strcmp(tmp.layer_model,'z-model')
-                            E.Z = vs_let(trih,'his-const','ZK','quiet');
+                            E.Zcen_int = -1*vs_let(trih,'his-const','ZK','quiet');
                         end
                     end
                     
