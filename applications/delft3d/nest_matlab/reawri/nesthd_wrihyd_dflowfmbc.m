@@ -42,7 +42,7 @@ for i_pnt = 1: no_pnt
             l_act = 1;
         end
         
-        if l_act >= 1
+        if lstci == -1 || (lstci >=1 && add_inf.genconc(l))
             %% Header information
             ext_force(l_act).Chapter                  = 'forcing';
             ext_force(l_act).Keyword.Name {1}         = 'Name';
@@ -114,24 +114,10 @@ for i_pnt = 1: no_pnt
         end
     end
     
-    %% Write the series for induvidual support
-    fileTmp = [path filesep 'tmp_' num2str(i_pnt,'%4.4i') '.bc'];
-    dflowfm_io_extfile('write',fileTmp,'ext_force',ext_force,'type','ini');
-end
-
-%% Merge individual files
-copyfile ([path filesep 'tmp_' num2str(1,'%4.4i') '.bc'],fileOut);
-
-for i_pnt = 2: no_pnt
-    tmp_series = [path filesep 'tmp_' num2str(i_pnt,'%4.4i') '.bc'];
-    fid1       = fopen(fileOut,'a');
-    fid2       = fopen(tmp_series,'r');
-    while ~feof(fid2)
-        tline = fgetl(fid2);
-        fprintf(fid1,'%s\n',tline);
+    %% Write the series for induvidual support points, first time open file, after that append
+    if i_pnt == 1
+        dflowfm_io_extfile('write',fileOut,'ext_force',ext_force,'type','ini');
+    else
+        dflowfm_io_extfile('write',fileOut,'ext_force',ext_force,'type','ini','first',false);
     end
-    fclose(fid2);
-    fclose(fid1);
 end
-
-delete([path filesep 'tmp_*.bc']);
