@@ -29,31 +29,34 @@ bnd         = nesthd_get_bnd_data (files{1},'Points',true);
 if isempty(bnd) return; end
 
 %% Get general information from history file
-gen_inf     = nesthd_geninf(files{3});
+gen_inf      = nesthd_geninf(files{3});
+gen_inf.to   = EHY_getModelType(files{4});
+gen_inf.from = EHY_getModelType(files{3});
+
 if OPT.check gen_inf.notims = min(gen_inf.notims,20); end
 nobnd       = length(bnd.DATA);
 kmax        = gen_inf.kmax;
 lstci       = gen_inf.lstci;
 notims      = gen_inf.notims;
 
-% %% Generate hydrodynamic boundary conditions
-% [bndval,error]      = nesthd_dethyd(fid_adm,bnd,gen_inf,add_inf,files{3});
-% if error return; end
-% 
-% %% Vertical interpolation, temporary, not correct place, should be done inside dethyd
-% if isfield(add_inf,'interpolate_z')
-%     bndtype         = {bnd.DATA(:).bndtype};
-%     det_inf         = nesthd_get_general  (add_inf.interpolate_z);
-%     bndval          = nesthd_interpolate_z(bndtype,bndval,gen_inf.rel_pos(1,:), det_inf.rel_pos);
-% end
-% 
-% %% Generate depth averaged bc from 3D simulation
-% [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
-% 
-% %% Write the hydrodynamic boundary conditions to file
-% nesthd_wrihyd (files{4},bnd,gen_inf,bndval, add_inf);
-% 
-% clear bndval
+%% Generate hydrodynamic boundary conditions
+[bndval,error]      = nesthd_dethyd(fid_adm,bnd,gen_inf,add_inf,files{3});
+if error return; end
+
+%% Vertical interpolation, temporary, not correct place, should be done inside dethyd
+if isfield(add_inf,'interpolate_z')
+    bndtype         = {bnd.DATA(:).bndtype};
+    det_inf         = nesthd_get_general  (add_inf.interpolate_z);
+    bndval          = nesthd_interpolate_z(bndtype,bndval,gen_inf.rel_pos(1,:), det_inf.rel_pos);
+end
+
+%% Generate depth averaged bc from 3D simulation
+[bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
+
+%% Write the hydrodynamic boundary conditions to file
+nesthd_wrihyd (files{4},bnd,gen_inf,bndval, add_inf);
+
+clear bndval
 
 %% Generate transport bc if avaialble on history file
 if lstci > 0

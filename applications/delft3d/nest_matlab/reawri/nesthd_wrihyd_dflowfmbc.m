@@ -8,6 +8,13 @@ function nesthd_wrihyd_dflowfmbc(fileOut,bnd,nfs_inf,bndval,add_inf)
 %% Set some general parameters
 no_pnt        = length(bnd.DATA);
 no_times      = length(bndval);
+no_layers     = nfs_inf.nolay;
+thick         = nfs_inf.thick;
+pos(1)        = 0.5*thick(1); 
+for i_lay = 2: no_layers
+    pos(i_lay) = pos(i_lay - 1) + 0.5*(thick(i_lay - 1) + thick(i_lay));
+end
+
 lstci         = -1;
 if length(size(bndval(1).value)) == 3 lstci = nfs_inf.lstci; end
 
@@ -37,32 +44,71 @@ for i_pnt = 1: no_pnt
         
         if l_act >= 1
             %% Header information
-            ext_force(l_act).Chapter          = 'forcing';
-            ext_force(l_act).Keyword.Name {1} = 'Name';
-            ext_force(l_act).Keyword.Value{1} = bnd.Name{i_pnt};
-            ext_force(l_act).Keyword.Name {2} = 'Function';
-            ext_force(l_act).Keyword.Value{2} = 'timeseries';
-            ext_force(l_act).Keyword.Name {3} = 'Time-interpolation';
-            ext_force(l_act).Keyword.Value{3} = 'linear';
-            ext_force(l_act).Keyword.Name {4} = 'Quantity';
-            ext_force(l_act).Keyword.Value{4} = 'time';
-            ext_force(l_act).Keyword.Name {5} = 'Unit';
-            ext_force(l_act).Keyword.Value{5} = ['minutes since ' itdate];
-            ext_force(l_act).Keyword.Name {6} = 'Quantity';
-            ext_force(l_act).Keyword.Value{6} = [quantity 'bnd'];
-            ext_force(l_act).Keyword.Name {7} = 'Unit';
-            ext_force(l_act).Keyword.Value{7} = 'kg/m3';
-            if strcmpi(quantity,'waterlevel'           ) ext_force(l_act).Keyword.Value{7} = 'm'  ; end
-            if strcmpi(quantity,'uxuyadvectionvelocity') ext_force(l_act).Keyword.Value{7} = 'm/s'; end
-            if strcmpi(quantity,'salinity'             ) ext_force(l_act).Keyword.Value{7} = 'psu'; end
-            if strcmpi(quantity,'temperature'          ) ext_force(l_act).Keyword.Value{7} = 'oC' ; end
+            ext_force(l_act).Chapter                  = 'forcing';
+            ext_force(l_act).Keyword.Name {1}         = 'Name';
+            ext_force(l_act).Keyword.Value{1}         = bnd.Name{i_pnt};
+            ext_force(l_act).Keyword.Name {end+1}     = 'Function';
+            if strcmpi(quantity,'waterlevel') ||  strcmpi(add_inf.profile,'uniform')
+                dav                                   = true; 
+                ext_force(l_act).Keyword.Value{end+1} = 'timeseries';
+            elseif strcmpi(add_inf.profile,'3d-profile')
+                dav                                   = false;
+                ext_force(l_act).Keyword.Value{end+1} = 't3d';
+            end    
+            ext_force(l_act).Keyword.Name {end+1}     = 'Time-interpolation';
+            ext_force(l_act).Keyword.Value{end+1}     = 'linear';
+            if ~dav
+                if strcmpi(nfs_inf.layer_model,'sigma-model')
+                    ext_force(l_act).Keyword.Name {end+1} = 'Vertical position type         ';
+                    ext_force(l_act).Keyword.Value{end+1} = 'percentage from bed';
+                    format                                = repmat('%6.3f ',1,no_layers);
+                    ext_force(l_act).Keyword.Name {end+1} = 'Vertical position specification';
+                    ext_force(l_act).Keyword.Value{end+1} = sprintf(format,pos);
+                else
+                    error('Fixed or mixed layers not supported yet')
+                end
+            end
+                
+            ext_force(l_act).Keyword.Name {end+1} = 'Quantity';
+            ext_force(l_act).Keyword.Value{end+1} = 'time';
+            ext_force(l_act).Keyword.Name {end+1} = 'Unit';
+            ext_force(l_act).Keyword.Value{end+1} = ['minutes since ' itdate];
+            if dav
+                ext_force(l_act).Keyword.Name {end+1} = 'Quantity';
+                ext_force(l_act).Keyword.Value{end+1} = [quantity 'bnd'];
+                ext_force(l_act).Keyword.Name {end+1} = 'Unit';
+                ext_force(l_act).Keyword.Value{end+1} = 'kg/m3';
+                if strcmpi(quantity,'waterlevel'           ) ext_force(l_act).Keyword.Value{end} = 'm'  ; end
+                if strcmpi(quantity,'uxuyadvectionvelocity') ext_force(l_act).Keyword.Value{end} = 'm/s'; end
+                if strcmpi(quantity,'salinity'             ) ext_force(l_act).Keyword.Value{end} = 'psu'; end
+                if strcmpi(quantity,'temperature'          ) ext_force(l_act).Keyword.Value{end} = 'oC' ; end
+            else
+                for i_lay = 1: no_layers
+                    ext_force(l_act).Keyword.Name {end+1} = 'Quantity';
+                    ext_force(l_act).Keyword.Value{end+1} = [quantity 'bnd'];
+                    ext_force(l_act).Keyword.Name {end+1} = 'Unit';
+                    ext_force(l_act).Keyword.Value{end+1} = 'kg/m3';
+                    if strcmpi(quantity,'waterlevel'           ) ext_force(l_act).Keyword.Value{end} = 'm'  ; end
+                    if strcmpi(quantity,'uxuyadvectionvelocity') ext_force(l_act).Keyword.Value{end} = 'm/s'; end
+                    if strcmpi(quantity,'salinity'             ) ext_force(l_act).Keyword.Value{end} = 'psu'; end
+                    if strcmpi(quantity,'temperature'          ) ext_force(l_act).Keyword.Value{end} = 'oC' ; end
+                    ext_force(l_act).Keyword.Name {end+1} = 'Vertical position';
+                    ext_force(l_act).Keyword.Value{end+1} = num2str(i_lay,'%3i');
+                end
+            end
             
             %% Series information
             for i_time = 1: no_times
                 ext_force(l_act).values{i_time,1} = (nfs_inf.times(i_time) - nfs_inf.itdate)*1440. + add_inf.timeZone*60.;    % minutes!
-                ext_force(l_act).values(i_time,2) = {bndval(i_time).value(i_pnt,1,l)};
-                if lower(bnd.DATA(i_pnt).bndtype) == 'p' || lower(bnd.DATA(i_pnt).bndtype) == 'x'
-                    ext_force(l).values(i_time,3) = {bndval(i_time).value(i_pnt,2,1)};
+                if dav
+                    ext_force(l_act).values(i_time,2) = {bndval(i_time).value(i_pnt,1,l)};
+                    if lower(bnd.DATA(i_pnt).bndtype) == 'p' || lower(bnd.DATA(i_pnt).bndtype) == 'x'
+                        ext_force(l).values(i_time,3) = {bndval(i_time).value(i_pnt,2,1)};
+                    end
+                else
+                    for i_lay = 1: no_layers
+                        ext_force(l_act).values(i_time,i_lay + 1) = {bndval(i_time).value(i_pnt,i_lay,l)};
+                    end
                 end
             end
         end

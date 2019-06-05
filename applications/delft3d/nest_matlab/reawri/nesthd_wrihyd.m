@@ -1,7 +1,8 @@
 function wrihyd(fileOut,bnd,nfs_inf,bndval,add_inf)
 
 % wrihyd : writes hydrodynamic bc to either Delft3D-Flow format or SIMONA format
-[modelType,fileType] = EHY_getModelType(fileOut);
+modelType    = EHY_getModelType      (fileOut);
+[~,fileType] = EHY_getTypeOfModelFile(fileOut);
 
 switch modelType
    case 'd3d'
