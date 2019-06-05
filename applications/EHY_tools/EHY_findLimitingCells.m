@@ -1,5 +1,5 @@
-function EHY_findLimitingCells(varargin)
-%% EHY_findLimitingCells(varargin)
+function EHY_findLimitingCells(mapFile,varargin)
+%% EHY_findLimitingCells(mapFile,OPT)
 %
 % Analyse limiting cells from a Delft3D-FM map output file
 % Note that the simulation has to be performed on 1 partition only
@@ -20,7 +20,7 @@ OPT.percentile  = 90; % Percentile of flow velocities shown in max. velocities
 OPT.timeseriesDT= 0; % create figure with dt varying over time
 
 % check user input
-if length(varargin)==0
+if ~exist('mapFile','var') && nargin==0
     [filename, pathname]=uigetfile('*_map.nc','Open the model output file');
     if isnumeric(filename); disp('EHY_findLimitingCells stopped by user.'); return; end
     
@@ -47,46 +47,54 @@ if length(varargin)==0
     elseif timeseriesDT==1
         OPT.timeseriesDT=1;
     end
-    
-elseif length(varargin)>0
-    if strcmp(varargin{1}(end-6:end),'_map.nc')
-        mapFile=varargin{1};
+end
+
+% another file that *_map.nc was provided
+if ~strcmp(mapFile(end-6:end),'_map.nc')
+    mdFile=EHY_getMdFile(mapFile);
+    mdu = dflowfm_io_mdu('read',mdFile);
+    if isempty(mdu.output.OutputDir)
+        [~,runid]=fileparts(mdFile);
+        runOutputDir = [fileparts(mdFile) filesep 'DFM_OUTPUT_' runid filesep];
     else
-        error(['Please use the map output file as input argument, like: ' char(10) 'EHY_findLimitingCells(''D:\model_map.nc'')'])
+        runOutputDir = [fileparts(mdFile) filesep mdu.output.OutputDir filesep];
     end
-    if length(varargin)> 1 && mod(length(varargin)-1,2)==0
-        OPT = setproperty(OPT,varargin{2:end});
-    elseif length(varargin)==1
-        % that's the map file
-    else
-        error('Additional input arguments must be given in pairs.')
-    end
+    mapFile=[runOutputDir 'dummy.dummy'];  
 end
 
 %% process
-outputDir=[fileparts(mapFile) '\..\' OPT.outputDir '\'];
+runOutputDir = [fileparts(mapFile) filesep];
+outputDir = [fileparts(runOutputDir(1:end-1)) filesep OPT.outputDir filesep];
 if ~exist(outputDir); mkdir(outputDir); end
 
 % maximum velocities
 if OPT.writeMaxVel
-    Data = EHY_getMapModelData(mapFile,'varName','uv','mergePartitions',1);
-    if ndims(Data.ucy)==2
-        mag=sqrt(Data.ucx.^2+Data.ucy.^2);
+    if ~exist(mapFile)
+        disp('Could not write max. velocities as no *_map.nc file was provided.')
+        OPT.writeMaxVel = 0;
     else
-        mag=max(sqrt(Data.ucx.^2+Data.ucy.^2),[],3); % maximum over depth
+        Data = EHY_getMapModelData(mapFile,'varName','uv','mergePartitions',1);
+        if ndims(Data.ucy)==2
+            mag=sqrt(Data.ucx.^2+Data.ucy.^2);
+        else
+            mag=max(sqrt(Data.ucx.^2+Data.ucy.^2),[],3); % maximum over depth
+        end
+        MAXVEL=prctile(mag,OPT.percentile)';
     end
-    MAXVEL=prctile(mag,OPT.percentile)';
 end
 
 % limiting cells
-numlimdtFiles=dir([fileparts(mapFile) filesep '*_numlimdt.xyz']);
+numlimdtFiles=dir([runOutputDir '*_numlimdt.xyz']);
 if ~isempty(numlimdtFiles)
     XYZ=[];
     for iF=1:length(numlimdtFiles)
-        XYZ=[XYZ; importdata([fileparts(mapFile) filesep numlimdtFiles(iF).name])];
+        fileInfo=dir([runOutputDir numlimdtFiles(iF).name]);
+        if fileInfo.bytes>0
+            XYZ=[XYZ; dlmread([runOutputDir numlimdtFiles(iF).name])];
+        end
     end
     Xlim=XYZ(:,1);Ylim=XYZ(:,2);NUMLIMDT=XYZ(:,3);
-else
+elseif exist(mapFile)
     disp('Reading numlimdt from *_map.nc ...')
     disp('To avoid this, set ''Wrimap_numlimdt = 1'' in the mdu-file')
     disp('and/or wait untill the simulation has finished.')
@@ -116,11 +124,13 @@ Ylim=Ylim(I);
 NUMLIMDT=NUMLIMDT(I);
 
 % export
-disp(['You can find the created files in the directory:' char(10) outputDir]),...
+disp(['You can find the created files in the directory:' char(10) outputDir])
     
 try
-    mdFile=EHY_getMdFile(fileparts(fileparts(mapFile)));
-    mdu=dflowfm_io_mdu('read',mdFile);
+    if ~exist('mdu','var')
+        mdFile=EHY_getMdFile(mapFile);
+        mdu=dflowfm_io_mdu('read',mdFile);
+    end
 end
 
 if ~isempty(Xlim)
@@ -151,8 +161,8 @@ fclose all;
 %% timeseries of time step
 if OPT.timeseriesDT
     disp('start reading timestep-info from *his.nc file');
-    hisFile=dir([fileparts(mapFile) filesep '*_his.nc']);
-    hisFile=[fileparts(mapFile) filesep hisFile(1).name];
+    hisFile=dir([runOutputDir '*_his.nc']);
+    hisFile=[runOutputDir hisFile(1).name];
     Data = EHY_getmodeldata(hisFile,'','dfm','varName','timestep');
     disp('finished reading timestep-info from *his.nc file');
     

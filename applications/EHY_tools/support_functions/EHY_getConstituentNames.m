@@ -12,8 +12,9 @@ function [namCon] = EHY_getConstituentNames(fileInp)
 % Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
 
 %%
-namCon               = {};
-modelType            = EHY_getModelType(fileInp);
+namCon                     = {};
+modelType                  = EHY_getModelType(fileInp);
+[~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(fileInp);
 
 %% 
 switch modelType
@@ -64,7 +65,11 @@ switch modelType
     %% Delft3D constituents    
     case 'd3d'
         handle  = vs_use (fileInp,'quiet');
-        tmpName = vs_get(handle ,'his-const','NAMCON','quiet');
+        if strcmp(typeOfModelFileDetail,'trih')
+            tmpName = vs_get(handle ,'his-const','NAMCON','quiet');
+        elseif strcmp(typeOfModelFileDetail,'trim')
+            tmpName = vs_get(handle ,'map-const','NAMCON','quiet');
+        end
         nr_con  = 0;
         for i_cons = 1: size(tmpName,1)
             if isempty(strfind(lower(tmpName(i_cons,:)),'energy'))

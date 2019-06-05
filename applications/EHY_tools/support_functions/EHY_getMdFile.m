@@ -30,11 +30,11 @@ while loop>0
     if isempty(pathstr)
         filename=[pwd filesep name ext];
     end
-    if ismember(ext,{'.mdu','.mdf'}) || ~isempty(strfind(lower(name),'siminp'))
+    if strcmp(ext,'.mdf') || ~isempty(strfind(lower(name),'siminp'))
         mdFile=filename;
     end
     
-    % the run directory was given
+    % the run directory was given // a (partioned) .mdu was given
     if ~exist('mdFile','var')
         mdFiles=[dir([filename filesep '*.mdu']); dir([filename filesep '*.mdf']); dir([filename filesep '*siminp*'])];
        
