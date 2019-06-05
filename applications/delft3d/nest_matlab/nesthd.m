@@ -73,9 +73,9 @@ Gen_inf    = {'Nesthd Version 2.0:'                                             
               ' '                                                                                                  ;
               'Hence, old adminstration files will have to be re-generated'                                        ;
               ' '                                                                                                  ;
-              'WARNING: I do not (yet) properly take into account different'                                       ;
-              '         vertical orientations (positive up or down) of the'                                        ;
-              '         differnt simulation programs (D3D, WAQUA or DFM)'                                          ;
+              'WARNING: 3D Nesting of tranport properties (like salinity  '                                       ;
+              '         or temperature is supported for sigma layers|     '                                        ;
+              '         NOT THOROUGHLY TESTED SO PLEASE CHECK RESULTS     '                                          ;
               ' '                                                                                                  ;
               'If you encounter problems, please do not hesitate to contact me'                                    ;
               'Theo.vanderkaaij@deltares.nl'                                                                      };

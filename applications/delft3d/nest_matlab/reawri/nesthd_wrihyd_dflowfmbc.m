@@ -10,17 +10,24 @@ no_pnt        = length(bnd.DATA);
 no_times      = length(bndval);
 no_layers     = nfs_inf.nolay;
 thick         = nfs_inf.thick;
-pos(1)        = 0.5*thick(1); 
-for i_lay = 2: no_layers
-    pos(i_lay) = pos(i_lay - 1) + 0.5*(thick(i_lay - 1) + thick(i_lay));
-end
 
-lstci         = -1;
+lstci         = -1;                                                        % Use lstci = -1 to incicate hydrodynamic bc (not very elegant)
 if length(size(bndval(1).value)) == 3 lstci = nfs_inf.lstci; end
 
 itdate        = datestr(nfs_inf.itdate,'yyyy-mm-dd HH:MM:SS');
 [path,~,~]    = fileparts(fileOut);
 if isempty(path) path = '.'; end
+
+%% Switch orientation if overall model is delft3D or Waqua
+if ~strcmpi(nfs_inf.from,'dfm')
+    [bndval,thick] = nesthd_flipori(bndval,thick);
+end
+
+%% Determine vertical positions
+pos(1)        = 0.5*thick(1); 
+for i_lay = 2: no_layers
+    pos(i_lay) = pos(i_lay - 1) + 0.5*(thick(i_lay - 1) + thick(i_lay));
+end
 
 %% cycle over boundary points
 for i_pnt = 1: no_pnt

@@ -10,6 +10,12 @@ no_bnd        = length(bnd.DATA)/2;
 notims        = length(bndval);
 kmax          = size(bndval(1).value,2);
 lstci         = size(bndval(1).value,3);
+thick         = nfs_inf.thick;
+
+%% Switch orientation if overall model is dflowfm
+if strcmpi(nfs_inf.from,'dfm')
+    [bndval,thick] = nesthd_flipori(bndval,thick);
+end
 
 %
 % Open output file
