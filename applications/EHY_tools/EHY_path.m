@@ -13,7 +13,7 @@ function path=EHY_path(path,win_or_unix)
 % returns (in unix):    '/d/folder/script.m'
 %
 % Example3: EHY_path('/d/folder/script.m','win')
-% returns (in unix):    'D:\folder\script.m'
+% returns (in windows): 'D:\folder\script.m'
 %
 % created by Julien Groenenboom, September 2017
 % Julien.Groenenboom@Deltares.nl

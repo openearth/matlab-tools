@@ -7,7 +7,7 @@ function mdFile=EHY_getMdFile(filename)
 % Example1: 	mdFile=EHY_getMdFile('D:\run01\')
 % Example2: 	mdFile=EHY_getMdFile('D:\run01\r01.ext')
 % Example3: 	mdFile=EHY_getMdFile('D:\run01\DFM_OUTPUT_r01\trih-r01.dat')
-% All examples would eturn: mdFile = 'D:\run01\r01.mdu'
+% All examples would return: mdFile = 'D:\run01\r01.mdu'
 %
 % support function of the EHY_tools
 % Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
@@ -37,9 +37,22 @@ while loop>0
     % the run directory was given
     if ~exist('mdFile','var')
         mdFiles=[dir([filename filesep '*.mdu']); dir([filename filesep '*.mdf']); dir([filename filesep '*siminp*'])];
+       
+        % remove partitioned .mdu-files
+        ind=find(~cellfun(@isempty,strfind({mdFiles.name},'.mdu')));
+        if ~isempty(ind)
+            deleteInd=[];
+            for iF=1:length(mdFiles)
+                if length(mdFiles(iF).name)>9 && all(ismember(mdFiles(iF).name(end-7:end-4),'0123456789'))
+                    deleteInd(end+1)=iF;
+                end
+            end
+            mdFiles(deleteInd)=[];
+        end
+        
         if ~isempty(mdFiles)
             [~,order] = sort([mdFiles.datenum]);
-            mdFile=fullfile([filename filesep mdFiles(order(1)).name]);
+            mdFile=fullfile([filename filesep mdFiles(order(end)).name]); % use most recent
             if length(order)>1
                 disp(['More than 1 mdf/mdu/siminp-file was found, now using ''' mdFiles(order(1)).name ''''])
             end
