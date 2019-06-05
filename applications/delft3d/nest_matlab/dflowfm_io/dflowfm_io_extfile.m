@@ -104,6 +104,7 @@ switch lower(cmd)
         OPT.Filcomments = '' ;
         OPT.ext_force   = [] ;
         OPT.type        = 'old';
+        OPT.first       = true;
         OPT = setproperty(OPT,varargin);
 
         if strcmp(OPT.type,'old')
@@ -135,7 +136,7 @@ switch lower(cmd)
         else
             % New format (writing through function inifile does not work
             % conveniently for series so write directly)
-            fid = fopen(fname,'w+');
+            if OPT.first fid = fopen(fname,'w+'); else; fid = fopen(fname,'a'); end
 
             ext_force = OPT.ext_force;
             no_force  = length(ext_force);
