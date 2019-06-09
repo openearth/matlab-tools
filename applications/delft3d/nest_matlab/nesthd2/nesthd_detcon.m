@@ -15,67 +15,78 @@
 %***********************************************************************
 h = waitbar(0,'Generating transport boundary conditions','Color',[0.831 0.816 0.784]);
 
-
-no_pnt = length(bnd.DATA);
-notims = nfs_inf.notims;
-t0     = nfs_inf.times(1); 
-tend   = nfs_inf.times(notims);
-kmax   = nfs_inf.kmax;
-lstci  = nfs_inf.lstci;
+no_pnt    = length(bnd.DATA);
+notims    = nfs_inf.notims;
+t0        = nfs_inf.times(1); 
+tend      = nfs_inf.times(notims);
+kmax      = nfs_inf.kmax;
+lstci     = nfs_inf.lstci;
+modelType = EHY_getModelType(fileInp);
 
 for itim = 1: notims
     bndval(itim).value(1:no_pnt,1:kmax,1:lstci) = 0.;
 end
 
-modelType = EHY_getModelType(fileInp);
-
-%% Cycle over all boundary support points
-for i_pnt = 1: no_pnt
+%% Determine time series of the boundary conditions
+for l = 1:lstci
     
-    waitbar(i_pnt/no_pnt);
-    
-    %% First get nesting stations, weights and orientation
-    %            of support points
-    mnbcsp         = bnd.Name{i_pnt};
-    [mnnes,weight] = nesthd_getwgh2 (fid_adm,mnbcsp,'z');
-
-    if isempty(mnnes)
-        error = true;
-        close(h);
-        simona2mdf_message({'Inconsistancy between boundary definition and' 'administration file'},'Window','Nesthd2 Error','Close',true,'n_sec',10);
-        return
-    end
-
-    %% Temporary for testing with old hong kong model
-    if strcmpi(modelType,'d3d')
-        for i_stat = 1: length(mnnes)
-            i_start = strfind(mnnes{i_stat},'(');
-            i_com   = strfind(mnnes{i_stat},',');
-            mnnes{i_stat} = [mnnes{i_stat}(1:i_start(2)) mnnes{i_stat}(i_start(2) + 2:i_com(2))  mnnes{i_stat}(i_com(2) + 2:end)];
-        end
-    end
-
-    %% Determine time series of the boundary conditions
-    for l = 1:lstci
-
-        %% If bc for this constituent are requested
-        if add_inf.genconc(l)
+    %% If bc for this constituent are requested
+    if add_inf.genconc(l)
+        
+        %% Retrieve all data for this constituent
+        data      = EHY_getmodeldata(fileInp,{},modelType,'varName',lower(nfs_inf.namcon{l}),'t0',t0,'tend',tend);
+        
+        %% Cycle over all boundary support points
+        for i_pnt = 1: no_pnt
             
-            %% Retrieve the data
-            data      = EHY_getmodeldata(fileInp,mnnes,modelType,'varName',lower(nfs_inf.namcon{l}),'t0',t0,'tend',tend);
-            conc      = data.val;
+            waitbar(i_pnt/no_pnt);
+            
+            %% First get nesting stations, weights and orientation of support points
+            mnbcsp         = bnd.Name{i_pnt};
+            [mnnes,weight] = nesthd_getwgh2 (fid_adm,mnbcsp,'z');
+            
+            if isempty(mnnes)
+                error = true;
+                close(h);
+                simona2mdf_message({'Inconsistancy between boundary definition and' 'administration file'},'Window','Nesthd2 Error','Close',true,'n_sec',10);
+                return
+            end
+            
+            %% Temporary for testing with old hong kong model
+            if strcmpi(modelType,'d3d')
+                for i_stat = 1: length(mnnes)
+                    i_start = strfind(mnnes{i_stat},'(');
+                    i_com   = strfind(mnnes{i_stat},',');
+                    mnnes{i_stat} = [mnnes{i_stat}(1:i_start(2)) mnnes{i_stat}(i_start(2) + 2:i_com(2))  mnnes{i_stat}(i_com(2) + 2:end)];
+                end
+            end
+            
+            %%  Fill conc rray with concentrations for the requested stations
+            no_times  = size(data.val,1);
+            no_stat   = 4;
+            no_layers = size(data.val,3);
+            conc(1:no_times,1:no_stat,1:no_layers) = 0.;
+            
+            for i_stat = 1: length(mnnes)
+                exist_stat(i_stat) = false;
+                index = get_nr(data.stationNames,mnnes{i_stat});
+                if ~isempty(index)
+                    exist_stat(i_stat) = true;
+                    conc(:,i_stat,:) = data.val(:,index(1),:);
+                end
+            end
             
             %% Exclude permanently dry points
             for i_stat = 1: 4
                 index = find(conc(:,i_stat,1) == conc(1,i_stat,1));
                 if length(index) == notims
-                    data.exist_stat(i_stat) = false;
-                    weight         (i_stat) = 0.; 
+                    exist_stat(i_stat) = false;
+                    weight    (i_stat) = 0.;
                 end
             end
             
             %% Normalise weights
-            wghttot = sum(data.exist_stat.*weight');
+            wghttot = sum(exist_stat.*weight);
             weight  = weight/wghttot;
             
             % In case of Zmodel, replace nodata values (-999) with above or below layer
@@ -93,10 +104,10 @@ for i_pnt = 1: no_pnt
                     end
                 end
             end
-
+            
             %% Determine weighed value
             for iwght = 1: 4
-                if data.exist_stat(iwght)
+                if exist_stat(iwght)
                     for itim = 1: notims
                         for k = 1: kmax
                             bndval(itim).value(i_pnt,k,l) = bndval(itim).value(i_pnt,k,l) +  ...

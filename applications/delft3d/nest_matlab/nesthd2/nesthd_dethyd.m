@@ -41,6 +41,9 @@
 
       modelType = EHY_getModelType(fileInp);
 
+      load_wl = false;
+      load_uv = false;
+
       %% -----cycle over all boundary support points
       for ipnt = 1: nopnt
           type = lower(bnd.DATA(ipnt).bndtype);
@@ -82,31 +85,61 @@
 
           %% Get the needed data
           if ismember(type,{'z' 'r' 'x' 'n'})
-              data      = EHY_getmodeldata(fileInp,mnnes,modelType,'varName','wl','t0',t0,'tend',tend);
-              wl        = data.val;
+              if ~load_wl
+                  data_wl = EHY_getmodeldata(fileInp,{},modelType,'varName','wl','t0',t0,'tend',tend);
+                  load_wl = true;
+              end
+
+              %% Get fill wl array with water levels for the requested stations
+              no_times  = size(data_wl.val,1);
+              no_stat   = 4;
+              wl(1:no_times,1:no_stat) = 0.;
+
+              for i_stat = 1: length(mnnes)
+                  index = get_nr(data_wl.stationNames,mnnes{i_stat});
+                  if ~isempty(index)  wl(:,i_stat) = data_wl.val(:,index(1));end
+              end
 
               %% Exclude permanently dry points
               for i_stat = 1: 4
+                  exist_stat(i_stat) = true;
                   index = find(wl(:,i_stat) == wl(1,i_stat));
                   if length(index) == notims
-                      data.exist_stat(i_stat) = false;
-                      weight         (i_stat) = 0.;
+                      exist_stat(i_stat) = false;
+                      weight    (i_stat) = 0.;
                   end
               end
           end
           if ismember(type,{'c' 'p' 'r' 'x'})
-              data      = EHY_getmodeldata(fileInp,mnnes,modelType,'varName','uv','t0',t0,'tend',tend);
-              uu        = data.vel_x;
-              vv        = data.vel_y;
+              if ~load_uv
+                  data_uv = EHY_getmodeldata(fileInp,{},modelType,'varName','uv','t0',t0,'tend',tend);
+                  load_uv = true;
+              end
+
+              %%  Fill uu and vv array with velocities for the requested stations
+              no_times  = size(data_uv.vel_x,1);
+              no_stat   = 4;
+              no_layers = size(data_uv.vel_x,3);
+              uu(1:no_times,1:no_stat,1:no_layers) = 0.;
+              vv(1:no_times,1:no_stat,1:no_layers) = 0.;
+
+              for i_stat = 1: length(mnnes)
+                  index = get_nr(data_uv.stationNames,mnnes{i_stat});
+                  if ~isempty(index)
+                      uu(:,i_stat,:) = data_uv.vel_x(:,index(1),:);
+                      vv(:,i_stat,:) = data_uv.vel_y(:,index(1),:);
+                  end
+              end
               [uu,vv]   = nesthd_rotate_vector(uu,vv,pi/2. - angle);
 
               %% Exclude permanently dry points
               for i_stat = 1: 4
+                  exist_stat(i_stat) = true;
                   index_u = find(uu(:,i_stat,1) == uu(1,i_stat,1));
                   index_v = find(vv(:,i_stat,1) == vv(1,i_stat,1));
                   if length(index_u) == notims && length(index_v) == notims
-                      data.exist_stat(i_stat) = false;
-                      weight         (i_stat) = 0.;
+                      exist_stat(i_stat) = false;
+                      weight    (i_stat) = 0.;
                   end
               end
 
@@ -130,13 +163,13 @@
           end
 
           %% Normalise weights
-          wghttot = sum(data.exist_stat.*weight');
+          wghttot = sum(exist_stat.*weight);
           weight  = weight/wghttot;
 
           %% Generate boundary conditions
           for iwght = 1: 4
               nr_key = get_nr(nfs_inf.names,mnnes{iwght});
-              if data.exist_stat(iwght)
+              if exist_stat(iwght)
                   switch type
                       %
                       %% Water level boundaries
@@ -173,9 +206,9 @@
           %% Neumann boundaries (still to adjust, hardly ever used)
           switch type
               case 'n'
-                  x     = x     (data.exist_stat);
-                  y     = y     (data.exist_stat);
-                  mnnes = mnnes (data.exist_stat);
+                  x     = x     (exist_stat);
+                  y     = y     (exist_stat);
+                  mnnes = mnnes (exist_stat);
 
                   % Neumann boundaries require 3 surrounding support points
                   if length(x) >= 3
@@ -196,9 +229,20 @@
               case {'x' 'p'}
                   [mnnes,weight,angle]         = nesthd_getwgh2 (fid_adm,mnbcsp,'p');
 
-                  data      = EHY_getmodeldata(fileInp,mnnes,modelType,'varName','uv','t0',t0,'tend',tend);
-                  uu        = data.vel_x;
-                  vv        = data.vel_y;
+                  %%  Fill uu and vv array with velocities for the requested stations
+                  no_times  = size(data_uv.velx,1);
+                  no_stat   = 4;
+                  no_layers = size(data_uv.velx,1);
+                  uu(1:no_times,1:no_stat,1:no_layers) = NaN;
+                  vv(1:no_times,1:no_stat,1:no_layers) = NaN;
+
+                  for i_stat = 1: length(mnnes)
+                      index = get_nr(data_wl.stationNames,mnnes{i_stat});
+                      if ~isempty(index)
+                          uu(:,i_stat,:) = data_uv.vel_x(:,index(1),:);
+                          vv(:,i_stat,:) = data_uv.vel_v(:,index(1),:);
+                      end
+                  end
                   [uu,vv]   = nesthd_rotate_vector(uu,vv,pi/2. - angle);
 
                   %% Exclude permanently dry points
@@ -206,8 +250,8 @@
                       index_u = find(uu(:,i_stat,1) == uu(1,i_stat,1));
                       index_v = find(vv(:,i_stat,1) == vv(1,i_stat,1));
                       if length(index_u) == notims && length(index_v) == notims
-                          data.exist_stat(i_stat) = false;
-                          weight         (i_stat) = 0.;
+                          exist_stat(i_stat) = false;
+                          weight    (i_stat) = 0.;
                       end
                   end
 
@@ -221,7 +265,7 @@
                   end
 
                   %% Temporary for testing with old hong kong model
-                  if strcmpi(modelType,'d3d')
+                  if shenzen
                       for i_stat = 1: length(mnnes)
                           i_start = strfind(mnnes{i_stat},'(');
                           i_com   = strfind(mnnes{i_stat},',');
@@ -230,11 +274,11 @@
                   end
 
                   %% Normalise weights
-                  wghttot = sum(data.exist_stat.*weight');
+                  wghttot = sum(exist_stat.*weight);
                   weight  = weight/wghttot;
 
                   for iwght = 1: 4
-                      if data.exist_stat(iwght)
+                      if exist_stat(iwght)
                           for itim = 1: notims
                               bndval(itim).value(ipnt,kmax+1:2*kmax,1) = bndval(itim).value(ipnt,kmax+1:2*kmax,1) + ...
                                                                          squeeze(vv(itim,iwght,:)*weight(iwght))' ;
