@@ -260,6 +260,7 @@ switch modelType
     case {'waqua','simona','siminp'}
         %% SIMONA (WAQUA/TRIWAQ)
         % open data file
+        if isempty(stat_name) stat_name = Data.requestedStations; end
         sds=qpfopen(inputFile);
         
         ii_stat    = 0;
