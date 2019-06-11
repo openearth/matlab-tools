@@ -84,7 +84,7 @@ if length(varargin)==1
     if ~isempty(strmatch('pol',availableoutputExt))
         availableoutputExt=[availableoutputExt; 'pli'];
     end
-    if ismember(inputExt0,{'.grd','.ldb','.nc','.pli','.pol','.xyz','.xyn'})
+    if ismember(inputExt0,{'.grd','.ldb','.nc','.pli','.pliz','.pol','.xyz','.xyn'})
         availableoutputExt=sort([availableoutputExt; inputExt0(2:end)]);
         [availableoutputId,~]=  listdlg('PromptString',['Convert this ' inputExt0 '-file to (to same extension >> coordinate conversion):'],...
             'SelectionMode','single',...
@@ -808,6 +808,41 @@ end
         end
         output=xyn;
     end
+% pliz2kml
+    function [output,OPT]=EHY_convert_pliz2kml(inputFile,outputFile,OPT)
+        if OPT.saveOutputFile
+            T=tekal('read',inputFile,'loaddata');
+            pol=[];
+            for iT=1:length(T.Field)
+                pol=[pol; T.Field(iT).Data(:,1:2); NaN NaN];
+            end
+            pol(end,:)=[];
+            [pol(:,1),pol(:,2),OPT]=EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
+            if OPT.saveOutputFile
+                [~,name]=fileparts(outputFile);
+                tempFile=[tempdir name '.kml'];
+                ldb2kml(pol(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
+                copyfile(tempFile,outputFile);
+                delete(tempFile)
+            end
+            output=pol;
+        end
+    end
+% pliz2pol
+    function [output,OPT]=EHY_convert_pliz2pol(inputFile,outputFile,OPT)
+        if OPT.saveOutputFile
+            T=tekal('read',inputFile,'loaddata');
+            pol=[];
+            for iT=1:length(T.Field)
+                pol=[pol; T.Field(iT).Data(:,1:2); NaN NaN];
+            end
+            pol(end,:)=[];
+            if OPT.saveOutputFile
+                io_polygon('write',outputFile,pol);
+            end
+            output=pol;
+        end
+    end
 % pol2kml
     function [output,OPT]=EHY_convert_pol2kml(inputFile,outputFile,OPT)
         pol=landboundary('read',inputFile);
@@ -1213,6 +1248,15 @@ if OPT.fromEPSG~=OPT.toEPSG
                 end
                 fclose(fid);
             end
+        case '.pliz'    
+             T=tekal('read',inputFile,'loaddata');
+             for iT=1:length(T.Field)
+                 [T.Field(iT).Data(:,1),T.Field(iT).Data(:,2)]=convertCoordinates(T.Field(iT).Data(:,1),T.Field(iT).Data(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
+             end
+             if OPT.saveOutputFile
+                 tekal('write',outputFile,T);
+             end
+             output=T;
         case '.nc'
             if nc_isvar(inputFile,'NetNode_x')
                 output=[ncread(inputFile,'NetNode_x') ncread(inputFile,'NetNode_y')];

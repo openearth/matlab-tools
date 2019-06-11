@@ -102,8 +102,13 @@ switch modelType
         if ismember('stations',dimNames) || ismember('cross_section',dimNames)
             stationX = ncread(inputFile,'station_x_coordinate');
             stationY = ncread(inputFile,'station_y_coordinate');
-            Data.location( Data.exist_stat,1:2)=[stationX(stationNrNoNan,1) stationY(stationNrNoNan,1)];
-            Data.location(~Data.exist_stat,1:2)=NaN;
+            if size(stationX,2)>1 % moving stations
+                Data.locationX(:, Data.exist_stat)=stationX(stationNrNoNan,:)';
+                Data.locationY(:, Data.exist_stat)=stationY(stationNrNoNan,:)';
+            else
+                Data.location( Data.exist_stat,1:2)=[stationX(stationNrNoNan,:) stationY(stationNrNoNan,:)];
+                Data.location(~Data.exist_stat,1:2)=NaN;
+            end
         else % delete station-information from 'Data'
             Data=rmfield(Data,{'stationNames','requestedStations','exist_stat'});
         end
@@ -387,6 +392,10 @@ else
     end
     if isfield(Data,'location')
         Data.location(~Data.exist_stat,:)=NaN;
+    end
+    if isfield(Data,'locationX')
+        Data.locationX(:,~Data.exist_stat)=NaN;
+        Data.locationY(:,~Data.exist_stat)=NaN;
     end
     if isfield(Data,'val') && isfield(Data,'exist_stat')
         Data.val(:,~Data.exist_stat,:)=NaN;

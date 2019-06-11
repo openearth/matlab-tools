@@ -14,6 +14,7 @@ OPT.gridColor=[1 0 0];
 OPT.ldbColor=[0 1 0];
 OPT.thdColor=[0 0 1];
 OPT.dryColor=[1 0 0];
+OPT.fxwColor=[0 0 1];
 OPT.crsColor=[1 1 0];
 OPT.extColor=[0 1 1];
 OPT.dryIconFile='http://maps.google.com/mapfiles/kml/paddle/ylw-square.png';
@@ -102,6 +103,15 @@ switch modelType
                 OPT2.iconFile=OPT.dryIconFile;
                 [~,OPT2]=EHY_convert(inputFile,'kml',OPT2);
             end
+        end
+        
+        % fixed weirs
+        if isfield(mdu.geometry,'FixedWeirFile') && ~isempty(mdu.geometry.FixedWeirFile)
+            inputFile=EHY_getFullWinPath(mdu.geometry.FixedWeirFile,runDir);
+            [~,name]=fileparts(inputFile);
+            OPT2.outputFile=[outputDir name '_fxw.kml'];
+            OPT2.lineColor=OPT.fxwColor;
+            [~,OPT2]=EHY_convert(inputFile,'kml','lineWidth',4,OPT2);
         end
         
         % Observation points

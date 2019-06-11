@@ -36,6 +36,7 @@ OPT.stations        = '';
 OPT.varName         = 'wl';
 OPT.manual          = true;
 OPT.mergePartitions = 0; % merge output from several dfm '_map.nc'-files
+OPT.disp            = 1; % display a message if none of the wanted output was found
 OPT                 = setproperty(OPT,varargin{2:end});
 
 %% process input from user
@@ -151,7 +152,7 @@ switch modelType
                         end
                     end
                     if ismember('Z',wantedOutput)
-                        tmp=EHY_getGridInfo(inputFile,{'layer_model','layer_perc'});
+                        tmp=EHY_getGridInfo(inputFile,{'layer_model','layer_perc'},'disp',0);
                         if strcmp(tmp.layer_model,'z-model')
                             dh=mdu.geometry.ZlayTop-mdu.geometry.ZlayBot;
                             E.Zcen_int=mdu.geometry.ZlayBot+cumsum([0 tmp.layer_perc]/100*dh);
@@ -226,13 +227,13 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                             if ~isfield(E,'Zcen_cen')
                                 try % try to get this info from mdFile
                                     mdFile=EHY_getMdFile(inputFile);
-                                    tmp = EHY_getGridInfo(mdFile,'Z');
+                                    tmp = EHY_getGridInfo(mdFile,'Z','disp',0);
                                     E.Zcen_int = tmp.Zcen_int;
                                     E.Zcen_cen = tmp.Zcen_cen;
                                 end
                             end
 
-                        elseif ~isempty(strfind(inputFile,'map.nc')) % map file
+                        elseif ~isempty(strfind(inputFile,'map.nc')) || ~isempty(strfind(inputFile,'_net.nc')) % map/nc file
                             % top-view information
                             if nc_isvar(inputFile,'mesh2d_node_z')
                                 E.Zcor=ncread(inputFile,'mesh2d_node_z');
@@ -255,11 +256,13 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                                 E.Zcen_cen=ncread(inputFile,'LayCoord_cc');
                                 E.Zcen_int=ncread(inputFile,'LayCoord_w');
                             end
-                            E.thickness=diff(E.Zint,[],2);
+                            if isfield(E,'Zcen_int')
+                                E.thickness=diff(E.Zcen_int,[],2);
+                            end
                         end
                     end
                     if ismember('layer_model',wantedOutput)
-                        tmp=EHY_getGridInfo(inputFile,'no_layers');
+                        tmp=EHY_getGridInfo(inputFile,'no_layers','disp',0);
                         if tmp.no_layers==1
                             E.layer_model='-';
                         else
@@ -288,7 +291,7 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                         end
                     end
                     if ismember('layer_perc',wantedOutput)
-                        tmp       = EHY_getGridInfo(inputFile,{'no_layers','layer_model'});
+                        tmp       = EHY_getGridInfo(inputFile,{'no_layers','layer_model'},'disp',0);
                         no_layers = tmp.no_layers;
                         layer_model = tmp.layer_model;
                         if no_layers == 1
@@ -322,7 +325,7 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                                 mdFile=EHY_getMdFile(inputFile);
                                 if ~isempty(mdFile)
                                     mdFile=EHY_getMdFile(inputFile);
-                                    gridInfo=EHY_getGridInfo(mdFile,'layer_perc');
+                                    gridInfo=EHY_getGridInfo(mdFile,'layer_perc','disp',0);
                                     E.layer_perc=gridInfo.layer_perc;
                                 end
                             end
@@ -444,7 +447,7 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                     E.layer_perc=mdf.keywords.thick;
                 end
                 if ismember('Z',wantedOutput)
-                    tmp=EHY_getGridInfo(inputFile,{'layer_model','layer_perc'});
+                    tmp=EHY_getGridInfo(inputFile,{'layer_model','layer_perc'},'disp',0);
                     if strcmp(tmp.layer_model,'z-model')
                         dh=mdf.keywords.ztop-mdf.keywords.zbot;
                         E.Zcen_int=mdf.keywords.zbot+cumsum([0 tmp.layer_perc]/100*dh);
@@ -502,7 +505,7 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                         E.Zcen = -1*vs_let(trih,'his-const','DPS');
                         
                         % side-view information
-                        tmp=EHY_getGridInfo(inputFile,{'layer_model'});
+                        tmp=EHY_getGridInfo(inputFile,{'layer_model'},'disp',0);
                         if strcmp(tmp.layer_model,'z-model')
                             E.Zcen_int = -1*vs_let(trih,'his-const','ZK','quiet');
                         end
@@ -541,7 +544,7 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                     end
                     
                     if ismember('Z', wantedOutput)
-                        tmp=EHY_getGridInfo(inputFile,{'layer_model'});
+                        tmp=EHY_getGridInfo(inputFile,{'layer_model'},'disp',0);
                         if strcmp(tmp.layer_model,'z-model')
                             E.Zcen = G.cen.dep;
                             E.Zcen_int = vs_let(trim,'map-const','ZK','quiet');
@@ -651,7 +654,7 @@ if ~isempty(OPT.stations)
 end
 
 %% Output structure E
-if ~exist('E','var')
+if ~exist('E','var') && OPT.disp
     disp('Could not find any of this data in the provided file');
 end
 E.inputFile=inputFile;
