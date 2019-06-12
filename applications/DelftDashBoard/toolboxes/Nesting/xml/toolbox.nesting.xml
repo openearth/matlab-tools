@@ -43,6 +43,12 @@
       <element>toolbox.nesting.dflowfm.nest2.xml</element>
     </tab>
     <tab>
+      <tabstring>Fews nesting</tabstring>
+      <callback>ddb_NestingToolbox_DFlowFM_Fews</callback>
+      <formodel>dflowfm</formodel>
+      <element>toolbox.nesting.dflowfm.fews.xml</element>
+    </tab>    
+    <tab>
       <tabstring>Nesting</tabstring>
       <callback>ddb_dummyTabCallback</callback>
       <formodel>fast</formodel>

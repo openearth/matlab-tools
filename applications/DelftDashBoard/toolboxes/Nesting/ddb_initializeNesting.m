@@ -105,6 +105,16 @@ handles.toolbox.nesting.dflowfm.depFile           = '';
 handles.toolbox.nesting.dflowfm.extfile           = '';
 handles.toolbox.nesting.dflowfm.admFile           = 'nesting.adm';
 
+% Fews
+handles.toolbox.nesting.fews.detailmodeltype   = 'dflowfm';
+handles.toolbox.nesting.fews.detailmodelcsname = 'unspecified';
+handles.toolbox.nesting.fews.detailmodelcstype = 'unspecified';
+handles.toolbox.nesting.fews.mduFile           = '';
+handles.toolbox.nesting.fews.extFile           = '';
+handles.toolbox.nesting.fews.xynFile           = '';
+handles.toolbox.nesting.fews.csvFile           = '';
+handles.toolbox.nesting.fews.zsini             = '';
+
 % Delft3D-WAVE
 handles.toolbox.nesting.delft3dwave.detailmodeltype   = 'delft3dwave';
 handles.toolbox.nesting.delft3dwave.detailmodelcsname = 'unspecified';

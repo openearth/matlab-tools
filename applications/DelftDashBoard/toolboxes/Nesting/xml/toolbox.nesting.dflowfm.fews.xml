@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>panel</style>
+    <position>10 10 760 130</position>
+    <text>Create output files for nesting in Fews</text>
+  </element>
+  <element>
+    <style>popupmenu</style>
+    <text>Model Type</text>
+    <position>80 100 100 20</position>
+    <tooltipstring>Select type of detailed model</tooltipstring>
+    <variable>handles.toolbox.nesting.fews.detailmodeltype</variable>
+    <type>string</type>
+    <listtext>DFlow-FM/SWAN</listtext>
+    <listtext>DFlow-FM</listtext>    
+    <listvalue>dflowfmwave</listvalue>
+    <listvalue>dflowfm</listvalue>    
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>190 100 80 20</position>
+    <text>Select CS</text>
+    <callback>ddb_NestingToolbox_DFlowFM_Fews</callback>
+    <option1>selectcs</option1>
+    <tooltipstring>Select horizontal coordinate system of detailed model (when not selected, it is assumed that the model is in the same coordinate system as the overall model)</tooltipstring>
+  </element>
+  <element>
+    <style>text</style>
+    <position>275 100</position>
+    <text>Projected :</text>
+    <dependency>
+      <action>visible</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.nesting.fews.detailmodelcstype</variable>
+        <value>projected</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>text</style>
+    <position>275 100</position>
+    <text>Geographic :</text>
+    <dependency>
+      <action>visible</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.nesting.fews.detailmodelcstype</variable>
+        <value>geographic</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>text</style>
+    <position>340 100</position>
+    <variable>handles.toolbox.nesting.fews.detailmodelcsname</variable>
+    <type>string</type>
+    <dependency>
+      <action>visible</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.nesting.fews.detailmodelcsname</variable>
+        <value>unspecified</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
+  </element>
+   <element>
+    <style>pushselectfile</style>
+    <position>20 70 120 20</position>
+    <text>Select .xyn File</text>
+    <variable>handles.toolbox.nesting.fews.xynFile</variable>
+    <onchange>ddb_NestingToolbox_DFlowFM_Fews</onchange>
+    <option1>selectxynfile</option1>
+    <showfilename>yes</showfilename>
+    <extension>*.xyn</extension>
+    <selectiontext>Select observation point file of overall model</selectiontext>
+    <tooltipstring>Select observation point file (*.xyn) of overall model</tooltipstring>
+    <dependency>
+      <action>visible</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.nesting.fews.detailmodeltype</variable>
+        <value>dflowfmwave</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>700 70 80 20</position>
+    <text>Convert xyn to csv</text>
+    <callback>ddb_NestingToolbox_DFlowFM_Fews</callback>
+    <option1>xyn_to_csv</option1>
+    <tooltipstring>Convert .xyn-file to Fews .csv-file</tooltipstring>
+  </element>  
+   <element>
+    <style>pushselectfile</style>
+    <position>20 50 120 20</position>
+    <text>Select .mdu File</text>
+    <variable>handles.toolbox.nesting.fews.mduFile</variable>
+    <onchange>ddb_NestingToolbox_DFlowFM_Fews</onchange>
+    <option1>selectmdufile</option1>
+    <showfilename>yes</showfilename>
+    <extension>*.mdu</extension>
+    <selectiontext>Select DflowFM input file</selectiontext>
+    <tooltipstring>Select DflowFM input file (*.mdu)</tooltipstring>
+    <dependency>
+      <action>visible</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.nesting.fews.detailmodeltype</variable>
+        <value>dflowfmwave</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>  
+ <element>
+    <style>edit</style>
+    <position>600 50 80 20</position>
+    <text>Initial water level (m)</text>
+    <onchange>ddb_NestingToolbox_DFlowFM_Fews</onchange>
+    <option1>change_zsini</option1>    
+    <type>real</type>
+    <tooltipstring>Edit initial water level. This value will be inserted as 'WaterLevIni' in the .mdu-file.</tooltipstring>
+    <variable>handles.toolbox.nesting.fews.zsini</variable>    
+  </element>  
+  <element>
+    <style>pushbutton</style>
+    <position>700 50 80 20</position>
+    <text>Change mdu File</text>
+    <callback>ddb_NestingToolbox_DFlowFM_Fews</callback>
+    <option1>change_mdu</option1>
+    <tooltipstring>Change initial water level and Wavemodelnr in .mdu-file</tooltipstring>
+  </element>   
+</root>
