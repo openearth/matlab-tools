@@ -10,7 +10,10 @@ try
     rev1 = str2num(char(regexp(out1, 'Last Changed Rev: (\d+)', 'tokens', 'once')));
     [~,out2]=system(['svn info ' fileparts(which('EHY.m'))]);
     rev2 = str2num(char(regexp(out2, 'Last Changed Rev: (\d+)', 'tokens', 'once')));
-    if rev2<rev1
+    if isempty(rev1) || isempty(rev2)
+        disp('Automatic check (and update) failed. Please update the folder yourself. Location on your pc:')
+        disp([fileparts(which('EHY.m')) filesep])
+    elseif rev2<rev1
         disp('Your EHY_tools are not up-to-date.')
         disp('Status: Updating the EHY_tools folder in your OET.')
         try
@@ -21,8 +24,7 @@ try
             disp([fileparts(which('EHY.m')) filesep])
         end
     else
-        disp('Automatic check (and update) failed. Please update the folder yourself. Location on your pc:')
-        disp([fileparts(which('EHY.m')) filesep])
+        % Your EHY_tools are up-to-date
     end
 end
 %%
@@ -79,14 +81,18 @@ for iF=1:length(functions)
         'units','centimeters','Position',[6 height-iF*0.7938-0.1 12 0.5292],...
         'String',functions{iF,2},'horizontalalignment','left');
 end
-% EHY_info
-button=uicontrol('Style', 'pushbutton', 'String','EHY_info',...
-    'units','centimeters','Position',[0.5027 height-(iF+1)*0.7938 5.2917 0.5292],...
-    'Callback', @EHY_info);
+
+EHY_infoFile='n:\Deltabox\Bulletin\groenenb\EHY_INFO\EHY_INFO.pdf';
+if exist(EHY_infoFile,'file')
+    % EHY_info
+    button=uicontrol('Style', 'pushbutton', 'String','EHY_info',...
+        'units','centimeters','Position',[0.5027 height-(iF+1)*0.7938 5.2917 0.5292],...
+        'Callback', @EHY_info);
     uicontrol('Style','text',...
         'units','centimeters','Position',[6 height-(iF+1)*0.7938-0.1 12 0.5292],...
         'String','Collection of my personal notes, tips and tricks','horizontalalignment','left');
-    
+end
+
 % aboutEHY
 button=uicontrol('Style', 'pushbutton', 'String','About EHY_tools',...
     'units','centimeters','Position',[0.5027 height-(iF+2)*0.7938 5.2917 0.5292],...
@@ -136,7 +142,7 @@ hStatusText=uicontrol('Style','text',...
     end
 
     function EHY_info(hObject,event)
-        open('n:\Deltabox\Bulletin\groenenb\EHY_INFO\EHY_INFO.pdf');
+        open(EHY_infoFile);
     end
 
 end
