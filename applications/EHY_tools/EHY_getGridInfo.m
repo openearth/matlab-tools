@@ -218,12 +218,35 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
 
                             % side-view information
                             if nc_isvar(inputFile,'zcoordinate_c')
-                                E.Zcen_cen = ncread_blocks(inputFile,'zcoordinate_c',[1 1 1],[Inf Inf Inf]);
+                                tmp        = EHY_getmodeldata(inputFile,{},modelType,'varName','zcoordinate_c');
+                                E.Zcen_cen = tmp.val;
+                                if nc_isvar(inputFile,'zcoordinate_w')
+                                    tmp        = EHY_getmodeldata(inputFile,{},modelType,'varName','zcoordinate_c');
+                                    E.Zcen_int = tmp.val;
+                                else
+                                    % Retrieve interfaces from water level end centre information
+                                    warning(['Re-contstructing position of interfaces from water level en centres.' newline    ...
+                                             'Can be time consuming. Consider writing interface information to history file!']);
+                                    tmp                              = EHY_getmodeldata(inputFile,{},modelType,'varName','wl');
+                                    E.Zcen_int(:,:,E.no_layers + 1) = tmp.val;
+                                    for i_lay = E.no_layers:-1:1
+                                         E.Zcen_int(:,:,i_lay) = E.Zcen_int(:,:,i_lay + 1) -2*(E.Zcen_int(:,:,i_lay + 1) - E.Zcen_cen(:,:,i_lay));
+                                    end     
+                                end
+                            elseif nc_isvar(inputFile,'bedlevel')
+                                E.Zcen_int(:,:,2) = ncread(inputFile,'waterlevel')';
+                                no_times          = size(E.Zcen_int,2);
+                                E.Zcen_int(:,:,1) = repmat(ncread(inputFile,'bedlevel'  )',no_times,1);
+                                E.Zcen_int(:,:,2) = ncread(inputFile,'waterlevel')';
+                                E.Zcen_cen(:,:,1) = 0.5*(E.Zcen_int(:,:,1) + E.Zcent_int(:,:,2));
+                            elseif nc_isvar(inputFile,'waterlevel') && nc_isvar(inputFile,'Waterdepth')
+                                wl = ncread(inputFile,'waterlevel')';
+                                wd = ncread(inputFile,'Waterdepth')';
+                                E.Zcen_int(:,:,2) = wl;
+                                E.Zcen_int(:,:,1) = -wd + wl;
+                                E.Zcen_cen(:,:,1) = 0.5*(E.Zcen_int(:,:,1) + E.Zcen_int(:,:,2));
                             end
-                            if nc_isvar(inputFile,'zcoordinate_w')
-                                E.Zcen_int = ncread_blocks(inputFile,'zcoordinate_w',[1 1 1],[Inf Inf Inf]);
-                            end
-                            
+  
                             if ~isfield(E,'Zcen_cen')
                                 try % try to get this info from mdFile
                                     mdFile=EHY_getMdFile(inputFile);
@@ -501,13 +524,11 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                     end
                     
                     if ismember('Z', wantedOutput)
-                        % top-view information
-                        E.Zcen = -1*vs_let(trih,'his-const','DPS');
-                        
-                        % side-view information
-                        tmp=EHY_getGridInfo(inputFile,{'layer_model'},'disp',0);
+                       E.depth_cen = -1.*vs_let(trih,'his-const','DPS','quiet');
+                        E.Zcen_int(1,:,1) =  E.depth_cen; 
+                        tmp=EHY_getGridInfo(inputFile,{'layer_model'});
                         if strcmp(tmp.layer_model,'z-model')
-                            E.Zcen_int = -1*vs_let(trih,'his-const','ZK','quiet');
+                            E.Z = vs_let(trih,'his-const','ZK','quiet');
                         end
                     end
                     
@@ -601,7 +622,7 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                 if ismember('layer_model', wantedOutput)
                     E.layer_model = 'sigma-model';
                 end
-                if ismember('depth', wantedOutput) || ismember('Z', wantedOutput)
+                if ismember('depth', wantedOutput) 
                     if ismember('depth', wantedOutput)
 disp('Note : variable ''depth'' will be replaced by ''z'' in next version of EHY_getGridInfo')
 st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_name).name); end  
@@ -620,6 +641,22 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                         end
                     end
                 end
+               if ismember('Z', wantedOutput)
+                    % Fill only interface 1 for the first time step with depths
+                    mn = waquaio(sds,'','wl-mn');
+                    if kmax == 1
+                        dps = waquaio(sds,'','depth_wl_points');
+                        for i_stat = 1: size(mn,1)
+                            E.Zcen_int(1,i_stat,1) = -1.*dps(mn(i_stat,2),mn(i_stat,1));
+                        end
+                    else
+                        [~,~,z] = waquaio(sds,'','zgrid3di');
+                        for i_stat = 1: size(mn,1)
+                            E.Zcen_int(1,i_stat,1) = z(mn(i_stat,2),mn(i_stat,1),kmax + 1);
+                        end
+                    end
+                end
+           
                 
                 if ismember('layer_perc',wantedOutput)
                     mn = waquaio(sds,'','wl-mn');
