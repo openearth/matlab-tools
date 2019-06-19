@@ -7,7 +7,7 @@ filegrd = fileInp;
 [pin,~,~]    = fileparts(fileInp);
 pin          = [pin filesep];
 
-[~,fileType] = EHY_getModelType(fileInp);
+fileType     = EHY_getTypeOfModelFile (fileInp);
 
 switch fileType
     case 'mdf'
@@ -16,7 +16,7 @@ switch fileType
     case 'mdu'
         mdu     = dflowfm_io_mdu('read',fileInp);
         fileOut = [pin mdu.geometry.NetFile];
-    case {'grd' 'net_nc' 'map_nc'}
+    case {'grd' 'net_nc' 'map_nc' 'grid'}
         fileOut = fileInp;
     case 'siminp'
 
