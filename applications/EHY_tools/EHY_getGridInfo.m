@@ -24,9 +24,14 @@ function gridInfo=EHY_getGridInfo(inputFile,varargin)
 %                                       specified in input for EHY_getmodeldata
 %
 % Conventions:  Z                       positive  up  from ref.
+%                                       shape of array [time,stations,Z]
 %               (water)depth            absolute value (bed to surface)
-%               layer info              from layer 1 to number of layers (bed to surface)
-%                                       shape of array [1,n]
+%               layer info              convention as in provided modelfile, i.e.:
+%                                       -dfm        (layer 1 = bed, layer n = surface)
+%                                       -d3d-zlayer (layer 1 = bed, layer n = surface)
+%                                       -d3d-sigma  (layer n = bed, layer 1 = surface)                                   
+%                                       -SIMONA     (layer n = bed, layer 1 = surface)
+%                                       
 %
 % For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
 % created by Julien Groenenboom, October 2018
@@ -524,11 +529,10 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                     end
                     
                     if ismember('Z', wantedOutput)
-                       E.depth_cen = -1.*vs_let(trih,'his-const','DPS','quiet');
-                        E.Zcen_int(1,:,1) =  E.depth_cen; 
-                        tmp=EHY_getGridInfo(inputFile,{'layer_model'});
+                        E.Zcen = -1*vs_let(trih,'his-const','DPS','quiet');
+                        tmp=EHY_getGridInfo(inputFile,{'layer_model','no_layers'},'disp',0);
                         if strcmp(tmp.layer_model,'z-model')
-                            E.Z = vs_let(trih,'his-const','ZK','quiet');
+                            E.Zcen_int(1,1,:) = vs_let(trih,'his-const','ZK','quiet'); % [time,stations,Z]
                         end
                     end
                     
@@ -684,8 +688,8 @@ if ~isempty(OPT.stations)
     [Data,stationNrNoNan] = EHY_getRequestedStations(inputFile,OPT.stations,modelType,'varName',OPT.varName);
     vars = {'Zcen_cen','Zcen_int','Zcen'};
     for iV = 1:length(vars)
-        if isfield(E,vars{iV})
-            E.(vars{iV}) = E.(vars{iV})(:,stationNrNoNan,:);
+        if isfield(E,vars{iV}) && size(E.(vars{iV}),2)>1 % for z-layer model only 1 'station' 
+            E.(vars{iV}) = E.(vars{iV})(:,stationNrNoNan,:); % [times,stations,Z]
         end
     end
 end

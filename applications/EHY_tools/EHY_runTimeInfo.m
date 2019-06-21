@@ -44,8 +44,16 @@ try % if simulation has finished
             gridInfo=EHY_getGridInfo(mdFile,{'no_layers','dimensions'});
             noLayers=gridInfo.no_layers;
             
-            % out.txt
-            outFile=[pathstr filesep 'out.txt'];
+            % out.txt or .dia (when running via dimr)
+            outputDir = EHY_getOutputDirFM(mdFile);
+            outFile = [pathstr filesep 'out.txt'];
+            if exist([pathstr filesep 'out.txt'])
+                outFile = [pathstr filesep 'out.txt'];
+            elseif exist([outputDir name '_0000.dia'])
+                outFile=[outputDir name '_0000.dia'];
+            elseif exist([outputDir name '.dia'])
+                outFile=[outputDir name '.dia'];
+            end
 
             fid=fopen(outFile,'r');
             fseek(fid, 0, 'eof'); % set position indicator to end of file

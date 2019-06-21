@@ -5,17 +5,9 @@ switch modelType
     case {'d3dfm','dflow','dflowfm','mdu'}
         %% Delft3D-Flexible Mesh
         mdu=dflowfm_io_mdu('read',[sim_dir filesep runid '.mdu']);
-        if isempty(mdu.output.OutputDir)
-            outputDir = [ sim_dir filesep 'DFM_OUTPUT_' runid];
-        else
-            outputDir=strrep(mdu.output.OutputDir,'/','\');
-            while strcmp(outputDir(1),filesep) || strcmp(outputDir(1),'.')
-                outputDir=outputDir(2:end);
-            end
-            outputDir = [ sim_dir filesep outputDir];
-        end
-        hisncfiles         = dir([outputDir filesep '*his*.nc']);
-        outputfile          = [outputDir filesep hisncfiles(1).name];
+        outputDir  = EHY_getOutputDirFM([sim_dir filesep runid '.mdu']);
+        hisncfiles = dir([outputDir filesep '*his*.nc']);
+        outputfile = [outputDir filesep hisncfiles(1).name];
         
     case {'d3d','d3d4','delft3d4','mdf'}
         %% Delft3D 4

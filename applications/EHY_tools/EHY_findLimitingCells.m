@@ -51,15 +51,8 @@ end
 
 % another file that *_map.nc was provided
 if ~strcmp(mapFile(end-6:end),'_map.nc')
-    mdFile=EHY_getMdFile(mapFile);
-    mdu = dflowfm_io_mdu('read',mdFile);
-    if isempty(mdu.output.OutputDir)
-        [~,runid]=fileparts(mdFile);
-        runOutputDir = [fileparts(mdFile) filesep 'DFM_OUTPUT_' runid filesep];
-    else
-        runOutputDir = [fileparts(mdFile) filesep mdu.output.OutputDir filesep];
-    end
-    mapFile=[runOutputDir 'dummy.dummy'];  
+    outputDir = EHY_getOutputDirFM(mapFile);
+    mapFile=[outputDir 'dummy.dummy'];  
 end
 
 %% process
@@ -98,9 +91,14 @@ elseif exist(mapFile)
     disp('Reading numlimdt from *_map.nc ...')
     disp('To avoid this, set ''Wrimap_numlimdt = 1'' in the mdu-file')
     disp('and/or wait untill the simulation has finished.')
-    time=EHY_getmodeldata_getDatenumsFromOutputfile(mapFile);
-    time=time(end);
-    Data = EHY_getMapModelData(mapFile,'varName','numlimdt','t0',time,'tend',time,'mergePartitions',1);
+    time0=EHY_getmodeldata_getDatenumsFromOutputfile(mapFile);
+    time=time0(end);
+    try
+        Data = EHY_getMapModelData(mapFile,'varName','numlimdt','t0',time,'tend',time,'mergePartitions',1);
+    catch % if run is not finished yet, mapFile may contain different one timestep less. Use one time step before.
+        time=time0(end-1);
+        Data = EHY_getMapModelData(mapFile,'varName','numlimdt','t0',time,'tend',time,'mergePartitions',1);
+    end
     NUMLIMDT=Data.value';
     limInd=find(NUMLIMDT>0);
     NUMLIMDT=NUMLIMDT(limInd);

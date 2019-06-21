@@ -2,7 +2,7 @@ function mdFile=EHY_getMdFile(filename)
 %% modelType=EHY_getMdFile(filename)
 %
 % This function returns the filename of the mdFile (master definition file)
-% based on a filename/filename. Possibile mdFiles: .mdu / .mdf / siminp
+% based on a filename/rundirectory. Possibile mdFiles: .mdu / .mdf / siminp
 %
 % Example1: 	mdFile=EHY_getMdFile('D:\run01\')
 % Example2: 	mdFile=EHY_getMdFile('D:\run01\r01.ext')
