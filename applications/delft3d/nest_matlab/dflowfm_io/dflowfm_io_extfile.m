@@ -4,34 +4,34 @@ function varargout=dflowfm_io_extfile(cmd,fname,varargin)
 %% Switch read/write
 
 switch lower(cmd)
-
+    
     case 'read'
         OPT.strip = false;
         OPT       = setproperty(OPT,varargin);
         i_forcing = 0;
         type      = 'old';
-
+        
         try
             % New Format
             Info           = inifile('open',fname);
-
+            
             %% Cycle over the Chapters
             ListOfChapters = inifile('chapters',Info);
-            if isempty(ListOfChapters{:}) throw(MException()); end    % then we have an old ext file, go to catch
+            if isempty(ListOfChapters(:)) throw(MException()); end    % then we have an old ext file, go to catch
             for i_chapter = 1: length(ListOfChapters);
                 i_forcing = i_forcing + 1;
                 i_val     = 0;
                 ext_force(i_forcing).Chapter = ListOfChapters{i_chapter};
-
+                
                 %% Cycle over the keywords within a chapter
                 ListOfKeywords=inifile('keywords',Info,i_chapter);
                 for i_key = 1: length(ListOfKeywords)
-
+                    
                     %% Keyword/value (not a series)
                     if ~isempty(ListOfKeywords{i_key})
                         ext_force(i_forcing).Keyword.Name {i_key}  = ListOfKeywords{i_key};
                         ext_force(i_forcing).Keyword.Value{i_key} = inifile('get',Info,i_chapter,i_key);
-
+                        
                         %% remove comments (if requested)
                         if OPT.strip
                             index = strfind(ext_force(i_forcing).Keyword.Value{i_key},'#');
@@ -39,7 +39,7 @@ switch lower(cmd)
                                 ext_force(i_forcing).Keyword.Value{i_key} = ext_force(i_forcing).Keyword.Value{i_key}(1:index(1) - 1);
                             end
                         end
-
+                        
                         %% Convert 2 number if possible (exception for timeseries since that is a native matlab function)
                         if isstr(ext_force(i_forcing).Keyword.Value{i_key}) && ~strcmp(ext_force(i_forcing).Keyword.Value{i_key},'timeseries')
                             if ~isempty(str2num(ext_force(i_forcing).Keyword.Value{i_key}))
@@ -56,7 +56,7 @@ switch lower(cmd)
                         tmp   = inifile('get',Info,i_chapter,i_key);
                         if ~isstr(tmp)
                             for i_col = 1: length(tmp)
-                               ext_force(i_forcing).values{i_val,i_col} =  tmp(i_col);
+                                ext_force(i_forcing).values{i_val,i_col} =  tmp(i_col);
                             end
                         else
                             index =   d3d2dflowfm_decomposestr(tmp);
@@ -70,11 +70,11 @@ switch lower(cmd)
                     end
                 end
             end
-            varargout{1} = 'ini';
-
+            type = 'ini';
+            
         catch
             %% Old Format
-
+            
             fid     = fopen(fname  );
             line = strtrim(fgetl(fid));
             while ~feof(fid)
@@ -94,19 +94,19 @@ switch lower(cmd)
                 end
                 line = strtrim(fgetl(fid));
             end
-
+            
             fclose (fid);
         end
         varargout{1} = ext_force;
         varargout{2} = type;
-
+        
     case 'write'
         OPT.Filcomments = '' ;
         OPT.ext_force   = [] ;
         OPT.type        = 'old';
         OPT.first       = true;
         OPT = setproperty(OPT,varargin);
-
+        
         if strcmp(OPT.type,'old')
             % Old format
             % Comment lines
@@ -118,7 +118,7 @@ switch lower(cmd)
                 end
                 fclose (fid);
             end
-
+            
             if ~isempty(OPT.ext_force)
                 fid = fopen(fname,'a');
                 fseek(fid,0,'eof');
@@ -137,24 +137,24 @@ switch lower(cmd)
             % New format (writing through function inifile does not work
             % conveniently for series so write directly)
             if OPT.first fid = fopen(fname,'w+'); else; fid = fopen(fname,'a'); end
-
+            
             ext_force = OPT.ext_force;
             no_force  = length(ext_force);
             for i_force = 1: no_force
                 Chapter  = ext_force(i_force).Chapter;
                 Keyword  = ext_force(i_force).Keyword.Name;
                 Value    = ext_force(i_force).Keyword.Value;
-
+                
                 fprintf(fid,'[%s]\n',ext_force(i_force).Chapter);
                 for i_key = 1: length(Keyword)
                     fprintf (fid,'%-20s = %s\n',Keyword{i_key},Value{i_key});
                 end
-
+                
                 if isfield(ext_force(i_force),'values')
                     Value = ext_force(i_force).values;
                     no_row = size(Value,1);
                     no_col = size(Value,2);
-
+                    
                     if isstr(Value{1,1})
                         format = ['%8s ' repmat('%12.6f ',1,no_col - 1)];
                     elseif isinteger(Value{1,1})
@@ -162,11 +162,12 @@ switch lower(cmd)
                     else
                         format = repmat('%12.6f ',1,no_col);
                     end
+                    
+                    for i_row = 1: no_row
+                        fprintf(fid,[format '\n'],cell2mat(Value(i_row,:)));
+                    end
                 end
-
-                for i_row = 1: no_row
-                    fprintf(fid,[format '\n'],cell2mat(Value(i_row,:)));
-                end
+                
             end
             fclose(fid);
         end
