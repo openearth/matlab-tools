@@ -254,16 +254,16 @@ for it = 1:length(Times)
     V1t_03(it,:) = velprof_03(it).UCa;    
 end
 
-%%
-figpath = cd; % change cd to the figure path
+%% plot effect of waves on velocity profile
+figpath = [cd,'\']; % change cd to the figure path
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-plot(V1t_00(18,:),z_00(18,:),'.-');
+plot(V1t_00(18,:),z_00(18,:),'b-');
 hold on;
-plot(V1t_01(18,:),z_01(18,:),'x--');
-plot(V1t_02(18,:),z_02(18,:),'o:');
-plot(V1t_03(18,:),z_03(18,:),'.-');
+plot(V1t_01(18,:),z_01(18,:),'g--');
+plot(V1t_02(18,:),z_02(18,:),'m:');
+plot(V1t_03(18,:),z_03(18,:),'r-.');
 grid on;
 set(gca,'fontsize',7)
 legend('Hm0 = 0 m','Hm0 = 1 m', 'Hm0 = 2 m','Hm0 = 3 m');
@@ -376,10 +376,9 @@ set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',fig
 hold on;
 semilogy(data03.Vz(it,:),data03.z(it,:),'o-')
 grid on;
-legend(addtofname)
-title(['Velocity profiles Vr:',num2str(Vr(it),'%2.2f'),'m/s'])
+title(['Velocity profiles Vr: ',num2str(Vr(it),'%2.2f'),'m/s'])
 
-%% plot concentration profiles TR2004
+%% plot concentration profiles TR2004 for one time step it
 % it = 2;
 % it = 18;
 it = 50;
@@ -390,38 +389,7 @@ loglog(data03.csand(it,:),data03.z(it,:),'b--');
 hold on;
 grid on;
 legend(addtofname)
-title(['Concentration profiles Vr:',num2str(Vr(it),'%2.2f'),'m/s'])
-
-% %% 
-% figure;
-% figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
-% set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-% subplot(2,1,1)
-% % plot(Vr(2:end),data00.ustarcw(2:end),'.-');
-% grid on;
-% title('ustarcw')
-% subplot(2,1,2)
-% plot(Vr(2:end),data00.beta(2:end),'.-');
-% grid on;
-% title('beta')
-% 
-%% 
-% figure;
-% figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
-% set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-% subplot(3,1,1)
-% plot(Vr(2:end),data00.ustarcw(2:end),'.-');
-% grid on;
-% title('ustarcw')
-% subplot(3,1,2)
-% plot(Vr(2:end),data00.beta(2:end),'.-');
-% grid on;
-% title('beta')
-% subplot(3,1,3)
-% plot(Vr(2:end),data00.susnumsanddamp(2:end),'.-');
-% grid on;
-% title('susnumsanddamp')
-
+title(['Concentration profiles Vr: ',num2str(Vr(it),'%2.2f'),'m/s'])
 
 %% compare the two velocity profiles for one time step it
 it = 18;
@@ -432,9 +400,7 @@ hold on;
 plot(data03.Vz(it,:),data03.z(it,:),'.-')
 plot(velprof_03(it).UCa,velprof_03(it).z,'x--')
 grid on;
-title('velocity profile')
-legend(addtofname,'test')
-
+title(['Velocity profile ',num2str(Vr(it),'%2.2f'),'m/s'])
 
 %% plot the apparent roughness for different wave heights
 figure;
@@ -596,7 +562,7 @@ set(gca,'fontsize',7);
 legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Mixing at mid depth EMAX [m^2/s]')
-title(['Comparison of mixing at mid depth', num2str(d(1)) ' m water depth'])
+title(['Comparison of mixing at mid depth ', num2str(d(1)) ' m water depth'])
 text(1,0,['\copyright Deltares ',datestr(now,10)],'fontsize',6,'rotation',90,'unit','n','ver','t');  % add ARCADIS copyright
 annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'horizontalalignment','right','verticalalignment','baseline','color',[0.5 0.5 0.5]);  % add script name
 % print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_EMAXW',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
@@ -744,7 +710,7 @@ set(gca,'fontsize',7);
 legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Reference concentration [kg/m^3]')
-title(['Comparison of reference concentration', num2str(d(1)) ' m water depth'])
+title(['Comparison of reference concentration ', num2str(d(1)) ' m water depth'])
 text(1,0,['\copyright Deltares ',datestr(now,10)],'fontsize',6,'rotation',90,'unit','n','ver','t');  % add ARCADIS copyright
 annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'horizontalalignment','right','verticalalignment','baseline','color',[0.5 0.5 0.5]);  % add script name
 % print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_CA',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
@@ -764,7 +730,7 @@ set(gca,'fontsize',7);
 legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Fall velocity WS [m/s]')
-title(['Comparison of fall velocity', num2str(d(1)) ' m water depth'])
+title(['Comparison of fall velocity ', num2str(d(1)) ' m water depth'])
 text(1,0,['\copyright Deltares ',datestr(now,10)],'fontsize',6,'rotation',90,'unit','n','ver','t');  % add ARCADIS copyright
 annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'horizontalalignment','right','verticalalignment','baseline','color',[0.5 0.5 0.5]);  % add script name
 % print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_WS',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
@@ -790,7 +756,6 @@ grid on;
 set(gca,'fontsize',7)
 ylim([10^-7 10^-1])
 legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
-set(leg,'fontsize',6);
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Total load transport in current direction [m^2/s/m, excl pores]')
 title(['Comparison of computed total load transport for ', num2str(d(1)) ' m water depth'])
@@ -811,7 +776,6 @@ grid on;
 set(gca,'fontsize',7)
 ylim([10^-7 10^-1])
 legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
-set(leg,'fontsize',6);
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Suspended load transport in current direction [m^2/s/m, excl pores]')
 title(['Comparison of computed suspended load transport for ', num2str(d(1)) ' m water depth'])
@@ -832,13 +796,12 @@ grid on;
 set(gca,'fontsize',7)
 ylim([10^-7 10^-1])
 legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
-set(leg,'fontsize',6);
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Bed load transport in current direction [m^2/s/m, excl pores]')
 title(['Comparison of computed bed load transport for ', num2str(d(1)) ' m water depth'])
 text(1,0,['\copyright Deltares ',datestr(now,10)],'fontsize',6,'rotation',90,'unit','n','ver','t');  % add ARCADIS copyright
 annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'horizontalalignment','right','verticalalignment','baseline','color',[0.5 0.5 0.5]);  % add script name
-% print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_BEDtransports_d',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
+print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_BEDtransports_d',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
 
 
 %%
