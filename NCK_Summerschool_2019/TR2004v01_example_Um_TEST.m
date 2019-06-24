@@ -50,7 +50,6 @@ psand = 1;
 pmud = 0;
 pgravel = 0;
 pclay = 0;
-dampsuspension = false;
 nrofsigmalevels = 20;
 
 myRW = NaN; % if NaN then computed by TR2004
@@ -276,17 +275,6 @@ annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'
 % print('-dpng','-r300',[figpath,filesep,'Deltares_figure'])  % print figure at 300 dpi
 %%
 
-% data00_06 = tsandv06('Times',Times,...
-%     'Hs',Hm0_00,'Tp',Tp,'Hdir',Hdir,...
-%     'U1',U1t_00,...
-%     'V1',V1t_00,'zvel',zvelt_00,...
-%     'zbedt',zbedt,'d',d,...
-%     'salt',salt,'D10',D10,'D50',D50,'D90',D90,...
-%     'psand',psand,'pmud',pmud,'pgravel',pgravel,...
-%     'computewaverelated',true,...
-%     'computeundertow',false,...
-%     'dampsuspension',dampsuspension);
-
 data00 = TR2004v01('Times',Times,...
     'Hs',Hm0_00,'Tp',Tp,'Hdir',Hdir,...
     'U1',U1t_00,...
@@ -296,7 +284,6 @@ data00 = TR2004v01('Times',Times,...
     'psand',psand,'pmud',pmud,'pgravel',pgravel,...
     'computewaverelated',true,...
     'compute_stokes_return_flow',false,...
-    'dampsuspension',dampsuspension,...
     'nrofsigmalevels',nrofsigmalevels,...
     'RW',myRW.*ones(size(Hm0_00)),...
     'RC',myRC.*ones(size(Hm0_00)),...
@@ -311,12 +298,10 @@ data01 = TR2004v01('Times',Times,...
     'psand',psand,'pmud',pmud,'pgravel',pgravel,...
     'computewaverelated',true,...
     'compute_stokes_return_flow',false,...
-    'dampsuspension',dampsuspension,...
     'nrofsigmalevels',nrofsigmalevels,...    
     'RW',myRW.*ones(size(Hm0_01)),...
     'RC',myRC.*ones(size(Hm0_01)),...
     'aR',myaR.*ones(size(Hm0_01)));
-
 
 data02 = TR2004v01('Times',Times,...
     'Hs',Hm0_02,'Tp',Tp,'Hdir',Hdir,...
@@ -327,7 +312,6 @@ data02 = TR2004v01('Times',Times,...
     'psand',psand,'pmud',pmud,'pgravel',pgravel,...
     'computewaverelated',true,...
     'compute_stokes_return_flow',false,...
-    'dampsuspension',dampsuspension,...
     'nrofsigmalevels',nrofsigmalevels,...    
     'RW',myRW.*ones(size(Hm0_02)),...
     'RC',myRC.*ones(size(Hm0_02)),...
@@ -342,7 +326,6 @@ data03 = TR2004v01('Times',Times,...
     'psand',psand,'pmud',pmud,'pgravel',pgravel,...
     'computewaverelated',true,...
     'compute_stokes_return_flow',false,...
-    'dampsuspension',dampsuspension,...
     'nrofsigmalevels',nrofsigmalevels,...    
     'RW',myRW.*ones(size(Hm0_03)),...
     'RC',myRC.*ones(size(Hm0_03)),...
@@ -440,7 +423,7 @@ title(['Concentration profiles Vr:',num2str(Vr(it),'%2.2f'),'m/s'])
 % title('susnumsanddamp')
 
 
-%%
+%% compare the two velocity profiles for one time step it
 it = 18;
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
@@ -453,7 +436,7 @@ title('velocity profile')
 legend(addtofname,'test')
 
 
-%%
+%% plot the apparent roughness for different wave heights
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
@@ -465,7 +448,7 @@ plot(Vr(2:end),data03.RA(2:end),'b--','linewidth',1.3)
 hold on;
 grid on
 set(gca,'fontsize',7);
-legend(addtofname);
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Apparent roughness [m]')
 title(['Comparison of computed roughness ', num2str(d(1)) ' m water depth'])
@@ -485,7 +468,7 @@ plot(Vr(2:end),data03.RW(2:end),'b--','linewidth',1.3)
 hold on;
 grid on
 set(gca,'fontsize',7);
-legend(addtofname);
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Wave-related roughness [m]')
 title(['Comparison of computed wave-related roughness ', num2str(d(1)) ' m water depth'])
@@ -497,15 +480,15 @@ annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-plot(Vr(2:end),data00.RC(2:end),'b--','linewidth',0.7)
+plot(Vr(2:end),data00.RC(2:end),'b-','linewidth',0.7)
 hold on;
-plot(Vr(2:end),data01.RC(2:end),'b--','linewidth',1)
+plot(Vr(2:end),data01.RC(2:end),'g--','linewidth',1)
 hold on;
-plot(Vr(2:end),data03.RC(2:end),'b--','linewidth',1.3)
+plot(Vr(2:end),data03.RC(2:end),'r-.','linewidth',1.3)
 hold on;
 grid on
 set(gca,'fontsize',7);
-legend(addtofname);
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Current-related roughness [m]')
 title(['Comparison of computed current-related roughness ', num2str(d(1)) ' m water depth'])
@@ -537,21 +520,21 @@ annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-plot(Vr(2:end),data00.tauw(2:end),'b--','linewidth',0.7)
+plot(Vr(2:end),data00.tauw(2:end),'b-','linewidth',0.7)
 hold on;
-plot(Vr(2:end),data01.tauw(2:end),'b--','linewidth',1)
+plot(Vr(2:end),data01.tauw(2:end),'g--','linewidth',1)
 hold on;
-plot(Vr(2:end),data03.tauw(2:end),'b--','linewidth',1.3)
+plot(Vr(2:end),data03.tauw(2:end),'r-.','linewidth',1.3)
 hold on;
 grid on
 set(gca,'fontsize',7);
-legend(addtofname);
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Wave-related shear stress [N/m^2]')
 title(['Comparison of computed wave-related shear stress ', num2str(d(1)) ' m water depth'])
 text(1,0,['\copyright Deltares ',datestr(now,10)],'fontsize',6,'rotation',90,'unit','n','ver','t');  % add ARCADIS copyright
 annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'horizontalalignment','right','verticalalignment','baseline','color',[0.5 0.5 0.5]);  % add script name
-% print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_vs_TAUW',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
+% print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_TAUW',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
 
 
 
@@ -559,15 +542,15 @@ annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-plot(Vr(2:end),data00.TAUCWE(2:end),'b--','linewidth',0.7)
+plot(Vr(2:end),data00.TAUCWE(2:end),'b-','linewidth',0.7)
 hold on;
-plot(Vr(2:end),data01.TAUCWE(2:end),'b--','linewidth',1)
+plot(Vr(2:end),data01.TAUCWE(2:end),'g--','linewidth',1)
 hold on;
-plot(Vr(2:end),data03.TAUCWE(2:end),'b--','linewidth',1.3)
+plot(Vr(2:end),data03.TAUCWE(2:end),'r-.','linewidth',1.3)
 hold on;
 grid on
 set(gca,'fontsize',7);
-legend(addtofname);
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Effective bed shear stress C+W [N/m^2]')
 title(['Comparison of computed effective bed shear stress C+W ', num2str(d(1)) ' m water depth'])
@@ -581,36 +564,36 @@ annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-plot(Vr(2:end),data00.EBW(2:end),'b--','linewidth',0.7)
+plot(Vr(2:end),data00.EBW(2:end),'b-','linewidth',0.7)
 hold on;
-plot(Vr(2:end),data01.EBW(2:end),'b--','linewidth',1)
+plot(Vr(2:end),data01.EBW(2:end),'g--','linewidth',1)
 hold on;
-plot(Vr(2:end),data03.EBW(2:end),'b--','linewidth',1.3)
+plot(Vr(2:end),data03.EBW(2:end),'r-.','linewidth',1.3)
 hold on;
 grid on
 set(gca,'fontsize',7);
-legend(addtofname);
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Near-bed mixing EBW [m^2/s]')
 title(['Comparison of near-bed mixing ', num2str(d(1)) ' m water depth'])
 text(1,0,['\copyright Deltares ',datestr(now,10)],'fontsize',6,'rotation',90,'unit','n','ver','t');  % add ARCADIS copyright
 annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'horizontalalignment','right','verticalalignment','baseline','color',[0.5 0.5 0.5]);  % add script name
-% print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_vs_EBW',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
+% print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_EBW',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
 
 
-%%
+%% plot mixinf at mid depth
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-plot(Vr(2:end),data00.EMAXW(2:end),'b--','linewidth',0.7)
+plot(Vr(2:end),data00.EMAXW(2:end),'b-','linewidth',0.7)
 hold on;
-plot(Vr(2:end),data01.EMAXW(2:end),'b--','linewidth',1)
+plot(Vr(2:end),data01.EMAXW(2:end),'g--','linewidth',1)
 hold on;
-plot(Vr(2:end),data03.EMAXW(2:end),'b--','linewidth',1.3)
+plot(Vr(2:end),data03.EMAXW(2:end),'r-.','linewidth',1.3)
 hold on;
 grid on
 set(gca,'fontsize',7);
-legend(addtofname);
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Mixing at mid depth EMAX [m^2/s]')
 title(['Comparison of mixing at mid depth', num2str(d(1)) ' m water depth'])
@@ -618,40 +601,40 @@ text(1,0,['\copyright Deltares ',datestr(now,10)],'fontsize',6,'rotation',90,'un
 annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'horizontalalignment','right','verticalalignment','baseline','color',[0.5 0.5 0.5]);  % add script name
 % print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_EMAXW',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
 
-%%
+%% plot mixing coefficient betaw
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-plot(Vr(2:end),data00.betaw(2:end),'b--','linewidth',0.7)
+plot(Vr(2:end),data00.betaw(2:end),'b-','linewidth',0.7)
 hold on;
-plot(Vr(2:end),data01.betaw(2:end),'b--','linewidth',1)
+plot(Vr(2:end),data01.betaw(2:end),'g--','linewidth',1)
 hold on;
-plot(Vr(2:end),data03.betaw(2:end),'b--','linewidth',1.3)
+plot(Vr(2:end),data03.betaw(2:end),'r-.','linewidth',1.3)
 hold on;
 grid on
 set(gca,'fontsize',7);
-legend(addtofname);
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Mixing coefficient BETAW [m^2/s]')
 title(['Comparison of mixing coefficient BETAW ', num2str(d(1)) ' m water depth'])
 text(1,0,['\copyright Deltares ',datestr(now,10)],'fontsize',6,'rotation',90,'unit','n','ver','t');  % add ARCADIS copyright
 annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'horizontalalignment','right','verticalalignment','baseline','color',[0.5 0.5 0.5]);  % add script name
-% print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_vs_BETAW',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
+% print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_BETAW',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
 
 
-%%
+%% plot wave-related friction coefficient fw
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-plot(Vr(2:end),data00.fw(2:end),'b--','linewidth',0.7)
+plot(Vr(2:end),data00.fw(2:end),'b-','linewidth',0.7)
 hold on;
-plot(Vr(2:end),data01.fw(2:end),'b--','linewidth',1)
+plot(Vr(2:end),data01.fw(2:end),'g--','linewidth',1)
 hold on;
-plot(Vr(2:end),data03.fw(2:end),'b--','linewidth',1.3)
+plot(Vr(2:end),data03.fw(2:end),'r-.','linewidth',1.3)
 hold on;
 grid on
 set(gca,'fontsize',7);
-legend(addtofname);
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Wave-related friction coefficient FW [-]')
 title(['Comparison of wave-related friction coefficient FW ', num2str(d(1)) ' m water depth'])
@@ -660,28 +643,28 @@ annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'
 % print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_FW',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
 
 
-%%
+%% plot representative orbital velocity UBWr
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-plot(Vr(2:end),data00.UBWr(2:end),'b--','linewidth',0.7)
+plot(Vr(2:end),data00.UBWr(2:end),'b-','linewidth',0.7)
 hold on;
-plot(Vr(2:end),data01.UBWr(2:end),'b--','linewidth',1)
+plot(Vr(2:end),data01.UBWr(2:end),'g--','linewidth',1)
 hold on;
-plot(Vr(2:end),data03.UBWr(2:end),'b--','linewidth',1.3)
+plot(Vr(2:end),data03.UBWr(2:end),'r-.','linewidth',1.3)
 hold on;
 grid on
 set(gca,'fontsize',7);
-legend(addtofname);
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('UBWr [m/s]')
 title(['Comparison of representative orbital velocity UBWr ', num2str(d(1)) ' m water depth'])
 text(1,0,['\copyright Deltares ',datestr(now,10)],'fontsize',6,'rotation',90,'unit','n','ver','t');  % add ARCADIS copyright
 annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'horizontalalignment','right','verticalalignment','baseline','color',[0.5 0.5 0.5]);  % add script name
-% print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_vs_UBWr',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
+% print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_UBWr',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
 
 
-%%
+%% plot critical bed shear stress
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
@@ -693,7 +676,7 @@ plot(Vr(2:end),data03.taucr(2:end),'b--','linewidth',1.3)
 hold on;
 grid on
 set(gca,'fontsize',7);
-legend(addtofname);
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('TAUCR [N/m^2]')
 title(['Comparison of critical bed shear stress TAUCR ', num2str(d(1)) ' m water depth'])
@@ -702,19 +685,19 @@ annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'
 % print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_TAUCR',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
 
 
-%%
+%% plot effective bed shear stress TAUCEF
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-plot(Vr(2:end),data00.TAUCEF(2:end),'b--','linewidth',0.7)
+plot(Vr(2:end),data00.TAUCEF(2:end),'b-','linewidth',0.7)
 hold on;
-plot(Vr(2:end),data01.TAUCEF(2:end),'b--','linewidth',1)
+plot(Vr(2:end),data01.TAUCEF(2:end),'g--','linewidth',1)
 hold on;
-plot(Vr(2:end),data03.TAUCEF(2:end),'b--','linewidth',1.3)
+plot(Vr(2:end),data03.TAUCEF(2:end),'r-.','linewidth',1.3)
 hold on;
 grid on
 set(gca,'fontsize',7);
-legend(addtofname);
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('TAUCEF [N/m^2]')
 title(['Comparison of effective bed shear stress TAUCEF ', num2str(d(1)) ' m water depth'])
@@ -723,19 +706,19 @@ annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'
 % print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_TAUCEF',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
 
 
-%%
+%% plot effective bed shear stress TAUWEF
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-plot(Vr(2:end),data00.TAUWEF(2:end),'b--','linewidth',0.7)
+plot(Vr(2:end),data00.TAUWEF(2:end),'b-','linewidth',0.7)
 hold on;
-plot(Vr(2:end),data01.TAUWEF(2:end),'b--','linewidth',1)
+plot(Vr(2:end),data01.TAUWEF(2:end),'g--','linewidth',1)
 hold on;
-plot(Vr(2:end),data03.TAUWEF(2:end),'b--','linewidth',1.3)
+plot(Vr(2:end),data03.TAUWEF(2:end),'r-.','linewidth',1.3)
 hold on;
 grid on
 set(gca,'fontsize',7);
-legend(addtofname);
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('TAUWEF [N/m^2]')
 title(['Comparison of effective bed shear stress TAUWEF ', num2str(d(1)) ' m water depth'])
@@ -745,20 +728,20 @@ annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'
 
 
 
-%%
+%% plot reference concentration csandref
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-plot(Vr(2:end),data00.csandref(2:end),'b--','linewidth',0.7)
+plot(Vr(2:end),data00.csandref(2:end),'b-','linewidth',0.7)
 hold on;
 % plot(Vr(2:end),data00.CA(2:end).*rhos,'k:','linewidth',2)
-plot(Vr(2:end),data01.csandref(2:end),'b--','linewidth',1)
+plot(Vr(2:end),data01.csandref(2:end),'g--','linewidth',1)
 hold on;
-plot(Vr(2:end),data03.csandref(2:end),'b--','linewidth',1.3)
+plot(Vr(2:end),data03.csandref(2:end),'r-.','linewidth',1.3)
 hold on;
 grid on
 set(gca,'fontsize',7);
-legend(addtofname);
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Reference concentration [kg/m^3]')
 title(['Comparison of reference concentration', num2str(d(1)) ' m water depth'])
@@ -766,19 +749,19 @@ text(1,0,['\copyright Deltares ',datestr(now,10)],'fontsize',6,'rotation',90,'un
 annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'horizontalalignment','right','verticalalignment','baseline','color',[0.5 0.5 0.5]);  % add script name
 % print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_CA',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
 
-%%
+%% plot fall velocity suspended material
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-plot(Vr(2:end),data00.wssand(2:end),'b--','linewidth',0.7)
+plot(Vr(2:end),data00.wssand(2:end),'b-','linewidth',0.7)
 hold on;
-plot(Vr(2:end),data01.wssand(2:end),'b--','linewidth',1)
+plot(Vr(2:end),data01.wssand(2:end),'g--','linewidth',1)
 hold on;
-plot(Vr(2:end),data03.wssand(2:end),'b--','linewidth',1.3)
+plot(Vr(2:end),data03.wssand(2:end),'r-.','linewidth',1.3)
 hold on;
 grid on
 set(gca,'fontsize',7);
-legend(addtofname);
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Fall velocity WS [m/s]')
 title(['Comparison of fall velocity', num2str(d(1)) ' m water depth'])
@@ -791,87 +774,71 @@ annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-semilogy(Vr(2:end),data00.qtotsandy(2:end)./2650,'b--','linewidth',0.7)
+semilogy(Vr(2:end),data00.qtotsandy(2:end)./2650,'b-','linewidth',0.7)
 hold on;
 % semilogy(Vmean(2:end),data00.SVR.qtotsandy(2:end)./2650,'g-','linewidth',0.7);
 % semilogy(Vr(2:end),data00.VR.qtotsandy(2:end)./2650,'g-','linewidth',0.7);
 
-semilogy(Vr(2:end),data01.qtotsandy(2:end)./2650,'b--','linewidth',1);
+semilogy(Vr(2:end),data01.qtotsandy(2:end)./2650,'g--','linewidth',1);
 % semilogy(Vmean(2:end),data01.SVR.qtotsandy(2:end)./2650,'g-','linewidth',1);
 % semilogy(Vr(2:end),data01.VR.qtotsandy(2:end)./2650,'g-','linewidth',1);
 
-semilogy(Vr(2:end),data03.qtotsandy(2:end)./2650,'b--','linewidth',1.3);
+semilogy(Vr(2:end),data03.qtotsandy(2:end)./2650,'r-.','linewidth',1.3);
 % semilogy(Vmean(2:end),data03.SVR.qtotsandy(2:end)./2650,'g-','linewidth',1.3);
 % semilogy(Vr(2:end),data03.VR.qtotsandy(2:end)./2650,'g-','linewidth',1.3);
 grid on;
 set(gca,'fontsize',7)
 ylim([10^-7 10^-1])
-leg = legend([addtofname,'; Hs = 0 m'],'Van Rijn formula Hs = 0 m',[addtofname,'; Hs = 1 m'],'Van Rijn formula Hs = 1 m',[addtofname,'; Hs = 3 m'],'Van Rijn formula Hs = 3 m','location','southeast');
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 set(leg,'fontsize',6);
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Total load transport in current direction [m^2/s/m, excl pores]')
 title(['Comparison of computed total load transport for ', num2str(d(1)) ' m water depth'])
 text(1,0,['\copyright Deltares ',datestr(now,10)],'fontsize',6,'rotation',90,'unit','n','ver','t');  % add ARCADIS copyright
 annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'horizontalalignment','right','verticalalignment','baseline','color',[0.5 0.5 0.5]);  % add script name
-% print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_vs_VanRijnFormula_transports_d',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
+% print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_TotalTransport_d',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
 
 
 %%
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-semilogy(Vr(2:end),data00.qssandy_dint(2:end)./2650,'b--','linewidth',0.7)
+semilogy(Vr(2:end),data00.qssandy_dint(2:end)./2650,'b-','linewidth',0.7)
 hold on;
-% semilogy(Vmean(2:end),data00.SVR.qtotsandy(2:end)./2650,'g-','linewidth',0.7);
-% semilogy(Vr(2:end),data00.VR.qssandy(2:end)./2650,'g-','linewidth',0.7);
-
-semilogy(Vr(2:end),data01.qssandy_dint(2:end)./2650,'b--','linewidth',1);
-% semilogy(Vmean(2:end),data01.SVR.qtotsandy(2:end)./2650,'g-','linewidth',1);
-% semilogy(Vr(2:end),data01.VR.qssandy(2:end)./2650,'g-','linewidth',1);
-
-semilogy(Vr(2:end),data03.qssandy_dint(2:end)./2650,'b--','linewidth',1.3);
-% semilogy(Vmean(2:end),data03.SVR.qtotsandy(2:end)./2650,'g-','linewidth',1.3);
-% semilogy(Vr(2:end),data03.VR.qssandy(2:end)./2650,'g-','linewidth',1.3);
+semilogy(Vr(2:end),data01.qssandy_dint(2:end)./2650,'g--','linewidth',1);
+semilogy(Vr(2:end),data03.qssandy_dint(2:end)./2650,'r-.','linewidth',1.3);
 grid on;
 set(gca,'fontsize',7)
 ylim([10^-7 10^-1])
-leg = legend([addtofname,'; Hs = 0 m'],'Van Rijn formula Hs = 0 m',[addtofname,'; Hs = 1 m'],'Van Rijn formula Hs = 1 m',[addtofname,'; Hs = 3 m'],'Van Rijn formula Hs = 3 m','location','southeast');
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 set(leg,'fontsize',6);
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Suspended load transport in current direction [m^2/s/m, excl pores]')
 title(['Comparison of computed suspended load transport for ', num2str(d(1)) ' m water depth'])
 text(1,0,['\copyright Deltares ',datestr(now,10)],'fontsize',6,'rotation',90,'unit','n','ver','t');  % add ARCADIS copyright
 annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'horizontalalignment','right','verticalalignment','baseline','color',[0.5 0.5 0.5]);  % add script name
-% print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_vs_VanRijnFormula_SUStransports_d',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
+% print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_SUStransports_d',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
 
 
 %%
 figure;
 figsize = [0 0 5.9 3];     % set figure size to 5.9 inch x 2.95 inch = 15 cm x 7.5 cm
 set(gcf,'PaperOrientation','portrait','PaperUnits','inches' ,'PaperPosition',figsize);
-semilogy(Vr(2:end),data00.qbsandy(2:end)./2650,'b--','linewidth',0.7)
+semilogy(Vr(2:end),data00.qbsandy(2:end)./2650,'b-','linewidth',0.7)
 hold on;
-% semilogy(Vmean(2:end),data00.SVR.qtotsandy(2:end)./2650,'g-','linewidth',0.7);
-% semilogy(Vr(2:end),data00.VR.qbsandy(2:end)./2650,'g-','linewidth',0.7);
-
-semilogy(Vr(2:end),data01.qbsandy(2:end)./2650,'b--','linewidth',1);
-% semilogy(Vmean(2:end),data01.SVR.qtotsandy(2:end)./2650,'g-','linewidth',1);
-% semilogy(Vr(2:end),data01.VR.qbsandy(2:end)./2650,'g-','linewidth',1);
-
-semilogy(Vr(2:end),data03.qbsandy(2:end)./2650,'b--','linewidth',1.3);
-% semilogy(Vmean(2:end),data03.SVR.qtotsandy(2:end)./2650,'g-','linewidth',1.3);
-% semilogy(Vr(2:end),data03.VR.qbsandy(2:end)./2650,'g-','linewidth',1.3);
+semilogy(Vr(2:end),data01.qbsandy(2:end)./2650,'g--','linewidth',1);
+semilogy(Vr(2:end),data03.qbsandy(2:end)./2650,'r-.','linewidth',1.3);
 grid on;
 set(gca,'fontsize',7)
 ylim([10^-7 10^-1])
-leg = legend([addtofname,'; Hs = 0 m'],'Van Rijn formula Hs = 0 m',[addtofname,'; Hs = 1 m'],'Van Rijn formula Hs = 1 m',[addtofname,'; Hs = 3 m'],'Van Rijn formula Hs = 3 m','location','southeast');
+legend('Hm0 = 0 m','Hm0 = 1 m','Hm0 = 3 m');
 set(leg,'fontsize',6);
 xlabel('Depth-averaged flow velocity [m/s]')
 ylabel('Bed load transport in current direction [m^2/s/m, excl pores]')
 title(['Comparison of computed bed load transport for ', num2str(d(1)) ' m water depth'])
 text(1,0,['\copyright Deltares ',datestr(now,10)],'fontsize',6,'rotation',90,'unit','n','ver','t');  % add ARCADIS copyright
 annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'horizontalalignment','right','verticalalignment','baseline','color',[0.5 0.5 0.5]);  % add script name
-% print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_vs_VanRijnFormula_BEDtransports_d',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
+% print('-dpng','-r600',[figpath,filesep,'TEST_',addtofname,'_BEDtransports_d',num2str(d(1),'%02.0f'),'m'])  % print figure at 300 dpi
 
 
 %%
