@@ -252,7 +252,7 @@ end
 
      [fileexist,action]=filecheck(fname);
       if strcmpi(action,'o')
-         mkpath(filepathstr(fname))
+         mkdir(filepathstr(fname))
       end
 
       if nargin==3
