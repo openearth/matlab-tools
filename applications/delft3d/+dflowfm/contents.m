@@ -24,6 +24,7 @@
 %  dflowfm.plotMapkml         - Plot a D-Flow FM map as Google Earth kml file (beta).
 %  dflowfm.add_CF_coordinates - appends CF coordinates to ncfile
 %  dflowfm.readHis            - Read timeseries data from a D-Flow FM history file.
+%  dflowfm.writeProfdef   	  - Write profile definition text file for 1D simulations
 %  plotparallel               - parallel version of plotMAP
 %  readparallel               - parallel version of readNet/readMap
 %
