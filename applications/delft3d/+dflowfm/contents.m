@@ -24,7 +24,6 @@
 %  dflowfm.plotMapkml         - Plot a D-Flow FM map as Google Earth kml file (beta).
 %  dflowfm.add_CF_coordinates - appends CF coordinates to ncfile
 %  dflowfm.readHis            - Read timeseries data from a D-Flow FM history file.
-%  dflowfm.writeProfdef   	  - Write profile definition text file for 1D simulations
 %  plotparallel               - parallel version of plotMAP
 %  readparallel               - parallel version of readNet/readMap
 %
@@ -34,6 +33,8 @@
 %  dflowfm.analyseHis           - analyse waterlevel time series against OPeNDAP data in time and frequency domain
 %  dflowfm.indexHis             - Read/show index of history station (obs point)
 %  dflowfm.fillDep              - fill depth values from OPeNDAP data source (single grid or gridset of tiles)
+%  dflowfm.writeProfdef   	    - Write profile definition text file for 1D models
+%  dflowfm.readProfdef_crs 		- Read xyz of yz profiles for 1D models
 %  delft3d_io_xyn               - read/write observation point files
 %
 % VARIOUS TOOLS:
