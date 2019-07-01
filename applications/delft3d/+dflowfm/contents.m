@@ -33,9 +33,10 @@
 %  dflowfm.analyseHis           - analyse waterlevel time series against OPeNDAP data in time and frequency domain
 %  dflowfm.indexHis             - Read/show index of history station (obs point)
 %  dflowfm.fillDep              - fill depth values from OPeNDAP data source (single grid or gridset of tiles)
-%  dflowfm.writeProfdef   	    - Write profile definition text file for 1D models
-%  dflowfm.readProfdef_crs 		- Read xyz of yz profiles for 1D models
 %  delft3d_io_xyn               - read/write observation point files
+%  dflowfm.write1DObsCrs 		- Define observational cross-sections for 1D network
+%  dflowfm.write1DProfdef 	    - Write profile definition text file for 1D models
+%  dflowfm.read1DProfdef_crs	- Read xyz or yz profiles for 1D models
 %
 % VARIOUS TOOLS:
 %  dflowfm.mike2dflowfm         - convert Mike mesh to D-Flow FM mesh
