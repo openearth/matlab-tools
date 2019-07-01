@@ -1,32 +1,37 @@
-function varargout = writeObsCrs1D(varargin)
+function varargout = write1DObsCrs(varargin)
 % Define observational cross-sections 1 net node apart from all boundaries 
 % (end points) and surrounding junctions of 1D network and write to *_crs.pli file
 %
 %
 %   Syntax:
-%   varargout = writeObsCrs1D('net',net,'crs',crsFile)
+%   write1DObsCrs('net',net,'crs',crsFile)
 %
 %   Input: For <keyword,value> pairs call Untitled() without arguments.
-%   net     = string or structure read by dflowfm.readNet
-%   crsFile = filename to *_crs.pli file
+%   net     = string to 1D network file or structure read by dflowfm.readNet
+%   crs     = filename to *_crs.pli file
+%   width   = width of the cross-sections (no function in 1D simulations,
+%             only for appearance, e.g. in Delta Shell). Default = 1000 m
 %
 %   Output:
 %   *_crs.pli file with observation cross-sections
 %
 %   Example
-%   Untitled
+%   dflowfm.write1DObsCrs('net','tree_net.nc','crsFile','tree_crs.pliz');
 %
 %   See also
 %   dflowfm.writeProfdef dflowfm.readProfdef_crs
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2019 <COMPANY>
+%   Copyright (C) 2019 Deltares
 %       schrijve
 %
-%       <EMAIL>
+%       Reinier.Schrijvershof@Deltares.nl
 %
-%       <ADDRESS>
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -59,13 +64,118 @@ function varargout = writeObsCrs1D(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
-OPT.keyword=value;
+%% Initialisation
+
+% Default
+OPT.net     = '';
+OPT.crs     = '';
+OPT.width   = 1000;
+
 % return defaults (aka introspection)
-if nargin==0;
+if nargin == 0
     varargout = {OPT};
     return
 end
+
 % overwrite defaults with user arguments
 OPT = setproperty(OPT, varargin);
-%% code
+
+%% Load net work
+
+if ~isempty(OPT.net)
+    if ischar(OPT.net)
+        net = dflowfm.readNet(OPT.net);
+    else
+        net = OPT.net;
+    end
+else
+    fprintf('\tPlease provide filename to 1D network or net struct\n');
+end
+
+%% calculations
+
+% Find network nodes that are located at junctions and at boundary sections
+% (end nodes)
+links = net.edge.NetLink(:);
+for i = 1:length(links)
+    id(i) = sum(links ==  links(i));
+end
+net.node.idjun = unique(links(id>2)); % Bifurcations
+net.node.xjun  = net.node.x(net.node.idjun);
+net.node.yjun  = net.node.y(net.node.idjun);
+net.node.idbnd = unique(links(id<2)); % Boundaries
+net.node.xbnd  = net.node.x(net.node.idbnd);
+net.node.ybnd  = net.node.y(net.node.idbnd);
+
+clear crs;
+% Find netwerk nodes that are connected to a end node and define
+% cross-sections of <width> m width with it's center at the node
+for i = 1:length(net.node.idbnd)
+    [r,c] = find(net.edge.NetLink == net.node.idbnd(i));
+    id = find(net.edge.NetLink(:,c) ~= net.node.idbnd(i));
+    p1 = net.node.idbnd(i);
+    p2 = net.edge.NetLink(id,c);
+    x1 = net.node.x(p1);
+    x2 = net.node.x(p2);
+    y1 = net.node.y(p1);
+    y2 = net.node.y(p2);
+    
+    % Normal to direction of grid lines
+    dir = uv2dir(x2-x1,y2-y1);
+    
+    % Define coordinates of cross-section
+    xcrs1 = (OPT.width/2)*sind(dir+90)+x2;
+    ycrs1 = (OPT.width/2)*cosd(dir+90)+y2;
+    xcrs2 = (OPT.width/2)*sind(dir-90)+x2;
+    ycrs2 = (OPT.width/2)*cosd(dir-90)+y2;
+    
+    crs.bnd.Field(i).Name = sprintf('bnd%03d',i);
+    crs.bnd.Field(i).Data = [xcrs1,xcrs2;ycrs1,ycrs2]';
+    
+end
+
+% Find netwerk nodes connected to junction nodes and define
+% cross-sections of <width> m width with it's center at the connected node
+n = 0;
+for i = 1:length(net.node.idjun)
+    [r,c] = find(net.edge.NetLink == net.node.idjun(i));
+    
+    for j = 1:length(c);
+        n = n+1;
+        id = find(net.edge.NetLink(:,c(j)) ~= net.node.idjun(i));
+        p1 = net.node.idjun(i);
+        p2 = net.edge.NetLink(id,c(j));
+        
+        % Rewrite
+        x1 = net.node.x(p1);
+        x2 = net.node.x(p2);
+        y1 = net.node.y(p1);
+        y2 = net.node.y(p2);
+        
+        % Normal to direction of grid lines
+        dir = uv2dir(x2-x1,y2-y1);
+        
+        % Define coordinates of cross-section
+        xcrs1 = (OPT.width/2)*sind(dir+90)+x2;
+        ycrs1 = (OPT.width/2)*cosd(dir+90)+y2;
+        xcrs2 = (OPT.width/2)*sind(dir-90)+x2;
+        ycrs2 = (OPT.width/2)*cosd(dir-90)+y2;
+        
+        % Write to struct
+        crs.jun.Field(n).Name = sprintf('jun%03d',n);
+        crs.jun.Field(n).Data = [xcrs1,xcrs2;ycrs1,ycrs2]';
+    end
+end
+
+% Merge
+crs.all = [crs.bnd.Field,crs.jun.Field];
+
+%% Write to file  
+crsName = sprintf('%s',OPT.crs);
+if ~strcmp(crsName(end-7:end),'_crs.pli')
+    crsName = sprintf('%s_crs.pli',crsName);
+end
+tekal('write',crsName,crs.all);
+fprintf('\tCross-sections for 1D network written to file\n');
+
+return
