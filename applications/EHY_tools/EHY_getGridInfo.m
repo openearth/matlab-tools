@@ -240,10 +240,10 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                                 end
                             elseif nc_isvar(inputFile,'bedlevel')
                                 E.Zcen_int(:,:,2) = ncread(inputFile,'waterlevel')';
-                                no_times          = size(E.Zcen_int,2);
+                                no_times          = size(E.Zcen_int,1);
                                 E.Zcen_int(:,:,1) = repmat(ncread(inputFile,'bedlevel'  )',no_times,1);
                                 E.Zcen_int(:,:,2) = ncread(inputFile,'waterlevel')';
-                                E.Zcen_cen(:,:,1) = 0.5*(E.Zcen_int(:,:,1) + E.Zcent_int(:,:,2));
+                                E.Zcen_cen(:,:,1) = 0.5*(E.Zcen_int(:,:,1) + E.Zcen_int(:,:,2));
                             elseif nc_isvar(inputFile,'waterlevel') && nc_isvar(inputFile,'Waterdepth')
                                 wl = ncread(inputFile,'waterlevel')';
                                 wd = ncread(inputFile,'Waterdepth')';
