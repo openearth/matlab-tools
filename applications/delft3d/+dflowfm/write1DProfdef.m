@@ -59,11 +59,11 @@ function varargout = writeProfdef(varargin)
 % Created: 25 Mar 2019
 % Created with Matlab version: 9.4.0.813654 (R2018a)
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %% Settings
