@@ -1,8 +1,8 @@
-function varargout = writeProfdef(varargin)
-% writeProfdef  Write a profile definition text file for a Delft3D Flexible Mesh 1D simulation
+function varargout = write1DProfdef(varargin)
+% write1DProfdef  Write a profile definition text file for a Delft3D Flexible Mesh 1D simulation
 %
 %   Syntax:
-%   writeProfdef(profnr,type,varargin)
+%   dflowfm.write1DProfdef(profnr,type,varargin)
 %
 %   Input: For <keyword,value> pairs call writeProfdef() without arguments.
 %   fname   = filename of text file
@@ -19,9 +19,10 @@ function varargout = writeProfdef(varargin)
 %   fname   = 'profdef.txt';
 %   profnr  = 1:10;
 %   type    = 200.*size(profnr);
-%   dflowfm.writeProfdef(fname,profnr,type)
+%   dflowfm.write1DProfdef(fname,profnr,type)
 %
 %   See also
+%   dflowfm.read1DProfdef_crs
 
 %% Copyright notice
 %   --------------------------------------------------------------------

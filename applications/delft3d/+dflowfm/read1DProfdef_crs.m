@@ -1,11 +1,11 @@
-function varargout = readProfdef_crs(varargin)
-% read the profiles from a Delft3D-FM 1D simulation (profdefyz_crs.pliz or 
-% profdefxyz_crs.pliz files) to struct
+function varargout = read1DProfdef_crs(varargin)
+% read1DProfdef_crs read the profiles from a Delft3D-FM 1D simulation 
+% (profdefYZ_crs.pliz or profdefXYZ_crs.pliz files) to struct
 %
 %   Syntax:
-%   crs = dflowfm.readProfdef_crs(varargin)
+%   crs = dflowfm.read1DProfdef_crs(varargin)
 %
-%   Input: For <keyword,value> pairs call dflowfm.readProfdef_crs() without arguments.
+%   Input: For <keyword,value> pairs call dflowfm.read1DProfdef_crs() without arguments.
 %   fname   = filename of profdefxyz_crs.pliz file
 %   type    = 'yz' or 'xyz' (NOTE: only xyz implemented at the moment)
 %
@@ -15,7 +15,7 @@ function varargout = readProfdef_crs(varargin)
 %   Example
 %   fname   = 'profdefxyz_crs.pliz';
 %   type    = 'xyz'
-%   CRS     = dflowfm.readProfdef_crs(fname,type);
+%   CRS     = dflowfm.read1DProfdef_crs(fname,type);
 %
 %   See also
 
