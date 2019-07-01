@@ -129,11 +129,11 @@ switch modelType
             if length(order)==1
                 value     =  ncread_blocks(inputFile,OPT.varName,start,count);
             else
-                value     =  permute(ncread_blocks(inputFile,OPT.varName,start,count),order);
+                value     =  ncread_blocks(inputFile,OPT.varName,start,count);
             end
         else
-            value_x   =  permute(ncread_blocks(inputFile,'x_velocity',start,count),order);
-            value_y   =  permute(ncread_blocks(inputFile,'y_velocity',start,count),order);
+            value_x   =  ncread_blocks(inputFile,'x_velocity',start,count);
+            value_y   =  ncread_blocks(inputFile,'y_velocity',start,count);
         end
         
         % put value(_x/_y) in output structure 'Data'
@@ -141,23 +141,23 @@ switch modelType
             if size(value,2)==1 || strcmp(dimNames{1},'general_structures')
                 Data.val=value(index_requested,:);
             elseif ndims(value)==2
-                Data.val(:,Data.exist_stat)=value(index_requested,stationNrNoNan);
-                Data.val(:,~Data.exist_stat)=NaN;
+                Data.val(:,Data.exist_stat)  = permute(value(stationNrNoNan,index_requested),order);
+                Data.val(:,~Data.exist_stat) = NaN;
             elseif ndims(value)==3
-                Data.val(:,Data.exist_stat,1:length(OPT.layer))=value(index_requested,stationNrNoNan,OPT.layer);
-                Data.val(:,~Data.exist_stat,1:length(OPT.layer))=NaN;
+                Data.val(:,Data.exist_stat,1:length(OPT.layer))  = permute(value(OPT.layer,stationNrNoNan,index_requested),order);
+                Data.val(:,~Data.exist_stat,1:length(OPT.layer)) = NaN;
             end
         elseif exist('value_x','var')
             if ndims(value_x)==2
-                Data.vel_x(:,Data.exist_stat)=value_x(:,stationNrNoNan);
-                Data.vel_y(:,Data.exist_stat)=value_y(:,stationNrNoNan);
-                Data.vel_x(:,~Data.exist_stat)=NaN;
-                Data.vel_y(:,~Data.exist_stat)=NaN;
+                Data.vel_x(:,Data.exist_stat)  = permute(value_x(stationNrNoNan,:),order);
+                Data.vel_y(:,Data.exist_stat)  = permute(value_y(stationNrNoNan,:),order);
+                Data.vel_x(:,~Data.exist_stat) = NaN;
+                Data.vel_y(:,~Data.exist_stat) = NaN;
             elseif ndims(value_x)==3
-                Data.vel_x(:,Data.exist_stat,1:length(OPT.layer))=value_x(:,stationNrNoNan,OPT.layer);
-                Data.vel_y(:,Data.exist_stat,1:length(OPT.layer))=value_y(:,stationNrNoNan,OPT.layer);
-                Data.vel_x(:,~Data.exist_stat,1:length(OPT.layer))=NaN;
-                Data.vel_y(:,~Data.exist_stat,1:length(OPT.layer))=NaN;
+                Data.vel_x(:,Data.exist_stat,1:length(OPT.layer))  = permute(value_x(OPT.layer,stationNrNoNan,:),order);
+                Data.vel_y(:,Data.exist_stat,1:length(OPT.layer))  = permute(value_y(OPT.layer,stationNrNoNan,:),order);
+                Data.vel_x(:,~Data.exist_stat,1:length(OPT.layer)) = NaN;
+                Data.vel_y(:,~Data.exist_stat,1:length(OPT.layer)) = NaN;
             end
         end
         
