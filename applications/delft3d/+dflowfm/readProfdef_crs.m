@@ -3,7 +3,7 @@ function varargout = readProfdef_crs(varargin)
 % profdefxyz_crs.pliz file to struct
 %
 %   Syntax:
-%   dflowfm.readProfdef_crs(varargin)
+%   crs = dflowfm.readProfdef_crs(varargin)
 %
 %   Input: For <keyword,value> pairs call readProfdef_crs without arguments.
 %   fname   = filename of profdefxyz_crs.pliz file
