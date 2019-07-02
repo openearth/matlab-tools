@@ -230,14 +230,14 @@
                   [mnnes,weight,angle]         = nesthd_getwgh2 (fid_adm,mnbcsp,'p');
 
                   %%  Fill uu and vv array with velocities for the requested stations
-                  no_times  = size(data_uv.velx,1);
+                  no_times  = size(data_uv.vel_x,1);
                   no_stat   = 4;
-                  no_layers = size(data_uv.velx,1);
+                  no_layers = size(data_uv.vel_x,1);
                   uu(1:no_times,1:no_stat,1:no_layers) = NaN;
                   vv(1:no_times,1:no_stat,1:no_layers) = NaN;
 
                   for i_stat = 1: length(mnnes)
-                      index = get_nr(data_wl.stationNames,mnnes{i_stat});
+                      index = get_nr(data_uv.stationNames,mnnes{i_stat});
                       if ~isempty(index)
                           uu(:,i_stat,:) = data_uv.vel_x(:,index(1),:);
                           vv(:,i_stat,:) = data_uv.vel_v(:,index(1),:);
