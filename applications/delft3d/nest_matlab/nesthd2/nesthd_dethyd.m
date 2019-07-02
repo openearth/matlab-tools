@@ -240,7 +240,7 @@
                       index = get_nr(data_uv.stationNames,mnnes{i_stat});
                       if ~isempty(index)
                           uu(:,i_stat,:) = data_uv.vel_x(:,index(1),:);
-                          vv(:,i_stat,:) = data_uv.vel_v(:,index(1),:);
+                          vv(:,i_stat,:) = data_uv.vel_y(:,index(1),:);
                       end
                   end
                   [uu,vv]   = nesthd_rotate_vector(uu,vv,pi/2. - angle);
