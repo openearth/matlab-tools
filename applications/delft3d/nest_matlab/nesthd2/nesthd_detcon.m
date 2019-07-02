@@ -33,9 +33,6 @@ for l = 1:lstci
     %% If bc for this constituent are requested
     if add_inf.genconc(l)
         
-        %% Retrieve all data for this constituent
-        data      = EHY_getmodeldata(fileInp,{},modelType,'varName',lower(nfs_inf.namcon{l}),'t0',t0,'tend',tend);
-        
         %% Cycle over all boundary support points
         for i_pnt = 1: no_pnt
             
@@ -61,23 +58,16 @@ for l = 1:lstci
                 end
             end
             
-            %%  Fill conc rray with concentrations for the requested stations
-            no_times  = size(data.val,1);
-            no_stat   = 4;
-            no_layers = size(data.val,3);
-            conc(1:no_times,1:no_stat,1:no_layers) = 0.;
+            %% Retrieve the data
+            data      = EHY_getmodeldata(fileInp,mnnes,modelType,'varName',lower(nfs_inf.namcon{l}),'t0',t0,'tend',tend);
             
-            for i_stat = 1: length(mnnes)
-                exist_stat(i_stat) = false;
-                index = get_nr(data.stationNames,mnnes{i_stat});
-                if ~isempty(index)
-                    exist_stat(i_stat) = true;
-                    conc(:,i_stat,:) = data.val(:,index(1),:);
-                end
-            end
+            %%  Fill conc array with concentrations for the requested stations
+            conc              = data.val;
+            conc(isnan(conc)) = 0.;
             
             %% Exclude permanently dry points
             for i_stat = 1: 4
+                exist_stat(i_stat) = true;
                 index = find(conc(:,i_stat,1) == conc(1,i_stat,1));
                 if length(index) == notims
                     exist_stat(i_stat) = false;
@@ -118,10 +108,12 @@ for l = 1:lstci
             end
         end
     end
+end
     
-    %% Adjust boundary conditions
-    for l = 1: lstci
-        if add_inf.genconc(l)
+%% Adjust boundary conditions
+for l = 1: lstci
+    if add_inf.genconc(l)
+        for i_pnt = 1: no_pnt
             for itim = 1 : notims
                 bndval(itim).value(i_pnt,:,l) =  bndval(itim).value(i_pnt,:,l) + add_inf.add(l);
                 bndval(itim).value(i_pnt,:,l) =  min(bndval(itim).value(i_pnt,:,l),add_inf.max(l));
