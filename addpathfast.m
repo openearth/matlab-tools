@@ -11,8 +11,14 @@ function addpathfast(basepath,varargin)
 % uses too much java.
 %
 % The following <keyword,value> pairs have been implemented;
+% * method:    (1) use OS system call, 
+%              (2) use Matlab (used to be slower but not any more),
+%              (3, default) use dir2, fastest option, does not support
+%              patterns option.
+% * dir_excl:  regular expression string with directories to exclude
+%              ('^\+|^@|^private$|^\.svn$|^\.|^deprecated$', default)
 % * patterns:  cell array with regular expression patterns to be excluded
-%              default {[filesep,'.svn']}. (i.e. <a href="subversion.tigris.org">Subversion</a> directories)
+%              default {[filesep,'.svn']}. (i.e. <a href="https://subversion.apache.org/">Subversion</a> directories)
 % * append:    add new path before (0) or after existing path (1, default)
 %
 % Example: to exclude all mexnc and (s)nctools related stuff too:
@@ -21,7 +27,20 @@ function addpathfast(basepath,varargin)
 %
 % See also: ADDPATH, REGEXP, OETSETTINGS
 
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 23 Oct 2008
+% Created with Matlab version: 
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% Set properties
    OPT.patterns = {[filesep,'.svn']}; % case sensitive
+   OPT.dir_excl = '^\+|^@|^private$|^\.svn$|^\.|^deprecated$';
    OPT.method   = 3; % 1 = via OS system call, 2 = Matlab (used to be slower but not any more), 3 = dir2
    OPT.append   = true; % add new path before or after existing path
    
@@ -79,11 +98,13 @@ function addpathfast(basepath,varargin)
       % do a dir commando that excludes all .svn and private directories, and does not include any files
 %     dirs    = dir2(basepath,'dir_excl','^\+|^@|^private$|^\.svn$|^\.','file_incl','');
       % Added deprecated folder to the excluse list
-      dirs    = dir2(basepath,'dir_excl','^\+|^@|^private$|^\.svn$|^\.|^deprecated$','file_incl','');
+%     dirs    = dir2(basepath,'dir_excl','^\+|^@|^private$|^\.svn$|^\.|^deprecated$','file_incl','');
+      % Made dir_excl regexp adjustable via varargin. Default is the regexp on the previous line.
+      dirs    = dir2(basepath,'dir_excl',OPT.dir_excl,'file_incl','');
       
       if ~isempty(dirs)
           % concatenate the path and the directory names
-          dirs    = strcat({dirs.pathname}, {dirs.name}, filesep, ';')';
+          dirs    = strcat({dirs.pathname}, {dirs.name}, filesep, pathsep)';
           newpath = strcat(dirs{:});
       else
           newpath = [];
