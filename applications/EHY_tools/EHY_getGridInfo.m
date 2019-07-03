@@ -213,6 +213,31 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                             E.depth_cor = NaN;
                         end
                     end
+                    
+                    %% Just the depths! Not the entire z structure
+                    if ismember('Zcen',wantedOutput)
+                        if nc_isvar(inputFile,'bedlevel')
+                            E.Zcen=ncread(inputFile,'bedlevel')';
+                        elseif nc_isvar(inputFile,'waterlevel') && nc_isvar(inputFile,'Waterdepth')
+                            wl     = ncread(inputFile,'waterlevel',[1 1],[Inf 1]);
+                            wd     = ncread(inputFile,'Waterdepth',[1 1],[Inf 1]);
+                            E.Zcen = -wd + wl;
+                        elseif nc_isvar(inputFile,'zcoordinate_w')
+                            tmp    = ncread(inputFile,'zcoordinate_w',[1 1 1],[1 Inf Inf]);
+                            E.Zcen = tmp(:,end); 
+                        elseif nc_isvar(inputFile,'zcoordinate_c')
+                            
+                            % Re construct depth based on water levels and centre coordinates
+                            E.Zcen = ncread(inputFile,'waterlevel',[1 1],[Inf 1]);
+                            tmp    = ncread(inputFile,'zcoordinate_c',[1 1 1],[Inf Inf 1])';
+                            for i_lay = E.no_layers:-1:1
+                                E.Zcen = E.Zcen -2*(E.Zcen- tmp(:,i_lay));
+                            end
+                        else
+                            %Nu weet ik het niet meer
+                        end
+                    end
+                    
                     if ismember('Z',wantedOutput)
                         if ~isempty(strfind(inputFile,'his.nc')) % his file 
 
@@ -528,12 +553,16 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                         E.layer_perc = 100*flipud(vs_let(trih,'his-const','THICK','quiet'));
                     end
                     
+                    if ismember('Zcen', wantedOutput)
+                        E.Zcen     = -1*vs_let(trih,'his-const','DPS','quiet');
+                        E.Zcen     = E.Zcen';
+                    end
+                    
                     if ismember('Z', wantedOutput)
-                        E.Zcen = -1*vs_let(trih,'his-const','DPS','quiet');
-                        tmp=EHY_getGridInfo(inputFile,{'layer_model','no_layers'},'disp',0);
-                        if strcmp(tmp.layer_model,'z-model')
-                            E.Zcen_int(1,1,:) = vs_let(trih,'his-const','ZK','quiet'); % [time,stations,Z]
-                        end
+                        tmp        = EHY_getmodeldata(inputFile,{},modelType,'varName','Zcen');
+                        E.Zcen_cen = flip(tmp.val,3);
+                        tmp        = EHY_getmodeldata(inputFile,{},modelType,'varName','Zint');
+                        E.Zcen_int = flip(tmp.val,3);
                     end
                     
                 elseif ~isempty(strfind(name,'trim-'))
@@ -645,7 +674,23 @@ st = dbstack; disp('Calling Function : '); for i_name = 1: length(st) disp(st(i_
                         end
                     end
                 end
-               if ismember('Z', wantedOutput)
+                
+                if ismember('Zcen', wantedOutput)
+                    mn = waquaio(sds,'','wl-mn');
+                    if kmax == 1
+                        z  = waquaio(sds,'','depth_wl_points');
+                        for i_stat = 1: size(mn,1)
+                            E.Zcen(i_stat) = -1.*z(mn(i_stat,2),mn(i_stat,1));
+                        end
+                        E.Zcen = E.Zcen';
+                    else
+                        [~,~,z] = waquaio(sds,'','zgrid3di');
+                        for i_stat = 1: size(mn,1)
+                            E.Zcen(i_stat) = z(mn(i_stat,2),mn(i_stat,1),kmax + 1);
+                        end
+                    end
+                end
+                if ismember('Z', wantedOutput)
                     % Fill only interface 1 for the first time step with depths
                     mn = waquaio(sds,'','wl-mn');
                     if kmax == 1
