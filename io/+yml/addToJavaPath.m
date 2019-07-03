@@ -24,8 +24,11 @@ function addToJavaPath()
 %   the static path. 
 %
 % See also javaaddpath javaclasspath yml.removeFromJavaPath
-
-jarFile = fullfile(fileparts(mfilename('fullpath')), 'external','snakeyaml-1.9.jar');
+if isdeployed
+    jarFile = fullfile(getcurrentdir(),'snakeyaml-1.9.jar');
+else
+    jarFile = fullfile(fileparts(mfilename('fullpath')), 'external','snakeyaml-1.9.jar');
+end
 if not(ismember(jarFile, javaclasspath ('-dynamic')))
-    javaaddpath(jarFile); 
+    javaaddpath(jarFile);
 end

@@ -25,7 +25,11 @@ function addToJavaPath()
 %
 % See also javaaddpath javaclasspath json.removeFromJavaPath
 
-jarFile = fullfile(fileparts(mfilename('fullpath')), 'java', 'json.jar');
+if isdeployed
+    jarFile = fullfile(getcurrentdir(),'json.jar');
+else
+    jarFile = fullfile(fileparts(mfilename('fullpath')), 'java', 'json.jar');
+end
 if not(ismember(jarFile, javaclasspath ('-dynamic')))
     javaaddpath(jarFile); 
 end
