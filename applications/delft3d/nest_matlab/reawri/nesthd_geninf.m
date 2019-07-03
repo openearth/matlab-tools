@@ -19,13 +19,10 @@
       end
 
       %% layer information
-      gridInfo                          = EHY_getGridInfo(fileInp,{'no_layers' 'layer_model' 'Z'});
+      gridInfo                          = EHY_getGridInfo(fileInp,{'Zcen' 'layer_model' 'no_layers'});
       gen_inf.kmax                      = gridInfo.no_layers;
-      try
-          gen_inf.dps                       = -1.*squeeze(gridInfo.Zcen_int(1,:,1));           % d3d convention
-      catch
-          gen_inf.dps                       = -1.*gridInfo.Zcen;
-      end
+      fileInp
+      gen_inf.dps                       = -1.*gridInfo.Zcen
       gen_inf.layer_model               = gridInfo.layer_model;
       if strcmpi (gridInfo.layer_model,'sigma-model')
           gridInfo                      = EHY_getGridInfo(fileInp,{'layer_perc'},'manual',false);
