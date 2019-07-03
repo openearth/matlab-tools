@@ -232,9 +232,9 @@
                   %%  Fill uu and vv array with velocities for the requested stations
                   no_times  = size(data_uv.vel_x,1);
                   no_stat   = 4;
-                  no_layers = size(data_uv.vel_x,1);
-                  uu(1:no_times,1:no_stat,1:no_layers) = NaN;
-                  vv(1:no_times,1:no_stat,1:no_layers) = NaN;
+                  no_layers = size(data_uv.vel_x,3);
+                  uu(1:no_times,1:no_stat,1:no_layers) = 0.;
+                  vv(1:no_times,1:no_stat,1:no_layers) = 0.;
 
                   for i_stat = 1: length(mnnes)
                       index = get_nr(data_uv.stationNames,mnnes{i_stat});
