@@ -258,6 +258,12 @@ switch modelType
                         value (:,i_stat,:) = cell2mat   (vs_get(trih,'his-series',{time_index(index_requested)},'GRO',{nr_stat,OPT.layer,nr_cons},'quiet'));
                         % series
                         Data.val(:, i_stat,:)= value(:,i_stat,:);
+                    otherwise
+                        warning('WARNING: non-standard varName requested, treated as constituent name')
+                        nr_cons            = get_nr(lower(constituents),OPT.varName);
+                        value (:,i_stat,:) = cell2mat   (vs_get(trih,'his-series',{time_index(index_requested)},'GRO',{nr_stat,OPT.layer,nr_cons},'quiet'));
+                        % series
+                        Data.val(:, i_stat,:)= value(:,i_stat,:);
                 end
             end
         end
