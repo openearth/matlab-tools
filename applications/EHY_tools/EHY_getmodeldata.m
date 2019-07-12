@@ -258,6 +258,12 @@ switch modelType
                         value (:,i_stat,:) = cell2mat   (vs_get(trih,'his-series',{time_index(index_requested)},'GRO',{nr_stat,OPT.layer,nr_cons},'quiet'));
                         % series
                         Data.val(:, i_stat,:)= value(:,i_stat,:);
+                    case {'zrho'} %density
+                        zrho               = cell2mat(vs_get(trih,'his-series',{time_index},'ZRHO',{nr_stat,OPT.layer},'quiet'));
+                        Data.val(:,i_stat,:) = zrho;
+                    case {'zvicww'} %vertical eddy viscosity
+                        zvicww             = cell2mat(vs_get(trih,'his-series',{time_index},'ZVICWW',{nr_stat,OPT.layer},'quiet'));
+                        Data.val(:,i_stat,:) = zvicww;
                     otherwise
                         warning('WARNING: non-standard varName requested, treated as constituent name')
                         nr_cons            = get_nr(lower(constituents),OPT.varName);
