@@ -33,6 +33,15 @@ gen_inf      = nesthd_geninf(files{3});
 gen_inf.to   = EHY_getModelType(files{4});
 gen_inf.from = EHY_getModelType(files{3});
 
+%  For dfm add A0 through the keyworoff-set in stead of directly 
+%  including it into the boundary (request Jelmer) 
+if strcmp(gen_inf.to,'dfm') && isfield(add_inf,'A0')
+    if add_inf.A0 ~= 0.
+        add_inf.A0_dfm = add_inf.A0;
+        add_inf.A0     = 0.;
+    end
+end
+
 if OPT.check gen_inf.notims = min(gen_inf.notims,20); end
 nobnd       = length(bnd.DATA);
 kmax        = gen_inf.kmax;
