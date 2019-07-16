@@ -24,7 +24,17 @@ d3d_mdf         = 'barrier'                                                     
 restart_name    = 'tri-rst.barrier'                                             ;
 path_d3d_in     = '/work/cjoh296/coupled_delft3d_xbeach.wd/models/delft3d/setup' ;
 path_XB_in      = '/work/cjoh296/coupled_delft3d_xbeach.wd/models/xbeach'  ;
-path_out        = '/work/cjoh296/coupled_delft3d_xbeach.wd/testing/output' ; 
+path_out        = '/work/cjoh296/coupled_delft3d_xbeach.wd/testing/output_';
+path_out        = [path_out, datestr(datetime('today'), 'YYYYmmdd')];
+
+% output
+if exist(path_out, 'dir')
+    path_out_bak = [path_out, '_backup'];
+    movefile(path_out, path_out_bak);
+    mkdir(path_out);
+else
+    mkdir(path_out);
+end
 
 delft3d_CRS     = 'WGS 84'                                                      ;
 xbeach_CRS      = 'WGS 84 / UTM zone 15N'                                       ;
@@ -41,7 +51,7 @@ Itdate_jd         = datenum(2008, 7, 25)                ;  % julian day for Itda
 simulation_dur    = 1*24*60*60 + 21*60*60               ;  % [s] simulation duration
 dt_coupling       = 30*60                               ;  % [s] coupling xbeach/delft3d timestep
 timesteps         = simulation_dur / dt_coupling        ;  % number of delft3d runs
-dt_times          = ones(timesteps, 1) * dt_coupling    ;  % [s]   so 10 minutes = 10 x 60 = 600 s
+dt_times          = ones(timesteps, 1) * dt_coupling    ;  % [s]   so 30 minutes = 30 x 60 = 1800 s
 %dt_times(1)       = 60*60*6                             ;  % [s]   spin-up time for Delft3D. inputs/BCs need to reflect this
 %mor_start         = dt_times(1)                         ;  % [s]   D3D spinup
 
@@ -62,8 +72,11 @@ T_matlab          = 0;
 T_XB              = 0;
 T_D3D             = 0;
 
+% use QueenBee II
+use_qb          = 1;
+
 % use SuperMIC
-use_smic        = 1;
+use_smic        = 0;
 
 % Calculation H6
 useh6           = 0;
@@ -255,7 +268,7 @@ for dt = 1:timesteps
 		% the last output of the previous timestep -- CJ Thu 23 May 2019 05:30:30 PM CDT
         tmp5        = qpread(Fil,'significant wave height','data',0,[1]);
 
-        if mean(tmp5.Val) > 0.5
+        if mean(tmp5.Val) > 0.005
             S = dir(['hot_1_', datestr(datetime_now, format_st)]) ;
             copyfile(S.name, [path_d3d_new, '/hot_1_00000000.000000']);
             S = dir(['hot_2_', datestr(datetime_now, format_st)]) ;
@@ -263,11 +276,11 @@ for dt = 1:timesteps
         end
 
         % Delete hotstart (to safe space)
-        cd(path_d3d_old);
-        listing = dir('hot*');
-        for qaz = 1:length(listing)
-            delete(listing(qaz).name);
-        end
+        %cd(path_d3d_old);
+        %listing = dir('hot*');
+        %for qaz = 1:length(listing)
+        %    delete(listing(qaz).name);
+        %end
 
 		% log processing output
 		dstr = ['Processing sediment transport for time step: ', num2str(dt)] ;
@@ -410,24 +423,27 @@ for dt = 1:timesteps
                 ratiohh  = hhnew./hhold;
 
                 % Change water levels
-                [iderodedcell] = (hhnew >= 0.001 & hhold < 0.001);
+                % there is a bug here L430 to L449. The dimensions of the matrixes are
+                % mismatched. See comments in this block -CJ 2019-7-15
+                % WL, hhnew and hhold are (nx, ny)
+                % dep, grd2 are (ny, nx)
                 [iderodedcell1, iderodedcell2] = find(hhnew >= 0.0 & hhold <= 0);
                 WL(iderodedcell1, iderodedcell2) = NaN;
-                for xijn = 1:length(iderodedcell1);
+                for xijn = 1:length(iderodedcell1)
 
                     % Point
-                    xTMP    = grd2.cen.x(iderodedcell1(xijn), iderodedcell2(xijn));
-                    yTMP    = grd2.cen.y(iderodedcell1(xijn), iderodedcell2(xijn));
+                    xTMP    = grd2.cen.x(iderodedcell2(xijn), iderodedcell1(xijn)); % indicies reversed here
+                    yTMP    = grd2.cen.y(iderodedcell2(xijn), iderodedcell1(xijn)); % indicies reversed here
 
                     % Main grid
                     xTMPs   = grd2.cen.x;
                     yTMPs   = grd2.cen.y;
-                    iddry   = find(hhold < 0.01 | hhnew < 0.01);
+                    iddry   = find(hhold' < 0.01 | hhnew' < 0.01); % transpose to match dimensions of xTMPs, yTMPs
                     xTMPs(iddry) = NaN;
                     yTMPs(iddry) = NaN;
 
                     % Find nearest wet point
-                    distances = sqrt((xTMPs - xTMP).^2 + (yTMPs - yTMP).^2);
+                    distances = sqrt((xTMPs' - xTMP').^2 + (yTMPs' - yTMP').^2); % transpose to match dimensions of WL
                     idnearest = find(distances == min(min(distances)));
                     WL(iderodedcell1, iderodedcell2) = WL(idnearest);
                 end
@@ -529,64 +545,55 @@ for dt = 1:timesteps
         end
 
 
+	% Used with QueenBee II
+	% Note: The incremental run number is replaced in the pbs script and submitted to the queue
+	% D3D_RUN_NUM is the placeholder dt in the pbs script.
+	elseif use_qb == 1
+
+        disp(['Running Delft3D for time step: ', num2str(dt)]) ;
+
+		% This block runs the mpi job and moves on if successful
+		tic                                                              ;
+		status = system('mpirun -np 24 d_hydro "config_d_hydro.xml" & wave barrier.mdw 1');
+		if status == 0;
+			exec_time = round(toc / 60)                                  ;
+			
+			dstr = sprintf('Delft3D run has taken (min): %3u', exec_time) ;
+			disp(dstr)                                               ;
+			
+			dstr = sprintf('\nDelft3D run %04u has finished.\n', dt) ;
+			disp(dstr)                                               ;
+		else
+			exit
+		end
+
+
+		T_D3D = T_D3D + toc;
+
 	% Used with SuperMIC
 	% Note: The incremental run number is replaced in the pbs script and submitted to the queue
 	% D3D_RUN_NUM is the placeholder dt in the pbs script.
 	elseif use_smic == 1
 
-		% if the time step has already been computed, then contunue
-		if exist('finished.txt') > 0
-			disp(['Delft3D for time step: ', num2str(dt), 'has already been run.']) ;
-			continue
-		end
-
         disp(['Running Delft3D for time step: ', num2str(dt)]) ;
 
-		fid3 = fopen('job_smic.pbs', 'rt')                     ;
-		X2   = fread(fid3)                                     ;
-		fclose(fid3)                                           ;
-
-		X2   = char(X2.')                                      ;
-		X2   = strrep(X2, 'D3D_RUN_NUM', D3D_run_num)          ;
-
-		fid4 = fopen('job_smic.pbs', 'wt')                     ;
-        fwrite(fid4, X2)                                       ;
-		fclose(fid4)                                           ;
-
-		[TMP1, TMP2] = system('qsub job_smic.pbs')             ;
-
-
-		% This block monitors the status of the D3D run
-		% When the pbs job finishes it writes "finished.txt" to the incremental D3D dir
-		running = 1                                                      ;
+		% This block runs the mpi job and moves on if successful
 		tic                                                              ;
-		print_int = 5                                                    ;
-		while running == 1
-            cd(path_d3d_new)                                             ;
-			
+		status = system('mpirun -np 24 d_hydro "config_d_hydro.xml" & wave barrier.mdw 1');
+		if status == 0;
 			exec_time = round(toc / 60)                                  ;
-			if exec_time >= print_int && mod(exec_time, print_int) == 0
-
-				dstr = sprintf('Delft3D run has taken (min): %3u', exec_time) ;
-				disp(dstr)                                               ;
-
-				print_int = print_int + 5                                ;
-			end
-
-			if exist('finished.txt') > 0
-
-				dstr = sprintf('\nDelft3D run %04u has finished.\n', dt) ;
-				disp(dstr)                                               ;
-
-                running = 0                                              ;
-            end
-
-		pause(1)                                                         ;
-        end
+			
+			dstr = sprintf('Delft3D run has taken (min): %3u', exec_time) ;
+			disp(dstr)                                               ;
+			
+			dstr = sprintf('\nDelft3D run %04u has finished.\n', dt) ;
+			disp(dstr)                                               ;
+		else
+			exit
+		end
         
         T_D3D = T_D3D + toc;
     end
-
 
 
 
@@ -609,7 +616,7 @@ for dt = 1:timesteps
     if Hs_offshore > HS_XB_threshold
 
         % A. Copy base
-		XB_run_num  = ['XB_', num2str(dt, '%04d')]                  ;
+		XB_run_num  = ['XB_', num2str(dt, '%04d')]           ;
         path_XB_new = [path_out, '/XB_' num2str(dt, '%04d')] ;
         mkdir(path_XB_new)                                   ;
         copyfile(path_XB_in, path_XB_new)                    ;
@@ -646,7 +653,7 @@ for dt = 1:timesteps
 		end
 		fclose(fid);
 
-        % D. Change bathymetry based on previous runs
+        % F. Change bathymetry based on previous runs
         if dt > 1
             try
                 cd(path_XB_old)
@@ -660,11 +667,52 @@ for dt = 1:timesteps
             end
         end
 
+		% G. conditionally set up hotstart
+		if dt > 1
+			copyfile([path_XB_old, '/hotstart_*.dat']);
+			
+			% turn on hotstart
+			cd(path_XB_new)                                                               ;
+			fid = fopen(['params.txt'], 'rt')                                             ;
+			X   = fread(fid)                                                              ;
+			fclose(fid)                                                                   ;
+			X = char(X.')                                                                 ;
+
+			% Replace hotstart
+			text_to_search         = 'HOTSTART'                                          ;
+			text_to_replace_spinup = '1'
+			X                      = strrep(X, text_to_search, text_to_replace_spinup)   ;
+
+			fid2 = fopen(['params.txt'],'wt')                                            ;
+			fwrite(fid2,X)                                                               ;
+			fclose (fid2)                                                                ;
+		
+		else 
+			% turn off hotstart
+			cd(path_XB_new)                                                               ;
+			fid = fopen(['params.txt'], 'rt')                                             ;
+			X   = fread(fid)                                                              ;
+			fclose(fid)                                                                   ;
+			X = char(X.')                                                                 ;
+
+			% Replace hotstart
+			text_to_search         = 'HOTSTART'                                          ;
+			text_to_replace_spinup = '0'
+			X                      = strrep(X, text_to_search, text_to_replace_spinup)   ;
+
+			fid2 = fopen(['params.txt'],'wt')                                            ;
+			fwrite(fid2,X)                                                               ;
+			fclose (fid2)                                                                ;
+		
+		end 
+
+
+
 		% log some information about XBeach step
 		dstr = sprintf('Entering incremental XBeach directory:\n\t%s\n', path_XB_new) ;
 		disp(dstr)                                                                    ;
 
-		% E. Change times in params
+		% H. Change times in params
         cd(path_XB_new)                                                               ;
         fid = fopen(['params.txt'], 'rt')                                             ;
         X   = fread(fid)                                                              ;
@@ -718,11 +766,11 @@ for dt = 1:timesteps
                 pause(1);
             end
 
-		% Used with SuperMIC
+
+		% Used with QueenBee II
 		% Note: The incremental run number is replaced in the pbs script and submitted to the queue
 		% D3D_RUN_NUM is the placeholder dt in the pbs script.
-		elseif use_smic == 1
-
+		elseif use_qb == 1
 
 			% if the time step has already been computed, then contunue
 			if exist('finished.txt') > 0
@@ -732,50 +780,58 @@ for dt = 1:timesteps
 			
 			disp(['Running XBeach for time step: ', num2str(dt)]) ;
 
-			fid3 = fopen('job_smic.pbs', 'rt')                     ;
+			fid3 = fopen('qb_job.pbs', 'rt')                     ;
 			X2   = fread(fid3)                                     ;
 			fclose(fid3)                                           ;
 
 			X2   = char(X2.')                                      ;
 			X2   = strrep(X2, 'XB_RUN_NUM', XB_run_num)            ;
 
-			fid4 = fopen('job_smic.pbs', 'wt')                     ;
+			fid4 = fopen('qb_job.pbs', 'wt')                       ;
 			fwrite(fid4, X2)                                       ;
 			fclose(fid4)                                           ;
-
-			[TMP1, TMP2] = system('qsub job_smic.pbs')             ;
-
-
-			% This block monitors the status of the XB run
-			% When the pbs job finishes it writes "finished.txt" to the incremental XB dir
-			running = 1                                                      ;
+			
 			tic                                                              ;
-			print_int = 5                                                    ;
-			while running == 1
-				cd(path_XB_new)                                              ;
-				
+			status = system('mpirun -np 240 xbeach5577_hs')  ;
+			if status == 0;
 				exec_time = round(toc / 60)                                  ;
-				if exec_time >= print_int && mod(exec_time, print_int) == 0
-
-					dstr = sprintf('XBeach run has taken (min): %3u', exec_time) ;
-					disp(dstr)                                               ;
-
-					print_int = print_int + 5                                ;
-				end
-
-				if exist('finished.txt') > 0
-
-					dstr = sprintf('\nXBeach run %04u has finished.\n', dt)  ;
-					disp(dstr)                                               ;
-
-					running = 0                                              ;
-				end
-            end
+				
+				dstr = sprintf('XBeach run has taken (min): %3u', exec_time) ;
+				disp(dstr)                                               ;
+				
+				dstr = sprintf('\nXBeach run %04u has finished.\n', dt)  ;
+				disp(dstr)                                               ;
+			else
+				exit
+			end
             
-            T_XB = T_XB + toc;
-        end
+			T_XB = T_XB + toc;
+
+		% Used with SuperMIC
+		% Note: The incremental run number is replaced in the pbs script and submitted to the queue
+		% D3D_RUN_NUM is the placeholder dt in the pbs script.
+		elseif use_smic == 1
+
+			tic                                                              ;
+			status = system('mpirun -np 240 xbeach5577_hs')  ;
+			if status == 0;
+				exec_time = round(toc / 60)                                  ;
+				
+				dstr = sprintf('XBeach run has taken (min): %3u', exec_time) ;
+				disp(dstr)                                               ;
+				
+				dstr = sprintf('\nXBeach run %04u has finished.\n', dt)  ;
+				disp(dstr)                                               ;
+			else
+				exit
+			end
+            
+			T_XB = T_XB + toc;
+
+		end
         xb_previous = 1;
-    else
+
+	else
         xb_previous = 0;
     end
     
