@@ -33,7 +33,8 @@ end
 [path,~,~] = fileparts(mfilename('fullpath'));
 
 if ~exist([path filesep 'list_opendap.mat'],'file')
-    url = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/catalog.xml';
+%    url = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/catalog.xml';
+    url = 'p:\z4821-trapjeslijn\wxf211\waterbase\local_2\water_base_20180918\';
     list = opendap_catalog(url,'disp','','maxlevel',4);
     save([path filesep 'list_opendap.mat'],'list');
 else
