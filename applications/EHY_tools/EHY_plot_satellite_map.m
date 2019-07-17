@@ -19,12 +19,25 @@ OPT.FaceAlpha = 0.5; % transparancy index
 OPT.rescale   = 1;   % change axes to get correct projection
 OPT.axes      = gca; 
 OPT.source    = 'esri_worldimagery'; % choose from: 'bluemarble','bingmaps','esri_worldimagery','openstreetmap'
+OPT.localEPSG = []; % specify local EPSG (e.g. 28992)
+OPT.localUnit = 'm'; % 'm' or 'km'
 OPT           = setproperty(OPT,varargin);
+%% get current axis
+curAxis=axis(OPT.axes);
+if any(abs(curAxis)>180) && isempty(OPT.localEPSG)
+    error('You''re probably not using spherical coordinates. Check the OPT.localEPSG option in this function')
+end
+
+if strcmpi(OPT.localUnit,'km')
+    curAxis=curAxis*10^3;
+end
 
 %% rescale
 if OPT.rescale % based on (EHY_)plot_google_map
     
-    curAxis=axis(OPT.axes);
+    if ~isempty(OPT.localEPSG) % local to WGS coordinates
+    [curAxis(1:2), curAxis(3:4)] = convertCoordinates(curAxis(1:2), curAxis(3:4),'CS1.code',OPT.localEPSG,'CS2.code',4326);
+    end
     
     % adjust current axis limit to avoid strectched maps
     [xExtent,yExtent] = latLonToMeters(curAxis(3:4), curAxis(1:2) );
@@ -79,7 +92,17 @@ if OPT.rescale % based on (EHY_)plot_google_map
     if curAxis(4) > 85
         curAxis(3:4) = curAxis(3:4) + (85 - curAxis(4));
     end
-    axis(OPT.axes, curAxis); % update axis as quickly as possible, before downloading new image
+    
+    if ~isempty(OPT.localEPSG) % WGS to local coordinates
+        [curAxis(1:2), curAxis(3:4)] = convertCoordinates(curAxis(1:2), curAxis(3:4),'CS1.code',4326,'CS2.code',OPT.localEPSG);
+    end
+    
+    % update axis as quickly as possible, before downloading new image
+    if strcmpi(OPT.localUnit,'km')
+        axis(OPT.axes, curAxis/10^3);
+    else
+        axis(OPT.axes, curAxis);
+    end
     drawnow
 end
 
@@ -87,10 +110,20 @@ end
 % Make use of QuickPlot-functionality, since wms.m is in private folder,
 % make a temporary copy of the wms.m-function
 copyfile([fileparts(which('d3d_qp')) filesep 'private' filesep 'wms.m'],pwd)
-[IMG,lon,lat] = wms('image',wms('tms',OPT.source),'',get(gca,'xlim'),get(gca,'ylim'));
+if ~isempty(OPT.localEPSG) % local to WGS coordinates
+    [curAxis(1:2), curAxis(3:4)] = convertCoordinates(curAxis(1:2), curAxis(3:4),'CS1.code',OPT.localEPSG,'CS2.code',4326);
+end
+[IMG,lon,lat] = wms('image',wms('tms',OPT.source),'',curAxis(1:2),curAxis(3:4));
+if ~isempty(OPT.localEPSG) % WGS to local coordinates
+    lon=linspace(lon(1),lon(2),length(lat));
+    [lon,lat] = convertCoordinates(lon, lat,'CS1.code',4326,'CS2.code',OPT.localEPSG);
+    if strcmpi(OPT.localUnit,'km')
+        lon=lon/1000;lat=lat/1000;
+    end
+end
 delete([pwd filesep 'wms.m'])
 hSurf = surface(lon,lat,zeros(length(lat),length(lon)),'cdata',IMG,'facecolor','texturemap', ...
-    'edgecolor','none','cLimInclude','off','ZData',repmat(-10^9,length(lat),2));
+    'edgecolor','none','cLimInclude','off','ZData',repmat(-10^9,length(lat),length(lon)));
 set(hSurf,'FaceAlpha', OPT.FaceAlpha, 'AlphaDataMapping', 'none');
 
 end
