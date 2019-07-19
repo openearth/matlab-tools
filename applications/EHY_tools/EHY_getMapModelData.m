@@ -163,7 +163,9 @@ switch modelType
                 end
             otherwise
                 if nc_isvar(fileInp,OPT.varName)
-                    if gridInfo.no_layers==1 % 2DH model
+                    nr_var     = get_nr({infonc.Variables.Name},lower(OPT.varName));
+                    dimNames   = {infonc.Variables(nr_var).Dimensions.Name};
+                    if gridInfo.no_layers==1 || ~ismember('layer',dimNames) % 2DH model
                         Data.value = ncread(fileInp,OPT.varName,[1 time_index(1)],[Inf nr_times_clip])';
                     else
                         Data.value = permute(ncread(fileInp,OPT.varName,[OPT.layer(1) 1 time_index(1)],[length(OPT.layer) Inf nr_times_clip]),[3 2 1]);

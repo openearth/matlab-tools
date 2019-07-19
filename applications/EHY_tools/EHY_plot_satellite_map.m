@@ -36,7 +36,7 @@ end
 if OPT.rescale % based on (EHY_)plot_google_map
     
     if ~isempty(OPT.localEPSG) % local to WGS coordinates
-    [curAxis(1:2), curAxis(3:4)] = convertCoordinates(curAxis(1:2), curAxis(3:4),'CS1.code',OPT.localEPSG,'CS2.code',4326);
+        [curAxis(1:2), curAxis(3:4)] = convertCoordinates(curAxis(1:2), curAxis(3:4),'CS1.code',OPT.localEPSG,'CS2.code',4326);
     end
     
     % adjust current axis limit to avoid strectched maps

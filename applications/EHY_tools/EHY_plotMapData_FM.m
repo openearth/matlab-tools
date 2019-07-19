@@ -43,8 +43,8 @@ if ~all([isstruct(gridInfo) isfield(gridInfo,'face_nodes_x') isfield(gridInfo,'f
     error('Something wrong with first input argument');
 end
 
-if size(gridInfo.face_nodes_x,2)~=length(zData)
-    error('Length of face_nodes_xy and zData should be the same')
+if size(gridInfo.face_nodes_x,2)~=prod(size(zData))
+    error('size(gridInfo.face_nodes_x,2) should be the same as  prod(size(zData))')
 end
 
 if isempty(zData); error('No zData to plot'); end

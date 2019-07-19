@@ -435,7 +435,7 @@ switch modelType
                         if isfield(E,'no_NetNode')
                             % warning: Number of NetNodes is prob. too large due to flowlinks in ghostcells
                         end
-                        if ismember('Z',wantedOutput)
+                        if isfield(E,'Zcen')
                             E.Zcen(ghostCellsCenter)=[];
                         end
                     end

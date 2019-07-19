@@ -39,8 +39,8 @@ varNames={'Water level','waterlevel';
     'y-velocity','y_velocity';
     'Salinity','salinity';
     'Temperature','temperature';
-    'z-coordinates (pos. up) of cell centers','Zcen';
-    'z-coordinates (pos. up) of cell interfaces','Zint'};
+    'z-coordinates (pos. up) of cell centers','zcoordinate_c';
+    'z-coordinates (pos. up) of cell interfaces','zcoordinate_w'};
 if strcmp(modelType,'dfm'); varNames{end+1,1}='Other info from .nc-file'; end
 option=listdlg('PromptString','What kind of time series do you want to load?','SelectionMode','single','ListString',...
     varNames(:,1),'ListSize',[300 150]);
