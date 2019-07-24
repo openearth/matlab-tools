@@ -92,7 +92,7 @@ disp([char(10) 'Note that next time you want to get this data, you can also use:
 disp(['Data = EHY_getMapModelData(''' outputfile '''' extraText ');' ])
 
 disp('start retrieving the data...')
-gridInfo=EHY_getGridInfo(outputfile,'face_nodes_xy');
+gridInfo=EHY_getGridInfo(outputfile,{'face_nodes_xy'},'mergePartitions',OPT.mergePartitions);
 if ~exist('OPT','var') || isempty(fieldnames(OPT))
     Data = EHY_getMapModelData(outputfile);
 else

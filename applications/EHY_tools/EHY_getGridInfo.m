@@ -37,8 +37,7 @@ function gridInfo=EHY_getGridInfo(inputFile,varargin)
 %% Initialisation
 OPT.stations        = '';
 OPT.varName         = 'wl';
-OPT.manual          = true;
-OPT.mergePartitions = 0; % merge output from several dfm '_map.nc'-files
+OPT.mergePartitions = 1; % merge output from several dfm '_map.nc'-files
 OPT.disp            = 1; % display a message if none of the wanted output was found
 OPT                 = setproperty(OPT,varargin{2:end});
 
