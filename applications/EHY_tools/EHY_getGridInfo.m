@@ -39,6 +39,7 @@ OPT.stations        = '';
 OPT.varName         = 'wl';
 OPT.mergePartitions = 1; % merge output from several dfm '_map.nc'-files
 OPT.disp            = 1; % display a message if none of the wanted output was found
+OPT.manual          = false; 
 OPT                 = setproperty(OPT,varargin{2:end});
 
 %% process input from user
@@ -213,13 +214,15 @@ switch modelType
                             elseif nc_isvar(inputFile,'zcoordinate_w')
                                 tmp    = ncread(inputFile,'zcoordinate_w',[1 1 1],[1 Inf Inf]);
                                 E.Zcen = tmp(:,end);
-                            elseif nc_isvar(inputFile,'zcoordinate_c')
+                            elseif nc_isvar(inputFile,'zcoordinate_c') && nc_isvar(inputFile,'waterlevel')
                                 % Re construct depth based on water levels and centre coordinates
                                 E.Zcen = ncread(inputFile,'waterlevel',[1 1],[Inf 1]);
                                 tmp    = ncread(inputFile,'zcoordinate_c',[1 1 1],[Inf Inf 1])';
                                 for i_lay = E.no_layers:-1:1
                                     E.Zcen = E.Zcen -2*(E.Zcen- tmp(:,i_lay));
                                 end
+                            else
+                                E.Zcen = NaN;
                             end
                         elseif   ~isempty(strfind(inputFile,'map.nc')) || ~isempty(strfind(inputFile,'_net.nc')) % map/nc file
                             if nc_isvar(inputFile,'mesh2d_node_z')
@@ -334,7 +337,7 @@ switch modelType
                                 for i_lay = 1: no_layers
                                     E.layer_perc(i_lay) = (tmp(i_lay + 1) - tmp(i_lay))/(tmp(end) - tmp(1));
                                 end
-                            elseif nc_isvar(inputFile,'zcoordinate_c') && strcmp(layer_model,'sigma-model')
+                            elseif nc_isvar(inputFile,'zcoordinate_c') && strcmp(layer_model,'sigma-model') && nc_isvar(inputFile,'waterlevel')
                                 
                                 % Reconstruct interfaces
                                 tmp_c  = ncread(inputFile,'zcoordinate_c',[1 1 1],[inf 1 1]);

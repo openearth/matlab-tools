@@ -24,10 +24,15 @@ if all(ismember({'start','count'},who))
     % allocate variable 'values'
     if length(dimensions)==1
         values=zeros([nr_times_clip 1])*NaN;
-    else
-        values=zeros([fliplr(dimensions(2:end)) nr_times_clip])*NaN;
+    elseif length(count) >= 2
+        values = zeros([fliplr(dimensions(2:end)) nr_times_clip])*NaN;
+        if length(count) == 2 && ~isinf(count(1))
+            values = zeros(count(1),nr_times_clip)*NaN;
+        elseif length(count) == 3 && ~isinf(count(2))
+            values = zeros(dimensions(end),count(2),nr_times_clip)*NaN;
+        end
     end
-    
+      
     % cycle over blocks
     for i_block = 1: nr_blocks
         bl_start                 = 1 + (i_block-1) * bl_length;

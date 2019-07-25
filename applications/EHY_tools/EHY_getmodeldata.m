@@ -118,46 +118,89 @@ switch modelType
             dimensions(1) = nr_times_clip;
         end
         
-        % get series data
+        %% get series data
         nrTimeStart           =  find(select, 1);
-        if length(dimensions) == 1 start = [    nrTimeStart]; count        = [        nr_times_clip]; end
-        if length(dimensions) == 2 start = [1   nrTimeStart]; count        = [Inf     nr_times_clip]; end
-        if length(dimensions) == 3 start = [1 1 nrTimeStart]; count        = [Inf Inf nr_times_clip]; end
-        order                 =  length(dimensions):-1:1;
         
+        %% Initialise output
+        if length(dimensions) == 1; Data.val(1:nr_times_clip) = NaN; end
         if ~ismember(OPT.varName,{'x_velocity'})
-            if length(order)==1
-                value     =  ncread_blocks(inputFile,OPT.varName,start,count);
-            else
-                value     =  ncread_blocks(inputFile,OPT.varName,start,count);
-            end
+            if length(dimensions) == 2 Data.val(1:nr_times_clip,1:length(stat_name))                       = NaN; end
+            if length(dimensions) == 3 Data.val(1:nr_times_clip,1:length(stat_name),1:length(OPT.layer))   = NaN; end
         else
-            value_x   =  ncread_blocks(inputFile,'x_velocity',start,count);
-            value_y   =  ncread_blocks(inputFile,'y_velocity',start,count);
+            if length(dimensions) == 2 Data.vel_x(1:nr_times_clip,1:length(stat_name))                     = NaN; end
+            if length(dimensions) == 2 Data.vel_y(1:nr_times_clip,1:length(stat_name))                     = NaN; end
+            if length(dimensions) == 3 Data.vel_x(1:nr_times_clip,1:length(stat_name),1:length(OPT.layer)) = NaN; end
+            if length(dimensions) == 3 Data.vel_x(1:nr_times_clip,1:length(stat_name),1:length(OPT.layer)) = NaN; end
         end
         
-        % put value(_x/_y) in output structure 'Data'
-        if exist('value','var')
-            if size(value,2)==1 || strcmp(dimNames{1},'general_structures')
-                Data.val=value(index_requested,:);
-            elseif ndims(value)==2
-                Data.val(:,Data.exist_stat)  = permute(value(stationNrNoNan,index_requested),order);
-                Data.val(:,~Data.exist_stat) = NaN;
-            elseif ndims(value)==3
-                Data.val(:,Data.exist_stat,1:length(OPT.layer))  = permute(value(OPT.layer,stationNrNoNan,index_requested),order);
-                Data.val(:,~Data.exist_stat,1:length(OPT.layer)) = NaN;
+        %% Read all at once
+        if isempty(stat_name) || length(stat_name) > 10
+            if length(dimensions) == 1 start = [    nrTimeStart]; count        = [        nr_times_clip]; end
+            if length(dimensions) == 2 start = [1   nrTimeStart]; count        = [Inf     nr_times_clip]; end
+            if length(dimensions) == 3 start = [1 1 nrTimeStart]; count        = [Inf Inf nr_times_clip]; end
+            order                 =  length(dimensions):-1:1;
+            
+            if ~ismember(OPT.varName,{'x_velocity'})
+                value     =  ncread_blocks(inputFile,OPT.varName,start,count);
+            else
+                value_x   =  ncread_blocks(inputFile,'x_velocity',start,count);
+                value_y   =  ncread_blocks(inputFile,'y_velocity',start,count);
             end
-        elseif exist('value_x','var')
-            if ndims(value_x)==2
-                Data.vel_x(:,Data.exist_stat)  = permute(value_x(stationNrNoNan,:),order);
-                Data.vel_y(:,Data.exist_stat)  = permute(value_y(stationNrNoNan,:),order);
-                Data.vel_x(:,~Data.exist_stat) = NaN;
-                Data.vel_y(:,~Data.exist_stat) = NaN;
-            elseif ndims(value_x)==3
-                Data.vel_x(:,Data.exist_stat,1:length(OPT.layer))  = permute(value_x(OPT.layer,stationNrNoNan,:),order);
-                Data.vel_y(:,Data.exist_stat,1:length(OPT.layer))  = permute(value_y(OPT.layer,stationNrNoNan,:),order);
-                Data.vel_x(:,~Data.exist_stat,1:length(OPT.layer)) = NaN;
-                Data.vel_y(:,~Data.exist_stat,1:length(OPT.layer)) = NaN;
+            
+            % put value(_x/_y) in output structure 'Data'
+            if exist('value','var')
+                if (size(value,2)==1 && ndims(value) == 2) || strcmp(dimNames{1},'general_structures')
+                    Data.val=value(index_requested,:);
+                elseif ndims(value)==2
+                    Data.val(:,Data.exist_stat)  = permute(value(stationNrNoNan,index_requested),order);
+                elseif ndims(value)==3
+                    Data.val(:,Data.exist_stat,1:length(OPT.layer))  = permute(value(OPT.layer,stationNrNoNan,index_requested),order);
+                end
+            elseif exist('value_x','var')
+                if ndims(value_x)==2
+                    Data.vel_x(:,Data.exist_stat)  = permute(value_x(stationNrNoNan,:),order);
+                    Data.vel_y(:,Data.exist_stat)  = permute(value_y(stationNrNoNan,:),order);
+                elseif ndims(value_x)==3
+                    Data.vel_x(:,Data.exist_stat,1:length(OPT.layer))  = permute(value_x(OPT.layer,stationNrNoNan,:),order);
+                    Data.vel_y(:,Data.exist_stat,1:length(OPT.layer))  = permute(value_y(OPT.layer,stationNrNoNan,:),order);
+                end
+            end
+            
+        %% Read station by station to avoid memory problems
+        else
+            for i_stat = 1: length(stat_name)
+                if Data.exist_stat(i_stat)
+                    if length(dimensions) == 1 start = [                         nrTimeStart]; count  = [        nr_times_clip]; end
+                    if length(dimensions) == 2 start = [  stationNrNoNan(i_stat) nrTimeStart]; count  = [     1  nr_times_clip]; end
+                    if length(dimensions) == 3 start = [1 stationNrNoNan(i_stat) nrTimeStart]; count  = [Inf  1  nr_times_clip]; end
+                    order                 =  length(dimensions):-1:1;
+                    
+                    if ~ismember(OPT.varName,{'x_velocity'})
+                        value     =  ncread_blocks(inputFile,OPT.varName,start,count);
+                    else
+                        value_x   =  ncread_blocks(inputFile,'x_velocity',start,count);
+                        value_y   =  ncread_blocks(inputFile,'y_velocity',start,count);
+                    end
+                    
+                    % put value(_x/_y) in output structure 'Data'
+                    if exist('value','var')
+                        if (size(value,2)==1 &&ndims(value) == 2) || strcmp(dimNames{1},'general_structures')
+                            Data.val=value(index_requested,:);
+                        elseif ndims(value)==2
+                            Data.val(:,i_stat)  = permute(value(1,index_requested),order);
+                        elseif ndims(value)==3
+                            Data.val(:,i_stat,1:length(OPT.layer))  = permute(value(OPT.layer,1,index_requested),order);
+                        end
+                    elseif exist('value_x','var')
+                        if ndims(value_x)==2
+                            Data.vel_x(:,i_stat)  = permute(value_x(1,:),order);
+                            Data.vel_y(:,i_stat)  = permute(value_y(1,:),order);
+                        elseif ndims(value_x)==3
+                            Data.vel_x(:,i_stat,1:length(OPT.layer))  = permute(value_x(OPT.layer,1,:),order);
+                            Data.vel_y(:,i_stat,1:length(OPT.layer))  = permute(value_y(OPT.layer,1,:),order);
+                        end
+                    end
+                end
             end
         end
         
