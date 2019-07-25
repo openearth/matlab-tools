@@ -54,7 +54,7 @@ end
 
 %% determine type of model and type of inputFile
 modelType=EHY_getModelType(inputFile);
-typeOfModelFile=EHY_getTypeOfModelFile(inputFile);
+[typeOfModelFile,typeOfModelFileDetail]=EHY_getTypeOfModelFile(inputFile);
 [pathstr, name, ext] = fileparts(lower(inputFile));
 
 if strcmp(modelType,'dfm') && strcmp(typeOfModelFile,'network')
@@ -63,7 +63,7 @@ if strcmp(modelType,'dfm') && strcmp(typeOfModelFile,'network')
 end
 
 %% check if output data is in several partitions and merge if necessary
-if OPT.mergePartitions==1 && strcmp(modelType,'dfm') && strcmp(inputFile(end-6:end),'_map.nc') && ~isempty(str2num(inputFile(end-10:end-7)))
+if OPT.mergePartitions==1 && strcmp(modelType,'dfm') && strcmp(typeOfModelFileDetail,'map_nc') && ~isempty(str2num(inputFile(end-10:end-7)))
     mapFiles=dir([inputFile(1:end-11) '*' inputFile(end-6:end)]);
     for iM=1:length(mapFiles)
         disp(['Reading and merging grid info data from partitions: ' num2str(iM) '/' num2str(length(mapFiles))])
@@ -112,7 +112,7 @@ end
 switch modelType
     case 'dfm'
         
-        if ~OPT.mergePartitions
+        if  ~strcmp(typeOfModelFileDetail,'map_nc') || ~OPT.mergePartitions
             
             switch typeOfModelFile
                 
@@ -156,9 +156,15 @@ switch modelType
                     if ismember('Z',wantedOutput)
                         tmp=EHY_getGridInfo(inputFile,{'layer_model','layer_perc'},'disp',0);
                         if strcmp(tmp.layer_model,'z-model')
+                            if isfield(mdu.geometry,'zlaytop')
                             dh=mdu.geometry.ZlayTop-mdu.geometry.ZlayBot;
                             E.Zcen_int=mdu.geometry.ZlayBot+cumsum([0 tmp.layer_perc]/100*dh);
                             E.Zcen_cen=E.Zcen_int(1:end-1)+diff(E.Zcen_int)/2;
+                            elseif isfield(mdu.geometry,'floorlevtoplay')
+%                                 E.Zcen_int=[mdu.geometry.floorlevtoplay:-mdu.geometry.dztop:mdu.geometry.dztopuniabovez ...
+%                                    <part with sigmagrowthfactor to maximum depth ...> ]
+                                % to be correctly implemented
+                            end
                         end
                     end
                     
