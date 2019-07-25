@@ -85,20 +85,9 @@
 
           %% Get the needed data
           if ismember(type,{'z' 'r' 'x' 'n'})
-              if ~load_wl
-                  data_wl = EHY_getmodeldata(fileInp,{},modelType,'varName','wl','t0',t0,'tend',tend);
-                  load_wl = true;
-              end
-
-              %% Get fill wl array with water levels for the requested stations
-              no_times  = size(data_wl.val,1);
-              no_stat   = 4;
-              wl(1:no_times,1:no_stat) = 0.;
-
-              for i_stat = 1: length(mnnes)
-                  index = get_nr(data_wl.stationNames,mnnes{i_stat});
-                  if ~isempty(index)  wl(:,i_stat) = data_wl.val(:,index(1));end
-              end
+              data          = EHY_getmodeldata(fileInp,mnnes,modelType,'varName','wl','t0',t0,'tend',tend);
+              wl            = data.val;
+              wl(isnan(wl)) = 0.;
 
               %% Exclude permanently dry points
               for i_stat = 1: 4
@@ -111,25 +100,9 @@
               end
           end
           if ismember(type,{'c' 'p' 'r' 'x'})
-              if ~load_uv
-                  data_uv = EHY_getmodeldata(fileInp,{},modelType,'varName','uv','t0',t0,'tend',tend);
-                  load_uv = true;
-              end
-
-              %%  Fill uu and vv array with velocities for the requested stations
-              no_times  = size(data_uv.vel_x,1);
-              no_stat   = 4;
-              no_layers = size(data_uv.vel_x,3);
-              uu(1:no_times,1:no_stat,1:no_layers) = 0.;
-              vv(1:no_times,1:no_stat,1:no_layers) = 0.;
-
-              for i_stat = 1: length(mnnes)
-                  index = get_nr(data_uv.stationNames,mnnes{i_stat});
-                  if ~isempty(index)
-                      uu(:,i_stat,:) = data_uv.vel_x(:,index(1),:);
-                      vv(:,i_stat,:) = data_uv.vel_y(:,index(1),:);
-                  end
-              end
+              data_uv   = EHY_getmodeldata(fileInp,mnnes,modelType,'varName','uv','t0',t0,'tend',tend);
+              uu        = data_uv.vel_x; uu(isnan(uu)) = 0.;
+              vv        = data_uv.vel_y; vv(isnan(vv)) = 0.;
               [uu,vv]   = nesthd_rotate_vector(uu,vv,pi/2. - angle);
 
               %% Exclude permanently dry points
@@ -228,21 +201,19 @@
           switch type
               case {'x' 'p'}
                   [mnnes,weight,angle]         = nesthd_getwgh2 (fid_adm,mnbcsp,'p');
-
-                  %%  Fill uu and vv array with velocities for the requested stations
-                  no_times  = size(data_uv.vel_x,1);
-                  no_stat   = 4;
-                  no_layers = size(data_uv.vel_x,3);
-                  uu(1:no_times,1:no_stat,1:no_layers) = 0.;
-                  vv(1:no_times,1:no_stat,1:no_layers) = 0.;
-
-                  for i_stat = 1: length(mnnes)
-                      index = get_nr(data_uv.stationNames,mnnes{i_stat});
-                      if ~isempty(index)
-                          uu(:,i_stat,:) = data_uv.vel_x(:,index(1),:);
-                          vv(:,i_stat,:) = data_uv.vel_y(:,index(1),:);
+                  
+                  %% Temporary for testing with old hong kong model
+                  if shenzen
+                      for i_stat = 1: length(mnnes)
+                          i_start = strfind(mnnes{i_stat},'(');
+                          i_com   = strfind(mnnes{i_stat},',');
+                          mnnes{i_stat} = [mnnes{i_stat}(1:i_start(2)) mnnes{i_stat}(i_start(2) + 2:i_com(2))  mnnes{i_stat}(i_com(2) + 2:end)];
                       end
                   end
+
+                  data_uv   = EHY_getmodeldata(fileInp,mnnes,modelType,'varName','uv','t0',t0,'tend',tend);
+                  uu        = data_uv.vel_x; uu(isnan(uu)) = 0.;
+                  vv        = data_uv.vel_y; vv(isnan(vv)) = 0.;
                   [uu,vv]   = nesthd_rotate_vector(uu,vv,pi/2. - angle);
 
                   %% Exclude permanently dry points
@@ -255,22 +226,12 @@
                       end
                   end
 
-
                   %% Error if no nesting stations are found
                   if isempty(mnnes)
                       error = true;
                       close(h);
                       simona2mdf_message({'Inconsistancy between boundary definition and' 'administration file'},'Window','Nesthd2 Error','Close',true,'n_sec',10);
                       return
-                  end
-
-                  %% Temporary for testing with old hong kong model
-                  if shenzen
-                      for i_stat = 1: length(mnnes)
-                          i_start = strfind(mnnes{i_stat},'(');
-                          i_com   = strfind(mnnes{i_stat},',');
-                          mnnes{i_stat} = [mnnes{i_stat}(1:i_start(2)) mnnes{i_stat}(i_start(2) + 2:i_com(2))  mnnes{i_stat}(i_com(2) + 2:end)];
-                      end
                   end
 
                   %% Normalise weights
