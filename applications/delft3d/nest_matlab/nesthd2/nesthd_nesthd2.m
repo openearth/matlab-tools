@@ -35,10 +35,10 @@ gen_inf.from = EHY_getModelType(files{3});
 
 %  For dfm add A0 through the keyworoff-set in stead of directly 
 %  including it into the boundary (request Jelmer) 
-if strcmp(gen_inf.to,'dfm') && isfield(add_inf,'A0')
-    if add_inf.A0 ~= 0.
-        add_inf.A0_dfm = add_inf.A0;
-        add_inf.A0     = 0.;
+if strcmp(gen_inf.to,'dfm') && isfield(add_inf,'a0')
+    if add_inf.a0 ~= 0.
+        add_inf.a0_dfm = add_inf.a0;
+        add_inf.a0     = 0.;
     end
 end
 
