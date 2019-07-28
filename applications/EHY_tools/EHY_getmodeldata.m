@@ -130,7 +130,7 @@ switch modelType
             if length(dimensions) == 2 Data.vel_x(1:nr_times_clip,1:length(stat_name))                     = NaN; end
             if length(dimensions) == 2 Data.vel_y(1:nr_times_clip,1:length(stat_name))                     = NaN; end
             if length(dimensions) == 3 Data.vel_x(1:nr_times_clip,1:length(stat_name),1:length(OPT.layer)) = NaN; end
-            if length(dimensions) == 3 Data.vel_x(1:nr_times_clip,1:length(stat_name),1:length(OPT.layer)) = NaN; end
+            if length(dimensions) == 3 Data.vel_y(1:nr_times_clip,1:length(stat_name),1:length(OPT.layer)) = NaN; end
         end
         
         %% Read all at once
