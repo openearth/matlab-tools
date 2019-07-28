@@ -32,7 +32,7 @@ for i_test = 1: length(tests)
             substitute ('**rundir**',tests{i_test},[tests{i_test} filesep 'nesthd1.ini']);
         end
     end
-    
+
     if check_nesthd2
         if exist([tests{i_test} filesep 'nesthd2.template'],'file')
             nesthd2(i_test) = true;
@@ -57,7 +57,7 @@ if check_exe
     system('run.bat');
 
     for i_test = 1: length(tests)
-        if nesthd2(i_test) 
+        if nesthd2(i_test)
             nesthd_compare([tests{i_test} filesep 'nesthd2.ini']);
         end
     end
@@ -69,7 +69,7 @@ if check_comprompt
         if nesthd1(i_test)
             nesthd        ([tests{i_test} filesep 'nesthd1.ini']);
             nesthd_compare([tests{i_test} filesep 'nesthd1.ini']);
-            delete        ([tests{i_test} filesep 'nesthd1.ini']); 
+            delete        ([tests{i_test} filesep 'nesthd1.ini']);
         end
         if nesthd2(i_test)
             nesthd        ([tests{i_test} filesep 'nesthd2.ini'],'check',true);

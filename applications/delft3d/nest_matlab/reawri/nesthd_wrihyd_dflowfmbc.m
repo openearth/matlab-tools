@@ -131,30 +131,34 @@ for i_pnt = 1: no_pnt
                     end
                 end
             end
-        end
-        
-        %% Series information
-        for i_time = 1: no_times
-            ext_force(l_act).values{i_time,1} = (nfs_inf.times(i_time) - nfs_inf.itdate)*1440. + add_inf.timeZone*60.;    % minutes!
-            if dav
-                ext_force(l_act).values(i_time,2) = {bndval(i_time).value(i_pnt,1,l)};
-                if lower(bnd.DATA(i_pnt).bndtype) == 'p' || lower(bnd.DATA(i_pnt).bndtype) == 'x'
-                    ext_force(l).values(i_time,3) = {bndval(i_time).value(i_pnt,2,1)};
-                end
-            else
-                for i_lay = 1: no_layers
-                    for i_xy = 1: no_xy
-                        ext_force(l_act).values(i_time,i_lay*2 + i_xy - 1) = {bndval(i_time).value(i_pnt,i_lay +  (i_xy - 1)*no_layers,l)};
+            
+            %% Series information
+            for i_time = 1: no_times
+                ext_force(l_act).values{i_time,1} = (nfs_inf.times(i_time) - nfs_inf.itdate)*1440. + add_inf.timeZone*60.;    % minutes!
+                if dav
+                    ext_force(l_act).values(i_time,2) = {bndval(i_time).value(i_pnt,1,l)};
+                    if lower(bnd.DATA(i_pnt).bndtype) == 'p' || lower(bnd.DATA(i_pnt).bndtype) == 'x'
+                        ext_force(l).values(i_time,3) = {bndval(i_time).value(i_pnt,2,1)};
+                    end
+                else
+                    for i_lay = 1: no_layers
+                        if no_xy == 2
+                            for i_xy = 1: no_xy
+                                ext_force(l_act).values(i_time,i_lay*2 + i_xy - 1) = {bndval(i_time).value(i_pnt,i_lay +  (i_xy - 1)*no_layers,l)};
+                            end
+                        else
+                            ext_force(l_act).values(i_time,i_lay + 1) = {bndval(i_time).value(i_pnt,i_lay,l)};
+                        end
                     end
                 end
             end
+            
+            %% Write the series for individual support points, first time open file, after that append
+            if i_pnt == 1
+                dflowfm_io_extfile('write',fileOut,'ext_force',ext_force,'type','ini');
+            else
+                dflowfm_io_extfile('write',fileOut,'ext_force',ext_force,'type','ini','first',false);
+            end
         end
-    end
-    
-    %% Write the series for individual support points, first time open file, after that append
-    if i_pnt == 1
-        dflowfm_io_extfile('write',fileOut,'ext_force',ext_force,'type','ini');
-    else
-        dflowfm_io_extfile('write',fileOut,'ext_force',ext_force,'type','ini','first',false);
     end
 end
