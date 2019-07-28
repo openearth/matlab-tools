@@ -16,9 +16,8 @@ else
     add_inf = nesthd_additional( );
 end
 
-OPT.check = false;
 if nargin >= 3
-    OPT = setproperty(OPT,varargin(3:end));
+    OPT = varargin{3};
 end
 
 %% Administration file
@@ -42,7 +41,7 @@ if strcmp(gen_inf.to,'dfm') && isfield(add_inf,'a0')
     end
 end
 
-if OPT.check gen_inf.notims = min(gen_inf.notims,20); end
+if ~isempty(OPT.no_times) gen_inf.notims = min(gen_inf.notims,OPT.no_times); end
 nobnd       = length(bnd.DATA);
 kmax        = gen_inf.kmax;
 lstci       = gen_inf.lstci;

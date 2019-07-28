@@ -1,9 +1,8 @@
 function run_now(handles,varargin)
 
 % run_now : runs nesting programs in batch (without ui)
-OPT.check = false;
 if ~isempty(varargin)
-    OPT = setproperty(OPT,varargin);
+    OPT = varargin{1};
 end
 
 Active = handles.active;
@@ -16,7 +15,7 @@ if strcmpi(Active,'Nesthd1')
 else
     handles = nesthd_check_nesthd2(handles);
     if strcmpi(handles.run_nesthd2_onoff,'on')
-        nesthd_nesthd2(handles.files_hd2,handles.add_inf,'check',OPT.check);
+        nesthd_nesthd2(handles.files_hd2,handles.add_inf,OPT);
     end
 end
 

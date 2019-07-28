@@ -94,11 +94,13 @@ if ~isempty(varargin)
 
     [handles] = nesthd_ini_ui(handles);
     [handles] = nesthd_read_ini(handles,varargin{1});
-    OPT.check = false;
+    OPT.check    = false;
+    OPT.no_times = [];
     if length(varargin)>= 2
         OPT = setproperty(OPT,varargin(2:end));
+        if OPT.check OPT.no_times = 20; end
     end
-    nesthd_run_now(handles,'check',OPT.check);
+    nesthd_run_now(handles,OPT);
 else
 
     % Stand alone
