@@ -9,6 +9,7 @@ function varargout=EHY_convert(varargin)
 % Example3: ldb=EHY_convert('D:\path.kml','ldb')
 % Example4: pol=EHY_convert('D:\path.kml','pol','saveOutputFile',0)
 % Example5: net=EHY_convert('D:\grid_net.nc','ldb','saveOutputFile',0)
+% Example6: EHY_convert('D:\coastline.ldb','ldb','fromEPSG',4326','toEPSG',28992,'overwrite',1)
 
 % created by Julien Groenenboom, August 2017
 %%
@@ -1232,6 +1233,12 @@ if OPT.fromEPSG~=OPT.toEPSG
             end
         case {'.ldb','.pli','.pol'}
             T=tekal('read',inputFile,'loaddata');
+            % tekal is used to keep the same polygon-names
+            if length(T.Field)>50 % put everything in one field, otherwise it takes a lot of time
+                T.Field(1).Data=io_polygon('read',inputFile);
+                T.Field(2:end)=[];
+            end
+            
             for iT=1:length(T.Field)
                 [T.Field(iT).Data(:,1),T.Field(iT).Data(:,2)]=convertCoordinates(T.Field(iT).Data(:,1),T.Field(iT).Data(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
             end
