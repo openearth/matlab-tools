@@ -8,10 +8,11 @@ function [t,ug,vg,pg,varargout]=spw2regulargrid(spwfile,xg,yg,dt,varargin)
 % mergefrac=0.5;          % merge fraction 
 % [xg,yg]=meshgrid(-70:0.1:-50,20:0.1:30);
 % [t,ug,vg,pg,frac]=spw2regular('ike.spw',xg,yg,dt,'interpolation',interpolation,'backgroundpressure',backgroundpressure,'mergefrac',mergefrac);
-
+%
 mergefrac=[];
 interpmethod='spline';
 backgroundpressure=101500;
+precipitation = 0; % by default don't read in rainfall
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})
@@ -22,13 +23,19 @@ for ii=1:length(varargin)
                 interpmethod=varargin{ii+1};
             case{'backgroundpressure'}
                 backgroundpressure=varargin{ii+1};
+            case{'precipitation'}
+                precipitation=varargin{ii+1};                
         end
     end
 end                
 
 % Read data
 info=asciiwind('open',spwfile);
-quantity={'wind_speed'  'wind_from_direction'  'p_drop'};
+if precipitation == 1
+    quantity={'wind_speed'  'wind_from_direction'  'p_drop'  'precipitation'};    
+else
+    quantity={'wind_speed'  'wind_from_direction'  'p_drop'};
+end
 rows=1:info.Header.n_rows;
 cols=1:info.Header.n_cols;
 dx=info.Header.spw_radius/info.Header.n_rows;
@@ -42,7 +49,9 @@ end
 wvel0=asciiwind('read',info,quantity{1},1:nt0,rows,cols);
 wdir0=asciiwind('read',info,quantity{2},1:nt0,rows,cols);
 pdrp0=asciiwind('read',info,quantity{3},1:nt0,rows,cols);
-
+if precipitation == 1
+    prcp0=asciiwind('read',info,quantity{4},1:nt0,rows,cols);
+end
 for it=1:nt0
     xeye(it)=info.Data(it).x_spw_eye;
     yeye(it)=info.Data(it).y_spw_eye;
@@ -70,6 +79,7 @@ ug(ug==0)=NaN;
 vg=ug;
 pg=ug;
 frac=ug;
+prcpg=ug;
 
 for it=1:nt
 
@@ -87,6 +97,9 @@ for it=1:nt
         pdrp=squeeze(pdrp0(it1,:,:));
         u=-wvel.*cos(wdir);
         v=-wvel.*sin(wdir);
+        if precipitation == 1
+            prcp=squeeze(prcp0(it1,:,:));        
+        end
     else
         
         wvel1=squeeze(wvel0(it1,:,:));
@@ -106,12 +119,21 @@ for it=1:nt
         u=tfrac1*u1+tfrac2*u2;
         v=tfrac1*v1+tfrac2*v2;
         pdrp=tfrac1*pdrp1+tfrac2*pdrp2;
+        
+        if precipitation == 1
+            prcp1=squeeze(prcp0(it1,:,:));    
+            prcp2=squeeze(prcp0(it2,:,:));        
+            prcp=tfrac1*pdrp1+tfrac2*pdrp2;
+        end        
 
     end
     
     u(:,end+1)=u(:,1);
     v(:,end+1)=v(:,1);
     pdrp(:,end+1)=pdrp(:,1);
+    if precipitation == 1
+        prcp(:,end+1)=prcp(:,1);
+    end
     
     % Interpolate
     if isempty(mergefrac)
@@ -124,7 +146,13 @@ for it=1:nt
     end
     pg(it,:,:)=backgroundpressure-radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,pdrp,'nautical');
     
+    if precipitation == 1
+        prcpg(it,:,:)=radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,prcp,'nautical');
+    end
 end
 
 varargout{1}=frac;
+if precipitation == 1
+    varargout{2}=prcpg;
+end
 
