@@ -303,7 +303,7 @@ switch modelType
                                 E.layer_model='sigma-model';
                             else
                                 % work-around1: try to get this info from mdFile
-                                mdFile=EHY_getMdFile(inputFile);
+                                mdFile=EHY_getMdFile(fileparts(inputFile));
                                 if ~isempty(mdFile)
                                     gridInfo=EHY_getGridInfo(mdFile,'layer_model');
                                     E.layer_model=gridInfo.layer_model;

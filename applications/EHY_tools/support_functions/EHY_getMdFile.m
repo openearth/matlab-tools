@@ -34,7 +34,14 @@ while loop>0
         mdFile=filename;
     end
     
-    % the run directory was given // a (partioned) .mdu was given
+    % on Linux dir('') with two '.'-symbols does not work
+    % work-around: already go to the next loop
+    if isunix || ~isempty(strfind(filename,'.'))
+        filename=fileparts(filename);
+        continue
+    end
+    
+    % the run directory was given // a (partitioned) .mdu was given
     if ~exist('mdFile','var')
         mdFiles=[dir([filename filesep '*.mdu']); dir([filename filesep '*.mdf']); dir([filename filesep '*siminp*'])];
        
