@@ -20,9 +20,15 @@ fname   = varargin{1};
 switch lower(cmd)
 
 case 'read'
-   simona2mdu_undress(fname,'scratch','comments',{'#' '*'});       %removes mdu cmments which dont belong in inifile
-   [tmp       ] = inifile('open','scratch');
-   delete 'scratch';
+    scratchFile='scratch';
+    try % if you have the permission to write in this dir
+        simona2mdu_undress(fname,scratchFile,'comments',{'#' '*'});       %removes mdu cmments which dont belong in inifile
+    catch % you don't have permission to write (e.g. MATLAB/bin/.. )
+        scratchFile=[tempdir 'scratch'];
+        simona2mdu_undress(fname,scratchFile,'comments',{'#' '*'});
+    end
+    [tmp       ] = inifile('open',scratchFile);
+    delete(scratchFile);
 
    %
    % Create one structure
