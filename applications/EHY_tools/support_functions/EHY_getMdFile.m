@@ -25,6 +25,11 @@ loop=3;
 while loop>0
     loop=loop-1;
     %% determine mdFile
+    % try to get runid based on filename
+    if ~exist('runid','var') || isempty(runid) % maybe it was found in previous loop
+        runid = EHY_getRunid(filename);
+    end
+        
     % the mdFile itself was given
     [pathstr, name, ext] = fileparts(filename);
     if isempty(pathstr)
@@ -36,7 +41,7 @@ while loop>0
     
     % on Linux dir('') with two '.'-symbols does not work
     % work-around: already go to the next loop
-    if isunix || ~isempty(strfind(filename,'.'))
+    if isunix && ~isempty(strfind(filename,'.'))
         filename=fileparts(filename);
         continue
     end
@@ -68,13 +73,6 @@ while loop>0
     
     % output file was given, try to get runid and mdFile
     if ~exist('mdFile','var') % dflowfm
-        [~,name,ext]=fileparts(filename);
-        fName=[name ext];
-        id=strfind(fName,'_his.nc');
-        runid=fName(1:id-1);
-        if length(runid)>5 && ~isempty(str2num(runid(end-3:end))) && strcmp(runid(end-4),'_')
-            runid=runid(1:end-5); % skip partitioning part
-        end
         if ~isempty(runid)
             mdFiles=dir([fileparts(fileparts(filename)) filesep '*' runid '.mdu']);
             if length(mdFiles)==1
@@ -83,9 +81,6 @@ while loop>0
         end
     end
     if ~exist('mdFile','var') % delft3d4
-        id1=strfind(fName,'trih-');
-        id2=strfind(fName,'.dat');
-        runid=fName(id1+5:id2-1);
         if ~isempty(runid)
             mdFiles=dir([fileparts(filename) filesep '*' runid '.mdf']);
             if length(mdFiles)==1

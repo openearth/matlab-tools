@@ -91,7 +91,7 @@ if OPT.mergePartitions==1 && strcmp(modelType,'dfm') && strcmp(typeOfModelFileDe
                 
                 if any(strcmp(fn{iFN},{'face_nodes_x','face_nodes_y'}))
                     gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
-                elseif any(strcmp(fn{iFN},{'face_nodes'}))
+                elseif strcmp(fn{iFN},{'face_nodes'})
                     gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) length(gridInfo.Xcor)+gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'Xcor','Xcen','Ycor','Ycen','Zcor','Zcen'}))
                     gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}); gridInfoPart.(fn{iFN})];
@@ -125,6 +125,11 @@ switch modelType
                         mdu.geometry.(lower(fn{iFN}))=mdu.geometry.(fn{iFN});
                     end
                     if ismember('no_layers',wantedOutput)
+                        tmp=EHY_getGridInfo(inputFile,{'layer_model'},'disp',0);
+                        if strcmp(tmp.layer_model,'z-model')
+                            disp('''no_layers'' taken from .mdu-file (keyword kmx), but z-layer model so could be different/overwritten.')
+                            disp('For actual number used, please check a model output file.')
+                        end
                         E.no_layers=mdu.geometry.kmx;
                         if E.no_layers==0
                             E.no_layers=1;
@@ -303,7 +308,7 @@ switch modelType
                                 E.layer_model='sigma-model';
                             else
                                 % work-around1: try to get this info from mdFile
-                                mdFile=EHY_getMdFile(fileparts(inputFile));
+                                mdFile=EHY_getMdFile(inputFile);
                                 if ~isempty(mdFile)
                                     gridInfo=EHY_getGridInfo(mdFile,'layer_model');
                                     E.layer_model=gridInfo.layer_model;
@@ -716,8 +721,8 @@ modelType=EHY_getModelType(inputFile);
 if strcmp(modelType,'dfm') && strcmp(inputFile(end-6:end),'_map.nc') && ~isempty(str2num(inputFile(end-10:end-7)))
     option=listdlg('PromptString','Do you want to merge the info from different partitions?','SelectionMode','single','ListString',...
         {'Yes','No'},'ListSize',[300 100]);
-    if option==1
-        OPT.mergePartitions=1;
+    if option==2
+        OPT.mergePartitions=0;
     end
 end
 

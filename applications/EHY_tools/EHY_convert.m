@@ -475,19 +475,20 @@ end
         [~,pliFiles]=strtok({ext{indPli}},'=');
         pliFiles=strtrim(strrep(pliFiles,'=',''));
         pliFiles=cellstr(EHY_getFullWinPath(pliFiles,fileparts(inputFile)));
-        POL=[];
+        PLI=[];
         for iF=1:length(pliFiles)
             pol=io_polygon('read',pliFiles{iF});
             xyn.x(iF)=mean(pol(:,1));xyn.y(iF)=mean(pol(:,2));
             [~,xyn.name{iF}]=fileparts(pliFiles{iF});
-            POL=[POL;NaN NaN; pol(:,1:2)];
+            PLI=[PLI;NaN NaN; pol(:,1:2)];
         end
-        [POL(:,1),POL(:,2),OPT]=EHY_convert_coorCheck(POL(:,1),POL(:,2),OPT);
+        [PLI(:,1),PLI(:,2),OPT]=EHY_convert_coorCheck(PLI(:,1),PLI(:,2),OPT);
+        [xyn.x,xyn.y,OPT]=EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
         if OPT.saveOutputFile
-            ldb2kml(POL(:,1:2),strrep(outputFile,'.kml','_lines.kml'),OPT.lineColor,OPT.lineWidth);
+            ldb2kml(PLI(:,1:2),strrep(outputFile,'.kml','_lines.kml'),OPT.lineColor,OPT.lineWidth);
             KMLPlaceMark(xyn.y,xyn.x,strrep(outputFile,'.kml','_names.kml'),'name',xyn.name,'icon',OPT.iconFile);
         end
-        output=POL;
+        output=PLI;
     end
 % grd2kml
     function [output,OPT]=EHY_convert_grd2kml(inputFile,outputFile,OPT)
@@ -839,7 +840,7 @@ end
             end
             pol(end,:)=[];
             if OPT.saveOutputFile
-                io_polygon('write',outputFile,pol);
+                io_polygon('write',outputFile,pol,'dosplit');
             end
             output=pol;
         end

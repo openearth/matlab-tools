@@ -78,30 +78,36 @@ switch modelType
         
         % thin dams
         if isfield(mdu.geometry,'ThinDamFile') && ~isempty(mdu.geometry.ThinDamFile)
-            inputFile=EHY_getFullWinPath(mdu.geometry.ThinDamFile,runDir);
-            [~,name]=fileparts(inputFile);
-            OPT2.outputFile=strrep([outputDir name '_thd.kml'],'_thd_thd','_thd');
-            OPT2.lineColor=OPT.thdColor;
-            [~,OPT2]=EHY_convert(inputFile,'kml','lineWidth',4,OPT2);
+            inputFiles=regexp(mdu.geometry.ThinDamFile,'\s+','split');
+            for iF=1:length(inputFiles)
+                inputFile=EHY_getFullWinPath(inputFiles{iF},runDir);
+                [~,name]=fileparts(inputFile);
+                OPT2.outputFile=strrep([outputDir name '_thd.kml'],'_thd_thd','_thd');
+                OPT2.lineColor=OPT.thdColor;
+                [~,OPT2]=EHY_convert(inputFile,'kml','lineWidth',4,OPT2);
+            end
         end
         
         % dry points
         if isfield(mdu.geometry,'DryPointsFile') && ~isempty(mdu.geometry.DryPointsFile)
-            inputFile=EHY_getFullWinPath(mdu.geometry.DryPointsFile,runDir);
-            [~,name,ext]=fileparts(inputFile);
-            OPT2.netFile=EHY_getFullWinPath(mdu.geometry.NetFile,runDir);
-            if strcmpi(ext,'.pol')
-                OPT2.outputFile=[outputDir name '_dryPol.kml'];
-                [~,OPT2]=EHY_convert(inputFile,'kml','lineColor',[0 0 1],OPT2);
-            elseif strcmpi(ext,'.xyz')
-                try
-                    OPT2.outputFile=[outputDir name '_xdry.kml'];
-                    OPT2.lineColor=OPT.dryColor;
-                    [~,OPT2]=EHY_convert(inputFile,'xdrykml',OPT2);
+            inputFiles=regexp(mdu.geometry.DryPointsFile,'\s+','split');
+            for iF=1:length(inputFiles)
+                inputFile=EHY_getFullWinPath(inputFiles{iF},runDir);
+                [~,name,ext]=fileparts(inputFile);
+                OPT2.netFile=EHY_getFullWinPath(mdu.geometry.NetFile,runDir);
+                if strcmpi(ext,'.pol')
+                    OPT2.outputFile=[outputDir name '_dryPol.kml'];
+                    [~,OPT2]=EHY_convert(inputFile,'kml','lineColor',[0 0 1],OPT2);
+                elseif strcmpi(ext,'.xyz')
+                    try
+                        OPT2.outputFile=[outputDir name '_xdry.kml'];
+                        OPT2.lineColor=OPT.dryColor;
+                        [~,OPT2]=EHY_convert(inputFile,'xdrykml',OPT2);
+                    end
+                    OPT2.outputFile=strrep([outputDir name '_dry.kml'],'_dry_dry','_dry');
+                    OPT2.iconFile=OPT.dryIconFile;
+                    [~,OPT2]=EHY_convert(inputFile,'kml',OPT2);
                 end
-                OPT2.outputFile=strrep([outputDir name '_dry.kml'],'_dry_dry','_dry');
-                OPT2.iconFile=OPT.dryIconFile;
-                [~,OPT2]=EHY_convert(inputFile,'kml',OPT2);
             end
         end
         
