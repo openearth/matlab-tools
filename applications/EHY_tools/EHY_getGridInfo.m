@@ -37,9 +37,8 @@ function gridInfo=EHY_getGridInfo(inputFile,varargin)
 %% Initialisation
 OPT.stations        = '';
 OPT.varName         = 'wl';
-OPT.mergePartitions = 1; % merge output from several dfm '_map.nc'-files
-OPT.disp            = 1; % display a message if none of the wanted output was found
-OPT.manual          = false; 
+OPT.mergePartitions = 1; % merge output in case of dfm '_map.nc'-files
+OPT.disp            = 1; % display status and message if none of the wanted output was found
 OPT                 = setproperty(OPT,varargin{2:end});
 
 %% process input from user
@@ -58,8 +57,14 @@ modelType=EHY_getModelType(inputFile);
 [typeOfModelFile,typeOfModelFileDetail]=EHY_getTypeOfModelFile(inputFile);
 [pathstr, name, ext] = fileparts(lower(inputFile));
 
+if strcmp(modelType,'dfm') && strcmp(typeOfModelFileDetail,'map_nc') && ~isempty(str2num(inputFile(end-10:end-7)))
+    % partitioned dfm run with *map*.nc-files
+else
+    OPT.mergePartitions = 0; % do not loop over all partitions
+end
+
 if strcmp(modelType,'dfm') && strcmp(typeOfModelFile,'network')
-    % info that is in grid, is probably also be in outputfile
+    % if network, treat as outputfile (.nc)
     typeOfModelFile='outputfile';
 end
 
@@ -67,9 +72,11 @@ end
 if OPT.mergePartitions==1 && strcmp(modelType,'dfm') && strcmp(typeOfModelFileDetail,'map_nc') && ~isempty(str2num(inputFile(end-10:end-7)))
     mapFiles=dir([inputFile(1:end-11) '*' inputFile(end-6:end)]);
     for iM=1:length(mapFiles)
-        disp(['Reading and merging grid info data from partitions: ' num2str(iM) '/' num2str(length(mapFiles))])
+        if OPT.disp
+            disp(['Reading and merging grid info data from partitions: ' num2str(iM) '/' num2str(length(mapFiles))])
+        end
         mapFile=[fileparts(inputFile) filesep mapFiles(iM).name];
-        gridInfoPart=EHY_getGridInfo(mapFile,varargin{:},'mergePartitions',0);
+        gridInfoPart=EHY_getGridInfo(mapFile,varargin{1},'mergePartitions',0);
         if iM==1
             gridInfo=gridInfoPart;
             fn=fieldnames(gridInfoPart);
@@ -298,7 +305,7 @@ switch modelType
                         end
                     end
                     if ismember('layer_model',wantedOutput)
-                        tmp=EHY_getGridInfo(inputFile,'no_layers','disp',0);
+                        tmp=EHY_getGridInfo(inputFile,'no_layers','disp',0,'mergePartitions',0);
                         if tmp.no_layers==1
                             E.layer_model='-';
                         else
@@ -327,7 +334,7 @@ switch modelType
                         end
                     end
                     if ismember('layer_perc',wantedOutput)
-                        tmp       = EHY_getGridInfo(inputFile,{'no_layers','layer_model'},'disp',0);
+                        tmp       = EHY_getGridInfo(inputFile,{'no_layers','layer_model'},'disp',0,'mergePartitions',0);
                         no_layers = tmp.no_layers;
                         layer_model = tmp.layer_model;
                         if no_layers == 1
