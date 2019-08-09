@@ -73,7 +73,7 @@ if OPT.mergePartitions==1 && strcmp(modelType,'dfm') && strcmp(typeOfModelFileDe
     mapFiles=dir([inputFile(1:end-11) '*' inputFile(end-6:end)]);
     for iM=1:length(mapFiles)
         if OPT.disp
-            disp(['Reading and merging grid info data from partitions: ' num2str(iM) '/' num2str(length(mapFiles))])
+        disp(['Reading and merging grid info data from partitions: ' num2str(iM) '/' num2str(length(mapFiles))])
         end
         mapFile=[fileparts(inputFile) filesep mapFiles(iM).name];
         gridInfoPart=EHY_getGridInfo(mapFile,varargin{1},'mergePartitions',0);
@@ -384,6 +384,9 @@ switch modelType
                         elseif nc_isvar(inputFile,'mesh2d_face_x_bnd')
                             E.face_nodes_x=ncread(inputFile,'mesh2d_face_x_bnd');
                             E.face_nodes_y=ncread(inputFile,'mesh2d_face_y_bnd');
+                        elseif nc_isvar(inputFile,'mesh2d_agg_face_x_bnd')
+                            E.face_nodes_x=ncread(inputFile,'mesh2d_agg_face_x_bnd');
+                            E.face_nodes_y=ncread(inputFile,'mesh2d_agg_face_y_bnd');
                         end
                     end
                     if ismember('dimensions',wantedOutput)
