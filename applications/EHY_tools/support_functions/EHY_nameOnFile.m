@@ -31,7 +31,9 @@ switch typeOfModelFileDetail
                 if strcmpi(varName,'wl'         ) newName = 's1'         ; end
                 if strcmpi(varName,'waterlevel' ) newName = 's1'         ; end
                 if strcmpi(varName,'sal'        ) newName = 'sa1'        ; end
+                if strcmpi(varName,'salinity'   ) newName = 'sa1'        ; end
                 if strcmpi(varName,'tem'        ) newName = 'tem1'       ; end
+                if strcmpi(varName,'temperature') newName = 'tem1'       ; end
                 if strcmpi(varName,'uv'         ) newName = 'ucx'        ; end
                 if strcmpi(varName,'wd'         ) newName = 'waterdepth' ; end
                 if strcmpi(varName,'water depth') newName = 'waterdepth' ; end
@@ -39,7 +41,7 @@ switch typeOfModelFileDetail
                 % to deal with old/new variable names like tem1 vs. mesh2d_tem1 
                 infonc = ncinfo(inputFile);
                 if ~nc_isvar(inputFile,newName)
-                    ind = find(~cellfun(@isempty,strfind({infonc.Variables.Name},newName)));
+                    ind = find(~cellfun(@isempty,strfind(lower({infonc.Variables.Name}),newName)));
                     if ~isempty(ind)
                         newName = infonc.Variables(ind).Name;
                     else

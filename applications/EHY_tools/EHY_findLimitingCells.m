@@ -67,10 +67,10 @@ if OPT.writeMaxVel
         OPT.writeMaxVel = 0;
     else
         Data = EHY_getMapModelData(mapFile,'varName','uv','mergePartitions',1);
-        if ndims(Data.ucy)==2
-            mag=sqrt(Data.ucx.^2+Data.ucy.^2);
+        if ndims(Data.vel_x)==2
+            mag=sqrt(Data.vel_x.^2+Data.vel_y.^2);
         else
-            mag=max(sqrt(Data.ucx.^2+Data.ucy.^2),[],3); % maximum over depth
+            mag=max(sqrt(Data.vel_x.^2+Data.vel_y.^2),[],3); % maximum over depth
         end
         MAXVEL=prctile(mag,OPT.percentile)';
     end
@@ -99,7 +99,7 @@ elseif exist(mapFile)
         time=time0(end-1);
         Data = EHY_getMapModelData(mapFile,'varName','numlimdt','t0',time,'tend',time,'mergePartitions',1);
     end
-    NUMLIMDT=Data.value';
+    NUMLIMDT=Data.val';
     limInd=find(NUMLIMDT>0);
     NUMLIMDT=NUMLIMDT(limInd);
 end
