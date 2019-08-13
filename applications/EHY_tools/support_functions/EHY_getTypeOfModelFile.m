@@ -63,6 +63,7 @@ if nargout==2
     if ~isempty(strfind(lower(fileInp),'sds'    ));  typeOfModelFileDetail = 'sds'   ; end
     if ~isempty(strfind(lower(fileInp),'_his.nc'));  typeOfModelFileDetail = 'his_nc'; end
     if ~isempty(strfind(lower(fileInp),'_map.nc'));  typeOfModelFileDetail = 'map_nc'; end
+    if ~isempty(strfind(lower(fileInp),'_fou.nc'));  typeOfModelFileDetail = 'fou_nc'; end
     if ~isempty(strfind(lower(fileInp),'_net.nc'));  typeOfModelFileDetail = 'net_nc'; end
     if ~isempty(strfind(lower(fileInp),'trih'   ));  typeOfModelFileDetail = 'trih'  ; end
     if ~isempty(strfind(lower(fileInp),'trim'   ));  typeOfModelFileDetail = 'trim'  ; end

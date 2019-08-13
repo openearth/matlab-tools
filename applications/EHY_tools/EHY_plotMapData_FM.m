@@ -12,7 +12,7 @@ function varargout=EHY_plotMapData_FM(gridInfo,zData,varargin)
 % Example2: EHY_plotMapData_FM(gridInfo,zData)
 %             with gridInfo=EHY_getGridInfo(outputfile,'face_nodes_xy');
 %                  Data = EHY_getMapModelData(outputfile, ... );
-%                  zData=Data.Val(1,:);
+%                  zData=Data.val(1,:);
 %
 % For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
 % created by Julien Groenenboom, October 2018
@@ -32,7 +32,6 @@ if ~isempty(varargin)
 end
 
 %% check input
-
 if ~all([exist('gridInfo','var') exist('zData','var')])
     % no input, start interactive script
     EHY_plotMapData_FM_interactive

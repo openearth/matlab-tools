@@ -57,7 +57,7 @@ modelType=EHY_getModelType(inputFile);
 [typeOfModelFile,typeOfModelFileDetail]=EHY_getTypeOfModelFile(inputFile);
 [pathstr, name, ext] = fileparts(lower(inputFile));
 
-if strcmp(modelType,'dfm') && strcmp(typeOfModelFileDetail,'map_nc') && ~isempty(str2num(inputFile(end-10:end-7)))
+if EHY_isPartitioned(inputFile,modelType,typeOfModelFile)
     % partitioned dfm run with *map*.nc-files
 else
     OPT.mergePartitions = 0; % do not loop over all partitions
@@ -69,8 +69,13 @@ if strcmp(modelType,'dfm') && strcmp(typeOfModelFile,'network')
 end
 
 %% check if output data is in several partitions and merge if necessary
-if OPT.mergePartitions==1 && strcmp(modelType,'dfm') && strcmp(typeOfModelFileDetail,'map_nc') && ~isempty(str2num(inputFile(end-10:end-7)))
+if OPT.mergePartitions==1 && EHY_isPartitioned(inputFile,modelType,typeOfModelFile)
     mapFiles=dir([inputFile(1:end-11) '*' inputFile(end-6:end)]);
+    try % temp fix for e.g. RMM_dflowfm_0007_0007_numlimdt.xyz
+        if ~isempty(str2num(inputFile(end-15:end-12)))
+            mapFiles=dir([inputFile(1:end-16) '*' inputFile(end-6:end)]);
+        end
+    end
     for iM=1:length(mapFiles)
         if OPT.disp
         disp(['Reading and merging grid info data from partitions: ' num2str(iM) '/' num2str(length(mapFiles))])
@@ -728,7 +733,7 @@ varargin{1}=outputParameters(option);
 
 % mergePartitions
 modelType=EHY_getModelType(inputFile);
-if strcmp(modelType,'dfm') && strcmp(inputFile(end-6:end),'_map.nc') && ~isempty(str2num(inputFile(end-10:end-7)))
+if EHY_isPartitioned(inputFile,modelType)
     option=listdlg('PromptString','Do you want to merge the info from different partitions?','SelectionMode','single','ListString',...
         {'Yes','No'},'ListSize',[300 100]);
     if option==2

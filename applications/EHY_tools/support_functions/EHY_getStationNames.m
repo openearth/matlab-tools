@@ -12,26 +12,24 @@ function stationNames = EHY_getStationNames(inputFile,modelType,varargin)
 % support function of the EHY_tools
 % Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
 
-OPT.varName = 'wl'; % 'wl','uv','crs'
+OPT.varName = 'wl'; % 'wl','uv','cross_section_*','general_structure_*'
 
 OPT         = setproperty(OPT,varargin);
 
-%% modify user input
-if ~isempty(strfind(OPT.varName,'cross_section_'))
-    % if cross-section data is requested, get the names of the cross-sections
-    OPT.varName='crs';
-end
-
 %%
+stationNames = '';
 switch modelType
     
     case {'d3dfm','dflow','dflowfm','mdu','dfm'}
         %% Delft3D-Flexible Mesh
-        if strcmp(lower(OPT.varName),'crs')
+        if ~isempty(strfind(lower(OPT.varName),'cross_section'))
             stationNames  = cellstr(strtrim(nc_varget(inputFile,'cross_section_name')));
+        elseif ~isempty(strfind(lower(OPT.varName),'general_structure'))
+            stationNames  = cellstr(strtrim(nc_varget(inputFile,'general_structure_name')));
         else % 'wl' or 'uv'
             stationNames  = cellstr(strtrim(nc_varget(inputFile,'station_name'))); 
         end
+        
     case {'d3d','d3d4','delft3d4','mdf'}
         %% Delft3D 4
         trih=vs_use(inputFile,'quiet');
@@ -59,6 +57,7 @@ switch modelType
         catch
              stationNames=cellstr(D.observation_id');
         end
+        
     case {'implic'}
         %% IMPLIC
         D         = dir2(inputFile,'file_incl','\.dat$');
@@ -67,5 +66,6 @@ switch modelType
         for i_stat = 1: length(filenames)
             [~,name,~] = fileparts(filenames{i_stat});
             stationNames{i_stat} = name;
-        end      
+        end   
+        
 end
