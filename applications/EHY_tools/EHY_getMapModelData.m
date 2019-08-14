@@ -79,6 +79,10 @@ end
 
 %% Get horizontal grid information
 mesh2dInd = find(~cellfun(@isempty,strfind(lower({dims(:).name}),'face'))); % any dimensionName with 'face' in it
+if isempty(mesh2dInd)
+    mesh2dInd = strmatch('nFlowElem',{dims(:).name}); % maybe from older version
+end
+
 if ~isempty(mesh2dInd)
     dims(mesh2dInd).index    = 1:dims(mesh2dInd).size;
     dims(mesh2dInd).indexOut = 1:dims(mesh2dInd).size;

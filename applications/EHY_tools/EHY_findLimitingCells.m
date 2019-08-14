@@ -49,6 +49,8 @@ if ~exist('mapFile','var') && nargin==0
     end
 end
 
+mapFile = strtrim(mapFile);
+
 % another file that *_map.nc was provided
 if ~strcmp(mapFile(end-6:end),'_map.nc')
     outputDir = EHY_getOutputDirFM(mapFile);
