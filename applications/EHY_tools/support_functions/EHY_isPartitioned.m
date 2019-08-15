@@ -1,4 +1,4 @@
-function tf = EHY_isPartitioned(filename,modelType,typeOfModelFile)
+function tf = EHY_isPartitioned(filename,modelType)
 % tf = EHY_isPartitioned(filename,modelType,typeOfModelFile)
 %
 % This function checks based on a filename if a simulation was a partitioned Delft3D-Flexible Mesh simulation
@@ -17,15 +17,13 @@ function tf = EHY_isPartitioned(filename,modelType,typeOfModelFile)
 if ~exist('modelType','var')
     modelType = EHY_getModelType(filename);
 end
-if ~exist('typeOfModelFile','var')
-    typeOfModelFile = EHY_getTypeOfModelFile(filename);
-end
+[typeOfModelFile, typeOfModelFileDetail] = EHY_getTypeOfModelFile(filename);
 
 %% determine if filename belongs to partitioned FM simulation
 tf = false;
 switch modelType
     case 'dfm'
-        if strcmp(modelType,'dfm') && strcmp(typeOfModelFile,'outputfile') && ...
+        if strcmp(modelType,'dfm') && strcmp(typeOfModelFile,'outputfile') && ismember(typeOfModelFileDetail,{'map_nc','fou_nc'}) && ...
                 length(filename)>10 && ~isempty(str2num(filename(end-10:end-7)))
             tf = true;
         end

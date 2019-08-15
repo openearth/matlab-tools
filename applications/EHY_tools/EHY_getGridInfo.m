@@ -57,7 +57,7 @@ modelType=EHY_getModelType(inputFile);
 [typeOfModelFile,typeOfModelFileDetail]=EHY_getTypeOfModelFile(inputFile);
 [pathstr, name, ext] = fileparts(lower(inputFile));
 
-if EHY_isPartitioned(inputFile,modelType,typeOfModelFile)
+if EHY_isPartitioned(inputFile,modelType)
     % partitioned dfm run with *map*.nc-files
 else
     OPT.mergePartitions = 0; % do not loop over all partitions
@@ -69,7 +69,7 @@ if strcmp(modelType,'dfm') && strcmp(typeOfModelFile,'network')
 end
 
 %% check if output data is in several partitions and merge if necessary
-if OPT.mergePartitions==1 && EHY_isPartitioned(inputFile,modelType,typeOfModelFile)
+if OPT.mergePartitions==1 && EHY_isPartitioned(inputFile,modelType)
     mapFiles=dir([inputFile(1:end-11) '*' inputFile(end-6:end)]);
     try % temp fix for e.g. RMM_dflowfm_0007_0007_numlimdt.xyz
         if ~isempty(str2num(inputFile(end-15:end-12)))
