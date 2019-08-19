@@ -82,6 +82,7 @@ for ii=1:length(coorsStart)
 %     pol=[tLdb(1:3:end) tLdb(2:3:end)];
     pol=[pol; tLdb];
 end
+fclose(fid);
 
 if saveOutput==1
 io_polygon('write',[fPat filesep fName '.pol'],pol(:,1:2));
