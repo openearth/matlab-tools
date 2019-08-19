@@ -11,7 +11,7 @@ friction_v(1:mmax,1:nmax) = 0.;
 % get information out of struc
 %
 
-OPT.nesthd_path = getenv('nesthd_path');
+OPT.nesthd_path = getenv_np('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
 siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'PROBLEM' 'FRICTION'});

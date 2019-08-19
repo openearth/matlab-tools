@@ -6,7 +6,7 @@ warning = false;
 warntext{1} = 'SIMINP2MDF Processes Warning:';
 warntext{2} = '';
 
-OPT.nesthd_path = getenv('nesthd_path');
+OPT.nesthd_path = getenv_np('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
 %
@@ -47,8 +47,8 @@ else
        mdf.sub1(3) = 'w';
     end
 end
-    
-    
+
+
 %
 % Writes the warning
 %

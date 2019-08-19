@@ -2,7 +2,7 @@ function mdf = simona2mdf_area(S,mdf,name_mdf, varargin)
 
 % simona2mdf_area : gets grid related quantities out of the parsed siminp tree
 
-OPT.nesthd_path = getenv('nesthd_path');
+OPT.nesthd_path = getenv_np('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
 
@@ -19,7 +19,7 @@ elseif simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.GRID.GENERALIZED_S
     mdf.filcco    = siminp_struc.ParsedTree.MESH.GRID.GENERALIZED_SPHERICAL.RGFFILE;
 elseif simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.GRID.SPHERICAL')
        % CSMv5 Create grid!
-    mmax = siminp_struc.ParsedTree.MESH.GRID.AREA.MMAX - 1;  
+    mmax = siminp_struc.ParsedTree.MESH.GRID.AREA.MMAX - 1;
     nmax = siminp_struc.ParsedTree.MESH.GRID.AREA.NMAX - 1;
     x0   = siminp_struc.ParsedTree.MESH.GRID.AREA.LONGITUDE;
     y0   = siminp_struc.ParsedTree.MESH.GRID.AREA.LATITUDE;

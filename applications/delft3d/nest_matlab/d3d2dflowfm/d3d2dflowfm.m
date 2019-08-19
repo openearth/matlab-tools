@@ -28,17 +28,10 @@ OPT.DispGen = true;
 OPT = setproperty(OPT,varargin{3:end});
 
 %% Check if nesthd_path is set
-
-% Let's set the env-variable automatically instead
-if 0
-    if isempty (getenv('nesthd_path'))
-       h = warndlg({'Please set the environment variable "nesthd_path"';'See the Release Notes ("Release Notes.chm")'},'NestHD Warning');
-       PutInCentre (h);
-       uiwait(h);
-    end
-else
-    complete_path = which('d3d2dflowfm');
-    setenv('nesthd_path',complete_path(1,1:findstr(complete_path,['nest_matlab' filesep'])+11));
+if isempty (getenv_np('nesthd_path'))
+   h = warndlg({'Please set the environment variable "nesthd_path"';'See the Release Notes ("Release Notes.chm")'},'NestHD Warning');
+   PutInCentre (h);
+   uiwait(h);
 end
 
 %% Dynamically get filenames (or specify in script), split into name and path
@@ -47,12 +40,12 @@ end
 
 % d3d2dflowfm (a GUI will pop-up)
 % d3d2dflowfm('find') (will find a single *.mdf file in the current folder)
-% d3d2dflowfm('D:\some_d3d_folder\some_mdf.mdf','D:\some_d3d_fm_folder\some_mdu.mdu') (will convert the provided files)   
+% d3d2dflowfm('D:\some_d3d_folder\some_mdf.mdf','D:\some_d3d_fm_folder\some_mdu.mdu') (will convert the provided files)
 
 % Edit Freek Scheel 2016: Make this a bit more dynamic when no arguments are given:
 if isempty(varargin)
     [name_mdf, path_mdf] = uigetfile({'*.mdf','Delft3D master definition files (*.mdf)'},'Pick a *.mdf file to convert...','MultiSelect','off');
-    
+
     if ~ischar(name_mdf)
         error('User abort: No input *.mdf file selected');
     else
@@ -73,11 +66,11 @@ else
             error('Multiple *.mdf files were found in the current Matlab working directory, if you wish to select one manually, simply call the function without any input variables: >> d3d2dflowfm');
         end
     end
-    
+
     if length(varargin) > 1
         fil_mdf = varargin{1};
         fil_mdu = varargin{2};
-        
+
         if ~exist(fil_mdf,'file')
             error(['The provided *.mdf file ' fil_mdf ' does not exist']);
         end
@@ -106,7 +99,7 @@ if OPT.DispGen
 end
 
 %% Start with creating empty mdu template
-[mdu,mdu_Comment] = dflowfm_io_mdu('new',[getenv('nesthd_path') filesep 'bin' filesep 'dflowfm-properties.csv']);
+[mdu,mdu_Comment] = dflowfm_io_mdu('new',[getenv_np('nesthd_path') filesep 'bin' filesep 'dflowfm-properties.csv']);
 mdu.pathmdu = path_mdu;
 
 %% Read the temporary mdf file, add the path of the d3d files to allow for reading later
@@ -125,7 +118,7 @@ else
     d3d2dflowfm_grd2net([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filgrd],mdf.depuni                   , ...
                         [fil_mdu '_net.nc']         ,[fil_mdu '.xyz']);
 end
-    
+
 mdu.geometry.NetFile = [fil_mdu '_net.nc'];
 mdu.geometry.NetFile = simona2mdf_rmpath(mdu.geometry.NetFile);
 

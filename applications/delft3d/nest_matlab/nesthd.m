@@ -56,7 +56,7 @@ end
 
 %% Check if nesthd_path is set
 
-if isempty (getenv('nesthd_path'))
+if isempty (getenv_np('nesthd_path'))
    h = warndlg({'Please set the environment variable "nesthd_path"';'See the Release Notes ("Release Notes.chm")'},'NestHD Warning');
    PutInCentre (h);
    uiwait(h);

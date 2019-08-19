@@ -30,7 +30,7 @@ switch fileType
 
         %
         % Parse Mesh/grid part
-        nesthd_dir   = getenv('nesthd_path');
+        nesthd_dir   = getenv_np('nesthd_path');
         siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'GRID'});
         fileOut = siminp_struc.ParsedTree.MESH.GRID.CURVILINEAR.RGFFILE;
         fileOut = [pin filegrd];

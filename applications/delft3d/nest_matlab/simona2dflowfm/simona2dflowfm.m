@@ -33,7 +33,7 @@ end
 
 %% Check if nesthd_path is set
 
-if isempty (getenv('nesthd_path'))
+if isempty (getenv_np('nesthd_path'))
    h = warndlg({'Please set the environment variable "nesthd_path"';'See the Release Notes ("Release Notes.chm")'},'NestHD Warning');
    PutInCentre (h);
    uiwait(h);
@@ -60,8 +60,8 @@ name_mdf = [path_mdf filesep 'tmp.mdf'];
 
 %% Display the general information
 
-logo = imread([getenv('nesthd_path') filesep 'bin' filesep 'dflowfm.jpg']);
-logo2= [getenv('nesthd_path') filesep 'bin' filesep 'deltares.gif'];
+logo = imread([getenv_np('nesthd_path') filesep 'bin' filesep 'dflowfm.jpg']);
+logo2= [getenv_np('nesthd_path') filesep 'bin' filesep 'deltares.gif'];
 simona2mdf_message(Gen_inf,'Logo',logo,'Logo2',logo2,'n_sec',10,'Window','SIMONA2DFLOWFM Message','Close',true);
 
 %% Convert the Simona siminp file to a temporary mdf file

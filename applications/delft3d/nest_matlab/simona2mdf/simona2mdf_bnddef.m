@@ -8,7 +8,7 @@ bnd = [];
 % Parse Boundary data
 %
 
-OPT.nesthd_path = getenv('nesthd_path');
+OPT.nesthd_path = getenv_np('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
 %
@@ -90,7 +90,7 @@ for iopen = 1: length(bnddef.B)
            bnd.pntnr(iopen,iside) = ipoint(1);
         end
     end
-        
+
     bnd.DATA(iopen).mn(1) = bnd.m(iopen,1);
     bnd.DATA(iopen).mn(2) = bnd.n(iopen,1);
     bnd.DATA(iopen).mn(3) = bnd.m(iopen,2);

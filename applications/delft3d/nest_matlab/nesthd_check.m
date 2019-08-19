@@ -72,6 +72,7 @@ if check_comprompt
             delete        ([tests{i_test} filesep 'nesthd1.ini']);
         end
         if nesthd2(i_test)
+            tests{i_test}
             nesthd        ([tests{i_test} filesep 'nesthd2.ini'],'check',true);
             nesthd_compare([tests{i_test} filesep 'nesthd2.ini']);
             delete        ([tests{i_test} filesep 'nesthd2.ini']);

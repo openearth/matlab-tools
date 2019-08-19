@@ -10,7 +10,7 @@ warntext{end+1} = 'Conversion of RESTART file (from SDS to tri-rst)';
 warntext{end+1} = 'not implemented yet';
 warntext{end+1} = '';
 
-OPT.nesthd_path = getenv('nesthd_path');
+OPT.nesthd_path = getenv_np('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
 %

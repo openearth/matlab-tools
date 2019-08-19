@@ -22,7 +22,7 @@ OPT.Filbc0    = '';
 OPT.Filwsvp   =  [];
 OPT           = setproperty(OPT,varargin);
 
-nesthd_path = getenv('nesthd_path');
+nesthd_path = getenv_np('nesthd_path');
 if ~isempty (nesthd_path) && OPT.Comments
    Filcomments = [nesthd_path filesep 'bin' filesep 'extcomments.csv'];
 end

@@ -55,7 +55,7 @@ function nesthd_nest_ui_OpeningFcn(hObject, eventdata, handles, varargin)
 handles = nesthd_ini_ui(handles);
 
 PutInCentre(handles.nest_ui);
-simona2mdf_legalornot(handles.nest_ui,[getenv('nesthd_path') filesep 'bin' filesep 'deltares.gif']);
+simona2mdf_legalornot(handles.nest_ui,[getenv_np('nesthd_path') filesep 'bin' filesep 'deltares.gif']);
 
 set (handles.bg,'Visible','On');
 
@@ -91,7 +91,7 @@ function bg_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 
 set(hObject,'Visible','off');
-nesthd_dir = getenv ('nesthd_path');
+nesthd_dir = getenv_np ('nesthd_path');
 handles.add_files         = [nesthd_dir filesep 'bin'];
 
 axes(hObject);
@@ -340,7 +340,7 @@ function Manual_wh_Callback(hObject, eventdata, handles)
 
 systemroot = getenv('systemroot');
 if exist([systemroot filesep 'hh.exe'],'file')
-    nesthd_path = getenv ('nesthd_path');
+    nesthd_path = getenv_np ('nesthd_path');
     command = [systemroot filesep 'hh.exe ' nesthd_path filesep 'nestHD.chm'];
     system (command);
 end
@@ -354,7 +354,7 @@ function release_notes_Callback(hObject, eventdata, handles)
 
 systemroot = getenv('systemroot');
 if exist([systemroot filesep 'hh.exe'],'file')
-    nesthd_path = getenv ('nesthd_path');
+    nesthd_path = getenv_np ('nesthd_path');
     command = [systemroot filesep 'hh.exe ' nesthd_path filesep 'Release Notes.chm'];
     system (command);
 end

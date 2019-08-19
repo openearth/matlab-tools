@@ -8,7 +8,7 @@ src = [];
 % Parse Boundary data
 %
 
-OPT.nesthd_path = getenv('nesthd_path');
+OPT.nesthd_path = getenv_np('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
 %

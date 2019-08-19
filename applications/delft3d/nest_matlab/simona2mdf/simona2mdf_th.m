@@ -2,7 +2,7 @@ function mdf = simona2mdf_th (S,bnd,mdf, varargin)
 
 % simona2mdf_th : Get thatcher Harleman time lags and set in the mdf struct
 
-OPT.nesthd_path = getenv('nesthd_path');
+OPT.nesthd_path = getenv_np('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
 mdf.rettis(1:length(bnd.DATA)) = 0.0;

@@ -4,7 +4,7 @@ function disstruc = simona2mdf_disstruc(S,src,mdf)
 
 disstruc = [];
 
-nesthd_dir = getenv('nesthd_path');
+nesthd_dir = getenv_np('nesthd_path');
 
 %
 % get information out of struc

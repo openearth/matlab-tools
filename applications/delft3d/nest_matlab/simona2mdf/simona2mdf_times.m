@@ -2,7 +2,7 @@ function mdf = simona2mdf_times (S,mdf,name_mdf, varargin);
 
 % simona2mdf_times : gets thimes out of the parsed siminp tree
 
-OPT.nesthd_path = getenv('nesthd_path');
+OPT.nesthd_path = getenv_np('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
 siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'PROBLEM'});

@@ -25,7 +25,7 @@ end
 %% Display general information
 
 OPT.DispGen     = true;
-OPT.nesthd_path = getenv('nesthd_path');
+OPT.nesthd_path = getenv_np('nesthd_path');
 OPT = setproperty(OPT,varargin{3:end});
 
 %% Check if nesthd_path is set

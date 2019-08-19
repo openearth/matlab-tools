@@ -4,7 +4,7 @@ function mdf = simona2mdf_thd(S,mdf,name_mdf,varargin)
 
 THD.DATA   =  [];
 
-OPT.nesthd_path = getenv('nesthd_path');
+OPT.nesthd_path = getenv_np('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
 %

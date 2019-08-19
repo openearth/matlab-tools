@@ -6,8 +6,8 @@ function mdf=simona2mdf_physical(S,mdf,~, varargin);
 % get information out of struc
 %
 
-OPT.nesthd_path = getenv('nesthd_path');
-OPT = setproperty(OPT,varargin{1:end});
+OPT.nesthd_path = getenv_np('nesthd_path');
+OPT             = setproperty(OPT,varargin{1:end});
 
 siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'GENERAL' 'PHYS'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.PHYSICALPARAM')

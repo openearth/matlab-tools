@@ -4,7 +4,7 @@ function mdf = simona2mdf_bnd(S,mdf,name_mdf,varargin);
 
 % Start with the boundary definition!
 
-OPT.nesthd_path = getenv('nesthd_path');
+OPT.nesthd_path = getenv_np('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
 bnd = simona2mdf_bnddef(S, 'nesthd_path', OPT.nesthd_path);

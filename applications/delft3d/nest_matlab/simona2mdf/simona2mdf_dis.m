@@ -4,7 +4,7 @@ function mdf = simona2mdf_dis(S,mdf,name_mdf, varargin);
 
 % Start with the definition of discharge points
 
-OPT.nesthd_path = getenv('nesthd_path');
+OPT.nesthd_path = getenv_np('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
 src = simona2mdf_src(S, 'nesthd_path', OPT.nesthd_path);

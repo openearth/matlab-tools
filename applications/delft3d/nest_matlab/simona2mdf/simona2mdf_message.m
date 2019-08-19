@@ -3,7 +3,7 @@ function simona2mdf_message(string,varargin)
 % message: writes general information to screen
 %
 %% set the defaults
-OPT.nesthd_path = getenv('nesthd_path');
+OPT.nesthd_path = getenv_np('nesthd_path');
 OPT.Window      = 'SIMINP2MDF Message';
 OPT.Logo        = '';
 OPT.Logo2       = '';
@@ -36,11 +36,11 @@ if ~isempty(OPT.Logo)
 else
     h_warn   = msgbox(string,OPT.Window,'replace');
 end
-    
+
 if ~isempty(OPT.Logo2)
     simona2mdf_legalornot(h_warn,OPT.Logo2)
 end
-    
+
 delete(findobj(h_warn,'string','OK'));
 uiwait(h_warn,OPT.n_sec);
 

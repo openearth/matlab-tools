@@ -2,8 +2,8 @@ function mdf = simona2mdf_output(S,mdf, varargin)
 
 % simona2mdf_output : gets output tmes from the siminp tree
 
-OPT.nesthd_path = getenv('nesthd_path');
-OPT = setproperty(OPT,varargin{1:end});
+OPT.nesthd_path = getenv_np('nesthd_path');
+OPT             = setproperty(OPT,varargin{1:end});
 
 
 % Maps

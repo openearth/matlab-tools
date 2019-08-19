@@ -5,7 +5,7 @@ function mdf = simona2mdf_obs(S,mdf,name_mdf, varargin);
 points    = [];
 chkpoints = [];
 
-OPT.nesthd_path = getenv('nesthd_path');
+OPT.nesthd_path = getenv_np('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
 siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'POINTS'});

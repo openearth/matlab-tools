@@ -6,20 +6,20 @@ function mdf = simona2mdf_wind (S,mdf,name_mdf, varargin);
 % Check for wind
 %
 
-OPT.nesthd_path = getenv('nesthd_path');
+OPT.nesthd_path = getenv_np('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
 if strcmpi(mdf.sub1(3),'w');
-    
+
     siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'GENERAL' 'WIND'});
-    
+
     if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.WIND')
         wind = siminp_struc.ParsedTree.GENERAL.WIND;
-        
+
         %
         % Wind Stress coefficient
         %
-        
+
         if simona2mdf_fieldandvalue(wind,'VARIABLE_CD')
             mdf.wstres(1) = wind.CDA;
             mdf.wstres(2) = wind.WIND_CDA;
@@ -35,11 +35,11 @@ if strcmpi(mdf.sub1(3),'w');
             mdf.wstres(5) = wind.WSTRESSFACT;
             mdf.wstres(6) = 100.;
         end
-        
+
         %
         % Get the wind series
         %
-        
+
         if simona2mdf_fieldandvalue(wind,'SERIES')
             if strcmpi(wind.SERIES,'regular')
                 times  = wind.FRAME(1):wind.FRAME(2):wind.FRAME(3);
@@ -57,7 +57,7 @@ if strcmpi(mdf.sub1(3),'w');
             %
             % Constant value specified
             %
-            
+
             wnd.minutes(1)   = mdf.tstart;
             wnd.minutes(2)   = mdf.tstop;
             wnd.speed(1)     = wind.WCONVERSIONF*wind.WSPEED;
@@ -68,16 +68,16 @@ if strcmpi(mdf.sub1(3),'w');
             simona2mdf_io_wnd('write',mdf.filwnd,wnd);
             mdf.filwnd       = simona2mdf_rmpath(mdf.filwnd);
         end
-        
+
         %
         % CHARNOCK
         %
-        
+
         if simona2mdf_fieldandvalue(wind,'CHARNOCK')
             simona2mdf_message({'CHARNOCK wind stress formulation not implemented in Delft3D-Flow'; ...
                 'Assuming Smith and Banke formulation'},'Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
         end
     end
-    
+
 end
 
