@@ -84,6 +84,15 @@ for ii=1:length(coorsStart)
 end
 fclose(fid);
 
+%reshape polygon to [nrows,3] if coordinates where supplied as one line
+sz = size(pol);
+if max(sz)>3 && min(sz) == 1
+    nrows = max(sz)/3;
+    pol = reshape(pol,3,nrows);
+    pol = pol';
+end
+
 if saveOutput==1
 io_polygon('write',[fPat filesep fName '.pol'],pol(:,1:2));
 end
+
