@@ -7,7 +7,7 @@ gridInfo.face_nodes_y = Data.face_nodes_y;
 
 if isfield(Data,'times') && length(Data.times)>1
     option=listdlg('PromptString','Plot these time steps (as animation): (Use CTRL to select multiple time steps)','ListString',...
-        datestr(Data.times),'ListSize',[300 400]);
+        datestr(Data.times),'ListSize',[400 400]);
     if isempty(option); disp('EHY_plotMapData_FM_interactive was stopped by user');return; end
     plotTimes=Data.times(option);
 elseif isfield(Data,'times') && length(Data.times)==1

@@ -14,10 +14,12 @@ switch modelType
         % layers
         dimsNames = strrep(dimsNames,'laydim','layers');
         dimsNames = strrep(dimsNames,'nmesh2d_layer','layers');
+        dimsNames = strrep(dimsNames,'mesh2d_nLayers','layers');
         % faces
         dimsNames = strrep(dimsNames,'nmesh2d_face','faces');
         dimsNames = strrep(dimsNames,'mesh2d_nFaces','faces');
         dimsNames = strrep(dimsNames,'nFlowElem','faces');
+        dimsNames = strrep(dimsNames,'nNetElem','faces');
         % stations
         dimsNames = strrep(dimsNames,'cross_section','stations');
         dimsNames = strrep(dimsNames,'general_structures','stations');

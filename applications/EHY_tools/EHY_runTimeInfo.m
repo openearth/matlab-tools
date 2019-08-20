@@ -58,7 +58,7 @@ try % if simulation has finished
             fid=fopen(outFile,'r');
             fseek(fid, 0, 'eof'); % set position indicator to end of file
             fileSize = ftell(fid);
-            HeaderLines=round(fileSize/88); % skip big part of out.txt/*.dia
+            HeaderLines=round(fileSize/89); % skip big part of out.txt/*.dia
             fseek(fid, 0, 'bof'); % set position indicator to begin of file
             out=textscan(fid,'%s','delimiter','\n','HeaderLines',HeaderLines,'CommentStyle','** INFO   :  Solver converged in');
             out=out{1,1};

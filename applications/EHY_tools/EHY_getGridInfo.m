@@ -189,10 +189,8 @@ switch modelType
                 case 'outputfile'
                     infonc = ncinfo(inputFile);
                     if ismember('no_layers',wantedOutput)
-                        ncVarInd = strmatch('laydim',{infonc.Dimensions.Name},'exact'); % old fm version
-                        if isempty(ncVarInd)
-                            ncVarInd = strmatch('nmesh2d_layer',{infonc.Dimensions.Name},'exact');
-                        end
+                        varName = EHY_nameOnFile(inputFile,'mesh2d_nLayers');
+                        ncVarInd = strmatch(varName,{infonc.Dimensions.Name},'exact');
                         if ~isempty(ncVarInd)
                             E.no_layers = infonc.Dimensions(ncVarInd).Length;
                         else
@@ -200,21 +198,15 @@ switch modelType
                         end
                     end
                     if ismember('XYcor',wantedOutput)
-                        if nc_isvar(inputFile,'NetNode_x') % old fm version
-                            E.Xcor=ncread(inputFile,'NetNode_x');
-                            E.Ycor=ncread(inputFile,'NetNode_y');
-                        elseif nc_isvar(inputFile,'mesh2d_node_x')
-                            E.Xcor=ncread(inputFile,'mesh2d_node_x');
-                            E.Ycor=ncread(inputFile,'mesh2d_node_y');
-                        end
+                        varName = EHY_nameOnFile(inputFile,'mesh2d_node_x');
+                        E.Xcor = ncread(inputFile,varName);
+                        E.Ycor = ncread(inputFile,strrep(varName,'x','y'));
                     end
                     if ismember('XYcen',wantedOutput)
-                        if nc_isvar(inputFile,'FlowElem_xcc') % old fm version
-                            E.Xcen=ncread(inputFile,'FlowElem_xcc');
-                            E.Ycen=ncread(inputFile,'FlowElem_ycc');
-                        elseif nc_isvar(inputFile,'mesh2d_face_x')
-                            E.Xcen=ncread(inputFile,'mesh2d_face_x');
-                            E.Ycen=ncread(inputFile,'mesh2d_face_y');
+                        varName = EHY_nameOnFile(inputFile,'FlowElem_xcc');
+                        if nc_isvar(inputFile,varName)
+                            E.Xcen = ncread(inputFile,varName);
+                            E.Ycen = ncread(inputFile,strrep(varName,'x','y'));
                         else
                             disp('Cell center info not found in network. Import grid>export grid in RGFGRID and try again')
                         end
@@ -241,13 +233,12 @@ switch modelType
                             else
                                 E.Zcen = NaN;
                             end
-                        elseif   ~isempty(strfind(inputFile,'map.nc')) || ~isempty(strfind(inputFile,'_net.nc')) % map/nc file
-                            if nc_isvar(inputFile,'mesh2d_node_z')
-                                E.Zcor=ncread(inputFile,'mesh2d_node_z');
-                                try; E.Zcen=ncread(inputFile,'mesh2d_flowelem_bl'); end % depth at center not always available
-                            elseif nc_isvar(inputFile,'NetNode_z') % old fm version
-                                E.Zcor=ncread(inputFile,'NetNode_z');
-                                try; E.Zcen=ncread(inputFile,'FlowElem_bl'); end % depth at center not always available
+                        elseif ~isempty(strfind(inputFile,'map.nc')) || ~isempty(strfind(inputFile,'_net.nc')) % map/nc file
+                            varName = EHY_nameOnFile(inputFile,'mesh2d_node_z');
+                            E.Zcor = ncread(inputFile,varName);
+                            try % depth at center not always available
+                            varName = EHY_nameOnFile(inputFile,'mesh2d_flowelem_bl');
+                            E.Zcen=ncread(inputFile,varName);
                             end
                         end
                     end
@@ -383,33 +374,22 @@ switch modelType
                         E.face_nodes=ncread(inputFile,'mesh2d_face_nodes');
                     end                         
                     if ismember('face_nodes_xy',wantedOutput)
-                        if nc_isvar(inputFile,'FlowElemContour_x') % *_waqgeom.nc
-                            E.face_nodes_x=ncread(inputFile,'FlowElemContour_x');
-                            E.face_nodes_y=ncread(inputFile,'FlowElemContour_y');
-                        elseif nc_isvar(inputFile,'mesh2d_face_x_bnd')
-                            E.face_nodes_x=ncread(inputFile,'mesh2d_face_x_bnd');
-                            E.face_nodes_y=ncread(inputFile,'mesh2d_face_y_bnd');
-                        elseif nc_isvar(inputFile,'mesh2d_agg_face_x_bnd')
-                            E.face_nodes_x=ncread(inputFile,'mesh2d_agg_face_x_bnd');
-                            E.face_nodes_y=ncread(inputFile,'mesh2d_agg_face_y_bnd');
-                        end
+                         varName = EHY_nameOnFile(inputFile,'mesh2d_face_x_bnd');
+                         E.face_nodes_x = ncread(inputFile,varName);
+                         E.face_nodes_y = ncread(inputFile,strrep(varName,'x','y'));
                     end
                     if ismember('dimensions',wantedOutput)
                         % no_NetNode
-                        id=strmatch('nNetNode',{infonc.Dimensions.Name},'exact');
-                        if isempty(id)
-                            id=strmatch('nmesh2d_node',{infonc.Dimensions.Name},'exact');
-                        end
-                        if ~isempty(id)
-                            E.no_NetNode=infonc.Dimensions(id).Length;
+                        dimName = EHY_nameOnFile(inputFile,'mesh2d_nNodes');
+                        ind = strmatch(dimName,{infonc.Dimensions.Name},'exact');
+                        if ~isempty(ind)
+                            E.no_NetNode = infonc.Dimensions(ind).Length;
                         end
                         % no_NetElem
-                        id=strmatch('nNetElem',{infonc.Dimensions.Name},'exact');
-                        if isempty(id)
-                            id=strmatch('nmesh2d_face',{infonc.Dimensions.Name},'exact');
-                        end
-                        if ~isempty(id) && infonc.Dimensions(id).Length~=0
-                            E.no_NetElem=infonc.Dimensions(id).Length;
+                        dimName = EHY_nameOnFile(inputFile,'mesh2d_nFaces');
+                        ind = strmatch(dimName,{infonc.Dimensions.Name},'exact');
+                        if ~isempty(ind)
+                            E.no_NetNode = infonc.Dimensions(ind).Length;
                         end
                     end
                     if ismember('area',wantedOutput)
