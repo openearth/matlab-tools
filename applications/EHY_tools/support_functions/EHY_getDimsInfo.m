@@ -30,7 +30,9 @@ switch modelType
             dims(iD).nameOnFile = dimsNamesOnFile{iD};
             dims(iD).name       = dimsNames{iD};
             dims(iD).size       = dimsSizes(iD);
-        end
+            dims(iD).index      = 1:dims(iD).size;
+            dims(iD).indexOut   = 1:dims(iD).size;
+        end       
         
     otherwise
         

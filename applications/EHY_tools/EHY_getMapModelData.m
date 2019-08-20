@@ -220,7 +220,7 @@ elseif isfield(Data,'vel_x')
     fn='vel_x';
 end
 if exist('dims','var') && strcmp(modelType,'dfm')
-    dimensionsComment = fliplr({dims.name});
+    dimensionsComment = fliplr({dims.nameOnFile});
     while length(size(Data.(fn)))<no_dims % size of output < no_dims
         % if e.g. only 1 layer selected, output is 2D instead of 3D.
         dimensionsComment(end)=[];
@@ -234,6 +234,8 @@ else
         dimensionsComment={'time','faces','layers'};
     end
 end
+dimensionsComment = sprintf('%s,',dimensionsComment{:});
+Data.dimensions = ['[' dimensionsComment(1:end-1) ']'];
 
 %% Fill output struct
 Data.OPT               = OPT;

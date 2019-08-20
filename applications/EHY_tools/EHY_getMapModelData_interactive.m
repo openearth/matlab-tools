@@ -61,7 +61,9 @@ if strcmp(modelType,'dfm') && option==length(varNames)
     end
     variablesOnFile         = variablesOnFile(cellFaceDataInd);
     variablesOnFileInclAttr = variablesOnFileInclAttr(cellFaceDataInd);
-    
+    if isempty(variablesOnFileInclAttr)
+        error('There is no cell face data available to plot in this file')
+    end
     option=listdlg('PromptString','What kind of time series do you want to load?','SelectionMode','single','ListString',...
         variablesOnFileInclAttr,'ListSize',[600 300]);
     if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end

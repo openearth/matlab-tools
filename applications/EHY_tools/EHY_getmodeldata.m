@@ -90,11 +90,6 @@ if ~isempty(stationsInd)
     dims(stationsInd).index    = stationNrNoNan;
     dims(stationsInd).indexOut = find(Data.exist_stat);
 end
-name_lenInd = strmatch('name_len',{dims(:).name});
-if ~isempty(name_lenInd)
-    dims(name_lenInd).index    = 1:dims(name_lenInd).size;
-    dims(name_lenInd).indexOut = dims(name_lenInd).index;
-end
 
 %% Get time information from simulation and determine index of required times
 timeInd = strmatch('time',{dims(:).name});
