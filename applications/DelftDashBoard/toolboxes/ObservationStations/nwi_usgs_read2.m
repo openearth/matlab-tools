@@ -1,4 +1,4 @@
-function [datStruc, datStruc2] = nwi_usgs_read(SiteNo,tstart,tend,ParCode,Dir)
+function [datStruc, datStruc2] = nwi_usgs_read2(SiteNo,tstart,tend,ParCode,Dir)
 % Read data from USGS NWI data system
 % SiteNo is parameter
 % tstart en tend is time
@@ -28,11 +28,11 @@ else
 end
 
 %% Download data
-prepart = 'https://waterdata.usgs.gov/nwis/dv?cb_';
-urlwant = [prepart, Pars, '=on&format=rdb&site_no=', SiteNo, '&referred_module=sw&period=&begin_date=', tstart, '&end_date=', tend];
-urlout  = [Dir 'nwi_usgs_data_' SiteNo, '_', tstart '_' tend '.txt'];
+prepart = 'https://nwis.waterdata.usgs.gov/ca/nwis/uv/?cb_';
+urlwant = [prepart, Pars, '=on&format=rdb&site_no=', SiteNo, '&period=&begin_date=', tstart, '&end_date=', tend];
+urlout  = [Dir 'nwi_usgs_data_' SiteNo, '_', Pars, '_', tstart '_' tend '.txt'];
 if exist(urlout) ~= 2
-    tmp     = urlwrite(urlwant,urlout);
+    tmp     = urlwrite(urlwant,[Dir 'nwi_usgs_data_' SiteNo, '_', Pars, '_', tstart '_' tend '.txt']);
 else
     tmp     = urlout;
 end
@@ -81,7 +81,7 @@ else
         
         %% Create the first data structure
         % First create a datenum from the date
-        for i = 4:2:length(pars)
+        for i = 5:2:length(pars)
             tmp3 = zeros(size(data{i}));
             for j = 1:length(data{i})
                 if ~isempty(data{i}{j})
@@ -128,7 +128,7 @@ else
         datStruc2.period.start      = tstart;
         datStruc2.period.end        = tend;
         datStruc2.datenum           = datStruc.datenum;
-        datStruc2.values            = data{1,4};
+        datStruc2.values            = data{1,5};
     catch
     end
 end

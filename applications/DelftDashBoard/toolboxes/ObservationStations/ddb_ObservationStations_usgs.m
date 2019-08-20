@@ -37,7 +37,7 @@ switch lower(OPT)
     case{'getobservations'}
         %varargout{1}=getusgsdata('getobservations','id',id,'parameter',parameter,'t0',t0,'t1',t1);
         try 
-        if parameter == 'discharges';  
+        if parameter == 'discharges' 
             fnumber = '00060'; 
             data = nwi_usgs_read(id{1,1},t0,t1,fnumber,'d:\');
             figure; plot(data.datenum, data.par_02_00060_00003); datetick('x',6); xlabel('Date'); ylabel('Discharge (mean in cubic feet per second)')
