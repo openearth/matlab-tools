@@ -1,4 +1,4 @@
-function sfincs_write_netcdf_amuamvfile(filename, x, y, EPSGcode, UTMname, refdate, time, amu, amv)
+function sfincs_write_netcdf_bndbzsfile(filename, x, y, EPSGcode, UTMname, refdate, time, bzs)
 %
 % v1.0  Leijnse     12-08-2019      Initial commit
 %
@@ -6,7 +6,7 @@ function sfincs_write_netcdf_amuamvfile(filename, x, y, EPSGcode, UTMname, refda
 % - x and y expected as arrays with values along axis, no matrix. Grid is assumed rectilinear and projected in SFINCS.
 % - refdate is expected as string like '1970-01-01 00:00:00' 
 % - time is expected as minutes since refdate
-% - amu/amv input matrix dimensions assumed to be (t,y,x)
+% - bzs input matrix dimensions assumed to be (t,stations)
 % - EPSGcode as a value like: 32631
 % - UTMname as a string like: 'UTM31N'
 % 
@@ -14,10 +14,10 @@ function sfincs_write_netcdf_amuamvfile(filename, x, y, EPSGcode, UTMname, refda
 % - data is now written away as singles
 % 
 % Example:
-% filename = 'sfincs_netamuamvfile.nc';
+% filename = 'sfincs_netbndbzsfile.nc';
 % 
 % x = [0, 100, 200];
-% y = [50, 150, 250, 350];
+% y = [50, 150, 250];
 % 
 % EPSGcode = 32631;
 % UTMname = 'UTM31N';
@@ -26,10 +26,9 @@ function sfincs_write_netcdf_amuamvfile(filename, x, y, EPSGcode, UTMname, refda
 % time = [0, 60];
 % 
 % rng('default');
-% amu = -1 * randi([0 10],length(time),length(y),length(x));
-% amv = 1 * randi([0 10],length(time),length(y),length(x));
+% bzs = -1 * randi([0 10],length(time),length(x));
 %
-% sfincs_write_netcdf_amuamvfile(filename, x, y, EPSGcode, UTMname, refdate, time, amu, amv)
+% sfincs_write_netcdf_bndbzsfile(filename, x, y, EPSGcode, UTMname, refdate, time, bzs)
 %
 %% General info
 ncid                = netcdf.create(filename,'NC_WRITE');
@@ -43,26 +42,24 @@ netcdf.putAtt(ncid,globalID, 'terms_for_use',   'Use as you like');
 netcdf.putAtt(ncid,globalID, 'disclaimer',      'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE');
 
 % Define the dimensions
-myxsize         = size(x,2); 
-myysize         = size(y,2); 
+mypointssize    = size(x,2); 
 mytimesize      = length(time);
 
-xdimid          = netcdf.defDim(ncid,'x',myxsize);
-ydimid          = netcdf.defDim(ncid,'y',myysize);
+pointsdimid     = netcdf.defDim(ncid,'stations',mypointssize);
 timedimid       = netcdf.defDim(ncid,'time',mytimesize);
 crsdimid        = netcdf.defDim(ncid,'crs',1);
 
 %% Standard names
-% Standard names - 1 = x
-x_ID        = netcdf.defVar(ncid,'x','double',xdimid); 
+% Standard names - 1 = x (bnd)
+x_ID        = netcdf.defVar(ncid,'x','double',pointsdimid); 
 netcdf.putAtt(ncid,x_ID,'standard_name','projection_x_coordinate');
 netcdf.putAtt(ncid,x_ID,'long_name',['x coordinate according to ',UTMname]);
 netcdf.putAtt(ncid,x_ID,'axis','X');
 netcdf.putAtt(ncid,x_ID,'_FillValue',-999);
 netcdf.putAtt(ncid,x_ID,'units','m');
 
-% Standard names - 2 = y
-y_ID        = netcdf.defVar(ncid,'y','double',ydimid); 
+% Standard names - 2 = y (bnd)
+y_ID        = netcdf.defVar(ncid,'y','double',pointsdimid); 
 netcdf.putAtt(ncid,y_ID,'standard_name','projection_y_coordinate');    
 netcdf.putAtt(ncid,y_ID,'long_name',['y coordinate according to ',UTMname]);
 netcdf.putAtt(ncid,y_ID,'axis','Y');
@@ -81,23 +78,14 @@ netcdf.putAtt(ncid,time_ID,'standard_name', 'time');
 netcdf.putAtt(ncid,time_ID,'long_name', 'time in minutes');
 netcdf.putAtt(ncid,time_ID,'units', ['minutes since ',refdate]);
 
-% Standard names - 5 = amu
-amu_ID      = netcdf.defVar(ncid,'eastward_wind','double',[xdimid ydimid timedimid]); 
-netcdf.putAtt(ncid,amu_ID,'standard_name','eastward_wind');
-netcdf.putAtt(ncid,amu_ID,'long_name','eastward_wind');
-netcdf.putAtt(ncid,amu_ID,'units','m/s');
-netcdf.putAtt(ncid,amu_ID,'_FillValue',-999);
-netcdf.putAtt(ncid,amu_ID,'coordinates','x y');
-netcdf.putAtt(ncid,amu_ID,'grid_mapping','crs');
-
-% Standard names -6 = amv
-amv_ID      = netcdf.defVar(ncid,'northward_wind','double',[xdimid ydimid timedimid]); 
-netcdf.putAtt(ncid,amv_ID,'standard_name','northward_wind');
-netcdf.putAtt(ncid,amv_ID,'long_name','northward_wind');
-netcdf.putAtt(ncid,amv_ID,'units','m/s');
-netcdf.putAtt(ncid,amv_ID,'_FillValue',-999);
-netcdf.putAtt(ncid,amv_ID,'coordinates','x y');
-netcdf.putAtt(ncid,amv_ID,'grid_mapping','crs');
+% Standard names - 5 = bzs
+bzs_ID      = netcdf.defVar(ncid,'water_level_astronomical','double',[pointsdimid timedimid]); 
+netcdf.putAtt(ncid,bzs_ID,'standard_name','water_level_astronomical');
+netcdf.putAtt(ncid,bzs_ID,'long_name','water_level_astronomical');
+netcdf.putAtt(ncid,bzs_ID,'units','m');
+netcdf.putAtt(ncid,bzs_ID,'_FillValue',-999);
+netcdf.putAtt(ncid,bzs_ID,'coordinates','x y time');
+netcdf.putAtt(ncid,bzs_ID,'grid_mapping','crs');
 
 %% Close defining the NetCdf and write data
 netcdf.endDef(ncid);
@@ -109,13 +97,9 @@ netcdf.putVar(ncid,crs_ID,EPSGcode);
 netcdf.putVar(ncid,time_ID,time);
 
 % Store real data, correct dimensions data
-amunew      = permute(squeeze(amu), [3,2,1]); %set input to right dimensions
-amunew      = single(amunew); %needed to specify as single?
-netcdf.putVar(ncid,amu_ID,amunew);
-
-amvnew      = permute(squeeze(amv), [3,2,1]);
-amvnew      = single(amvnew);
-netcdf.putVar(ncid,amv_ID,amvnew);
+bzsnew      = permute(squeeze(bzs), [2,1]); %set input to right dimensions
+bzsnew      = single(bzsnew); %needed to specify as single?
+netcdf.putVar(ncid,bzs_ID,bzsnew);
 
 % We're done, close the netcdf input file
 netcdf.close(ncid)

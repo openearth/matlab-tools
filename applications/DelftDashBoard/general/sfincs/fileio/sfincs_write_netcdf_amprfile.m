@@ -3,7 +3,7 @@ function sfincs_write_netcdf_amprfile(filename, x, y, EPSGcode, UTMname, refdate
 % v1.0  Leijnse     12-08-2019      Initial commit
 %
 % Input specification:
-% - x and y expected as arrays with values along axis, no matrix. Grid is assumed rectilinear and proejcted in SFINCS.
+% - x and y expected as arrays with values along axis, no matrix. Grid is assumed rectilinear and projected in SFINCS.
 % - refdate is expected as string like '1970-01-01 00:00:00' 
 % - time is expected as minutes since refdate
 % - ampr input matrix dimensions assumed to be (t,y,x)
@@ -52,7 +52,7 @@ timedimid       = netcdf.defDim(ncid,'time',mytimesize);
 crsdimid        = netcdf.defDim(ncid,'crs',1);
 
 %% Standard names
-% Standard names - 1
+% Standard names - 1 = x
 x_ID        = netcdf.defVar(ncid,'x','double',xdimid); 
 netcdf.putAtt(ncid,x_ID,'standard_name','projection_x_coordinate');
 netcdf.putAtt(ncid,x_ID,'long_name',['x coordinate according to ',UTMname]);
@@ -60,9 +60,9 @@ netcdf.putAtt(ncid,x_ID,'axis','X');
 netcdf.putAtt(ncid,x_ID,'_FillValue',-999);
 netcdf.putAtt(ncid,x_ID,'units','m');
 
-% Standard names - 2
+% Standard names - 2 = y
 y_ID        = netcdf.defVar(ncid,'y','double',ydimid); 
-netcdf.putAtt(ncid,y_ID,'standard_name','projection_x_coordinate');    
+netcdf.putAtt(ncid,y_ID,'standard_name','projection_y_coordinate');    
 netcdf.putAtt(ncid,y_ID,'long_name',['y coordinate according to ',UTMname]);
 netcdf.putAtt(ncid,y_ID,'axis','Y');
 netcdf.putAtt(ncid,y_ID,'_FillValue',-999);
@@ -77,8 +77,8 @@ netcdf.putAtt(ncid,crs_ID,'epsg_code', ['EPSG:',num2str(EPSGcode)]);
 % Standard names - 4 = time
 time_ID     = netcdf.defVar(ncid,'time','double',timedimid);
 netcdf.putAtt(ncid,time_ID,'standard_name', 'time');
-netcdf.putAtt(ncid,time_ID,'long_name', ['minutes since ',refdate]);
-netcdf.putAtt(ncid,time_ID,'units', 'm');
+netcdf.putAtt(ncid,time_ID,'long_name', 'time in minutes');
+netcdf.putAtt(ncid,time_ID,'units', ['minutes since ',refdate]);
 
 % Standard names - 5 = ampr
 ampr_ID      = netcdf.defVar(ncid,'precipitation','double',[xdimid ydimid timedimid]); 
