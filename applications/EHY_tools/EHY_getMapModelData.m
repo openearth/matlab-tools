@@ -45,13 +45,9 @@ if ~isnumeric(OPT.layer); OPT.layer=str2num(OPT.layer); end
 
 %% Get model type
 modelType = EHY_getModelType(inputFile);
-[typeOfModelFile, typeOfModelFileDetail] = EHY_getTypeOfModelFile(inputFile);
 
 %% Get name of the parameter as known on output file
 OPT.varName = EHY_nameOnFile(inputFile,OPT.varName);
-if strcmp(modelType,'dfm') && ~nc_isvar(inputFile,OPT.varName)
-    error(['Could not find variable ''' OPT.varName ''' on provided file'])
-end
 
 %% Get information about required dimension information
 dims = EHY_getDimsInfo(inputFile,OPT.varName);
@@ -67,25 +63,21 @@ if ~isempty(timeInd)
 end
 
 %% Get layer information and type of vertical schematisation
-laydimInd = find(~cellfun(@isempty,strfind(lower({dims(:).name}),'layer'))); % any dimensionName with 'layer' in it
-if ~isempty(laydimInd)
-    gridInfo                 = EHY_getGridInfo(inputFile,{'no_layers' 'layer_model'},'mergePartitions',0);
-    no_layers                = gridInfo.no_layers;
-    layer_model              = gridInfo.layer_model;
-    OPT                      = EHY_getmodeldata_layer_index(OPT,no_layers);
-    dims(laydimInd).index    = OPT.layer';
-    dims(laydimInd).indexOut = 1:length(OPT.layer);
+layersInd = strmatch('layers',{dims(:).name});
+if ~isempty(layersInd)
+    gridInfo                = EHY_getGridInfo(inputFile,{'no_layers' 'layer_model'},'mergePartitions',0);
+    no_layers               = gridInfo.no_layers;
+    layer_model             = gridInfo.layer_model;
+    OPT                     = EHY_getmodeldata_layer_index(OPT,no_layers);
+    dims(layersInd).index    = OPT.layer';
+    dims(layersInd).indexOut = 1:length(OPT.layer);
 end
 
 %% Get horizontal grid information
-mesh2dInd = find(~cellfun(@isempty,strfind(lower({dims(:).name}),'face'))); % any dimensionName with 'face' in it
-if isempty(mesh2dInd)
-    mesh2dInd = strmatch('nFlowElem',{dims(:).name}); % maybe from older version
-end
-
-if ~isempty(mesh2dInd)
-    dims(mesh2dInd).index    = 1:dims(mesh2dInd).size;
-    dims(mesh2dInd).indexOut = 1:dims(mesh2dInd).size;
+facesInd = strmatch('faces',{dims(:).name});
+if ~isempty(facesInd)
+    dims(facesInd).index    = 1:dims(facesInd).size;
+    dims(facesInd).indexOut = 1:dims(facesInd).size;
 end
 
 %% Get dimension size of requested indices
@@ -115,10 +107,10 @@ if OPT.mergePartitions==1 && EHY_isPartitioned(inputFile)
             Data=DataPart;
         else
             if isfield(Data,'val')
-                Data.val=cat(order(mesh2dInd),Data.val,DataPart.val);
+                Data.val=cat(order(facesInd),Data.val,DataPart.val);
             elseif isfield(Data,'vel_x')
-                Data.vel_x=cat(order(mesh2dInd),Data.vel_x,DataPart.vel_x);
-                Data.vel_y=cat(order(mesh2dInd),Data.vel_y,DataPart.vel_x);
+                Data.vel_x=cat(order(facesInd),Data.vel_x,DataPart.vel_x);
+                Data.vel_y=cat(order(facesInd),Data.vel_y,DataPart.vel_x);
             end
         end
     end
@@ -143,13 +135,13 @@ switch modelType
         end
         
         % change 'layer'-values to wanted indices
-        if ~isempty(laydimInd)
-            diffLayers=diff(dims(laydimInd).index);
+        if ~isempty(layersInd)
+            diffLayers=diff(dims(layersInd).index);
             if isempty(diffLayers) || all(diffLayers==1)
                 % take OPT.tint into account
-                start(laydimInd) = dims(laydimInd).index(1);
-                count(laydimInd) = dims(laydimInd).index(end)-dims(laydimInd).index(1)+1;
-                dims(laydimInd).index = dims(laydimInd).index-dims(laydimInd).index(1)+1;% needed to 'only keep requested indices'
+                start(layersInd) = dims(layersInd).index(1);
+                count(layersInd) = dims(layersInd).index(end)-dims(layersInd).index(1)+1;
+                dims(layersInd).index = dims(layersInd).index-dims(layersInd).index(1)+1;% needed to 'only keep requested indices'
             end
         end
         
@@ -194,16 +186,16 @@ switch modelType
             end
             
             if isfield(Data,'val')
-                if order(mesh2dInd)==1
+                if order(facesInd)==1
                     Data.val(FlowElemDomain~=domainNr,:,:)=[];
-                elseif order(mesh2dInd)==2
+                elseif order(facesInd)==2
                     Data.val(:,FlowElemDomain~=domainNr,:)=[];
                 end
             elseif isfield(Data,'vel_x')
-                if order(mesh2dInd)==1
+                if order(facesInd)==1
                     Data.vel_x(FlowElemDomain~=domainNr,:,:)=[];
                     Data.vel_y(FlowElemDomain~=domainNr,:,:)=[];
-                elseif order(mesh2dInd)==2
+                elseif order(facesInd)==2
                     Data.vel_x(:,FlowElemDomain~=domainNr,:)=[];
                     Data.vel_y(:,FlowElemDomain~=domainNr,:)=[];
                 end
@@ -227,20 +219,19 @@ if isfield(Data,'val')
 elseif isfield(Data,'vel_x')
     fn='vel_x';
 end
-if exist('dims','var')
+if exist('dims','var') && strcmp(modelType,'dfm')
     dimensionsComment = fliplr({dims.name});
     while length(size(Data.(fn)))<no_dims % size of output < no_dims
+        % if e.g. only 1 layer selected, output is 2D instead of 3D.
         dimensionsComment(end)=[];
         dims(end)=[];
         no_dims=length(dims);
     end
-    dimensionsComment = sprintf('%s,',dimensionsComment{:});
-    Data.dimensions = ['[' dimensionsComment(1:end-1) ']'];
 else
     if length(size(Data.(fn)))==2
-        Data.dimensions='[times,netElem]';
+        dimensionsComment={'time','faces'};
     elseif length(size(Data.(fn)))==3
-        Data.dimensions='[times,netElem,layers]';
+        dimensionsComment={'time','faces','layers'};
     end
 end
 

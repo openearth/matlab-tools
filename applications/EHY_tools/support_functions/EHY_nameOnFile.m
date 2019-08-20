@@ -1,21 +1,25 @@
 function newName = EHY_nameOnFile(inputFile,varName)
 
-newName                    = varName;
-
+% get modelType and typeOfModelFileDetail
 modelType                  = EHY_getModelType(inputFile);
 [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(inputFile);
+
+% for Delft3D 4, IMPLIC and SOBEK3
+if strcmpi(varName,'sal')          varName = 'salinity'   ; end
+if strcmpi(varName,'tem')          varName = 'temperature'; end
+if strcmpi(varName,'waterlevel'  ) varName = 'wl'         ; end
+if strcmpi(varName,'waterdepth'  ) varName = 'wd'         ; end
+if strcmpi(varName,'water depth' ) varName = 'wd'         ; end
+        
+newName = varName;
 
 switch typeOfModelFileDetail
     case 'his_nc'
         %% Get the name of varName as specified on the history file of a simulation       
-        if strcmpi(varName,'sal'         ) newName = 'salinity'   ; end
-        if strcmpi(varName,'tem'         ) newName = 'temperature'; end
-        
         switch modelType
             case 'dfm'
                 if strcmpi(varName,'wl'         ) newName = 'waterlevel'   ; end
                 if strcmpi(varName,'wd'         ) newName = 'waterdepth'   ; end
-                if strcmpi(varName,'water depth') newName = 'waterdepth'   ; end
                 if strcmpi(varName,'uv'         ) newName = 'x_velocity'   ; end
                 if strcmpi(varName,'Zcen'       ) newName = 'zcoordinate_c'; end
                 if strcmpi(varName,'Zint'       ) newName = 'zcoordinate_w'; end
@@ -29,14 +33,10 @@ switch typeOfModelFileDetail
         switch modelType
             case 'dfm'
                 if strcmpi(varName,'wl'         ) newName = 's1'         ; end
-                if strcmpi(varName,'waterlevel' ) newName = 's1'         ; end
-                if strcmpi(varName,'sal'        ) newName = 'sa1'        ; end
                 if strcmpi(varName,'salinity'   ) newName = 'sa1'        ; end
-                if strcmpi(varName,'tem'        ) newName = 'tem1'       ; end
                 if strcmpi(varName,'temperature') newName = 'tem1'       ; end
                 if strcmpi(varName,'uv'         ) newName = 'ucx'        ; end
                 if strcmpi(varName,'wd'         ) newName = 'waterdepth' ; end
-                if strcmpi(varName,'water depth') newName = 'waterdepth' ; end
                 
                 % to deal with old/new variable names like tem1 vs. mesh2d_tem1 
                 infonc = ncinfo(inputFile);

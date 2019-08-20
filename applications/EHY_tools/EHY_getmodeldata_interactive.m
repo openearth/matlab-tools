@@ -33,8 +33,8 @@ if isempty(modelType)
 end
 
 % varName
-varNames={'Water level','waterlevel';
-    'Water depth','waterdepth';
+varNames={'Water level','wl';
+    'Water depth','wd';
     'x,y-velocity','uv';
     'Salinity','salinity';
     'Temperature','temperature';
@@ -49,47 +49,27 @@ OPT.varName=varNames{option,2};
 % Option=Other info from .nc-file
 if strcmp(modelType,'dfm') && option==length(varNames)
     infonc           = ncinfo(outputfile);
-    variablesOnFile0 = {infonc.Variables.Name};
-    variablesOnFile  = variablesOnFile0;
+    variablesOnFile  = {infonc.Variables.Name};
+    variablesOnFileInclAttr = variablesOnFile;
     for iV=1:length(variablesOnFile)
+        % add attribute info - long_name
         indAttr =  strmatch('long_name',{infonc.Variables(iV).Attributes.Name},'exact');
         if ~isempty(indAttr)
-            variablesOnFile{iV}=strcat(variablesOnFile{iV},' [', infonc.Variables(iV).Attributes(indAttr).Value,']');
+            variablesOnFileInclAttr{iV} = strcat(variablesOnFile{iV},' [', infonc.Variables(iV).Attributes(indAttr).Value,']');
         end
     end
     option=listdlg('PromptString','What kind of time series do you want to load?','SelectionMode','single','ListString',...
-        variablesOnFile,'ListSize',[600 300]);
+        variablesOnFileInclAttr,'ListSize',[600 300]);
     if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end
-    OPT.varName=variablesOnFile0{option};
+    OPT.varName=variablesOnFile{option};
 end
 
 OPT.varName = EHY_nameOnFile(outputfile,OPT.varName);
 
 %% check which dimensions/info is needed from user
 dims = EHY_getDimsInfo(outputfile,OPT.varName);
-stationsInd = [strmatch('stations',{dims(:).name}); strmatch('cross_section',{dims(:).name}); strmatch('general_structures',{dims(:).name}) ];
-if ~isempty(stationsInd)
-    stationNames = cellstr(EHY_getStationNames(outputfile,modelType,'varName',OPT.varName));
-    option=listdlg('PromptString','From which station would you like you to load the data? (Use CTRL to select multiple stations)','ListString',...
-        stationNames,'ListSize',[500 200]);
-    if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end
-    stat_name=stationNames(option);
-else
-    stat_name='';
-end
 
 %% get required input from user
-laydimInd = strmatch('laydim',{dims(:).name});
-if ~isempty(laydimInd) && ~strcmp(OPT.varName,'waterlevel')
-    option=listdlg('PromptString',{'Want to load data from a specific layer?','(Default is, in case of 3D-model, all layers)'},'SelectionMode','single','ListString',...
-        {'Yes','No'},'ListSize',[300 50]);
-    if isempty(option)
-        disp('EHY_getmodeldata_interactive was stopped by user');return;
-    elseif option==1
-        OPT.layer = cell2mat(inputdlg('Layer nr:','',1,{num2str(gridInfo.no_layers)}));
-    end
-end
-
 timeInd = strmatch('time',{dims(:).name});
 if ~isempty(timeInd)
     datenums=EHY_getmodeldata_getDatenumsFromOutputfile(outputfile);
@@ -101,6 +81,33 @@ if ~isempty(timeInd)
                 OPT.t0 = option{1};
                 OPT.tend = option{2};
             end
+        else
+            disp('EHY_getmodeldata_interactive was stopped by user');return;
+        end
+    end
+end
+
+stationsInd = strmatch('stations',{dims(:).name});
+if ~isempty(stationsInd)
+    stationNames = cellstr(EHY_getStationNames(outputfile,modelType,'varName',OPT.varName));
+    option=listdlg('PromptString','From which station would you like you to load the data? (Use CTRL to select multiple stations)','ListString',...
+        stationNames,'ListSize',[500 200]);
+    if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end
+    stat_name=stationNames(option);
+else
+    stat_name='';
+end
+
+layersInd = strmatch('layers',{dims(:).name});
+if ~isempty(layersInd)
+    gridInfo = EHY_getGridInfo(outputfile,{'no_layers'});
+    if gridInfo.no_layers>1
+        option=listdlg('PromptString',{'Want to load data from a specific layer?','(Default is, in case of 3D-model, all layers)'},'SelectionMode','single','ListString',...
+            {'Yes','No'},'ListSize',[300 50]);
+        if isempty(option)
+            disp('EHY_getmodeldata_interactive was stopped by user');return;
+        elseif option==1
+            OPT.layer = cell2mat(inputdlg('Layer nr:','',1,{num2str(gridInfo.no_layers)}));
         end
     end
 end

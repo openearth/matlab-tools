@@ -14,16 +14,18 @@ function varargout = EHY_getmodeldata(inputFile,stat_name,modelType,varargin)
 %
 % Optional input arguments:
 % varName   : Name of variable, choose from:
-%               'wl'    water level
-%               'wd'    water depth
-%               'uv'    velocities (in (u,v,)x,y-direction)
-%               'sal'   salinity
-%               'tem'   temperature
-%               'Zcen'  z-coordinates (positive up) of cell centers
-%               'Zint'  z-coordinates (positive up) of cell interfaces
+%             'wl'        water level
+%             'wd'        water depth
+%             'dps'       bed level
+%             'uv'        velocities (in (u,v,)x,y-direction)
+%             'sal'       salinity
+%             'tem'       temperature
+%             'Zcen_cen'  z-coordinates (positive up) of cell centers (in NetElem/faces)
+%             'Zcen_int'  z-coordinates (positive up) of cell interfaces (in NetElem/faces)
 % t0        : Start time of dataset (e.g. '01-Jan-2018' or 737061 (Matlab date) )
 % tend      : End time of dataset (e.g. '01-Feb-2018' or 737092 (Matlab date) )
 % layer     : Model layer, e.g. '0' (all layers), [2] or [4:8]
+% tint      : interval time (t0:tint:tend) in minutes
 %
 % Output:
 % Data.stationNames       : list of ALL stations available on history file
@@ -48,159 +50,174 @@ function varargout = EHY_getmodeldata(inputFile,stat_name,modelType,varargin)
 %                           Data.val(:,:,:,2) are the varName values (salinity, temperature etc).
 %
 % For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
-
+%% check user input
 if ~all(ismember({'inputFile','stat_name','modelType'},who))
     EHY_getmodeldata_interactive
     return
 end
 
 %% Settings
-OPT.varName  = 'wl';
-OPT.t0       = '';
-OPT.tend     = '';
-OPT.tint     = ''; % in minutes
-OPT.layer    = 0; % all
-OPT          = setproperty(OPT,varargin);
+OPT.varName      = 'wl';
+OPT.t0           = '';
+OPT.tend         = '';
+OPT.tint         = ''; % in minutes
+OPT.layer        = 0; % all
+OPT.loopStations = 0; % set to 1 if you want to loop over the stations to avoid memory problems
+OPT              = setproperty(OPT,varargin);
 
 %% modify input
+inputFile = strtrim(inputFile);
 if ~isempty  (OPT.t0           ) OPT.t0   =datenum(OPT.t0)    ; end
 if ~isempty  (OPT.tend         ) OPT.tend =datenum(OPT.tend)  ; end
 if ~isempty  (OPT.tint         ) OPT.tint = OPT.tint/1440.    ; end % From minutes to days
 if ~isnumeric(OPT.layer        ) OPT.layer=str2num(OPT.layer) ; end
 
+%% Get model type
+if isempty(modelType)
+    modelType = EHY_getModelType(inputFile);
+end
+
 %% Get name of the parameter as known on output file
-OPT.varName = nameOnFile(inputFile,OPT.varName);
+OPT.varName = EHY_nameOnFile(inputFile,OPT.varName);
 
-%% Get time information from simulation and determine index of required times
-Data.times                               = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
-[tmp,time_index,select,index_requested]  = EHY_getmodeldata_time_index(Data,OPT);
-nr_times_clip                            = length(tmp.times);
-
-%% Get layer information and type of vertical schematisation
-gridInfo    = EHY_getGridInfo(inputFile,{'no_layers' 'layer_model'});
-no_layers   = gridInfo.no_layers;
-layer_model = gridInfo.layer_model;
-OPT         = EHY_getmodeldata_layer_index(OPT,no_layers);
+%% Get information about required dimension information
+dims = EHY_getDimsInfo(inputFile,OPT.varName);
 
 %% Get list with the numbers of the requested stations
-[Data,stationNrNoNan] = EHY_getRequestedStations(inputFile,stat_name,modelType,'varName',OPT.varName);
-if exist('tmp','var'); Data.times     = tmp.times(index_requested); end
+stationsInd = strmatch('stations',{dims(:).name});
+if ~isempty(stationsInd)
+    [Data,stationNrNoNan]      = EHY_getRequestedStations(inputFile,stat_name,modelType,'varName',OPT.varName);
+    dims(stationsInd).index    = stationNrNoNan;
+    dims(stationsInd).indexOut = find(Data.exist_stat);
+end
+name_lenInd = strmatch('name_len',{dims(:).name});
+if ~isempty(name_lenInd)
+    dims(name_lenInd).index    = 1:dims(name_lenInd).size;
+    dims(name_lenInd).indexOut = dims(name_lenInd).index;
+end
+
+%% Get time information from simulation and determine index of required times
+timeInd = strmatch('time',{dims(:).name});
+if ~isempty(timeInd)
+    Data.times                               = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
+    [Data,time_index,select,index_requested] = EHY_getmodeldata_time_index(Data,OPT);
+    Data.times                               = Data.times(index_requested); % if time-interval was used, this step is needed
+    dims(timeInd).index                      = time_index(index_requested);
+    dims(timeInd).indexOut                   = 1:length(dims(timeInd).index);
+end
+
+%% Get layer information and type of vertical schematisation
+layersInd = strmatch('layers',{dims(:).name});
+if ~isempty(layersInd)
+    gridInfo                 = EHY_getGridInfo(inputFile,{'no_layers' 'layer_model'},'mergePartitions',0);
+    no_layers                = gridInfo.no_layers;
+    layer_model              = gridInfo.layer_model;
+    OPT                      = EHY_getmodeldata_layer_index(OPT,no_layers);
+    dims(layersInd).index    = OPT.layer';
+    dims(layersInd).indexOut = 1:length(OPT.layer);
+end
+
+%% Get dimension size of requested indices
+for iD=1:length(dims)
+    dims(iD).sizeOut = length(dims(iD).index);
+end
+
+no_dims = length(dims);
+order = no_dims:-1:1;
 
 %% Get the computational data
 switch modelType
     %  Delft3D-Flexible Mesh
     case {'d3dfm','dflow','dflowfm','mdu','dfm'}
         
-        % open inputfile
-        infonc          = ncinfo(inputFile);
-        variablesOnFile = {infonc.Variables.Name};
-        nr_var     = get_nr(lower(variablesOnFile),lower(OPT.varName));
-        dimNames   = {infonc.Variables(nr_var).Dimensions.Name};
-        dimensions = fliplr(infonc.Variables(nr_var).Size);
-        
-        % station info
-        if ismember('stations',dimNames) || ismember('cross_section',dimNames)
-            stationX = ncread(inputFile,'station_x_coordinate');
-            stationY = ncread(inputFile,'station_y_coordinate');
-            if size(stationX,2)>1 % moving stations
-                Data.locationX(:, Data.exist_stat)=stationX(stationNrNoNan,:)';
-                Data.locationY(:, Data.exist_stat)=stationY(stationNrNoNan,:)';
-            else
-                Data.location( Data.exist_stat,1:2)=[stationX(stationNrNoNan,:) stationY(stationNrNoNan,:)];
-                Data.location(~Data.exist_stat,1:2)=NaN;
+        %% station x,y-location info
+        if any(ismember({dims.name},{'stations','cross_section'}))
+            if strcmp(dims(stationsInd).name,'stations')
+                stationX = ncread(inputFile,'station_x_coordinate');
+                stationY = ncread(inputFile,'station_y_coordinate');
+            elseif strcmp(dims(stationsInd).name,'cross_section')
+                stationX = ncread(inputFile,'cross_section_x_coordinate')';
+                stationY = ncread(inputFile,'cross_section_y_coordinate')';
             end
-        else % delete station-information from 'Data'
-            Data=rmfield(Data,{'stationNames','requestedStations','exist_stat'});
+            if size(stationX,2)>1 % moving stations or cross-section
+                Data.locationX(:, Data.exist_stat) = stationX(dims(stationsInd).index,:)';
+                Data.locationY(:, Data.exist_stat) = stationY(dims(stationsInd).index,:)';
+            else
+                Data.location( Data.exist_stat,1:2) = [stationX(dims(stationsInd).index,:) stationY(dims(stationsInd).index,:)];
+                Data.location(~Data.exist_stat,1:2) = NaN;
+            end
         end
         
-        % Specify dimensions and initialise series data
-        if strcmp(dimNames(end),'time')
-            dimensions(1) = nr_times_clip;
+        %% Read data
+        start = ones(1,no_dims);
+        count = [dims.size];
+        
+        % change 'time'-values as we're going to loop over time-blocks
+        if ~isempty(timeInd)
+            % take OPT.tint into account
+            start(timeInd) = dims(timeInd).index(1);
+            count(timeInd) = dims(timeInd).index(end)-dims(timeInd).index(1)+1;
+            dims(timeInd).index = dims(timeInd).index-dims(timeInd).index(1)+1;% needed to 'only keep requested indices'
         end
         
-        %% get series data
-        nrTimeStart           =  find(select, 1);
-        
-        %% Initialise output
-        if length(dimensions) == 1; Data.val(1:nr_times_clip) = NaN; end
-        if ~ismember(OPT.varName,{'x_velocity'})
-            if length(dimensions) == 2 Data.val(1:nr_times_clip,1:length(stat_name))                       = NaN; end
-            if length(dimensions) == 3 Data.val(1:nr_times_clip,1:length(stat_name),1:length(OPT.layer))   = NaN; end
-        else
-            if length(dimensions) == 2 Data.vel_x(1:nr_times_clip,1:length(stat_name))                     = NaN; end
-            if length(dimensions) == 2 Data.vel_y(1:nr_times_clip,1:length(stat_name))                     = NaN; end
-            if length(dimensions) == 3 Data.vel_x(1:nr_times_clip,1:length(stat_name),1:length(OPT.layer)) = NaN; end
-            if length(dimensions) == 3 Data.vel_y(1:nr_times_clip,1:length(stat_name),1:length(OPT.layer)) = NaN; end
+        % change 'stations'-values if we're going to loop over requested stations
+        % looping over stations is done to avoid too large variables
+        if ~isempty(stationsInd) && dims(stationsInd).sizeOut<=10
+            OPT.loopStations = 1;
         end
         
-        %% Read all at once
-        if isempty(stat_name) || length(stat_name) > 10
-            if length(dimensions) == 1 start = [    nrTimeStart]; count        = [        nr_times_clip]; end
-            if length(dimensions) == 2 start = [1   nrTimeStart]; count        = [Inf     nr_times_clip]; end
-            if length(dimensions) == 3 start = [1 1 nrTimeStart]; count        = [Inf Inf nr_times_clip]; end
-            order                 =  length(dimensions):-1:1;
+        if OPT.loopStations
+            % loop over stations
+            for i_stat = 1:dims(stationsInd).sizeOut
+                
+                start(stationsInd) = dims(stationsInd).index(i_stat);
+                count(stationsInd) = 1;
+                
+                if ~strcmp(OPT.varName,{'x_velocity'})
+                    if ~exist('value','var'); value=[]; end % initiate
+                    value_station   = ncread_blocks(inputFile,OPT.varName,start,count);
+                    value           = cat(stationsInd,value,value_station);
+                else
+                    if ~exist('value_x','var'); value_x=[]; value_y=[]; end % initiate
+                    value_x_station = ncread_blocks(inputFile,'x_velocity',start,count);
+                    value_y_station = ncread_blocks(inputFile,'y_velocity',start,count);
+                    value_x         = cat(stationsInd,value_x,value_x_station);
+                    value_y         = cat(stationsInd,value_y,value_y_station);
+                end
+            end
+            dims(stationsInd).index = 1:dims(stationsInd).sizeOut;
             
-            if ~ismember(OPT.varName,{'x_velocity'})
+        else
+            % don't loop over stations
+            if ~strcmp(OPT.varName,{'x_velocity'})
                 value     =  ncread_blocks(inputFile,OPT.varName,start,count);
             else
                 value_x   =  ncread_blocks(inputFile,'x_velocity',start,count);
                 value_y   =  ncread_blocks(inputFile,'y_velocity',start,count);
             end
-            
-            % put value(_x/_y) in output structure 'Data'
-            if exist('value','var')
-                if (size(value,2)==1 && ndims(value) == 2) || strcmp(dimNames{1},'general_structures')
-                    Data.val=value(index_requested,:);
-                elseif ndims(value)==2
-                    Data.val(:,Data.exist_stat)  = permute(value(stationNrNoNan,index_requested),order);
-                elseif ndims(value)==3
-                    Data.val(:,Data.exist_stat,1:length(OPT.layer))  = permute(value(OPT.layer,stationNrNoNan,index_requested),order);
-                end
-            elseif exist('value_x','var')
-                if ndims(value_x)==2
-                    Data.vel_x(:,Data.exist_stat)  = permute(value_x(stationNrNoNan,:),order);
-                    Data.vel_y(:,Data.exist_stat)  = permute(value_y(stationNrNoNan,:),order);
-                elseif ndims(value_x)==3
-                    Data.vel_x(:,Data.exist_stat,1:length(OPT.layer))  = permute(value_x(OPT.layer,stationNrNoNan,:),order);
-                    Data.vel_y(:,Data.exist_stat,1:length(OPT.layer))  = permute(value_y(OPT.layer,stationNrNoNan,:),order);
-                end
+        end
+        
+        % put value(_x/_y) in output structure 'Data'
+        if exist('value','var')
+            if no_dims==1
+                Data.val(dims(1).indexOut,1) = value(dims(1).index);
+            elseif no_dims==2
+                Data.val(dims(2).indexOut,dims(1).indexOut) = permute( value(dims(1).index,dims(2).index) ,order);
+            elseif no_dims==3
+                Data.val(dims(3).indexOut,dims(2).indexOut,dims(1).indexOut) = permute( value(dims(1).index,dims(2).index,dims(3).index) ,order);
             end
-            
-        %% Read station by station to avoid memory problems
-        else
-            for i_stat = 1: length(stat_name)
-                if Data.exist_stat(i_stat)
-                    if length(dimensions) == 1 start = [                         nrTimeStart]; count  = [        nr_times_clip]; end
-                    if length(dimensions) == 2 start = [  stationNrNoNan(i_stat) nrTimeStart]; count  = [     1  nr_times_clip]; end
-                    if length(dimensions) == 3 start = [1 stationNrNoNan(i_stat) nrTimeStart]; count  = [Inf  1  nr_times_clip]; end
-                    order                 =  length(dimensions):-1:1;
-                    
-                    if ~ismember(OPT.varName,{'x_velocity'})
-                        value     =  ncread_blocks(inputFile,OPT.varName,start,count);
-                    else
-                        value_x   =  ncread_blocks(inputFile,'x_velocity',start,count);
-                        value_y   =  ncread_blocks(inputFile,'y_velocity',start,count);
-                    end
-                    
-                    % put value(_x/_y) in output structure 'Data'
-                    if exist('value','var')
-                        if (size(value,2)==1 &&ndims(value) == 2) || strcmp(dimNames{1},'general_structures')
-                            Data.val=value(index_requested,:);
-                        elseif ndims(value)==2
-                            Data.val(:,i_stat)  = permute(value(1,index_requested),order);
-                        elseif ndims(value)==3
-                            Data.val(:,i_stat,1:length(OPT.layer))  = permute(value(OPT.layer,1,index_requested),order);
-                        end
-                    elseif exist('value_x','var')
-                        if ndims(value_x)==2
-                            Data.vel_x(:,i_stat)  = permute(value_x(1,:),order);
-                            Data.vel_y(:,i_stat)  = permute(value_y(1,:),order);
-                        elseif ndims(value_x)==3
-                            Data.vel_x(:,i_stat,1:length(OPT.layer))  = permute(value_x(OPT.layer,1,:),order);
-                            Data.vel_y(:,i_stat,1:length(OPT.layer))  = permute(value_y(OPT.layer,1,:),order);
-                        end
-                    end
+        elseif exist('value_x','var')
+            if strcmp(dims(1).name,'layers') && strcmp(dims(2).name,'stations') && strcmp(dims(3).name,'time')
+                if ndims(value_x)==2 % time,stations
+                    Data.vel_x(:,dims(2).indexOut) = permute(value_x(dims(1).index,dims(2).index),order);
+                    Data.vel_y(:,dims(2).indexOut) = permute(value_y(dims(1).index,dims(2).index),order);
+                elseif ndims(value_x)==3 % time,stations,layers
+                    Data.vel_x(:,dims(2).indexOut,dims(1).indexOut) = permute(value_x(dims(1).index,dims(2).index,dims(3).index),order);
+                    Data.vel_y(:,dims(2).indexOut,dims(1).indexOut) = permute(value_y(dims(1).index,dims(2).index,dims(3).index),order);
                 end
+            else
+                error(['Variable is not in order as expected' char(10) ...
+                    'Please contact Julien Groenenboom or Theo van der Kaaij'])
             end
         end
         
@@ -225,7 +242,7 @@ switch modelType
                 Data.location(i_stat,:)=[stationXY(:,nr_stat)'];
                 
                 % Get constants for profile data
-                if strcmpi(OPT.varName,'Zcen') || strcmpi(OPT.varName,'Zint')
+                if strcmpi(OPT.varName,'Zcen_cen') || strcmpi(OPT.varName,'Zcen_int')
                     if strcmp(layer_model,'sigma-model')
                         thick    = vs_let(trih,'his-const'              ,'THICK'          ,'quiet');
                         dps      = vs_let(trih,'his-const'              ,'DPS'            ,'quiet');
@@ -239,7 +256,7 @@ switch modelType
                 switch OPT.varName
                     case 'wl'
                         Data.val(:,i_stat)=cell2mat(vs_get(trih,'his-series',{time_index},'ZWL',{nr_stat},'quiet'));
-                    case {'waterdepth'}
+                    case 'wd'
                         wl                 = cell2mat(vs_get(trih,'his-series',{time_index},'ZWL',{nr_stat},'quiet')); % ref to wl
                         dps                = vs_get(trih,'his-const',{1},'DPS',{nr_stat},'quiet'); % bed to ref
                         Data.val(:,i_stat) = wl+dps;
@@ -260,17 +277,17 @@ switch modelType
                             Data.vel_u(:,i_stat,:) = cell2mat(vs_get(trih,'his-series',{time_index},'ZCURU',{nr_stat,OPT.layer},'quiet'));
                             Data.vel_v(:,i_stat,:) = cell2mat(vs_get(trih,'his-series',{time_index},'ZCURV',{nr_stat,OPT.layer},'quiet'));
                         end
-                    case {'Zcen' 'Zint'}
+                    case {'Zcen_cen' 'Zcen_int'}
                         zwl      = vs_let(trih,'his-series',{time_index(index_requested)},'ZWL'  ,{nr_stat},'quiet');
                         for i_time = 1: length(index_requested)
                             if strcmpi(layer_model,'sigma-model')
                                 depth = dps(stationNrNoNan(i_stat)) + zwl(i_time);
-                                Zint(i_time,1     )        = zwl(i_time);
-                                Zint(i_time,no_layers + 1) = -dps(nr_stat);
-                                Zcen(i_time,1     )        = zwl(i_time) - 0.5*thick(1)*depth;
+                                Zcen_int(i_time,1     )        = zwl(i_time);
+                                Zcen_int(i_time,no_layers + 1) = -dps(nr_stat);
+                                Zcen_cen(i_time,1     )        = zwl(i_time) - 0.5*thick(1)*depth;
                                 for k = 2: no_layers
-                                    Zint(i_time,k)  = Zint(i_time,k-1) - thick(k-1)*depth;
-                                    Zcen(i_time,k)  = Zcen(i_time,k-1) - 0.5*(thick(k-1) + thick(k))*depth;
+                                    Zcen_int(i_time,k)  = Zcen_int(i_time,k-1) - thick(k-1)*depth;
+                                    Zcen_cen(i_time,k)  = Zcen_cen(i_time,k-1) - 0.5*(thick(k-1) + thick(k))*depth;
                                 end
                             elseif strcmpi(layer_model,'z-model')
                                 zk_int(1:no_layers + 1) = NaN;
@@ -283,17 +300,17 @@ switch modelType
                                 zk_int(i_stop)  =  zwl(i_time);
                                 
                                 zk_int(i_start+1:i_stop-1) = zk(i_start+1:i_stop-1);
-                                Zint(i_time,:) = zk_int;
+                                Zcen_int(i_time,:) = zk_int;
                                 for k = 1: no_layers
-                                    Zcen(i_time,k) = 0.5*(Zint(i_time,k  ) + Zint(i_time,k+1) );
+                                    Zcen_cen(i_time,k) = 0.5*(Zcen_int(i_time,k  ) + Zcen_int(i_time,k+1) );
                                 end
                             end
                         end
                         
-                        if strcmpi(OPT.varName    ,'Zcen')
-                            Data.val(:,i_stat,:) = Zcen;
-                        elseif strcmpi(OPT.varName,'Zint')
-                            Data.val(:,i_stat,:) = Zint;
+                        if strcmpi(OPT.varName    ,'Zcen_cen')
+                            Data.val(:,i_stat,:) = Zcen_cen;
+                        elseif strcmpi(OPT.varName,'Zcen_int')
+                            Data.val(:,i_stat,:) = Zcen_int;
                         end
                         
                     case {'salinity' 'temperature'}
@@ -457,20 +474,38 @@ else
     elseif isfield(Data,'vel_x')
         Data.vel_x(:,~Data.exist_stat,:)=NaN;
         Data.vel_y(:,~Data.exist_stat,:)=NaN;
-        Data.vel_u(:,~Data.exist_stat,:)=NaN;
-        Data.vel_v(:,~Data.exist_stat,:)=NaN;
+        if isfield(Data,'vel_u')
+            Data.vel_u(:,~Data.exist_stat,:)=NaN;
+            Data.vel_v(:,~Data.exist_stat,:)=NaN;
+        end
     end
 end
 
 % dimension information
-fn=fieldnames(Data);
-if length(size(Data.(fn{end})))==2 && size(Data.(fn{end}),2)==1
-    Data.dimensions='[times,-]';
-elseif length(size(Data.(fn{end})))==2
-    Data.dimensions='[times,stations]';
-elseif length(size(Data.(fn{end})))==3
-    Data.dimensions='[times,stations,layers]';
+if isfield(Data,'val')
+    fn='val';
+elseif isfield(Data,'vel_x')
+    fn='vel_x';
 end
+if exist('dims','var') && strcmp(modelType,'dfm')
+    dimensionsComment = fliplr({dims.nameOnFile});
+    while length(size(Data.(fn)))<no_dims % size of output < no_dims
+        % if e.g. only 1 layer selected, output is 2D instead of 3D.
+        dimensionsComment(end)=[];
+        dims(end)=[];
+        no_dims=length(dims);
+    end
+else
+    if length(size(Data.(fn)))==2 && ~isfield(Data,'requestedStations')
+        dimensionsComment={'time'};
+    elseif length(size(Data.(fn)))==2 && isfield(Data,'requestedStations')
+        dimensionsComment={'time','stations'};
+    elseif length(size(Data.(fn)))==3
+        dimensionsComment={'time','stations','layers'};
+    end
+end
+dimensionsComment = sprintf('%s,',dimensionsComment{:});
+Data.dimensions = ['[' dimensionsComment(1:end-1) ']'];
 
 %% Fill output struct
 Data.OPT               = OPT;
@@ -478,32 +513,6 @@ Data.OPT.inputFile     = inputFile;
 
 if nargout==1
     varargout{1}=Data;
-end
-
-end
-
-function newName = nameOnFile(inputFile,varName)
-
-%% Get the name of varName as specified on the history file of a simulation
-newName   = varName;
-
-if strcmpi(varName,'sal'         ) newName = 'salinity'   ; end
-if strcmpi(varName,'tem'         ) newName = 'temperature'; end
-
-modelType = EHY_getModelType(inputFile);
-
-switch modelType
-    case 'dfm'
-        if strcmpi(varName,'wl'         ) newName = 'waterlevel'   ; end
-        if strcmpi(varName,'wd'         ) newName = 'waterdepth'   ; end
-        if strcmpi(varName,'water depth') newName = 'waterdepth'   ; end
-        if strcmpi(varName,'uv'         ) newName = 'x_velocity'   ; end
-        if strcmpi(varName,'Zcen'       ) newName = 'zcoordinate_c'; end
-        if strcmpi(varName,'Zint'       ) newName = 'zcoordinate_w'; end
-        
-    case 'd3d'
-
-    case 'simona'
 end
 
 end

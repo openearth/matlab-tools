@@ -7,11 +7,27 @@ switch modelType
         variablesOnFile = {infonc.Variables.Name};
         nr_var          = strmatch(varName,variablesOnFile,'exact');
         
-        dimsNames = {infonc.Variables(nr_var).Dimensions.Name};
+        dimsNamesOnFile = {infonc.Variables(nr_var).Dimensions.Name};
+        
+        %%% change names for easier handling 
+        dimsNames = dimsNamesOnFile;
+        % layers
+        dimsNames = strrep(dimsNames,'laydim','layers');
+        dimsNames = strrep(dimsNames,'nmesh2d_layer','layers');
+        % faces
+        dimsNames = strrep(dimsNames,'nmesh2d_face','faces');
+        dimsNames = strrep(dimsNames,'mesh2d_nFaces','faces');
+        dimsNames = strrep(dimsNames,'nFlowElem','faces');
+        % stations
+        dimsNames = strrep(dimsNames,'cross_section','stations');
+        dimsNames = strrep(dimsNames,'general_structures','stations');
+        
+        %%%
         dimsSizes = infonc.Variables(nr_var).Size;
         for iD=1:length(dimsNames)
-            dims(iD).name = dimsNames{iD};
-            dims(iD).size = dimsSizes(iD);
+            dims(iD).nameOnFile = dimsNamesOnFile{iD};
+            dims(iD).name       = dimsNames{iD};
+            dims(iD).size       = dimsSizes(iD);
         end
         
     otherwise
@@ -22,10 +38,10 @@ switch modelType
         % time // always ask for time
         dims(1).name = 'time';
         
-        % laydim
+        % layers
         gridInfo = EHY_getGridInfo(inputFile,{'no_layers'});
         if gridInfo.no_layers > 1
-            dims(end+1).name = 'laydim';
+            dims(end+1).name = 'layers';
         end
         
         % stations

@@ -1,50 +1,50 @@
 function values = ncread_blocks(inputFile,varName,start,count)
 
-%% Identical to ncread however te speed up data is read in blocks
+%% Identical to ncread however te speed up data is read in blocks (loop over variable 'time')
 %  Function can be removed if ncread is speeded up for large datasets 
-if all(ismember({'start','count'},who))
-    offset        = start(end) - 1;
-    nr_times_clip = count(end);
+
+dims        = EHY_getDimsInfo(inputFile,varName);
+no_dims     = length(dims);
+timeInd     = strmatch('time',{dims(:).name});
+
+if all(ismember({'start','count'},who)) && ~isempty(timeInd)
     
-    % general information (reconstruct nr_times_clip)
-    infonc          = ncinfo(inputFile);
-    variablesOnFile = {infonc.Variables.Name};
-    nr_var          = get_nr(variablesOnFile,varName);
-    dimensions      = fliplr(infonc.Variables(nr_var).Size);
-    nr_times        = dimensions(1);
-    if isinf(nr_times_clip) nr_times_clip = nr_times; end
+    nr_times      = dims(timeInd).size;
+    nr_times_clip = count(timeInd);
     
     % devide in blocks
     filesize     = dir(inputFile);
     filesize     = filesize.bytes /(1024^3); %converted to Gb
     maxblocksize = 0.5; %Gb
-    nr_blocks    = ceil((nr_times_clip / nr_times) * (filesize / maxblocksize));
-    bl_length    = ceil(nr_times_clip / nr_blocks);
+    no_blocks    = ceil((nr_times_clip / nr_times) * (filesize / maxblocksize));
+    bl_length    = ceil(nr_times_clip / no_blocks);
+    
+    % assuming timeInd==length(dims)
+    if timeInd ~= length(dims)
+        error(['timeInd is not last variable, ncread_blocks does not work correctly in that case' char(10) ...
+        'Please contact Julien Groenenboom or Theo van der Kaaij'])
+    end
     
     % allocate variable 'values'
-    if length(dimensions)==1
-        values=zeros([nr_times_clip 1])*NaN;
-    elseif length(count) >= 2
-        values = zeros([fliplr(dimensions(2:end)) nr_times_clip])*NaN;
-        if length(count) == 2 && ~isinf(count(1))
-            values = zeros(count(1),nr_times_clip)*NaN;
-        elseif length(count) == 3 && ~isinf(count(2))
-            values = zeros(dimensions(end),count(2),nr_times_clip)*NaN;
-        end
+    if numel(count) == 1
+        values = NaN(count,1);
+    else
+        values = NaN(count);
     end
       
     % cycle over blocks
-    for i_block = 1: nr_blocks
+    offset        = start(end) - 1;
+    for i_block = 1:no_blocks
         bl_start                 = 1 + (i_block-1) * bl_length;
         bl_stop                  = min(i_block * bl_length, nr_times_clip);
         bl_int                   = bl_stop-bl_start+1;
         start(end)               = bl_start + offset;
         count(end)               = bl_int;
-        if length(start)     == 1
+        if no_dims == 1
             values(bl_start:bl_stop,1)   = ncread(inputFile,varName,start,count);
-        elseif length(start)     == 2
+        elseif no_dims == 2
             values(:,bl_start:bl_stop)   = ncread(inputFile,varName,start,count);
-        elseif length(start) == 3
+        elseif no_dims == 3
             values(:,:,bl_start:bl_stop) = ncread(inputFile,varName,start,count);
         end
     end

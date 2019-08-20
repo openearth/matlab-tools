@@ -1,7 +1,7 @@
 function [datenums,varargout] = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile)
 
-modelType=EHY_getModelType(inputFile);
-
+modelType = EHY_getModelType(inputFile);
+ 
 switch modelType
     case 'dfm'
         infonc       = ncinfo(inputFile);
