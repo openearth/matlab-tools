@@ -83,7 +83,7 @@ if strcmp(modelType,'dfm') && strcmp(fName(end-2:end),'.nc')
         elseif  ~isempty(indDimNames)
             newName = infonc.Dimensions(indDimNames).Name;
         else
-            error(['Could not find variable/dimension ''' varName ''' on provided file']);
+            newName = 'noMatchFound';
         end
     end
 end
