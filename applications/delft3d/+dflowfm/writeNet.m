@@ -111,6 +111,13 @@ function varargout = writeNet(ncfile,X,Y,varargin)
        Z     = [];
    end
    
+   if (nargin)>5
+       NetLinkType = varargin{3};
+       varargin{2} = [];
+   else
+       NetLinkType     = [];
+   end
+   
    if verLessThan('matlab','7.12.0.635')
       error('At least Matlab release R2011a is required for writing netCDF files due tue NCWRITESCHEMA.')
    end
@@ -261,7 +268,12 @@ warning([mfilename,'agree with developer on _FillValue'])
           ncwrite(ncfile,OPT.zname,Z(:));ncwriteatt(ncfile,OPT.zname,'actual_range',[min(Z(:)) max(Z(:))]);
       end
       ncwrite(ncfile,'NetLink',NetLink');
-      ncwrite(ncfile,'NetLinkType',repmat(int32(2),[1 size(NetLink,1)]));
+      
+      if ~isempty(NetLinkType)
+        ncwrite(ncfile,'NetLinkType',NetLinkType);
+      else
+        ncwrite(ncfile,'NetLinkType',repmat(int32(2),[1 size(NetLink,1)]));
+      end
 
       disp(['D-Flow FM grid file saved as ' ncfile])
       
