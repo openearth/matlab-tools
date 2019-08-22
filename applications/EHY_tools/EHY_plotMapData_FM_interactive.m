@@ -9,11 +9,11 @@ if isfield(Data,'times') && length(Data.times)>1
     option=listdlg('PromptString','Plot these time steps (as animation): (Use CTRL to select multiple time steps)','ListString',...
         datestr(Data.times),'ListSize',[400 400]);
     if isempty(option); disp('EHY_plotMapData_FM_interactive was stopped by user');return; end
-    plotTimes=Data.times(option);
+    plotInd = option;
 elseif isfield(Data,'times') && length(Data.times)==1
-    plotTimes=Data.times(1);
+    plotInd = 1;
 else
-    plotTimes=[];
+    plotInd = [];
 end
 
 disp([char(10) 'Note that next time you want to plot this data, you can also use:'])
@@ -22,23 +22,33 @@ if Data.OPT.mergePartitions==1
 else
     disp(['gridInfo = EHY_getGridInfo(''' Data.OPT.outputfile ''',''face_nodes_xy'');' ])
 end
-disp(['EHY_plotMapData_FM(gridInfo,Data.val(1,:));' ])
 
-% if velocity was selected, plot magnitude
-if ~isfield(Data,'val') && isfield(Data,'vel_x')
-    Data.val=sqrt(Data.vel_x.^2+Data.vel_y.^2);
+% if velocity was selected
+if isfield(Data,'vel_mag')
+    disp(['EHY_plotMapData_FM(gridInfo,Data.vel_mag(' num2str(plotInd(1)) ',:));' ])
+else
+    if isempty(plotInd)
+        disp(['EHY_plotMapData_FM(gridInfo,Data.val);' ])
+    else
+        disp(['EHY_plotMapData_FM(gridInfo,Data.val(' num2str(plotInd(1)) ',:));' ])
+    end
 end
 
 disp('start plotting the top-view data...')
 figure
-no_plotTimes=length(plotTimes);
-for iT=1:max([1 no_plotTimes])
-    if ~isempty(plotTimes)
-        title(datestr(plotTimes(iT)))
-        if no_plotTimes>1
-            disp(['Plotting top-views: ' num2str(iT) '/' num2str(no_plotTimes)])
+for iPI=1:max([1 length(plotInd)])
+    
+    if ~isempty(plotInd)
+        iT = plotInd(iPI);
+        title(datestr(Data.times(plotInd(iPI))))
+        if length(plotInd)>1
+            disp(['Plotting top-views: ' num2str(iPI) '/' num2str(length(plotInd))])
         end
-        EHY_plotMapData_FM(gridInfo,Data.val(iT,:))
+        if isfield(Data,'vel_mag')
+            EHY_plotMapData_FM(gridInfo,Data.vel_mag(iT,:))
+        else
+            EHY_plotMapData_FM(gridInfo,Data.val(iT,:))
+        end
     else
         EHY_plotMapData_FM(gridInfo,Data.val)
     end

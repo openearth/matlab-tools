@@ -111,6 +111,7 @@ if OPT.mergePartitions==1 && EHY_isPartitioned(inputFile)
             elseif isfield(Data,'vel_x')
                 Data.vel_x=cat(order(facesInd),Data.vel_x,DataPart.vel_x);
                 Data.vel_y=cat(order(facesInd),Data.vel_y,DataPart.vel_x);
+                Data.vel_mag=cat(order(facesInd),Data.vel_mag,DataPart.vel_mag);
             end
         end
     end
@@ -148,7 +149,7 @@ switch modelType
         % read data from netcdf file
         if ~isempty(strfind(OPT.varName,'ucx'))
             value_x   =  ncread(inputFile,OPT.varName,start,count);
-            value_y   =  ncread(inputFile,OPT.varName,start,count);
+            value_y   =  ncread(inputFile,strrep(OPT.varName,'ucx','ucy'),start,count);
         else
             value     =  ncread(inputFile,OPT.varName,start,count);
         end
@@ -199,6 +200,7 @@ switch modelType
                     Data.vel_x(:,FlowElemDomain~=domainNr,:)=[];
                     Data.vel_y(:,FlowElemDomain~=domainNr,:)=[];
                 end
+                Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
             end
             
         end
