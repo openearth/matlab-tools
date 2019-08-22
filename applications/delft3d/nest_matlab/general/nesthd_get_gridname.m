@@ -7,7 +7,7 @@ filegrd = fileInp;
 [pin,~,~]    = fileparts(fileInp);
 pin          = [pin filesep];
 
-fileType     = EHY_getTypeOfModelFile (fileInp);
+[~,fileType] = EHY_getTypeOfModelFile (fileInp);
 
 switch fileType
     case 'mdf'

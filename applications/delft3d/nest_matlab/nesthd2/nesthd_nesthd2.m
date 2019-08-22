@@ -41,7 +41,7 @@ if strcmp(gen_inf.to,'dfm') && isfield(add_inf,'a0')
     end
 end
 
-if ~isempty(OPT.no_times) gen_inf.notims = min(gen_inf.notims,OPT.no_times); end
+if exist('OPT','var') && ~isempty(OPT.no_times) gen_inf.notims = min(gen_inf.notims,OPT.no_times); end
 nobnd       = length(bnd.DATA);
 kmax        = gen_inf.kmax;
 lstci       = gen_inf.lstci;
