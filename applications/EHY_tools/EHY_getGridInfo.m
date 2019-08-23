@@ -389,7 +389,10 @@ switch modelType
                         dimName = EHY_nameOnFile(inputFile,'mesh2d_nFaces');
                         ind = strmatch(dimName,{infonc.Dimensions.Name},'exact');
                         if ~isempty(ind)
-                            E.no_NetNode = infonc.Dimensions(ind).Length;
+                            E.no_NetElem = infonc.Dimensions(ind).Length;
+                            if E.no_NetElem == 0
+                                E.no_NetElem = NaN;
+                            end
                         end
                     end
                     if ismember('area',wantedOutput)

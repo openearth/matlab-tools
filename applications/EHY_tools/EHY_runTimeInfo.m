@@ -68,8 +68,11 @@ try % if simulation has finished
             mduFiles=dir([pathstr filesep name '_*.mdu']);
             noPartitions=max([1 length(mduFiles)]);
             
-            % number of netnodes
-            noNetNodes=gridInfo.no_NetNode;
+            % number of netnodes and netelements
+            noNetNodes = gridInfo.no_NetNode;
+            if isfield(gridInfo,'no_NetElem') && ~isnan(gridInfo.no_NetElem)
+                noNetElem =  gridInfo.no_NetElem;
+            end
 
             % average timestep
             wantedLine=regexptranslate('wildcard','** INFO   : average timestep * (s)  :');
@@ -215,9 +218,13 @@ if exist('realTime_S','var') % if simulation has finished
     if exist('noPartitions','var')
         runTimeInfo.numberOfPartitions = noPartitions;
     end
-    % partitions
+    % noNetNodes
     if exist('noNetNodes','var')
         runTimeInfo.numberOfNetNodes = noNetNodes;
+    end
+    % noNetElem
+    if exist('noNetElem','var')
+        runTimeInfo.numberOfNetElem = noNetElem;
     end
     
 else
