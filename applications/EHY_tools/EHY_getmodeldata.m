@@ -180,6 +180,7 @@ switch modelType
                     value_y         = cat(stationsInd,value_y,value_y_station);
                 end
             end
+            % because of looping over stations > change index
             dims(stationsInd).index = 1:dims(stationsInd).sizeOut;
             
         else
@@ -255,7 +256,7 @@ switch modelType
                         wl                 = cell2mat(vs_get(trih,'his-series',{time_index},'ZWL',{nr_stat},'quiet')); % ref to wl
                         dps                = vs_get(trih,'his-const',{1},'DPS',{nr_stat},'quiet'); % bed to ref
                         Data.val(:,i_stat) = wl+dps;
-                    case {'dps'}
+                    case 'dps'
                         dps                = vs_get(trih,'his-const',{1},'DPS',{nr_stat},'quiet'); % bed to ref
                         Data.val(:,i_stat) = dps;
                     case 'uv'
@@ -313,10 +314,10 @@ switch modelType
                         value (:,i_stat,:) = cell2mat   (vs_get(trih,'his-series',{time_index(index_requested)},'GRO',{nr_stat,OPT.layer,nr_cons},'quiet'));
                         % series
                         Data.val(:, i_stat,:)= value(:,i_stat,:);
-                    case {'zrho'} %density
+                    case 'zrho' %density
                         zrho               = cell2mat(vs_get(trih,'his-series',{time_index},'ZRHO',{nr_stat,OPT.layer},'quiet'));
                         Data.val(:,i_stat,:) = zrho;
-                    case {'zvicww'} %vertical eddy viscosity
+                    case 'zvicww' %vertical eddy viscosity
                         zvicww             = cell2mat(vs_get(trih,'his-series',{time_index},'ZVICWW',{nr_stat,OPT.layer},'quiet'));
                         Data.val(:,i_stat,:) = zvicww;
                     otherwise
@@ -478,11 +479,13 @@ end
 
 % dimension information
 if isfield(Data,'val')
-    fn='val';
+    fn = 'val';
 elseif isfield(Data,'vel_x')
-    fn='vel_x';
+    fn = 'vel_x';
+else % no model
+    fn = '';
 end
-if exist('dims','var') && strcmp(modelType,'dfm')
+if ~isempty(fn) && exist('dims','var') && strcmp(modelType,'dfm')
     dimensionsComment = fliplr({dims.nameOnFile});
     while length(size(Data.(fn)))<no_dims % size of output < no_dims
         % if e.g. only 1 layer selected, output is 2D instead of 3D.
@@ -490,7 +493,7 @@ if exist('dims','var') && strcmp(modelType,'dfm')
         dims(end)=[];
         no_dims=length(dims);
     end
-else
+elseif ~isempty(fn)
     if length(size(Data.(fn)))==2 && ~isfield(Data,'requestedStations')
         dimensionsComment={'time'};
     elseif length(size(Data.(fn)))==2 && isfield(Data,'requestedStations')
@@ -498,6 +501,8 @@ else
     elseif length(size(Data.(fn)))==3
         dimensionsComment={'time','stations','layers'};
     end
+else
+    dimensionsComment={'No data loaded/found'};
 end
 dimensionsComment = sprintf('%s,',dimensionsComment{:});
 Data.dimensions = ['[' dimensionsComment(1:end-1) ']'];

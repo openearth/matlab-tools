@@ -24,8 +24,11 @@ modelType                  = EHY_getModelType(fName);
 if strcmpi(varName,'sal')          varName = 'salinity'   ; end
 if strcmpi(varName,'tem')          varName = 'temperature'; end
 if strcmpi(varName,'waterlevel'  ) varName = 'wl'         ; end
+if strcmpi(varName,'water level' ) varName = 'wl'         ; end
 if strcmpi(varName,'waterdepth'  ) varName = 'wd'         ; end
 if strcmpi(varName,'water depth' ) varName = 'wd'         ; end
+if strcmpi(varName,'bedlevel'    ) varName = 'dps'        ; end
+if strcmpi(varName,'bed level'   ) varName = 'dps'        ; end
 
 %% Change the name of the requested Variable name
 newName = varName;
@@ -36,6 +39,7 @@ switch typeOfModelFileDetail
             case 'dfm'
                 if strcmpi(varName,'wl'         ) newName = 'waterlevel'   ; end
                 if strcmpi(varName,'wd'         ) newName = 'waterdepth'   ; end
+                if strcmpi(varName,'dps'        ) newName = 'bedlevel'     ; end
                 if strcmpi(varName,'uv'         ) newName = 'x_velocity'   ; end
                 if strcmpi(varName,'Zcen'       ) newName = 'zcoordinate_c'; end
                 if strcmpi(varName,'Zint'       ) newName = 'zcoordinate_w'; end

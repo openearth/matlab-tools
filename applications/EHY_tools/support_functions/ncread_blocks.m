@@ -1,13 +1,13 @@
 function values = ncread_blocks(inputFile,varName,start,count)
 
 %% Identical to ncread however te speed up data is read in blocks (loop over variable 'time')
-%  Function can be removed if ncread is speeded up for large datasets 
+%  Function can be removed if ncread is speeded up for large datasets
 
 dims        = EHY_getDimsInfo(inputFile,varName);
 no_dims     = length(dims);
 timeInd     = strmatch('time',{dims(:).name});
 
-if all(ismember({'start','count'},who)) && ~isempty(timeInd)
+if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count specified, variable has time dimension
     
     nr_times      = dims(timeInd).size;
     nr_times_clip = count(timeInd);
@@ -22,7 +22,7 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd)
     % assuming timeInd==length(dims)
     if timeInd ~= length(dims)
         error(['timeInd is not last variable, ncread_blocks does not work correctly in that case' char(10) ...
-        'Please contact Julien Groenenboom or Theo van der Kaaij'])
+            'Please contact Julien Groenenboom or Theo van der Kaaij'])
     end
     
     % allocate variable 'values'
@@ -31,7 +31,7 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd)
     else
         values = NaN(count);
     end
-      
+    
     % cycle over blocks
     offset        = start(end) - 1;
     for i_block = 1:no_blocks
@@ -49,7 +49,9 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd)
         end
     end
     
+elseif all(ismember({'start','count'},who)) && isempty(timeInd)  % start and count specified, variable has not a time dimension
+    values = ncread(inputFile,varName,start,count);
 else
-    % no start and count specified, normal reading
+    % no start and count specified, regular ncread
     values = ncread(inputFile,varName);
 end
