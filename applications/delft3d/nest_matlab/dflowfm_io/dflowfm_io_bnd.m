@@ -27,35 +27,60 @@ switch lower(cmd)
                 end
 
                 ext     = dflowfm_io_extfile('read',fname);
+                
+                %% new inifile format (covert to old structure, remainder of the past)
+                if isfield(ext,'Chapter')
+                    for i_ext = 1: length(ext)
+                        ext(i_ext).quantity     = 'notExisting';
+                        ext(i_ext).locationfile = 'notExisting';
+                        names                   = ext(i_ext).Keyword.Name;
+                        i_val                   = get_nr(lower(names),'quantity');
+                        if ~isempty (i_val) ext(i_ext).quantity     = ext(i_ext).Keyword.Value{i_val}; end
+                        i_val                   = get_nr(lower(names),'locationfile');
+                        if ~isempty (i_val) ext(i_ext).locationfile = ext(i_ext).Keyword.Value{i_val}; end
+                    end
+                end
+                
+                %% Get names of pli files for which boundary conditions should be generated
                 allowedVars = {'waterlevel','normalvelocity','velocity','neumann','uxuyadvectionvelocitybnd'};
                 i_file  = 0;
                 for i_ext = 1: length(ext)
-                    if ~isempty(strfind(ext(i_ext).quantity,'bnd'        )) && ~isempty(find(~cellfun('isempty',regexp(ext(i_ext).quantity,allowedVars))))
-
-                        i_file = i_file + 1;
-                        if ~isempty(path)
-                            try
-                                filelist{i_file} = [path filesep ext(i_ext).filename];
-                            catch
-                                filelist{i_file} = [path filesep ext(i_ext).locationfile];
+                    if strcmp(lower(ext(i_ext).Chapter),'boundary')
+                        if ~isempty(strfind(ext(i_ext).quantity,'bnd'        )) && ~isempty(find(~cellfun('isempty',regexp(ext(i_ext).quantity,allowedVars))))
+                            
+                            i_file = i_file + 1;
+                            if ~isempty(path)
+                                try
+                                    if ~isabsolutepath(ext(i_ext).filename)
+                                        filelist{i_file} = [path filesep ext(i_ext).filename];
+                                    else
+                                        filelist{i_file} = ext(i_ext).filename;
+                                    end
+                                catch
+                                    if ~isabsolutepath(ext(i_ext).locationfile)
+                                        filelist{i_file} = [path filesep ext(i_ext).locationfile];
+                                    else
+                                        filelist{i_file} = ext(i_ext).locationfile;
+                                    end
+                                end
+                            else
+                                try
+                                    filelist{i_file} = [ext(i_ext).filename];
+                                catch
+                                    filelist{i_file} = [ext(i_ext).locationfile];
+                                end
                             end
-                        else
-                            try
-                                filelist{i_file} = [ext(i_ext).filename];
-                            catch
-                                filelist{i_file} = [ext(i_ext).locationfile];
+                            
+                            if ~isempty(strfind(ext(i_ext).quantity,'waterlevel'))
+                                bndtype{i_file} = 'z';
+                            elseif ~isempty(strfind(ext(i_ext).quantity,'velocity')) && isempty(strfind(ext(i_ext).quantity,'normalvelocity')) ...
+                                    && isempty(strfind(ext(i_ext).quantity,'uxuyadvectionvelocitybnd'))
+                                bndtype{i_file} = 'c';
+                            elseif ~isempty(strfind(ext(i_ext).quantity,'neumann'))
+                                bndtype{i_file} = 'n';
+                            elseif ~isempty(strfind(ext(i_ext).quantity,'uxuyadvectionvelocitybnd'))
+                                bndtype{i_file} = 'p';
                             end
-                        end
-
-                        if ~isempty(strfind(ext(i_ext).quantity,'waterlevel'))
-                           bndtype{i_file} = 'z';
-                        elseif ~isempty(strfind(ext(i_ext).quantity,'velocity')) && isempty(strfind(ext(i_ext).quantity,'normalvelocity')) ...
-                                                                                 && isempty(strfind(ext(i_ext).quantity,'uxuyadvectionvelocitybnd'))
-                           bndtype{i_file} = 'c';
-                        elseif ~isempty(strfind(ext(i_ext).quantity,'neumann'))
-                           bndtype{i_file} = 'n';
-                        elseif ~isempty(strfind(ext(i_ext).quantity,'uxuyadvectionvelocitybnd'))
-                           bndtype{i_file} = 'p';
                         end
                     end
                 end
@@ -89,4 +114,14 @@ switch lower(cmd)
 
         %% To implement
 end
+
+function trueorfalse = isabsolutepath(fname)
+
+%% returns true if fname contains absloutepath, false if it is a relative path
+
+trueorfalse = true;
+if strcmp(fname(1) ,'.') || strcmp(fname(1),filesep)
+    trueorfalse = false;
+end
+
 
