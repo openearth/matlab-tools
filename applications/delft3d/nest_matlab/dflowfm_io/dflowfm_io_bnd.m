@@ -45,7 +45,7 @@ switch lower(cmd)
                 allowedVars = {'waterlevel','normalvelocity','velocity','neumann','uxuyadvectionvelocitybnd'};
                 i_file  = 0;
                 for i_ext = 1: length(ext)
-                    if strcmp(lower(ext(i_ext).Chapter),'boundary')
+                    if ~isfield(ext(i_ext),'Chapter') || (isfield(ext(i_ext),'Chapter') && strcmp(lower(ext(i_ext).Chapter),'boundary'))
                         if ~isempty(strfind(ext(i_ext).quantity,'bnd'        )) && ~isempty(find(~cellfun('isempty',regexp(ext(i_ext).quantity,allowedVars))))
                             
                             i_file = i_file + 1;

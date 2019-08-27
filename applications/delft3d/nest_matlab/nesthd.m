@@ -49,49 +49,24 @@ function nesthd(varargin)
 
 %% set additional paths
 %  is already taken care of by oetsettings: then setproperty is on path (most important OET function)
-
 if ~isdeployed && any(which('setproperty'))
    addpath(genpath('..\..\..\..\matlab'));
 end
 
 %% Check if nesthd_path is set
-
 if isempty (getenv_np('nesthd_path'))
    h = warndlg({'Please set the environment variable "nesthd_path"';'See the Release Notes ("Release Notes.chm")'},'NestHD Warning');
    PutInCentre (h);
    uiwait(h);
 end
 
-%% Display a warning, administration file has changed
-Gen_inf    = {'Nesthd Version 2.0:'                                                                                 ;
-              ' '                                                                                                  ;
-              'In addition to nesting Delft3D-Flow models and SIMONA models,'                                      ;
-              'This version also support nesting of DFLOWFM models'                                                ;
-              'To allow for nesting of DFLOWFM models the administration file'                                     ;
-              'had to be adjusted (string based in stead of (M,N) based)'                                          ;
-              'This means that old, version 1, adminstration files do not work anymore'                            ;
-              ' '                                                                                                  ;
-              'Hence, old adminstration files will have to be re-generated'                                        ;
-              ' '                                                                                                  ;
-              'WARNING: 3D Nesting of tranport properties (like salinity  '                                       ;
-              '         or temperature is supported for sigma layers|     '                                        ;
-              '         NOT THOROUGHLY TESTED SO PLEASE CHECK RESULTS     '                                          ;
-              ' '                                                                                                  ;
-              'If you encounter problems, please do not hesitate to contact me'                                    ;
-              'Theo.vanderkaaij@deltares.nl'                                                                      };
-
-simona2mdf_message(Gen_inf,'n_sec',10,'Window','NESTHD Message','Close',true);
-
 %% Initialize
-
 handles  = [];
 
 %% run
-
 if ~isempty(varargin)
 
-    % Batch
-
+    %% Batch
     [handles] = nesthd_ini_ui(handles);
     [handles] = nesthd_read_ini(handles,varargin{1});
     OPT.check    = false;
@@ -103,6 +78,27 @@ if ~isempty(varargin)
     nesthd_run_now(handles,OPT);
 else
 
-    % Stand alone
+    %% Stand alone
+    %  Display a warning 
+    Gen_inf    = {'Nesthd Version 2.0:'                                                     ;
+                  ' '                                                                       ;
+                  'In addition to nesting Delft3D-Flow models and SIMONA models,'           ;
+                  'This version also support nesting of DFLOWFM models'                     ;
+                  'To allow for nesting of DFLOWFM models the administration file'          ;
+                  'had to be adjusted (string based in stead of (M,N) based)'               ;
+                  'This means that old, version 1, adminstration files do not work anymore' ;
+                  ' '                                                                       ;
+                  'Hence, old adminstration files will have to be re-generated'             ;
+                  ' '                                                                       ;
+                  'WARNING: 3D Nesting of tranport properties (like salinity  '             ;
+                  '         or temperature is supported for sigma layers|     '             ;
+                  '         NOT THOROUGHLY TESTED SO PLEASE CHECK RESULTS     '             ;
+                  ' '                                                                       ;
+                  'If you encounter problems, please do not hesitate to contact me'         ;
+                  'Theo.vanderkaaij@deltares.nl'                                           };
+    
+    simona2mdf_message(Gen_inf,'n_sec',10,'Window','NESTHD Message','Close',true);
+    
+    %  SStart ui
     nesthd_nest_ui;
 end
