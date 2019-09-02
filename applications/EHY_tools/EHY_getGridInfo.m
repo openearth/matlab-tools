@@ -366,6 +366,9 @@ switch modelType
                                     mdFile=EHY_getMdFile(inputFile);
                                     gridInfo=EHY_getGridInfo(mdFile,'layer_perc','disp',0);
                                     E.layer_perc=gridInfo.layer_perc;
+                                else
+                                    % Could not retrieve layer info, set to NaN
+                                    E.layer_perc(1:no_layers) = NaN;
                                 end
                             end
                         end
