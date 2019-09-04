@@ -478,7 +478,8 @@ end
         PLI=[];
         for iF=1:length(pliFiles)
             pol=io_polygon('read',pliFiles{iF});
-            xyn.x(iF)=mean(pol(:,1));xyn.y(iF)=mean(pol(:,2));
+            pol(pol==-999)=NaN;
+            xyn.x(iF)=nanmean(pol(:,1));xyn.y(iF)=nanmean(pol(:,2));
             [~,xyn.name{iF}]=fileparts(pliFiles{iF});
             PLI=[PLI;NaN NaN; pol(:,1:2)];
         end

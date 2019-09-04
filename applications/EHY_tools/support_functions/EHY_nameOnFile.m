@@ -109,8 +109,8 @@ fmNames{end+1,1}={'FlowElemContour_x','mesh2d_face_x_bnd','mesh2d_agg_face_x_bnd
 fmNames{end+1,1}={'FlowElemContour_y','mesh2d_face_y_bnd','mesh2d_agg_face_y_bnd'}; % y-coordinates of flow element contours
 
 fmNames{end+1,1}={'mesh2d_flowelem_domain','FlowElemDomain'}; % flow element domain
-
 fmNames{end+1,1}={'mesh2d_flowelem_bl','FlowElem_bl'}; % bed level
+fmNames{end+1,1}={'mesh2d_flowelem_ba','FlowElem_bac'}; % area (m2) of cell faces
 
 %%% DIMENSION names used within different versions of Delft3D-Flexible Mesh
 fmNames{end+1,1}={'mesh2d_nNodes','nmesh2d_node','nNetNode'}; % number of nodes

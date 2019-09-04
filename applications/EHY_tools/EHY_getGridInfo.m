@@ -213,7 +213,7 @@ switch modelType
                     end
                     
                     if ismember('Zcen',wantedOutput) || ismember('Z',wantedOutput) % top-view information
-                        if ~isempty(strfind(inputFile,'his.nc')) % his file
+                        if strcmp(typeOfModelFileDetail,'his_nc') % his file
                             if nc_isvar(inputFile,'bedlevel')
                                 E.Zcen=ncread(inputFile,'bedlevel')';
                             elseif nc_isvar(inputFile,'waterlevel') && nc_isvar(inputFile,'Waterdepth')
@@ -233,7 +233,7 @@ switch modelType
                             else
                                 E.Zcen = NaN;
                             end
-                        elseif ~isempty(strfind(inputFile,'map.nc')) || ~isempty(strfind(inputFile,'_net.nc')) % map/nc file
+                        elseif strcmp(typeOfModelFileDetail,'map_nc') || strcmp(typeOfModelFileDetail,'net_nc') % map/nc file
                             varName = EHY_nameOnFile(inputFile,'mesh2d_node_z');
                             E.Zcor = ncread(inputFile,varName);
                             try % depth at center not always available
@@ -243,21 +243,29 @@ switch modelType
                         end
                     end
                     
-                    if ismember('Z',wantedOutput) % side-view information
-                        if ~isempty(strfind(inputFile,'his.nc')) % his file 
+                    if any(ismember({'Z','Zcen_cen','Zcen_int'},wantedOutput)) % side-view information
+                        if strcmp(typeOfModelFileDetail,'his_nc') % his file 
                             if nc_isvar(inputFile,'zcoordinate_c')
                                 tmp        = EHY_getmodeldata(inputFile,{},modelType,'varName','zcoordinate_c');
                                 E.Zcen_cen = tmp.val;
                                 if nc_isvar(inputFile,'zcoordinate_w')
-                                    tmp        = EHY_getmodeldata(inputFile,{},modelType,'varName','zcoordinate_c');
+                                    tmp        = EHY_getmodeldata(inputFile,{},modelType,'varName','zcoordinate_w');
                                     E.Zcen_int = tmp.val;
                                 else
                                     % Retrieve interfaces from water level end centre information
                                     warning(['Reconstructing position of interfaces from water level and centres.' newline    ...
                                              'Can be time consuming. Consider writing interface information to history file!']);
                                     tmp                              = EHY_getmodeldata(inputFile,{},modelType,'varName','wl');
-                                    E.Zcen_int(:,:,E.no_layers + 1) = tmp.val;
-                                    for i_lay = E.no_layers:-1:1
+                                    
+                                    if isfield(E,'no_layers')
+                                        no_layers = E.no_layers;
+                                    else
+                                        tmpNOL = EHY_getGridInfo(inputFile,'no_layers');
+                                        no_layers = tmpNOL.no_layers;
+                                    end
+                                    
+                                    E.Zcen_int(:,:,no_layers + 1) = tmp.val;
+                                    for i_lay = no_layers:-1:1
                                          E.Zcen_int(:,:,i_lay) = E.Zcen_int(:,:,i_lay + 1) -2*(E.Zcen_int(:,:,i_lay + 1) - E.Zcen_cen(:,:,i_lay));
                                     end     
                                 end
@@ -274,7 +282,7 @@ switch modelType
                                 E.Zcen_int(:,:,1) = -wd + wl;
                                 E.Zcen_cen(:,:,1) = 0.5*(E.Zcen_int(:,:,1) + E.Zcen_int(:,:,2));
                             end
-                              if ~isfield(E,'Zcen_cen')
+                            if ~isfield(E,'Zcen_cen')
                                 try % try to get this info from mdFile
                                     mdFile=EHY_getMdFile(inputFile);
                                     tmp = EHY_getGridInfo(mdFile,'Z','disp',0);
@@ -282,7 +290,7 @@ switch modelType
                                     E.Zcen_cen = tmp.Zcen_cen;
                                 end
                             end
-                        elseif ~isempty(strfind(inputFile,'map.nc')) || ~isempty(strfind(inputFile,'_net.nc')) % map/nc file
+                        elseif strcmp(typeOfModelFileDetail,'map_nc') || strcmp(typeOfModelFileDetail,'net_nc') % map/nc file
                             if nc_isvar(inputFile,'mesh2d_layer_z') % z-layer info
                                 E.Zcen_cen=ncread(inputFile,'mesh2d_layer_z')';
                                 E.Zcen_int=ncread(inputFile,'mesh2d_interface_z')';
@@ -399,8 +407,9 @@ switch modelType
                         end
                     end
                     if ismember('area',wantedOutput)
-                        if nc_isvar(inputFile,'mesh2d_flowelem_ba')
-                            E.area=ncread(inputFile,'mesh2d_flowelem_ba');
+                        varName = EHY_nameOnFile(inputFile,'mesh2d_flowelem_ba');
+                        if nc_isvar(inputFile,varName)
+                            E.area=ncread(inputFile,varName);
                         end
                     end
                     if ismember('spherical', wantedOutput)
