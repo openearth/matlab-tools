@@ -13,7 +13,14 @@
 % limitations        :
 % subroutines called : getwgh, check, getwcr
 %***********************************************************************
+
+if isfield(add_inf,'display')==0
+  add_inf.display=1;
+end
+      
+if add_inf.display==1
 h = waitbar(0,'Generating transport boundary conditions','Color',[0.831 0.816 0.784]);
+end
 
 no_pnt    = length(bnd.DATA);
 notims    = nfs_inf.notims;
@@ -36,7 +43,11 @@ for l = 1:lstci
         %% Cycle over all boundary support points
         for i_pnt = 1: no_pnt
             
-            waitbar(i_pnt/no_pnt);
+            if add_inf.display==1
+                waitbar(i_pnt/no_pnt);
+            else
+                fprintf('done %5.1f %% \n',i_pnt/no_pnt*100)
+            end
             
             %% First get nesting stations, weights and orientation of support points
             mnbcsp         = bnd.Name{i_pnt};
@@ -44,7 +55,9 @@ for l = 1:lstci
             
             if isempty(mnnes)
                 error = true;
+                if add_inf.display==1
                 close(h);
+                end
                 simona2mdf_message({'Inconsistancy between boundary definition and' 'administration file'},'Window','Nesthd2 Error','Close',true,'n_sec',10);
                 return
             end
@@ -123,4 +136,6 @@ for l = 1: lstci
     end
 end
 
+if add_inf.display==1
 close(h);
+end

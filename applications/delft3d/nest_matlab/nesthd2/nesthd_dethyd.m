@@ -23,8 +23,14 @@
 
       %% Initialisation
       error = false;
-
-      h = waitbar(0,'Generating Hydrodynamic boundary conditions','Color',[0.831 0.816 0.784]);
+      
+      if isfield(add_inf,'display')==0
+          add_inf.display=1;
+      end
+      
+      if add_inf.display==1
+        h = waitbar(0,'Generating Hydrodynamic boundary conditions','Color',[0.831 0.816 0.784]);
+      end
 
       nopnt  = length(bnd.DATA);
       notims = nfs_inf.notims;
@@ -47,7 +53,11 @@
       %% -----cycle over all boundary support points
       for ipnt = 1: nopnt
           type = lower(bnd.DATA(ipnt).bndtype);
-          waitbar(ipnt/nopnt);
+          if add_inf.display==1
+            waitbar(ipnt/nopnt);
+          else 
+              fprintf('done %5.1f %% \n',ipnt/nopnt*100)
+          end
 
           wl = [];
           uu = [];
@@ -69,7 +79,9 @@
           %% Error if no nesting stations are found
           if isempty(mnnes)
               error = true;
-              close(h);
+              if add_inf.display==1
+                close(h);
+              end
               simona2mdf_message({'Inconsistancy between boundary definition and' 'administration file'},'Window','Nesthd2 Error','Close',true,'n_sec',10);
               return
           end
@@ -229,7 +241,9 @@
                   %% Error if no nesting stations are found
                   if isempty(mnnes)
                       error = true;
-                      close(h);
+                      if add_inf.display==1
+                        close(h);
+                      end
                       simona2mdf_message({'Inconsistancy between boundary definition and' 'administration file'},'Window','Nesthd2 Error','Close',true,'n_sec',10);
                       return
                   end
@@ -249,4 +263,6 @@
           end
       end
 
-      close(h);
+      if add_inf.display==1
+        close(h);
+      end
