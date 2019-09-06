@@ -50,7 +50,7 @@ switch win_or_unix
         % change '/' into '\'
         path=strrep(path,'/','\');
         
-    case 'u' % Unix
+    case {'u','l'} % Unix (or Linux)
         
         % from p:\ to /p/
         if strcmp(path(2),':')

@@ -40,10 +40,10 @@ switch modelType
         sds= qpfopen(inputFile);
         if strcmpi(OPT.varName,'uv')
             stationNames  = strtrim(waquaio(sds,[],'flowstat-uv'));
-        elseif strcmpi(OPT.varName,'wl') || strcmpi(OPT.varName,'waterlevel') || strcmpi(OPT.varName,'dps')
-            stationNames  = strtrim(waquaio(sds,[],'flowstat-wl'));
         elseif strcmpi(OPT.varName,'salinity') || strcmpi(OPT.varName,'temperature')
             stationNames  = strtrim(waquaio(sds,[],'transtat'));
+        else % 'wl','wd','dps'
+            stationNames  = strtrim(waquaio(sds,[],'flowstat-wl'));
         end
         
     case {'sobek3' 'sobek3_new'}

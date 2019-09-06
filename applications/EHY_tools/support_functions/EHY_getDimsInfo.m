@@ -44,7 +44,7 @@ switch modelType
         
         % layers
         gridInfo = EHY_getGridInfo(inputFile,{'no_layers'});
-        if gridInfo.no_layers > 1
+        if gridInfo.no_layers > 1 && ~ismember(varName,{'wl','wd','dps'})
             dims(end+1).name = 'layers';
         end
         

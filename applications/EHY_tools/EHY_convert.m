@@ -1093,7 +1093,7 @@ end
             in= inpolygon(gridInfo.Xcen(k),gridInfo.Ycen(k),xBndCell(:),yBndCell(:));
             k=k(in);
             
-            % make  and cat ldb from cell center to all the corners
+            % make and cat ldb from cell center to all the corners
             ldb0{size(xyz,1),1}=[];
             for i_k=1:length(k)
                 dmyLdb=[];
@@ -1108,7 +1108,7 @@ end
             end
             output=ldb;
         catch
-            disp('Save the network with cell info via Hermans GUI first and try again')
+            disp('Import grid>export grid in RGFGRID and try again')
         end
     end
 %% output

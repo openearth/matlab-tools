@@ -251,14 +251,14 @@ switch modelType
                 % get data
                 switch OPT.varName
                     case 'wl'
-                        Data.val(:,i_stat)=cell2mat(vs_get(trih,'his-series',{time_index},'ZWL',{nr_stat},'quiet'));
+                        Data.val(:,i_stat) = cell2mat(vs_get(trih,'his-series',{time_index},'ZWL',{nr_stat},'quiet')); % ref to wl
+                    case 'dps'
+                        dps                = vs_get(trih,'his-const',{1},'DPS',{nr_stat},'quiet'); % bed to ref
+                        Data.val(:,i_stat) = dps;
                     case 'wd'
                         wl                 = cell2mat(vs_get(trih,'his-series',{time_index},'ZWL',{nr_stat},'quiet')); % ref to wl
                         dps                = vs_get(trih,'his-const',{1},'DPS',{nr_stat},'quiet'); % bed to ref
                         Data.val(:,i_stat) = wl+dps;
-                    case 'dps'
-                        dps                = vs_get(trih,'his-const',{1},'DPS',{nr_stat},'quiet'); % bed to ref
-                        Data.val(:,i_stat) = dps;
                     case 'uv'
                         if no_layers==1
                             data=qpread(trih,1,'depth averaged velocity','griddata',time_index,nr_stat);
@@ -341,21 +341,30 @@ switch modelType
             if Data.exist_stat(i_stat)
                 ii_stat  = ii_stat + 1;
                 nr_stat  = stationNrNoNan(ii_stat);
+                
+                % location info: [m,n] and [x,y]
+                if strcmp(OPT.varName,'uv')
+                    mn                        = waquaio(sds,[],'uv-mn');
+                    [x,y]                     = waquaio(sds,[],'uv-xy');
+                else
+                    mn                        = waquaio(sds,[],'wl-mn');
+                    [x,y]                     = waquaio(sds,[],'wl-xy');
+                end
+                Data.locationMN(i_stat,:) = mn(nr_stat,:);
+                Data.locationXY(i_stat,:) = [x(nr_stat) y(nr_stat)];
+                        
                 switch OPT.varName
-                    case 'wl'
-                        mn                        = waquaio(sds,[],'wl-mn');
-                        [x,y]                     = waquaio(sds,[],'wl-xy');
-                        Data.locationMN(i_stat,:) = mn(nr_stat,:);
-                        Data.locationXY(i_stat,:) = [x(nr_stat) y(nr_stat)];
+                    case 'wl' % ref to wl
                         Data.val(:,i_stat)        = waquaio(sds,[],'wlstat',time_index,nr_stat);
-                    case 'dps'
+                    case 'dps' % bed to ref
                         [~,~,z_int]        = waquaio(sds,[],'z-stat',1,nr_stat);
                         Data.val(i_stat)   = -1.*z_int(end);
+                    case 'wd'
+                        wl                 = waquaio(sds,[],'wlstat',time_index,nr_stat);
+                        [~,~,z_int]        = waquaio(sds,[],'z-stat',1,nr_stat);
+                        dps                = -1.*z_int(end);
+                        Data.val(:,i_stat) = wl+dps;
                     case 'uv'
-                        mn                        = waquaio(sds,[],'uv-mn');
-                        [x,y]                     = waquaio(sds,[],'uv-xy');
-                        Data.locationMN(i_stat,:) = mn(nr_stat,:);
-                        Data.locationXY(i_stat,:) = [x(nr_stat) y(nr_stat)];
                         if no_layers==1
                             [uu,vv] = waquaio(sds,[],'uv-stat',time_index,nr_stat);
                             Data.vel_x(:,i_stat) = uu;
@@ -365,10 +374,6 @@ switch modelType
                             Data.vel_y(:,i_stat,:) = waquaio(sds,[],'v-stat',time_index,nr_stat,OPT.layer);
                         end
                     case 'salinity'
-                        mn                        = waquaio(sds,[],'wl-mn');
-                        [x,y]                     = waquaio(sds,[],'wl-xy');
-                        Data.locationMN(i_stat,:) = mn(nr_stat,:);
-                        Data.locationXY(i_stat,:) = [x(nr_stat) y(nr_stat)];
                         if no_layers==1
                             Data.val(:,i_stat) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat);
                         else

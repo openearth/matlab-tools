@@ -386,8 +386,12 @@ switch modelType
                     end                         
                     if ismember('face_nodes_xy',wantedOutput)
                          varName = EHY_nameOnFile(inputFile,'mesh2d_face_x_bnd');
-                         E.face_nodes_x = ncread(inputFile,varName);
-                         E.face_nodes_y = ncread(inputFile,strrep(varName,'x','y'));
+                         if nc_isvar(inputFile,varName)
+                             E.face_nodes_x = ncread(inputFile,varName);
+                             E.face_nodes_y = ncread(inputFile,strrep(varName,'x','y'));
+                         else
+                             disp('Face_x_bnd-info not found in network. Import grid>export grid in RGFGRID and try again')
+                         end
                     end
                     if ismember('dimensions',wantedOutput)
                         % no_NetNode
