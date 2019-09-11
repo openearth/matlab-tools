@@ -3,7 +3,7 @@ function sfincs_write_netcdf_bndbzsfile(filename, x, y, EPSGcode, UTMname, refda
 % v1.0  Leijnse     12-08-2019      Initial commit
 %
 % Input specification:
-% - x and y expected as arrays with values along axis, no matrix. Grid is assumed rectilinear and projected in SFINCS.
+% - x and y expected as arrays with values per station in same projected coordinate system as in SFINCS.
 % - refdate is expected as string like '1970-01-01 00:00:00' 
 % - time is expected as minutes since refdate
 % - bzs input matrix dimensions assumed to be (t,stations)
@@ -35,7 +35,7 @@ ncid                = netcdf.create(filename,'NC_WRITE');
 globalID            = netcdf.getConstant('NC_GLOBAL');
 
 % Add attributes global to the dataset
-netcdf.putAtt(ncid,globalID, 'title',           'SFINCS netcdf amu/amv wind input');
+netcdf.putAtt(ncid,globalID, 'title',           'SFINCS netcdf bnd/bzs water level time-series input');
 netcdf.putAtt(ncid,globalID, 'institution',     'Deltares');
 netcdf.putAtt(ncid,globalID, 'email',           'tim.leijnse@deltares.nl');
 netcdf.putAtt(ncid,globalID, 'terms_for_use',   'Use as you like');
@@ -79,9 +79,9 @@ netcdf.putAtt(ncid,time_ID,'long_name', 'time in minutes');
 netcdf.putAtt(ncid,time_ID,'units', ['minutes since ',refdate]);
 
 % Standard names - 5 = bzs
-bzs_ID      = netcdf.defVar(ncid,'water_level_astronomical','double',[pointsdimid timedimid]); 
-netcdf.putAtt(ncid,bzs_ID,'standard_name','water_level_astronomical');
-netcdf.putAtt(ncid,bzs_ID,'long_name','water_level_astronomical');
+bzs_ID      = netcdf.defVar(ncid,'sea_surface_height_above_mean_sea_level','double',[pointsdimid timedimid]); 
+netcdf.putAtt(ncid,bzs_ID,'standard_name','water_level');
+netcdf.putAtt(ncid,bzs_ID,'long_name','sea_surface_height_above_mean_sea_level');
 netcdf.putAtt(ncid,bzs_ID,'units','m');
 netcdf.putAtt(ncid,bzs_ID,'_FillValue',-999);
 netcdf.putAtt(ncid,bzs_ID,'coordinates','x y time');
