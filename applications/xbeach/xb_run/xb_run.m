@@ -133,7 +133,7 @@ else
     if isunix()
         copyfile(OPT.binary, fullfile(OPT.path, 'bin', 'xbeach'));
     elseif OPT.copy
-        copyfile(OPT.binary, fullfile(OPT.path, 'bin', 'xbeach.exe'));
+        copyfile'));
     end
 end
 

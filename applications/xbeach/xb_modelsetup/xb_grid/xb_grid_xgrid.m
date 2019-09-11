@@ -92,7 +92,6 @@ function [xgr zgr] = xb_grid_xgrid(xin, zin, varargin)
 
 %% settings
 
-% defaults
 OPT = struct(...
     'xgrid', [],...        % predefined xgrid vector
     'Tm',5,...             % incident short wave period (used for maximum grid size at offshore boundary) if you impose time series of wave conditions use the min(Tm) as input
@@ -112,8 +111,10 @@ OPT = struct(...
     'xdry', [],...         % horizontal (cross-shore) level from which cells should be considered dry
     'minh', 0.01 ...       % minimum water depth used in dispersion relation
     );
+%% 
 
 % overrule default settings by propertyName-propertyValue pairs, given in varargin
+%% 
 OPT = setproperty(OPT, varargin{:});
 if isempty(OPT.dxdry)
     OPT.dxdry = OPT.dxmin;
@@ -126,6 +127,7 @@ end
 % fix if z-values contain NaN's
 xin = xin(~isnan(zin));
 zin = zin(~isnan(zin));
+%% 
 
 % set boundaries
 xend    = xin(end);
