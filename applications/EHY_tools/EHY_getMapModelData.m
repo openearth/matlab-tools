@@ -33,15 +33,25 @@ OPT.varName         = 'wl';
 OPT.t0              = '';
 OPT.tend            = '';
 OPT.layer           = 0; % all
+OPT.m               = 0; % all (horizontal structured grid [m,n])
+OPT.n               = 0; % all (horizontal structured grid [m,n])
+OPT.k               = 0; % all (vertical   d3d grid [m,n,k])
 OPT.mergePartitions = 1; % merge output from several dfm '_map.nc'-files
 OPT.disp            = 1; % display status of getting map model data
 OPT                 = setproperty(OPT,varargin);
 
 %% modify input
-inputFile=strtrim(inputFile);
-if ~isempty(OPT.t0); OPT.t0=datenum(OPT.t0); end
-if ~isempty(OPT.tend); OPT.tend=datenum(OPT.tend); end
+inputFile = strtrim(inputFile);
+if ~isempty(OPT.t0);      OPT.t0=datenum(OPT.t0);       end
+if ~isempty(OPT.tend);    OPT.tend=datenum(OPT.tend);   end
 if ~isnumeric(OPT.layer); OPT.layer=str2num(OPT.layer); end
+if ~isnumeric(OPT.m);     OPT.m=str2num(OPT.m);         end
+if ~isnumeric(OPT.n);     OPT.n=str2num(OPT.n);         end
+if ~isnumeric(OPT.k);     OPT.k=str2num(OPT.k);         end
+
+if all(OPT.layer==0) && ~all(OPT.k==0) % OPT.k was provided, OPT.layer not
+    OPT.layer = OPT.k; % use OPT.layer instead of OPT.k 
+end
 
 %% Get model type
 modelType = EHY_getModelType(inputFile);
@@ -73,11 +83,18 @@ if ~isempty(layersInd)
     dims(layersInd).indexOut = 1:length(OPT.layer);
 end
 
-%% Get horizontal grid information
-facesInd = strmatch('faces',{dims(:).name});
+%% Get horizontal grid information (cells / faces)
+facesInd = strmatch('faces',{dims(:).name}); % unstructured network
 if ~isempty(facesInd)
-    dims(facesInd).index    = 1:dims(facesInd).size;
-    dims(facesInd).indexOut = 1:dims(facesInd).size;
+        dims(facesInd).index    = 1:dims(facesInd).size;
+        dims(facesInd).indexOut = 1:dims(facesInd).size;
+end
+mInd = strmatch('m',{dims(:).name}); % structured grid
+if ~isempty(mInd)
+    OPT = EHY_getmodeldata_mn_index(OPT,inputFile);
+    dims(mInd).index = OPT.m;
+    nInd = strmatch('n',{dims(:).name});
+    dims(nInd).index = OPT.n;
 end
 
 %% Get dimension size of requested indices
@@ -207,7 +224,31 @@ switch modelType
         
     case 'd3d'
         %% Delft3D 4
-        % to be implemented
+        trim = vs_use(inputFile,'quiet');
+        if strcmp(OPT.varName,'S1') % velocity
+                Data.val = vs_let(trim,'map-series',{dims(timeInd).index},OPT.varName,{dims(nInd).index,dims(mInd).index},'quiet');          
+                
+        elseif strcmp(OPT.varName,'U1') % velocity
+            if ~isempty(layersInd) % 3D
+                Data.vel_x = vs_let(trim,'map-series',{dims(timeInd).index},OPT.varName,{dims(nInd).index,dims(mInd).index,dims(layersInd).index},'quiet');
+                Data.vel_y = vs_let(trim,'map-series',{dims(timeInd).index},'V1'       ,{dims(nInd).index,dims(mInd).index,dims(layersInd).index},'quiet');
+            else % 2Dh
+                Data.vel_x = vs_let(trim,'map-series',{dims(timeInd).index},OPT.varName,{dims(nInd).index,dims(mInd).index},'quiet');
+                Data.vel_y = vs_let(trim,'map-series',{dims(timeInd).index},'V1'       ,{dims(nInd).index,dims(mInd).index},'quiet');
+            end
+            Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
+            
+        elseif strcmp(OPT.varName,'DPS0') % bottom level, bed to ref
+            Data.val = vs_let(trim,'map-const',{1},OPT.varName,{dims(nInd).index,dims(mInd).index},'quiet');
+            
+        elseif strcmp(OPT.varName,'wd') % water depth, bed to wl
+            wl  = vs_let(trim,'map-series',{dims(timeInd).index},'S1'  ,{dims(nInd).index,dims(mInd).index},'quiet');          
+            dps = vs_let(trim,'map-const' ,{1}                  ,'DPS0',{dims(nInd).index,dims(mInd).index},'quiet');
+            Data.val = wl+dps; 
+        end
+        % delete ghost cells
+        if dims(nInd).index(1)==1; Data.val = Data.val(:,2:end,:,:); end
+        if dims(mInd).index(1)==1; Data.val = Data.val(:,:,2:end,:); end      
         
     case 'simona'
         %% SIMONA (WAQUA/TRIWAQ)
@@ -221,21 +262,30 @@ if isfield(Data,'val')
 elseif isfield(Data,'vel_x')
     fn='vel_x';
 end
-if exist('dims','var') && strcmp(modelType,'dfm')
-    dimensionsComment = fliplr({dims.nameOnFile});
-    while length(size(Data.(fn)))<no_dims % size of output < no_dims
-        % if e.g. only 1 layer selected, output is 2D instead of 3D.
-        dimensionsComment(end)=[];
-        dims(end)=[];
-        no_dims=length(dims);
+if strcmp(modelType,'dfm')
+    if exist('dims','var')
+        dimensionsComment = fliplr({dims.nameOnFile});
+        while length(size(Data.(fn)))<no_dims % size of output < no_dims
+            % if e.g. only 1 layer selected, output is 2D instead of 3D.
+            dimensionsComment(end)=[];
+            dims(end)=[];
+            no_dims=length(dims);
+        end
+    else
+        if length(size(Data.(fn)))==2
+            dimensionsComment={'time','faces'};
+        elseif length(size(Data.(fn)))==3
+            dimensionsComment={'time','faces','layers'};
+        end
     end
-else
-    if length(size(Data.(fn)))==2
-        dimensionsComment={'time','faces'};
-    elseif length(size(Data.(fn)))==3
-        dimensionsComment={'time','faces','layers'};
+elseif strcmp(modelType,'d3d')
+    if length(size(Data.(fn)))==3
+        dimensionsComment={'time','n_index','m_index'};
+    elseif length(size(Data.(fn)))==4
+        dimensionsComment={'time','n_index','m_index','k_index'};
     end
 end
+
 dimensionsComment = sprintf('%s,',dimensionsComment{:});
 Data.dimensions = ['[' dimensionsComment(1:end-1) ']'];
 

@@ -21,6 +21,8 @@ function gridInfo=EHY_getGridInfo(inputFile,varargin)
 % varargin{2:3) <keyword/value> pair
 %               stations                celll array of station names identical to
 %                                       specified in input for EHY_getmodeldata
+%               m                       horizontal structured grid [m,n] (default = 0, all)
+%               n                       horizontal structured grid [m,n] (default = 0, all)
 %
 % Conventions:  Z                       positive  up  from ref.
 %                                       shape of array [time,stations,Z]
@@ -28,9 +30,9 @@ function gridInfo=EHY_getGridInfo(inputFile,varargin)
 %               layer info              convention as in provided modelfile, i.e.:
 %                                       -dfm        (layer 1 = bed, layer n = surface)
 %                                       -d3d-zlayer (layer 1 = bed, layer n = surface)
-%                                       -d3d-sigma  (layer n = bed, layer 1 = surface)                                   
+%                                       -d3d-sigma  (layer n = bed, layer 1 = surface)
 %                                       -SIMONA     (layer n = bed, layer 1 = surface)
-%                                       
+%
 % For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
 % created by Julien Groenenboom, October 2018
 
@@ -39,6 +41,8 @@ OPT.stations        = '';
 OPT.varName         = 'wl';
 OPT.mergePartitions = 1; % merge output in case of dfm '_map.nc'-files
 OPT.disp            = 1; % display status and message if none of the wanted output was found
+OPT.m               = 0; % all (horizontal structured grid [m,n])
+OPT.n               = 0; % all (horizontal structured grid [m,n])
 OPT                 = setproperty(OPT,varargin{2:end});
 
 %% process input from user
@@ -51,6 +55,12 @@ else
     end
     wantedOutput=cellstr(varargin{1});
 end
+
+inputFile = strtrim(inputFile);
+if isempty(OPT.m);    OPT.m=0;              end
+if isempty(OPT.n);    OPT.n=0;              end
+if ~isnumeric(OPT.m); OPT.m=str2num(OPT.m); end
+if ~isnumeric(OPT.n); OPT.n=str2num(OPT.n); end
 
 %% determine type of model and type of inputFile
 modelType=EHY_getModelType(inputFile);
@@ -78,7 +88,7 @@ if OPT.mergePartitions==1 && EHY_isPartitioned(inputFile,modelType)
     end
     for iM=1:length(mapFiles)
         if OPT.disp
-        disp(['Reading and merging grid info data from partitions: ' num2str(iM) '/' num2str(length(mapFiles))])
+            disp(['Reading and merging grid info data from partitions: ' num2str(iM) '/' num2str(length(mapFiles))])
         end
         mapFile=[fileparts(inputFile) filesep mapFiles(iM).name];
         gridInfoPart=EHY_getGridInfo(mapFile,varargin{1},'mergePartitions',0);
@@ -89,7 +99,7 @@ if OPT.mergePartitions==1 && EHY_isPartitioned(inputFile,modelType)
             fn=[fn(ind); fn];
             fn(ind+1)=[];
         else
-            for iFN=1:length(fn)                
+            for iFN=1:length(fn)
                 if any(strcmp(fn{iFN},{'face_nodes','face_nodes_x','face_nodes_y'}))
                     % some partitions only contain triangles,squares, ..
                     nrRows=size(gridInfo.(fn{iFN}),1);
@@ -175,12 +185,12 @@ switch modelType
                         tmp=EHY_getGridInfo(inputFile,{'layer_model','layer_perc'},'disp',0);
                         if strcmp(tmp.layer_model,'z-model')
                             if isfield(mdu.geometry,'zlaytop')
-                            dh=mdu.geometry.ZlayTop-mdu.geometry.ZlayBot;
-                            E.Zcen_int=mdu.geometry.ZlayBot+cumsum([0 tmp.layer_perc]/100*dh);
-                            E.Zcen_cen=E.Zcen_int(1:end-1)+diff(E.Zcen_int)/2;
+                                dh=mdu.geometry.ZlayTop-mdu.geometry.ZlayBot;
+                                E.Zcen_int=mdu.geometry.ZlayBot+cumsum([0 tmp.layer_perc]/100*dh);
+                                E.Zcen_cen=E.Zcen_int(1:end-1)+diff(E.Zcen_int)/2;
                             elseif isfield(mdu.geometry,'floorlevtoplay')
-%                                 E.Zcen_int=[mdu.geometry.floorlevtoplay:-mdu.geometry.dztop:mdu.geometry.dztopuniabovez ...
-%                                    <part with sigmagrowthfactor to maximum depth ...> ]
+                                %                                 E.Zcen_int=[mdu.geometry.floorlevtoplay:-mdu.geometry.dztop:mdu.geometry.dztopuniabovez ...
+                                %                                    <part with sigmagrowthfactor to maximum depth ...> ]
                                 % to be correctly implemented
                             end
                         end
@@ -237,14 +247,14 @@ switch modelType
                             varName = EHY_nameOnFile(inputFile,'mesh2d_node_z');
                             E.Zcor = ncread(inputFile,varName);
                             try % depth at center not always available
-                            varName = EHY_nameOnFile(inputFile,'mesh2d_flowelem_bl');
-                            E.Zcen=ncread(inputFile,varName);
+                                varName = EHY_nameOnFile(inputFile,'mesh2d_flowelem_bl');
+                                E.Zcen=ncread(inputFile,varName);
                             end
                         end
                     end
                     
                     if any(ismember({'Z','Zcen_cen','Zcen_int'},wantedOutput)) % side-view information
-                        if strcmp(typeOfModelFileDetail,'his_nc') % his file 
+                        if strcmp(typeOfModelFileDetail,'his_nc') % his file
                             if nc_isvar(inputFile,'zcoordinate_c')
                                 tmp        = EHY_getmodeldata(inputFile,{},modelType,'varName','zcoordinate_c');
                                 E.Zcen_cen = tmp.val;
@@ -254,7 +264,7 @@ switch modelType
                                 else
                                     % Retrieve interfaces from water level end centre information
                                     warning(['Reconstructing position of interfaces from water level and centres.' newline    ...
-                                             'Can be time consuming. Consider writing interface information to history file!']);
+                                        'Can be time consuming. Consider writing interface information to history file!']);
                                     tmp                              = EHY_getmodeldata(inputFile,{},modelType,'varName','wl');
                                     
                                     if isfield(E,'no_layers')
@@ -266,8 +276,8 @@ switch modelType
                                     
                                     E.Zcen_int(:,:,no_layers + 1) = tmp.val;
                                     for i_lay = no_layers:-1:1
-                                         E.Zcen_int(:,:,i_lay) = E.Zcen_int(:,:,i_lay + 1) -2*(E.Zcen_int(:,:,i_lay + 1) - E.Zcen_cen(:,:,i_lay));
-                                    end     
+                                        E.Zcen_int(:,:,i_lay) = E.Zcen_int(:,:,i_lay + 1) -2*(E.Zcen_int(:,:,i_lay + 1) - E.Zcen_cen(:,:,i_lay));
+                                    end
                                 end
                             elseif nc_isvar(inputFile,'bedlevel')
                                 E.Zcen_int(:,:,2) = ncread(inputFile,'waterlevel')';
@@ -367,7 +377,7 @@ switch modelType
                                 for i_lay = 1: no_layers
                                     E.layer_perc(i_lay) = (tmp_i(i_lay + 1) - tmp_i(i_lay))/(tmp_i(end) - tmp_i(1));
                                 end
-                                                         
+                                
                             else % try to get this info from mdFile
                                 mdFile=EHY_getMdFile(inputFile);
                                 if ~isempty(mdFile)
@@ -383,15 +393,15 @@ switch modelType
                     end
                     if ismember('face_nodes',wantedOutput)
                         E.face_nodes=ncread(inputFile,'mesh2d_face_nodes');
-                    end                         
+                    end
                     if ismember('face_nodes_xy',wantedOutput)
-                         varName = EHY_nameOnFile(inputFile,'mesh2d_face_x_bnd');
-                         if nc_isvar(inputFile,varName)
-                             E.face_nodes_x = ncread(inputFile,varName);
-                             E.face_nodes_y = ncread(inputFile,strrep(varName,'x','y'));
-                         else
-                             disp('Face_x_bnd-info not found in network. Import grid>export grid in RGFGRID and try again')
-                         end
+                        varName = EHY_nameOnFile(inputFile,'mesh2d_face_x_bnd');
+                        if nc_isvar(inputFile,varName)
+                            E.face_nodes_x = ncread(inputFile,varName);
+                            E.face_nodes_y = ncread(inputFile,strrep(varName,'x','y'));
+                        else
+                            disp('Face_x_bnd-info not found in network. Import grid>export grid in RGFGRID and try again')
+                        end
                     end
                     if ismember('dimensions',wantedOutput)
                         % no_NetNode
@@ -523,7 +533,6 @@ switch modelType
                 
                 if ~isempty(strfind(name,'trih-'))
                     % TRIH
-                    
                     trih=vs_use(inputFile,'quiet');
                     if ismember('no_layers',wantedOutput)
                         E.no_layers=vs_get(trih,'his-const',{1},'KMAX','quiet');
@@ -644,7 +653,7 @@ switch modelType
                 end
                 if ismember('layer_model', wantedOutput)
                     E.layer_model = 'sigma-model';
-                end              
+                end
                 if ismember('Zcen', wantedOutput)
                     mn = waquaio(sds,'','wl-mn');
                     if kmax == 1
@@ -699,10 +708,40 @@ end % modelType
 %% If selection of stations is specified, reduce output to specified stations only
 if ~isempty(OPT.stations)
     [Data,stationNrNoNan] = EHY_getRequestedStations(inputFile,OPT.stations,modelType,'varName',OPT.varName);
-    vars = {'Zcen_cen','Zcen_int','Zcen'};
+    vars = intersect(fieldnames(E),{'Zcen_cen','Zcen_int','Zcen'});
     for iV = 1:length(vars)
-        if isfield(E,vars{iV}) && size(E.(vars{iV}),2)>1 % for z-layer model only 1 'station' 
+        if size(E.(vars{iV}),2)>1 % for z-layer model only 1 'station'
             E.(vars{iV}) = E.(vars{iV})(:,stationNrNoNan,:); % [times,stations,Z]
+        end
+    end
+end
+
+%% If [m,n]-selection is specified for structured grid, reduce output to specified grid cells only
+if strcmp(modelType,'d3d') && strcmp(typeOfModelFileDetail,'trim')
+    % deal with ghost-cells start of grid
+    if ~ismember(OPT.m(1),[0 1]); OPT.m = [OPT.m(1)-1 OPT.m]; end
+    if ~ismember(OPT.n(1),[0 1]); OPT.n = [OPT.n(1)-1 OPT.n]; end
+    vars = intersect(fieldnames(E),{'Xcor','Ycor','Xcen','Ycen'});
+    for iV = 1:length(vars)
+        if all(OPT.n==0) && all(OPT.m==0)
+            % do nothing
+        elseif all(OPT.n==0)
+            E.(vars{iV}) = E.(vars{iV})(:,OPT.m);
+        elseif all(OPT.m==0)
+            E.(vars{iV}) = E.(vars{iV})(OPT.n,:);
+        else
+            E.(vars{iV}) = E.(vars{iV})(OPT.n,OPT.m);
+        end
+    end
+    
+    % deal with ghost-cells end of grid
+    vars = intersect(fieldnames(E),{'Xcor','Ycor','Xcen','Ycen'});
+    for iV = 1:length(vars)
+        if all(OPT.n==0)
+            E.(vars{iV})(end+1,:)=NaN;
+        end
+        if all(OPT.m==0)
+            E.(vars{iV})(:,end+1)=NaN;
         end
     end
 end

@@ -33,30 +33,31 @@ if strcmpi(varName,'bed level'   ) varName = 'dps'        ; end
 %% Change the name of the requested Variable name
 newName = varName;
 switch typeOfModelFileDetail
-    case 'his_nc'
+    case 'his_nc' % dfm
         % Get the name of varName as specified on the history file of a simulation
-        switch modelType
-            case 'dfm'
-                if strcmpi(varName,'wl'         ) newName = 'waterlevel'   ; end
-                if strcmpi(varName,'wd'         ) newName = 'waterdepth'   ; end
-                if strcmpi(varName,'dps'        ) newName = 'bedlevel'     ; end
-                if strcmpi(varName,'uv'         ) newName = 'x_velocity'   ; end
-                if strcmpi(varName,'Zcen'       ) newName = 'zcoordinate_c'; end
-                if strcmpi(varName,'Zint'       ) newName = 'zcoordinate_w'; end
-                if strcmpi(varName,'Zcen_cen'   ) newName = 'zcoordinate_c'; end
-                if strcmpi(varName,'Zcen_int'   ) newName = 'zcoordinate_w'; end
-        end
+        if strcmpi(varName,'wl'         ) newName = 'waterlevel'   ; end
+        if strcmpi(varName,'wd'         ) newName = 'waterdepth'   ; end
+        if strcmpi(varName,'dps'        ) newName = 'bedlevel'     ; end
+        if strcmpi(varName,'uv'         ) newName = 'x_velocity'   ; end
+        if strcmpi(varName,'Zcen'       ) newName = 'zcoordinate_c'; end
+        if strcmpi(varName,'Zint'       ) newName = 'zcoordinate_w'; end
+        if strcmpi(varName,'Zcen_cen'   ) newName = 'zcoordinate_c'; end
+        if strcmpi(varName,'Zcen_int'   ) newName = 'zcoordinate_w'; end
         
-    case {'map_nc','fou_nc'}
+    case {'map_nc','fou_nc'} % dfm
         % Get the name of varName as specified on the map file of a simulation
-        switch modelType
-            case 'dfm'
-                if strcmpi(varName,'wl'         ) newName = 's1'         ; end
-                if strcmpi(varName,'salinity'   ) newName = 'sa1'        ; end
-                if strcmpi(varName,'temperature') newName = 'tem1'       ; end
-                if strcmpi(varName,'uv'         ) newName = 'ucx'        ; end
-                if strcmpi(varName,'wd'         ) newName = 'waterdepth' ; end
-        end
+        if strcmpi(varName,'wl'         ) newName = 's1'         ; end
+        if strcmpi(varName,'salinity'   ) newName = 'sa1'        ; end
+        if strcmpi(varName,'temperature') newName = 'tem1'       ; end
+        if strcmpi(varName,'uv'         ) newName = 'ucx'        ; end
+        if strcmpi(varName,'wd'         ) newName = 'waterdepth' ; end
+        
+    case 'trim' % d3d
+        % Get the name of varName as specified on the map file of a simulation
+        if strcmpi(varName,'wl'         ) newName = 'S1'         ; end
+        if strcmpi(varName,'uv'         ) newName = 'U1'         ; end
+        if strcmpi(varName,'dps'        ) newName = 'DPS0'       ; end
+        
 end
 
 %% for FM output (netCDF files)

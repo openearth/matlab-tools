@@ -1,6 +1,7 @@
 function dims = EHY_getDimsInfo(inputFile,varName)
 
 modelType = EHY_getModelType(inputFile);
+[typeOfModelFile, typeOfModelFileDetail] = EHY_getTypeOfModelFile(inputFile);
 switch modelType
     case 'dfm'
         infonc          = ncinfo(inputFile);
@@ -32,13 +33,33 @@ switch modelType
             dims(iD).size       = dimsSizes(iD);
             dims(iD).index      = 1:dims(iD).size;
             dims(iD).indexOut   = 1:dims(iD).size;
-        end       
+        end
         
-    otherwise
+    case 'd3d'
         
-        dims=struct;
-        modelType = EHY_getModelType(inputFile);
+        % time // always ask for time
+        dims(1).name = 'time';
         
+        % layers
+        gridInfo = EHY_getGridInfo(inputFile,{'no_layers'});
+        if gridInfo.no_layers > 1 && ~ismember(varName,{'wl','wd','dps','S1'})
+            dims(end+1).name = 'layers';
+        end
+        
+        if strcmp(typeOfModelFileDetail,'trih')
+            % stations
+            stationNames = EHY_getStationNames(inputFile,modelType,'varName',varName);
+            if ~isempty(stationNames)
+                dims(end+1).name = 'stations';
+            end
+        elseif strcmp(typeOfModelFileDetail,'trim')
+            % faces/grid cells
+            dims(end+1).name = 'm';
+            dims(end+1).name = 'n';
+        end
+        
+    otherwise % SOBEK / SIMONA
+              
         % time // always ask for time
         dims(1).name = 'time';
         

@@ -1,6 +1,6 @@
 function OPT=EHY_getmodeldata_layer_index(OPT,no_layers)
 
-if all(OPT.layer==0)
+if isempty(OPT.layer) || all(OPT.layer==0)
     OPT.layer=1:no_layers;
 elseif no_layers==1 && length(OPT.layer)>1
     warning('User selected multiple layers, but there is only 1 layer available. Setting OPT.layer=1; ')

@@ -97,23 +97,38 @@ layersInd = strmatch('layers',{dims(:).name});
 if ~isempty(layersInd)
     gridInfo = EHY_getGridInfo(outputfile,{'no_layers'});
     if gridInfo.no_layers>1
-    option=listdlg('PromptString',{'Want to load data from a specific layer?','(Default is, in case of 3D-model, all layers)'},'SelectionMode','single','ListString',...
-        {'Yes','No'},'ListSize',[300 50]);
-    if isempty(option)
-        disp('EHY_getmodeldata_interactive was stopped by user');return;
-    elseif option==1
-        OPT.layer = cell2mat(inputdlg('Layer nr:','',1,{num2str(gridInfo.no_layers)}));
+        option=listdlg('PromptString',{'Want to load data from a specific layer?','(Default is, in case of 3D-model, all layers)'},'SelectionMode','single','ListString',...
+            {'Yes','No'},'ListSize',[300 50]);
+        if isempty(option)
+            disp('EHY_getmodeldata_interactive was stopped by user');return;
+        elseif option==1
+            OPT.layer = cell2mat(inputdlg('Layer nr:','',1,{num2str(gridInfo.no_layers)}));
+        end
     end
 end
+
+mInd = strmatch('m',{dims(:).name});
+if ~isempty(mInd)
+    gridInfo = EHY_getGridInfo(outputfile,{'dimensions'});
+    option=inputdlg({['Want to specifiy a certain [m,n]-domain? (Default: 0 [all data])' char(10) char(10) 'm-range [1:' num2str(gridInfo.MNKmax(1)) ']'],...
+        ['n-range [1:' num2str(gridInfo.MNKmax(2)) ']']},'Specify domain',1,{'0','0'});
+    if isempty(option)
+        disp('EHY_getmodeldata_interactive was stopped by user');return;
+    else
+        OPT.m = option{1};
+        OPT.n = option{2};
+    end
 end
 
 % mergePartitions
-OPT.mergePartitions=0;
-if EHY_isPartitioned(outputfile,modelType)
-    option=listdlg('PromptString','Do you want to merge the info from different partitions?','SelectionMode','single','ListString',...
-        {'Yes','No'},'ListSize',[300 100]);
-    if option==1
-        OPT.mergePartitions=1;
+if strcmp(modelType,'dfm')
+    OPT.mergePartitions=0;
+    if EHY_isPartitioned(outputfile,modelType)
+        option=listdlg('PromptString','Do you want to merge the info from different partitions?','SelectionMode','single','ListString',...
+            {'Yes','No'},'ListSize',[300 100]);
+        if option==1
+            OPT.mergePartitions=1;
+        end
     end
 end
 
@@ -134,15 +149,28 @@ disp([char(10) 'Note that next time you want to get this data, you can also use:
 disp(['Data = EHY_getMapModelData(''' outputfile '''' extraText ');' ])
 
 disp('start retrieving the data...')
-gridInfo=EHY_getGridInfo(outputfile,{'face_nodes_xy'},'mergePartitions',OPT.mergePartitions);
 if ~exist('OPT','var') || isempty(fieldnames(OPT))
     Data = EHY_getMapModelData(outputfile);
 else
     Data = EHY_getMapModelData(outputfile,OPT);
 end
-% add xy data of face_nodes
-Data.face_nodes_x=gridInfo.face_nodes_x;
-Data.face_nodes_y=gridInfo.face_nodes_y;
+
+% load and add grid information
+if strcmp(modelType,'dfm')
+    gridInfo=EHY_getGridInfo(outputfile,{'face_nodes_xy'},'mergePartitions',OPT.mergePartitions);
+elseif strcmp(modelType,'d3d')
+    gridInfo=EHY_getGridInfo(outputfile,{'XYcor'},'m',OPT.m,'n',OPT.n);
+end
+
+if strcmp(modelType,'dfm')
+    % add xy data of face_nodes
+    Data.face_nodes_x=gridInfo.face_nodes_x;
+    Data.face_nodes_y=gridInfo.face_nodes_y;
+elseif strcmp(modelType,'d3d')
+    % add xy data of corners
+    Data.Xcor=gridInfo.Xcor;
+    Data.Ycor=gridInfo.Ycor;
+end
 
 disp('Finished retrieving the data!')
 assignin('base','Data',Data);

@@ -1,0 +1,11 @@
+function OPT = EHY_getmodeldata_mn_index(OPT,fName)
+
+gridInfo = EHY_getGridInfo(fName,{'dimensions'});
+
+% replace empty-indices or 0 by all
+if isempty(OPT.m) || all(OPT.m==0)
+    OPT.m=1:gridInfo.MNKmax(1); 
+end
+if isempty(OPT.n) || all(OPT.n==0)
+    OPT.n=1:gridInfo.MNKmax(2); 
+end

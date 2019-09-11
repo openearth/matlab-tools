@@ -18,7 +18,7 @@ function varargout=EHY_plotMapData_FM(gridInfo,zData,varargin)
 % created by Julien Groenenboom, October 2018
 %
 %% Settings
-OPT.linestyle = 'none'; % other options: '-' 
+OPT.linestyle = 'none'; % other options: '-'
 OPT.edgecolor = 'k';
 OPT.facecolor = 'flat';
 
@@ -38,54 +38,86 @@ if ~all([exist('gridInfo','var') exist('zData','var')])
     return
 end
 
-if ~all([isstruct(gridInfo) isfield(gridInfo,'face_nodes_x') isfield(gridInfo,'face_nodes_y')])
+if isstruct(gridInfo)
+    if isfield(gridInfo,'face_nodes_x') && isfield(gridInfo,'face_nodes_y')
+        modelType= 'dfm';
+    elseif isfield(gridInfo,'Xcor') && isfield(gridInfo,'Ycor')
+        modelType= 'd3d';
+    else
+        error('Something wrong with first input argument')
+    end
+else
     error('Something wrong with first input argument');
 end
 
-if size(gridInfo.face_nodes_x,2)~=prod(size(zData))
-    error('size(gridInfo.face_nodes_x,2) should be the same as  prod(size(zData))')
+if isempty(zData)
+    error('No zData to plot')
+elseif size(zData,1)==1
+    zData = squeeze(zData);
 end
 
-if isempty(zData); error('No zData to plot'); end
+if strcmp(modelType,'dfm') && size(gridInfo.face_nodes_x,2)~=prod(size(zData))
+    error('size(gridInfo.face_nodes_x,2) should be the same as  prod(size(zData))')
+elseif strcmp(modelType,'d3d') && ~all(size(gridInfo.Xcor)==size(gridInfo.Ycor))
+    error('size(gridInfo.Xcor) and size(gridInfo.Ycor) should be the same')
+elseif strcmp(modelType,'d3d') && ~all( (size(gridInfo.Xcor)-size(zData))==1 )
+    error('size(gridInfo.Xcor) and size(gridInfo) should be one size bigger than size(zData)')
+end
+
+if strcmp(modelType,'d3d')
+   % add dummy row and column for plotting of grid
+   zData(end+1,:)=NaN;
+   zData(:,end+1)=NaN;
+end
 
 %% plot figure
-for ii=1:size(gridInfo.face_nodes_x,2)
-    XY{1,ii}=[gridInfo.face_nodes_x(:,ii) gridInfo.face_nodes_y(:,ii); ];
-    % delete NaNs
-    XY{1,ii}(isnan(XY{1,ii}(:,1)),:)=[];
-    % close polygon
-    XY{1,ii}(end+1,:)=XY{1,ii}(1,:);
-end
-
-nnodes = cellfun('size',XY,1);
-unodes = unique(nnodes);
-unodes(unodes==0)=[];
-for i = 1:length(unodes)
-    n = unodes(i);
-    nr = n-1;
-    poly_n = find(nnodes==n);
-    npoly = length(poly_n);
-    tvertex = nr*npoly;
-    XYvertex = NaN(tvertex,2);
-    Vpatch = NaN(npoly,1);
-    offset = 0;
-    for ip = 1:npoly
-        XYvertex(offset+(1:nr),:) = XY{poly_n(ip)}(1:nr,:);
-        offset = offset+nr;
-        Vpatch(ip) = zData(poly_n(ip));
-    end
-    
-    hPatch(i,1)=patch('vertices',XYvertex, ...
-        'faces',reshape(1:tvertex,[nr npoly])', ...
-        'facevertexcdata',Vpatch, ...
-        'marker','none',...
-        'edgecolor',OPT.edgecolor,...
-        'linestyle',OPT.linestyle,...
-        'faceColor',OPT.facecolor);
-end
-
-if nargout==1
-    varargout{1}=hPatch;
-end
-
+switch modelType
+    case 'dfm'
+        
+        for ii=1:size(gridInfo.face_nodes_x,2)
+            XY{1,ii}=[gridInfo.face_nodes_x(:,ii) gridInfo.face_nodes_y(:,ii); ];
+            % delete NaNs
+            XY{1,ii}(isnan(XY{1,ii}(:,1)),:)=[];
+            % close polygon
+            XY{1,ii}(end+1,:)=XY{1,ii}(1,:);
+        end
+        
+        nnodes = cellfun('size',XY,1);
+        unodes = unique(nnodes);
+        unodes(unodes==0)=[];
+        for i = 1:length(unodes)
+            n = unodes(i);
+            nr = n-1;
+            poly_n = find(nnodes==n);
+            npoly = length(poly_n);
+            tvertex = nr*npoly;
+            XYvertex = NaN(tvertex,2);
+            Vpatch = NaN(npoly,1);
+            offset = 0;
+            for ip = 1:npoly
+                XYvertex(offset+(1:nr),:) = XY{poly_n(ip)}(1:nr,:);
+                offset = offset+nr;
+                Vpatch(ip) = zData(poly_n(ip));
+            end
+            
+            hPatch(i,1)=patch('vertices',XYvertex, ...
+                'faces',reshape(1:tvertex,[nr npoly])', ...
+                'facevertexcdata',Vpatch, ...
+                'marker','none',...
+                'edgecolor',OPT.edgecolor,...
+                'linestyle',OPT.linestyle,...
+                'faceColor',OPT.facecolor);
+        end
+        
+        if nargout==1
+            varargout{1}=hPatch;
+        end
+        
+    case 'd3d'
+        hPcolor = pcolor(gridInfo.Xcor,gridInfo.Ycor,zData);
+        set(hPcolor,'linestyle',OPT.linestyle,'edgecolor',OPT.edgecolor,'facecolor',OPT.facecolor);
+        
+        if nargout==1
+            varargout{1}=hPcolor;
+        end
 end
