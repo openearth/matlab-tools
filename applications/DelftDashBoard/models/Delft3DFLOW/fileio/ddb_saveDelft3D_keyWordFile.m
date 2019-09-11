@@ -177,7 +177,11 @@ for i=1:length(fldnames)
                         
                         valstr=[valstr repmat(' ',1,17-length(valstr))];
                         str=['   ' keywstr ' = ' valstr ' ' unit ' ' comment];
-                        fprintf(fid,'%s\n',str);
+                        if iscell(str) == 1
+                            fprintf(fid,'%s\n',str{:});
+                        else
+                            fprintf(fid,'%s\n',str);                            
+                        end
                         
                         % Additional comments
                         if isfield(s.(fldname)(j).(keyw),'comment')

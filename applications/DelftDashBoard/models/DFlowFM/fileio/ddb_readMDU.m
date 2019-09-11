@@ -1,4 +1,4 @@
-function handles = ddb_readMDU(handles, filename, id)
+ function handles = ddb_readMDU(handles, filename, id)
 %DDB_READMDU  One line description goes here.
 
 %% Copyright notice

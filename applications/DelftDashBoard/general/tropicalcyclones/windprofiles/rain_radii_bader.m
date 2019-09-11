@@ -1,6 +1,6 @@
 function [pmax_out,pr] = rain_radii_bader(meas_vmax, rmax, radius, probability)
-% Functon calculate pmax (maximum rainfall intensity)
-% add the radial distribution of the rain (pr)
+% Function to calculate pmax (maximum rainfall intensity)
+% and the radial distribution of the rain (pr)
 % Input meas_vmax in m/s and 10 minute averaged (Daan to check)
 % Input rmax and radius in km
 % Probability is 0, means you will get the most probably pmax and pr

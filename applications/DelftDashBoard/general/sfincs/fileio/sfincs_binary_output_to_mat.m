@@ -51,23 +51,31 @@ fclose(fid);
 
 if exist([folder 'cumprcp.dat'],'file')
     % Read data file
-    it=0;
-    fid=fopen([folder 'cumprcp.dat'],'r');
-    while 1
-        idummy=fread(fid,1,'integer*4');
-        if isempty(idummy)
-            break
-        end
-        it=it+1;
-        zsv=fread(fid,np,'real*4');
-        idummy=fread(fid,1,'integer*4');
-        zs0=zeros(inp.nmax,inp.mmax);
-        zs0(zs0==0)=NaN;
-        zs0(indices)=zsv;
-        %    zs0(zs0-zb<0.05)=NaN;
-        cumprcp(it,:,:)=zs0;
-    end
+%     it=0;
+%     fid=fopen([folder 'cumprcp.dat'],'r');
+%     while 1
+%         idummy=fread(fid,1,'integer*4');
+%         if isempty(idummy)
+%             break
+%         end
+%         it=it+1;
+%         zsv=fread(fid,np,'real*4');
+%         idummy=fread(fid,1,'integer*4');
+%         zs0=zeros(inp.nmax,inp.mmax);
+%         zs0(zs0==0)=NaN;
+%         zs0(indices)=zsv;
+%         %    zs0(zs0-zb<0.05)=NaN;
+%         cumprcp(it,:,:)=zs0;
+%     end
+%     fclose(fid);
+    fid=fopen([folder 'cumprcp.dat'],'r'); %now only at latest time-step
+    idummy=fread(fid,1,'integer*4');
+    cumprcpv=fread(fid,np,'real*4');
+    idummy=fread(fid,1,'integer*4');
     fclose(fid);
+    cumprcp=zeros(inp.nmax,inp.mmax);
+    cumprcp(cumprcp==0)=NaN;
+    cumprcp(indices)=cumprcpv;
 end
 
 
@@ -118,7 +126,8 @@ valout(valout==0)=NaN;
 zbout(zbout==0)=NaN;
 hmaxout=zbout;
 vmaxout=zbout;
-cumprcpout=valout;
+% cumprcpout=valout;
+cumprcpout=zbout;
 
 
 n=0;
@@ -174,15 +183,26 @@ s.parameters(n).parameter.quantity='scalar';
 %     s.parameters(n).parameter.quantity='scalar';
 % end
 
-if exist([folder 'cumprcp.dat'],'file')
-    cumprcpout(:,1:end-1,1:end-1)=cumprcp;
+% if exist([folder 'cumprcp.dat'],'file')
+%     cumprcpout(:,1:end-1,1:end-1)=cumprcp;
+%     n=n+1;
+%     s.parameters(n).parameter.name='cumulative precipitation';
+%     s.parameters(n).parameter.time=tstart+t/86400;
+%     s.parameters(n).parameter.x=x;
+%     s.parameters(n).parameter.y=y;
+%     s.parameters(n).parameter.val=cumprcpout;
+%     s.parameters(n).parameter.size=[it 0 size(x,1) size(x,2) 0];
+%     s.parameters(n).parameter.quantity='scalar';
+% end
+
+if exist([folder 'cumprcp.dat'],'file') %now only at latest time-step
+    cumprcpout(1:end-1,1:end-1)=cumprcp;
     n=n+1;
     s.parameters(n).parameter.name='cumulative precipitation';
-    s.parameters(n).parameter.time=tstart+t/86400;
     s.parameters(n).parameter.x=x;
     s.parameters(n).parameter.y=y;
     s.parameters(n).parameter.val=cumprcpout;
-    s.parameters(n).parameter.size=[it 0 size(x,1) size(x,2) 0];
+    s.parameters(n).parameter.size=[0 0 size(x,1) size(x,2) 0];
     s.parameters(n).parameter.quantity='scalar';
 end
 

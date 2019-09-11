@@ -1,4 +1,4 @@
-function tc=wes3(trackinput,format,spwinput,outputfile,varargin)
+function tc=wes4(trackinput,format,spwinput,outputfile,varargin)
 
 % The tc structure contains ONLY information about the track.
 % The spw structure contains info of the spiderweb grid (radius, nr bins,

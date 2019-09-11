@@ -35,7 +35,7 @@ ncid                = netcdf.create(filename,'NC_WRITE');
 globalID            = netcdf.getConstant('NC_GLOBAL');
 
 % Add attributes global to the dataset
-netcdf.putAtt(ncid,globalID, 'title',           'SFINCS netcdf amu/amv wind input');
+netcdf.putAtt(ncid,globalID, 'title',           'SFINCS netcdf ampr precipitation input');
 netcdf.putAtt(ncid,globalID, 'institution',     'Deltares');
 netcdf.putAtt(ncid,globalID, 'email',           'tim.leijnse@deltares.nl');
 netcdf.putAtt(ncid,globalID, 'terms_for_use',   'Use as you like');
@@ -83,7 +83,7 @@ netcdf.putAtt(ncid,time_ID,'units', ['minutes since ',refdate]);
 % Standard names - 5 = ampr
 ampr_ID      = netcdf.defVar(ncid,'precipitation','double',[xdimid ydimid timedimid]); 
 netcdf.putAtt(ncid,ampr_ID,'standard_name','precipitation');
-netcdf.putAtt(ncid,ampr_ID,'long_name','precipitation');
+netcdf.putAtt(ncid,ampr_ID,'long_name','precipitation_rate');
 netcdf.putAtt(ncid,ampr_ID,'units','mm/hr');
 netcdf.putAtt(ncid,ampr_ID,'_FillValue',-999);
 netcdf.putAtt(ncid,ampr_ID,'coordinates','x y');

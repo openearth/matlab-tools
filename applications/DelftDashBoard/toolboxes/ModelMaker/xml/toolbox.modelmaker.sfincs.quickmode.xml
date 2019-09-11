@@ -94,6 +94,17 @@
     <option1>generategrid</option1>
   </element>
   <element>
+    <style>edit</style>
+    <position>500 110 50 20</position>
+    <tooltipstring>Change minimum water depth for active cells determination</tooltipstring>
+    <text>Z Min (m)</text>
+    <textposition>right</textposition>
+    <onchange>ddb_ModelMakerToolbox_sfincs_quickMode</onchange>
+    <option1>editzMin</option1>
+    <type>integer</type>
+    <variable>handles.toolbox.modelmaker.zMin</variable>
+  </element>
+  <element>
     <style>pushbutton</style>
     <position>320 85 140 20</position>
     <tooltipstring>Push to generate model bathymetry</tooltipstring>

@@ -76,10 +76,19 @@ handles.model.sfincs.domain(id).input.depfile=filename;
 gridz=handles.model.sfincs.domain(id).gridz';
 %gridz(isnan(gridz))=-99;
 %gridz=min(gridz,20);
+zmin = -2;
+zmax = 100;
+if ~isempty(handles.toolbox.modelmaker.zMin)
+   zmin = handles.toolbox.modelmaker.zMin; 
+   disp(['User defined zMin= ',num2str(zmin)])
+end
+disp(zmin)    
+disp('stopdepth --> deze nog aan laten passen')
 
 %xy=landboundary('read','texas_land.pli');
 %xy=landboundary('read','southflorida.pli');
-msk=sfincs_make_mask(xg',yg',gridz,[-2 100]);
+% msk=sfincs_make_mask(xg',yg',gridz,[-10000 100]); %voor test NI ocean
+msk=sfincs_make_mask(xg',yg',gridz,[zmin zmax]);
 %msk=sfincs_make_mask(xg',yg',gridz,[-2 100],'includepolygon',xy);
 msk(isnan(gridz))=0;
 gridz(msk==0)=NaN;
