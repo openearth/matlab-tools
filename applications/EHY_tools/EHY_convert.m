@@ -1178,6 +1178,16 @@ if isempty(OPT.fromEPSG)
         OPT.fromEPSG=str2num(answer{1});
     end
 end
+
+% ad-hoc for Singapore
+if OPT.fromEPSG==3414
+    warning('Ad-hoc conversion for SVY21, based on WGS84/UTM48N');
+    OPT.fromEPSG=32648;
+    x=x+342212;
+    y=y+112342;
+end
+% end
+
 if isempty(OPT.fromEPSG)
     disp('Coordinates are assumed to be in WGS''84 (Latitude,Longitude)')
     OPT.fromEPSG='4326';
