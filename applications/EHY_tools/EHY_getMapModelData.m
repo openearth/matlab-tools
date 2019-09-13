@@ -6,10 +6,16 @@ function varargout = EHY_getMapModelData(inputFile,varargin)
 % feedback on how to use the EHY_getMapModelData-function with input arguments.
 %
 % Input Arguments:
-% outputfile: Output file with simulation results
+% inputFile: model file with simulation results
 %
 % Optional input arguments:
-% varName   : Name of variable, choose from: 'wl','wd','uv','sal',tem'
+% varName   : Name of variable, choose from:
+%             'wl'        water level
+%             'wd'        water depth
+%             'dps'       bed level
+%             'uv'        velocities (in (u,v,)x,y-direction)
+%             'sal'       salinity
+%             'tem'       temperature
 % t0        : Start time of dataset (e.g. '01-Jan-2018' or 737061 (Matlab date) )
 % tend      : End time of dataset (e.g. '01-Feb-2018' or 737092 (Matlab date) )
 % layer     : Model layer, e.g. '0' (all layers), [2] or [4:8]
@@ -21,7 +27,6 @@ function varargout = EHY_getMapModelData(inputFile,varargin)
 % Data.OPT                : Structure with optional user settings used
 %
 % For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
-% created by Julien Groenenboom, October 2018
 %% check user input
 if ~exist('inputFile','var')
     EHY_getMapModelData_interactive
@@ -32,6 +37,7 @@ end
 OPT.varName         = 'wl';
 OPT.t0              = '';
 OPT.tend            = '';
+OPT.t               = []; % time index. If OPT.t is specified, OPT.t0 and OPT.tend are not used to find time index
 OPT.layer           = 0; % all
 OPT.m               = 0; % all (horizontal structured grid [m,n])
 OPT.n               = 0; % all (horizontal structured grid [m,n])
@@ -45,12 +51,13 @@ inputFile = strtrim(inputFile);
 if ~isempty(OPT.t0);      OPT.t0=datenum(OPT.t0);       end
 if ~isempty(OPT.tend);    OPT.tend=datenum(OPT.tend);   end
 if ~isnumeric(OPT.layer); OPT.layer=str2num(OPT.layer); end
+if ~isnumeric(OPT.t);     OPT.m=str2num(OPT.t);         end
 if ~isnumeric(OPT.m);     OPT.m=str2num(OPT.m);         end
 if ~isnumeric(OPT.n);     OPT.n=str2num(OPT.n);         end
 if ~isnumeric(OPT.k);     OPT.k=str2num(OPT.k);         end
 
 if all(OPT.layer==0) && ~all(OPT.k==0) % OPT.k was provided, OPT.layer not
-    OPT.layer = OPT.k; % use OPT.layer instead of OPT.k 
+    OPT.layer = OPT.k; % OPT.layer is used in script
 end
 
 %% Get model type
@@ -66,7 +73,12 @@ dims = EHY_getDimsInfo(inputFile,OPT.varName);
 timeInd = strmatch('time',{dims(:).name});
 if ~isempty(timeInd)
     Data.times                               = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
-    [Data,time_index,select,index_requested] = EHY_getmodeldata_time_index(Data,OPT);
+    if ~isempty(OPT.t)
+        index_requested = OPT.t;
+        time_index      = 1:length(Data.times);
+    else
+        [Data,time_index,~,index_requested]  = EHY_getmodeldata_time_index(Data,OPT);
+    end
     Data.times                               = Data.times(index_requested); % if time-interval was used, this step is needed
     dims(timeInd).index                      = time_index(index_requested);
     dims(timeInd).indexOut                   = 1:length(dims(timeInd).index);
@@ -142,7 +154,7 @@ switch modelType
     case 'dfm'
         
         %% Read data
-        start = repmat(1,1,no_dims);
+        start = ones(1,no_dims);
         count = [dims.size];
         
         % change 'time'-values to wanted indices
@@ -258,18 +270,18 @@ end
 
 % dimension information
 if isfield(Data,'val')
-    fn='val';
+    fn = 'val';
 elseif isfield(Data,'vel_x')
-    fn='vel_x';
+    fn = 'vel_x';
 end
 if strcmp(modelType,'dfm')
     if exist('dims','var')
         dimensionsComment = fliplr({dims.nameOnFile});
-        while length(size(Data.(fn)))<no_dims % size of output < no_dims
+        while length(size(Data.(fn))) < no_dims % size of output < no_dims
             % if e.g. only 1 layer selected, output is 2D instead of 3D.
-            dimensionsComment(end)=[];
-            dims(end)=[];
-            no_dims=length(dims);
+            dimensionsComment(end) = [];
+            dims(end) = [];
+            no_dims = length(dims);
         end
     else
         if length(size(Data.(fn)))==2
@@ -286,8 +298,10 @@ elseif strcmp(modelType,'d3d')
     end
 end
 
-dimensionsComment = sprintf('%s,',dimensionsComment{:});
-Data.dimensions = ['[' dimensionsComment(1:end-1) ']'];
+if exist('dimensionsComment','var') % does not exist for partitioned dfm simulation
+    dimensionsComment = sprintf('%s,',dimensionsComment{:});
+    Data.dimensions = ['[' dimensionsComment(1:end-1) ']'];
+end
 
 %% Fill output struct
 Data.OPT               = OPT;

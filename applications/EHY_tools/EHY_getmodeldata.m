@@ -61,6 +61,7 @@ OPT.varName      = 'wl';
 OPT.t0           = '';
 OPT.tend         = '';
 OPT.tint         = ''; % in minutes
+OPT.t            = []; % time index. If OPT.t is specified, OPT.t0, OPT.tend and OPT.tint are not used to find time index
 OPT.layer        = 0; % all
 OPT.loopStations = 0; % set to 1 if you want to loop over the stations to avoid memory problems
 OPT              = setproperty(OPT,varargin);
@@ -95,7 +96,12 @@ end
 timeInd = strmatch('time',{dims(:).name});
 if ~isempty(timeInd)
     Data.times                               = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
-    [Data,time_index,select,index_requested] = EHY_getmodeldata_time_index(Data,OPT);
+    if ~isempty(OPT.t)
+        index_requested = OPT.t;
+        time_index      = 1:length(Data.times);
+    else
+        [Data,time_index,~,index_requested]  = EHY_getmodeldata_time_index(Data,OPT);
+    end
     Data.times                               = Data.times(index_requested); % if time-interval was used, this step is needed
     dims(timeInd).index                      = time_index(index_requested);
     dims(timeInd).indexOut                   = 1:length(dims(timeInd).index);
