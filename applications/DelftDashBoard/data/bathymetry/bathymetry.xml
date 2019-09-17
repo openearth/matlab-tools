@@ -1,6 +1,17 @@
 <?xml version="1.0"?>
 <root>
   <dataset>
+    <name>gebco19</name>
+    <longName>GEBCO 19</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/gebco19</URL>
+    <useCache>1</useCache>
+    <source>Other</source>
+    <dataset/>
+  </dataset>
+  <dataset>
     <name>gebco08</name>
     <longName>GEBCO 08</longName>
     <version>1</version>
