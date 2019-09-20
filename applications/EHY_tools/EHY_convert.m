@@ -1277,21 +1277,16 @@ if OPT.fromEPSG~=OPT.toEPSG
              end
              output=T;
         case '.nc'
-            if nc_isvar(inputFile,'NetNode_x')
-                output=[ncread(inputFile,'NetNode_x') ncread(inputFile,'NetNode_y')];
-            else
-                output=[ncread(inputFile,'mesh2d_node_x') ncread(inputFile,'mesh2d_node_y')];
-            end
+            varNameX = EHY_nameOnFile(inputFile,'NetNode_x');
+            varNameY = EHY_nameOnFile(inputFile,'NetNode_y');
+            output=[ncread(inputFile,varNameX) ncread(inputFile,varNameY)];
+             
             [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
             if OPT.saveOutputFile
                 copyfile(inputFile,outputFile)
-                if nc_isvar(inputFile,'NetNode_x')
-                    nc_varput(outputFile,'NetNode_x',output(:,1));
-                    nc_varput(outputFile,'NetNode_y',output(:,2));
-                else
-                    nc_varput(outputFile,'mesh2d_node_x',output(:,1));
-                    nc_varput(outputFile,'mesh2d_node_y',output(:,2));
-                end
+                nc_varput(outputFile,varNameX,output(:,1));
+                nc_varput(outputFile,varNameY,output(:,2));
+            
                 % to do: fix setting the right EPSG code in the .nc file,
                 % not properply working yet
 %                 if OPT.toEPSG==4326
