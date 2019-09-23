@@ -1,10 +1,10 @@
-function values = ncread_blocks(inputFile,varName,start,count)
+function values = ncread_blocks2(inputFile,varName,start,count,dims)
 
 %% Identical to ncread however te speed up data is read in blocks (loop over variable 'time')
 %  Function can be removed if ncread is speeded up for large datasets
 
-dims        = EHY_getDimsInfo(inputFile,varName);
 no_dims     = length(dims);
+order       = no_dims:-1:1;
 timeInd     = strmatch('time',{dims(:).name});
 
 if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count specified, variable has time dimension
@@ -27,9 +27,9 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count s
     
     % allocate variable 'values'
     if numel(count) == 1
-        values = NaN(count,1);
+        values = NaN(dims.sizeOut,1);
     else
-        values = NaN(count);
+        values = NaN(dims(order).sizeOut);
     end
     
     % cycle over blocks
@@ -41,17 +41,29 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count s
         start(end)               = bl_start + offset;
         count(end)               = bl_int;
         if no_dims == 1
-            values(bl_start:bl_stop,1)   = ncread(inputFile,varName,start,count);
+            % probably [time]          = [time]
+            values(bl_start:bl_stop,1) = ncread(inputFile,varName,start,count);
         elseif no_dims == 2
-            values(:,bl_start:bl_stop)   = ncread(inputFile,varName,start,count);
+            values_tmp = ncread(inputFile,varName,start,count);
+            % probably [time,station]                 = [station,time]
+            values(bl_start:bl_stop,dims(1).indexOut) = permute(values_tmp(dims(1).index,:),order);
         elseif no_dims == 3
-            values(:,:,bl_start:bl_stop) = ncread(inputFile,varName,start,count);
+            values_tmp = ncread(inputFile,varName,start,count);
+            % probably [time,station,layer]                            = [layer,station,time]
+            values(bl_start:bl_stop,dims(2).indexOut,dims(1).indexOut) = permute(values_tmp(dims(1).index,dims(2).index,:),order);
         end
     end
     
+    % correct for wanted time-indices in case of time-interval 
+    % (works for 1D, 2D and 3D sized variable 'values')
+    values = values(dims(timeInd).index,:,:);
+    
 elseif all(ismember({'start','count'},who)) && isempty(timeInd)  % start and count specified, variable has not a time dimension
-    values = ncread(inputFile,varName,start,count);
+    values_tmp = ncread(inputFile,varName,start,count);
+    values(dims(order).indexOut) = values_tmp(dims.index);
+    
 else
     % no start and count specified, regular ncread
-    values = ncread(inputFile,varName);
+    values_tmp = ncread(inputFile,varName);
+    values(dims(order).indexOut) = values_tmp(dims.index);
 end

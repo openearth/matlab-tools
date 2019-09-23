@@ -205,8 +205,10 @@ if exist('realTime_S','var') % if simulation has finished
     runTimeInfo.compTime_dayPerYear=runTimeInfo.compTime_minPerDay/60/24*365;
     
     %initialisation time
-    runTimeInfo.initTime_S=initTime_S;
-    runTimeInfo.initTime_M=runTimeInfo.initTime_S/60;
+    if exist('initTime_S','var')
+        runTimeInfo.initTime_S=initTime_S;
+        runTimeInfo.initTime_M=runTimeInfo.initTime_S/60;
+    end
     
     %initialisation of external forcing time
     if exist('initextforcTime_S','var')

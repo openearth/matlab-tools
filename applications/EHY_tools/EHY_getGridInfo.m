@@ -436,13 +436,11 @@ switch modelType
                     
                     % If partitioned run, delete ghost cells
                     [~, name]=fileparts(inputFile);
-                    if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && or(nc_isvar(inputFile,'FlowElemDomain'),nc_isvar(inputFile,'mesh2d_flowelem_domain'))
-                        domainNr=str2num(name(end-7:end-4));
-                        if nc_isvar(inputFile,'FlowElemDomain')
-                            FlowElemDomain=ncread(inputFile,'FlowElemDomain');
-                        elseif nc_isvar(inputFile,'mesh2d_flowelem_domain')
-                            FlowElemDomain=ncread(inputFile,'mesh2d_flowelem_domain');
-                        end
+                    varName = EHY_nameOnFile(inputFile,'FlowElemDomain');
+                    if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && nc_isvar(inputFile,varName)
+                        domainNr = str2num(name(end-7:end-4));
+                        FlowElemDomain = ncread(inputFile,varName);
+
                         % FlowElemGlobal(ghostCellsCenter)
                         ghostCellsCenter=FlowElemDomain~=domainNr;
                         % to be implemenetd for ghostCellsCorner
@@ -700,9 +698,24 @@ switch modelType
                     end
                 end
         end % typeOfModelFile
+        
     case {'sobek3' 'sobek3_new' 'implic'}
         E.layer_model = '';
         E.no_layers   = 1;
+        
+    case 'delwaq'
+        switch typeOfModelFile
+            case 'grid'
+                dw = delwaq('open',inputFile);
+                if ismember('dimensions',wantedOutput)
+                    E.MNKmax = dw.MNK;
+                end
+                if ismember('XYcor',wantedOutput)
+                    E.Xcor = dw.X;
+                    E.Ycor = dw.Y;
+                end
+        end % typeOfModelFile
+  
 end % modelType
 
 %% If selection of stations is specified, reduce output to specified stations only

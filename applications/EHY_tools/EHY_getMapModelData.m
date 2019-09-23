@@ -38,12 +38,13 @@ OPT.varName         = 'wl';
 OPT.t0              = '';
 OPT.tend            = '';
 OPT.t               = []; % time index. If OPT.t is specified, OPT.t0 and OPT.tend are not used to find time index
-OPT.layer           = 0; % all
-OPT.m               = 0; % all (horizontal structured grid [m,n])
-OPT.n               = 0; % all (horizontal structured grid [m,n])
-OPT.k               = 0; % all (vertical   d3d grid [m,n,k])
-OPT.mergePartitions = 1; % merge output from several dfm '_map.nc'-files
-OPT.disp            = 1; % display status of getting map model data
+OPT.layer           = 0;  % all
+OPT.m               = 0;  % all (horizontal structured grid [m,n])
+OPT.n               = 0;  % all (horizontal structured grid [m,n])
+OPT.k               = 0;  % all (vertical   d3d grid [m,n,k])
+OPT.mergePartitions = 1;  % merge output from several dfm '_map.nc'-files
+OPT.disp            = 1;  % display status of getting map model data
+OPT.lgaFile         = ''; %lga-file needed in combination with delwaq output file
 OPT                 = setproperty(OPT,varargin);
 
 %% modify input
@@ -72,7 +73,7 @@ dims = EHY_getDimsInfo(inputFile,OPT.varName);
 %% Get time information from simulation and determine index of required times
 timeInd = strmatch('time',{dims(:).name});
 if ~isempty(timeInd)
-    Data.times                               = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
+    Data.times          = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
     if ~isempty(OPT.t)
         index_requested = OPT.t;
         time_index      = 1:length(Data.times);
@@ -206,14 +207,11 @@ switch modelType
         end
         
         % If partitioned run, delete ghost cells
-        [~, name]=fileparts(inputFile);
-        if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && or(nc_isvar(inputFile,'FlowElemDomain'),nc_isvar(inputFile,'mesh2d_flowelem_domain'))
-            domainNr=str2num(name(end-7:end-4));
-            if nc_isvar(inputFile,'FlowElemDomain')
-                FlowElemDomain=ncread(inputFile,'FlowElemDomain');
-            elseif nc_isvar(inputFile,'mesh2d_flowelem_domain')
-                FlowElemDomain=ncread(inputFile,'mesh2d_flowelem_domain');
-            end
+        [~, name] = fileparts(inputFile);
+        varName = EHY_nameOnFile(inputFile,'FlowElemDomain');
+        if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && nc_isvar(inputFile,varName)
+            domainNr = str2num(name(end-7:end-4));
+            FlowElemDomain = ncread(inputFile,varName);
             
             if isfield(Data,'val')
                 if order(facesInd)==1
@@ -262,6 +260,25 @@ switch modelType
         if dims(nInd).index(1)==1; Data.val = Data.val(:,2:end,:,:); end
         if dims(mInd).index(1)==1; Data.val = Data.val(:,:,2:end,:); end      
         
+    case 'delwaq'
+        dw       = delwaq('open',inputFile);
+        lga      = delwaq('open',OPT.lgaFile);
+        subInd   = strmatch(OPT.varName,dw.SubsName);
+        Data.val = NaN([1 size(lga.Index)]); % allocate 
+        
+        for iT = 1:length(dims(timeInd).index)
+            time_ind = dims(timeInd).index(iT);
+            [~,data] = delwaq('read',dw,subInd,0,time_ind);
+            data     = waq2flow3d(data,lga.Index);
+            Data.val(dims(timeInd).indexOut(iT),:,:,:) = data;
+        end
+        
+        % delete ghost cells
+        if dims(nInd).index(1)==1; Data.val = Data.val(:,2:end,:,:); end
+        if dims(mInd).index(1)==1; Data.val = Data.val(:,:,2:end,:); end
+        
+        Data.val(Data.val<0) = NaN;
+        
     case 'simona'
         %% SIMONA (WAQUA/TRIWAQ)
         % to be implemented
@@ -290,7 +307,7 @@ if strcmp(modelType,'dfm')
             dimensionsComment={'time','faces','layers'};
         end
     end
-elseif strcmp(modelType,'d3d')
+elseif any(ismember(modelType,{'d3d','delwaq'}))
     if length(size(Data.(fn)))==3
         dimensionsComment={'time','n_index','m_index'};
     elseif length(size(Data.(fn)))==4

@@ -23,12 +23,17 @@ switch modelType
     case {'d3dfm','dflow','dflowfm','mdu','dfm'}
         %% Delft3D-Flexible Mesh
         if ~isempty(strfind(lower(OPT.varName),'cross_section'))
-            stationNames  = cellstr(strtrim(nc_varget(inputFile,'cross_section_name')));
+            stationNames  = nc_varget(inputFile,'cross_section_name');
         elseif ~isempty(strfind(lower(OPT.varName),'general_structure'))
-            stationNames  = cellstr(strtrim(nc_varget(inputFile,'general_structure_name')));
+            stationNames  = nc_varget(inputFile,'general_structure_name');
         else % 'wl' or 'uv'
-            stationNames  = cellstr(strtrim(nc_varget(inputFile,'station_name'))); 
+            stationNames  = nc_varget(inputFile,'station_name'); 
         end
+        
+        if size(stationNames,2) == 1 % transpose needed in this case
+            stationNames = stationNames'; 
+        end
+        stationNames = cellstr(strtrim(stationNames));
         
     case {'d3d','d3d4','delft3d4','mdf'}
         %% Delft3D 4
@@ -58,7 +63,7 @@ switch modelType
              stationNames=cellstr(D.observation_id');
         end
         
-    case {'implic'}
+    case 'implic'
         %% IMPLIC
         D         = dir2(inputFile,'file_incl','\.dat$');
         files     = find(~[D.isdir]);
@@ -68,4 +73,9 @@ switch modelType
             stationNames{i_stat} = name;
         end   
         
+    case 'delwaq'
+        %% DELWAQ
+        dw = delwaq('open',inputFile);
+        stationNames = dw.SubsName;
+
 end

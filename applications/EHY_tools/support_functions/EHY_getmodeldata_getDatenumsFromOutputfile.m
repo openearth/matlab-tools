@@ -20,6 +20,7 @@ switch modelType
         itdate       = attri(15:end);
         datenums     = datenum(itdate, 'yyyy-mm-dd HH:MM:SS')+days;
         varargout{1} = datenum(itdate,'yyyy-mm-dd  HH:MM:SS');
+        
     case 'd3d'
         if ~isempty(strfind(inputFile,'mdf'))
             % mdf file
@@ -43,6 +44,7 @@ switch modelType
             trim     = qpfopen(inputFile);
             datenums = qpread(trim,'water level','times');
         end
+        
     case 'simona'
         sds=qpfopen(inputFile);
         datenums     = qpread(sds,1,'water level (station)','times');
@@ -56,6 +58,7 @@ switch modelType
         D        = read_sobeknc(inputFile);
         refdate  = ncreadatt(inputFile, 'time','units');
         datenums = D.time/1440./60. + datenum(refdate(15:end),'yyyy-mm-dd  HH:MM:SS');
+        
     case 'implic'
         if exist([inputFile filesep 'implic.mat'],'file')
             load([inputFile filesep 'implic.mat']);
@@ -82,5 +85,8 @@ switch modelType
             fclose(fid);
             
         end
+        
+    case 'delwaq'
+        dw = delwaq('open',inputFile);
+        datenums = delwaq('read',dw,dw.SubsName{1},1,0);
 end
-

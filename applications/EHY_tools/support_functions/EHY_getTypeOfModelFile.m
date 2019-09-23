@@ -25,7 +25,7 @@ typeOfModelFile='';
 
 % grid
 if isempty(typeOfModelFile)
-    if ismember(ext,'.grd')
+    if ismember(ext,{'.grd','.lga'})
         typeOfModelFile = 'grid';
     end
 end
@@ -49,7 +49,7 @@ if isempty(typeOfModelFile)
     if ~isempty(strfind([name ext],'_his.nc'))  || ~isempty(strfind([name ext],'_map.nc')) || ...
             ~isempty(strfind([name ext],'trih-'))  || ~isempty(strfind([name ext],'trim-')) || ...
             ~isempty(strfind([name],'sds')) || ~isempty(strfind([name ext],'_fou.nc')) || ...
-            ~isempty(strfind([name ext],'_waqgeom.nc'))
+            ~isempty(strfind([name ext],'_waqgeom.nc')) || strcmp(ext,'.map')
         typeOfModelFile = 'outputfile';
     end
 end

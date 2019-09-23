@@ -1,5 +1,8 @@
 function OPT = EHY_getmodeldata_mn_index(OPT,fName)
 
+if ~isempty(OPT.lgaFile)
+    fName = OPT.lgaFile; % get grid info from corresponding lga-file
+end
 gridInfo = EHY_getGridInfo(fName,{'dimensions'});
 
 % replace empty-indices or 0 by all

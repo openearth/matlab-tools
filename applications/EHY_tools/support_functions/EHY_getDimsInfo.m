@@ -58,14 +58,31 @@ switch modelType
             dims(end+1).name = 'n';
         end
         
-    otherwise % SOBEK / SIMONA
-              
+    case 'delwaq'
+        
+        % time // always ask for time
+        dims(1).name = 'time';
+                
+        if strcmp(typeOfModelFileDetail,'his')
+            % stations
+            stationNames = EHY_getStationNames(inputFile,modelType,'varName',varName);
+            if ~isempty(stationNames)
+                dims(end+1).name = 'stations';
+            end
+        elseif strcmp(typeOfModelFileDetail,'map')
+            % faces/grid cells
+            dims(end+1).name = 'm';
+            dims(end+1).name = 'n';
+        end
+        
+    otherwise % SOBEK / SIMONA / DELWAQ
+        
         % time // always ask for time
         dims(1).name = 'time';
         
         % layers
         gridInfo = EHY_getGridInfo(inputFile,{'no_layers'});
-        if gridInfo.no_layers > 1 && ~ismember(varName,{'wl','wd','dps'})
+        if isfield(gridInfo,'no_layers') && gridInfo.no_layers > 1 && ~ismember(varName,{'wl','wd','dps'})
             dims(end+1).name = 'layers';
         end
         

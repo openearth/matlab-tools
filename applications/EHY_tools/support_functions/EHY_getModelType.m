@@ -66,6 +66,11 @@ if ischar(fileInp)
         end
     end
     
+    % delwaq
+    if ismember(ext,{'.map','.lga','.his'})
+        modelType = 'delwaq';
+    end
+    
 elseif isstruct(fileInp)
     
     % Delft3D 4

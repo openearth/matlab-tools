@@ -63,7 +63,6 @@ OPT.tend         = '';
 OPT.tint         = ''; % in minutes
 OPT.t            = []; % time index. If OPT.t is specified, OPT.t0, OPT.tend and OPT.tint are not used to find time index
 OPT.layer        = 0; % all
-OPT.loopStations = 0; % set to 1 if you want to loop over the stations to avoid memory problems
 OPT              = setproperty(OPT,varargin);
 
 %% modify input
@@ -85,7 +84,7 @@ OPT.varName = EHY_nameOnFile(inputFile,OPT.varName);
 dims = EHY_getDimsInfo(inputFile,OPT.varName);
 
 %% Get list with the numbers of the requested stations
-stationsInd = strmatch('stations',{dims(:).name});
+stationsInd = strmatch('stations',{dims(:).name},'exact');
 if ~isempty(stationsInd)
     [Data,stationNrNoNan]      = EHY_getRequestedStations(inputFile,stat_name,modelType,'varName',OPT.varName);
     dims(stationsInd).index    = stationNrNoNan;
@@ -128,10 +127,9 @@ order = no_dims:-1:1;
 
 %% Get the computational data
 switch modelType
-    %  Delft3D-Flexible Mesh
     case {'d3dfm','dflow','dflowfm','mdu','dfm'}
-        
-        %% station x,y-location info
+        %%  Delft3D-Flexible Mesh
+        % station x,y-location info
         if any(ismember({dims.name},{'stations','cross_section'}))
             if strcmp(dims(stationsInd).name,'stations')
                 stationX = ncread(inputFile,'station_x_coordinate');
@@ -149,7 +147,7 @@ switch modelType
             end
         end
         
-        %% Read data
+        % Read data
         start = ones(1,no_dims);
         count = [dims.size];
         
@@ -161,70 +159,16 @@ switch modelType
             dims(timeInd).index = dims(timeInd).index-dims(timeInd).index(1)+1;% needed to 'only keep requested indices'
         end
         
-        % change 'stations'-values if we're going to loop over requested stations
-        % looping over stations is done to avoid too large variables
-        if ~isempty(stationsInd) && dims(stationsInd).sizeOut<=10
-            OPT.loopStations = 1;
-        end
-        
-        if OPT.loopStations
-            % loop over stations
-            for i_stat = 1:dims(stationsInd).sizeOut
-                
-                start(stationsInd) = dims(stationsInd).index(i_stat);
-                count(stationsInd) = 1;
-                
-                if ~strcmp(OPT.varName,{'x_velocity'})
-                    if ~exist('value','var'); value=[]; end % initiate
-                    value_station   = ncread_blocks(inputFile,OPT.varName,start,count);
-                    value           = cat(stationsInd,value,value_station);
-                else
-                    if ~exist('value_x','var'); value_x=[]; value_y=[]; end % initiate
-                    value_x_station = ncread_blocks(inputFile,'x_velocity',start,count);
-                    value_y_station = ncread_blocks(inputFile,'y_velocity',start,count);
-                    value_x         = cat(stationsInd,value_x,value_x_station);
-                    value_y         = cat(stationsInd,value_y,value_y_station);
-                end
-            end
-            % because of looping over stations > change index
-            dims(stationsInd).index = 1:dims(stationsInd).sizeOut;
-            
+        % The handling of all the wanted indices (like times, stations and layers) is done within ncread_blocks
+        if ~strcmp(OPT.varName,{'x_velocity'})
+            Data.val   =  ncread_blocks(inputFile,OPT.varName,start,count,dims);
         else
-            % don't loop over stations
-            if ~strcmp(OPT.varName,{'x_velocity'})
-                value     =  ncread_blocks(inputFile,OPT.varName,start,count);
-            else
-                value_x   =  ncread_blocks(inputFile,'x_velocity',start,count);
-                value_y   =  ncread_blocks(inputFile,'y_velocity',start,count);
-            end
+            Data.vel_x =  ncread_blocks(inputFile,'x_velocity',start,count,dims);
+            Data.vel_y =  ncread_blocks(inputFile,'y_velocity',start,count,dims);
         end
-        
-        % put value(_x/_y) in output structure 'Data'
-        if exist('value','var')
-            if no_dims==1
-                Data.val(dims(1).indexOut,1) = value(dims(1).index);
-            elseif no_dims==2
-                Data.val(dims(2).indexOut,dims(1).indexOut) = permute( value(dims(1).index,dims(2).index) ,order);
-            elseif no_dims==3
-                Data.val(dims(3).indexOut,dims(2).indexOut,dims(1).indexOut) = permute( value(dims(1).index,dims(2).index,dims(3).index) ,order);
-            end
-        elseif exist('value_x','var')
-            if strcmp(dims(1).name,'layers') && strcmp(dims(2).name,'stations') && strcmp(dims(3).name,'time')
-                if ndims(value_x)==2 % time,stations
-                    Data.vel_x(:,dims(2).indexOut) = permute(value_x(dims(1).index,dims(2).index),order);
-                    Data.vel_y(:,dims(2).indexOut) = permute(value_y(dims(1).index,dims(2).index),order);
-                elseif ndims(value_x)==3 % time,stations,layers
-                    Data.vel_x(:,dims(2).indexOut,dims(1).indexOut) = permute(value_x(dims(1).index,dims(2).index,dims(3).index),order);
-                    Data.vel_y(:,dims(2).indexOut,dims(1).indexOut) = permute(value_y(dims(1).index,dims(2).index,dims(3).index),order);
-                end
-            else
-                error(['Variable is not in order as expected' char(10) ...
-                    'Please contact Julien Groenenboom or Theo van der Kaaij'])
-            end
-        end
-        
-        % Delft3D 4
+
     case {'d3d','d3d4','delft3d4','mdf'}
+         %% Delft3D 4
         % open inputfile
         trih = vs_use(inputFile,'quiet');
         % loop over stations
@@ -460,6 +404,14 @@ switch modelType
         end
         
         clear tmp
+        
+    case 'delwaq'
+        %% DELWAQ
+        dw = delwaq('open',inputFile);
+        subInd = strmatch(OPT.varName,dw.SubsName);
+        error
+        delwaq('read');
+        
 end
 
 if ~isfield(Data,'exist_stat')
