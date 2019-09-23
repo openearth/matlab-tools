@@ -90,7 +90,7 @@ if exist(EHY_infoFile,'file')
         'Callback', @EHY_info);
     uicontrol('Style','text',...
         'units','centimeters','Position',[6 height-(iF+1)*0.7938-0.1 12 0.5292],...
-        'String','Collection of my personal notes, tips and tricks','horizontalalignment','left');
+        'String','Collection of notes, tips and tricks for Deltares modellers','horizontalalignment','left');
 end
 
 % aboutEHY

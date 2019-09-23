@@ -1,12 +1,20 @@
-function values = ncread_blocks2(inputFile,varName,start,count,dims)
+function values = ncread_blocks(inputFile,varName,start,count,dims)
 
 %% Identical to ncread however te speed up data is read in blocks (loop over variable 'time')
-%  Function can be removed if ncread is speeded up for large datasets
+% Note that the handling of wanted indices is done within this script, 
+% it if therefore not the same as ncread without looping over blocks.
 
 no_dims     = length(dims);
 order       = no_dims:-1:1;
 timeInd     = strmatch('time',{dims(:).name});
 
+% allocate variable 'values' > also to get NaN's in e.g. non-existing stations
+if no_dims == 1
+    values = NaN(dims.sizeOut,1);
+else
+    values = NaN(dims(order).sizeOut);
+end
+    
 if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count specified, variable has time dimension
     
     nr_times      = dims(timeInd).size;
@@ -24,14 +32,7 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count s
         error(['timeInd is not last variable, ncread_blocks does not work correctly in that case' char(10) ...
             'Please contact Julien Groenenboom or Theo van der Kaaij'])
     end
-    
-    % allocate variable 'values'
-    if numel(count) == 1
-        values = NaN(dims.sizeOut,1);
-    else
-        values = NaN(dims(order).sizeOut);
-    end
-    
+       
     % cycle over blocks
     offset        = start(end) - 1;
     for i_block = 1:no_blocks
