@@ -101,7 +101,7 @@ case 'write'
                line(end + 1) = ' ';
            end
            line(maxlen + 5:maxlen + length(mdu_Comments.(names{igroup}).(pars{ipar})) + 6) = ...
-           ['# ' mdu_Comments.(names{igroup}).(pars{ipar})];
+           ['# ' mdu_Comments.(names{igroup}).(pars{ipar})]
            tmp.Data{igroup,2}{ipar,2} = line;
        end
    end
@@ -148,7 +148,7 @@ case 'new'
                 comment = '';
                 for icol = 15: size(tmp,2)
                     if ~isempty (tmp{irow,icol})
-                        comment = [comment ', ' tmp{irow,icol}];
+                        comment = [comment ', ' char(tmp{irow,icol})];
                     end
                 end
                 mdu_Comment.(grpnam{igrp}).(tmp{irow,2}) = strtrim(comment(2:end));
