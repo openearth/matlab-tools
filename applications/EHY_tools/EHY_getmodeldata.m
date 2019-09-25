@@ -163,8 +163,9 @@ switch modelType
         if ~strcmp(OPT.varName,{'x_velocity'})
             Data.val   =  ncread_blocks(inputFile,OPT.varName,start,count,dims);
         else
-            Data.vel_x =  ncread_blocks(inputFile,'x_velocity',start,count,dims);
-            Data.vel_y =  ncread_blocks(inputFile,'y_velocity',start,count,dims);
+            Data.vel_x   = ncread_blocks(inputFile,'x_velocity',start,count,dims);
+            Data.vel_y   = ncread_blocks(inputFile,'y_velocity',start,count,dims);
+            Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
         end
 
     case {'d3d','d3d4','delft3d4','mdf'}
@@ -223,6 +224,7 @@ switch modelType
                             Data.vel_u(:,i_stat,:) = cell2mat(vs_get(trih,'his-series',{time_index},'ZCURU',{nr_stat,OPT.layer},'quiet'));
                             Data.vel_v(:,i_stat,:) = cell2mat(vs_get(trih,'his-series',{time_index},'ZCURV',{nr_stat,OPT.layer},'quiet'));
                         end
+                        Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
                     case {'Zcen_cen' 'Zcen_int'}
                         zwl      = vs_let(trih,'his-series',{time_index(index_requested)},'ZWL'  ,{nr_stat},'quiet');
                         for i_time = 1: length(index_requested)
@@ -323,6 +325,7 @@ switch modelType
                             Data.vel_x(:,i_stat,:) = waquaio(sds,[],'u-stat',time_index,nr_stat,OPT.layer);
                             Data.vel_y(:,i_stat,:) = waquaio(sds,[],'v-stat',time_index,nr_stat,OPT.layer);
                         end
+                        Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
                     case 'salinity'
                         if no_layers==1
                             Data.val(:,i_stat) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat);

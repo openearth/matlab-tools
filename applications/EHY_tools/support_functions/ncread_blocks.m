@@ -14,6 +14,11 @@ if no_dims == 1
 else
     values = NaN(dims(order).sizeOut);
 end
+% check if output is char or double 
+infonc = ncinfo(inputFile,varName);
+if strcmp(infonc.Datatype,'char')
+   values = char(values);
+end
     
 if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count specified, variable has time dimension
     

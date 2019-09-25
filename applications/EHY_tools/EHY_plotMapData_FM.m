@@ -1,7 +1,9 @@
 function varargout=EHY_plotMapData_FM(gridInfo,zData,varargin)
 %% EHY_plotMapData_FM(gridInfo,zData)
-% Create top views using QuickPlot / d3d_qp functionalities
-% However, this function only plots the pcolor / patch part,
+% Create top views using QuickPlot / d3d_qp functionalities (for
+% 'DFM'-runs) or pcolor (for 'D3D'-runs)
+%
+% This function only plots the pcolor / patch part,
 % so you can more easily add your own colorbar, xlims, etc.
 %
 % gridInfo     :   struct (with fields face_nodes_x and face_nodes_x) obtained with:
@@ -56,7 +58,7 @@ elseif size(zData,1)==1
     zData = squeeze(zData);
 end
 
-if strcmp(modelType,'dfm') && size(gridInfo.face_nodes_x,2)~=prod(size(zData))
+if strcmp(modelType,'dfm') && size(gridInfo.face_nodes_x,2)~=numel(zData)
     error('size(gridInfo.face_nodes_x,2) should be the same as  prod(size(zData))')
 elseif strcmp(modelType,'d3d') && ~all(size(gridInfo.Xcor)==size(gridInfo.Ycor))
     error('size(gridInfo.Xcor) and size(gridInfo.Ycor) should be the same')
@@ -65,37 +67,35 @@ elseif strcmp(modelType,'d3d') && ~all( (size(gridInfo.Xcor)-size(zData))==1 )
 end
 
 if strcmp(modelType,'d3d')
-   % add dummy row and column for plotting of grid
-   zData(end+1,:)=NaN;
-   zData(:,end+1)=NaN;
+    % add dummy row and column for plotting of grid
+    zData(end+1,:)=NaN;
+    zData(:,end+1)=NaN;
 end
 
 %% plot figure
 switch modelType
     case 'dfm'
         
-        for ii=1:size(gridInfo.face_nodes_x,2)
-            XY{1,ii}=[gridInfo.face_nodes_x(:,ii) gridInfo.face_nodes_y(:,ii); ];
-            % delete NaNs
-            XY{1,ii}(isnan(XY{1,ii}(:,1)),:)=[];
-            % close polygon
-            XY{1,ii}(end+1,:)=XY{1,ii}(1,:);
-        end
-        
-        nnodes = cellfun('size',XY,1);
+        % don't plot NaN's (gives problems in older MATLAB versions)
+        nanInd = isnan(zData);
+        gridInfo.face_nodes_x(:,nanInd) = [];
+        gridInfo.face_nodes_y(:,nanInd) = [];
+        zData(nanInd) = [];
+                
+        nnodes = size(gridInfo.face_nodes_x,1) - sum(isnan(gridInfo.face_nodes_x));
         unodes = unique(nnodes);
-        unodes(unodes==0)=[];
+        unodes(unodes==0) = [];
+        
         for i = 1:length(unodes)
-            n = unodes(i);
-            nr = n-1;
-            poly_n = find(nnodes==n);
+            nr = unodes(i);
+            poly_n = find(nnodes==nr);
             npoly = length(poly_n);
             tvertex = nr*npoly;
             XYvertex = NaN(tvertex,2);
             Vpatch = NaN(npoly,1);
             offset = 0;
             for ip = 1:npoly
-                XYvertex(offset+(1:nr),:) = XY{poly_n(ip)}(1:nr,:);
+                XYvertex(offset+(1:nr),:) = [gridInfo.face_nodes_x(1:nr,poly_n(ip)) gridInfo.face_nodes_y(1:nr,poly_n(ip))];
                 offset = offset+nr;
                 Vpatch(ip) = zData(poly_n(ip));
             end

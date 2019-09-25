@@ -146,7 +146,7 @@ if exist('OPT','var')
 end
 
 disp([char(10) 'Note that next time you want to get this data, you can also use:'])
-disp(['Data = EHY_getMapModelData(''' outputfile '''' extraText ');' ])
+disp(['<strong>Data = EHY_getMapModelData(''' outputfile '''' extraText ');</strong>' ])
 
 disp('start retrieving the data...')
 if ~exist('OPT','var') || isempty(fieldnames(OPT))

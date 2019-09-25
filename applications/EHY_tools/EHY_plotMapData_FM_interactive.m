@@ -21,25 +21,26 @@ else
     plotInd = [];
 end
 
+disp([char(10) 'Note that the example MATLAB-line to get the variable ''Data'' is a few lines above ^. '])
 disp([char(10) 'Note that next time you want to plot this data, you can also use:'])
 if isfield(Data,'face_nodes_x') % dfm
     if Data.OPT.mergePartitions==1
-        disp(['gridInfo = EHY_getGridInfo(''' Data.OPT.outputfile ''',''face_nodes_xy'',''mergePartitions'',1);' ])
+        disp(['<strong>gridInfo = EHY_getGridInfo(''' Data.OPT.outputfile ''',''face_nodes_xy'',''mergePartitions'',1);</strong>' ])
     else
-        disp(['gridInfo = EHY_getGridInfo(''' Data.OPT.outputfile ''',''face_nodes_xy'');' ])
+        disp(['<strong>gridInfo = EHY_getGridInfo(''' Data.OPT.outputfile ''',''face_nodes_xy'');</strong>' ])
     end
 elseif isfield(Data,'Xcor') % d3d
-    disp(['gridInfo = EHY_getGridInfo(''' Data.OPT.outputfile ''',''XYcor'');' ])
+    disp(['<strong>gridInfo = EHY_getGridInfo(''' Data.OPT.outputfile ''',''XYcor'');</strong>' ])
 end
 
 % if velocity was selected
 if isfield(Data,'vel_mag')
-    disp(['EHY_plotMapData_FM(gridInfo,Data.vel_mag(' num2str(plotInd(1)) repmat(',:',1,ndims(Data.vel_mag)-1) '));' ])
+    disp(['<strong>EHY_plotMapData_FM(gridInfo,Data.vel_mag(' num2str(plotInd(1)) repmat(',:',1,ndims(Data.vel_mag)-1) '));</strong>' ])
 else
     if isempty(plotInd)
-        disp(['EHY_plotMapData_FM(gridInfo,Data.val);' ])
+        disp(['<strong>EHY_plotMapData_FM(gridInfo,Data.val);</strong>' ])
     else
-        disp(['EHY_plotMapData_FM(gridInfo,Data.val(' num2str(plotInd(1)) repmat(',:',1,ndims(Data.val)-1) '));' ])
+        disp(['<strong>EHY_plotMapData_FM(gridInfo,Data.val(' num2str(plotInd(1)) repmat(',:',1,ndims(Data.val)-1) '));</strong>' ])
     end
 end
 

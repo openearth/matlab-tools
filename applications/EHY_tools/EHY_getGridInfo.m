@@ -437,7 +437,7 @@ switch modelType
                     % If partitioned run, delete ghost cells
                     [~, name]=fileparts(inputFile);
                     varName = EHY_nameOnFile(inputFile,'FlowElemDomain');
-                    if length(name)>=13 && all(ismember(name(end-7:end-4),'0123456789')) && nc_isvar(inputFile,varName)
+                    if length(name)>=10 && all(ismember(name(end-7:end-4),'0123456789')) && nc_isvar(inputFile,varName)
                         domainNr = str2num(name(end-7:end-4));
                         FlowElemDomain = ncread(inputFile,varName);
 

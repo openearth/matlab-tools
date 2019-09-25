@@ -13,8 +13,12 @@ function stationNames = EHY_getStationNames(inputFile,modelType,varargin)
 % Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
 
 OPT.varName = 'wl'; % 'wl','uv','cross_section_*','general_structure_*'
-
 OPT         = setproperty(OPT,varargin);
+
+%% check user input
+if ~exist('modelType','var') || isempty(modelType)
+    modelType = EHY_getModelType(inputFile);
+end
 
 %%
 stationNames = '';
