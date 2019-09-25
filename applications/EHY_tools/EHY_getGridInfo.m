@@ -748,7 +748,7 @@ if strcmp(modelType,'d3d') && strcmp(typeOfModelFileDetail,'trim')
     end
     
     % deal with ghost-cells end of grid
-    vars = intersect(fieldnames(E),{'Xcor','Ycor','Xcen','Ycen'});
+    vars = intersect(fieldnames(E),{'Xcor','Ycor','Xcen','Ycen','Zcen'});
     for iV = 1:length(vars)
         if all(OPT.n==0)
             E.(vars{iV})(end+1,:)=NaN;

@@ -1,4 +1,4 @@
-function [area_pol, volume_pol, varargout] = EHY_dethyps(x,y,z,filPol,varargin)
+function [area_pol, volume_pol, varargout] = EHY_dethyps(x,y,z,varargin)
 
 % Function EHY_dethyps
 % 
@@ -7,19 +7,39 @@ function [area_pol, volume_pol, varargout] = EHY_dethyps(x,y,z,filPol,varargin)
 
 %% Initialisation
 OPT.interface = [];
+OPT.spherical = false;
+OPT.filePol   = '';
 OPT           = setproperty(OPT,varargin);
+
+SemiMajorAxis = 6378137;
+Eccentricity  = 0.0818191908426215;
+WGS84         = [SemiMajorAxis Eccentricity]; % ToDo: retrieve those values from EPSG.mat  
 
 %% Create triangulation network, determine incentres, depth at centers and areas of the triangle 
 TR          = delaunayTriangulation(x,y);
 centre      = incenter (TR);
 no_points   = size     (TR,1);
-for i_pnt = 1: no_points 
-    area (i_pnt) = polyarea(x(TR.ConnectivityList(i_pnt,:)),y(TR.ConnectivityList(i_pnt,:)));
+for i_pnt = 1: no_points
+    if ~OPT.spherical
+        area (i_pnt) = polyarea(x(TR.ConnectivityList(i_pnt,:)),y(TR.ConnectivityList(i_pnt,:)));
+    else
+        area (i_pnt) = areaint (x(TR.ConnectivityList(i_pnt,:)),y(TR.ConnectivityList(i_pnt,:)),WGS84);
+    end
     level(i_pnt) = mean(z(TR.ConnectivityList(i_pnt,:)));
 end
 
 %% load the polygon and determine which points inside
-[pol]     = readldb  (filPol);
+if ~isempty(OPT.filePol)
+    [pol]     = readldb  (OPT.filePol);
+else
+    % entire model domain
+    xmin = min(x) -1; xmax = max(x) + 1; ymin = min(y) - 1; ymax = max(y) + 1;
+    pol.x(1) = xmin; pol.y(1) = ymin;
+    pol.x(2) = xmax; pol.y(2) = ymin;
+    pol.x(3) = xmax; pol.y(3) = ymax;
+    pol.x(4) = xmin; pol.y(4) = ymax;
+end
+   
 inside    = inpolygon(centre(:,1),centre(:,2),pol.x,pol.y);
 area      = area  (inside);
 level     = level (inside);
