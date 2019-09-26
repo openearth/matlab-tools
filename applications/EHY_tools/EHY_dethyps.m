@@ -23,7 +23,8 @@ for i_pnt = 1: no_points
     if ~OPT.spherical
         area (i_pnt) = polyarea(x(TR.ConnectivityList(i_pnt,:)),y(TR.ConnectivityList(i_pnt,:)));
     else
-        area (i_pnt) = areaint (x(TR.ConnectivityList(i_pnt,:)),y(TR.ConnectivityList(i_pnt,:)),WGS84);
+        area (i_pnt) = geodarea(x(TR.ConnectivityList(i_pnt,:)),y(TR.ConnectivityList(i_pnt,:)),WGS84);
+        area(i_pnt)  = sign(area(i_pnt))*area(i_pnt);
     end
     level(i_pnt) = mean(z(TR.ConnectivityList(i_pnt,:)));
 end
@@ -50,8 +51,8 @@ if isempty (OPT.interface)
     min_level = min(level);
     max_level = max(level);
     OPT.interface = min_level:(max_level - min_level)/100.:max_level;
-    varargout{1} = OPT.interface;
 end
+varargout{1}  = OPT.interface;
 no_interfaces = length(OPT.interface);
 
 %% Cycle over interfaces
