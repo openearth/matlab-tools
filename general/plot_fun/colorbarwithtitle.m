@@ -1,30 +1,30 @@
 function [varargout]=colorbarwithtitle(colorbartxt,varargin)
 %COLORBARWITHTITLE   (re)draws the colorbar with title above it.
 %
-%         colorbarwithtitle(colorbartxt,<ctick>) 
+%         colorbarwithtitle(colorbartxt,<ctick>)
 %
 %  (re)draws the colorbar with text inside it <with tick marks at positions ctick>.
 %
-%   [<ax>, h] =colorbarwithtitle(colorbartxt) 
+%   [<ax>, h] =colorbarwithtitle(colorbartxt)
 %
 %   returns the handle h of the colorbar and optionally the
-%   handle ax of the axes. NOTE that with 2 output arguments ax 
+%   handle ax of the axes. NOTE that with 2 output arguments ax
 %   is returned first to follow the syntax of ax = colorbar.
-%   [ax, h,txt] = colorbarwithx(...) returns also the handle of the text object. 
+%   [ax, h,txt] = colorbarwithx(...) returns also the handle of the text object.
 %
 %      colorbarwithtitle(colorbartxt,      arguments)
 %      colorbarwithtitle(colorbartxt,[]   ,arguments)
-%      colorbarwithtitle(colorbartxt,ctick,arguments) 
+%      colorbarwithtitle(colorbartxt,ctick,arguments)
 %
-%   passes arguments to colorbar. E.g. to to locate a colorbar 
+%   passes arguments to colorbar. E.g. to to locate a colorbar
 %   in a pre-defined axis with handle AX, use
 %
 %      colorbar('position',get(AX,'position'))
 %
-%   Example:  
+%   Example:
 %
 %      caxis([0 360])
-%      [ax, h]=colorbarwithtitle('wind direction',[0:90:360]) 
+%      [ax, h]=colorbarwithtitle('wind direction',[0:90:360])
 %      set(ax,'YTickLabel',{'E','N','W','S'})
 %
 %      logticks = [1 2 5 10 20 50]
@@ -32,7 +32,7 @@ function [varargout]=colorbarwithtitle(colorbartxt,varargin)
 %      [ax, h]=colorbarwithtitle('SPM [mg/l]',logticks);
 %      set(ax,'YTickLabel',logticks);
 %
-%   See also: COLORBAR, SET(gca), GET(gca), 
+%   See also: COLORBAR, SET(gca), GET(gca),
 %             COLORBARWITHhTEXT, COLORBARWITHvTEXT,
 %             COLORBARWITHxLABEL, COLORBARWITHyLABEL
 
@@ -40,7 +40,7 @@ function [varargout]=colorbarwithtitle(colorbartxt,varargin)
 %   Copyright (C) 2004 Delft University of Technology
 %       Gerben J. de Boer
 %
-%       g.j.deboer@tudelft.nl	
+%       g.j.deboer@tudelft.nl
 %
 %       Fluid Mechanics Section
 %       Faculty of Civil Engineering and Geosciences
@@ -65,9 +65,9 @@ function [varargout]=colorbarwithtitle(colorbartxt,varargin)
 %   -------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -78,24 +78,24 @@ function [varargout]=colorbarwithtitle(colorbartxt,varargin)
 % $HeadURL$
 % $Keywords: $
 
-    OPT.position = 'title';
+OPT.position = 'title';
 
-    nextarg = 1;
-    ctick   = [];
+nextarg = 1;
+ctick   = [];
 if nargin>1
-
+    
     %% note that 0 is also a handle,
     %% so we cannot use ishandle(), and we use istype()
-
+    
     if isnumeric(varargin{1}) & ~istype(varargin{1},'axes');
-    nextarg = 2;
-    ctick   = varargin{1};
-    end    
-
+        nextarg = 2;
+        ctick   = varargin{1};
+    end
+    
     if isempty(varargin{1})
-    nextarg = 2;
-    ctick   = varargin{1}; % [] default
-    end    
+        nextarg = 2;
+        ctick   = varargin{1}; % [] default
+    end
 end
 
 Handles.axes          = colorbar(varargin{nextarg:end});
@@ -105,10 +105,10 @@ if     strcmp(OPT.position,'title' );Handles.txt = get(Handles.axes,'title');
 elseif strcmp(OPT.position,'xlabel');Handles.txt = get(Handles.axes,'xlabel');
 elseif strcmp(OPT.position,'ylabel');Handles.txt = get(Handles.axes,'ylabel');
 elseif strcmp(OPT.position,'text'  );Handles.txt = ...
-    text(0.5,0.5,colorbartxt,'units','normalized',...
-                          'rotation',0,...
-               'horizontalalignment','center',...
-                            'Parent',Handles.axes);
+        text(0.5,0.5,colorbartxt,'units','normalized',...
+        'rotation',0,...
+        'horizontalalignment','center',...
+        'Parent',Handles.axes);
 end
 
 %for i=1:length(Handles.colorbar)
@@ -117,11 +117,13 @@ end
 %end
 
 if ~isempty(ctick)
-   if isempty(get(Handles.axes,'xtick'))
-   set(Handles.axes,'ytick',ctick);    
-   elseif isempty(get(Handles.axes,'ytick'))
-   set(Handles.axes,'xtick',ctick);    
-   end
+    if isempty(get(Handles.axes,'xtick'))
+        set(Handles.axes,'ytick',ctick);
+    elseif isempty(get(Handles.axes,'ytick'))
+        set(Handles.axes,'xtick',ctick);
+    else
+        set(Handles.axes,'ticks',ctick);
+    end
 end
 
 set(Handles.txt,'string',colorbartxt);
@@ -130,5 +132,5 @@ if     nargout==1;varargout={Handles.colorbar};
 elseif nargout==2;varargout={Handles.axes,   Handles.colorbar};
 elseif nargout==3;varargout={Handles.axes,   Handles.colorbar,Handles.txt};
 elseif nargout>3
-   error('requires only 0,1,2 or 3 output parameters.');
+    error('requires only 0,1,2 or 3 output parameters.');
 end
