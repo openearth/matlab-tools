@@ -40,9 +40,16 @@ switch modelType
         % time // always ask for time
         dims(1).name = 'time';
         
+        % sediment fractions
+        trim = vs_use(inputFile,'quiet');
+        NAMSEDind = strmatch('NAMSED',{trim.ElmDef.Name});
+        if ~isempty(NAMSEDind)
+            dims(end+1).name = 'sedimentFraction';
+        end
+        
         % layers
         gridInfo = EHY_getGridInfo(inputFile,{'no_layers'});
-        if gridInfo.no_layers > 1 && ~ismember(varName,{'wl','wd','dps','S1'})
+        if ~isempty(strmatch('sedimentFraction',{dims(:).name,})) || (gridInfo.no_layers > 1 && ~ismember(varName,{'wl','wd','dps','S1'}))
             dims(end+1).name = 'layers';
         end
         
@@ -57,7 +64,7 @@ switch modelType
             dims(end+1).name = 'm';
             dims(end+1).name = 'n';
         end
-        
+                  
     case 'delwaq'
         
         % time // always ask for time
