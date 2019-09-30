@@ -114,7 +114,7 @@ end
 
 %% Choose and run conversion
 % coordinate conversion
-if strcmp(inputExt0(2:end),outputExt) 
+if strcmp(inputExt0(2:end),outputExt)
     OPT=EHY_selectToAndFromEPSG(OPT);
     if ~exist('inputExt0','var'); inputExt0=['.' inputExt]; end
     outputFile=strrep(inputFile,inputExt0,['_EPSG-' num2str(OPT.toEPSG) '.' outputExt]);
@@ -130,7 +130,7 @@ elseif strcmp(inputExt,outputExt) % coordinate conversion
 elseif exist('outputFile','var') % outputFile was determined based on coordinate conversion
     % do nothing
 else % replace inputExt by outputExt
-     [pathstr, name, ext] = fileparts(inputFile);
+    [pathstr, name, ext] = fileparts(inputFile);
     outputFile=[pathstr filesep name '.' outputExt];
 end
 
@@ -149,7 +149,7 @@ if OPT.saveOutputFile && exist(outputFile,'file') && ~OPT.overwrite
         [FileName,PathName] = uiputfile([pathstr filesep ext]);
         outputFile=[PathName FileName];
     elseif isempty(YesNoID)
-      disp('EHY_convert stopped by user.'); return;
+        disp('EHY_convert stopped by user.'); return;
     end
 end
 
@@ -224,7 +224,7 @@ end
             line=strrep(line,';',' ');
             line=strtrim(strrep(line,',',' '));
             line=cellfun(@str2num,regexp(line,'\s+','split'));
-
+            
             m=line(1):line(3);
             n=line(2):line(4);
             
@@ -249,7 +249,7 @@ end
         [x,y,OPT]=EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
         output=[x y];
         % delete multiple NaN rows
-        output(find(isnan(output(2:end,1)) & isnan(output(1:end-1,1))),:)=[]; 
+        output(find(isnan(output(2:end,1)) & isnan(output(1:end-1,1))),:)=[];
         OPT=OPT_user;
         if OPT.saveOutputFile
             % lines
@@ -294,7 +294,7 @@ end
                 fprintf(fid,'%s\n',[crs.DATA(iC).name]);
                 fprintf(fid,'%5i %5i \n',blockEnd(iC)-blockStart(iC)+1,2);
                 for iX=blockStart(iC):blockEnd(iC)
-                   fprintf(fid,' %20.7f %20.7f \n',x(iX),y(iX));   
+                    fprintf(fid,' %20.7f %20.7f \n',x(iX),y(iX));
                 end
             end
             fclose(fid);
@@ -337,7 +337,7 @@ end
         % find corresponding points for curves
         for iC=1:length(curv.p)
             for jj=1:2
-                ind=find(OBS.p==curv.p(iC,jj)); 
+                ind=find(OBS.p==curv.p(iC,jj));
                 if isempty(ind)
                     error(['Can not find Point P ' num2str(curv.p(iC,jj)) ' in the provided Point-files'])
                 else
@@ -1251,9 +1251,22 @@ if OPT.fromEPSG~=OPT.toEPSG
                 T.Field(2:end)=[];
             end
             
-            for iT=1:length(T.Field)
-                [T.Field(iT).Data(:,1),T.Field(iT).Data(:,2)]=convertCoordinates(T.Field(iT).Data(:,1),T.Field(iT).Data(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
+            % ad-hoc for Singapore
+            if OPT.toEPSG==3414
+                warning('Ad-hoc conversion for SVY21, based on WGS84/UTM48N');
+                OPT.toEPSG=32648;
+                for iT=1:length(T.Field)
+                    [T.Field(iT).Data(:,1),T.Field(iT).Data(:,2)]=convertCoordinates(T.Field(iT).Data(:,1),T.Field(iT).Data(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
+                end
+                T.Field.Data(:,1)=T.Field.Data(:,1)-342212;
+                T.Field.Data(:,2)=T.Field.Data(:,2)-112342;
+              
+            else
+                for iT=1:length(T.Field)
+                    [T.Field(iT).Data(:,1),T.Field(iT).Data(:,2)]=convertCoordinates(T.Field(iT).Data(:,1),T.Field(iT).Data(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
+                end
             end
+            
             output=[]; % to do
             
             % pol may contain 3rd column with 1 / -1's, but ignore when it
@@ -1267,15 +1280,15 @@ if OPT.fromEPSG~=OPT.toEPSG
                 end
                 fclose(fid);
             end
-        case '.pliz'    
-             T=tekal('read',inputFile,'loaddata');
-             for iT=1:length(T.Field)
-                 [T.Field(iT).Data(:,1),T.Field(iT).Data(:,2)]=convertCoordinates(T.Field(iT).Data(:,1),T.Field(iT).Data(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
-             end
-             if OPT.saveOutputFile
-                 tekal('write',outputFile,T);
-             end
-             output=T;
+        case '.pliz'
+            T=tekal('read',inputFile,'loaddata');
+            for iT=1:length(T.Field)
+                [T.Field(iT).Data(:,1),T.Field(iT).Data(:,2)]=convertCoordinates(T.Field(iT).Data(:,1),T.Field(iT).Data(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
+            end
+            if OPT.saveOutputFile
+                tekal('write',outputFile,T);
+            end
+            output=T;
         case '.nc'
             varNameX = EHY_nameOnFile(inputFile,'NetNode_x');
             varNameY = EHY_nameOnFile(inputFile,'NetNode_y');
@@ -1289,18 +1302,18 @@ if OPT.fromEPSG~=OPT.toEPSG
             
                 % to do: fix setting the right EPSG code in the .nc file,
                 % not properply working yet
-%                 if OPT.toEPSG==4326
-%                     nccreate(outputFile,'wgs84','Datatype','int32')
-%                     epsgInfo={'name','WGS84';'epsg',4326;'grid_mapping_name','latitude_longitude';'longitude_of_prime_meridian',0;'semi_major_axis',6378137;'semi_minor_axis',6356752.31424500;'inverse_flattening',298.257223563000;'epsg_code','EPSG:4326';'value','value is equal to EPSG code'};
-%                     for iE=1:length(epsgInfo)
-%                         ncwriteatt(outputFile,'wgs84',epsgInfo{iE,1},epsgInfo{iE,2});
-%                     end
-%                     ncwriteatt(outputFile,'Mesh2D','topology_dimension',1);
-%                     ncid = netcdf.open(outputFile,'WRITE');
-%                     netcdf.reDef(ncid);
-% %                     netcdf.delAtt(ncid,netcdf.getConstant('GLOBAL'),'Spherical');
-%                     netcdf.close(ncid);
-%                 end
+                %                 if OPT.toEPSG==4326
+                %                     nccreate(outputFile,'wgs84','Datatype','int32')
+                %                     epsgInfo={'name','WGS84';'epsg',4326;'grid_mapping_name','latitude_longitude';'longitude_of_prime_meridian',0;'semi_major_axis',6378137;'semi_minor_axis',6356752.31424500;'inverse_flattening',298.257223563000;'epsg_code','EPSG:4326';'value','value is equal to EPSG code'};
+                %                     for iE=1:length(epsgInfo)
+                %                         ncwriteatt(outputFile,'wgs84',epsgInfo{iE,1},epsgInfo{iE,2});
+                %                     end
+                %                     ncwriteatt(outputFile,'Mesh2D','topology_dimension',1);
+                %                     ncid = netcdf.open(outputFile,'WRITE');
+                %                     netcdf.reDef(ncid);
+                % %                     netcdf.delAtt(ncid,netcdf.getConstant('GLOBAL'),'Spherical');
+                %                     netcdf.close(ncid);
+                %                 end
             end
         case {'.xyz'}
             output=importdata(inputFile);
