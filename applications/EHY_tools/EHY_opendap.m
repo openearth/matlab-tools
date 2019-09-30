@@ -45,7 +45,7 @@ end
 if isempty(OPT.Parameter) & nargout==1
     i_par = 1;
     for i_data = 1: length(list)
-        i_sep = strfind(list{i_data},'/');
+        i_sep = strfind(list{i_data},filesep);
         name_tmp = list{i_data}(i_sep(end-2) + 1:i_sep(end-1) - 1);
         if i_data == 1
             name_par{i_par} = name_tmp;
