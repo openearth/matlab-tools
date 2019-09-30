@@ -118,6 +118,17 @@ end
 no_dims = length(dims);
 order = no_dims:-1:1;
 
+%% Get sediment fractions information
+sedfracInd = strmatch('sedimentFraction',{dims(:).name});
+if ~isempty(sedfracInd)
+    sedfracName = vs_let(vs_use(inputFile,'quiet'),'map-const','NAMSED','quiet');
+    if size(sedfracName,2) > 1
+        warning('Using multiple (all) sediment fractions.');
+    end
+    dims(sedfracInd).index    = 1:size(sedfracName,2);
+    dims(sedfracInd).indexOut = 1:size(sedfracName,2);
+end
+
 %% check if output data is in several partitions and merge if necessary
 if OPT.mergePartitions==1 && EHY_isPartitioned(inputFile)
     mapFiles=dir([inputFile(1:end-11) '*' inputFile(end-6:end)]);
@@ -248,6 +259,35 @@ switch modelType
             end
             Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
             
+        elseif strcmp(OPT.varName,'SBUU') % bed load
+            Data.val_x   = vs_let(trim,'map-sed-series',{dims(timeInd).index},OPT.varName,{dims(nInd).index,dims(mInd).index,dims(sedfracInd).index},'quiet');
+            Data.val_y   = vs_let(trim,'map-sed-series',{dims(timeInd).index},'SBVV'     ,{dims(nInd).index,dims(mInd).index,dims(sedfracInd).index},'quiet');
+            Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
+            
+        elseif strcmp(OPT.varName,'SSUU') % bed load
+            Data.val_x   = vs_let(trim,'map-sed-series',{dims(timeInd).index},OPT.varName,{dims(nInd).index,dims(mInd).index,dims(sedfracInd).index},'quiet');
+            Data.val_y   = vs_let(trim,'map-sed-series',{dims(timeInd).index},'SSVV'     ,{dims(nInd).index,dims(mInd).index,dims(sedfracInd).index},'quiet');
+            Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
+            
+        elseif strcmp(OPT.varName,'SBUUA') % bed load
+            Data.val_x   = vs_let(trim,'map-sed-series',{dims(timeInd).index},OPT.varName,{dims(nInd).index,dims(mInd).index,dims(sedfracInd).index},'quiet');
+            Data.val_y   = vs_let(trim,'map-sed-series',{dims(timeInd).index},'SBVVA'    ,{dims(nInd).index,dims(mInd).index,dims(sedfracInd).index},'quiet');
+            Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
+            
+        elseif strcmp(OPT.varName,'SSUUA') % bed load
+            Data.val_x   = vs_let(trim,'map-sed-series',{dims(timeInd).index},OPT.varName,{dims(nInd).index,dims(mInd).index,dims(sedfracInd).index},'quiet');
+            Data.val_y   = vs_let(trim,'map-sed-series',{dims(timeInd).index},'SSVVA'    ,{dims(nInd).index,dims(mInd).index,dims(sedfracInd).index},'quiet');
+            Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
+            
+        elseif strcmp(OPT.varName,'TAUKSI') % bed load
+            Data.val_x   = vs_let(trim,'map-series',{dims(timeInd).index},OPT.varName,{dims(nInd).index,dims(mInd).index},'quiet');
+            Data.val_y   = vs_let(trim,'map-series',{dims(timeInd).index},'TAUETA'   ,{dims(nInd).index,dims(mInd).index},'quiet');
+            Data.val_max = vs_let(trim,'map-series',{dims(timeInd).index},'TAUMAX'   ,{dims(nInd).index,dims(mInd).index},'quiet');
+            Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
+            
+        elseif strcmp(OPT.varName,'RSEDEQ') % velocity
+            Data.val = vs_let(trim,'map-sed-series',{dims(timeInd).index},OPT.varName,{dims(nInd).index,dims(mInd).index,dims(layersInd).index,dims(sedfracInd).index},'quiet');
+            
         elseif strcmp(OPT.varName,'DPS0') % bottom level, bed to ref
             Data.val = vs_let(trim,'map-const',{1},OPT.varName,{dims(nInd).index,dims(mInd).index},'quiet');
             
@@ -258,7 +298,7 @@ switch modelType
         end
         % delete ghost cells
         if dims(nInd).index(1)==1; Data.val = Data.val(:,2:end,:,:); end
-        if dims(mInd).index(1)==1; Data.val = Data.val(:,:,2:end,:); end      
+        if dims(mInd).index(1)==1; Data.val = Data.val(:,:,2:end,:); end
         
     case 'delwaq'
         dw       = delwaq('open',inputFile);
@@ -288,6 +328,8 @@ end
 % dimension information
 if isfield(Data,'val')
     fn = 'val';
+elseif isfield(Data,'val_x')
+    fn = 'val_x';
 elseif isfield(Data,'vel_x')
     fn = 'vel_x';
 end
@@ -311,7 +353,7 @@ elseif any(ismember(modelType,{'d3d','delwaq'}))
     if length(size(Data.(fn)))==3
         dimensionsComment={'time','n_index','m_index'};
     elseif length(size(Data.(fn)))==4
-        dimensionsComment={'time','n_index','m_index','k_index'};
+        dimensionsComment={'time','n_index','m_index','k_index/sedfrac'};
     end
 end
 
