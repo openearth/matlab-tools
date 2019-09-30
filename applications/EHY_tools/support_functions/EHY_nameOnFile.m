@@ -21,14 +21,15 @@ modelType                  = EHY_getModelType(fName);
 [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(fName);
 
 %% Change variable name (for usage in EHY_getmodeldata) for Delft3D 4, IMPLIC and SOBEK3
-if strcmpi(varName,'sal')          varName = 'salinity'   ; end
-if strcmpi(varName,'tem')          varName = 'temperature'; end
-if strcmpi(varName,'waterlevel'  ) varName = 'wl'         ; end
-if strcmpi(varName,'water level' ) varName = 'wl'         ; end
-if strcmpi(varName,'waterdepth'  ) varName = 'wd'         ; end
-if strcmpi(varName,'water depth' ) varName = 'wd'         ; end
-if strcmpi(varName,'bedlevel'    ) varName = 'dps'        ; end
-if strcmpi(varName,'bed level'   ) varName = 'dps'        ; end
+varName = strrep(varName, ' ', '');
+
+if strcmpi(varName,'sal'                  ) varName = 'salinity'   ; end
+if strcmpi(varName,'tem'                  ) varName = 'temperature'; end
+if strcmpi(varName,'waterlevel'           ) varName = 'wl'         ; end
+if strcmpi(varName,'waterdepth'           ) varName = 'wd'         ; end
+if strcmpi(varName,'bedlevel'             ) varName = 'dps'        ; end
+if strcmpi(varName,'suspendedload'        ) varName = 'suspload'   ; end
+if strcmpi(varName,'sedimentconcentration') varName = 'sedconc'    ; end
 
 %% Change the name of the requested Variable name
 newName = varName;
@@ -57,7 +58,12 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'wl'         ) newName = 'S1'         ; end
         if strcmpi(varName,'uv'         ) newName = 'U1'         ; end
         if strcmpi(varName,'dps'        ) newName = 'DPS0'       ; end
-        
+        if strcmpi(varName,'avbedload'  ) newName = 'SBUUA'      ; end
+        if strcmpi(varName,'avsuspload' ) newName = 'SSUUA'      ; end
+        if strcmpi(varName,'bedload'    ) newName = 'SBUU'       ; end
+        if strcmpi(varName,'suspload'   ) newName = 'SSUU'       ; end
+        if strcmpi(varName,'tau'        ) newName = 'TAUKSI'     ; end
+        if strcmpi(varName,'sedconc'    ) newName = 'RSEDEQ'     ; end
 end
 
 %% for FM output (netCDF files)
