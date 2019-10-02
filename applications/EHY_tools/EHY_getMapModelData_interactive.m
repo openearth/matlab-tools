@@ -70,7 +70,10 @@ if strcmp(modelType,'dfm') && option==length(varNames)
     OPT.varName=variablesOnFile{option};
 end
 
-OPT.varName = EHY_nameOnFile(outputfile,OPT.varName);
+[OPT.varName,varNameInput] = EHY_nameOnFile(outputfile,OPT.varName);
+if strcmp(OPT.varName,'noMatchFound')
+    error(['Requested variable (' varNameInput ') not available in model output'])
+end
 
 %% check which dimensions/info is needed from user
 dims = EHY_getDimsInfo(outputfile,OPT.varName);
