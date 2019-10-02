@@ -1,5 +1,5 @@
-function newName = EHY_nameOnFile(fName,varName)
-%% newName = EHY_nameOnFile(fName,varName)
+function [newName,varNameInput] = EHY_nameOnFile(fName,varName)
+%% [newName,varNameInput] = EHY_nameOnFile(fName,varName)
 %
 % This function returns the variable/dimension name (newName) that you would like to
 % read (varName) based on the available variables names in the netCDF file (fName).
@@ -21,6 +21,7 @@ modelType                  = EHY_getModelType(fName);
 [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(fName);
 
 %% Change variable name (for usage in EHY_getmodeldata) for Delft3D 4, IMPLIC and SOBEK3
+varNameInput = varName;
 varName = strrep(varName, ' ', '');
 
 if strcmpi(varName,'sal'                  ) varName = 'salinity'   ; end
