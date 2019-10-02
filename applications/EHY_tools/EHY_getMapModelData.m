@@ -65,8 +65,10 @@ end
 modelType = EHY_getModelType(inputFile);
 
 %% Get name of the parameter as known on output file
-OPT.varName = EHY_nameOnFile(inputFile,OPT.varName);
-
+[OPT.varName,varNameInput] = EHY_nameOnFile(inputFile,OPT.varName);
+if strcmp(OPT.varName,'noMatchFound')
+    error(['Requested variable (' varNameInput ') not available in model output'])
+end
 %% Get information about required dimension information
 dims = EHY_getDimsInfo(inputFile,OPT.varName);
 
