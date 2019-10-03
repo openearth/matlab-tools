@@ -153,7 +153,7 @@ if OPT.mergePartitions==1 && EHY_isPartitioned(inputFile)
                 Data.val=cat(order(facesInd),Data.val,DataPart.val);
             elseif isfield(Data,'vel_x')
                 Data.vel_x=cat(order(facesInd),Data.vel_x,DataPart.vel_x);
-                Data.vel_y=cat(order(facesInd),Data.vel_y,DataPart.vel_x);
+                Data.vel_y=cat(order(facesInd),Data.vel_y,DataPart.vel_y);
                 Data.vel_mag=cat(order(facesInd),Data.vel_mag,DataPart.vel_mag);
             end
         end
