@@ -190,8 +190,8 @@ switch modelType
         end
         
         % read data from netcdf file
-        if ~isempty(strfind(OPT.varName,'ucx'))
-            value_x   =  ncread(inputFile,OPT.varName,start,count);
+        if ~isempty(strfind(OPT.varName,'ucx')) || ~isempty(strfind(OPT.varName,'ucy')) 
+            value_x   =  ncread(inputFile,strrep(OPT.varName,'ucy','ucx'),start,count);
             value_y   =  ncread(inputFile,strrep(OPT.varName,'ucx','ucy'),start,count);
         else
             value     =  ncread(inputFile,OPT.varName,start,count);
@@ -318,8 +318,6 @@ switch modelType
         % delete ghost cells
         if dims(nInd).index(1)==1; Data.val = Data.val(:,2:end,:,:); end
         if dims(mInd).index(1)==1; Data.val = Data.val(:,:,2:end,:); end
-        
-        Data.val(Data.val<0) = NaN;
         
     case 'simona'
         %% SIMONA (WAQUA/TRIWAQ)
