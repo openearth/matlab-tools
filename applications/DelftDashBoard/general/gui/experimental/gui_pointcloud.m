@@ -225,7 +225,9 @@ switch lower(opt)
                             setappdata(hg,'y',y);
                             tx=getappdata(hg,'texthandles');
                             for ii=1:length(tx)
-                                set(tx(ii),'XData',x(ii),'YData',y(ii));
+                                pos=[x(ii) y(ii) 0];
+%                                set(tx(ii),'XData',x(ii),'YData',y(ii));
+                                set(tx(ii),'Position',pos);
                             end
                         case{'text'}
                             txt=varargin{i+1};
