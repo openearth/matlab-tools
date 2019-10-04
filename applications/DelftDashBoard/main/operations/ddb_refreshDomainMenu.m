@@ -83,20 +83,38 @@ uimenu(h,'Label','Delete Domain','Callback',@deleteDomain,'Checked','off','UserD
 function selectDomain(hObject, eventdata, nr)
 ddb_zoomOff;
 handles=getHandles;
+model=handles.activeModel.name;
 if nr>0
+    switch model
+        case{'delft3dflow'}
+        case{'sfincs'}
+            cd(handles.model.(model).domain(nr).directory);
+    end
     changeDomain(nr);
 else
-    str=GetUIString('Enter Runid New Domain');
-    if ~isempty(str)
-        model=handles.activeModel.name;
-        id=handles.model.(model).nrDomains+1;
-        handles.model.(model).nrDomains=id;
-        handles.activeDomain=id;
-        handles.model.(model).domain(id).runid=str;
-        handles=ddb_initializeFlowDomain(handles,'all',id,handles.model.(model).domain(id).runid);
-        setHandles(handles);
-        ddb_refreshDomainMenu;
-        changeDomain(id);
+    switch model
+        case{'delft3dflow'}
+            str=GetUIString('Enter Runid New Domain');
+            if ~isempty(str)
+                id=handles.model.(model).nrDomains+1;
+                handles.model.(model).nrDomains=id;
+                handles.activeDomain=id;
+                handles.model.(model).domain(id).runid=str;
+                handles=ddb_initializeFlowDomain(handles,'all',id,handles.model.(model).domain(id).runid);
+                setHandles(handles);
+                ddb_refreshDomainMenu;
+                changeDomain(id);
+            end
+        case{'sfincs'}
+            dirname = uigetdir('','Select folder for new SFINCS domain');
+            id=handles.model.(model).nrDomains+1;
+            handles.model.(model).nrDomains=id;
+            handles.activeDomain=id;
+            cd(dirname);
+            handles = ddb_initialize_sfincs_domain(handles, 'dummy', id, 'dummy');
+            setHandles(handles);
+            ddb_refreshDomainMenu;
+            changeDomain(id);
     end
 end
 
