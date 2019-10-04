@@ -1,20 +1,21 @@
-function handles = ddb_initializeDFlowFM(handles, varargin)
-%DDB_INITIALIZEDFLOWFM  One line description goes here.
+function ddb_menuViewDFlowFM(hObject, eventdata, option)
+%DDB_MENUVIEWDELFT3DFLOW  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   handles = ddb_initializeDFlowFM(handles, varargin)
+%   ddb_menuViewDelft3DFLOW(hObject, eventdata, handles)
 %
 %   Input:
-%   handles  =
-%   varargin =
+%   hObject   =
+%   eventdata =
+%   handles   =
 %
-%   Output:
-%   handles  =
+%
+%
 %
 %   Example
-%   ddb_initializeDFlowFM
+%   ddb_menuViewDelft3DFLOW
 %
 %   See also
 
@@ -53,20 +54,35 @@ function handles = ddb_initializeDFlowFM(handles, varargin)
 % Created: 29 Nov 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
 % $Keywords: $
 
 %%
+handles=getHandles;
 
-handles.model.dflowfm.domain=[];
+checked=get(hObject,'Checked');
 
-runid='tst';
+if strcmp(checked,'on')
+    ivis=0;
+    set(hObject,'Checked','off');
+else
+    ivis=1;
+    set(hObject,'Checked','on');
+end
 
-handles=ddb_initializeDFlowFMdomain(handles,'all',1,runid);
+switch option
+    case{'grid'}
+        handles.model.dflowfm.menuview.grid=ivis;
+        handles=ddb_DFlowFM_plotGrid(handles,'update','domain',1);
+    case{'bathymetry'}
+        handles.model.dflowfm.menuview.bathymetry=ivis;
+        handles=ddb_DFlowFM_plotBathymetry(handles,'update','domain',1);
+end
 
-handles.model.dflowfm.menuview.grid=1;
-handles.model.dflowfm.menuview.bathymetry=1;
+setHandles(handles);
+
+

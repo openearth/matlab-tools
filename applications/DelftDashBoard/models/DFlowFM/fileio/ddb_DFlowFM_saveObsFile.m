@@ -68,7 +68,7 @@ if handles.model.dflowfm.domain(id).nrobservationpoints>0
         x=handles.model.dflowfm.domain(id).observationpoints(ip).x;
         y=handles.model.dflowfm.domain(id).observationpoints(ip).y;
         name=handles.model.dflowfm.domain(id).observationpoints(ip).name;
-        fprintf(fid,'%14.6f %14.6f %s\n',x,y,['''' name '''']);
+        fprintf(fid,'%14.6f %14.6f %s\n',x,y,['"' name '"']);
     end
     fclose(fid);
 end

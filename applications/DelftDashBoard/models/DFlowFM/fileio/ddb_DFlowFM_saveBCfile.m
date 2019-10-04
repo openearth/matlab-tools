@@ -1,4 +1,4 @@
-function ddb_DFlowFM_saveBCfile(forcingfile,boundaries)
+function ddb_DFlowFM_saveBCfile(forcingfile,boundaries,refdate)
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares
@@ -72,8 +72,31 @@ for ii = 1:length(boundaries);
                     fprintf(fid,'%s %8.5f %7.2f\n',name,amp,phi);
                 end
                 fprintf(fid,'%s\n',[]);
+
+            case{'timeseries'}
+                
+                % Header
+                fprintf(fid,'%s\n',['[forcing]']);
+                fprintf(fid,'%s\n',['Name                            = ' boundaries(ii).nodes(jj).name]);
+                fprintf(fid,'%s\n',['Function                        = ' boundaries(ii).nodes(jj).bc.Function]);
+                fprintf(fid,'%s\n','Time-interpolation              = linear');
+                fprintf(fid,'%s\n',['Quantity                        = time']);
+                fprintf(fid,'%s\n',['Unit                            = ','seconds since ' datestr(refdate,'yyyy-mm-dd HH:MM:SS')]);
+                fprintf(fid,'%s\n',['Quantity                        = waterlevelbnd']);
+                fprintf(fid,'%s\n','Unit                            = m');
+                % Values
+                    fprintf(fid,'%12.2f %8.4f\n',0,0);
+                    fprintf(fid,'%12.2f %8.4f\n',43200,8);
+                    fprintf(fid,'%12.2f %8.4f\n',86400,0);
+%                 for it=1:length(boundaries(ii).nodes(jj).timeseries.time)
+%                     t=1440*(boundaries(ii).nodes(jj).timeseries.time(it)-refdate);
+%                     v=boundaries(ii).nodes(jj).timeseries.value(it);
+%                     fprintf(fid,'%12.2f %8.4f\n',t,v);
+%                 end
                 
         end
         
     end
 end
+
+fclose(fid);

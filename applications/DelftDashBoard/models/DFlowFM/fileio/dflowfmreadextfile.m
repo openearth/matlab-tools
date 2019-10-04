@@ -65,14 +65,18 @@ while 1
                 case{'quanti'}
                     n=n+1;
                     s(n).quantity=deblank2(str(nis+1:end));
-                case{'filety'}
-                    s(n).filetype=deblank2(str(nis+1:end));
-                case{'filena'}
-                    s(n).filename=deblank2(str(nis+1:end));
-                case{'method'}
-                    s(n).method=deblank2(str(nis+1:end));
-                case{'operan'}
-                    s(n).operand=deblank2(str(nis+1:end));
+%                 case{'filety'}
+%                     s(n).filetype=deblank2(str(nis+1:end));
+%                 case{'filena'}
+%                     s(n).filename=deblank2(str(nis+1:end));
+%                 case{'method'}
+%                     s(n).method=deblank2(str(nis+1:end));
+%                 case{'operan'}
+%                     s(n).operand=deblank2(str(nis+1:end));
+                case{'locati'}
+                    s(n).locationfile=deblank2(str(nis+1:end));
+                case{'forcin'}
+                    s(n).forcingfile=deblank2(str(nis+1:end));
             end
         end
         

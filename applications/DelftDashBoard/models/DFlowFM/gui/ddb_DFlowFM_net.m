@@ -63,19 +63,44 @@ fname=handles.model.dflowfm.domain(ad).netfile;
 
 %andles.model.dflowfm.domain(ad).netstruc=loadnetstruc(fname);
 %handles.model.dflowfm.domain(ad).netstruc=loadnetstruc2(fname);
-handles.model.dflowfm.domain(ad).netstruc=dflowfm.readNet(fname);
+
+try
+    netstruc=dflowfm.readNet_new(fname);
+catch    
+    netstruc=dflowfm.readNetOld(fname);
+
+    netstruc.edge.mesh2d_edge_nodes=netstruc.edge.NetLink;
+    netstruc.edge=rmfield(netstruc.edge,'NetLink');
+
+    netstruc.node.mesh2d_node_x=netstruc.node.x;
+    netstruc.node.mesh2d_node_y=netstruc.node.y;
+    netstruc.node.mesh2d_node_z=netstruc.node.z;
+    netstruc.node=rmfield(netstruc.node,'x');
+    netstruc.node=rmfield(netstruc.node,'y');
+    netstruc.node=rmfield(netstruc.node,'z');
+    
+    netstruc.face.mesh2d_face_nodes=netstruc.face.NetElemNode';
+    netstruc.face=rmfield(netstruc.face,'NetElemNode');
+    
+end
+
+netstruc.node.mesh2d_node_z(netstruc.node.mesh2d_node_z==-999)=NaN;
+
+handles.model.dflowfm.domain(ad).netstruc=netstruc;
+
 % handles.model.dflowfm.domain(ad).netstruc.edge.NetLink=handles.model.dflowfm.domain(ad).netstruc.edge.NetLink';
 
 %handles.model.dflowfm.domain.circumference=ddb_findNetCircumference(handles.model.dflowfm.domain(ad).netstruc);
 handles.model.dflowfm.domain.circumference=[];
 
 % Zoom to grid
-xl(1)=min(handles.model.dflowfm.domain.netstruc.node.x);
-xl(2)=max(handles.model.dflowfm.domain.netstruc.node.x);
-yl(1)=min(handles.model.dflowfm.domain.netstruc.node.y);
-yl(2)=max(handles.model.dflowfm.domain.netstruc.node.y);
+xl(1)=min(handles.model.dflowfm.domain.netstruc.node.mesh2d_node_x);
+xl(2)=max(handles.model.dflowfm.domain.netstruc.node.mesh2d_node_x);
+yl(1)=min(handles.model.dflowfm.domain.netstruc.node.mesh2d_node_y);
+yl(2)=max(handles.model.dflowfm.domain.netstruc.node.mesh2d_node_y);
 handles=ddb_zoomTo(handles,xl,yl,0.1);
 
 handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',ad,'color',[0.35 0.35 0.35],'visible',1,'active',1);
+handles=ddb_DFlowFM_plotBathymetry(handles,'plot','domain',ad,'visible',1,'active',1);
 
 setHandles(handles);

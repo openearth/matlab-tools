@@ -51,8 +51,8 @@ posx=[];
 iac=handles.toolbox.tidestations.activeDatabase;
 names=handles.toolbox.tidestations.database(iac).stationShortNames;
 
-xg=handles.model.dflowfm.domain(ad).netstruc.node.x;
-yg=handles.model.dflowfm.domain(ad).netstruc.node.y;
+xg=handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_x;
+yg=handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_y;
 
 xmin=min(min(xg));
 xmax=max(max(xg));

@@ -82,10 +82,10 @@ switch opt
             handles=ddb_readMDU(handles,filename,id);
             handles=ddb_DFlowFM_readAttributeFiles(handles,id);
 
-            xl(1)=min(handles.model.dflowfm.domain.netstruc.node.x);
-            xl(2)=max(handles.model.dflowfm.domain.netstruc.node.x);
-            yl(1)=min(handles.model.dflowfm.domain.netstruc.node.y);
-            yl(2)=max(handles.model.dflowfm.domain.netstruc.node.y);
+            xl(1)=min(handles.model.dflowfm.domain.netstruc.node.mesh2d_node_x);
+            xl(2)=max(handles.model.dflowfm.domain.netstruc.node.mesh2d_node_x);
+            yl(1)=min(handles.model.dflowfm.domain.netstruc.node.mesh2d_node_y);
+            yl(2)=max(handles.model.dflowfm.domain.netstruc.node.mesh2d_node_y);
             handles=ddb_zoomTo(handles,xl,yl,0.1);
             
             setHandles(handles);

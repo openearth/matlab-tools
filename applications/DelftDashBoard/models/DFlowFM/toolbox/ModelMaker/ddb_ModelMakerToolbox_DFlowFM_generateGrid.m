@@ -159,6 +159,7 @@ handles.model.dflowfm.domain(id).circumference=circ;
 % % Clip shallow areas
 % netstruc=dflowfm_clip_shallow_areas(netstruc,zmax);
 
+netstruc.edge.NetLink=netstruc.edge.NetLink';
 
 netStruc2nc(handles.model.dflowfm.domain(id).netfile,netstruc,'cstype',handles.screenParameters.coordinateSystem.type, 'csname', handles.screenParameters.coordinateSystem.name);
 

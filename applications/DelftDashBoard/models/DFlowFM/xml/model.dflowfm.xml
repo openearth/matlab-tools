@@ -34,7 +34,18 @@
         <option>selectversion</option>
       </menuitem>
     </menusavefile>
-    <menuview/>
+    <menuview>
+      <attribute>
+        <string>Grid</string>
+        <callback>ddb_menuViewDFlowFM</callback>
+        <option>grid</option>
+      </attribute>
+      <attribute>
+        <string>Bathymetry</string>
+        <callback>ddb_menuViewDFlowFM</callback>
+        <option>bathymetry</option>
+      </attribute>
+    </menuview>
   </menu>
   <element>
     <style>tabpanel</style>

@@ -98,6 +98,8 @@ end
 
 handles=ddb_DFlowFM_plotGrid(handles,option,'domain',id,'color',col,'visible',vis,'active',act);
 
+handles=ddb_DFlowFM_plotBathymetry(handles,option,'domain',id,'color',col,'visible',vis,'active',act);
+
 if idomain==0 && ~act
     vis=0;
 end

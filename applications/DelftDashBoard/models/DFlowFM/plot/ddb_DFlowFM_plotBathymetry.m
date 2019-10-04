@@ -1,4 +1,4 @@
-function handles = ddb_DFlowFM_plotGrid(handles, opt, varargin)
+function handles = ddb_DFlowFM_plotBathymetry(handles, opt, varargin)
 %DDB_DFlowFM_PLOTGRID  One line description goes here.
 %
 %   More detailed description goes here.
@@ -54,11 +54,11 @@ function handles = ddb_DFlowFM_plotGrid(handles, opt, varargin)
 % Created: 29 Nov 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: ddb_DFlowFM_plotGrid.m 13494 2017-07-27 12:08:29Z ormondt $
+% $Date: 2017-07-27 14:08:29 +0200 (Thu, 27 Jul 2017) $
+% $Author: ormondt $
+% $Revision: 13494 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/models/DFlowFM/plot/ddb_DFlowFM_plotGrid.m $
 % $Keywords: $
 
 %%
@@ -71,8 +71,6 @@ iactive=0;
 for i=1:length(varargin)
     if ischar(varargin{i})
         switch lower(varargin{i})
-            case{'color'}
-                col=varargin{i+1};
             case{'visible'}
                 vis=varargin{i+1};
             case{'domain'}
@@ -83,62 +81,66 @@ for i=1:length(varargin)
     end
 end
 
-vis=vis*handles.model.dflowfm.menuview.grid;
+vis=vis*handles.model.dflowfm.menuview.bathymetry;
 
 switch lower(opt)
     
     case{'plot'}
         
         % First delete old grid
-        if isfield(handles.model.dflowfm.domain(id).grid,'handle')
-            if ~isempty(handles.model.dflowfm.domain(id).grid.handle)
+        if isfield(handles.model.dflowfm.domain(id).bathymetry,'handle')
+            if ~isempty(handles.model.dflowfm.domain(id).bathymetry.handle)
                 try
-                    delete(handles.model.dflowfm.domain(id).grid.handle);
+                    delete(handles.model.dflowfm.domain(id).bathymetry.handle);
                 end
             end
         end
+        node=handles.model.dflowfm.domain(id).netstruc.node;
+        h=fastscatter(node.mesh2d_node_x,node.mesh2d_node_y,node.mesh2d_node_z);
+
+        clims=get(gca,'CLim');
+        zmin=clims(1);
+        zmax=clims(2);
+        colormap(ddb_getColors(handles.mapData.colorMaps.earth,64)*255);
+        caxis([zmin zmax]);
         
-        h=pltnet(handles.model.dflowfm.domain(id).netstruc);
-%         p=dflowfm.plotNet(handles.model.dflowfm.domain(id).netstruc,'cor',[],'cen',[]);
-%         handles.model.dflowfm.domain(id).grid.handle=p.per;
-        handles.model.dflowfm.domain(id).grid.handle=h;
-        set(h,'Tag','dflowfmnet');
+        handles.model.dflowfm.domain(id).bathymetry.handle=h;
+        set(h,'Tag','dflowfmbathymetry');
         set(h,'HitTest','off');
 
         if vis
-            set(h,'Color',col,'Visible','on');
+            set(h,'Visible','on');
         else
-            set(h,'Color',col,'Visible','off');
+            set(h,'Visible','off');
         end
                 
     case{'delete'}
         
         % Delete old grid
-        if isfield(handles.model.dflowfm.domain(id).grid,'handle')
-            if ~isempty(handles.model.dflowfm.domain(id).grid.handle)
+        if isfield(handles.model.dflowfm.domain(id).bathymetry,'handle')
+            if ~isempty(handles.model.dflowfm.domain(id).bathymetry.handle)
                 try
-                    delete(handles.model.dflowfm.domain(id).grid.handle);
+                    delete(handles.model.dflowfm.domain(id).bathymetry.handle);
                 end
             end
         end
         
         if id==0
-            h=findobj(gcf,'Tag','dflowfmnet');
+            h=findobj(gcf,'Tag','dflowfmbathymetry');
             if ~isempty(h)
                 delete(h);
             end
         end
         
     case{'update'}
-        if isfield(handles.model.dflowfm.domain(id).grid,'handle')
-            if ~isempty(handles.model.dflowfm.domain(id).grid.handle)
+        if isfield(handles.model.dflowfm.domain(id).bathymetry,'handle')
+            if ~isempty(handles.model.dflowfm.domain(id).bathymetry.handle)
                 try
-                    set(handles.model.dflowfm.domain(id).grid.handle,'HitTest','off');
-                    set(handles.model.dflowfm.domain(id).grid.handle,'Color',col);
+                    set(handles.model.dflowfm.domain(id).bathymetry.handle,'HitTest','off');
                     if vis
-                        set(handles.model.dflowfm.domain(id).grid.handle,'Color',col,'Visible','on');
+                        set(handles.model.dflowfm.domain(id).bathymetry.handle,'Visible','on');
                     else
-                        set(handles.model.dflowfm.domain(id).grid.handle,'Color',col,'Visible','off');
+                        set(handles.model.dflowfm.domain(id).bathymetry.handle,'Visible','off');
                     end
                 end
             end

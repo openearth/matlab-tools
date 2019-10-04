@@ -174,6 +174,7 @@ close(wb);
 %handles.model.dflowfm.domain(ad).netstruc=loadnetstruc2(filename);
 
 handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',ad);
+handles=ddb_DFlowFM_plotBathymetry(handles,'plot','domain',ad);
 
 setHandles(handles);
 
@@ -278,7 +279,17 @@ y=handles.toolbox.modelmaker.polygonY;
 
 handles.model.dflowfm.domain(ad).netstruc=dflowfm_clip_mesh_in_polygon(handles.model.dflowfm.domain(ad).netstruc,x,y);
 
-netStruc2nc(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domain(ad).netstruc,'cstype',handles.screenParameters.coordinateSystem.type,'csname', handles.screenParameters.coordinateSystem.name);
+cs.name=handles.screenParameters.coordinateSystem.name;
+switch lower(handles.screenParameters.coordinateSystem.type(1:3))
+    case{'pro','car'}
+        cs.type='projected';
+    otherwise
+        cs.type='geographic';
+end
+
+netstruc2netcdf(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domain(ad).netstruc,'cs',cs);
+
+%netStruc2nc(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domain(ad).netstruc,'cstype',handles.screenParameters.coordinateSystem.type,'csname', handles.screenParameters.coordinateSystem.name);
 
 handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',ad);
 
@@ -303,7 +314,17 @@ handles.model.dflowfm.domain(ad).netfile=filename;
 
 handles.model.dflowfm.domain(ad).netstruc=dflowfm_clip_shallow_areas(handles.model.dflowfm.domain(ad).netstruc,handles.toolbox.modelmaker.zMax, 'max');
 
-netStruc2nc(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domain(ad).netstruc,'cstype',handles.screenParameters.coordinateSystem.type,'csname', handles.screenParameters.coordinateSystem.name);
+% netStruc2nc(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domain(ad).netstruc,'cstype',handles.screenParameters.coordinateSystem.type,'csname', handles.screenParameters.coordinateSystem.name);
+
+cs.name=handles.screenParameters.coordinateSystem.name;
+switch lower(handles.screenParameters.coordinateSystem.type(1:3))
+    case{'pro','car'}
+        cs.type='projected';
+    otherwise
+        cs.type='geographic';
+end
+
+netstruc2netcdf(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domain(ad).netstruc,'cs',cs);
 
 handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',ad);
 

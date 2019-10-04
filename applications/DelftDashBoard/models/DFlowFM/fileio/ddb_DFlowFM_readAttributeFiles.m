@@ -53,8 +53,32 @@ fname=handles.model.dflowfm.domain(id).netfile;
 
 if exist(fname,'file')    
     % Load file
-    handles.model.dflowfm.domain(id).netstruc=dflowfm.readNet(fname);
-    handles.model.dflowfm.domain(id).netstruc.edge.NetLink=handles.model.dflowfm.domain(id).netstruc.edge.NetLink';
+%     handles.model.dflowfm.domain(id).netstruc=dflowfm.readNet_new(fname);
+
+try
+    netstruc=dflowfm.readNet_new(fname);
+catch    
+    netstruc=dflowfm.readNetOld(fname);
+
+    netstruc.edge.mesh2d_edge_nodes=netstruc.edge.NetLink;
+    netstruc.edge=rmfield(netstruc.edge,'NetLink');
+
+    netstruc.node.mesh2d_node_x=netstruc.node.x;
+    netstruc.node.mesh2d_node_y=netstruc.node.y;
+    netstruc.node.mesh2d_node_z=netstruc.node.z;
+    netstruc.node=rmfield(netstruc.node,'x');
+    netstruc.node=rmfield(netstruc.node,'y');
+    netstruc.node=rmfield(netstruc.node,'z');
+    
+    netstruc.face.mesh2d_face_nodes=netstruc.face.NetElemNode';
+    netstruc.face=rmfield(netstruc.face,'NetElemNode');
+    
+end
+
+netstruc.node.mesh2d_node_z(netstruc.node.mesh2d_node_z==-999)=NaN;
+
+handles.model.dflowfm.domain(id).netstruc=netstruc;
+    
 %     % Compute circumference
 %    handles.model.dflowfm.domain.circumference=ddb_findNetCircumference(handles.model.dflowfm.domain(id).netstruc);
     handles.model.dflowfm.domain.circumference=[];

@@ -15,6 +15,7 @@ function handles=initializeGridDependentInput(handles,id)
 
 % Only the grid dependent input
 handles.model.dflowfm.domain(id).grid=[];
+handles.model.dflowfm.domain(id).bathymetry=[];
 handles.model.dflowfm.domain(id).plothandles=[];
 
 %% Geometry
@@ -124,6 +125,7 @@ handles.model.dflowfm.domain(id).icdtyp=3;
 handles.model.dflowfm.domain(id).cdbreakpoints=[0.00100  0.00300 0.0015];
 handles.model.dflowfm.domain(id).windspeedbreakpoints=[0.0 25.0 50.0];
 handles.model.dflowfm.domain(id).pavbnd=101200;
+handles.model.dflowfm.domain(id).rhoair=1.2;
 
 %% Time
 handles.model.dflowfm.domain(id).refdate        = floor(now);

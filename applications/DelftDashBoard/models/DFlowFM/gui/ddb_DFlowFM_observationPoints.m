@@ -105,6 +105,7 @@ else
             set(gcf, 'windowbuttondownfcn',[]);
             if handles.model.dflowfm.domain(ad).changeobservationpoint
                 setInstructions({'','','Select observation point on map to change'});
+                
             end
             setHandles(handles);
             
@@ -118,7 +119,12 @@ else
             name=handles.model.dflowfm.domain(ad).observationpoints(n).name;
             handles.model.dflowfm.domain(ad).observationpointnames{n}=name;
             h=handles.model.dflowfm.domain(ad).observationpointshandle;
-            gui_pointcloud(h,'change','text',handles.model.dflowfm.domain(ad).observationpointnames);
+            
+            for ii=1:length(handles.model.dflowfm.domain(ad).observationpoints)
+                xy(ii,1)=handles.model.dflowfm.domain(ad).observationpoints(ii).x;
+                xy(ii,2)=handles.model.dflowfm.domain(ad).observationpoints(ii).y;
+            end
+            gui_pointcloud(h,'change','xy',xy,'text',handles.model.dflowfm.domain(ad).observationpointnames);
             setHandles(handles);
             
         case{'selectfromlist'}

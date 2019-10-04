@@ -41,7 +41,7 @@ if icheck
         return
     end
     % Check if there is already data in depth matrix
-    dmax=nanmax(nanmax(handles.model.dflowfm.domain(ad).netstruc.node.z));
+    dmax=nanmax(nanmax(handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_z));
     if isnan(dmax)
         overwrite=1;
     else
@@ -60,23 +60,32 @@ if icheck
 end
 
 %% Grid coordinates and type
-xg=handles.model.dflowfm.domain(id).netstruc.node.x;
-yg=handles.model.dflowfm.domain(id).netstruc.node.y;
-zg=handles.model.dflowfm.domain(id).netstruc.node.z;
+xg=handles.model.dflowfm.domain(id).netstruc.node.mesh2d_node_x;
+yg=handles.model.dflowfm.domain(id).netstruc.node.mesh2d_node_y;
+zg=handles.model.dflowfm.domain(id).netstruc.node.mesh2d_node_z;
 gridtype='unstructured';
 
 %% Generate bathymetry
 [xg,yg,zg]=ddb_ModelMakerToolbox_generateBathymetry(handles,xg,yg,zg,datasets,'filename',filename,'overwrite',overwrite,'gridtype',gridtype,'modeloffset',modeloffset);
 
 %% Update model data
-handles.model.dflowfm.domain(id).netstruc.node.z=zg;
+handles.model.dflowfm.domain(id).netstruc.node.mesh2d_node_z=zg;
 % Update circumference
 %handles.model.dflowfm.domain(id).circumference.z=handles.model.dflowfm.domain(id).netstruc.node.z(handles.model.dflowfm.domain(id).circumference.n);
     
 % Net file
 handles.model.dflowfm.domain(ad).netfile=filename;
-netStruc2nc(handles.model.dflowfm.domain(id).netfile,handles.model.dflowfm.domain(id).netstruc,'cstype',handles.screenParameters.coordinateSystem.type, 'csname', handles.screenParameters.coordinateSystem.name);
+%handles.model.dflowfm.domain(id).netstruc.edge.NetLink=handles.model.dflowfm.domain(id).netstruc.edge.NetLink';
+%netStruc2nc(handles.model.dflowfm.domain(id).netfile,handles.model.dflowfm.domain(id).netstruc,'cstype',handles.screenParameters.coordinateSystem.type);
+cs.name=handles.screenParameters.coordinateSystem.name;
+switch lower(handles.screenParameters.coordinateSystem.type(1:3))
+    case{'pro','car'}
+        cs.type='projected';
+    otherwise
+        cs.type='geographic';
+end
 
+netstruc2netcdf(handles.model.dflowfm.domain(id).netfile,handles.model.dflowfm.domain(id).netstruc,'cs',cs);
 % Plot
 % TODO handles=ddb_DFlowFM_plotBathymetry(handles,'plot');
 

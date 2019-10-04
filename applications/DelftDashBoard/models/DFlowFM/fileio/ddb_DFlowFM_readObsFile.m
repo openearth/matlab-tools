@@ -46,14 +46,25 @@ function handles = ddb_DFlowFM_readObsFile(handles, id)
 %% Get values
 filename    = handles.model.dflowfm.domain(id).obsfile;
 fileID      = fopen(filename,'r');
-dataArray   = textscan(fileID, '%f%f%q%[^\n\r]', 'Delimiter', ' ', 'MultipleDelimsAsOne', true,  'ReturnOnError', false);
+%dataArray   = textscan(fileID, '%f%f%q%[^\n\r]', 'Delimiter', ' "''', 'MultipleDelimsAsOne', true,  'ReturnOnError', false);
+dataArray   = textscan(fileID, '%f%f%q%[^\n\r]', 'MultipleDelimsAsOne', true,  'ReturnOnError', false);
 fclose(fileID);
 x           = dataArray{:, 1};
 y           = dataArray{:, 2};
 name        = dataArray{:, 3};
 
+%         while 1
+%             tx0=fgets(fid);
+%             if and(ischar(tx0), size(tx0>0))
+%                 v0=strread(tx0,'%q');
+
+% for ip=1:length(x)
+%     name{ip}=name{ip}(2:end-1); % Get rid of quotes
+% end
+
 % Place values in handles
 handles.model.dflowfm.domain(id).observationpoints=[];
+handles.model.dflowfm.domain(id).observationpointnames={''};
 
 for ip=1:length(x)
     handles.model.dflowfm.domain(id).observationpoints(ip).name=name{ip};

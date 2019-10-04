@@ -50,4 +50,44 @@ data=zeros(length(boundaries(ii).nodes(jj).timeseries.time),size(boundaries(ii).
 data(:,1)=1440*(boundaries(ii).nodes(jj).timeseries.time-refdate);
 data(:,2:end)=boundaries(ii).nodes(jj).timeseries.value;
 
-save(fname,'-ascii','data');
+% save(fname,'-ascii','data');
+
+
+
+
+
+
+fname=boundaries(ii).nodes(jj).timfile;
+
+fid=fopen(fname,'wt');
+
+fprintf(fid,'%s\n',['* Delft3D-FLOW boundary segment name: ' boundaries(ii).name]);
+fprintf(fid,'%s\n',['* ' boundaries(ii).nodes(jj).cmpfile]);
+fprintf(fid,'%s\n','* COLUMNN=3');
+fprintf(fid,'%s\n','* COLUMN1=Period (min) or Astronomical Componentname');
+fprintf(fid,'%s\n','* COLUMN2=Amplitude (m)');
+fprintf(fid,'%s\n','* COLUMN3=Phase (deg)');
+
+tp=boundaries(ii).nodes(jj).cmptype;
+
+switch tp(1:5)
+    case{'astro','astronomic'}
+        components=boundaries(ii).nodes(jj).astronomiccomponents;
+    case{'harmo'}
+        components=boundaries(ii).nodes(jj).harmoniccomponents;
+end
+        
+for ip=1:length(components)
+    cmp=components(ip).component;
+    if ischar(cmp)
+        cmp=[repmat(' ',1,12-length(cmp)) cmp]; 
+    else
+        cmp=num2str(cmp,'%12.3f');
+        cmp=[repmat(' ',1,12-length(cmp)) cmp]; 
+    end
+    amp=components(ip).amplitude;
+    phi=components(ip).phase;
+    fprintf(fid,'%s %11.4f %11.1f\n',cmp,amp,phi);
+end
+
+fclose(fid);

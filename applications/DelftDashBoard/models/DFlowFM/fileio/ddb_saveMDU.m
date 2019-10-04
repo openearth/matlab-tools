@@ -165,6 +165,10 @@ s.wind.PavBnd.value  = inp.pavbnd;
 s.wind.PavBnd.type   = 'real';  
 s.wind.PavBnd.comment  = '# Background pressure (Pa)';         
 
+s.wind.Rhoair.value  = inp.rhoair;               
+s.wind.Rhoair.type   = 'real';  
+s.wind.Rhoair.comment  = '# Air density (kg/m3)';         
+
 %% Waves
 if isfield(inp, 'wavemodelnr')
     s.waves.Wavemodelnr.value          = inp.wavemodelnr;

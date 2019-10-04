@@ -78,6 +78,16 @@ nr=nr+1;
 
 handles.model.dflowfm.domain.nrboundaries=nr;
 
+for ip=1:length(x)
+    xb=x(ip);
+    yb=y(ip);
+    dst=sqrt((handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_x-xb).^2+(handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_y-yb).^2);
+    imin=find(dst==min(dst));
+    imin=imin(1);
+    x(ip)=handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_x(imin);
+    y(ip)=handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_y(imin);
+end
+
 handles.model.dflowfm.domain.boundaries=ddb_DFlowFM_initializeBoundary(handles.model.dflowfm.domain.boundaries,x,y,['bnd_' num2str(nr,'%0.3i')],nr, ...
     handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop);
 
@@ -90,6 +100,7 @@ handles.model.dflowfm.domain.boundaries(nr).handle=h;
 %     handles.model.dflowfm.domain.boundaries(nr).definition=handles.model.dflowfm.domain.boundaries(handles.model.dflowfm.domain.activeboundary).definition;
 % end
 handles.model.dflowfm.domain.activeboundary=nr;
+
 
 setHandles(handles);
 
@@ -160,10 +171,20 @@ end
 %     x(nr)=xcir(imin);
 %     y(nr)=ycir(imin);
 %     
-    handles.model.dflowfm.domain.activeboundary=iac;
-    handles.model.dflowfm.domain.boundaries(iac).x=x;
-    handles.model.dflowfm.domain.boundaries(iac).y=y;
-    handles.model.dflowfm.domain.boundaries(iac).activenode=nr;
+
+% Find nearest grid point
+xb=x(nr);
+yb=y(nr);
+dst=sqrt((handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_x-xb).^2+(handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_y-yb).^2);
+imin=find(dst==min(dst));
+imin=imin(1);
+x(nr)=handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_x(imin);
+y(nr)=handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_y(imin);
+
+handles.model.dflowfm.domain(ad).activeboundary=iac;
+    handles.model.dflowfm.domain(ad).boundaries(iac).x=x;
+    handles.model.dflowfm.domain(ad).boundaries(iac).y=y;
+    handles.model.dflowfm.domain(ad).boundaries(iac).activenode=nr;
 %     
 % end
 
@@ -277,6 +298,15 @@ for iac=1:handles.model.dflowfm.domain.nrboundaries
     ddb_DFlowFM_saveBoundaryPolygon('.\',handles.model.dflowfm.domain.boundaries,iac);
 
 %    landboundary('write',handles.model.dflowfm.domain.boundaries(iac).filename,x,y);
+    for jj=1:length(x)
+        handles.model.dflowfm.domain.boundaries(iac).nodes(jj).bc.Function='timeseries';
+        handles.model.dflowfm.domain.boundaries(iac).nodes(jj).bc.Quantity1='time';
+        handles.model.dflowfm.domain.boundaries(iac).nodes(jj).bc.Unit1='-';
+        handles.model.dflowfm.domain.boundaries(iac).nodes(jj).bc.Quantity2='waterlevelbnd';
+        handles.model.dflowfm.domain.boundaries(iac).nodes(jj).bc.Unit2='-';
+    end
+
+    ddb_DFlowFM_saveBCfile('mackay.bc',handles.model.dflowfm.domain.boundaries,handles.model.dflowfm.domain.refdate);
 
 %     % Save component files
 %     for jj=1:length(x)
@@ -284,6 +314,7 @@ for iac=1:handles.model.dflowfm.domain.nrboundaries
 %             ddb_DFlowFM_saveCmpFile(handles.model.dflowfm.domain.boundaries,iac,jj);
 %         end
 %         if handles.model.dflowfm.domain.boundaries(iac).nodes(jj).tim
+%             handles.model.dflowfm.domain.boundaries(iac).nodes(jj).timfile=[handles.model.dflowfm.domain.boundaries(iac).name '_' num2str(jj,'%0.4i') '.tim'];
 %             ddb_DFlowFM_saveTimFile(handles.model.dflowfm.domain.boundaries,iac,jj,handles.model.dflowfm.domain.refdate);
 %         end
 %     end

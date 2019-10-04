@@ -3,12 +3,12 @@ function netstruc1=dflowfm_clip_mesh_in_polygon(netstruc,xpol,ypol)
 x=netstruc.node.x;
 y=netstruc.node.y;
 inp=inpolygon(x,y,xpol,ypol);
-netlink=netstruc.edge.NetLink;
-netelemnode=netstruc.face.NetElemNode;
+netlink=netstruc.edge.mesh2d_edge_nodes;
+netelemnode=netstruc.face.mesh2d_face_nodes;
 
-node1.x=netstruc.node.x(~inp);
-node1.y=netstruc.node.y(~inp);
-node1.z=netstruc.node.z(~inp);
+node1.mesh2d_node_x=netstruc.node.mesh2d_node_x(~inp);
+node1.mesh2d_node_y=netstruc.node.mesh2d_node_y(~inp);
+node1.mesh2d_node_z=netstruc.node.mesh2d_node_z(~inp);
 node1.n=sum(inp);
 
 n=0;
@@ -22,19 +22,19 @@ for ii=1:length(x)
 end
 
 n=0;
-for ii=1:size(netlink,1)
-    if ~inp(netlink(ii,1)) && ~inp(netlink(ii,2))
+for ii=1:size(netlink,2)
+    if ~inp(netlink(1,ii)) && ~inp(netlink(2,ii))
         % both points active
         n=n+1;
-        netlink1(n,1)=ind(netlink(ii,1));
-        netlink1(n,2)=ind(netlink(ii,2));
+        netlink1(1,n)=ind(netlink(1,ii));
+        netlink1(2,n)=ind(netlink(2,ii));
     end
 end
 
-ncol=size(netelemnode,2);
+ncol=size(netelemnode,1);
 n=0;
-for ii=1:size(netelemnode,1)
-    netelemtmp=squeeze(netelemnode(ii,:));
+for ii=1:size(netelemnode,2)
+    netelemtmp=squeeze(netelemnode(:,ii));
     % Remove NaNs
     netelemtmp=netelemtmp(~isnan(netelemtmp));
     inptmp=inp(netelemtmp);
@@ -44,10 +44,10 @@ for ii=1:size(netelemnode,1)
         % All surrounding points active
         n=n+1;
         for j=1:ncol
-            if ~isnan(netelemnode(ii,j))
-                netelemnode1(n,j)=ind(netelemnode(ii,j));
+            if ~isnan(netelemnode(j,ii))
+                netelemnode1(j,n)=ind(netelemnode(j,ii));
             else
-                netelemnode1(n,j)=NaN;
+                netelemnode1(j,n)=NaN;
             end
         end
     end
@@ -55,5 +55,5 @@ end
 
 netstruc1=netstruc;
 netstruc1.node=node1;
-netstruc1.edge.NetLink=netlink1;
-netstruc1.face.NetElemNode=netelemnode1;
+netstruc1.edge.mesh2d_edge_nodes=netlink1;
+netstruc1.face.mesh2d_face_nodes=netelemnode1;

@@ -144,89 +144,92 @@ for ii=1:length(s)
 end
 
 for ii = 1:length(boundaries)
-
+    
     % Now read time series / component files
-    [A] = textread(handles.model.dflowfm.domain.bcfile,'%s');
-    for jj = 1:length(boundaries(ii).nodes)
-        id = find(strcmpi(A, boundaries(ii).nodes(jj).name)); 
-        if ~isempty(id)
-            
-            % Reading time series
-            if strcmp(A{ (id+3) ,1}, 'timeseries')
+    if exist(handles.model.dflowfm.domain.bcfile,'file')
+        [A] = textread(handles.model.dflowfm.domain.bcfile,'%s');
+        for jj = 1:length(boundaries(ii).nodes)
+            id = find(strcmpi(A, boundaries(ii).nodes(jj).name));
+            if ~isempty(id)
                 
-                % Set the bc-file
-                id = find(strcmpi(A, boundaries(ii).cmpfile(jj))); 
-                boundaries(ii).nodes(jj).bc.Function   = A{id+3,1};
-                boundaries(ii).nodes(jj).bc.Timeinterpolation  = A{id+6,1};
-                boundaries(ii).nodes(jj).bc.Quantity1  = A{id+9,1};
-                boundaries(ii).nodes(jj).bc.Unit1      = [A{id+12,1},' ', A{id+13,1},' ', A{id+14,1},' ', A{id+15,1}];
-                boundaries(ii).nodes(jj).bc.Quantity2  = A{id+18,1};
-                boundaries(ii).nodes(jj).bc.Unit2      = A{id+21,1};
-                
-                % Get values
-                endvalue = 0; idvalue = id+22; count = 1;
-                while endvalue == 0
-                    try
-                    time(count) = str2num(A{idvalue,1}); idvalue = idvalue+1;
-                    value(count) = str2num(A{idvalue,1}); idvalue = idvalue+1; count = count+1;
-                    catch
-                    endvalue = 1;
-                    end
-                end
-
-                % Save value
-                boundaries(ii).nodes(jj).timeseries.time    = time;
-                boundaries(ii).nodes(jj).timeseries.value   = value;
-                boundaries(ii).nodes(jj).cmptype            = 'timeseries';
-                
-            % Reading harmonic  (TO DO)  
-            elseif strcmp(A{ (id+3) ,1}, 'harmonic')
-               
-                
-                % Save value
-                boundaries(ii).nodes(jj).cmptype            = 'harmonic';
-
-            % Reading harmonic    
-            elseif strcmp(A{ (id+3) ,1}, 'astronomic')
-                
-                % Set the bc-file
-                id = find(strcmpi(A, boundaries(ii).nodes(jj).name)); 
-                boundaries(ii).nodes(jj).bc.Function   = A{id+3,1};
-                boundaries(ii).nodes(jj).bc.Quantity1  = [A{id+6,1}, ' ', A{id+7,1}];
-                boundaries(ii).nodes(jj).bc.Unit1      = A{id+10,1};
-                boundaries(ii).nodes(jj).bc.Quantity2  = [A{id+13,1}, ' ', A{id+14,1}];
-                boundaries(ii).nodes(jj).bc.Unit2      = A{id+17,1};
-                boundaries(ii).nodes(jj).bc.Quantity3  = [A{id+13,1}, ' ', A{id+21,1}];
-                boundaries(ii).nodes(jj).bc.Unit3      = A{id+24,1};
-                
-                % Get value
-                endvalue = 0; idvalue = id+25; count = 1;
-                while endvalue == 0
-                    try
-                    values(count).con = A{idvalue,1}; idvalue = idvalue+1;
-                    values(count).amp = str2num(A{idvalue,1}); idvalue = idvalue+1; 
-                    values(count).phi = str2num(A{idvalue,1}); idvalue = idvalue+1; 
+                % Reading time series
+                if strcmp(A{ (id+3) ,1}, 'timeseries')
                     
-                    if isempty(values(count).con) || isempty(values(count).amp) || isempty(values(count).phi)
-                        endvalue = 1;
-                    else
-                        count = count+1;
+                    % Set the bc-file
+                    nodename=boundaries(ii).nodes(jj).name;
+                    id = find(strcmpi(A, nodename));
+                    %                id = find(strcmpi(A, boundaries(ii).cmpfile(jj)));
+                    boundaries(ii).nodes(jj).bc.Function   = A{id+3,1};
+                    boundaries(ii).nodes(jj).bc.Timeinterpolation  = A{id+6,1};
+                    boundaries(ii).nodes(jj).bc.Quantity1  = A{id+9,1};
+                    boundaries(ii).nodes(jj).bc.Unit1      = [A{id+12,1},' ', A{id+13,1},' ', A{id+14,1},' ', A{id+15,1}];
+                    boundaries(ii).nodes(jj).bc.Quantity2  = A{id+18,1};
+                    boundaries(ii).nodes(jj).bc.Unit2      = A{id+21,1};
+                    
+                    % Get values
+                    endvalue = 0; idvalue = id+22; count = 1;
+                    while endvalue == 0
+                        try
+                            time(count) = str2num(A{idvalue,1}); idvalue = idvalue+1;
+                            value(count) = str2num(A{idvalue,1}); idvalue = idvalue+1; count = count+1;
+                        catch
+                            endvalue = 1;
+                        end
                     end
                     
-                    catch
-                    endvalue = 1;
+                    % Save value
+                    boundaries(ii).nodes(jj).timeseries.time    = time;
+                    boundaries(ii).nodes(jj).timeseries.value   = value;
+                    boundaries(ii).nodes(jj).cmptype            = 'timeseries';
+                    
+                    % Reading harmonic  (TO DO)
+                elseif strcmp(A{ (id+3) ,1}, 'harmonic')
+                    
+                    
+                    % Save value
+                    boundaries(ii).nodes(jj).cmptype            = 'harmonic';
+                    
+                    % Reading harmonic
+                elseif strcmp(A{ (id+3) ,1}, 'astronomic')
+                    
+                    % Set the bc-file
+                    id = find(strcmpi(A, boundaries(ii).nodes(jj).name));
+                    boundaries(ii).nodes(jj).bc.Function   = A{id+3,1};
+                    boundaries(ii).nodes(jj).bc.Quantity1  = [A{id+6,1}, ' ', A{id+7,1}];
+                    boundaries(ii).nodes(jj).bc.Unit1      = A{id+10,1};
+                    boundaries(ii).nodes(jj).bc.Quantity2  = [A{id+13,1}, ' ', A{id+14,1}];
+                    boundaries(ii).nodes(jj).bc.Unit2      = A{id+17,1};
+                    boundaries(ii).nodes(jj).bc.Quantity3  = [A{id+13,1}, ' ', A{id+21,1}];
+                    boundaries(ii).nodes(jj).bc.Unit3      = A{id+24,1};
+                    
+                    % Get value
+                    endvalue = 0; idvalue = id+25; count = 1;
+                    while endvalue == 0
+                        try
+                            values(count).con = A{idvalue,1}; idvalue = idvalue+1;
+                            values(count).amp = str2num(A{idvalue,1}); idvalue = idvalue+1;
+                            values(count).phi = str2num(A{idvalue,1}); idvalue = idvalue+1;
+                            
+                            if isempty(values(count).con) || isempty(values(count).amp) || isempty(values(count).phi)
+                                endvalue = 1;
+                            else
+                                count = count+1;
+                            end
+                            
+                        catch
+                            endvalue = 1;
+                        end
                     end
-                end
-                
-                % Save values
-                nnnn = length(values);
-                for xx = 1:nnnn-1
-                    boundaries(ii).nodes(jj).astronomiccomponents(xx).component = values(xx).con;
-                    boundaries(ii).nodes(jj).astronomiccomponents(xx).amplitude = values(xx).amp;
-                    boundaries(ii).nodes(jj).astronomiccomponents(xx).phase     = values(xx).phi;
+                    
+                    % Save values
+                    nnnn = length(values);
+                    for xx = 1:nnnn-1
+                        boundaries(ii).nodes(jj).astronomiccomponents(xx).component = values(xx).con;
+                        boundaries(ii).nodes(jj).astronomiccomponents(xx).amplitude = values(xx).amp;
+                        boundaries(ii).nodes(jj).astronomiccomponents(xx).phase     = values(xx).phi;
+                    end
                 end
             end
-            
         end
     end
 end

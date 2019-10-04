@@ -66,8 +66,8 @@ for ip=1:length(x)
     boundaries(ib).nodes(ip).harmoniccomponents(1).phase=0.0;
     
     % Time series
-    boundaries(ib).nodes(ip).timeseries.time=[t0 t1];
-    boundaries(ib).nodes(ip).timeseries.value=[0 0];
+    boundaries(ib).nodes(ip).timeseries.time=[t0;t1];
+    boundaries(ib).nodes(ip).timeseries.value=[0;0];
 
     boundaries(ib).nodes(ip).name          = [boundaries(ib).name '_' num2str(ip,'%0.4i')];
     boundaries(ib).nodes(ip).cmp=1;

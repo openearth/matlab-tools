@@ -16,7 +16,7 @@ end
 
 % Get dimensions
 nnodes=length(netStruc.node.x);
-nlinks=size(netStruc.edge.NetLink,1);
+nlinks=size(netStruc.edge.NetLink,2);
 if isfield(netStruc,'face')
     nelems=size(netStruc.face.NetElemNode,1);
 end
@@ -190,7 +190,8 @@ varid = netcdf.defVar(NCid,'NetLink','int',[nNetLinkPtsDimId nNetLinkDimId]);
 netcdf.putAtt(NCid,varid,'standard_name','netlink');
 netcdf.putAtt(NCid,varid,'long_name','link between two netnodes');
 netcdf.endDef(NCid);
-netcdf.putVar(NCid,varid,netStruc.edge.NetLink');
+%netcdf.putVar(NCid,varid,netStruc.edge.NetLink');
+netcdf.putVar(NCid,varid,netStruc.edge.NetLink);
 
 % Net link type
 netcdf.reDef(NCid);
