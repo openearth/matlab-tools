@@ -66,7 +66,48 @@ ddb_fixtimestepDelft3DFLOW(handles, ad); % Check input and output times
 
 switch lower(opt)
     case{'save'}
+        
         ddb_saveMDF(handles,ad);
+        
+%         % Save xml file for FEWS toolbox
+%         xml.model(1).model.name=handles.model.delft3dflow.domain(ad).runid;
+%         xml.model(1).model.runid=handles.model.delft3dflow.domain(ad).runid;
+%         
+%         if handles.model.delft3dflow.domain(ad).waves
+%             tp='delft3dflowwave';
+%         else
+%             tp='delft3dflow';
+%         end
+%         xml.model(1).model.type=tp;
+%         if handles.model.delft3dflow.domain(ad).wind
+%             xml.model(1).model.wind=1;
+%         else
+%             xml.model(1).model.wind=0;
+%         end
+%         xml.model(1).model.spinup_time=2880;
+%         xml.model(1).model.cs_name=handles.screenParameters.coordinateSystem.name;
+%         xml.model(1).model.cs_type=handles.screenParameters.coordinateSystem.type;
+%         xml.model(1).model.stations='xtide_gom.xml';
+%         
+%         cs.name='WGS 84';
+%         cs.type='geographic';
+%         [xg,yg]=ddb_coordConvert(handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY,handles.screenParameters.coordinateSystem,cs);
+% 
+%         xmin=nanmin(nanmin(xg));
+%         xmax=nanmin(nanmin(xg));
+%         ymin=nanmin(nanmin(yg));
+%         ymax=nanmin(nanmin(yg));
+%         
+%         xml.model(1).model.lon=xmin+0.5*(xmax-xmin);
+%         xml.model(1).model.lat=ymin+0.5*(ymax-ymin);
+%         
+%         xml.model(1).model.lon_min=floor(xmin);
+%         xml.model(1).model.lon_max=ceil(xmax);
+%         xml.model(1).model.lat_min=floor(ymin);
+%         xml.model(1).model.lat_max=ceil(ymax);
+%         
+%         struct2xml([xml.model(1).model.name '.xml'],xml,'structuretype','short');
+%                
     case{'saveas'}
         [filename, pathname, ~] = uiputfile('*.mdf', 'Select MDF File','');
         if pathname~=0
