@@ -110,5 +110,17 @@
       <callback>ddb_ModelMakerToolbox_DFlowFM_refine</callback>
       <element>toolbox.modelmaker.dflowfm.refine.xml</element>
     </tab>
+    <tab>
+      <formodel>sfincs</formodel>
+      <tabstring>Mask</tabstring>
+      <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
+      <element>toolbox.modelmaker.sfincs.mask.xml</element>
+    </tab>    
+    <tab>
+      <formodel>sfincs</formodel>
+      <tabstring>Coastline</tabstring>
+      <callback>ddb_ModelMakerToolbox_sfincs_coastline</callback>
+      <element>toolbox.modelmaker.sfincs.coastline.xml</element>
+    </tab>    
   </element>
 </root>

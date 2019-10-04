@@ -1,4 +1,4 @@
-function zgnew=ddb_interpolateBathymetry2(bathymetry,datasets,xg,yg,zg,modeloffset,overwrite,gridtype,internaldiff,coord)
+function zgnew=ddb_interpolateBathymetry2(bathymetry,datasets,xg,yg,zg,modeloffset,overwrite,gridtype,internaldiff,coord,varargin)
 %DDB_INTERPOLATEBATHYMETRY2 interpolates data from datasets onto structured or unstructured grid
 %
 %% Copyright notice
@@ -32,6 +32,18 @@ function zgnew=ddb_interpolateBathymetry2(bathymetry,datasets,xg,yg,zg,modeloffs
 % Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
+dmin=50;
+% dmax=50;
+
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'dmin'}
+                dmin=varargin{ii+1};
+        end
+    end    
+end
+
 %% Generate bathymetry
 
 % If now input bathymetry is given, fill matrix with nans
@@ -48,13 +60,13 @@ zg(zg==0)=NaN;
 if strcmpi(gridtype,'structured')
     % Find minimum grid resolution (in metres!) for this dataset
     [dmin,dmax]=findMinMaxGridSize(xg,yg,'cstype',coord.type);
-else
-    % TODO determine minimum and maximum grid spacing fro unstructured
-    % grids
-    dmin=5000;
-    dmax=5000;
-    dmin=1000;
-    dmax=1000;
+% else
+%     % TODO determine minimum and maximum grid spacing fro unstructured
+%     % grids
+% %     dmin=5000;
+% %     dmax=5000;
+%     dmin=50;
+%     dmax=50;
 end
 %dmin=dmin/2;
 xg0=xg;

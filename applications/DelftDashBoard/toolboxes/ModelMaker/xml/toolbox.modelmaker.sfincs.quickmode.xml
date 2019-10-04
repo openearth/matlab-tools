@@ -87,7 +87,7 @@
   </element>
   <element>
     <style>pushbutton</style>
-    <position>320 110 140 20</position>
+    <position>320 110 160 20</position>
     <tooltipstring>Push to generate model grid</tooltipstring>
     <text>Make Rectangular Grid</text>
     <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
@@ -106,12 +106,30 @@
   </element>
   <element>
     <style>pushbutton</style>
-    <position>320 85 140 20</position>
-    <tooltipstring>Push to generate model bathymetry</tooltipstring>
-    <text>Make Bathymetry</text>
+    <position>320 85 160 20</position>
+    <tooltipstring>Push to generate model bathymetry and mask file</tooltipstring>
+    <text>Make Bathymetry and Mask</text>
     <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
     <option1>generatebathymetry</option1>
     <enable>1</enable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>550 110 50 20</position>
+    <tooltipstring>Edit maximum elevation SFINCS model</tooltipstring>
+    <text>Zmax</text>
+    <textposition>left</textposition>
+    <variable>handles.toolbox.modelmaker.sfincs.zmax</variable>
+    <type>real</type>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>550 85 50 20</position>
+    <tooltipstring>Edit minimum elevation SFINCS model</tooltipstring>
+    <text>Zmin</text>
+    <textposition>left</textposition>
+    <variable>handles.toolbox.modelmaker.sfincs.zmin</variable>
+    <type>real</type>
   </element>
   <element>
     <style>edit</style>
@@ -119,7 +137,7 @@
     <tooltipstring>Edit reference time</tooltipstring>
     <text>Ref Time</text>
     <textposition>left</textposition>
-    <variable>handles.model.sfincs.domain(ad).tref</variable>
+    <variable>handles.model.sfincs.domain(ad).input.tref</variable>
     <type>datetime</type>
     <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
     <option1>edittimes</option1>
@@ -130,7 +148,7 @@
     <tooltipstring>Edit start time</tooltipstring>
     <text>Start Time</text>
     <textposition>left</textposition>
-    <variable>handles.model.sfincs.domain(ad).tstart</variable>
+    <variable>handles.model.sfincs.domain(ad).input.tstart</variable>
     <type>datetime</type>
     <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
     <option1>edittimes</option1>
@@ -141,7 +159,7 @@
     <tooltipstring>Edit stop time</tooltipstring>
     <text>Stop Time</text>
     <textposition>left</textposition>
-    <variable>handles.model.sfincs.domain(ad).tstop</variable>
+    <variable>handles.model.sfincs.domain(ad).input.tstop</variable>
     <type>datetime</type>
     <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
     <option1>edittimes</option1>

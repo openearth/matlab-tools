@@ -209,3 +209,25 @@ handles.toolbox.modelmaker.dflowfm.nr_refinement_steps=1;
 handles.toolbox.modelmaker.dflowfm.dtmax=60;
 handles.toolbox.modelmaker.polyLength=0;
 handles.toolbox.modelmaker.polygonFile='';
+
+%% SFINCS
+handles.toolbox.modelmaker.sfincs.zmin=-2;
+handles.toolbox.modelmaker.sfincs.zmax=10;
+handles.toolbox.modelmaker.sfincs.include_xy=[];
+handles.toolbox.modelmaker.sfincs.exclude_xy=[];
+
+handles.toolbox.modelmaker.sfincs.mask.nrincludepolygons=0;
+handles.toolbox.modelmaker.sfincs.mask.includepolygonnames={''};
+handles.toolbox.modelmaker.sfincs.mask.activeincludepolygon=1;
+handles.toolbox.modelmaker.sfincs.mask.includepolygon(1).length=0;
+handles.toolbox.modelmaker.sfincs.mask.includepolygon(1).x=[];
+handles.toolbox.modelmaker.sfincs.mask.includepolygon(1).y=[];
+handles.toolbox.modelmaker.sfincs.mask.includepolygonfile='';
+
+handles.toolbox.modelmaker.sfincs.mask.nrexcludepolygons=0;
+handles.toolbox.modelmaker.sfincs.mask.excludepolygonnames={''};
+handles.toolbox.modelmaker.sfincs.mask.activeexcludepolygon=1;
+handles.toolbox.modelmaker.sfincs.mask.excludepolygon(1).length=0;
+handles.toolbox.modelmaker.sfincs.mask.excludepolygon(1).x=[];
+handles.toolbox.modelmaker.sfincs.mask.excludepolygon(1).y=[];
+handles.toolbox.modelmaker.sfincs.mask.excludepolygonfile='';
