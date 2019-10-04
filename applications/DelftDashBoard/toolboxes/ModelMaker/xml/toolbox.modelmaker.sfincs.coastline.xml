@@ -124,7 +124,7 @@
     <onchange>ddb_ModelMakerToolbox_sfincs_coastline</onchange>
     <option1>savecoastlinepoints</option1>
     <showfilename>no</showfilename>
-    <extension>*.bnd</extension>
+    <extension>*.cst</extension>
     <selectiontext>Select boundary points file</selectiontext>
     <tooltipstring>Select boundary points file</tooltipstring>
     <dependency>
