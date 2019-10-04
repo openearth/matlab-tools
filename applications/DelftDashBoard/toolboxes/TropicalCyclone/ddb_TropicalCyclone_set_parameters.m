@@ -683,8 +683,14 @@ else
                 reftime=handles.model.(model).domain(ad).refdate;
                 tstart=handles.model.(model).domain(ad).tstart;
                 tstop=handles.model.(model).domain(ad).tstop;
+            case{'ww3'}
+                reftime=floor(handles.toolbox.tropicalcyclone.track.time(1));
+                tstart=handles.model.(model).domain(ad).start_time;
+                tstop=handles.model.(model).domain(ad).stop_time;
             otherwise
                 reftime=floor(handles.toolbox.tropicalcyclone.track.time(1));
+%                tstart=handles.model.(model).domain(ad).start_time;
+%                tstop=handles.model.(model).domain(ad).stop_time;
         end
         
         tdummy=[];
