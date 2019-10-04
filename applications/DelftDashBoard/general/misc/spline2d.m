@@ -2,8 +2,14 @@ function [xs2,ys2]=spline2d(xp,yp,varargin)
 % Generates spline in xy spaces with equidistant points
 
 dx=[];
+cstype='projected';
+
 if nargin>2
     dx=varargin{1};
+end
+
+if nargin>3
+    cstype=varargin{2};
 end
 
 if length(xp)<2
@@ -29,7 +35,7 @@ xys=spline(t,xy,ts);
 xs=xys(1,:);
 ys=xys(2,:);
 
-pd0=pathdistance(xs,ys);
+pd0=pathdistance(xs,ys,cstype);
 if isempty(dx)
     dx=(pd0(end)/(np*n));
 end
