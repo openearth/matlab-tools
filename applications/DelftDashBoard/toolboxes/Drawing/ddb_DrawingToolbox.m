@@ -509,10 +509,18 @@ end
 
 fid=fopen(handles.toolbox.drawing.splinefile,'wt');
 for ip=1:handles.toolbox.drawing.nrsplines
+    
+    xs=handles.toolbox.drawing.spline(ip).x;
+    ys=handles.toolbox.drawing.spline(ip).y;
+    
+    if handles.toolbox.drawing.dxxspline>0
+        [xs,ys]=spline2d(xs,ys,handles.toolbox.drawing.dxxspline,cs);
+    end
+    
     fprintf(fid,'%s\n',handles.toolbox.drawing.splinenames{ip});
-    fprintf(fid,'%i %i\n',[handles.toolbox.drawing.spline(ip).length 2]);
-    for ix=1:handles.toolbox.drawing.spline(ip).length
-        fprintf(fid,fmt,[handles.toolbox.drawing.spline(ip).x(ix) handles.toolbox.drawing.spline(ip).y(ix)]);
+    fprintf(fid,'%i %i\n',[length(xs) 2]);
+    for ix=1:length(xs)
+        fprintf(fid,fmt,[xs(ix) ys(ix)]);
     end
 end
 fclose(fid);
