@@ -94,6 +94,7 @@ handles.model.sfincs.domain(id).coastline.reef_height=-1;
 handles.model.sfincs.domain(id).coastline.type=1;
 handles.model.sfincs.domain(id).coastline.length=0;
 handles.model.sfincs.domain(id).coastline.active_point=1;
+handles.model.sfincs.domain(id).coastline.orientation=0;
 handles.model.sfincs.domain(ad).coastline.point_list={''};
 
 % Boundary conditions
