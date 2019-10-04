@@ -68,6 +68,9 @@ handles.toolbox.tidedatabase.yLim(1)=0;
 handles.toolbox.tidedatabase.xLim(2)=0;
 handles.toolbox.tidedatabase.yLim(2)=0;
 
+handles.toolbox.tidedatabase.point_x=0;
+handles.toolbox.tidedatabase.point_y=0;
+
 handles.toolbox.tidedatabase.exportFormats={'tek','mat'};
 handles.toolbox.tidedatabase.exportFormatExtensions={'*.tek','*.mat'};
 handles.toolbox.tidedatabase.exportFormatNames={'Tekal file','Mat file'};
@@ -87,11 +90,11 @@ handles.toolbox.tidedatabase.activeConstituent=1;
 %% Get list
 ii=handles.toolbox.tidedatabase.activeModel;
 name=handles.tideModels.model(ii).name;
-    if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
-        tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
-    else
-        tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
-    end
+if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
+    tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
+else
+    tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
+end
 cnst=nc_varget(tidefile,'tidal_constituents');
 for ii=1:length(cnst)
     cnstlist{ii}=deblank(upper(cnst(ii,:)));

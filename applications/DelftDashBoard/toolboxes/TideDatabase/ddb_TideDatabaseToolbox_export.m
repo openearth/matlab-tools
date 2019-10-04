@@ -86,7 +86,14 @@ else
         case{'selectexportformat'}
             selectExportFormat;
         case('download')
-            downloadData
+            downloadData;
+        case('clickpoint')
+            setInstructions({'','','Use mouse to click location on map'});
+            gui_clickpoint('xy','callback',@selectPoint);
+        case('viewtimeseries')
+            viewTimeSeries;
+        case('exporttimeseries')
+            exportTimeSeries;
     end
 end
 
@@ -120,7 +127,7 @@ end
     
 % Get location
 pathname = 'd:\projects\ddb\working\tidemodels\';
-[pathname] = uigetdir(handles.toolbox.tidedatabase.dataDir,'Select the desired data location')
+[pathname] = uigetdir(handles.toolbox.tidedatabase.dataDir,'Select the desired data location');
 cd(pathname);
 
 
@@ -148,7 +155,7 @@ close(wb);
 % Change XML
 cd(handles.tideDir);
 s=xml2struct('tidemodels.xml','structuretype','supershort');
-s.model(ii).URL = pathname
+s.model(ii).URL = pathname;
 struct2xml('tidemodels.xml', s,'structuretype','supershort')
 
    
@@ -441,5 +448,70 @@ if ~isempty(handles.toolbox.tidedatabase.tideDatabaseBoxHandle)
         delete(handles.toolbox.tidedatabase.tideDatabaseBoxHandle);
     end
 end
+
+%%
+function selectPoint(x,y)
+
+clearInstructions;
+
+handles=getHandles;
+handles.toolbox.tidedatabase.point_x=x;
+handles.toolbox.tidedatabase.point_y=y;
+setHandles(handles);
+
+gui_updateActiveTab;
+
+%% 
+function viewTimeSeries
+[tim,wl]=get_timeseries_at_point;
+ddb_plotTimeSeries(tim,wl,'Point');
+
+%% 
+function exportTimeSeries
+handles=getHandles;
+[tim,wl]=get_timeseries_at_point;
+x=handles.toolbox.tidedatabase.point_x;
+y=handles.toolbox.tidedatabase.point_y;
+xstr=num2str(x,'%0.3f');
+ystr=num2str(y,'%0.3f');
+fname=['x' xstr '_y' ystr '.tek']; 
+            exportTEK(wl',tim',fname,[xstr '_' ystr]);
+
+%%
+function [tim,wl]=get_timeseries_at_point
+
+handles=getHandles;
+ii=handles.toolbox.tidedatabase.activeModel;
+name=handles.tideModels.model(ii).name;
+if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
+    tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
+else
+    tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
+end
+
+x=handles.toolbox.tidedatabase.point_x;
+y=handles.toolbox.tidedatabase.point_y;
+
+cs.name='WGS 84';
+cs.type='geographic';
+[x,y]=ddb_coordConvert(x,y,handles.screenParameters.coordinateSystem,cs);
+
+
+[lon,lat, gt, depth, conList] =  readTideModel(tidefile,'type','h','x',x,'y',y,'constituent','all');
+
+t0=handles.toolbox.tidestations.startTime;
+t1=handles.toolbox.tidestations.stopTime;
+dt=handles.toolbox.tidestations.timeStep/1440;
+
+% t0=datenum(2017,3,1);
+% t1=datenum(2017,4,1);
+% t0=floor(now);
+% t1=t0+31;
+% dt=30/1440;
+
+tim=t0:dt:t1;
+
+latitude=y;
+wl=makeTidePrediction(tim,conList,gt.amp,gt.phi,latitude);
 
 
