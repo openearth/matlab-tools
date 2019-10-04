@@ -1269,13 +1269,12 @@ if OPT.fromEPSG~=OPT.toEPSG
             
             output=[]; % to do
             
-            % pol may contain 3rd column with 1 / -1's, but ignore when it
-            % contains large values
+            % don't take third dimensions into account
             if OPT.saveOutputFile
                 fid=fopen(outputFile,'w');
                 for iT=1:length(T.Field)
                     fprintf(fid,'%s\n',T.Field(iT).Name);
-                    fprintf(fid,'     %i     %i\n',size(T.Field(iT).Data));
+                    fprintf(fid,'     %i     %i\n',size(T.Field(iT).Data,1), 2);
                     fprintf(fid,'%20.7f %20.7f\n',[T.Field(iT).Data(:,1) T.Field(iT).Data(:,2)]');
                 end
                 fclose(fid);

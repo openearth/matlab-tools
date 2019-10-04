@@ -40,14 +40,16 @@ varNames={'Water level','wl';
     'Temperature','temperature';
     'z-coordinates (pos. up) of cell centers','Zcen_cen';
     'z-coordinates (pos. up) of cell interfaces','zcoordinate_w'};
-if strcmp(modelType,'dfm'); varNames{end+1,1}='Other info from .nc-file'; end
+if strcmp(modelType,'dfm');    varNames{end+1,1}='Other info from .nc-file';    end
+if strcmp(modelType,'delwaq'); varNames{end+1,1}='Other info from delwaq-file'; end
 option=listdlg('PromptString','What kind of time series do you want to load?','SelectionMode','single','ListString',...
     varNames(:,1),'ListSize',[300 150]);
 if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end
 OPT.varName=varNames{option,2};
 
 % Option=Other info from .nc-file
-if strcmp(modelType,'dfm') && option==length(varNames)
+if ismember(modelType,{'dfm','delwaq'}) && option==length(varNames)
+    if strcmp(modelType,'dfm')
     infonc           = ncinfo(outputfile);
     variablesOnFile  = {infonc.Variables.Name};
     variablesOnFileInclAttr = variablesOnFile;
@@ -57,6 +59,11 @@ if strcmp(modelType,'dfm') && option==length(varNames)
         if ~isempty(indAttr)
             variablesOnFileInclAttr{iV} = strcat(variablesOnFile{iV},' [', infonc.Variables(iV).Attributes(indAttr).Value,']');
         end
+    end
+    elseif strcmp(modelType,'delwaq')
+        dw = delwaq('open',outputfile);
+        variablesOnFile = dw.SubsName;
+        variablesOnFileInclAttr = variablesOnFile;
     end
     option=listdlg('PromptString','What kind of time series do you want to load?','SelectionMode','single','ListString',...
         variablesOnFileInclAttr,'ListSize',[600 300]);
@@ -107,7 +114,8 @@ if ~isempty(layersInd)
         if isempty(option)
             disp('EHY_getmodeldata_interactive was stopped by user');return;
         elseif option==1
-            OPT.layer = cell2mat(inputdlg('Layer nr:','',1,{num2str(gridInfo.no_layers)}));
+            nol = num2str(gridInfo.no_layers);
+            OPT.layer = cell2mat(inputdlg(['Layer nr (1-' nol '):'],'',1,{nol}));
         end
     end
 end

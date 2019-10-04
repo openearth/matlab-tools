@@ -80,6 +80,6 @@ switch modelType
     case 'delwaq'
         %% DELWAQ
         dw = delwaq('open',inputFile);
-        stationNames = dw.SubsName;
+        stationNames = dw.SegmentName;
 
 end

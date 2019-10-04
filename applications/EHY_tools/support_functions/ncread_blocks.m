@@ -66,10 +66,10 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count s
     
 elseif all(ismember({'start','count'},who)) && isempty(timeInd)  % start and count specified, variable has not a time dimension
     values_tmp = ncread(inputFile,varName,start,count);
-    values(dims(order).indexOut) = values_tmp(dims.index);
+    values(dims(order).indexOut) = permute(values_tmp(dims.index),order);
     
 else
     % no start and count specified, regular ncread
     values_tmp = ncread(inputFile,varName);
-    values(dims(order).indexOut) = values_tmp(dims.index);
+    values(dims(order).indexOut) = permute(values_tmp(dims.index),order);
 end

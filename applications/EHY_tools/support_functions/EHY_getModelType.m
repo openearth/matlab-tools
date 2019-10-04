@@ -67,7 +67,7 @@ if ischar(fileInp)
     end
     
     % delwaq
-    if ismember(ext,{'.map','.lga','.his'})
+    if ismember(ext,{'.map','.his','.lga','.cco'})
         modelType = 'delwaq';
     end
     

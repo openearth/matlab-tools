@@ -1,7 +1,7 @@
 function EHY_plotMapData_FM_interactive
 %% EHY_plotMapData_FM_interactive
 % get data
-Data = EHY_getMapModelData_interactive;
+[Data,EHY_getGridInfo_line] = EHY_getMapModelData_interactive;
 if isfield(Data,'face_nodes_x')
     gridInfo.face_nodes_x = Data.face_nodes_x;
     gridInfo.face_nodes_y = Data.face_nodes_y;
@@ -23,22 +23,14 @@ end
 
 disp([char(10) 'Note that the example MATLAB-line to get the variable ''Data'' is a few lines above ^. '])
 disp([char(10) 'Note that next time you want to plot this data, you can also use:'])
-if isfield(Data,'face_nodes_x') % dfm
-    if Data.OPT.mergePartitions==1
-        disp(['<strong>gridInfo = EHY_getGridInfo(''' Data.OPT.outputfile ''',''face_nodes_xy'',''mergePartitions'',1);</strong>' ])
-    else
-        disp(['<strong>gridInfo = EHY_getGridInfo(''' Data.OPT.outputfile ''',''face_nodes_xy'');</strong>' ])
-    end
-elseif isfield(Data,'Xcor') % d3d
-    disp(['<strong>gridInfo = EHY_getGridInfo(''' Data.OPT.outputfile ''',''XYcor'');</strong>' ])
-end
+disp(['<strong>' EHY_getGridInfo_line '</strong>'])
 
 % if velocity was selected
 if isfield(Data,'vel_mag')
     disp(['<strong>EHY_plotMapData_FM(gridInfo,Data.vel_mag(' num2str(plotInd(1)) repmat(',:',1,ndims(Data.vel_mag)-1) '));</strong>' ])
 else
     if isempty(plotInd)
-        disp(['<strong>EHY_plotMapData_FM(gridInfo,Data.val);</strong>' ])
+        disp('<strong>EHY_plotMapData_FM(gridInfo,Data.val);</strong>')
     else
         disp(['<strong>EHY_plotMapData_FM(gridInfo,Data.val(' num2str(plotInd(1)) repmat(',:',1,ndims(Data.val)-1) '));</strong>' ])
     end

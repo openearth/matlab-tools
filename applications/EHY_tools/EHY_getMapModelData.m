@@ -19,6 +19,7 @@ function varargout = EHY_getMapModelData(inputFile,varargin)
 % t0        : Start time of dataset (e.g. '01-Jan-2018' or 737061 (Matlab date) )
 % tend      : End time of dataset (e.g. '01-Feb-2018' or 737092 (Matlab date) )
 % layer     : Model layer, e.g. '0' (all layers), [2] or [4:8]
+% tint      : interval time (t0:tint:tend) in minutes
 %
 % Output:
 % Data.times              : (matlab) times belonging with the series
@@ -44,7 +45,7 @@ OPT.n               = 0;  % all (horizontal structured grid [m,n])
 OPT.k               = 0;  % all (vertical   d3d grid [m,n,k])
 OPT.mergePartitions = 1;  % merge output from several dfm '_map.nc'-files
 OPT.disp            = 1;  % display status of getting map model data
-OPT.lgaFile         = ''; %lga-file needed in combination with delwaq output file
+OPT.gridFile        = ''; % grid (either lga or nc file) needed in combination with delwaq output file
 OPT                 = setproperty(OPT,varargin);
 
 %% modify input
@@ -70,14 +71,18 @@ if strcmp(OPT.varName,'noMatchFound')
     error(['Requested variable (' varNameInput ') not available in model output'])
 end
 %% Get information about required dimension information
-dims = EHY_getDimsInfo(inputFile,OPT.varName);
+dims = EHY_getDimsInfo(inputFile,OPT.varName,OPT.gridFile);
 
 %% Get time information from simulation and determine index of required times
 timeInd = strmatch('time',{dims(:).name});
 if ~isempty(timeInd)
     Data.times          = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
     if ~isempty(OPT.t)
+        if all(OPT.t==0)
+            index_requested = 1:length(Data.times);
+        else
         index_requested = OPT.t;
+        end
         time_index      = 1:length(Data.times);
     else
         [Data,time_index,~,index_requested]  = EHY_getmodeldata_time_index(Data,OPT);
@@ -90,9 +95,8 @@ end
 %% Get layer information and type of vertical schematisation
 layersInd = strmatch('layers',{dims(:).name});
 if ~isempty(layersInd)
-    gridInfo                = EHY_getGridInfo(inputFile,{'no_layers' 'layer_model'},'mergePartitions',0);
+    gridInfo                 = EHY_getGridInfo(inputFile,{'no_layers'},'mergePartitions',0,'gridFile',OPT.gridFile);
     no_layers               = gridInfo.no_layers;
-    layer_model             = gridInfo.layer_model;
     OPT                     = EHY_getmodeldata_layer_index(OPT,no_layers);
     dims(layersInd).index    = OPT.layer';
     dims(layersInd).indexOut = 1:length(OPT.layer);
@@ -104,21 +108,13 @@ if ~isempty(facesInd)
         dims(facesInd).index    = 1:dims(facesInd).size;
         dims(facesInd).indexOut = 1:dims(facesInd).size;
 end
-mInd = strmatch('m',{dims(:).name}); % structured grid
+mInd = strmatch('m',{dims(:).name},'exact'); % structured grid
 if ~isempty(mInd)
     OPT = EHY_getmodeldata_mn_index(OPT,inputFile);
     dims(mInd).index = OPT.m;
-    nInd = strmatch('n',{dims(:).name});
+    nInd = strmatch('n',{dims(:).name},'exact');
     dims(nInd).index = OPT.n;
 end
-
-%% Get dimension size of requested indices
-for iD=1:length(dims)
-    dims(iD).sizeOut = length(dims(iD).index);
-end
-
-no_dims = length(dims);
-order = no_dims:-1:1;
 
 %% Get sediment fractions information
 sedfracInd = strmatch('sedimentFraction',{dims(:).name});
@@ -131,6 +127,9 @@ if ~isempty(sedfracInd)
     dims(sedfracInd).indexOut = 1:size(sedfracName,2);
 end
 
+%% EHY_getmodeldata_optimiseDims
+[dims,start,count,order] = EHY_getmodeldata_optimiseDims(dims,modelType);
+
 %% check if output data is in several partitions and merge if necessary
 if OPT.mergePartitions==1 && EHY_isPartitioned(inputFile)
     mapFiles=dir([inputFile(1:end-11) '*' inputFile(end-6:end)]);
@@ -140,6 +139,7 @@ if OPT.mergePartitions==1 && EHY_isPartitioned(inputFile)
         end
     end
     
+    order = numel(dims):-1:1;
     for iM=1:length(mapFiles)
         if OPT.disp
             disp(['Reading and merging map model data from partitions: ' num2str(iM) '/' num2str(length(mapFiles))])
@@ -167,28 +167,6 @@ switch modelType
     % Delft3D-Flexible Mesh
     case 'dfm'
         
-        %% Read data
-        start = ones(1,no_dims);
-        count = [dims.size];
-        
-        % change 'time'-values to wanted indices
-        if ~isempty(timeInd)
-            start(timeInd) = dims(timeInd).index(1);
-            count(timeInd) = dims(timeInd).index(end)-dims(timeInd).index(1)+1;
-            dims(timeInd).index = dims(timeInd).index-dims(timeInd).index(1)+1;% needed to 'only keep requested indices'
-        end
-        
-        % change 'layer'-values to wanted indices
-        if ~isempty(layersInd)
-            diffLayers=diff(dims(layersInd).index);
-            if isempty(diffLayers) || all(diffLayers==1)
-                % take OPT.tint into account
-                start(layersInd) = dims(layersInd).index(1);
-                count(layersInd) = dims(layersInd).index(end)-dims(layersInd).index(1)+1;
-                dims(layersInd).index = dims(layersInd).index-dims(layersInd).index(1)+1;% needed to 'only keep requested indices'
-            end
-        end
-        
         % read data from netcdf file
         if ~isempty(strfind(OPT.varName,'ucx')) || ~isempty(strfind(OPT.varName,'ucy')) 
             value_x   =  ncread(inputFile,strrep(OPT.varName,'ucy','ucx'),start,count);
@@ -199,24 +177,10 @@ switch modelType
         
         % put value(_x/_y) in output structure 'Data'
         if exist('value','var')
-            if no_dims==1
-                Data.val(dims(1).indexOut,1) = value(dims(1).index);
-            elseif no_dims==2
-                Data.val(dims(2).indexOut,dims(1).indexOut) = permute( value(dims(1).index,dims(2).index) ,order);
-            elseif no_dims==3
-                Data.val(dims(3).indexOut,dims(2).indexOut,dims(1).indexOut) = permute( value(dims(1).index,dims(2).index,dims(3).index) ,order);
-            end
+            Data.val(dims(order).indexOut) = permute(value(dims.index),order);
         elseif exist('value_x','var')
-            if no_dims==1
-                Data.vel_x(dims(1).indexOut,1) = value_x(dims(1).index);
-                Data.vel_y(dims(1).indexOut,1) = value_y(dims(1).index);
-            elseif no_dims==2
-                Data.vel_x(dims(2).indexOut,dims(1).indexOut) = permute( value_x(dims(1).index,dims(2).index) ,order);
-                Data.vel_y(dims(2).indexOut,dims(1).indexOut) = permute( value_y(dims(1).index,dims(2).index) ,order);
-            elseif no_dims==3
-                Data.vel_x(dims(3).indexOut,dims(2).indexOut,dims(1).indexOut) = permute( value_x(dims(1).index,dims(2).index,dims(3).index) ,order);
-                Data.vel_y(dims(3).indexOut,dims(2).indexOut,dims(1).indexOut) = permute( value_y(dims(1).index,dims(2).index,dims(3).index) ,order);
-            end
+            Data.vel_x(dims(order).indexOut) = permute(value_x(dims.index),order);
+            Data.vel_y(dims(order).indexOut) = permute(value_y(dims.index),order);
         end
         
         % If partitioned run, delete ghost cells
@@ -298,69 +262,75 @@ switch modelType
             dps = vs_let(trim,'map-const' ,{1}                  ,'DPS0',{dims(nInd).index,dims(mInd).index},'quiet');
             Data.val = wl+dps; 
         end
-        % delete ghost cells
-        if dims(nInd).index(1)==1; Data.val = Data.val(:,2:end,:,:); end
-        if dims(mInd).index(1)==1; Data.val = Data.val(:,:,2:end,:); end
-        
-    case 'delwaq'
-        dw       = delwaq('open',inputFile);
-        lga      = delwaq('open',OPT.lgaFile);
-        subInd   = strmatch(OPT.varName,dw.SubsName);
-        Data.val = NaN([1 size(lga.Index)]); % allocate 
-        
-        for iT = 1:length(dims(timeInd).index)
-            time_ind = dims(timeInd).index(iT);
-            [~,data] = delwaq('read',dw,subInd,0,time_ind);
-            data     = waq2flow3d(data,lga.Index);
-            Data.val(dims(timeInd).indexOut(iT),:,:,:) = data;
+        % swap m,n-indices (from vs_let) from [n,m] to [time,m,n(,layers)]
+        fns = {'val','vel_x','vel_y','val_x','val_max','val_mag'};
+        for iFns = 1:length(fns)
+            if isfield(Data,fns{iFns})
+                Data.val = permute(Data.val,[1 3 2 4]);
+            end
         end
         
         % delete ghost cells
-        if dims(nInd).index(1)==1; Data.val = Data.val(:,2:end,:,:); end
-        if dims(mInd).index(1)==1; Data.val = Data.val(:,:,2:end,:); end
+        if dims(mInd).index(1)==1; Data.val = Data.val(:,2:end,:,:); end
+        if dims(nInd).index(1)==1; Data.val = Data.val(:,:,2:end,:); end
         
+    case 'delwaq'
+        dw       = delwaq('open',inputFile);
+        subInd   = strmatch(OPT.varName,dw.SubsName);
+        [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(OPT.gridFile);
+        if ismember(typeOfModelFileDetail,{'lga','cco'})
+            dwGrid      = delwaq('open',OPT.gridFile); 
+            Data.val = NaN([dims.sizeOut]); % allocate
+            
+            for iT = 1:length(dims(timeInd).index)
+                time_ind  = dims(timeInd).index(iT);
+                [~,data]  = delwaq('read',dw,subInd,0,time_ind);
+                data      = waq2flow3d(data,dwGrid.Index);
+                layer_ind = dims(layersInd).index;
+                Data.val(dims(timeInd).indexOut(iT),:,:,:) = data(dims(mInd).index,dims(nInd).index,dims(layersInd).index);
+            end
+            
+            % delete ghost cells
+            if dims(nInd).index(1)==1; Data.val = Data.val(:,2:end,:,:); end
+            if dims(mInd).index(1)==1; Data.val = Data.val(:,:,2:end,:); end
+
+        elseif strcmp(typeOfModelFileDetail, 'nc')
+            no_segm_perlayer = dims(facesInd).size; 
+            
+            if ~isempty(layersInd)
+                layer = dims(layersInd).index; 
+            else
+                layer = 1; 
+            end
+            
+            segm = ((layer - 1) * no_segm_perlayer + 1):(layer * no_segm_perlayer); 
+            [~, data] = delwaq('read', dw, subInd, segm, dims(timeInd).index);
+            Data.val = permute(data,[3 2 1]);                  
+        end
+        Data.val(Data.val==-999) = NaN;
+       
     case 'simona'
         %% SIMONA (WAQUA/TRIWAQ)
         % to be implemented
         
 end
 
+%% add dimension information to Data
 % dimension information
-if isfield(Data,'val')
-    fn = 'val';
-elseif isfield(Data,'val_x')
-    fn = 'val_x';
-elseif isfield(Data,'vel_x')
-    fn = 'vel_x';
-end
 if strcmp(modelType,'dfm')
-    if exist('dims','var')
-        dimensionsComment = fliplr({dims.nameOnFile});
-        while length(size(Data.(fn))) < no_dims % size of output < no_dims
-            % if e.g. only 1 layer selected, output is 2D instead of 3D.
-            dimensionsComment(end) = [];
-            dims(end) = [];
-            no_dims = length(dims);
-        end
-    else
-        if length(size(Data.(fn)))==2
-            dimensionsComment={'time','faces'};
-        elseif length(size(Data.(fn)))==3
-            dimensionsComment={'time','faces','layers'};
-        end
-    end
-elseif any(ismember(modelType,{'d3d','delwaq'}))
-    if length(size(Data.(fn)))==3
-        dimensionsComment={'time','n_index','m_index'};
-    elseif length(size(Data.(fn)))==4
-        dimensionsComment={'time','n_index','m_index','k_index/sedfrac'};
-    end
+    dimensionsComment = fliplr({dims.nameOnFile});
+else
+    dimensionsComment = {dims.name};
 end
 
-if exist('dimensionsComment','var') % does not exist for partitioned dfm simulation
-    dimensionsComment = sprintf('%s,',dimensionsComment{:});
-    Data.dimensions = ['[' dimensionsComment(1:end-1) ']'];
+fn = char(intersect(fieldnames(Data),{'val','vel_x','val_x'}));
+while ndims(Data.(fn))<numel(dimensionsComment)
+    dimensionsComment(end) = [];
 end
+
+% add to Data-struct
+dimensionsComment = sprintf('%s,',dimensionsComment{:});
+Data.dimensions = ['[' dimensionsComment(1:end-1) ']'];
 
 %% Fill output struct
 Data.OPT               = OPT;

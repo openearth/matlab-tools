@@ -133,7 +133,44 @@ percentage=runPeriod_S/simPeriod_S*100;
 disp(['Status of ' name ext ': ' num2str(round(runPeriod_D)) '/' num2str(round(simPeriod_D)) ' of simulation days - ',...
     sprintf('%0.1f',percentage) '%']);
 
+if strcmp(modelType,'dfm')
+    try
+        ETA(mdFile,percentage);
+    end
+end
+
 if nargout==1
     varargout{1}=percentage;
 end
 
+end
+
+function ETA(mdFile,percentage)
+% Estimated time of arrival (when is simulation expected to be done?)
+
+outFile = [fileparts(mdFile) filesep 'out.txt'];
+str2find = '* File creation date:';
+fID = fopen(outFile,'r');
+found = false;
+while ~found
+    line = fgetl(fID);
+    if length(line)>22 && strcmp(line(1:22),'* File creation date: ')
+        found = true;
+        datenumStart = datenum(line(23:end),'HH:MM:ss, dd-mm-yyyy');
+    end
+end
+fclose(fID);
+
+timeNeededToFinish = (now-datenumStart)/percentage*(100-percentage);
+datenumEnd = datestr(now + timeNeededToFinish);
+if timeNeededToFinish > 1
+    disp(['Simulation is expected to be finished in ' sprintf('%.2f',timeNeededToFinish) ' days at ' datenumEnd ])
+elseif timeNeededToFinish*24 > 1
+    timeNeededToFinish = timeNeededToFinish*timeFactor('d','h');
+    disp(['Simulation is expected to be finished in ' sprintf('%.2f',timeNeededToFinish) ' hours at ' datenumEnd ])
+else
+    timeNeededToFinish = timeNeededToFinish*timeFactor('d','m');
+    disp(['Simulation is expected to be finished in ' sprintf('%.2f',timeNeededToFinish) ' minutes at ' datenumEnd ])
+end
+
+end

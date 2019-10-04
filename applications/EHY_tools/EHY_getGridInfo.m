@@ -1,5 +1,5 @@
-function gridInfo=EHY_getGridInfo(inputFile,varargin)
-%% gridInfo=EHY_getGridInfo(inputFile,varargin)
+function gridInfo = EHY_getGridInfo(inputFile,varargin)
+%% gridInfo = EHY_getGridInfo(inputFile,varargin)
 % Get information (specified in varargin{1}) from the provided inputFile
 %
 % Input Arguments:
@@ -43,6 +43,7 @@ OPT.mergePartitions = 1; % merge output in case of dfm '_map.nc'-files
 OPT.disp            = 1; % display status and message if none of the wanted output was found
 OPT.m               = 0; % all (horizontal structured grid [m,n])
 OPT.n               = 0; % all (horizontal structured grid [m,n])
+OPT.gridFile        = ''; % grid (either lga or nc file) needed in combination with delwaq output file
 OPT                 = setproperty(OPT,varargin{2:end});
 
 %% process input from user
@@ -578,6 +579,12 @@ switch modelType
                     
                     if any(ismember({'XYcor','XYcen','Z'},wantedOutput))
                         G = vs_meshgrid2dcorcen(trim);
+                        % [n,m] to [m,n]
+                        for fn1 = {'cen','cor'}
+                            for fn2 = {'x','y','mask'}
+                                G.(fn1{:}).(fn2{:}) = G.(fn1{:}).(fn2{:})';
+                            end
+                        end
                     end
                     
                     if ismember('XYcor',wantedOutput)
@@ -714,6 +721,29 @@ switch modelType
                     E.Xcor = dw.X;
                     E.Ycor = dw.Y;
                 end
+            case 'outputfile'
+                if isempty(OPT.gridFile)
+                    error('DelWAQ map output needs a grid file');
+                end
+                [~, typeOfModelFileDetailGrid] = EHY_getTypeOfModelFile(OPT.gridFile);
+                if ismember(typeOfModelFileDetailGrid,{'lga','cco'})     % faces/grid cells
+                    dwGrid = delwaq('open',OPT.gridFile);
+                     if ismember('no_layers',wantedOutput)
+                        E.no_layers = dwGrid.MNK(3);
+                     end
+                     if ismember('dimensions',wantedOutput)
+                        E.MNKmax = dwGrid.MNK;
+                     end
+                elseif strcmp(typeOfModelFileDetailGrid, 'nc')
+                    dw = delwaq('open', inputFile);
+                    no_segm = dw.NumSegm;
+                    
+                    if ismember('no_layers',wantedOutput)
+                        tmp = EHY_getGridInfo(OPT.gridFile, 'dimensions');
+                        E.no_layers = no_segm/tmp.no_NetElem;
+                    end
+                end
+                
         end % typeOfModelFile
   
 end % modelType
@@ -730,7 +760,7 @@ if ~isempty(OPT.stations)
 end
 
 %% If [m,n]-selection is specified for structured grid, reduce output to specified grid cells only
-if strcmp(modelType,'d3d') && strcmp(typeOfModelFileDetail,'trim')
+if ismember(modelType,{'d3d','delwaq'}) && ismember(typeOfModelFileDetail,{'trim','lga','cco'})
     % deal with ghost-cells start of grid
     if ~ismember(OPT.m(1),[0 1]); OPT.m = [OPT.m(1)-1 OPT.m]; end
     if ~ismember(OPT.n(1),[0 1]); OPT.n = [OPT.n(1)-1 OPT.n]; end
@@ -739,22 +769,24 @@ if strcmp(modelType,'d3d') && strcmp(typeOfModelFileDetail,'trim')
         if all(OPT.n==0) && all(OPT.m==0)
             % do nothing
         elseif all(OPT.n==0)
-            E.(vars{iV}) = E.(vars{iV})(:,OPT.m);
+            E.(vars{iV}) = E.(vars{iV})(OPT.m,:);
         elseif all(OPT.m==0)
-            E.(vars{iV}) = E.(vars{iV})(OPT.n,:);
+            E.(vars{iV}) = E.(vars{iV})(:,OPT.n);
         else
-            E.(vars{iV}) = E.(vars{iV})(OPT.n,OPT.m);
+            E.(vars{iV}) = E.(vars{iV})(OPT.m,OPT.n);
         end
     end
     
-    % deal with ghost-cells end of grid
-    vars = intersect(fieldnames(E),{'Xcor','Ycor','Xcen','Ycen','Zcen'});
-    for iV = 1:length(vars)
-        if all(OPT.n==0)
-            E.(vars{iV})(end+1,:)=NaN;
-        end
-        if all(OPT.m==0)
-            E.(vars{iV})(:,end+1)=NaN;
+    % deal with ghost-cells end of grid 
+    if strcmp(modelType,'d3d') % not needed for delwaq
+        vars = intersect(fieldnames(E),{'Xcor','Ycor','Xcen','Ycen','Zcen'});
+        for iV = 1:length(vars)
+            if all(OPT.m==0)
+                E.(vars{iV})(end+1,:)=NaN;
+            end
+            if all(OPT.n==0)
+                E.(vars{iV})(:,end+1)=NaN;
+            end
         end
     end
 end
@@ -771,56 +803,66 @@ end
 function EHY_getGridInfo_interactive
 % get inputFile
 disp('Open a grid, model inputfile or model outputfile')
-[filename, pathname]=uigetfile('*.*','Open a grid, model inputfile or model outputfile');
+[filename, pathname] = uigetfile('*.*','Open a grid, model inputfile or model outputfile');
 if isnumeric(filename); disp('EHY_getGridInfo_interactive stopped by user.'); return; end
-inputFile=[pathname filename];
+inputFile = [pathname filename];
 
 % wanted output
-outputParameters={'no_layers','dimensions','XYcor','XYcen','layer_model','face_nodes_xy','area','Zcen','Z','layer_perc'};
-option=listdlg('PromptString','Choose wanted output parameters (Use CTRL to select multiple options):','ListString',...
+outputParameters = {'no_layers','dimensions','XYcor','XYcen','layer_model','face_nodes_xy','area','Zcen','Z','layer_perc'};
+option = listdlg('PromptString',{'Choose wanted output parameters','(Use CTRL to select multiple options):'},'ListString',...
     outputParameters,'ListSize',[300 200]);
 if isempty(option); disp('EHY_getGridInfo_interactive was stopped by user');return; end
-varargin{1}=outputParameters(option);
+varargin{1} = outputParameters(option);
 
 % mergePartitions
-modelType=EHY_getModelType(inputFile);
+modelType = EHY_getModelType(inputFile);
 if EHY_isPartitioned(inputFile,modelType)
-    option=listdlg('PromptString','Do you want to merge the info from different partitions?','SelectionMode','single','ListString',...
+    option = listdlg('PromptString','Do you want to merge the info from different partitions?','SelectionMode','single','ListString',...
         {'Yes','No'},'ListSize',[300 100]);
-    if option==2
-        OPT.mergePartitions=0;
+    if option ==  2
+        OPT.mergePartitions = 0;
+    end
+end
+
+% gridFile for DELWAQ
+if strcmp(modelType,'delwaq')
+    disp('Open (if you think it is needed, otherwise cancel) the corresponding grid file (*.lga, *.cco, *.nc)')
+    [filename, pathname] = uigetfile({'*.lga;*.cco', 'Structured grid files';
+        '*.nc',  'Unstructured grid files'},'Open (if you think it is needed, otherwise cancel) the corresponding grid file (*.lga, *.cco, *.nc)');
+    if ~isnumeric(filename)
+        OPT.gridFile = [pathname filename];
     end
 end
 
 %% display example line
 % wanted variables // varargin{1}
-vararginStr='';
-for iV=1:length(varargin{1})
-    vararginStr=[vararginStr '''' varargin{1}{iV} ''','];
+vararginStr = '';
+for iV = 1:length(varargin{1})
+    vararginStr = [vararginStr '''' varargin{1}{iV} ''','];
 end
-vararginStr=['{' vararginStr(1:end-1) '}' ];
+vararginStr = ['{' vararginStr(1:end-1) '}' ];
 
 % wanted OPT // varargin{2:3, ...}
-extraText='';
+extraText = '';
 if exist('OPT','var')
-    fn=fieldnames(OPT);
-    for iF=1:length(fn)
+    fn = fieldnames(OPT);
+    for iF = 1:length(fn)
         if ischar(OPT.(fn{iF}))
-            extraText=[extraText ',''' fn{iF} ''',''' OPT.(fn{iF}) ''''];
+            extraText = [extraText ',''' fn{iF} ''',''' OPT.(fn{iF}) ''''];
         elseif isnumeric(OPT.(fn{iF}))
-            extraText=[extraText ',''' fn{iF} ''',' num2str(OPT.(fn{iF}))];
+            extraText = [extraText ',''' fn{iF} ''',' num2str(OPT.(fn{iF}))];
         end
     end
 end
-vararginStr=[vararginStr extraText];
+vararginStr = [vararginStr extraText];
 
 % disp output
 disp([char(10) 'Note that next time you want to get this data, you can also use:'])
-disp(['gridInfo = EHY_getGridInfo(''' inputFile ''',' vararginStr ');'])
+disp(['<strong>gridInfo = EHY_getGridInfo(''' inputFile ''',' vararginStr ');</strong>'])
 
 disp('start retrieving the grid info...')
 
-if exist('OPT','var');
+if exist('OPT','var')
     gridInfo = EHY_getGridInfo(inputFile,varargin{:},OPT);
 else
     gridInfo = EHY_getGridInfo(inputFile,varargin{:});

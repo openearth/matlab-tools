@@ -1,7 +1,7 @@
 function OPT = EHY_getmodeldata_mn_index(OPT,fName)
 
-if ~isempty(OPT.lgaFile)
-    fName = OPT.lgaFile; % get grid info from corresponding lga-file
+if ~isempty(OPT.gridFile)
+    fName = OPT.gridFile; % get grid info from corresponding grid-file
 end
 gridInfo = EHY_getGridInfo(fName,{'dimensions'});
 

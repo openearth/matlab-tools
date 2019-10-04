@@ -1,14 +1,11 @@
-function dims = EHY_getDimsInfo(inputFile,varName)
+function dims = EHY_getDimsInfo(inputFile,varName,gridFile)
 
 modelType = EHY_getModelType(inputFile);
 [typeOfModelFile, typeOfModelFileDetail] = EHY_getTypeOfModelFile(inputFile);
 switch modelType
     case 'dfm'
-        infonc          = ncinfo(inputFile);
-        variablesOnFile = {infonc.Variables.Name};
-        nr_var          = strmatch(varName,variablesOnFile,'exact');
-        
-        dimsNamesOnFile = {infonc.Variables(nr_var).Dimensions.Name};
+        infonc          = ncinfo(inputFile,varName);       
+        dimsNamesOnFile = {infonc.Dimensions.Name};
         
         %%% change names for easier handling 
         dimsNames = dimsNamesOnFile;
@@ -26,7 +23,7 @@ switch modelType
         dimsNames = strrep(dimsNames,'general_structures','stations');
         
         %%%
-        dimsSizes = infonc.Variables(nr_var).Size;
+        dimsSizes = infonc.Size;
         for iD=1:length(dimsNames)
             dims(iD).nameOnFile = dimsNamesOnFile{iD};
             dims(iD).name       = dimsNames{iD};
@@ -77,12 +74,25 @@ switch modelType
                 dims(end+1).name = 'stations';
             end
         elseif strcmp(typeOfModelFileDetail,'map')
-            % faces/grid cells
-            dims(end+1).name = 'm';
-            dims(end+1).name = 'n';
+            [~, typeOfModelFileDetailGrid] = EHY_getTypeOfModelFile(gridFile); 
+            if ismember(typeOfModelFileDetailGrid, {'lga', 'cco'})     % faces/grid cells
+                dims(end+1).name = 'm';
+                dims(end+1).name = 'n';
+            elseif strcmp(typeOfModelFileDetailGrid, 'nc')
+                dims(end+1).name = 'faces';
+                gridInfo = EHY_getGridInfo(gridFile, {'dimensions'});
+                dims(end).size = gridInfo.no_NetElem;
+            end
+            
+            % layers
+            gridInfo = EHY_getGridInfo(inputFile,{'no_layers'}, 'gridFile', gridFile);
+            if isfield(gridInfo,'no_layers') && gridInfo.no_layers > 1
+                dims(end+1).name = 'layers';
+            end 
+
         end
         
-    otherwise % SOBEK / SIMONA / DELWAQ
+    otherwise % SOBEK / SIMONA 
         
         % time // always ask for time
         dims(1).name = 'time';

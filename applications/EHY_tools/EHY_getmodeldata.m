@@ -63,22 +63,41 @@ OPT.tend         = '';
 OPT.tint         = ''; % in minutes
 OPT.t            = []; % time index. If OPT.t is specified, OPT.t0, OPT.tend and OPT.tint are not used to find time index
 OPT.layer        = 0; % all
+
+% return output at specified reference level
+OPT.z            = ''; % z = positive up. Wanted vertical level = OPT.zRef + OPT.z
+OPT.zRef         = ''; % choose: 'ref' = model reference level, 'wl' = water level or 'bed' = from bottom level
+OPT.zMethod      = ''; % interpolation method: '' = corresponding layer or 'linear' = 'interpolation between two layers'
+
 OPT              = setproperty(OPT,varargin);
+
+%% return output at specified reference level
+if ~isempty(OPT.zRef)
+    Data = EHY_getmodeldata_z(inputFile,stat_name,modelType,varargin);
+    return
+end
 
 %% modify input
 inputFile = strtrim(inputFile);
-if ~isempty  (OPT.t0           ) OPT.t0   =datenum(OPT.t0)    ; end
-if ~isempty  (OPT.tend         ) OPT.tend =datenum(OPT.tend)  ; end
-if ~isempty  (OPT.tint         ) OPT.tint = OPT.tint/1440.    ; end % From minutes to days
-if ~isnumeric(OPT.layer        ) OPT.layer=str2num(OPT.layer) ; end
+if ~isempty  (OPT.t0   ) OPT.t0    = datenum(OPT.t0)    ; end
+if ~isempty  (OPT.tend ) OPT.tend  = datenum(OPT.tend)  ; end
+if ~isempty  (OPT.tint ) OPT.tint  = OPT.tint/1440      ; end % from minutes to days
+if ~isnumeric(OPT.layer) OPT.layer = str2num(OPT.layer) ; end
+if ~isnumeric(OPT.zRef ) OPT.zRef  = str2num(OPT.zRef)  ; end
 
 %% Get model type
 if isempty(modelType)
     modelType = EHY_getModelType(inputFile);
 end
+if ismember(modelType,{'d3dfm','dflow','dflowfm','mdu','dfm'}); modelType = 'dfm'; end
+if ismember(modelType,{'d3d','d3d4','delft3d4','mdf'});         modelType = 'd3d'; end
+if ismember(modelType,{'waqua','simona','siminp'});             modelType = 'simona'; end
 
 %% Get name of the parameter as known on output file
-OPT.varName = EHY_nameOnFile(inputFile,OPT.varName);
+[OPT.varName,varNameInput] = EHY_nameOnFile(inputFile,OPT.varName);
+if strcmp(OPT.varName,'noMatchFound')
+    error(['Requested variable (' varNameInput ') not available in model output'])
+end
 
 %% Get information about required dimension information
 dims = EHY_getDimsInfo(inputFile,OPT.varName);
@@ -96,7 +115,11 @@ timeInd = strmatch('time',{dims(:).name});
 if ~isempty(timeInd)
     Data.times                               = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
     if ~isempty(OPT.t)
-        index_requested = OPT.t;
+        if all(OPT.t==0)
+            index_requested = 1:length(Data.times);
+        else
+            index_requested = OPT.t;
+        end
         time_index      = 1:length(Data.times);
     else
         [Data,time_index,~,index_requested]  = EHY_getmodeldata_time_index(Data,OPT);
@@ -117,17 +140,12 @@ if ~isempty(layersInd)
     dims(layersInd).indexOut = 1:length(OPT.layer);
 end
 
-%% Get dimension size of requested indices
-for iD=1:length(dims)
-    dims(iD).sizeOut = length(dims(iD).index);
-end
-
-no_dims = length(dims);
-order = no_dims:-1:1;
+%% EHY_getmodeldata_optimiseDims
+[dims,start,count,order] = EHY_getmodeldata_optimiseDims(dims,modelType);
 
 %% Get the computational data
 switch modelType
-    case {'d3dfm','dflow','dflowfm','mdu','dfm'}
+    case 'dfm'
         %%  Delft3D-Flexible Mesh
         % station x,y-location info
         if any(ismember({dims.name},{'stations','cross_section'}))
@@ -147,18 +165,6 @@ switch modelType
             end
         end
         
-        % Read data
-        start = ones(1,no_dims);
-        count = [dims.size];
-        
-        % change 'time'-values as we're going to loop over time-blocks
-        if ~isempty(timeInd)
-            % take OPT.tint into account
-            start(timeInd) = dims(timeInd).index(1);
-            count(timeInd) = dims(timeInd).index(end)-dims(timeInd).index(1)+1;
-            dims(timeInd).index = dims(timeInd).index-dims(timeInd).index(1)+1;% needed to 'only keep requested indices'
-        end
-        
         % The handling of all the wanted indices (like times, stations and layers) is done within ncread_blocks
         if ~strcmp(OPT.varName,{'x_velocity'})
             Data.val   =  ncread_blocks(inputFile,OPT.varName,start,count,dims);
@@ -168,7 +174,7 @@ switch modelType
             Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
         end
 
-    case {'d3d','d3d4','delft3d4','mdf'}
+    case 'd3d'
          %% Delft3D 4
         % open inputfile
         trih = vs_use(inputFile,'quiet');
@@ -282,7 +288,7 @@ switch modelType
             end
         end
         
-    case {'waqua','simona','siminp'}
+    case 'simona'
         %% SIMONA (WAQUA/TRIWAQ)
         % open data file
         if isempty(stat_name) stat_name = Data.requestedStations; end
@@ -336,7 +342,7 @@ switch modelType
             end
         end
         
-    case {'sobek3'}
+    case 'sobek3'
         %% SOBEK3
         for i_stat = 1: length(stat_name)
             if Data.exist_stat(i_stat)
@@ -351,7 +357,7 @@ switch modelType
             end
         end
         
-    case {'sobek3_new'}
+    case 'sobek3_new'
         %% SOBEK3 new
         for i_stat = 1: length(stat_name)
             if Data.exist_stat(i_stat)
@@ -368,7 +374,7 @@ switch modelType
             end
         end
         
-    case {'implic'}
+    case 'implic'
         %% IMPLIC
         %  get simulation data either by reading mat file or direct reading
         %  of IMPLIC output files
@@ -412,8 +418,10 @@ switch modelType
         %% DELWAQ
         dw = delwaq('open',inputFile);
         subInd = strmatch(OPT.varName,dw.SubsName);
-        error
-        delwaq('read');
+        if isempty(subInd); error(['Could not find substance ''' OPT.varName ''' on provided file']); end
+        [~,data] = delwaq('read',dw,subInd,dims(stationsInd).index,dims(timeInd).index);
+        Data.val(:,dims(stationsInd).indexOut) = permute(data,[3 2 1]);
+        Data.val(:,~Data.exist_stat) = NaN;
         
 end
 
@@ -443,33 +451,20 @@ else
     end
 end
 
+%% add dimension information to Data
 % dimension information
-if isfield(Data,'val')
-    fn = 'val';
-elseif isfield(Data,'vel_x')
-    fn = 'vel_x';
-else % no model
-    fn = '';
-end
-if ~isempty(fn) && exist('dims','var') && strcmp(modelType,'dfm')
+if strcmp(modelType,'dfm')
     dimensionsComment = fliplr({dims.nameOnFile});
-    while length(size(Data.(fn)))<no_dims % size of output < no_dims
-        % if e.g. only 1 layer selected, output is 2D instead of 3D.
-        dimensionsComment(end)=[];
-        dims(end)=[];
-        no_dims=length(dims);
-    end
-elseif ~isempty(fn)
-    if length(size(Data.(fn)))==2 && ~isfield(Data,'requestedStations')
-        dimensionsComment={'time'};
-    elseif length(size(Data.(fn)))==2 && isfield(Data,'requestedStations')
-        dimensionsComment={'time','stations'};
-    elseif length(size(Data.(fn)))==3
-        dimensionsComment={'time','stations','layers'};
-    end
 else
-    dimensionsComment={'No data loaded/found'};
+    dimensionsComment = {dims.name};
 end
+
+fn = char(intersect(fieldnames(Data),{'val','vel_x','val_x'}));
+while ndims(Data.(fn))<numel(dimensionsComment)
+    dimensionsComment(end) = [];
+end
+
+% add to Data-struct
 dimensionsComment = sprintf('%s,',dimensionsComment{:});
 Data.dimensions = ['[' dimensionsComment(1:end-1) ']'];
 

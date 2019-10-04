@@ -14,6 +14,7 @@ switch modelType
             seconds_int  = ncread(inputFile, 'time', 1, 3);
             interval     = seconds_int(3)-seconds_int(2);
             seconds      = [seconds_int(1) seconds_int(2) + interval*[0:nr_times-2] ]';
+            seconds(end) = ncread(inputFile, 'time', nr_times, 1); % overwrite, end time could be different when interval is specified
         end
         days         = seconds / (24*60*60);
         attri        = infonc.Variables(ncVarInd).Attributes(ncAttrInd).Value;

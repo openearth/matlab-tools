@@ -73,11 +73,12 @@ if strcmp(modelType,'dfm') && strcmp(fName(end-2:end),'.nc')
     %%% get ncinfo
     infonc   = ncinfo(fName);
     varNames = {infonc.Variables.Name};
+    dimNames = {infonc.Dimensions.Name};
     if any(~cellfun(@isempty,strfind(varNames,'_agg'))) % DELWAQ-aggregated file
         varNames = strrep(varNames,'_agg','');
+        dimNames = strrep(dimNames,'_agg','');
         aggregated = 1;
     end
-    dimNames = {infonc.Dimensions.Name};
     
     %%% Change Variable or Dimension name to deal with old/new variable names like NetNode_x (older) vs. mesh2d_node_x (newer)
     %%% based on the list at the end of this script
