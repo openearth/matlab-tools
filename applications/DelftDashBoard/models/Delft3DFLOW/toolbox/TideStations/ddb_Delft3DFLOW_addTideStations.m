@@ -101,8 +101,6 @@ n=0;
 x=handles.toolbox.tidestations.database(iac).xLocLocal;
 y=handles.toolbox.tidestations.database(iac).yLocLocal;
 
-
-
 % First find points within grid bounding box
 for i=1:ns
     if x(i)>xmin && x(i)<xmax && ...
@@ -112,8 +110,19 @@ for i=1:ns
         posy(n)=y(i);
         name{n}=names{i};
         istat(n)=i;
+
+        xml.station(n).station.id=handles.toolbox.tidestations.database(iac).idCodes{i};
+        xml.station(n).station.longname=handles.toolbox.tidestations.database(iac).stationList{i};
+        xml.station(n).station.lon=handles.toolbox.tidestations.database(iac).x(i);
+        xml.station(n).station.lat=handles.toolbox.tidestations.database(iac).y(i);
+        xml.station(n).station.database=handles.toolbox.tidestations.database(iac).longName;
+    
     end
 end
+
+% if n>0
+%     struct2xml('stations.xml',xml,'structuretype','short');
+% end
 
 % Find stations within grid
 nrp=0;
@@ -126,8 +135,8 @@ if ~isempty(posx)
             istation(nrp)=istat(i);
             mm(nrp)=m(i);
             nn(nrp)=n(i);
-%             posx2(nrp)=posx(i);
-%             posy2(nrp)=posy(i);
+            posx_ori(nrp)=posx(i);
+            posy_ori(nrp)=posy(i);
             posx2(nrp)=handles.model.delft3dflow.domain(ad).gridXZ(m(i),n(i));
             posy2(nrp)=handles.model.delft3dflow.domain(ad).gridYZ(m(i),n(i));
         end
@@ -154,6 +163,8 @@ for i=1:nrp
         nobs=nobs+1;
         handles.model.delft3dflow.domain(ad).observationPoints(nobs).M=mm(i);
         handles.model.delft3dflow.domain(ad).observationPoints(nobs).N=nn(i);
+%         handles.model.delft3dflow.domain(ad).observationPoints(nobs).xori=posx_ori(i);
+%         handles.model.delft3dflow.domain(ad).observationPoints(nobs).yori=posy_ori(i);
         handles.model.delft3dflow.domain(ad).observationPoints(nobs).x=posx2(i);
         handles.model.delft3dflow.domain(ad).observationPoints(nobs).y=posy2(i);
         lname=length(name);
