@@ -58,45 +58,59 @@ fclose(fid);
 
 if exist([folder 'cumprcp.dat'],'file')
     % Read data file
-%     it=0;
-%     fid=fopen([folder 'cumprcp.dat'],'r');
-%     while 1
-%         idummy=fread(fid,1,'integer*4');
-%         if isempty(idummy)
-%             break
-%         end
-%         it=it+1;
-%         zsv=fread(fid,np,'real*4');
-%         idummy=fread(fid,1,'integer*4');
-%         zs0=zeros(inp.nmax,inp.mmax);
-%         zs0(zs0==0)=NaN;
-%         zs0(indices)=zsv;
-%         %    zs0(zs0-zb<0.05)=NaN;
-%         cumprcp(it,:,:)=zs0;
-%     end
-%     fclose(fid);
-    fid=fopen([folder 'cumprcp.dat'],'r'); %now only at latest time-step
-    idummy=fread(fid,1,'integer*4');
-    cumprcpv=fread(fid,np,'real*4');
-    idummy=fread(fid,1,'integer*4');
+    it=0;
+    fid=fopen([folder 'cumprcp.dat'],'r');
+    while 1
+        idummy=fread(fid,1,'integer*4');
+        if isempty(idummy)
+            break
+        end
+        it=it+1;
+        zsv=fread(fid,np,'real*4');
+        idummy=fread(fid,1,'integer*4');
+        zs0=zeros(inp.nmax,inp.mmax);
+        zs0(zs0==0)=NaN;
+        zs0(indices)=zsv;
+        %    zs0(zs0-zb<0.05)=NaN;
+        cumprcp(it,:,:)=zs0;
+    end
     fclose(fid);
-    cumprcp=zeros(inp.nmax,inp.mmax);
-    cumprcp(cumprcp==0)=NaN;
-    cumprcp(indices)=cumprcpv;
 end
 
 
-% Read Hmax file
-if exist([folder inp.hmaxfile],'file')
-fid=fopen([folder inp.hmaxfile],'r');
-idummy=fread(fid,1,'integer*4');
-hmaxv=fread(fid,np,'real*4');
-idummy=fread(fid,1,'integer*4');
+% Read data file
+it=0;
+fid=fopen([folder inp.zsmaxfile],'r');
+while 1
+    idummy=fread(fid,1,'integer*4');
+    if isempty(idummy)
+        break
+    end
+    it=it+1;
+    zsv=fread(fid,np,'real*4');
+    idummy=fread(fid,1,'integer*4');
+    zs0=zeros(inp.nmax,inp.mmax);
+    zs0(zs0==0)=NaN;
+    zs0(indices)=zsv;
+     zs0(zs0-zb<0.1)=NaN;
+%     zs0(zb>0.0)=NaN; 
+    hmax(it,:,:)=zs0;
+    tmax(it)=(it-1)*inp.dtmaxout;
+end
 fclose(fid);
-hmax=zeros(inp.nmax,inp.mmax);
-hmax(hmax==0)=NaN;
-hmax(indices)=hmaxv;
-end
+
+
+% % Read Hmax file
+% if exist([folder inp.hmaxfile],'file')
+% fid=fopen([folder inp.hmaxfile],'r');
+% idummy=fread(fid,1,'integer*4');
+% hmaxv=fread(fid,np,'real*4');
+% idummy=fread(fid,1,'integer*4');
+% fclose(fid);
+% hmax=zeros(inp.nmax,inp.mmax);
+% hmax(hmax==0)=NaN;
+% hmax(indices)=hmaxv;
+% end
 
 
 % Read vmaxfile
@@ -135,15 +149,16 @@ valout=zeros(size(val,1),inp.nmax+1,inp.mmax+1);
 zbout=zeros(inp.nmax+1,inp.mmax+1);
 valout(valout==0)=NaN;
 zbout(zbout==0)=NaN;
-hmaxout=zbout;
+hmaxout=zeros(size(hmax,1),inp.nmax+1,inp.mmax+1);
+hmaxout(hmaxout==0)=NaN;
 vmaxout=zbout;
-% cumprcpout=valout;
-cumprcpout=zbout;
+cumprcpout=valout;
 
 
 n=0;
 
 valout(:,1:end-1,1:end-1)=val;
+
 n=n+1;
 s.parameters(n).parameter.name='water level';
 
@@ -155,16 +170,28 @@ s.parameters(n).parameter.size=[it 0 size(x,1) size(x,2) 0];
 s.parameters(n).parameter.quantity='scalar';
 
 
-if exist([folder inp.hmaxfile],'file')
-hmaxout(1:end-1,1:end-1)=hmax;
 n=n+1;
-s.parameters(n).parameter.name='maximum water depth';
+
+hmaxout(:,1:end-1,1:end-1)=hmax;
+
+s.parameters(n).parameter.name='maximum water level';
+s.parameters(n).parameter.time=tstart+tmax/86400;
 s.parameters(n).parameter.x=x;
 s.parameters(n).parameter.y=y;
 s.parameters(n).parameter.val=hmaxout;
-s.parameters(n).parameter.size=[0 0 size(x,1) size(x,2) 0];
+s.parameters(n).parameter.size=[length(tmax) 0 size(x,1) size(x,2) 0];
 s.parameters(n).parameter.quantity='scalar';
-end
+
+% if exist([folder inp.hmaxfile],'file')
+% hmaxout(1:end-1,1:end-1)=hmax;
+% n=n+1;
+% s.parameters(n).parameter.name='maximum water depth';
+% s.parameters(n).parameter.x=x;
+% s.parameters(n).parameter.y=y;
+% s.parameters(n).parameter.val=hmaxout;
+% s.parameters(n).parameter.size=[0 0 size(x,1) size(x,2) 0];
+% s.parameters(n).parameter.quantity='scalar';
+% end
 
 zbout(1:end-1,1:end-1)=zb;
 n=n+1;
@@ -197,26 +224,15 @@ end
 %     s.parameters(n).parameter.quantity='scalar';
 % end
 
-% if exist([folder 'cumprcp.dat'],'file')
-%     cumprcpout(:,1:end-1,1:end-1)=cumprcp;
-%     n=n+1;
-%     s.parameters(n).parameter.name='cumulative precipitation';
-%     s.parameters(n).parameter.time=tstart+t/86400;
-%     s.parameters(n).parameter.x=x;
-%     s.parameters(n).parameter.y=y;
-%     s.parameters(n).parameter.val=cumprcpout;
-%     s.parameters(n).parameter.size=[it 0 size(x,1) size(x,2) 0];
-%     s.parameters(n).parameter.quantity='scalar';
-% end
-
-if exist([folder 'cumprcp.dat'],'file') %now only at latest time-step
-    cumprcpout(1:end-1,1:end-1)=cumprcp;
+if exist([folder 'cumprcp.dat'],'file')
+    cumprcpout(:,1:end-1,1:end-1)=cumprcp;
     n=n+1;
     s.parameters(n).parameter.name='cumulative precipitation';
+    s.parameters(n).parameter.time=tstart+t/86400;
     s.parameters(n).parameter.x=x;
     s.parameters(n).parameter.y=y;
     s.parameters(n).parameter.val=cumprcpout;
-    s.parameters(n).parameter.size=[0 0 size(x,1) size(x,2) 0];
+    s.parameters(n).parameter.size=[it 0 size(x,1) size(x,2) 0];
     s.parameters(n).parameter.quantity='scalar';
 end
 

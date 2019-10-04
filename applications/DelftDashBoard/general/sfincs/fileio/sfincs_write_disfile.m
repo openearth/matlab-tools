@@ -1,8 +1,13 @@
-function sfincs_save_boundary_conditions(filename,t,v,tref)
+function sfincs_write_disfile(filename,source)
 
-t=86400*(t-tref);
+np=length(source.x);
+val=[];
+t=source(1).time;
 
-np=size(v,2);
+for ip=1:np
+    val=[val source(ip).q];
+end
+
 fmt=['%10.1f' repmat('%8.2f',[1 np]) '\n'];
 
 fid=fopen(filename,'wt');

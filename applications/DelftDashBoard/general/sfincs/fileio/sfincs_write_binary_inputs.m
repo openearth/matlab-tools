@@ -12,6 +12,7 @@ fclose(fid);
 
 % Depth file
 zv=z(msk>0);
+% zv=max(zv,-5);
 fid=fopen(bindepfile,'w');
 fwrite(fid,zv,'real*4');
 fclose(fid);

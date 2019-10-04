@@ -17,3 +17,7 @@ while 1
     inp.(keyw)=val;
 end
 fclose(fid);
+
+inp.tref=datenum(inp.tref,'yyyymmdd HHMMSS');
+inp.tstart=datenum(inp.tstart,'yyyymmdd HHMMSS');
+inp.tstop=datenum(inp.tstop,'yyyymmdd HHMMSS');
