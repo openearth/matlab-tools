@@ -250,7 +250,7 @@ x=x(cols(1):cols(end));
 y=y(rows(1):rows(end));
 
 A=imread(filename,'PixelRegion',{rows cols});
-A = double(A); id = A > 100; A(id) = NaN;
+A = double(A); % id = A > 100; A(id) = NaN;
 
 %% Update info structure to more accurately reflect the new image: 
 
