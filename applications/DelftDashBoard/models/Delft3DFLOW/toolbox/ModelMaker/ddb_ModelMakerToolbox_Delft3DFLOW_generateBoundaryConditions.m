@@ -148,9 +148,11 @@ try
             
             for ic=1:length(conList)
                 ii=strmatch(conList{ic},cns,'exact');
-                freq=frq(ii); % Freq in cycles per hour
-                for jj=1:size(phasez,2)
-                    phasez(ic,jj)=phasez(ic,jj)+360*handles.model.delft3dflow.domain(id).timeZone*freq;
+                if ~isempty(ii)
+                    freq=frq(ii); % Freq in cycles per hour
+                    for jj=1:size(phasez,2)
+                        phasez(ic,jj)=phasez(ic,jj)+360*handles.model.delft3dflow.domain(id).timeZone*freq;
+                    end
                 end
             end
             phasez=mod(phasez,360);
@@ -236,10 +238,12 @@ try
             end
             for ic=1:length(conList)
                 ii=strmatch(conList{ic},cns,'exact');
-                freq=frq(ii); % Freq in cycles per hour
-                for jj=1:size(phasez,2)
-                    phaseu(ic,jj)=phaseu(ic,jj)+360*handles.model.delft3dflow.domain(id).timeZone*freq;
-                    phasev(ic,jj)=phasev(ic,jj)+360*handles.model.delft3dflow.domain(id).timeZone*freq;
+                if ~isempty(ii)
+                    freq=frq(ii); % Freq in cycles per hour
+                    for jj=1:size(phasez,2)
+                        phaseu(ic,jj)=phaseu(ic,jj)+360*handles.model.delft3dflow.domain(id).timeZone*freq;
+                        phasev(ic,jj)=phasev(ic,jj)+360*handles.model.delft3dflow.domain(id).timeZone*freq;
+                    end
                 end
             end
             phaseu=mod(phaseu,360);
