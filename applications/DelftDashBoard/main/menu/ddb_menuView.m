@@ -76,6 +76,8 @@ switch tg,
         menuViewHybrid_Callback(hObject,eventdata,handles);
     case{'menuViewRoads'}
         menuViewRoads_Callback(hObject,eventdata,handles);
+    case{'menuViewNone'}
+        menuViewNone_Callback(hObject,eventdata,handles);
     case{'menuViewCities'}
         menuViewCities_Callback(hObject,eventdata,handles);
     case{'menuViewSettings'}
@@ -110,6 +112,7 @@ else
     set(handles.GUIHandles.Menu.View.Aerial,'Checked','off');
     set(handles.GUIHandles.Menu.View.Hybrid,'Checked','off');
     set(handles.GUIHandles.Menu.View.Roads,'Checked','off');
+    set(handles.GUIHandles.Menu.View.None,'Checked','off');
     setHandles(handles);
     ddb_updateDataInScreen;
 end
@@ -130,6 +133,7 @@ else
     set(handles.GUIHandles.Menu.View.BackgroundBathymetry,'Checked','off');
     set(handles.GUIHandles.Menu.View.Hybrid,'Checked','off');
     set(handles.GUIHandles.Menu.View.Roads,'Checked','off');
+    set(handles.GUIHandles.Menu.View.None,'Checked','off');
     setHandles(handles);
     ddb_updateDataInScreen;
 end
@@ -150,6 +154,7 @@ else
     set(handles.GUIHandles.Menu.View.BackgroundBathymetry,'Checked','off');
     set(handles.GUIHandles.Menu.View.Aerial,'Checked','off');
     set(handles.GUIHandles.Menu.View.Roads,'Checked','off');
+    set(handles.GUIHandles.Menu.View.None,'Checked','off');
     setHandles(handles);
     ddb_updateDataInScreen;
 end
@@ -170,8 +175,28 @@ else
     set(handles.GUIHandles.Menu.View.BackgroundBathymetry,'Checked','off');
     set(handles.GUIHandles.Menu.View.Aerial,'Checked','off');
     set(handles.GUIHandles.Menu.View.Hybrid,'Checked','off');
+    set(handles.GUIHandles.Menu.View.None,'Checked','off');
     setHandles(handles);
     ddb_updateDataInScreen;
+end
+
+%%
+function menuViewNone_Callback(hObject, eventdata, handles)
+
+checked=get(hObject,'Checked');
+
+if strcmp(checked,'on')
+    set(hObject,'Checked','off');
+    set(handles.mapHandles.backgroundImage,'Visible','off');
+else
+    set(hObject,'Checked','on');
+    set(handles.mapHandles.backgroundImage,'Visible','off');
+    handles.GUIData.backgroundImageType='none';
+    set(handles.GUIHandles.Menu.View.BackgroundBathymetry,'Checked','off');
+    set(handles.GUIHandles.Menu.View.Aerial,'Checked','off');
+    set(handles.GUIHandles.Menu.View.Hybrid,'Checked','off');
+    setHandles(handles);
+%     ddb_updateDataInScreen;
 end
 
 %%
