@@ -67,15 +67,27 @@ switch lower(option)
         delete(h);
         h=findobj(gca,'Tag','bathymetryrectangle');
         delete(h);
+        h=findobj(gca,'Tag','bathymetryeditpolygon');
+        delete(h);
+        h=findobj(gca,'Tag','bathymetryeditsamples');
+        delete(h);
     case{'activate'}
         h=findobj(gca,'Tag','bathymetrypolygon');
         set(h,'Visible','on');
         h=findobj(gca,'Tag','bathymetryrectangle');
         set(h,'Visible','on');
+        h=findobj(gca,'Tag','bathymetryeditpolygon');
+        set(h,'Visible','on');
+        h=findobj(gca,'Tag','bathymetryeditsamples');
+        set(h,'Visible','on');
     case{'deactivate'}
         h=findobj(gca,'Tag','bathymetrypolygon');
         set(h,'Visible','off');
         h=findobj(gca,'Tag','bathymetryrectangle');
+        set(h,'Visible','off');
+        h=findobj(gca,'Tag','bathymetryeditpolygon');
+        set(h,'Visible','off');
+        h=findobj(gca,'Tag','bathymetryeditsamples');
         set(h,'Visible','off');
 end
 

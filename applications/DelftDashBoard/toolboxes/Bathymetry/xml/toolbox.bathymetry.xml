@@ -23,5 +23,18 @@
       <element>toolbox.bathymetry.fillcache.xml</element>
       <enable>1</enable>
     </tab>
+    <tab>
+      <tabstring>Cross-section</tabstring>
+      <callback>ddb_BathymetryToolbox_crosssection</callback>
+      <element>toolbox.bathymetry.crosssection.xml</element>
+      <enable>0</enable>
+    </tab>
+    <tab>
+      <tabstring>Edit</tabstring>
+      <callback>ddb_BathymetryToolbox_edit</callback>
+      <element>toolbox.bathymetry.edit.xml</element>
+      <formodel>dflowfm</formodel>
+      <enable>1</enable>
+    </tab>
   </element>
 </root>

@@ -219,4 +219,40 @@ handles.toolbox.bathymetry.shoreline.disclaimer                   = 'These data 
 handles.toolbox.bathymetry.shoreline.nc_library                   = 'matlab';
 handles.toolbox.bathymetry.shoreline.type                         = 'float';
 
+%% Edit
+
+handles.toolbox.bathymetry.edit.samplesfile='';
+handles.toolbox.bathymetry.edit.nrsamples=0;
+handles.toolbox.bathymetry.edit.samples.x=[];
+handles.toolbox.bathymetry.edit.samples.y=[];
+handles.toolbox.bathymetry.edit.samples.z=[];
+
+handles.toolbox.bathymetry.edit.uniform_value=0;
+
+handles.toolbox.bathymetry.edit.nrpolygons=0;
+handles.toolbox.bathymetry.edit.polygonnames={''};
+handles.toolbox.bathymetry.edit.activepolygon=1;
+handles.toolbox.bathymetry.edit.polygon(1).length=0;
+handles.toolbox.bathymetry.edit.polygon(1).x=[];
+handles.toolbox.bathymetry.edit.polygon(1).y=[];
+handles.toolbox.bathymetry.edit.polygon(1).handle=[];
+handles.toolbox.bathymetry.edit.polygonfile='';
+
+handles.toolbox.bathymetry.edit.depth_change_option_strings{1}='z = uniform value (only missing points)';
+handles.toolbox.bathymetry.edit.depth_change_option_strings{2}='z = uniform value (all points)';
+handles.toolbox.bathymetry.edit.depth_change_option_strings{3}='z = max(z, uniform value)';
+handles.toolbox.bathymetry.edit.depth_change_option_strings{4}='z = min(z, uniform value)';
+handles.toolbox.bathymetry.edit.depth_change_option_strings{5}='z = z + uniform value';
+handles.toolbox.bathymetry.edit.depth_change_option_strings{6}='z = z * uniform value';
+handles.toolbox.bathymetry.edit.depth_change_option_strings{7}='z = NaN';
+
+handles.toolbox.bathymetry.edit.depth_change_options{1}='unif-missing';
+handles.toolbox.bathymetry.edit.depth_change_options{2}='unif-all';
+handles.toolbox.bathymetry.edit.depth_change_options{3}='max';
+handles.toolbox.bathymetry.edit.depth_change_options{4}='min';
+handles.toolbox.bathymetry.edit.depth_change_options{5}='plus';
+handles.toolbox.bathymetry.edit.depth_change_options{6}='times';
+handles.toolbox.bathymetry.edit.depth_change_options{7}='nan';
+
+handles.toolbox.bathymetry.edit.depth_change_option='unif-missing';
 

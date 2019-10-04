@@ -80,16 +80,27 @@ function ddb_makeBathymetryTiles(fname1,dr,dataname,rawdataformat,rawdatatype,nx
 wb = waitbox('Reading data file ...');
 
 pbyp=0;
+multiple_files=0;
 
 switch lower(rawdataformat)
     case{'arcinfogrid'}
-        [x,y,z]=readArcInfo(fname1);
-        x00=x(1);
-        y00=y(1);
-        dx=x(2)-x(1);
-        dy=y(2)-y(1);
-        ncols=length(x);
-        nrows=length(y);
+        [ncols,nrows,x00,y00,cellsz,noval]=readArcInfo(fname1,'info');
+        if ncols*nrows>225000000
+            %        if ncols*nrows>1
+            % Too large, read piece by piece...
+            pbyp=1;
+            dx=cellsz;
+            dy=cellsz;
+            tile_arc_info_ascii(fname1,'TMP_BATHY',nx,noval);
+        else
+            [x,y,z]=readArcInfo(fname1);
+            x00=x(1);
+            y00=y(1);
+            dx=x(2)-x(1);
+            dy=y(2)-y(1);
+            ncols=length(x);
+            nrows=length(y);
+        end
     case{'arcbinarygrid'}
         [x,y,z,m] = arc_info_binary([fileparts(fname1) filesep]);
         dx=m.X(2)-m.X(1);
@@ -98,7 +109,7 @@ switch lower(rawdataformat)
             x00=m.X(1);
             y00=m.Y(end);
             z=flipud(z);
-%            y=fliplr(y);
+            %            y=fliplr(y);
         else
             x00=m.X(1);
             y00=m.Y(end);
@@ -117,18 +128,31 @@ switch lower(rawdataformat)
         dy=s.y(2)-s.y(1);
         ncols=length(s.x);
     case{'netcdf'}
-        x=nc_varget(fname1,'x');
-        y=nc_varget(fname1,'y');
-        z=nc_varget(fname1,'z');
-%         x=nc_varget(fname1,'COLUMNS');
-%         y=nc_varget(fname1,'LINES');
-%         z=nc_varget(fname1,'DEPTH');
+        %        x=nc_varget(fname1,'x');
+        %        y=nc_varget(fname1,'y');
+        %        z=nc_varget(fname1,'z');
+        x=nc_varget(fname1,'lon');
+        y=nc_varget(fname1,'lat');
+%         z=nc_varget(fname1,'elevation');
+        %         x=nc_varget(fname1,'COLUMNS');
+        %         y=nc_varget(fname1,'LINES');
+        %         z=nc_varget(fname1,'DEPTH');
         x00=x(1);
         y00=y(1);
         nrows=length(y);
         dx=x(2)-x(1);
         dy=y(2)-y(1);
         ncols=length(x);
+        
+        if ncols*nrows>400000000
+            %        if ncols*nrows>225000000
+            % Too large, read piece by piece...
+            pbyp=1;
+        else
+            z=nc_varget(fname1,'elevation');
+        end
+        
+        
     case{'xyz'}
         s=load(fname1);
         x0=s(:,1);
@@ -145,7 +169,7 @@ switch lower(rawdataformat)
         x00=x0;
         y00=y0;
         ncols=length(xx);
-        nrows=length(yy);        
+        nrows=length(yy);
     case{'xyzregular'}
         [x,y,z]=xyz2regulargrid(fname1);
         x00=x(1,1);
@@ -155,24 +179,51 @@ switch lower(rawdataformat)
         ncols=length(x);
         nrows=length(y);
     case{'geotiff'}
-        [z,x,y,I] = geoimread(fname1,'info');
-        z=flipud(z);
-        z(z<-15000)=NaN; % Get rid of no data values
-        x00=min(x);
-        y00=min(y);
-        dx=abs(x(2)-x(1));
-        dy=abs(y(2)-y(1));
-        ncols=length(x);
-        nrows=length(y);
-        if ncols*nrows>225000000
-            % Too large, read piece by piece...
-            pbyp=1;
-        else
-            [z,xdum,ydum,I] = geoimread(fname1);
+        if ~iscell(fname1)
+            % just one file
+            [z,x,y,I] = geoimread(fname1,'info');
             z=flipud(z);
-            z(z<-15000)=NaN;
+            z(z<-15000)=NaN; % Get rid of no data values
+            x00=min(x);
+            y00=min(y);
+            dx=abs(x(2)-x(1));
+            dy=abs(y(2)-y(1));
+            ncols=length(x);
+            nrows=length(y);
+            if ncols*nrows>400000000
+                %        if ncols*nrows>225000000
+                % Too large, read piece by piece...
+                pbyp=1;
+            else
+                [z,xdum,ydum,I] = geoimread(fname1);
+                z=flipud(z);
+                z(z<-15000)=NaN;
+            end
+        else
+            multiple_files=1;
+            xmin= 1e9;
+            xmax=-1e9;
+            ymin= 1e9;
+            ymax=-1e9;
+            for ii=1:length(fname1)
+                filename=fname1{ii};
+                [A,x,y,I]=geoimread(filename,'info');
+                xx=[x(1) x(end) x(end) x(1) x(1)];
+                yy=[y(end) y(end) y(1) y(1) y(end)];
+                dx=(x(end)-x(1))/(length(x)-1);
+                dy=-(y(end)-y(1))/(length(y)-1);
+                xmin=min(xmin,x(1));
+                xmax=max(xmax,x(end));
+                ymin=min(ymin,y(end));
+                ymax=max(ymax,y(1));
+            end
+            x00=xmin;
+            y00=ymin;
+            ncols=round((xmax-xmin)/dx+1);
+            nrows=round((ymax-ymin)/dy+1);
         end
 end
+
 close(wb);
 
 % Determine required number of zoom levels
@@ -189,7 +240,7 @@ if isempty(iiy)
 end
 nrzoom=max(iix,iiy);
 
-% 
+%
 % else
 %     % Read in one go!
 %     switch lower(rawdatatype)
@@ -238,90 +289,201 @@ if imaketiles
         nny=nnyk(k);
         
         if k==1
-
-            wb = awaitbar(0,'Generating tiles ...');
             
-            tilen=0;
+            wb = awaitbar(0,'Generating tiles ...');
 
-            for i=1:nnx
-                for j=1:nny
+            if multiple_files
+                nfiles=length(fname1);
+            else
+                nfiles=1;
+            end
+            
+            for ifile=1:nfiles
 
-                    tilen=tilen+1;
-
-                    str=['Generating tiles - tile ' num2str(tilen) ' of ' ...
-                        num2str(nnx*nny) ' ...'];
-                    [hh,abort2]=awaitbar(tilen/(nnx*nny),wb,str);
-                    
-                    if abort2 % Abort the process by clicking abort button
-                        break;
-                    end;
-                    if isempty(hh); % Break the process when closing the figure
-                        break;
-                    end;
-
-                    disp(['Processing ' num2str((i-1)*nny+j) ' of ' num2str(nnx*nny) ' ...']);
-                    
-                    xmin = x0(k)+(i-1)*nx*dx;
-                    ymin = y0(k)+(j-1)*ny*dy;
-                    xmax = xmin+(nx-1)*dx;
-                    ymax = ymin+(ny-1)*dy;
-                    
-                    xx=xmin:dx:xmax;
-                    yy=ymin:dy:ymax;
-                    
-                    i1=(i-1)*nx+1;
-                    i2=i*nx;
-                    i2=min(i2,ncols);
-                    j1=(j-1)*ny+1;
-                    j2=j*ny;
-                    j2=min(j2,nrows);
-                    
-                    zz=nan(ny,nx);
-                    
-                     if pbyp
-                         % Read data piece by piece
-                         switch lower(rawdataformat)
-                             case{'arcinfogrid'}
-                                 [x,y,zz]=readArcInfo(fname1,'x',xx,'y',yy);
-                             case{'geotiff'}
-                                 [zz,xdum,ydum,I] = geoimread(fname1,[xmin xmax],[ymin ymax]);
-                                 zz=flipud(zz);
-                                 zz(zz<-15000)=NaN;
-                                 zz(zz>15000)=NaN;
-                                 
-                                 if ~OPT.positiveup
-				     z=z*-1;
-				 end
-                                 sztile=size(zz);
-                                 if sztile(1)~=300 || sztile(2)~=300
-                                     zz1=zeros(ny,nx);
-                                     zz1(zz1==0)=NaN;
-                                     zz1(1:size(zz,1),1:size(zz,2))=zz;
-                                     zz=single(zz1);
-                                 end
-                         end
-                         %                        zz(1:(j2-j1+1),1:(i2-i1+1))=single(z);
-                     else
-                        zsingle=full(z(j1:j2,i1:i2));
-                        zz(1:(j2-j1+1),1:(i2-i1+1))=single(zsingle);
-                     end
-                     
-                     if zrange(1)>-15000 || zrange(2)<15000
-                         zz(zz<zrange(1))=NaN;
-                         zz(zz>zrange(2))=NaN;
-                     end
-                    % Only save files that contain at least some valid
-                    % values
-                    if ~isnan(nanmax(nanmax(zz)))
-                        zz=single(zz);
-                        zz=zz';
-                        fname=[dr 'zl' num2str(k,'%0.2i') filesep dataname '.zl01.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
+                if multiple_files
+                    % This is where we read in the separate files
+                    [z,x,y,I] = geoimread(fname1{ifile});
+                    xminf=min(x);
+                    yminf=min(y);
+                    z=flipud(z);
+                    z(z<-15000)=NaN;
+                end                
+                
+                tilen=0;
+                
+                for i=1:nnx
+                    for j=1:nny
                         
-                        OPT.fillValue=-999;
+                        tilen=tilen+1;
+
+                        xmin = x0(k)+(i-1)*nx*dx;
+                        ymin = y0(k)+(j-1)*ny*dy;
+                        xmax = xmin+(nx-1)*dx;
+                        ymax = ymin+(ny-1)*dy;
                         
-                        nc_grid_createNCfile2(fname,xx,yy,zz,OPT);
+                        xx=xmin:dx:xmax;
+                        yy=ymin:dy:ymax;
+                        
+                        if multiple_files
+                            i1=round((xmin-xminf)/dx)+1;
+                            i2=round((xmax-xminf)/dx)+1;
+                            j1=round((ymin-yminf)/dy)+1;
+                            j2=round((ymax-yminf)/dy)+1;
+                            if (i1<1 && i2<1) || (i1>length(x) && i2>length(x)) || (j1<1 && j2<1) || (j1>length(y) && j2>length(y))
+                                % tile outside file extent
+                                continue
+                            end
+                            
+                            jj1=1;
+                            jj2=j2-j1+1;
+                            ii1=1;
+                            ii2=i2-i1+1;
+                            
+                            if i1<1 && i2>=1
+                                ii1=-i1+2;
+                                ii2=nx;
+                                i1=1;
+                            end
+                            if i1<=length(x) && i2>length(x)
+                                ii1=1;
+                                ii2=nx-(i2-length(x));
+                                i2=length(x);
+                            end
+
+                            if j1<1 && j2>=1
+                                jj1=-j1+2;
+                                jj2=ny;
+                                j1=1;
+                            end
+                            if j1<=length(y) && j2>length(y)
+                                jj1=1;
+                                jj2=ny-(j2-length(y));
+                                j2=length(y);
+                            end
+                            
+                        else
+                            i1=(i-1)*nx+1;
+                            i2=i*nx;
+                            i2=min(i2,ncols);
+                            j1=(j-1)*ny+1;
+                            j2=j*ny;
+                            j2=min(j2,nrows);
+                            
+                            jj1=1;
+                            jj2=j2-j1+1;
+                            ii1=1;
+                            ii2=i2-i1+1;
+
+                        end
+                        
+                        
+                        str=['Generating tiles - tile ' num2str(tilen) ' of ' ...
+                            num2str(nnx*nny) ' ...'];
+                        [hh,abort2]=awaitbar(tilen/(nnx*nny),wb,str);
+                        
+                        if abort2 % Abort the process by clicking abort button
+                            break;
+                        end;
+                        if isempty(hh); % Break the process when closing the figure
+                            break;
+                        end;
+                        
+%                         disp(['Processing ' num2str((i-1)*nny+j) ' of ' num2str(nnx*nny) ' ...']);
+                        
+                        zz=nan(ny,nx);
+                        
+                        if pbyp
+                            % Read data piece by piece
+                            switch lower(rawdataformat)
+                                case{'arcinfogrid'}
+                                    tempdir='TMP_BATHY';
+                                    fname=[tempdir filesep 'TMP_' num2str(i,'%0.6i') '_' num2str(j,'%0.6i')  '.mat'];
+                                    if exist(fname,'file')
+                                        zz=load(fname);
+                                        zz=zz.m2;
+                                    end
+                                    %                                [x,y,zz]=readArcInfo(fname1,'x',xx,'y',yy);
+                                case{'geotiff'}
+                                    [zz,xdum,ydum,I] = geoimread(fname1,[xmin xmax],[ymin ymax]);
+                                    zz=flipud(zz);
+                                    zz(zz<-15000)=NaN;
+                                    zz(zz>15000)=NaN;
+                                    
+                                    if ~OPT.positiveup
+                                        z=z*-1;
+                                    end
+                                    sztile=size(zz);
+                                    if sztile(1)~=300 || sztile(2)~=300
+                                        zz1=zeros(ny,nx);
+                                        zz1(zz1==0)=NaN;
+                                        zz1(1:size(zz,1),1:size(zz,2))=zz;
+                                        zz=single(zz1);
+                                    end
+                                case{'netcdf'}
+                                    tic
+                                    try
+                                    zz=nc_varget(fname1,'elevation',[j1-1 i1-1],[ny nx]);
+                                    catch
+                                        shite=1;
+                                    end
+                                    toc
+%                                     [zz,xdum,ydum,I] = geoimread(fname1,[xmin xmax],[ymin ymax]);
+%                                     zz=flipud(zz);
+%                                     zz(zz<-15000)=NaN;
+%                                     zz(zz>15000)=NaN;
+%                                     
+%                                     if ~OPT.positiveup
+%                                         z=z*-1;
+%                                     end
+%                                     sztile=size(zz);
+%                                     if sztile(1)~=300 || sztile(2)~=300
+%                                         zz1=zeros(ny,nx);
+%                                         zz1(zz1==0)=NaN;
+%                                         zz1(1:size(zz,1),1:size(zz,2))=zz;
+%                                         zz=single(zz1);
+%                                     end
+                            end
+                            %                        zz(1:(j2-j1+1),1:(i2-i1+1))=single(z);
+                        else
+                            zsingle=full(z(j1:j2,i1:i2));
+%                            zz(1:(j2-j1+1),1:(i2-i1+1))=single(zsingle);
+                            zz(jj1:jj2,ii1:ii2)=single(zsingle);
+                        end
+                        
+                        if zrange(1)>-15000 || zrange(2)<15000
+                            zz(zz<zrange(1))=NaN;
+                            zz(zz>zrange(2))=NaN;
+                        end
+                        % Only save files that contain at least some valid
+                        % values
+                        try
+                            if ~isnan(nanmax(nanmax(zz)))
+                                
+                                if multiple_files
+                                    % Check if the file was already partially filled
+                                    % using previous file(s)
+                                    fname=[dr 'zl' num2str(k,'%0.2i') filesep dataname '.zl01.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
+                                    if exist(fname,'file')
+                                        zz0=nc_varget(fname,'depth');
+                                        zz0=double(zz0);
+                                        zz0(zz0==-999)=NaN;
+                                        zz(isnan(zz))=zz0(isnan(zz));
+                                    end
+                                end
+                                
+                                zz=single(zz);
+                                zz=zz';
+                                fname=[dr 'zl' num2str(k,'%0.2i') filesep dataname '.zl01.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
+                                
+                                OPT.fillValue=-999;
+                                
+                                nc_grid_createNCfile2(fname,xx,yy,zz,OPT);
+                            end
+                        catch
+                            shite=1
+                        end
+                        
                     end
-                    
                 end
             end
             
@@ -331,7 +493,7 @@ if imaketiles
             end
             
         else
-                        
+            
             % Get tiles from lower zoom level
             
             wb = awaitbar(0,'Generating tiles ...');
@@ -342,7 +504,7 @@ if imaketiles
                 for j=1:nny
                     
                     tilen=tilen+1;
-
+                    
                     str=['Generating level ' num2str(k) ' of ' num2str(nrzoom) ' - tile ' num2str(tilen) ' of ' ...
                         num2str(nnx*nny) ' ...'];
                     [hh,abort2]=awaitbar(tilen/(nnx*nny),wb,str);
@@ -420,9 +582,9 @@ if imaketiles
                             %                            pause(5)
                             
                             fname=[dr 'zl' num2str(k,'%0.2i') filesep dataname '.zl' num2str(k,'%0.2i') '.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
-
+                            
                             OPT.fillValue=-999;
-
+                            
                             nc_grid_createNCfile2(fname,xx,yy,z,OPT);
                             
                         end
@@ -435,7 +597,7 @@ if imaketiles
             if ~isempty(hh)
                 close(wb);
             end
-
+            
         end
     end
 end

@@ -131,8 +131,10 @@ try
             dy=s.y(2)-s.y(1);
         case{'netcdf'}
             wb = waitbox('Reading data file ...');
-            x=nc_varget(handles.toolbox.bathymetry.import.dataFile,'x');
-            y=nc_varget(handles.toolbox.bathymetry.import.dataFile,'y');
+%            x=nc_varget(handles.toolbox.bathymetry.import.dataFile,'x');
+%            y=nc_varget(handles.toolbox.bathymetry.import.dataFile,'y');
+            x=nc_varget(handles.toolbox.bathymetry.import.dataFile,'lon');
+            y=nc_varget(handles.toolbox.bathymetry.import.dataFile,'lat');
 %             x=nc_varget(handles.toolbox.bathymetry.import.dataFile,'COLUMNS');
 %             y=nc_varget(handles.toolbox.bathymetry.import.dataFile,'LINES');
             x0=x(1);
@@ -289,6 +291,20 @@ if ~isempty(strmatch(handles.toolbox.bathymetry.import.attributes.title,handles.
 end
 
 zrange=[handles.toolbox.bathymetry.import.minElevation handles.toolbox.bathymetry.import.maxElevation];
+
+multiple_files=0;
+[pathstr,name,ext] = fileparts(fname);
+if multiple_files
+    if ~isempty(pathstr)
+        flist=dir([pathstr filesep '*' ext]);
+    else
+        flist=dir(['*' ext]);
+    end
+    fname=[];
+    for ii=1:length(flist)
+        fname{ii}=[pathstr filesep flist(ii).name];
+    end
+end
 ddb_makeBathymetryTiles(fname,dr,dataname,dataformat,datatype,nx,ny,x0,y0,dx,dy,zrange,OPT);
 
 % Now add data to data xml
