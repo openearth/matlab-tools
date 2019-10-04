@@ -75,7 +75,7 @@ imageQuality=1;
 
 % Coordinate system of bathymetry data or satellite image
 switch handles.GUIData.backgroundImageType
-    case{'bathymetry'}
+    case{'bathymetry','none'}
         iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
         dataCoord.name=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
         dataCoord.type=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
@@ -206,7 +206,11 @@ switch handles.GUIData.backgroundImageType
 %         disp('Plotting image data ...');
         handles=ddb_plotBackgroundSatelliteImage(handles,x11,y11,cdata);
 %         toc
+    case{'none'}
         
+        h=handles.mapHandles.backgroundImage;
+        set(h,'Visible','off');
+
 end
 
 
