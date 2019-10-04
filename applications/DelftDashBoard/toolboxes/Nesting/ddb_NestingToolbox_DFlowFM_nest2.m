@@ -87,6 +87,8 @@ end
 
 hisfile=handles.toolbox.nesting.trihFile;
 nestadm=handles.toolbox.nesting.dflowfm.admFile;
+admfile=handles.toolbox.nesting.admFile;
+admfile=handles.toolbox.nesting.admFile;
 z0=handles.toolbox.nesting.zCor;
 opt='';
 if handles.toolbox.nesting.nestHydro && handles.toolbox.nesting.nestTransport
@@ -116,10 +118,14 @@ if ~isempty(opt)
     % Run Nesthd2
     cs=handles.screenParameters.coordinateSystem.type;
     
-    bnd=nesthd2_new('input',handles.model.dflowfm.domain,'openboundaries',bnd,'vertgrid',vertGrid,'hisfile',hisfile, ...
-        'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt,'coordinatesystem',cs,'save','n','overallmodeltype','dflowfm');
+    bnd=nest2_dflowfm_in_dflowfm(hisfile,admfile,handles.model.dflowfm.domain.refdate,'boundary',bnd,'zcor',z0);
+    
+%    bnd=nesthd2_new('input',handles.model.dflowfm.domain,'openboundaries',bnd,'vertgrid',vertGrid,'hisfile',hisfile, ...
+%        'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt,'coordinatesystem',cs,'save','n','overallmodeltype','dflowfm');
 %        'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt,'coordinatesystem',cs,'save','n','overallmodeltype','delft3dflow');
     
+
+
     handles.model.dflowfm.domain.boundaries=bnd;
 
 %     zersunif=zeros(2,1);

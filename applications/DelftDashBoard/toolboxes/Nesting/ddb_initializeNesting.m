@@ -103,7 +103,7 @@ handles.toolbox.nesting.dflowfm.encFile           = '';
 handles.toolbox.nesting.dflowfm.bndFile           = '';
 handles.toolbox.nesting.dflowfm.depFile           = '';
 handles.toolbox.nesting.dflowfm.extfile           = '';
-handles.toolbox.nesting.dflowfm.admFile           = 'nesting.adm';
+handles.toolbox.nesting.dflowfm.admFile           = 'nesting.xml';
 
 % Fews
 handles.toolbox.nesting.fews.detailmodeltype    = 'dflowfmwave';

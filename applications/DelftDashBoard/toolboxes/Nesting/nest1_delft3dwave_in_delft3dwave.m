@@ -93,6 +93,10 @@ switch method
                     lastyp=1e9;
                 end
             end
+            
+            lastxp=sections(isec).x(1);
+            lastyp=sections(isec).y(1);
+            
             for ip=1:length(sections(isec).x)
                 xp=sections(isec).x(ip);
                 yp=sections(isec).y(ip);
@@ -105,7 +109,7 @@ switch method
                         dst=sqrt((xp-lastxp)^2 + (yp-lastyp)^2);
                 end
                 % Check if this point is more than max_dist away from last point that was found
-                if dst>str2double(len) || ip==length(sections(isec).x)
+                if dst>len || ip==length(sections(isec).x)
                     % New point found
                     np=np+1;
                     xx(np)=xp;

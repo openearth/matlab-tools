@@ -151,7 +151,8 @@ switch handles.toolbox.nesting.dflowfm.detailmodeltype
         cs.type=handles.toolbox.nesting.dflowfm.detailmodelcstype;
         
         newpoints=nest1_dflowfm_in_dflowfm('extfile',handles.toolbox.nesting.dflowfm.extfile, ...
-            'csoverall',handles.screenParameters.coordinateSystem,'csdetail',cs);
+            'csoverall',handles.screenParameters.coordinateSystem,'csdetail',cs, ...
+            'admfile',handles.toolbox.nesting.dflowfm.admFile);
         
         if ~isempty(newpoints)
             

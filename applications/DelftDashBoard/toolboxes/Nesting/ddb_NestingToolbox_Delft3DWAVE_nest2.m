@@ -57,7 +57,7 @@ else
         case{'nest2'}
             nest2;
         case{'selectcs'}
-            
+            selectCS;            
     end
 end
 
@@ -126,3 +126,19 @@ if ~isempty(fname)
     
 end
 
+%%
+function selectCS
+
+handles=getHandles;
+
+% Open GUI to select data set
+
+[cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.coordinateData,handles.EPSG,'default','WGS 84','type','both','defaulttype','geographic');
+
+if ok    
+    handles.toolbox.nesting.delft3dwave.overallmodelcsname=cs;
+    handles.toolbox.nesting.delft3dwave.overallmodelcstype=type;    
+    setHandles(handles);
+end
+
+gui_updateActiveTab;

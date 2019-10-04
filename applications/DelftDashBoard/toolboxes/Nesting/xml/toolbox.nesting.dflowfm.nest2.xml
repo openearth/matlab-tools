@@ -5,7 +5,7 @@
     <position>10 110 120 20</position>
     <text>Select History File</text>
     <variable>handles.toolbox.nesting.trihFile</variable>
-    <onchange>ddb_NestingToolbox_nestHD2</onchange>
+    <onchange>ddb_NestingToolbox_DFlowFM_nest2</onchange>
     <option1>selecthisfile</option1>
     <showfilename>yes</showfilename>
     <extension>trih*.dat</extension>
@@ -17,7 +17,7 @@
     <position>10 85 120 20</position>
     <text>Select Admin File</text>
     <variable>handles.toolbox.nesting.admFile</variable>
-    <onchange>ddb_NestingToolbox_nestHD2</onchange>
+    <onchange>ddb_NestingToolbox_DFlowFM_nest2</onchange>
     <option1>selectadmfile</option1>
     <showfilename>yes</showfilename>
     <extension>*.adm</extension>

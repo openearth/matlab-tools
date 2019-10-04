@@ -1,4 +1,4 @@
-function obspoints=ddb_nesthd1_dflowfm_in_dflowfm(varargin)
+function obspoints=nest1_dflowfm_in_dflowfm(varargin)
 %ddb_nesthd1_dflowfm_in_delft3dflow  Step 1 of nesting DFlow-FM model in Delft3D-FLOW model.
 %
 % Creates nesting administration file
@@ -89,7 +89,8 @@ end
 obspoints=[];
 
 % Read ext file
-s=dflowfmreadextfile(extfile);
+s=dflowfm_readextfile(extfile);
+
 folder=fileparts(extfile);
 
 boundaries=s.boundaries;
@@ -100,7 +101,7 @@ for ipli=1:length(boundaries)
     % Loop through polylines
 
     % Read boundary pli
-    [x,y]=landboundary('read',[folder filesep boundaries(ipli).filename]);
+    [x,y]=landboundary('read',[folder filesep boundaries(ipli).locationfile]);
     
     % Convert pli to current coordinate system (when necessary)
     if ~strcmpi(csdetail.name,'unspecified')
@@ -119,6 +120,17 @@ for ipli=1:length(boundaries)
         obspoints(nrobs).y=y(ip);
                         
     end
+
+    % Nesting adm file
+    xml.boundary(ipli).name=boundaries(ipli).name;
+    for ip=1:length(x)
+        xml.boundary(ipli).node(ip).name=[boundaries(ipli).name '_' num2str(ip,'%0.4i')];
+        xml.boundary(ipli).node(ip).obspoint(1).name=[boundaries(ipli).name '_' num2str(ip,'%0.4i')];
+        xml.boundary(ipli).node(ip).obspoint(1).weight=1;
+    end
+
+    
 end
 
 % No need for nesting administration file
+struct2xml(admfile,xml,'structuretype','supershort');
