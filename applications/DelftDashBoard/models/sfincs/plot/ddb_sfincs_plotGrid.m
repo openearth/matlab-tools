@@ -63,7 +63,7 @@ function handles = ddb_sfincs_plot_grid(handles, opt, varargin)
 
 %%
 
-col=[0.35 0.35 0.35];
+col=[1 1 0];
 vis=1;
 id=1;
 
@@ -74,7 +74,7 @@ for i=1:length(varargin)
                 col=varargin{i+1};
             case{'visible'}
                 vis=varargin{i+1};
-            case{'wavedomain'}
+            case{'domain'}
                 id=varargin{i+1};
         end
     end

@@ -164,6 +164,25 @@
   </element>
 
   <element>
+    <style>pushbutton</style>
+    <position>280 20 120 20</position>
+    <text>Generate Tides</text>
+    <callback>ddb_sfincs_boundary_conditions</callback>
+    <option1>generatetides</option1>
+    <tooltipstring>Generate tidal boundary conditions</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).flowboundarypoints.length</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+
+  <element>
     <style>panel</style>
     <position>550 10 270 150</position>
     <text>Waves</text>
@@ -309,14 +328,4 @@
     <type>string</type>
     <tooltipstring>Edit bzs file name</tooltipstring>
   </element>
-  <element>
-    <style>pushbutton</style>
-    <position>890 20 150 20</position>
-    <text>Save Boundary Conditions</text>
-    <callback>ddb_sfincs_boundary_conditions</callback>
-    <option1>saveboundaryconditions</option1>
-    <tooltipstring>Save all boundary condition files (bzs,bhs,bwd and btp files)</tooltipstring>
-  </element>
-
-
 </root>

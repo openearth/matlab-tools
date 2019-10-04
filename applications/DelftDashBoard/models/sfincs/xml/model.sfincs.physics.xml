@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>edit</style>
+    <position>100 140 50 20</position>
+    <text>Air Density</text>
+    <variable>handles.model.sfincs.domain(ad).input.rhoa</variable>
+    <type>real</type>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>100 115 50 20</position>
+    <text>Water Density</text>
+    <variable>handles.model.sfincs.domain(ad).input.rhow</variable>
+    <type>real</type>
+  </element>
+  <element>
+    <style>popupmenu</style>
+    <position>250 140 150 20</position>
+    <text>Roughness Type</text>
+    <variable>handles.model.sfincs.domain(ad).roughness_type</variable>
+    <type>string</type>
+    <listtext>Uniform</listtext>
+    <listtext>Land-sea interface</listtext>
+    <listtext>File</listtext>
+    <listvalue>uniform</listvalue>
+    <listvalue>landsea</listvalue>
+    <listvalue>file</listvalue>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>250 115 50 20</position>
+    <text>Manning</text>
+    <variable>handles.model.sfincs.domain(ad).input.manning</variable>
+    <type>real</type>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).roughness_type</variable>
+        <value>uniform</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>250 90 50 20</position>
+    <text>Manning (land)</text>
+    <variable>handles.model.sfincs.domain(ad).input.manning_land</variable>
+    <type>real</type>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).roughness_type</variable>
+        <value>landsea</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>250 65 50 20</position>
+    <text>Manning (sea)</text>
+    <variable>handles.model.sfincs.domain(ad).input.manning_sea</variable>
+    <type>real</type>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).roughness_type</variable>
+        <value>landsea</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>250 40 50 20</position>
+    <text>Land level</text>
+    <variable>handles.model.sfincs.domain(ad).input.rgh_lev_land</variable>
+    <type>real</type>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).roughness_type</variable>
+        <value>landsea</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>250 15 80 20</position>
+    <tooltipstring>Select Manning file</tooltipstring>
+    <text>Manning File</text>
+    <variable>handles.model.sfincs.domain(ad).input.manningfile</variable>
+    <extension>*.rgh</extension>
+    <selectiontext>Select Manning file</selectiontext>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).roughness_type</variable>
+        <value>file</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+</root>

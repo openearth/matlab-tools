@@ -29,7 +29,7 @@ switch lower(opt)
         xp=handles.model.sfincs.domain(ad).flowboundarypoints.x;
         yp=handles.model.sfincs.domain(ad).flowboundarypoints.y;
         p=plot(xp,yp,'o');
-        set(p,'MarkerEdgeColor','k','MarkerFaceColor','k');
+        set(p,'MarkerEdgeColor','m','MarkerFaceColor','m');
         set(p,'tag','sfincsflowboundarypoints');
         handles.model.sfincs.domain(ad).flowboundarypoints.handle=p;
         

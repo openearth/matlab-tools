@@ -64,19 +64,37 @@ function handles = ddb_initialize_sfincs_domain(handles, opt, id, runid)
 
 %%
 
+% Input structure from sfincs.inp file
 handles.model.sfincs.domain(id).input=sfincs_initialize_input;
 
-handles.model.sfincs.domain(id).runid=runid;
-handles.model.sfincs.domain.attName='test';
+% Runid is folder name
+[fldr,runid]=fileparts(pwd);
 
-handles.model.sfincs.domain(id).tref=floor(now);
-handles.model.sfincs.domain(id).tstart=floor(now);
-handles.model.sfincs.domain(id).tstop =floor(now+1);
+handles.model.sfincs.domain(id).directory=[pwd filesep];
+handles.model.sfincs.domain(id).runid=runid;
+handles.model.sfincs.domain(id).attName='test';
+
+handles.model.sfincs.domain(id).roughness_type='landsea';
+handles.model.sfincs.domain(id).wind_type='uniform';
+handles.model.sfincs.domain(id).rain_type='uniform';
+
+% handles.model.sfincs.domain(id).tref=floor(now);
+% handles.model.sfincs.domain(id).tstart=floor(now);
+% handles.model.sfincs.domain(id).tstop =floor(now+1);
 
 % Coast line
+handles.model.sfincs.domain(id).coastline.handle=[];
+handles.model.sfincs.domain(id).coastline.active_point_handle=[];
 handles.model.sfincs.domain(id).coastline.x=0;
 handles.model.sfincs.domain(id).coastline.y=0;
-handles.model.sfincs.domain(id).coastline.slope=0.05;
+handles.model.sfincs.domain(id).coastline.slope=0.01;
+handles.model.sfincs.domain(id).coastline.dean=0.05;
+handles.model.sfincs.domain(id).coastline.reef_width=1000;
+handles.model.sfincs.domain(id).coastline.reef_height=-1;
+handles.model.sfincs.domain(id).coastline.type=1;
+handles.model.sfincs.domain(id).coastline.length=0;
+handles.model.sfincs.domain(id).coastline.active_point=1;
+handles.model.sfincs.domain(ad).coastline.point_list={''};
 
 % Boundary conditions
 handles.model.sfincs.domain(id).flowboundarypoints.handle=[];
@@ -95,23 +113,16 @@ handles.model.sfincs.domain(id).waveboundaryconditions.hs=0;
 handles.model.sfincs.domain(id).waveboundaryconditions.tp=0;
 handles.model.sfincs.domain(id).waveboundaryconditions.wd=0;
 
-% handles.model.sfincs.domain(id).mmax=0;
-% handles.model.sfincs.domain(id).nmax=0;
-% handles.model.sfincs.domain(id).x0=0;
-% handles.model.sfincs.domain(id).y0=0;
-% handles.model.sfincs.domain(id).dx=0;
-% handles.model.sfincs.domain(id).dy=0;
-% handles.model.sfincs.domain(id).gridx=[];
-% handles.model.sfincs.domain(id).gridy=[];
-% handles.model.sfincs.domain(id).gridz=[];
-% handles.model.sfincs.domain(id).alfa=0;
-% handles.model.sfincs.domain(id).run_duration=3600;
-% handles.model.sfincs.domain(id).output_timestep=600;
-% handles.model.sfincs.domain(id).vmax=3;
-% handles.model.sfincs.domain(id).manning=0.030;
-% handles.model.sfincs.domain(id).depfile='';
-% handles.model.sfincs.domain(id).bndfile='boundary_conditions.txt';
-% handles.model.sfincs.domain(id).bndlocfile='boundary_locations.txt';
-% 
+% Sources
+handles.model.sfincs.domain(id).sourcepoints.handle=[];
+handles.model.sfincs.domain(id).sourcepoints.x=[];
+handles.model.sfincs.domain(id).sourcepoints.y=[];
+handles.model.sfincs.domain(id).sourcepoints.length=0;
+handles.model.sfincs.domain(id).sourcepoints.time=0;
+handles.model.sfincs.domain(id).sourcepoints.q=0;
 
-
+% Observation points
+handles.model.sfincs.domain(id).obspoints.handle=[];
+handles.model.sfincs.domain(id).obspoints.x=[];
+handles.model.sfincs.domain(id).obspoints.y=[];
+handles.model.sfincs.domain(id).obspoints.length=0;

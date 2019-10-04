@@ -56,7 +56,9 @@ if isempty(varargin)
     % New tab selected
     ddb_refreshScreen;
     ddb_plotModelMaker('activate');
-     ddb_plotsfincs('update','active',1,'visible',1);    
+    ddb_plotsfincs('update','active',1,'visible',1);
+    ddb_sfincs_plot_mask(handles, 'update','domain',ad,'visible',0);
+
     if ~isempty(handles.toolbox.modelmaker.gridOutlineHandle)
         setInstructions({'Left-click and drag markers to change corner points','Right-click and drag YELLOW marker to move entire box', ...
             'Right-click and drag RED markers to rotate box (note: rotating grid in geographic coordinate systems is NOT recommended!)'});
@@ -189,17 +191,27 @@ if handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.nY>npmax
     ddb_giveWarning('Warning',['Maximum number of grid points (' num2str(npmax) ') exceeded ! Please reduce grid resolution.']);
     return
 end
+
+% Temporarily set zMax to very high value
+zmx=handles.toolbox.modelmaker.zMax;
 handles.toolbox.modelmaker.zMax=20000;
+
+%handles=ddb_initialize_sfincs_domain(handles,'dummy',ad,'dummy');
+
 handles=ddb_ModelMakerToolbox_sfincs_generateGrid(handles,'option',opt);
 
+handles.toolbox.modelmaker.zMax=zmx;
+
 setHandles(handles);
+
+
 
 %%
 function generateBathymetry
 handles=getHandles;
 % Use background bathymetry data
 datasets(1).name=handles.screenParameters.backgroundBathymetry;
-handles=ddb_ModelMakerToolbox_sfincs_generateBathymetry(handles,1,datasets);
+handles=ddb_ModelMakerToolbox_sfincs_generateBathymetry(handles,ad,datasets);
 setHandles(handles);
 
 %%

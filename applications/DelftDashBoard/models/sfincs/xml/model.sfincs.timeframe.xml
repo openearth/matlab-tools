@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>edit</style>
+    <position>90 140 110 20</position>
+    <text>Reference Time</text>
+    <variable>handles.model.sfincs.domain(ad).input.tref</variable>
+    <type>datetime</type>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>90 115 110 20</position>
+    <text>Start Time</text>
+    <variable>handles.model.sfincs.domain(ad).input.tstart</variable>
+    <type>datetime</type>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>90 90 110 20</position>
+    <text>Stop Time</text>
+    <variable>handles.model.sfincs.domain(ad).input.tstop</variable>
+    <type>datetime</type>
+  </element>
+</root>

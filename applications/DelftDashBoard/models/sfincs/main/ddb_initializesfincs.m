@@ -65,9 +65,9 @@ function handles = ddb_initializesfincs(handles, varargin)
 
 handles.model.sfincs.domain=[];
 
-runid='tst';
+%runid='tst';
 
-handles=ddb_initialize_sfincs_domain(handles,runid,1,runid);
+handles=ddb_initialize_sfincs_domain(handles,'dummy',1,'dummy');
 
 handles.model.sfincs.menuview.grid=1;
 handles.model.sfincs.menuview.bathymetry=1;
@@ -88,4 +88,11 @@ handles.model.sfincs.boundaryconditions.wd=0.0;
 
 handles.model.sfincs.depthcontour.handle=[];
 handles.model.sfincs.depthcontour.value=-2;
+
+handles.model.sfincs.coastspline.handle=[];
+handles.model.sfincs.coastspline.filename='';
+handles.model.sfincs.coastspline.length=0;
+handles.model.sfincs.coastspline.x=[];
+handles.model.sfincs.coastspline.y=[];
+handles.model.sfincs.coastspline.flowdx=500;
 

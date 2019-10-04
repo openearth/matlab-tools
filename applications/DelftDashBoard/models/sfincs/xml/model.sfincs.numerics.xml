@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>edit</style>
+    <position>60 140 50 20</position>
+    <text>Alpha</text>
+    <variable>handles.model.sfincs.domain(ad).input.alpha</variable>
+    <type>real</type>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>60 115 50 20</position>
+    <text>Theta</text>
+    <variable>handles.model.sfincs.domain(ad).input.theta</variable>
+    <type>real</type>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>60 90 50 20</position>
+    <text>Hu Thresh</text>
+    <variable>handles.model.sfincs.domain(ad).input.huthresh</variable>
+    <type>real</type>
+  </element>
+</root>

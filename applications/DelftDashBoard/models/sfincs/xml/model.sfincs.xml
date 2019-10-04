@@ -2,7 +2,7 @@
 <root>
   <model>sfincs</model>
   <longname>SFINCS</longname>
-  <multipledomains>no</multipledomains>
+  <multipledomains>yes</multipledomains>
   <enable>1</enable>
   <menu>
     <menuopenfile>
@@ -54,6 +54,26 @@
       <callback>ddb_sfincs_domain</callback>
     </tab>
     <tab>
+      <tabstring>Time Frame</tabstring>
+      <element>model.sfincs.timeframe.xml</element>
+      <callback>ddb_sfincs_timeframe</callback>
+    </tab>
+    <tab>
+      <tabstring>Physics</tabstring>
+      <element>model.sfincs.physics.xml</element>
+      <callback>ddb_sfincs_physics</callback>
+    </tab>
+    <tab>
+      <tabstring>Numerics</tabstring>
+      <element>model.sfincs.numerics.xml</element>
+      <callback>ddb_sfincs_numerics</callback>
+    </tab>
+    <tab>
+      <tabstring>Coastline</tabstring>
+      <element>model.sfincs.coastline.xml</element>
+      <callback>ddb_sfincs_coastline</callback>
+    </tab>
+    <tab>
       <tabstring>Boundary Conditions</tabstring>
       <callback>ddb_sfincs_boundary_conditions</callback>
       <element>model.sfincs.boundaryconditions.xml</element>
@@ -62,6 +82,11 @@
       <tabstring>Meteo</tabstring>
       <element>model.sfincs.meteo.xml</element>
       <callback>ddb_sfincs_meteo</callback>
+    </tab>
+    <tab>
+      <tabstring>Obstacles</tabstring>
+      <element>model.sfincs.obstacles.xml</element>
+      <callback>ddb_sfincs_obstacles</callback>
     </tab>
     <tab>
       <tabstring>Output</tabstring>

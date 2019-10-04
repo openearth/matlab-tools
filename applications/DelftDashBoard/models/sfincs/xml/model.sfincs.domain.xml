@@ -1,118 +1,94 @@
 <?xml version="1.0"?>
 <root>
   <element>
-    <style>listbox</style>
-    <mx>1000</mx>
-    <position>10 10 150 140</position>
-    <tooltipstring>Select point</tooltipstring>
-    <text>Points</text>
-    <textposition>above-center</textposition>
-    <variable>handles.model.fast.domain.activepoint</variable>
-    <multivariable>handles.model.fast.domain.activepoints</multivariable>
-    <max>1000</max>
-    <type>integer</type>
-    <onchange>ddb_FAST_domain</onchange>
-    <option1>selectfromlist</option1>
-    <listtext>
-      <variable>handles.model.fast.domain.pointnames</variable>
-    </listtext>
+    <style>edit</style>
+    <position>60 140 40 20</position>
+    <text>X0</text>
+    <variable>handles.model.sfincs.domain(ad).input.x0</variable>
+    <type>string</type>
+    <enable>0</enable>
   </element>
   <element>
-    <style>pushbutton</style>
-    <position>170 130 150 20</position>
-    <tooltipstring>Push to delete points</tooltipstring>
-    <text>Delete</text>
-    <callback>ddb_FAST_domain</callback>
-    <option1>deletepoints</option1>
-    <dependency>
-      <action>enable</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.model.fast.domain.nrpoints</variable>
-        <value>0</value>
-        <operator>gt</operator>
-      </check>
-    </dependency>
+    <style>edit</style>
+    <position>150 140 40 20</position>
+    <text>Y0</text>
+    <variable>handles.model.sfincs.domain(ad).input.y0</variable>
+    <type>string</type>
+    <enable>0</enable>
   </element>
   <element>
-    <style>pushbutton</style>
-    <position>170 105 150 20</position>
-    <tooltipstring>Push to draw polygon in which depth points will be deleted</tooltipstring>
-    <text>Draw Polygon</text>
-    <callback>ddb_FAST_domain</callback>
-    <option1>drawpolygon</option1>
-    <dependency>
-      <action>enable</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.model.fast.domain.nrpoints</variable>
-        <value>0</value>
-        <operator>gt</operator>
-      </check>
-    </dependency>
+    <style>edit</style>
+    <position>60 115 40 20</position>
+    <text>MMax</text>
+    <variable>handles.model.sfincs.domain(ad).input.mmax</variable>
+    <type>string</type>
+    <enable>0</enable>
   </element>
   <element>
-    <style>pushbutton</style>
-    <position>170 80 150 20</position>
-    <tooltipstring>Push to delete polygon</tooltipstring>
-    <text>Delete Polygon</text>
-    <callback>ddb_FAST_domain</callback>
-    <option1>deletepolygon</option1>
-    <dependency>
-      <action>enable</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.model.fast.domain.polygonlength</variable>
-        <value>0</value>
-        <operator>gt</operator>
-      </check>
-    </dependency>
+    <style>edit</style>
+    <position>150 115 40 20</position>
+    <text>NMax</text>
+    <variable>handles.model.sfincs.domain(ad).input.nmax</variable>
+    <type>string</type>
+    <enable>0</enable>
   </element>
   <element>
-    <style>pushbutton</style>
-    <position>170 55 150 20</position>
-    <tooltipstring>Push to delete points inside polygon</tooltipstring>
-    <text>Delete Points in Polygon</text>
-    <callback>ddb_FAST_domain</callback>
-    <option1>deletepointsinpolygon</option1>
-    <dependency>
-      <action>enable</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.model.fast.domain.polygonlength</variable>
-        <value>0</value>
-        <operator>gt</operator>
-      </check>
-      <check>
-        <variable>handles.model.fast.domain.nrpoints</variable>
-        <value>0</value>
-        <operator>gt</operator>
-      </check>
-    </dependency>
+    <style>edit</style>
+    <position>60 90 40 20</position>
+    <text>dX</text>
+    <variable>handles.model.sfincs.domain(ad).input.dx</variable>
+    <type>string</type>
+    <enable>0</enable>
   </element>
   <element>
-    <style>pushbutton</style>
-    <position>340 130 100 20</position>
-    <tooltipstring>Push to load points</tooltipstring>
-    <text>Load Points</text>
-    <callback>ddb_FAST_domain</callback>
-    <option1>loadpoints</option1>
+    <style>edit</style>
+    <position>150 90 40 20</position>
+    <text>dY</text>
+    <variable>handles.model.sfincs.domain(ad).input.dy</variable>
+    <type>string</type>
+    <enable>0</enable>
   </element>
   <element>
-    <style>pushbutton</style>
-    <position>340 105 100 20</position>
-    <tooltipstring>Push to save points</tooltipstring>
-    <text>Save Points</text>
-    <callback>ddb_FAST_domain</callback>
-    <option1>savepoints</option1>
-    <dependency>
-      <action>enable</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.model.fast.domain.nrpoints</variable>
-        <value>0</value>
-        <operator>gt</operator>
-      </check>
-    </dependency>
+    <style>edit</style>
+    <position>60 65 40 20</position>
+    <text>Rotation</text>
+    <variable>handles.model.sfincs.domain(ad).input.rotation</variable>
+    <type>string</type>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>270 140 200 20</position>
+    <text>Depth File</text>
+    <variable>handles.model.sfincs.domain(ad).input.depfile</variable>
+    <type>string</type>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>270 115 200 20</position>
+    <text>Index File</text>
+    <variable>handles.model.sfincs.domain(ad).input.indexfile</variable>
+    <type>string</type>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>270 90 200 20</position>
+    <text>Mask File</text>
+    <variable>handles.model.sfincs.domain(ad).input.mskfile</variable>
+    <type>string</type>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>popupmenu</style>
+    <position>270 65 150 20</position>
+    <text>Input Format</text>
+    <variable>handles.model.sfincs.domain(ad).input.inputformat</variable>
+    <type>string</type>
+    <listtext>Binary</listtext>
+    <listtext>ASCII</listtext>
+    <listvalue>bin</listvalue>
+    <listvalue>asc</listvalue>
   </element>
 </root>

@@ -45,10 +45,21 @@ function ddb_sfincs_boundary_conditions(varargin)
 %%
 ddb_zoomOff;
 
+
 if isempty(varargin)
     % New tab selected
     ddb_refreshScreen;
     ddb_plotsfincs('update','active',1,'visible',1);
+    handles=getHandles;
+    h=handles.model.sfincs.boundaryspline.handle;
+    if ~isempty(h)
+        set(h,'visible','on');
+    end
+    h=handles.model.sfincs.depthcontour.handle;
+    if ~isempty(h)
+        set(h,'visible','on');
+    end
+        
 else
     
     %Options selected
@@ -86,6 +97,9 @@ else
             save_wave_boundary_points;
         case{'saveboundaryconditions'}
             save_boundary_conditions;
+
+        case{'generatetides'}
+            generate_tides;
             
     end
     
@@ -212,6 +226,13 @@ end
 
 handles.model.sfincs.domain(ad).flowboundarypoints.length=length(xp);
 
+%if isempty(handles.model.sfincs.domain(ad).input.bndfile)
+    handles.model.sfincs.domain(ad).input.bndfile='sfincs.bnd';
+    handles.model.sfincs.domain(ad).input.bzsfile='sfincs.bzs';
+    handles.model.sfincs.domain(ad).flowboundarypoints.time=[handles.model.sfincs.domain(ad).input.tref;handles.model.sfincs.domain(ad).input.tstop];
+    handles.model.sfincs.domain(ad).flowboundarypoints.zs=zeros(2,length(xp))+handles.model.sfincs.boundaryconditions.zs;
+%end
+
 setHandles(handles);
 
 delete_flow_boundary_points;
@@ -222,6 +243,9 @@ plot_flow_boundary_points;
 function remove_flow_boundary_points
 
 handles=getHandles;
+
+handles.model.sfincs.domain(ad).input.bndfile='';
+handles.model.sfincs.domain(ad).input.bzsfile='';
 
 handles.model.sfincs.domain(ad).flowboundarypoints.x=[];
 handles.model.sfincs.domain(ad).flowboundarypoints.y=[];
@@ -234,9 +258,14 @@ delete_flow_boundary_points;
 %%
 function load_flow_boundary_points
 
+handles=getHandles;
+bndfile=handles.model.sfincs.domain(ad).input.bndfile;
+
 remove_flow_boundary_points;
 
 handles=getHandles;
+
+handles.model.sfincs.domain(ad).input.bndfile=bndfile;
 
 filename=handles.model.sfincs.domain(ad).input.bndfile;
 xy=load(filename);
@@ -247,6 +276,9 @@ yp=xy(2,:);
 handles.model.sfincs.domain(ad).flowboundarypoints.x=xp;
 handles.model.sfincs.domain(ad).flowboundarypoints.y=yp;
 handles.model.sfincs.domain(ad).flowboundarypoints.length=length(xp);
+
+handles.model.sfincs.domain(ad).flowboundarypoints.time=[handles.model.sfincs.domain(ad).input.tref;handles.model.sfincs.domain(ad).input.tstop];
+handles.model.sfincs.domain(ad).flowboundarypoints.zs=zeros(2,length(xp));
 
 setHandles(handles);
 
@@ -265,7 +297,111 @@ for ip=1:handles.model.sfincs.domain(ad).flowboundarypoints.length
 end
 fclose(fid);
 
+filename=handles.model.sfincs.domain(ad).input.bzsfile;
+
+tt(1)=86400*(handles.model.sfincs.domain(ad).input.tstart-handles.model.sfincs.domain(ad).input.tref);
+tt(2)=86400*(handles.model.sfincs.domain(ad).input.tstop -handles.model.sfincs.domain(ad).input.tref);
+zz=repmat(handles.model.sfincs.boundaryconditions.zs,[1 handles.model.sfincs.domain(ad).flowboundarypoints.length]);
+fmt=repmat(' %10.3f',[1 handles.model.sfincs.domain(ad).flowboundarypoints.length]);
+fmt=['%10.1f' fmt '\n'];
+
+fid=fopen(filename,'wt');
+fprintf(fid,fmt,[tt(1) zz]);
+fprintf(fid,fmt,[tt(2) zz]);
+% for ip=1:handles.model.sfincs.domain(ad).flowboundarypoints.length
+%     fprintf(fid,'%10.1f %10.1f\n',handles.model.sfincs.domain(ad).flowboundarypoints.x(ip),handles.model.sfincs.domain(ad).flowboundarypoints.y(ip));
+% end
+fclose(fid);
+
+
 setHandles(handles);
+
+%%
+function generate_tides
+
+handles=getHandles;
+
+x=handles.model.sfincs.domain(ad).flowboundarypoints.x;
+y=handles.model.sfincs.domain(ad).flowboundarypoints.y;
+
+% Convert to lat-lon
+cs.name='WGS 84';
+cs.type='geographic';
+[x,y]=ddb_coordConvert(x,y,handles.screenParameters.coordinateSystem,cs);
+
+% Times (10 minute interval)
+tt(1)=86400*(handles.model.sfincs.domain(ad).input.tstart-handles.model.sfincs.domain(ad).input.tref);
+tt(2)=86400*(handles.model.sfincs.domain(ad).input.tstop -handles.model.sfincs.domain(ad).input.tref);
+tmat=handles.model.sfincs.domain(ad).input.tstart:10/1440:handles.model.sfincs.domain(ad).input.tstop;
+t=[tt(1):600:tt(2)];
+
+wl=get_timeseries_at_point(tmat,x,y);
+
+fmt=repmat(' %10.3f',[1 handles.model.sfincs.domain(ad).flowboundarypoints.length]);
+fmt=['%10.1f' fmt '\n'];
+
+filename=handles.model.sfincs.domain(ad).input.bzsfile;
+fid=fopen(filename,'wt');
+for it=1:length(t)
+    zz=squeeze(wl(it,:));
+    zz=[t(it) zz];
+    fprintf(fid,fmt,zz);
+end
+fclose(fid);
+
+
+setHandles(handles);
+
+% %% 
+% function exportTimeSeries
+% handles=getHandles;
+% [tim,wl]=get_timeseries_at_point;
+% x=handles.toolbox.tidedatabase.point_x;
+% y=handles.toolbox.tidedatabase.point_y;
+% xstr=num2str(x,'%0.3f');
+% ystr=num2str(y,'%0.3f');
+% fname=['x' xstr '_y' ystr '.tek']; 
+% exportTEK(wl',tim',fname,[xstr '_' ystr]);
+
+%%
+function wl=get_timeseries_at_point(tim,x,y)
+
+handles=getHandles;
+ii=handles.toolbox.tidedatabase.activeModel;
+name=handles.tideModels.model(ii).name;
+if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
+    tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
+else
+    tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
+end
+
+[lon,lat, gt, depth, conList] =  readTideModel(tidefile,'type','h','x',x','y',y','constituent','all');
+
+% t0=handles.toolbox.tidestations.startTime;
+% t1=handles.toolbox.tidestations.stopTime;
+% dt=handles.toolbox.tidestations.timeStep/1440;
+% 
+% % t0=datenum(2017,3,1);
+% % t1=datenum(2017,4,1);
+% % t0=floor(now);
+% % t1=t0+31;
+% % dt=30/1440;
+% 
+% tim=t0:dt:t1;
+
+wl=zeros(length(tim),length(x));
+
+for ip=1:length(x)
+    gt0.amp=gt.amp(ip,:);
+    gt0.phi=gt.phi(ip,:);
+    wl0=makeTidePrediction(tim,conList,gt0.amp,gt0.phi,y(ip));
+    wl(:,ip)=wl0';
+
+end
+
+%latitude=y;
+%wl=makeTidePrediction(tim,conList,gt.amp,gt.phi,latitude);
+
 
 
 %%
@@ -325,6 +461,17 @@ end
 
 handles.model.sfincs.domain(ad).waveboundarypoints.length=length(xp);
 
+%if isempty(handles.model.sfincs.domain(ad).input.bwvfile)
+    handles.model.sfincs.domain(ad).input.bwvfile='sfincs.bwv';
+    handles.model.sfincs.domain(ad).input.bhsfile='sfincs.bhs';
+    handles.model.sfincs.domain(ad).input.btpfile='sfincs.btp';
+    handles.model.sfincs.domain(ad).input.bwdfile='sfincs.bwd';
+    handles.model.sfincs.domain(ad).waveboundarypoints.time=[handles.model.sfincs.domain(ad).input.tref;handles.model.sfincs.domain(ad).input.tstop];
+    handles.model.sfincs.domain(ad).waveboundarypoints.hs=zeros(2,length(xp))+handles.model.sfincs.boundaryconditions.hs;
+    handles.model.sfincs.domain(ad).waveboundarypoints.tp=zeros(2,length(xp))+handles.model.sfincs.boundaryconditions.tp;
+    handles.model.sfincs.domain(ad).waveboundarypoints.wd=zeros(2,length(xp))+handles.model.sfincs.boundaryconditions.wd;
+%end
+
 setHandles(handles);
 
 delete_wave_boundary_points;
@@ -335,6 +482,11 @@ plot_wave_boundary_points;
 function remove_wave_boundary_points
 
 handles=getHandles;
+
+handles.model.sfincs.domain(ad).input.bwvfile='';
+handles.model.sfincs.domain(ad).input.bhsfile='';
+handles.model.sfincs.domain(ad).input.btpfile='';
+handles.model.sfincs.domain(ad).input.bwdfile='';
 
 handles.model.sfincs.domain(ad).waveboundarypoints.x=[];
 handles.model.sfincs.domain(ad).waveboundarypoints.y=[];
@@ -360,6 +512,11 @@ yp=xy(2,:);
 handles.model.sfincs.domain(ad).waveboundarypoints.x=xp;
 handles.model.sfincs.domain(ad).waveboundarypoints.y=yp;
 handles.model.sfincs.domain(ad).waveboundarypoints.length=length(xp);
+
+handles.model.sfincs.domain(ad).waveboundarypoints.time=[handles.model.sfincs.domain(ad).input.tref;handles.model.sfincs.domain(ad).input.tstop];
+handles.model.sfincs.domain(ad).waveboundarypoints.hs=zeros(2,length(xp));
+handles.model.sfincs.domain(ad).waveboundarypoints.tp=zeros(2,length(xp))+5;
+handles.model.sfincs.domain(ad).waveboundarypoints.wd=zeros(2,length(xp));
 
 setHandles(handles);
 
@@ -399,47 +556,53 @@ handles=ddb_sfincs_plot_wave_boundary_points(handles,'plot','domain',ad);
 
 setHandles(handles);
 
-%%
-function save_boundary_conditions
-
-handles=getHandles;
-
-inp=handles.model.sfincs.domain(ad).input;
-
-nt=2;
-
-np=handles.model.sfincs.domain(ad).flowboundarypoints.length;
-bnd0=zeros(nt,np);
-
-simtime=86400*(handles.model.sfincs.domain(ad).tstop-handles.model.sfincs.domain(ad).tref);
-% BZS
-t=[0;simtime];
-v=bnd0+handles.model.sfincs.boundaryconditions.zs;
-handles.model.sfincs.domain(ad).flowboundaryconditions.time=t;
-handles.model.sfincs.domain(ad).flowboundaryconditions.zs=v;
-sfincs_write_boundary_conditions(inp.bzsfile,t,v);
-
+% %%
+% function save_boundary_conditions
+% 
+% handles=getHandles;
+% 
+% inp=handles.model.sfincs.domain(ad).input;
+% 
+% nt=2;
+% 
+% np=handles.model.sfincs.domain(ad).flowboundarypoints.length;
+% 
+% if np>0
+%     bnd0=zeros(nt,np);
+%     simtime=86400*(inp.tstop-inp.tref);
+%     % BZS
+%     t=[0;simtime];
+%     v=bnd0+handles.model.sfincs.boundaryconditions.zs;
+%     handles.model.sfincs.domain(ad).flowboundaryconditions.time=t;
+%     handles.model.sfincs.domain(ad).flowboundaryconditions.zs=v;
+%     sfincs_write_boundary_conditions(inp.bzsfile,t,v);
+% end
+% 
 % np=handles.model.sfincs.domain(ad).waveboundarypoints.length;
-bnd0=zeros(nt,np);
-
-% BHS
-t=[0;simtime];
-v=bnd0+handles.model.sfincs.boundaryconditions.hs;
-handles.model.sfincs.domain(ad).waveboundaryconditions.time=t;
-handles.model.sfincs.domain(ad).waveboundaryconditions.hs=v;
-sfincs_write_boundary_conditions(inp.bhsfile,t,v);
-
-% BTP
-t=[0;simtime];
-v=bnd0+handles.model.sfincs.boundaryconditions.tp;
-handles.model.sfincs.domain(ad).waveboundaryconditions.time=t;
-handles.model.sfincs.domain(ad).waveboundaryconditions.tp=v;
-sfincs_write_boundary_conditions(inp.btpfile,t,v);
-
-% BWD
-t=[0;simtime];
-v=bnd0+handles.model.sfincs.boundaryconditions.wd;
-handles.model.sfincs.domain(ad).waveboundaryconditions.time=t;
-handles.model.sfincs.domain(ad).waveboundaryconditions.wd=v;
-sfincs_write_boundary_conditions(inp.bwdfile,t,v);
-
+% 
+% if np>0
+% 
+%     bnd0=zeros(nt,np);
+%     
+%     % BHS
+%     t=[0;simtime];
+%     v=bnd0+handles.model.sfincs.boundaryconditions.hs;
+%     handles.model.sfincs.domain(ad).waveboundaryconditions.time=t;
+%     handles.model.sfincs.domain(ad).waveboundaryconditions.hs=v;
+%     sfincs_write_boundary_conditions(inp.bhsfile,t,v);
+%     
+%     % BTP
+%     t=[0;simtime];
+%     v=bnd0+handles.model.sfincs.boundaryconditions.tp;
+%     handles.model.sfincs.domain(ad).waveboundaryconditions.time=t;
+%     handles.model.sfincs.domain(ad).waveboundaryconditions.tp=v;
+%     sfincs_write_boundary_conditions(inp.btpfile,t,v);
+%     
+%     % BWD
+%     t=[0;simtime];
+%     v=bnd0+handles.model.sfincs.boundaryconditions.wd;
+%     handles.model.sfincs.domain(ad).waveboundaryconditions.time=t;
+%     handles.model.sfincs.domain(ad).waveboundaryconditions.wd=v;
+%     sfincs_write_boundary_conditions(inp.bwdfile,t,v);
+% end
+% 
