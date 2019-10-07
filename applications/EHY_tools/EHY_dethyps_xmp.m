@@ -8,7 +8,7 @@ mmax      = size(data.Xcen,2);
 nmax      = size(data.Xcen,1);
 x         = reshape(data.Xcen,mmax*nmax,1);
 y         = reshape(data.Ycen,mmax*nmax,1);
-z         = reshape(data.Zcen,mmax*nmax,1); 
+z         = reshape(data.Zcen,mmax*nmax,1);
 spherical = data.spherical;
 
 exist = ~isnan(x);
@@ -16,7 +16,7 @@ x     = x (exist); y = y(exist); z = z(exist);
 
 %% Determine hysometric curve
 interface                 = -500:10:0;
-[area, volume, interface] = EHY_dethyps(x,y,z,'spherical',spherical,'filePol','','interface',interface);
+[area, volume, interface] = EHY_dethyps(x,y,z,'spherical',spherical,'filePol',filepol,'interface',interface);
 
 %% Write to ouput file
 fid = fopen('dethyps_xmp.tek','w+');
