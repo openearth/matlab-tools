@@ -1,7 +1,0 @@
-.ui-collapsible .ui-collapsible-header { cursor: pointer; position: relative; margin-top: 1px; zoom: 1; }
-.ui-collapsible .ui-collapsible-li-fix { display: inline; }
-.ui-collapsible .ui-collapsible-header-active { border-bottom: 0 !important; }
-.ui-collapsible .ui-collapsible-header a { display: block; font-size: 1em; padding: .5em .5em .5em 2.2em; }
-.ui-collapsible .ui-collapsible-header .ui-icon { position: absolute; left: .5em; top: 50%; margin-top: -8px; }
-.ui-collapsible .ui-collapsible-content { padding: 1em 2.2em; border-top: 0; margin-top: -2px; position: relative; top: 1px; margin-bottom: 2px; overflow: auto; display: none; }
-.ui-collapsible .ui-collapsible-content-active { display: block; }/* Datepicker
