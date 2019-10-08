@@ -181,19 +181,19 @@ end
 % load and add grid information
 % (forward this example line to EHY_plotMapData_FM if needed)
 if strcmp(modelType,'dfm')
-    if isfield(OPT,'mergePartitions')
-        EHY_getGridInfo_line = 'gridInfo = EHY_getGridInfo(outputfile,{''face_nodes_xy''},''mergePartitions'',OPT.mergePartitions);';
+    if isfield(OPT,'mergePartitions') && OPT.mergePartitions==0
+        EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''face_nodes_xy''},''mergePartitions'',0);'];
     else
-        EHY_getGridInfo_line = 'gridInfo = EHY_getGridInfo(outputfile,{''face_nodes_xy''});';
+        EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''face_nodes_xy''});'];
     end
 elseif strcmp(modelType,'d3d')
-    EHY_getGridInfo_line = 'gridInfo = EHY_getGridInfo(outputfile,{''XYcor''},''m'',OPT.m,''n'',OPT.n);';
+    EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''XYcor''},''m'',OPT.m,''n'',OPT.n);'];
 elseif strcmp(modelType,'delwaq')
     [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(gridFile);
     if strcmp(typeOfModelFileDetail,'nc')
-        EHY_getGridInfo_line = 'gridInfo = EHY_getGridInfo(gridFile,{''face_nodes_xy''});';
+        EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' gridFile ''',{''face_nodes_xy''});'];
     elseif ismember(typeOfModelFileDetail,{'lga','cco'})
-        EHY_getGridInfo_line = 'gridInfo = EHY_getGridInfo(gridFile,{''XYcor''},''m'',OPT.m,''n'',OPT.n);';
+        EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' gridFile ''',{''XYcor''},''m'',OPT.m,''n'',OPT.n);'];
     end
 end
 eval(EHY_getGridInfo_line);

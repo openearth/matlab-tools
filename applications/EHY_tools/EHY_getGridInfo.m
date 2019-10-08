@@ -434,7 +434,7 @@ switch modelType
                             E.spherical = 0;
                         end
                     end
-                    
+
                     % If partitioned run, delete ghost cells
                     [~, name]=fileparts(inputFile);
                     varName = EHY_nameOnFile(inputFile,'FlowElemDomain');
@@ -788,6 +788,15 @@ if ismember(modelType,{'d3d','delwaq'}) && ismember(typeOfModelFileDetail,{'trim
                 E.(vars{iV})(:,end+1)=NaN;
             end
         end
+    end
+end
+
+%% waqgeom may contain -999's instead of NaN's
+if ~isempty(strfind(inputFile,'waqgeom.nc'))
+    vars = intersect(fieldnames(E),{'Xcor','Ycor','Xcen','Ycen','face_nodes_x','face_nodes_y'});
+    for iV = 1:length(vars)
+         nanInd = E.(vars{iV}) == -999;
+         E.(vars{iV})(nanInd) = NaN;
     end
 end
 
