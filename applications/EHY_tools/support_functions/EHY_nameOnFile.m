@@ -97,7 +97,7 @@ if strcmp(modelType,'dfm') && strcmp(fName(end-2:end),'.nc')
     
     %%% Change Variable or Dimension name to deal with old/new variable names like tem1 (older) vs. mesh2d_tem1 (newer)
     if ~nc_isvar(fName,newName) && ~nc_isdim(fName,newName)
-        if size(newName,2)>1
+        if size(newName,1)>1
             ind = find(ismember({infonc.Dimensions.Name},newName));
             if numel(unique([infonc.Dimensions(ind).Length]))
                 newName = newName(1,:);
@@ -130,6 +130,9 @@ fmNames{end+1,1}={'mesh2d_node_z','NetNode_z'}; % z-coordinate of nodes
 fmNames{end+1,1}={'FlowElem_xcc','mesh2d_face_x'}; % x-coordinate of faces
 fmNames{end+1,1}={'FlowElem_ycc','mesh2d_face_y'}; % y-coordinate of faces
 
+fmNames{end+1,1}={'FlowElem_xcc','mesh2d_edge_x'}; % x-coordinate of velocity-points
+fmNames{end+1,1}={'FlowElem_ycc','mesh2d_edge_y'}; % y-coordinate of velocity-points
+
 fmNames{end+1,1}={'FlowElemContour_x','mesh2d_face_x_bnd','mesh2d_agg_face_x_bnd'}; % x-coordinates of flow element contours
 fmNames{end+1,1}={'FlowElemContour_y','mesh2d_face_y_bnd','mesh2d_agg_face_y_bnd'}; % y-coordinates of flow element contours
 
@@ -140,6 +143,7 @@ fmNames{end+1,1}={'mesh2d_flowelem_ba','FlowElem_bac'}; % area (m2) of cell face
 %%% DIMENSION names used within different versions of Delft3D-Flexible Mesh
 fmNames{end+1,1}={'mesh2d_nNodes','nmesh2d_node','nNetNode','NetElemNode'}; % number of nodes
 fmNames{end+1,1}={'mesh2d_nFaces','nmesh2d_face','nNetElem','nFlowElem'}; % number of faces
+fmNames{end+1,1}={                'nmesh2d_edge','nNetLink'}; % number of velocity-points
 
 fmNames{end+1,1}={'mesh2d_nLayers','laydim','nmesh2d_layer',}; % layer
 end
