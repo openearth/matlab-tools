@@ -55,7 +55,7 @@ while loop>0
         if ~isempty(ind)
             deleteInd=[];
             for iF=1:length(mdFiles)
-                if length(mdFiles(iF).name)>9 && all(ismember(mdFiles(iF).name(end-7:end-4),'0123456789'))
+                if length(mdFiles(iF).name)>9 && all(ismember(mdFiles(iF).name(end-7:end-4),'0123456789')) && strcmp(mdFiles(iF).name(end-8),'_')
                     deleteInd(end+1)=iF;
                 end
             end
