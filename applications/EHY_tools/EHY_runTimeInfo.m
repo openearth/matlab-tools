@@ -54,19 +54,25 @@ try % if simulation has finished
             elseif exist([outputDir name '.dia'])
                 outFile=[outputDir name '.dia'];
             end
-
-            fid=fopen(outFile,'r');
+            
+            fid = fopen(outFile,'r');
             fseek(fid, 0, 'eof'); % set position indicator to end of file
             fileSize = ftell(fid);
-            HeaderLines=round(fileSize/89); % skip big part of out.txt/*.dia
-            fseek(fid, 0, 'bof'); % set position indicator to begin of file
-            out=textscan(fid,'%s','delimiter','\n','HeaderLines',HeaderLines,'CommentStyle','** INFO   :  Solver converged in');
-            out=out{1,1};
+            charperline = 88;
+            out = {};
+            while length(out)<100 %minimum of read lines at end of file is 100
+                %length(out)
+                HeaderLines = round(fileSize/charperline); % skip big part of out.txt/*.dia.
+                fseek(fid, 0, 'bof'); % set position indicator to begin of file
+                out = textscan(fid,'%s','delimiter','\n','HeaderLines',HeaderLines,'CommentStyle','** INFO   :  Solver converged in');
+                out = out{1,1};
+                charperline = charperline+1;
+            end
             fclose(fid);
 
             % partitions
-            mduFiles=dir([pathstr filesep name '_*.mdu']);
-            noPartitions=max([1 length(mduFiles)]);
+            mduFiles = dir([pathstr filesep name '_*.mdu']);
+            noPartitions = max([1 length(mduFiles)]);
             
             % number of netnodes and netelements
             noNetNodes = gridInfo.no_NetNode;
