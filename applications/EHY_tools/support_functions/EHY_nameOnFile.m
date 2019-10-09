@@ -97,7 +97,7 @@ if strcmp(modelType,'dfm') && strcmp(fName(end-2:end),'.nc')
     
     %%% Change Variable or Dimension name to deal with old/new variable names like tem1 (older) vs. mesh2d_tem1 (newer)
     if ~nc_isvar(fName,newName) && ~nc_isdim(fName,newName)
-        if iscell(newName) && length(newName)>1
+        if size(newName,2)>1
             ind = find(ismember({infonc.Dimensions.Name},newName));
             if numel(unique([infonc.Dimensions(ind).Length]))
                 newName = newName(1,:);
