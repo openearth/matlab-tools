@@ -1,6 +1,5 @@
-function EHY_plotMapData_FM_interactive
-%% EHY_plotMapData_FM_interactive
-warning('EHY_plotMapData_FM_interactive will be replaced by EHY_plotMapModelData_interactive in the near future')
+function EHY_plotMapModelData_interactive
+%% EHY_plotMapModelData_interactive
 % get data
 [Data,EHY_getGridInfo_line] = EHY_getMapModelData_interactive;
 if isfield(Data,'face_nodes_x')
@@ -14,7 +13,7 @@ end
 if isfield(Data,'times') && length(Data.times)>1
     option=listdlg('PromptString','Plot these time steps (as animation): (Use CTRL to select multiple time steps)','ListString',...
         datestr(Data.times),'ListSize',[400 400]);
-    if isempty(option); disp('EHY_plotMapData_FM_interactive was stopped by user');return; end
+    if isempty(option); disp('EHY_plotMapModelData_interactive was stopped by user');return; end
     plotInd = option;
 elseif isfield(Data,'times') && length(Data.times)==1
     plotInd = 1;
@@ -28,12 +27,12 @@ disp(['<strong>' EHY_getGridInfo_line '</strong>'])
 
 % if velocity was selected
 if isfield(Data,'vel_mag')
-    disp(['<strong>EHY_plotMapData_FM(gridInfo,Data.vel_mag(' num2str(plotInd(1)) repmat(',:',1,ndims(Data.vel_mag)-1) '));</strong>' ])
+    disp(['<strong>EHY_plotMapModelData(gridInfo,Data.vel_mag(' num2str(plotInd(1)) repmat(',:',1,ndims(Data.vel_mag)-1) '));</strong>' ])
 else
     if isempty(plotInd)
-        disp('<strong>EHY_plotMapData_FM(gridInfo,Data.val);</strong>')
+        disp('<strong>EHY_plotMapModelData(gridInfo,Data.val);</strong>')
     else
-        disp(['<strong>EHY_plotMapData_FM(gridInfo,Data.val(' num2str(plotInd(1)) repmat(',:',1,ndims(Data.val)-1) '));</strong>' ])
+        disp(['<strong>EHY_plotMapModelData(gridInfo,Data.val(' num2str(plotInd(1)) repmat(',:',1,ndims(Data.val)-1) '));</strong>' ])
     end
 end
 

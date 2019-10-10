@@ -1,26 +1,24 @@
-function varargout=EHY_plotMapData_FM(gridInfo,zData,varargin)
-%% EHY_plotMapData_FM(gridInfo,zData)
+function varargout = EHY_plotMapModelData(gridInfo,zData,varargin)
+%% varargout = EHY_plotMapModelData(gridInfo,zData,varargin)
 % Create top views using QuickPlot / d3d_qp functionalities (for
 % 'DFM'-runs) or pcolor (for 'D3D'-runs)
 %
 % This function only plots the pcolor / patch part,
-% so you can more easily add your own colorbar, xlims, etc.
+% so you can easily add your own colorbar, xlims, etc.
 %
 % gridInfo     :   struct (with fields face_nodes_x and face_nodes_x) obtained with:
-%                  gridInfo=EHY_getGridInfo(filename,'face_nodes_xy');
-% zData        :   Data in net elements (cell centers)
+%                  gridInfo = EHY_getGridInfo(filename,{'face_nodes_xy'});
+% zData        :   matrix: Data in net elements (cell centers)
 %
 % Example1: EHY_plotMapData_FM
 % Example2: EHY_plotMapData_FM(gridInfo,zData)
-%             with gridInfo=EHY_getGridInfo(outputfile,'face_nodes_xy');
-%                  Data = EHY_getMapModelData(outputfile, ... );
-%                  zData=Data.val(1,:);
+%             with gridInfo = EHY_getGridInfo(outputfile,{'face_nodes_xy'});
+%                  Data     = EHY_getMapModelData(outputfile, ... );
+%                  zData    = Data.val(1,:);
 %
 % For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
 % created by Julien Groenenboom, October 2018
 %
-warning('EHY_plotMapData_FM will be replaced by EHY_plotMapModelData in the near future')
-warning('Change in your script "EHY_plotMapData_FM" to "EHY_plotMapModelData"')
 %% Settings
 OPT.linestyle = 'none'; % other options: '-'
 OPT.edgecolor = 'k';
@@ -38,7 +36,7 @@ end
 %% check input
 if ~all([exist('gridInfo','var') exist('zData','var')])
     % no input, start interactive script
-    EHY_plotMapData_FM_interactive
+    EHY_plotMapModelData_interactive
     return
 end
 
@@ -83,7 +81,7 @@ switch modelType
         gridInfo.face_nodes_x(:,nanInd) = [];
         gridInfo.face_nodes_y(:,nanInd) = [];
         zData(nanInd) = [];
-                
+        
         nnodes = size(gridInfo.face_nodes_x,1) - sum(isnan(gridInfo.face_nodes_x));
         unodes = unique(nnodes);
         unodes(unodes==0) = [];

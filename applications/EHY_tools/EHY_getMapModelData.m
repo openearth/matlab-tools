@@ -46,17 +46,21 @@ OPT.k               = 0;  % all (vertical   d3d grid [m,n,k])
 OPT.mergePartitions = 1;  % merge output from several dfm '_map.nc'-files
 OPT.disp            = 1;  % display status of getting map model data
 OPT.gridFile        = ''; % grid (either lga or nc file) needed in combination with delwaq output file
+OPT.sgft0           = ''; % delwaq segment function (sgf) - datenum or datestr of t0
+OPT.sgfkmax         = []; % delwaq segment function (sgf) - number of layers (k_max)
 OPT                 = setproperty(OPT,varargin);
 
 %% modify input
 inputFile = strtrim(inputFile);
-if ~isempty(OPT.t0);      OPT.t0=datenum(OPT.t0);       end
-if ~isempty(OPT.tend);    OPT.tend=datenum(OPT.tend);   end
-if ~isnumeric(OPT.layer); OPT.layer=str2num(OPT.layer); end
-if ~isnumeric(OPT.t);     OPT.m=str2num(OPT.t);         end
-if ~isnumeric(OPT.m);     OPT.m=str2num(OPT.m);         end
-if ~isnumeric(OPT.n);     OPT.n=str2num(OPT.n);         end
-if ~isnumeric(OPT.k);     OPT.k=str2num(OPT.k);         end
+if ~isempty(OPT.t0);        OPT.t0=datenum(OPT.t0);           end
+if ~isempty(OPT.tend);      OPT.tend=datenum(OPT.tend);       end
+if ~isnumeric(OPT.layer);   OPT.layer=str2num(OPT.layer);     end
+if ~isnumeric(OPT.t);       OPT.m=str2num(OPT.t);             end
+if ~isnumeric(OPT.m);       OPT.m=str2num(OPT.m);             end
+if ~isnumeric(OPT.n);       OPT.n=str2num(OPT.n);             end
+if ~isnumeric(OPT.k);       OPT.k=str2num(OPT.k);             end
+if ~isempty(OPT.sgft0);     OPT.sgft0=datenum(OPT.sgft0);     end
+if ~isnumeric(OPT.sgfkmax); OPT.sgfkmax=str2num(OPT.sgfkmax); end
 
 if all(OPT.layer==0) && ~all(OPT.k==0) % OPT.k was provided, OPT.layer not
     OPT.layer = OPT.k; % OPT.layer is used in script
@@ -204,9 +208,11 @@ switch modelType
                     Data.vel_x(:,FlowElemDomain~=domainNr,:)=[];
                     Data.vel_y(:,FlowElemDomain~=domainNr,:)=[];
                 end
-                Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
             end
-            
+        end
+        
+        if isfield(Data,'vel_x')
+            Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
         end
         
     case 'd3d'
@@ -216,14 +222,15 @@ switch modelType
                 Data.val = vs_let(trim,'map-series',{dims(timeInd).index},OPT.varName,{dims(nInd).index,dims(mInd).index},'quiet');          
                 
         elseif strcmp(OPT.varName,'U1') % velocity
-            if ~isempty(layersInd) % 3D
-                Data.vel_x = vs_let(trim,'map-series',{dims(timeInd).index},OPT.varName,{dims(nInd).index,dims(mInd).index,dims(layersInd).index},'quiet');
-                Data.vel_y = vs_let(trim,'map-series',{dims(timeInd).index},'V1'       ,{dims(nInd).index,dims(mInd).index,dims(layersInd).index},'quiet');
-            else % 2Dh
-                Data.vel_x = vs_let(trim,'map-series',{dims(timeInd).index},OPT.varName,{dims(nInd).index,dims(mInd).index},'quiet');
-                Data.vel_y = vs_let(trim,'map-series',{dims(timeInd).index},'V1'       ,{dims(nInd).index,dims(mInd).index},'quiet');
-            end
-            Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
+            error('This should be tested for velocities in x,y- or m,n-direction and apply to velocity grid')
+%             if ~isempty(layersInd) % 3D
+%                 Data.vel_x = vs_let(trim,'map-series',{dims(timeInd).index},OPT.varName,{dims(nInd).index,dims(mInd).index,dims(layersInd).index},'quiet');
+%                 Data.vel_y = vs_let(trim,'map-series',{dims(timeInd).index},'V1'       ,{dims(nInd).index,dims(mInd).index,dims(layersInd).index},'quiet');
+%             else % 2Dh
+%                 Data.vel_x = vs_let(trim,'map-series',{dims(timeInd).index},OPT.varName,{dims(nInd).index,dims(mInd).index},'quiet');
+%                 Data.vel_y = vs_let(trim,'map-series',{dims(timeInd).index},'V1'       ,{dims(nInd).index,dims(mInd).index},'quiet');
+%             end
+%             Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
             
         elseif strcmp(OPT.varName,'SBUU') % bed load
             Data.val_x   = vs_let(trim,'map-sed-series',{dims(timeInd).index},OPT.varName,{dims(nInd).index,dims(mInd).index,dims(sedfracInd).index},'quiet');
@@ -263,52 +270,65 @@ switch modelType
             Data.val = wl+dps; 
         end
         % swap m,n-indices (from vs_let) from [n,m] to [time,m,n(,layers)]
-        fns = {'val','vel_x','vel_y','val_x','val_max','val_mag'};
+        fns = intersect(fieldnames(Data),{'val','vel_x','vel_y','vel_mag','val_x','val_max','val_mag'});
         for iFns = 1:length(fns)
             if isfield(Data,fns{iFns})
-                Data.val = permute(Data.val,[1 3 2 4]);
+                Data.(fns{iFns}) = permute(Data.(fns{iFns}),[1 3 2 4]);
             end
         end
         
         % delete ghost cells
-        if dims(mInd).index(1)==1; Data.val = Data.val(:,2:end,:,:); end
-        if dims(nInd).index(1)==1; Data.val = Data.val(:,:,2:end,:); end
+        for iFns = 1:length(fns)
+            if dims(mInd).index(1)==1; Data.(fns{iFns}) = Data.(fns{iFns})(:,2:end,:,:); end
+            if dims(nInd).index(1)==1; Data.(fns{iFns}) = Data.(fns{iFns})(:,:,2:end,:); end
+        end
         
     case 'delwaq'
-        dw       = delwaq('open',inputFile);
-        subInd   = strmatch(OPT.varName,dw.SubsName);
-        [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(OPT.gridFile);
-        if ismember(typeOfModelFileDetail,{'lga','cco'})
-            dwGrid      = delwaq('open',OPT.gridFile); 
-            Data.val = NaN([dims.sizeOut]); % allocate
-            
-            for iT = 1:length(dims(timeInd).index)
-                time_ind  = dims(timeInd).index(iT);
-                [~,data]  = delwaq('read',dw,subInd,0,time_ind);
-                data      = waq2flow3d(data,dwGrid.Index);
-                layer_ind = dims(layersInd).index;
-                Data.val(dims(timeInd).indexOut(iT),:,:,:) = data(dims(mInd).index,dims(nInd).index,dims(layersInd).index);
+        [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(inputFile);
+        if ~strcmpi(typeOfModelFileDetail,'sgf')
+            dw       = delwaq('open',inputFile);
+            subInd   = strmatch(OPT.varName,dw.SubsName);
+            [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(OPT.gridFile);
+            if ismember(typeOfModelFileDetail,{'lga','cco'})
+                dwGrid      = delwaq('open',OPT.gridFile);
+                Data.val = NaN([dims.sizeOut]); % allocate
+                
+                for iT = 1:length(dims(timeInd).index)
+                    time_ind  = dims(timeInd).index(iT);
+                    [~,data]  = delwaq('read',dw,subInd,0,time_ind);
+                    data      = waq2flow3d(data,dwGrid.Index);
+                    layer_ind = dims(layersInd).index;
+                    Data.val(dims(timeInd).indexOut(iT),:,:,:) = data(dims(mInd).index,dims(nInd).index,dims(layersInd).index);
+                end
+                
+                % delete ghost cells
+                if dims(nInd).index(1)==1; Data.val = Data.val(:,2:end,:,:); end
+                if dims(mInd).index(1)==1; Data.val = Data.val(:,:,2:end,:); end
+                
+            elseif strcmp(typeOfModelFileDetail, 'nc')
+                no_segm_perlayer = dims(facesInd).size;
+                
+                if ~isempty(layersInd)
+                    layer = dims(layersInd).index;
+                else
+                    layer = 1;
+                end
+                
+                segm = ((layer - 1) * no_segm_perlayer + 1):(layer * no_segm_perlayer);
+                [~, data] = delwaq('read', dw, subInd, segm, dims(timeInd).index);
+                Data.val = permute(data,[3 2 1]);
             end
             
-            % delete ghost cells
-            if dims(nInd).index(1)==1; Data.val = Data.val(:,2:end,:,:); end
-            if dims(mInd).index(1)==1; Data.val = Data.val(:,:,2:end,:); end
-
-        elseif strcmp(typeOfModelFileDetail, 'nc')
-            no_segm_perlayer = dims(facesInd).size; 
+        else % SGF
             
-            if ~isempty(layersInd)
-                layer = dims(layersInd).index; 
-            else
-                layer = 1; 
-            end
+            gridInfo = EHY_getGridInfo(OPT.gridFile,'dimensions');
+            no_seg = OPT.sgfkmax * gridInfo.no_NetElem;
+            data = delwaq_sgf('read',file_sgf, no_seg, OPT.sgft0);
+            Data.times = data.Date';
             
-            segm = ((layer - 1) * no_segm_perlayer + 1):(layer * no_segm_perlayer); 
-            [~, data] = delwaq('read', dw, subInd, segm, dims(timeInd).index);
-            Data.val = permute(data,[3 2 1]);                  
         end
         Data.val(Data.val==-999) = NaN;
-       
+
     case 'simona'
         %% SIMONA (WAQUA/TRIWAQ)
         % to be implemented

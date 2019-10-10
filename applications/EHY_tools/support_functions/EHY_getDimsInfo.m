@@ -4,10 +4,10 @@ modelType = EHY_getModelType(inputFile);
 [typeOfModelFile, typeOfModelFileDetail] = EHY_getTypeOfModelFile(inputFile);
 switch modelType
     case 'dfm'
-        infonc          = ncinfo(inputFile,varName);       
+        infonc          = ncinfo(inputFile,varName);
         dimsNamesOnFile = {infonc.Dimensions.Name};
         
-        %%% change names for easier handling 
+        %%% change names for easier handling
         dimsNames = dimsNamesOnFile;
         % layers
         dimsNames = strrep(dimsNames,'laydim','layers');
@@ -61,12 +61,12 @@ switch modelType
             dims(end+1).name = 'm';
             dims(end+1).name = 'n';
         end
-                  
+        
     case 'delwaq'
         
-        % time // always ask for time
+        % time
         dims(1).name = 'time';
-                
+        
         if strcmp(typeOfModelFileDetail,'his')
             % stations
             stationNames = EHY_getStationNames(inputFile,modelType,'varName',varName);
@@ -74,7 +74,7 @@ switch modelType
                 dims(end+1).name = 'stations';
             end
         elseif strcmp(typeOfModelFileDetail,'map')
-            [~, typeOfModelFileDetailGrid] = EHY_getTypeOfModelFile(gridFile); 
+            [~, typeOfModelFileDetailGrid] = EHY_getTypeOfModelFile(gridFile);
             if ismember(typeOfModelFileDetailGrid, {'lga', 'cco'})     % faces/grid cells
                 dims(end+1).name = 'm';
                 dims(end+1).name = 'n';
@@ -88,11 +88,16 @@ switch modelType
             gridInfo = EHY_getGridInfo(inputFile,{'no_layers'}, 'gridFile', gridFile);
             if isfield(gridInfo,'no_layers') && gridInfo.no_layers > 1
                 dims(end+1).name = 'layers';
-            end 
-
+            end
+            
         end
         
-    otherwise % SOBEK / SIMONA 
+        if strcmpi(typeOfModelFileDetail,'sgf')
+            dims = [];
+            dims.name = '';
+        end
+        
+    otherwise % SOBEK / SIMONA
         
         % time // always ask for time
         dims(1).name = 'time';
@@ -106,7 +111,7 @@ switch modelType
         % stations
         stationNames = EHY_getStationNames(inputFile,modelType,'varName',varName);
         if ~isempty(stationNames)
-             dims(end+1).name = 'stations';
+            dims(end+1).name = 'stations';
         end
-
+        
 end

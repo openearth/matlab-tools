@@ -10,6 +10,7 @@ function gridInfo = EHY_getGridInfo(inputFile,varargin)
 %               dimensions              E.MNKmax | no_NetNode & no_NetElem
 %               XYcor                   E.Xcor & E.Ycor (=NetNodes)
 %               XYcen                   E.Xcen & E.Ycen (=NetElem/faces)
+%               XYu                     E.Xu & E.Yu (=velocity points)
 %               layer_model             E.layer_model (sigma-model or z-model)
 %               face_nodes_xy           E.face_nodes_x & E.face_nodes_y
 %               area                    E.area
@@ -220,6 +221,15 @@ switch modelType
                             E.Ycen = ncread(inputFile,strrep(varName,'x','y'));
                         else
                             disp('Cell center info not found in network. Import grid>export grid in RGFGRID and try again')
+                        end
+                    end
+                    if ismember('XYuv',wantedOutput)
+                        varName = EHY_nameOnFile(inputFile,'NetLink_xu');
+                        if nc_isvar(inputFile,varName)
+                            E.Xu = ncread(inputFile,varName);
+                            E.Yu = ncread(inputFile,strrep(varName,'x','y'));
+                        else
+                            disp('Velocity-point info not found in network. Import grid>export grid in RGFGRID and try again')
                         end
                     end
                     
@@ -726,7 +736,7 @@ switch modelType
                     error('DelWAQ map output needs a grid file');
                 end
                 [~, typeOfModelFileDetailGrid] = EHY_getTypeOfModelFile(OPT.gridFile);
-                if ismember(typeOfModelFileDetailGrid,{'lga','cco'})     % faces/grid cells
+                if ismember(typeOfModelFileDetailGrid,{'lga','cco'})
                     dwGrid = delwaq('open',OPT.gridFile);
                      if ismember('no_layers',wantedOutput)
                         E.no_layers = dwGrid.MNK(3);
