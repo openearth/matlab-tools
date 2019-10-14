@@ -42,19 +42,11 @@ OPT.thinning = round(OPT.thinning);
 if ~isnumeric(OPT.scaling);  OPT.scaling  = str2num(OPT.scaling);  end
 if ~isnumeric(OPT.thinning); OPT.thinning = str2num(OPT.thinning); end
 
-vel_x = permute(vel_x,[2 3 4 1]); % get rid of first dimension (=time)
-vel_y = permute(vel_y,[2 3 4 1]);
+vel_x = squeeze(vel_x);
+vel_y = squeeze(vel_y);
 
 if ~all([exist('gridInfo','var') exist('vel_x','var') exist('vel_y','var')])
     error('input arguments gridInfo, vel_x and vel_y are required')
-end
-
-if any(size(vel_x)~=size(vel_y))
-    error('size(vel_x) should be equal to size(vel_y)')
-elseif isfield(gridInfo,'face_nodes_x') && size(gridInfo.face_nodes_x,2)~=numel(vel_x)
-    error('size(gridInfo.face_nodes_x,2) should be the same as  prod(size(zData))')
-elseif isfield(gridInfo,'Xcen') && any(size(gridInfo.Xcen)~=size(vel_x))
-    error('size(gridInfo.Xcor) and size(vel_x) should be the same')
 end
 
 % make sure we have cell center coordinates
@@ -64,15 +56,38 @@ if ~all(ismember({'Xcen','Ycen'},fieldnames(gridInfo)))
     gridInfo.Ycen = nanmean(gridInfo.face_nodes_y,1);
 end
 
+
+if size(gridInfo.Xcen,2) == 1
+    gridInfo.Xcen = gridInfo.Xcen';
+end
+if size(gridInfo.Ycen,2) == 1
+    gridInfo.Ycen = gridInfo.Ycen';
+end
+
+
+if any(size(vel_x)~=size(vel_y))
+    error('size(vel_x) should be equal to size(vel_y)')
+elseif isfield(gridInfo,'face_nodes_x') && size(gridInfo.face_nodes_x,2)~=numel(vel_x)
+    error('size(gridInfo.face_nodes_x,2) should be the same as  prod(size(zData))')
+elseif isfield(gridInfo,'Xcen') && any(size(gridInfo.Xcen)~=size(vel_x))
+    error('size(gridInfo.Xcor) and size(vel_x) should be the same')
+end
+
 %% quiver
 
 % thinning
-if ndims(vel_x)==2
+if ndims(vel_x) == 2 && min(size(vel_x)) == 1
     vel_x = vel_x(1:OPT.thinning:end);
     vel_y = vel_y(1:OPT.thinning:end);
     gridInfo.Xcen = gridInfo.Xcen(1:OPT.thinning:end);
     gridInfo.Ycen = gridInfo.Ycen(1:OPT.thinning:end);
+elseif ndims(vel_x) == 2 && min(size(vel_x)) > 1
+    vel_x = vel_x(1:OPT.thinning:end,1:OPT.thinning:end);
+    vel_y = vel_y(1:OPT.thinning:end,1:OPT.thinning:end);
+    gridInfo.Xcen = gridInfo.Xcen(1:OPT.thinning:end,1:OPT.thinning:end);
+    gridInfo.Ycen = gridInfo.Ycen(1:OPT.thinning:end,1:OPT.thinning:end);
 end
+
 
 % quiver
 if ~isempty(OPT.scaling)
