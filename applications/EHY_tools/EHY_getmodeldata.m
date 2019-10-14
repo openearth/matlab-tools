@@ -156,11 +156,12 @@ switch modelType
                 stationX = ncread(inputFile,'cross_section_x_coordinate')';
                 stationY = ncread(inputFile,'cross_section_y_coordinate')';
             end
+            stationIndTmp = dims(stationsInd).index+start(stationsInd)-1;
             if size(stationX,2)>1 % moving stations or cross-section
-                Data.locationX(:, Data.exist_stat) = stationX(dims(stationsInd).index,:)';
-                Data.locationY(:, Data.exist_stat) = stationY(dims(stationsInd).index,:)';
+                Data.locationX(:, Data.exist_stat) = stationX(stationIndTmp,:)';
+                Data.locationY(:, Data.exist_stat) = stationY(stationIndTmp,:)';
             else
-                Data.location( Data.exist_stat,1:2) = [stationX(dims(stationsInd).index,:) stationY(dims(stationsInd).index,:)];
+                Data.location( Data.exist_stat,1:2) = [stationX(stationIndTmp,:) stationY(stationIndTmp,:)];
                 Data.location(~Data.exist_stat,1:2) = NaN;
             end
         end
