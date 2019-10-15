@@ -77,6 +77,7 @@ if length(varargin)==1
     end
     
     if strcmp(inputExt,'pli'); inputExt='pol'; end
+    if strcmp(inputExt,'lga'); inputExt='cco'; end
     availableInputId=strmatch(inputExt,availableConversions(:,1));
     if isempty(availableInputId)
         error(['No conversions available for ' inputExt '-files.'])
@@ -241,6 +242,40 @@ end
             delft3d_io_dep('write',outputFile,dep,'location','cor');
         end
     end
+% cco2grd
+   function [output,OPT]=EHY_convert_cco2grd(inputFile,outputFile,OPT)
+        dw = delwaq('open',inputFile);
+        grd.X = dw.X;
+        grd.Y = dw.Y;
+        if OPT.saveOutputFile
+            wlgrid('write',outputFile,grd);
+        end
+       output = grd;
+   end
+% cco2kml
+   function [output,OPT]=EHY_convert_cco2kml(inputFile,outputFile,OPT)
+       if OPT.saveOutputFile
+           [~,name] = fileparts(outputFile);
+           tempFileGrd = [tempdir name '.grd'];
+           tempFileKml = [tempdir name '.kml'];
+           copyfile(inputFile,tempFileGrd);
+           dw = delwaq('open',inputFile);
+           grd.X = dw.X; grd.Y = dw.Y; 
+           [x,y,OPT] = EHY_convert_coorCheck(grd.X,grd.Y,OPT);
+           if ~any(any(grd.X==x)) % coordinates have been converted
+               grd.X=x; grd.Y=y; grd.CoordinateSystem='Spherical';
+               wlgrid('write',tempFileGrd,grd);
+           end
+           grid2kml(tempFileGrd,OPT.lineColor*255);
+           copyfile(tempFileKml,outputFile);
+           delete(tempFileGrd)
+           if exist(strrep(tempFileGrd,'.grd','.enc'))
+               delete(strrep(tempFileGrd,'.grd','.enc'))
+           end
+           delete(tempFileKml)
+       end
+       output=[];
+   end
 % crs2kml
     function [output,OPT]=EHY_convert_crs2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
