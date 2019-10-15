@@ -83,16 +83,18 @@ end
 %% check if output data is in several partitions and merge if necessary
 if OPT.mergePartitions==1 && EHY_isPartitioned(inputFile,modelType)
     mapFiles=dir([inputFile(1:end-11) '*' inputFile(end-6:end)]);
+    mapFilesName = regexpi({mapFiles.name},['\S{' num2str(length(mapFiles(1).name)-11) '}+\d{4}_map.nc'],'match');
+    mapFilesName = mapFilesName(~cellfun('isempty',mapFilesName));
     try % temp fix for e.g. RMM_dflowfm_0007_0007_numlimdt.xyz
         if ~isempty(str2num(inputFile(end-15:end-12)))
-            mapFiles=dir([inputFile(1:end-16) '*' inputFile(end-6:end)]);
+            mapFiles=dir([inputFile(1:end-16) sprintf('%d') inputFile(end-6:end)]);
         end
     end
-    for iM=1:length(mapFiles)
+    for iM=1:length(mapFilesName)
         if OPT.disp
-            disp(['Reading and merging grid info data from partitions: ' num2str(iM) '/' num2str(length(mapFiles))])
+            disp(['Reading and merging grid info data from partitions: ' num2str(iM) '/' num2str(length(mapFilesName))])
         end
-        mapFile=[fileparts(inputFile) filesep mapFiles(iM).name];
+        mapFile=cell2mat([fileparts(inputFile) filesep mapFilesName{iM}]);
         gridInfoPart=EHY_getGridInfo(mapFile,varargin{1},'mergePartitions',0);
         if iM==1
             gridInfo=gridInfoPart;
