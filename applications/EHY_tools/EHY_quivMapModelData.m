@@ -25,7 +25,7 @@ function varargout = EHY_quivMapModelData(gridInfo,vel_x,vel_y,varargin)
 %
 %% Settings
 OPT.color    = 'k'; % color of the vectors
-OPT.scaling  = [];  % scale factor: default = automatic, otherwise the velocity vectors are multiplied by this factor
+OPT.scaling  = 1;   % scale factor: the velocity vectors are multiplied by this factor
 OPT.thinning = 1;   % thinning factor, should be integer (velocity vectors are spatially-thinned by this factor)
 
 % if pairs were given as input OPT
@@ -90,11 +90,7 @@ end
 
 
 % quiver
-if ~isempty(OPT.scaling)
-    hQuiver = quiver(gridInfo.Xcen,gridInfo.Ycen,vel_x,vel_y,OPT.scaling);
-else
-    hQuiver = quiver(gridInfo.Xcen,gridInfo.Ycen,vel_x,vel_y);
-end
+hQuiver = quiver(gridInfo.Xcen,gridInfo.Ycen,OPT.scaling*vel_x,OPT.scaling*vel_y,0);
 
 % color
 set(hQuiver,'color',OPT.color);
