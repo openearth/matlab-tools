@@ -81,7 +81,7 @@ netcdf.putAtt(ncid,time_ID,'long_name', 'time in minutes');
 netcdf.putAtt(ncid,time_ID,'units', ['minutes since ',refdate]);
 
 % Standard names - 5 = ampr
-ampr_ID      = netcdf.defVar(ncid,'precipitation','double',[xdimid ydimid timedimid]); 
+ampr_ID      = netcdf.defVar(ncid,'Precipitation','double',[xdimid ydimid timedimid]); 
 netcdf.putAtt(ncid,ampr_ID,'standard_name','precipitation');
 netcdf.putAtt(ncid,ampr_ID,'long_name','precipitation_rate');
 netcdf.putAtt(ncid,ampr_ID,'units','mm/hr');

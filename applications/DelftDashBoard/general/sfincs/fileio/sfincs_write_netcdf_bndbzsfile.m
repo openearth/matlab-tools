@@ -79,7 +79,7 @@ netcdf.putAtt(ncid,time_ID,'long_name', 'time in minutes');
 netcdf.putAtt(ncid,time_ID,'units', ['minutes since ',refdate]);
 
 % Standard names - 5 = bzs
-bzs_ID      = netcdf.defVar(ncid,'sea_surface_height_above_mean_sea_level','double',[pointsdimid timedimid]); 
+bzs_ID      = netcdf.defVar(ncid,'zs','double',[pointsdimid timedimid]); 
 netcdf.putAtt(ncid,bzs_ID,'standard_name','water_level');
 netcdf.putAtt(ncid,bzs_ID,'long_name','sea_surface_height_above_mean_sea_level');
 netcdf.putAtt(ncid,bzs_ID,'units','m');

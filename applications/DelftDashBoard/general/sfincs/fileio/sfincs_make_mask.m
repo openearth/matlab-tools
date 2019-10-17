@@ -17,19 +17,19 @@ for ii=1:length(varargin)
 end
 
 
-if ~isempty(xy)
+if xy.length > 0
     % Throw away points below zlev(1), but not points within polygon
     % Do this by temporarily raising these points to zlev(1)+0.01
-    xp=xy(:,1);
-    yp=xy(:,2);
+    xp=xy.x;
+    yp=xy;
     inp=inpolygon(x,y,xp,yp);
     z(inp)=max(z(inp),zlev(1)+0.01);
 end
 
-if ~isempty(xy_ex)
+if xy_ex.length > 0
     % Throw away points within polygon
-    xp_ex=xy_ex(:,1);
-    yp_ex=xy_ex(:,2);
+    xp_ex=xy_ex.x;
+    yp_ex=xy_ex.y;
     inp_ex=inpolygon(x,y,xp_ex,yp_ex);
     z(inp_ex)=NaN; %max(z(inp),zlev(1)+0.01);
 end
