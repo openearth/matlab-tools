@@ -149,10 +149,12 @@ function ETA(mdFile,percentage)
 % Estimated time of arrival (when is simulation expected to be done?)
 
 outFile = [fileparts(mdFile) filesep 'out.txt'];
+
+% datenumStart is in out.txt
 str2find = '* File creation date:';
 fID = fopen(outFile,'r');
 found = false;
-while ~found
+while ~feof(fID) && ~found
     line = fgetl(fID);
     if length(line)>22 && strcmp(line(1:22),'* File creation date: ')
         found = true;
@@ -160,6 +162,26 @@ while ~found
     end
 end
 fclose(fID);
+
+% datenumStart is not in out.txt but in *.o*-file
+if ~exist('datenumStart','var')
+    oFile = dir([fileparts(mdFile) filesep '*.o*']);
+    if length(oFile)~=1
+        error
+    else
+        oFile=[fileparts(mdFile) filesep oFile.name];
+        fID = fopen(oFile,'r');
+        found = false;
+        while ~feof(fID) && ~found
+            line = fgetl(fID);
+            if length(line)>26 && strcmp(line(1:6),'Dimr [')
+                found = true;
+                datenumStart = datenum(line(7:25),'yyyy-mm-dd HH:MM:ss');
+            end
+        end
+        fclose(fID);
+    end
+end
 
 timeNeededToFinish = (now-datenumStart)/percentage*(100-percentage);
 datenumEnd = datestr(now + timeNeededToFinish);

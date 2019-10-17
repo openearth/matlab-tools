@@ -10,8 +10,8 @@ function varargout = EHY_plotMapModelData(gridInfo,zData,varargin)
 %                  gridInfo = EHY_getGridInfo(filename,{'face_nodes_xy'});
 % zData        :   matrix: Data in net elements (cell centers)
 %
-% Example1: EHY_plotMapData_FM
-% Example2: EHY_plotMapData_FM(gridInfo,zData)
+% Example1: EHY_plotMapModelData
+% Example2: EHY_plotMapModelData(gridInfo,zData)
 %             with gridInfo = EHY_getGridInfo(outputfile,{'face_nodes_xy'});
 %                  Data     = EHY_getMapModelData(outputfile, ... );
 %                  zData    = Data.val(1,:);

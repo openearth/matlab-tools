@@ -48,13 +48,17 @@ try % if simulation has finished
             outputDir = EHY_getOutputDirFM(mdFile);
             outFile = [pathstr filesep 'out.txt'];
             if exist([pathstr filesep 'out.txt'])
-                outFile = [pathstr filesep 'out.txt'];
-            elseif exist([outputDir name '_0000.dia'])
-                outFile=[outputDir name '_0000.dia'];
-            elseif exist([outputDir name '.dia'])
-                outFile=[outputDir name '.dia'];
+                outFileDetails = dir(outFile);
             end
-            
+            if ~exist(outFile) || outFileDetails.bytes<1000
+                % look for .dia file
+                if exist([outputDir name '_0000.dia'])
+                    outFile=[outputDir name '_0000.dia'];
+                elseif exist([outputDir name '.dia'])
+                    outFile=[outputDir name '.dia'];
+                end
+            end
+                            
             fid = fopen(outFile,'r');
             fseek(fid, 0, 'eof'); % set position indicator to end of file
             fileSize = ftell(fid);
