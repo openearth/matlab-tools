@@ -43,6 +43,7 @@ for i_test = 1: length(tests)
 end
 
 %% Windows batch file (first create)
+t_start = now;
 if check_exe
     fid = fopen ('run.bat','w+');
     for i_test = 1: length(tests)
@@ -79,3 +80,9 @@ if check_comprompt
         end
     end
 end
+
+%% Duration
+t_dur = 1440.*60.*(now - t_start);
+fid   = fopen(['compare_' datestr(now,'yyyymmdd') '.txt'],'a');
+fprintf(fid,'\nTotal Duration [sec]: %6i \n',round(t_dur));
+fclose (fid);
