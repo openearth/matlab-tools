@@ -1,5 +1,6 @@
 function varargout = EHY_getmodeldata(inputFile,stat_name,modelType,varargin)
-% Extracts time series (of water levels/velocities/salinity/temperature) from output of different models
+%% varargout = EHY_getmodeldata(inputFile,stat_name,modelType,varargin)
+% Extracts time series (of water levels/velocities/salinity/temperature) from output of different model types
 %
 % Running 'EHY_getmodeldata' without any arguments opens a interactive version, that also gives
 % feedback on how to use the EHY_getmodeldata-function with input arguments.
@@ -66,16 +67,10 @@ OPT.layer        = 0; % all
 
 % return output at specified reference level
 OPT.z            = ''; % z = positive up. Wanted vertical level = OPT.zRef + OPT.z
-OPT.zRef         = ''; % choose: 'ref' = model reference level, 'wl' = water level or 'bed' = from bottom level
+OPT.zRef         = ''; % choose: '' = model reference level, 'wl' = water level or 'bed' = from bottom level
 OPT.zMethod      = ''; % interpolation method: '' = corresponding layer or 'linear' = 'interpolation between two layers'
 
 OPT              = setproperty(OPT,varargin);
-
-%% return output at specified reference level
-if ~isempty(OPT.zRef)
-    Data = EHY_getmodeldata_z(inputFile,stat_name,modelType,varargin);
-    return
-end
 
 %% modify input
 inputFile = strtrim(inputFile);
@@ -83,15 +78,14 @@ if ~isempty  (OPT.t0   ) OPT.t0    = datenum(OPT.t0)    ; end
 if ~isempty  (OPT.tend ) OPT.tend  = datenum(OPT.tend)  ; end
 if ~isempty  (OPT.tint ) OPT.tint  = OPT.tint/1440      ; end % from minutes to days
 if ~isnumeric(OPT.layer) OPT.layer = str2num(OPT.layer) ; end
-if ~isnumeric(OPT.zRef ) OPT.zRef  = str2num(OPT.zRef)  ; end
+if ~isnumeric(OPT.z )    OPT.z     = str2num(OPT.z)     ; end
 
 %% Get model type
-if isempty(modelType)
-    modelType = EHY_getModelType(inputFile);
+if isempty(modelType);                                              modelType = EHY_getModelType(inputFile);
+elseif ismember(modelType,{'d3dfm','dflow','dflowfm','mdu','dfm'}); modelType = 'dfm';
+elseif ismember(modelType,{'d3d','d3d4','delft3d4','mdf'});         modelType = 'd3d';
+elseif ismember(modelType,{'waqua','simona','siminp'});             modelType = 'simona';
 end
-if ismember(modelType,{'d3dfm','dflow','dflowfm','mdu','dfm'}); modelType = 'dfm'; end
-if ismember(modelType,{'d3d','d3d4','delft3d4','mdf'});         modelType = 'd3d'; end
-if ismember(modelType,{'waqua','simona','siminp'});             modelType = 'simona'; end
 
 %% Get name of the parameter as known on output file
 [OPT.varName,varNameInput] = EHY_nameOnFile(inputFile,OPT.varName);
@@ -99,49 +93,17 @@ if strcmp(OPT.varName,'noMatchFound')
     error(['Requested variable (' varNameInput ') not available in model output'])
 end
 
-%% Get information about required dimension information
-dims = EHY_getDimsInfo(inputFile,OPT.varName);
-
-%% Get list with the numbers of the requested stations
-stationsInd = strmatch('stations',{dims(:).name},'exact');
-if ~isempty(stationsInd)
-    [Data,stationNrNoNan]      = EHY_getRequestedStations(inputFile,stat_name,modelType,'varName',OPT.varName);
-    dims(stationsInd).index    = stationNrNoNan;
-    dims(stationsInd).indexOut = find(Data.exist_stat);
-end
-
-%% Get time information from simulation and determine index of required times
-timeInd = strmatch('time',{dims(:).name});
-if ~isempty(timeInd)
-    Data.times                               = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
-    if ~isempty(OPT.t)
-        if all(OPT.t==0)
-            index_requested = 1:length(Data.times);
-        else
-            index_requested = OPT.t;
-        end
-        time_index      = 1:length(Data.times);
-    else
-        [Data,time_index,~,index_requested]  = EHY_getmodeldata_time_index(Data,OPT);
+%% return output at specified reference level
+if ~isempty(OPT.z)
+    Data = EHY_getmodeldata_z(inputFile,stat_name,modelType,OPT);
+    if nargout==1
+        varargout{1} = Data;
     end
-    Data.times                               = Data.times(index_requested); % if time-interval was used, this step is needed
-    dims(timeInd).index                      = time_index(index_requested);
-    dims(timeInd).indexOut                   = 1:length(dims(timeInd).index);
+    return
 end
 
-%% Get layer information and type of vertical schematisation
-layersInd = strmatch('layers',{dims(:).name});
-if ~isempty(layersInd)
-    gridInfo                 = EHY_getGridInfo(inputFile,{'no_layers' 'layer_model'},'mergePartitions',0);
-    no_layers                = gridInfo.no_layers;
-    layer_model              = gridInfo.layer_model;
-    OPT                      = EHY_getmodeldata_layer_index(OPT,no_layers);
-    dims(layersInd).index    = OPT.layer';
-    dims(layersInd).indexOut = 1:length(OPT.layer);
-end
-
-%% EHY_getmodeldata_optimiseDims
-[dims,start,count,order] = EHY_getmodeldata_optimiseDims(dims,modelType);
+%% Get the available and requested dimensions
+[dims,dimsInd,Data] = EHY_getDimsInfo(inputFile,OPT,modelType,stat_name);
 
 %% Get the computational data
 switch modelType
@@ -156,15 +118,16 @@ switch modelType
                 stationX = ncread(inputFile,'cross_section_x_coordinate')';
                 stationY = ncread(inputFile,'cross_section_y_coordinate')';
             end
-            stationIndTmp = dims(stationsInd).index+start(stationsInd)-1;
             if size(stationX,2)>1 % moving stations or cross-section
-                Data.locationX(:, Data.exist_stat) = stationX(stationIndTmp,:)';
-                Data.locationY(:, Data.exist_stat) = stationY(stationIndTmp,:)';
+                Data.locationX(:, Data.exist_stat) = stationX(dims(stationsInd).index,:)';
+                Data.locationY(:, Data.exist_stat) = stationY(dims(stationsInd).index,:)';
             else
-                Data.location( Data.exist_stat,1:2) = [stationX(stationIndTmp,:) stationY(stationIndTmp,:)];
-                Data.location(~Data.exist_stat,1:2) = NaN;
+                Data.location( Data.exist_stat,1:2) = [stationX(dims(stationsInd).index,:) stationY(dims(stationsInd).index,:)];
             end
         end
+        
+        % initialise start+count and optimise if possible
+        [dims,start,count] = EHY_getmodeldata_optimiseDims(dims,dimsInd);
         
         % The handling of all the wanted indices (like times, stations and layers) is done within ncread_blocks
         if ~strcmp(OPT.varName,{'x_velocity'})
@@ -176,202 +139,218 @@ switch modelType
         end
 
     case 'd3d'
-         %% Delft3D 4
+        %% Delft3D 4
         % open inputfile
         trih = vs_use(inputFile,'quiet');
+        
+        % constituents
+        constituents = squeeze(vs_get(trih,'his-const','NAMCON','quiet'));
+        if size(constituents,1)>size(constituents,2); constituents = constituents'; end
+        constituents = cellstr(constituents);
+        
+        % station info
+        locationMN = vs_get(trih,'his-const',{1},'MNSTAT','quiet')';
+        Data.locationMN(Data.exist_stat,:) = locationMN(dims(stationsInd).index,:);
+        locationXY = vs_get(trih,'his-const',{1},'XYSTAT','quiet')';
+        Data.location(Data.exist_stat,:)   = locationXY(dims(stationsInd).index,:);
+        
+        % vertical grid info
+        if strcmpi(OPT.varName,'Zcen_cen') || strcmpi(OPT.varName,'Zcen_int')
+            gridInfo = EHY_getGridInfo(inputFile,'layer_model');
+            
+            layer_model = gridInfo.layer_model;
+            if strcmp(gridInfo.layer_model,'sigma-model')
+                thick    = vs_let(trih,'his-const', 'THICK','quiet');
+                dps      = vs_let(trih,'his-const', 'DPS',  'quiet');
+            elseif strcmp(gridInfo.layer_model,'z-model')
+                dps      = vs_let(trih,'his-const', 'DPS',  'quiet');
+                zk       = vs_get(trih,'his-const', 'ZK' ,  'quiet');
+            end
+        end
+        if exist('layersInd','var')
+            no_layers = dims(layersInd).size;
+            layerInd  = dims(layersInd).index;
+        else
+            no_layers = 1;
+        end
+        
+        time_ind  = dims(timeInd).index;
         % loop over stations
-        ii_stat = 0;
-        for i_stat = 1: length(Data.requestedStations)
-            if Data.exist_stat(i_stat)
-                ii_stat = ii_stat + 1;
-                nr_stat  = stationNrNoNan(ii_stat);
-                % constituents
-                constituents=squeeze(vs_get(trih,'his-const','NAMCON','quiet'));
-                if size(constituents,1)>size(constituents,2); constituents=constituents'; end
-                constituents=cellstr(constituents);
-                % station info
-                stationMN = vs_get(trih,'his-const',{1},'MNSTAT','quiet');
-                stationXY = vs_get(trih,'his-const',{1},'XYSTAT','quiet');
-                Data.locationMN(i_stat,:)=[stationMN(:,nr_stat)'];
-                Data.location(i_stat,:)=[stationXY(:,nr_stat)'];
-                
-                % Get constants for profile data
-                if strcmpi(OPT.varName,'Zcen_cen') || strcmpi(OPT.varName,'Zcen_int')
-                    if strcmp(layer_model,'sigma-model')
-                        thick    = vs_let(trih,'his-const'              ,'THICK'          ,'quiet');
-                        dps      = vs_let(trih,'his-const'              ,'DPS'            ,'quiet');
-                    elseif strcmp(layer_model,'z-model')
-                        dps      = vs_let(trih,'his-const'              ,'DPS'            ,'quiet');
-                        zk       = vs_get(trih,'his-const'              ,'ZK'             ,'quiet');
+        for i_stat = 1:dims(stationsInd).sizeOut
+            stat_ind  = dims(stationsInd).index(i_stat);
+            indexOut = dims(stationsInd).indexOut(i_stat);
+            
+            % get data
+            switch OPT.varName
+                case 'wl'
+                    Data.val(:,indexOut) = cell2mat(vs_get(trih,'his-series',{time_ind},'ZWL',{stat_ind},'quiet')); % ref to wl
+                case 'dps'
+                    dps                  = vs_get(trih,'his-const',{1},'DPS',{stat_ind},'quiet'); % bed to ref
+                    Data.val(:,indexOut) = dps;
+                case 'bedlevel' % bedlevel (z-coordinate, negative)
+                    dps                  = vs_get(trih,'his-const',{1},'DPS',{stat_ind},'quiet');
+                    Data.val(:,indexOut) = -dps;
+                case 'wd'
+                    wl                   = cell2mat(vs_get(trih,'his-series',{time_ind},'ZWL',{stat_ind},'quiet')); % ref to wl
+                    dps                  = vs_get(trih,'his-const',{1},'DPS',{stat_ind},'quiet'); % bed to ref
+                    Data.val(:,indexOut) = wl+dps;
+                case 'uv'
+                    if no_layers == 1 % 2Dh
+                        data=qpread(trih,1,'depth averaged velocity','griddata',time_ind,stat_ind);
+                        Data.vel_x(:,indexOut) = data.XComp;
+                        Data.vel_y(:,indexOut) = data.YComp;
+                        Data.vel_u(:,indexOut) = cell2mat(vs_get(trih,'his-series',{time_ind},'ZCURU',{stat_ind,1},'quiet'));
+                        Data.vel_v(:,indexOut) = cell2mat(vs_get(trih,'his-series',{time_ind},'ZCURV',{stat_ind,1},'quiet'));
+                    else % 3D
+                        data=qpread(trih,1,'horizontal velocity','griddata',time_ind,stat_ind,0);
+                        Data.vel_x(:,indexOut,:) = squeeze(data.XComp(:,1,dims(layersInd).index));
+                        Data.vel_y(:,indexOut,:) = squeeze(data.YComp(:,1,dims(layersInd).index));
+                        Data.vel_u(:,indexOut,:) = cell2mat(vs_get(trih,'his-series',{time_ind},'ZCURU',{stat_ind,layerInd},'quiet'));
+                        Data.vel_v(:,indexOut,:) = cell2mat(vs_get(trih,'his-series',{time_ind},'ZCURV',{stat_ind,layerInd},'quiet'));
                     end
-                end
-                
-                % get data
-                switch OPT.varName
-                    case 'wl'
-                        Data.val(:,i_stat) = cell2mat(vs_get(trih,'his-series',{time_index},'ZWL',{nr_stat},'quiet')); % ref to wl
-                    case 'dps'
-                        dps                = vs_get(trih,'his-const',{1},'DPS',{nr_stat},'quiet'); % bed to ref
-                        Data.val(:,i_stat) = dps;
-                    case 'wd'
-                        wl                 = cell2mat(vs_get(trih,'his-series',{time_index},'ZWL',{nr_stat},'quiet')); % ref to wl
-                        dps                = vs_get(trih,'his-const',{1},'DPS',{nr_stat},'quiet'); % bed to ref
-                        Data.val(:,i_stat) = wl+dps;
-                    case 'uv'
-                        if no_layers==1
-                            data=qpread(trih,1,'depth averaged velocity','griddata',time_index,nr_stat);
-                            Data.vel_x(:,i_stat) = data.XComp;
-                            Data.vel_y(:,i_stat) = data.YComp;
-                            Data.vel_u(:,i_stat) = cell2mat(vs_get(trih,'his-series',{time_index},'ZCURU',{nr_stat,1},'quiet'));
-                            Data.vel_v(:,i_stat) = cell2mat(vs_get(trih,'his-series',{time_index},'ZCURV',{nr_stat,1},'quiet'));
-                        else
-                            data=qpread(trih,1,'horizontal velocity','griddata',time_index,nr_stat,0);
-                            Data.vel_x(:,i_stat,:) = squeeze(data.XComp(:,1,OPT.layer));
-                            Data.vel_y(:,i_stat,:) = squeeze(data.YComp(:,1,OPT.layer));
-                            Data.vel_u(:,i_stat,:) = cell2mat(vs_get(trih,'his-series',{time_index},'ZCURU',{nr_stat,OPT.layer},'quiet'));
-                            Data.vel_v(:,i_stat,:) = cell2mat(vs_get(trih,'his-series',{time_index},'ZCURV',{nr_stat,OPT.layer},'quiet'));
-                        end
-                        Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
-                    case {'Zcen_cen' 'Zcen_int'}
-                        zwl      = vs_let(trih,'his-series',{time_index(index_requested)},'ZWL'  ,{nr_stat},'quiet');
-                        for i_time = 1: length(index_requested)
-                            if strcmpi(layer_model,'sigma-model')
-                                depth = dps(stationNrNoNan(i_stat)) + zwl(i_time);
-                                Zcen_int(i_time,1     )        = zwl(i_time);
-                                Zcen_int(i_time,no_layers + 1) = -dps(nr_stat);
-                                Zcen_cen(i_time,1     )        = zwl(i_time) - 0.5*thick(1)*depth;
-                                for k = 2: no_layers
-                                    Zcen_int(i_time,k)  = Zcen_int(i_time,k-1) - thick(k-1)*depth;
-                                    Zcen_cen(i_time,k)  = Zcen_cen(i_time,k-1) - 0.5*(thick(k-1) + thick(k))*depth;
-                                end
-                            elseif strcmpi(layer_model,'z-model')
-                                zk_int(1:no_layers + 1) = NaN;
-                                
-                                %restrict to active computational layers
-                                i_start = find(zk> -dps(nr_stat),1,'first') - 1;
-                                i_stop =  find(zk>  zwl(i_time),1,'first');
-                                if isempty(i_stop) i_stop = no_layers + 1; end
-                                zk_int(i_start) = -dps(nr_stat);
-                                zk_int(i_stop)  =  zwl(i_time);
-                                
-                                zk_int(i_start+1:i_stop-1) = zk(i_start+1:i_stop-1);
-                                Zcen_int(i_time,:) = zk_int;
-                                for k = 1: no_layers
-                                    Zcen_cen(i_time,k) = 0.5*(Zcen_int(i_time,k  ) + Zcen_int(i_time,k+1) );
-                                end
+                    Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
+                case {'Zcen_cen' 'Zcen_int'}
+                    zwl      = vs_let(trih,'his-series',{time_ind},'ZWL',{stat_ind},'quiet');
+                    for i_time = 1:dims(timeInd).sizeOut
+                        if strcmpi(layer_model,'sigma-model')
+                            depth = dps(stat_ind) + zwl(i_time);
+                            Zcen_int(i_time,1     )        = zwl(i_time);
+                            Zcen_int(i_time,no_layers + 1) = -dps(stat_ind);
+                            Zcen_cen(i_time,1     )        = zwl(i_time) - 0.5*thick(1)*depth;
+                            for k = 2: no_layers
+                                Zcen_int(i_time,k)  = Zcen_int(i_time,k-1) - thick(k-1)*depth;
+                                Zcen_cen(i_time,k)  = Zcen_cen(i_time,k-1) - 0.5*(thick(k-1) + thick(k))*depth;
+                            end
+                        elseif strcmpi(layer_model,'z-model')
+                            zk_int(1:no_layers + 1) = NaN;
+                            
+                            %restrict to active computational layers
+                            i_start = find(zk> -dps(stat_ind),1,'first') - 1;
+                            i_stop =  find(zk>  zwl(i_time),1,'first');
+                            if isempty(i_stop) i_stop = no_layers + 1; end
+                            zk_int(i_start) = -dps(stat_ind);
+                            zk_int(i_stop)  =  zwl(i_time);
+                            
+                            zk_int(i_start+1:i_stop-1) = zk(i_start+1:i_stop-1);
+                            Zcen_int(i_time,:) = zk_int;
+                            for k = 1: no_layers
+                                Zcen_cen(i_time,k) = 0.5*(Zcen_int(i_time,k  ) + Zcen_int(i_time,k+1) );
                             end
                         end
-                        
-                        if strcmpi(OPT.varName    ,'Zcen_cen')
-                            Data.val(:,i_stat,:) = Zcen_cen;
-                        elseif strcmpi(OPT.varName,'Zcen_int')
-                            Data.val(:,i_stat,:) = Zcen_int;
-                        end
-                        
-                    case {'salinity' 'temperature'}
-                        nr_cons            = get_nr(lower(constituents),OPT.varName);
-                        value (:,i_stat,:) = cell2mat   (vs_get(trih,'his-series',{time_index(index_requested)},'GRO',{nr_stat,OPT.layer,nr_cons},'quiet'));
-                        % series
-                        Data.val(:, i_stat,:)= value(:,i_stat,:);
-                    case 'zrho' %density
-                        zrho               = cell2mat(vs_get(trih,'his-series',{time_index},'ZRHO',{nr_stat,OPT.layer},'quiet'));
-                        Data.val(:,i_stat,:) = zrho;
-                    case 'zvicww' %vertical eddy viscosity
-                        zvicww             = cell2mat(vs_get(trih,'his-series',{time_index},'ZVICWW',{nr_stat,OPT.layer},'quiet'));
-                        Data.val(:,i_stat,:) = zvicww;
-                    otherwise
-                        warning('WARNING: non-standard varName requested, treated as constituent name')
-                        nr_cons            = get_nr(lower(constituents),OPT.varName);
-                        value (:,i_stat,:) = cell2mat   (vs_get(trih,'his-series',{time_index(index_requested)},'GRO',{nr_stat,OPT.layer,nr_cons},'quiet'));
-                        % series
-                        Data.val(:, i_stat,:)= value(:,i_stat,:);
-                end
+                    end
+                    
+                    if strcmpi(OPT.varName    ,'Zcen_cen')
+                        Data.val(:,indexOut,:) = Zcen_cen;
+                    elseif strcmpi(OPT.varName,'Zcen_int')
+                        Data.val(:,indexOut,:) = Zcen_int;
+                    end
+                    
+                case {'salinity' 'temperature'}
+                    consInd                 = strmatch(lower(OPT.varName),lower(constituents),'exact');
+                    Data.val(:, indexOut,:) = cell2mat(vs_get(trih,'his-series',{time_ind},'GRO',{stat_ind,layerInd,consInd},'quiet'));
+                case 'zrho' %density
+                    zrho                   = cell2mat(vs_get(trih,'his-series',{time_ind},'ZRHO',{stat_ind,layerInd},'quiet'));
+                    Data.val(:,indexOut,:) = zrho;
+                case 'zvicww' %vertical eddy viscosity
+                    zvicww                 = cell2mat(vs_get(trih,'his-series',{time_ind},'ZVICWW',{stat_ind,layerInd},'quiet'));
+                    Data.val(:,indexOut,:) = zvicww;
+                otherwise
+                    warning('Non-standard varName requested, treated as constituent name')
+                    consInd                 = get_nr(lower(constituents),OPT.varName);
+                    Data.val(:, indexOut,:) = cell2mat   (vs_get(trih,'his-series',{time_ind},'GRO',{stat_ind,layerInd,consInd},'quiet'));
             end
         end
         
     case 'simona'
         %% SIMONA (WAQUA/TRIWAQ)
         % open data file
-        if isempty(stat_name) stat_name = Data.requestedStations; end
         sds=qpfopen(inputFile);
         
-        ii_stat    = 0;
-        for i_stat = 1: length(stat_name)
-            if Data.exist_stat(i_stat)
-                ii_stat  = ii_stat + 1;
-                nr_stat  = stationNrNoNan(ii_stat);
-                
-                % location info: [m,n] and [x,y]
-                if strcmp(OPT.varName,'uv')
-                    mn                        = waquaio(sds,[],'uv-mn');
-                    [x,y]                     = waquaio(sds,[],'uv-xy');
-                else
-                    mn                        = waquaio(sds,[],'wl-mn');
-                    [x,y]                     = waquaio(sds,[],'wl-xy');
-                end
-                Data.locationMN(i_stat,:) = mn(nr_stat,:);
-                Data.locationXY(i_stat,:) = [x(nr_stat) y(nr_stat)];
-                        
-                switch OPT.varName
-                    case 'wl' % ref to wl
-                        Data.val(:,i_stat)        = waquaio(sds,[],'wlstat',time_index,nr_stat);
-                    case 'dps' % bed to ref
-                        [~,~,z_int]        = waquaio(sds,[],'z-stat',1,nr_stat);
-                        Data.val(i_stat)   = -1.*z_int(end);
-                    case 'wd'
-                        wl                 = waquaio(sds,[],'wlstat',time_index,nr_stat);
-                        [~,~,z_int]        = waquaio(sds,[],'z-stat',1,nr_stat);
-                        dps                = -1.*z_int(end);
-                        Data.val(:,i_stat) = wl+dps;
-                    case 'uv'
-                        if no_layers==1
-                            [uu,vv] = waquaio(sds,[],'uv-stat',time_index,nr_stat);
-                            Data.vel_x(:,i_stat) = uu;
-                            Data.vel_y(:,i_stat) = vv;
-                        else
-                            Data.vel_x(:,i_stat,:) = waquaio(sds,[],'u-stat',time_index,nr_stat,OPT.layer);
-                            Data.vel_y(:,i_stat,:) = waquaio(sds,[],'v-stat',time_index,nr_stat,OPT.layer);
-                        end
-                        Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
-                    case 'salinity'
-                        if no_layers==1
-                            Data.val(:,i_stat) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat);
-                        else
-                            Data.val(:,i_stat,:) = waquaio(sds,[],'stsubst:            salinity',time_index,nr_stat,OPT.layer);
-                        end
-                end
+        if ~isempty(layersInd)
+            no_layers = dims(layersInd).size;
+            layerInd  = dims(layersInd).index;
+        else
+            no_layers = 1;
+        end
+        
+        % location info: [m,n] and [x,y]
+        if strcmp(OPT.varName,'uv')
+            mn                        = waquaio(sds,[],'uv-mn');
+            [x,y]                     = waquaio(sds,[],'uv-xy');
+        else
+            mn                        = waquaio(sds,[],'wl-mn');
+            [x,y]                     = waquaio(sds,[],'wl-xy');
+        end
+        Data.locationMN(i_stat,:) = mn(stat_ind,:);
+        Data.locationXY(i_stat,:) = [x(stat_ind) y(stat_ind)];
+        
+        time_ind  = dims(time_ind).index;
+        % loop over stations
+        for i_stat = 1:dims(stationsInd).sizeOut
+            stat_ind  = dims(stationsInd).index(i_stat);
+            indexOut = dims(stationsInd).indexOut(i_stat);
+            
+            switch OPT.varName
+                case 'wl' % ref to wl
+                    Data.val(:,indexOut)        = waquaio(sds,[],'wlstat',time_ind,stat_ind);
+                case 'dps' % bed to ref
+                    [~,~,z_int]        = waquaio(sds,[],'z-stat',1,stat_ind);
+                    Data.val(indexOut)   = -1.*z_int(end);
+                case 'wd'
+                    wl                 = waquaio(sds,[],'wlstat',time_ind,stat_ind);
+                    [~,~,z_int]        = waquaio(sds,[],'z-stat',1,stat_ind);
+                    dps                = -1.*z_int(end);
+                    Data.val(:,indexOut) = wl+dps;
+                case 'uv'
+                    if no_layers==1
+                        [uu,vv] = waquaio(sds,[],'uv-stat',time_ind,stat_ind);
+                        Data.vel_x(:,indexOut) = uu;
+                        Data.vel_y(:,indexOut) = vv;
+                    else
+                        Data.vel_x(:,indexOut,:) = waquaio(sds,[],'u-stat',time_ind,stat_ind,layerInd);
+                        Data.vel_y(:,indexOut,:) = waquaio(sds,[],'v-stat',time_ind,stat_ind,layerInd);
+                    end
+                    Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
+                case 'salinity'
+                    if no_layers==1
+                        Data.val(:,indexOut) = waquaio(sds,[],'stsubst:            salinity',time_ind,stat_ind);
+                    else
+                        Data.val(:,indexOut,:) = waquaio(sds,[],'stsubst:            salinity',time_ind,stat_ind,layerInd);
+                    end
             end
         end
         
     case 'sobek3'
         %% SOBEK3
-        for i_stat = 1: length(stat_name)
-            if Data.exist_stat(i_stat)
-                nr_stat  = stationNrNoNan(i_stat);
-                % open data file
-                D          = read_sobeknc(inputFile);
-                % get data
-                switch OPT.varName
-                    case 'wl'
-                        Data.val(:,i_stat)         =D.value(nr_stat,time_index);
-                end
+        time_ind  = dims(time_ind).index;
+        % loop over stations
+        for i_stat = 1:dims(stationsInd).sizeOut
+            stat_ind  = dims(stationsInd).index(i_stat);
+            indexOut = dims(stationsInd).indexOut(i_stat);
+            % open data file
+            D          = read_sobeknc(inputFile);
+            % get data
+            switch OPT.varName
+                case 'wl'
+                    Data.val(:,indexOut)         =D.value(stat_ind,time_ind);
             end
         end
         
     case 'sobek3_new'
         %% SOBEK3 new
-        for i_stat = 1: length(stat_name)
-            if Data.exist_stat(i_stat)
-                nr_stat  = stationNrNoNan(i_stat);
-                % open data file
-                D          = read_sobeknc(inputFile);
-                refdate    = ncreadatt(inputFile, 'time','units');
-                Data.times = D.time/1440./60. + datenum(refdate(15:end),'yyyy-mm-dd  HH:MM:SS');
-                % get data
-                switch OPT.varName
-                    case 'wl'
-                        Data.val(:,i_stat)         =D.water_level(nr_stat,:);
-                end
+        time_ind  = dims(time_ind).index;
+        % loop over stations
+        for i_stat = 1:dims(stationsInd).sizeOut
+            stat_ind  = dims(stationsInd).index(i_stat);
+            indexOut = dims(stationsInd).indexOut(i_stat);
+            % open data file
+            D          = read_sobeknc(inputFile);
+            refdate    = ncreadatt(inputFile, 'time','units');
+            Data.times = D.time(time_ind)/1440/60 + datenum(refdate(15:end),'yyyy-mm-dd  HH:MM:SS');
+            % get data
+            switch OPT.varName
+                case 'wl'
+                    Data.val(:,indexOut) = D.water_level(stat_ind,time_ind);
             end
         end
         
@@ -402,17 +381,15 @@ switch modelType
             save([inputFile filesep 'implic.mat'],'tmp');
         end
         
-        for i_stat = 1: length(stat_name)
-            if Data.exist_stat(i_stat)
-                nr_stat  = stationNrNoNan(i_stat);
-                % get data
-                switch OPT.varName
-                    case 'wl'
-                        Data.val(:,i_stat) = tmp.val_tmp(:,nr_stat);
-                end
+        % loop over stations
+        for i_stat = 1:dims(stationsInd).sizeOut
+            stat_ind  = dims(stationsInd).index(i_stat);
+            indexOut = dims(stationsInd).indexOut(i_stat);
+            switch OPT.varName
+                case 'wl'
+                    Data.val(:,indexOut) = tmp.val_tmp(:,stat_ind);
             end
         end
-        
         clear tmp
         
     case 'delwaq'
@@ -422,46 +399,35 @@ switch modelType
         if isempty(subInd); error(['Could not find substance ''' OPT.varName ''' on provided file']); end
         [~,data] = delwaq('read',dw,subInd,dims(stationsInd).index,dims(timeInd).index);
         Data.val(:,dims(stationsInd).indexOut) = permute(data,[3 2 1]);
-        Data.val(:,~Data.exist_stat) = NaN;
         
 end
 
+%% fill data of non-existing stations with NaN's
 if ~isfield(Data,'exist_stat')
-    % non-station info from .nc-file
+    % non-station info from modelfile
 else
-    % fill data of non-existing stations with NaN's
-    if isfield(Data,'locationMN')
-        Data.locationMN(~Data.exist_stat,:)=NaN;
+    % station at 1st dimension
+    fns = intersect(fieldnames(Data),{'locationMN','location'});
+    for iFns = 1:length(fns)
+        Data.(fns{iFns})(~Data.exist_stat,:,:) = NaN;
     end
-    if isfield(Data,'location')
-        Data.location(~Data.exist_stat,:)=NaN;
-    end
-    if isfield(Data,'locationX')
-        Data.locationX(:,~Data.exist_stat)=NaN;
-        Data.locationY(:,~Data.exist_stat)=NaN;
-    end
-    if isfield(Data,'val') && isfield(Data,'exist_stat')
-        Data.val(:,~Data.exist_stat,:)=NaN;
-    elseif isfield(Data,'vel_x')
-        Data.vel_x(:,~Data.exist_stat,:)=NaN;
-        Data.vel_y(:,~Data.exist_stat,:)=NaN;
-        if isfield(Data,'vel_u')
-            Data.vel_u(:,~Data.exist_stat,:)=NaN;
-            Data.vel_v(:,~Data.exist_stat,:)=NaN;
-        end
+    % station at 2nd dimension
+    fns = intersect(fieldnames(Data),{'val','vel_x','vel_y','vel_u','vel_v','locationX','locationY'});
+    for iFns = 1:length(fns)
+        Data.(fns{iFns})(:,~Data.exist_stat,:) = NaN;
     end
 end
 
 %% add dimension information to Data
 % dimension information
 if strcmp(modelType,'dfm')
-    dimensionsComment = fliplr({dims.nameOnFile});
+    dimensionsComment = fliplr({dims.name});
 else
     dimensionsComment = {dims.name};
 end
 
 fn = char(intersect(fieldnames(Data),{'val','vel_x','val_x'}));
-while ndims(Data.(fn))<numel(dimensionsComment)
+while ~isempty(fn) && ndims(Data.(fn))<numel(dimensionsComment)
     dimensionsComment(end) = [];
 end
 
@@ -474,7 +440,7 @@ Data.OPT               = OPT;
 Data.OPT.inputFile     = inputFile;
 
 if nargout==1
-    varargout{1}=Data;
+    varargout{1} = Data;
 end
 
 end

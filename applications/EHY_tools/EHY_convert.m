@@ -157,8 +157,9 @@ end
 inputExt=lower(inputExt);
 outputExt=lower(outputExt);
 
-if strcmp(inputExt,'pli'); inputExt='pol'; end
-if strcmpi(outputExt,'pli'); outputExt='pol'; end %treat as .pol, but still save as .pli
+if strcmp(inputExt,'pli');   inputExt  = 'pol'; end
+if strcmpi(outputExt,'pli'); outputExt = 'pol'; end %treat as .pol, but still save as .pli
+if strcmp(inputExt,'lga');   inputExt  = 'cco'; end %treat as .cco
 if strcmpi(outputExt,'nc')
     if isempty(strfind(outputFile,'_net.nc'))
         outputFile=strrep(outputFile,'.nc','_net.nc');
@@ -214,6 +215,16 @@ end
             delete(tempFile)
         end
         output=[];
+    end
+% arl2xyz
+    function [output,OPT]=EHY_convert_arl2xyz(inputFile,outputFile,OPT)
+        output = dlmread(inputFile);
+        output = output(:,[1 2 4]); % x,y,code
+        if OPT.saveOutputFile
+            fid = fopen(outputFile,'w');
+            fprintf(fid,'%.7f %.7f %4.0f\n',output');
+            fclose(fid);
+        end
     end
 % box2dep
     function [output,OPT]=EHY_convert_box2dep(inputFile,outputFile,OPT)

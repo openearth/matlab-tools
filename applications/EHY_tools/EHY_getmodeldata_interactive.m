@@ -10,17 +10,17 @@ function varargout = EHY_getmodeldata_interactive
 
 % outputFile
 disp('Open the model output file')
-[filename, pathname]=uigetfile('*.*','Open the model output file');
+[filename, pathname] = uigetfile('*.*','Open the model output file');
 if isnumeric(filename); disp('EHY_getmodeldata_interactive stopped by user.'); return; end
 
 % outputfile
-outputfile=[pathname filename];
-modelType=EHY_getModelType(outputfile);
+outputfile = [pathname filename];
+modelType = EHY_getModelType(outputfile);
 if isempty(modelType)
     % Automatic procedure failed
     disp('Automatic procedure failed. Please provide input manually.')
     % modelType
-    modelTypes={'Delft3D-FM / D-FLOW FM','dfm';...
+    modelTypes = {'Delft3D-FM / D-FLOW FM','dfm';...
         'Delft3D 4','d3d';...
         'SIMONA','simona';...
         'SOBEK3','sobek3';...
@@ -29,26 +29,26 @@ if isempty(modelType)
     option=listdlg('PromptString','Choose model type:','SelectionMode','single','ListString',...
         modelTypes(:,1),'ListSize',[300 100]);
     if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end
-    modelType=modelTypes{option,2};
+    modelType = modelTypes{option,2};
 end
 
 % varName
-varNames={'Water level','wl';
-    'Water depth','wd';
+varNames = {'Water level','waterlevel';
+    'Water depth','waterdepth';
     'x,y-velocity','uv';
     'Salinity','salinity';
     'Temperature','temperature';
     'z-coordinates (pos. up) of cell centers','Zcen_cen';
-    'z-coordinates (pos. up) of cell interfaces','zcoordinate_w'};
+    'z-coordinates (pos. up) of cell interfaces','Zcen_int'};
 if strcmp(modelType,'dfm');    varNames{end+1,1}='Other info from .nc-file';    end
 if strcmp(modelType,'delwaq'); varNames{end+1,1}='Other info from delwaq-file'; end
 option=listdlg('PromptString','What kind of time series do you want to load?','SelectionMode','single','ListString',...
     varNames(:,1),'ListSize',[300 150]);
 if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end
-OPT.varName=varNames{option,2};
+OPT.varName = varNames{option,2};
 
-% Option=Other info from .nc-file
-if ismember(modelType,{'dfm','delwaq'}) && option==length(varNames)
+% Option = Other info from .nc-file
+if ismember(modelType,{'dfm','delwaq'}) && option == length(varNames)
     if strcmp(modelType,'dfm')
     infonc           = ncinfo(outputfile);
     variablesOnFile  = {infonc.Variables.Name};
@@ -68,20 +68,22 @@ if ismember(modelType,{'dfm','delwaq'}) && option==length(varNames)
     option=listdlg('PromptString','What kind of time series do you want to load?','SelectionMode','single','ListString',...
         variablesOnFileInclAttr,'ListSize',[600 300]);
     if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end
-    OPT.varName=variablesOnFile{option};
+    OPT.varName = variablesOnFile{option};
 end
 
-OPT.varName = EHY_nameOnFile(outputfile,OPT.varName);
+[OPT.varName,varNameInput] = EHY_nameOnFile(outputfile,OPT.varName);
+if strcmp(OPT.varName,'noMatchFound')
+    error(['Requested variable (' varNameInput ') not available in model output'])
+end
 
 %% check which dimensions/info is needed from user
-dims = EHY_getDimsInfo(outputfile,OPT.varName);
-
+[dims,dimsInd] = EHY_getDimsInfo(outputfile,OPT,modelType);
+    
 %% get required input from user
-timeInd = strmatch('time',{dims(:).name});
-if ~isempty(timeInd)
-    datenums=EHY_getmodeldata_getDatenumsFromOutputfile(outputfile);
+if ~isempty(dimsInd.time)
+    datenums = EHY_getmodeldata_getDatenumsFromOutputfile(outputfile);
     if length(datenums)>1
-        option=inputdlg({['Want to specifiy a certain output period? (Default: all data)' char(10) char(10) 'Start date [dd-mmm-yyyy HH:MM]'],'End date   [dd-mmm-yyyy HH:MM]'},'Specify output period',1,...
+        option = inputdlg({['Want to specifiy a certain output period? (Default: all data)' newline newline 'Start date [dd-mmm-yyyy HH:MM]'],'End date   [dd-mmm-yyyy HH:MM]'},'Specify output period',1,...
             {datestr(datenums(1)),datestr(datenums(end))});
         if ~isempty(option)
             if ~strcmp(datestr(datenums(1)),option{1}) || ~strcmp(datestr(datenums(end)),option{2})
@@ -94,8 +96,7 @@ if ~isempty(timeInd)
     end
 end
 
-stationsInd = strmatch('stations',{dims(:).name});
-if ~isempty(stationsInd)
+if ~isempty(dimsInd.stations)
     stationNames = cellstr(EHY_getStationNames(outputfile,modelType,'varName',OPT.varName));
     option=listdlg('PromptString','From which station would you like you to load the data? (Use CTRL to select multiple stations)','ListString',...
         stationNames,'ListSize',[500 200]);
@@ -105,30 +106,38 @@ else
     stat_name='';
 end
 
-layersInd = strmatch('layers',{dims(:).name});
-if ~isempty(layersInd)
+if ~isempty(dimsInd.layers)
     gridInfo = EHY_getGridInfo(outputfile,{'no_layers'});
     if gridInfo.no_layers>1
-        option=listdlg('PromptString',{'Want to load data from a specific layer?','(Default is, in case of 3D-model, all layers)'},'SelectionMode','single','ListString',...
-            {'Yes','No'},'ListSize',[300 50]);
-        if isempty(option)
-            disp('EHY_getmodeldata_interactive was stopped by user');return;
-        elseif option==1
+        option = listdlg('PromptString',{'Want to load data from a specific layer or','at a certain reference level?'},'SelectionMode','single','ListString',...
+            {'Specific model layer','Certain reference level'},'ListSize',[300 50]);
+        if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return;
+        elseif option == 1 % Specific model layer
             nol = num2str(gridInfo.no_layers);
             OPT.layer = cell2mat(inputdlg(['Layer nr (1-' nol '):'],'',1,{nol}));
+        elseif option == 2 % Certain reference level
+            option = listdlg('PromptString',{'Referenced to:'},'SelectionMode','single','ListString',...
+                {'Model reference level','Water level','Bed level'},'ListSize',[300 50]);
+            if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return;
+            elseif option == 2 % Water level
+                OPT.zRef = 'wl';
+            elseif option == 3 % Bed level
+                OPT.zRef = 'bed';
+            end
+            OPT.z = cell2mat(inputdlg('height (m) from ref. level (pos. up)','',1,{'0'}));
         end
     end
 end
 
 %%
-extraText='';
+extraText = '';
 if exist('OPT','var')
-    fn=fieldnames(OPT);
-    for iF=1:length(fn)
+    fn = fieldnames(OPT);
+    for iF = 1:length(fn)
         if ischar(OPT.(fn{iF}))
-            extraText=[extraText ',''' fn{iF} ''',''' OPT.(fn{iF}) ''''];
+            extraText = [extraText ',''' fn{iF} ''',''' OPT.(fn{iF}) ''''];
         elseif isnumeric(OPT.(fn{iF}))
-            extraText=[extraText ',''' fn{iF} ''',' num2str(OPT.(fn{iF}))];
+            extraText = [extraText ',''' fn{iF} ''',' num2str(OPT.(fn{iF}))];
         end
     end
 end
@@ -140,7 +149,7 @@ else
     stations='''''';
 end
 
-disp([char(10) 'Note that next time you want to get this data, you can also use:'])
+disp([newline 'Note that next time you want to get this data, you can also use:'])
 disp(['<strong>Data = EHY_getmodeldata(''' outputfile ''',' stations ',''' modelType '''' extraText ');</strong>' ])
 
 disp('start retrieving the data...')
@@ -156,7 +165,7 @@ open Data
 disp('Variable ''Data'' created by EHY_getmodeldata_interactive')
 
 %% output
-if nargout==1
-    Data.OPT.outputfile=outputfile;
-    varargout{1}=Data;
+if nargout == 1
+    Data.OPT.outputfile = outputfile;
+    varargout{1} = Data;
 end

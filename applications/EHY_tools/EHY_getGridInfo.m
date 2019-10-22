@@ -81,27 +81,24 @@ if strcmp(modelType,'dfm') && strcmp(typeOfModelFile,'network')
 end
 
 %% check if output data is in several partitions and merge if necessary
-if OPT.mergePartitions==1 && EHY_isPartitioned(inputFile,modelType)
-    mapFiles=dir([inputFile(1:end-11) '*' inputFile(end-6:end)]);
-    mapFilesName = regexpi({mapFiles.name},['\S{' num2str(length(mapFiles(1).name)-11) '}+\d{4}_map.nc'],'match');
-    mapFilesName = mapFilesName(~cellfun('isempty',mapFilesName));
-    try % temp fix for e.g. RMM_dflowfm_0007_0007_numlimdt.xyz
-        if ~isempty(str2num(inputFile(end-15:end-12)))
-            mapFiles=dir([inputFile(1:end-16) sprintf('%d') inputFile(end-6:end)]);
-        end
-    end
-    for iM=1:length(mapFilesName)
+if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
+    ncFiles = dir([inputFile(1:end-11) '*' inputFile(end-6:end)]);
+    ncFilesName = regexpi({ncFiles.name},['\S{' num2str(length(ncFiles(1).name)-11) '}+\d{4}_+\S{3}.nc'],'match');
+    ncFilesName = ncFilesName(~cellfun('isempty',ncFilesName));
+    ncFiles = strcat(fileparts(inputFile),filesep,vertcat(ncFilesName{:}));
+    
+    for iF=1:length(ncFiles)
         if OPT.disp
-            disp(['Reading and merging grid info data from partitions: ' num2str(iM) '/' num2str(length(mapFilesName))])
+            disp(['Reading and merging grid info data from partitions: ' num2str(iF) '/' num2str(length(ncFiles))])
         end
-        mapFile=cell2mat([fileparts(inputFile) filesep mapFilesName{iM}]);
-        gridInfoPart=EHY_getGridInfo(mapFile,varargin{1},'mergePartitions',0);
-        if iM==1
-            gridInfo=gridInfoPart;
-            fn=fieldnames(gridInfoPart);
-            ind=strmatch('face_nodes',fn,'exact');
-            fn=[fn(ind); fn];
-            fn(ind+1)=[];
+        ncFile = ncFiles{iF};
+        gridInfoPart = EHY_getGridInfo(ncFile,varargin{1},'mergePartitions',0);
+        if iF == 1
+            gridInfo = gridInfoPart;
+            fn = fieldnames(gridInfoPart);
+            ind = strmatch('face_nodes',fn,'exact');
+            fn = [fn(ind); fn];
+            fn(ind+1) = [];
         else
             for iFN=1:length(fn)
                 if any(strcmp(fn{iFN},{'face_nodes','face_nodes_x','face_nodes_y'}))
@@ -725,39 +722,37 @@ switch modelType
     case 'delwaq'
         switch typeOfModelFile
             case 'grid'
-                dw = delwaq('open',inputFile);
-                if ismember('dimensions',wantedOutput)
-                    E.MNKmax = dw.MNK;
-                end
-                if ismember('XYcor',wantedOutput)
-                    E.Xcor = dw.X;
-                    E.Ycor = dw.Y;
+                if ismember(typeOfModelFileDetail,{'lga','cco'})
+                    dw = delwaq('open',inputFile);
+                    if ismember('dimensions',wantedOutput)
+                        E.MNKmax = dw.MNK;
+                    end
+                    if ismember('no_layers',wantedOutput)
+                        E.no_layers = dw.MNK(3);
+                    end
+                    if ismember('XYcor',wantedOutput)
+                        E.Xcor = dw.X;
+                        E.Ycor = dw.Y;
+                    end
                 end
             case 'outputfile'
                 if isempty(OPT.gridFile)
                     error('DelWAQ map output needs a grid file');
                 end
-                [~, typeOfModelFileDetailGrid] = EHY_getTypeOfModelFile(OPT.gridFile);
-                if ismember(typeOfModelFileDetailGrid,{'lga','cco'})
-                    dwGrid = delwaq('open',OPT.gridFile);
-                     if ismember('no_layers',wantedOutput)
-                        E.no_layers = dwGrid.MNK(3);
-                     end
-                     if ismember('dimensions',wantedOutput)
-                        E.MNKmax = dwGrid.MNK;
-                     end
-                elseif strcmp(typeOfModelFileDetailGrid, 'nc')
-                    dw = delwaq('open', inputFile);
-                    no_segm = dw.NumSegm;
-                    
-                    if ismember('no_layers',wantedOutput)
-                        tmp = EHY_getGridInfo(OPT.gridFile, 'dimensions');
-                        E.no_layers = no_segm/tmp.no_NetElem;
+                
+                if ismember('no_layers',wantedOutput)
+                    [~, typeOfModelFileDetailGrid] = EHY_getTypeOfModelFile(OPT.gridFile);
+                    if ismember(typeOfModelFileDetailGrid,'.nc')
+                        dw = delwaq('open', inputFile);
+                        tmp = EHY_getGridInfo(OPT.gridFile,'dimensions');
+                        E.no_layers = dw.NumSegm/tmp.no_NetElem;
+                    elseif ismember(typeOfModelFileDetailGrid,{'lga','cco'})
+                       dw = delwaq('open',OPT.gridFile);
+                       E.no_layers = dw.MNK(3);
                     end
                 end
                 
         end % typeOfModelFile
-  
 end % modelType
 
 %% If selection of stations is specified, reduce output to specified stations only

@@ -83,9 +83,8 @@ if strcmp(OPT.varName,'noMatchFound')
     error(['Requested variable (' varNameInput ') not available in model output'])
 end
 
-%% check which dimensions/info is needed from user
+%% gridFile for DELWAQ
 gridFile = '';
-% gridFile for DELWAQ
 if strcmp(modelType,'delwaq')
     disp('Open (if you think it is needed, otherwise cancel) the corresponding grid file (*.lga, *.cco, *.nc)')
     [filename, pathname] = uigetfile({'*.lga;*.cco', 'Structured grid files';
@@ -95,14 +94,15 @@ if strcmp(modelType,'delwaq')
         OPT.gridFile = gridFile; % use this in feedback script-line
     end
 end
-dims = EHY_getDimsInfo(outputfile,OPT.varName,gridFile);
+
+%% check which dimensions/info is needed from user
+[~,dimsInd] = EHY_getDimsInfo(outputfile,OPT,modelType);
 
 %% get required input from user
-timeInd = strmatch('time',{dims(:).name});
-if ~isempty(timeInd)
+if ~isempty(dimsInd.time)
     datenums = EHY_getmodeldata_getDatenumsFromOutputfile(outputfile);
     if length(datenums)>1
-        option = inputdlg({['Want to specifiy a certain output period? (Default: all data)' char(10) char(10) 'Start date [dd-mmm-yyyy HH:MM]'],'End date   [dd-mmm-yyyy HH:MM]'},'Specify output period',1,...
+        option = inputdlg({['Want to specifiy a certain output period? (Default: all data)' newline newline 'Start date [dd-mmm-yyyy HH:MM]'],'End date   [dd-mmm-yyyy HH:MM]'},'Specify output period',1,...
             {datestr(datenums(1)),datestr(datenums(end))});
         if ~isempty(option)
             if ~strcmp(datestr(datenums(1)),option{1}) || ~strcmp(datestr(datenums(end)),option{2})
@@ -115,8 +115,7 @@ if ~isempty(timeInd)
     end
 end
 
-layersInd = strmatch('layers',{dims(:).name});
-if ~isempty(layersInd)
+if ~isempty(dimsInd.layers)
     gridInfo = EHY_getGridInfo(outputfile,{'no_layers'},'gridFile',gridFile);
     if gridInfo.no_layers>1
         option = listdlg('PromptString',{'Want to load data from a specific layer?','(Default is, in case of 3D-model, all layers)'},'SelectionMode','single','ListString',...
@@ -129,10 +128,9 @@ if ~isempty(layersInd)
     end
 end
 
-mInd = strmatch('m',{dims(:).name},'exact');
-if ~isempty(mInd)
+if ~isempty(dimsInd.m)
     gridInfo = EHY_getGridInfo(outputfile,{'dimensions'},'gridFile',gridFile);
-    option = inputdlg({['Want to specifiy a certain [m,n]-domain? (Default: 0 [all data])' char(10) char(10) 'm-range [1:' num2str(gridInfo.MNKmax(1)) ']'],...
+    option = inputdlg({['Want to specifiy a certain [m,n]-domain? (Default: 0 [all data])' newline newline 'm-range [1:' num2str(gridInfo.MNKmax(1)) ']'],...
         ['n-range [1:' num2str(gridInfo.MNKmax(2)) ']']},'Specify domain',1,{'0','0'});
     if isempty(option)
         disp('EHY_getMapModelData_interactive was stopped by user');return;
@@ -168,7 +166,7 @@ if exist('OPT','var')
     end
 end
 
-disp([char(10) 'Note that next time you want to get this data, you can also use:'])
+disp([newline 'Note that next time you want to get this data, you can also use:'])
 disp(['<strong>Data = EHY_getMapModelData(''' outputfile '''' extraText ');</strong>' ])
 
 disp('start retrieving the data...')
@@ -179,7 +177,7 @@ else
 end
 
 % load and add grid information
-% (forward this example line to EHY_plotMapData_FM if needed)
+% (forward this example line to EHY_plotMapModelData if needed)
 if strcmp(modelType,'dfm')
     if isfield(OPT,'mergePartitions') && OPT.mergePartitions==0
         EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''face_nodes_xy''},''mergePartitions'',0);'];

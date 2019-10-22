@@ -1,6 +1,8 @@
-function Data = EHY_getmodeldata_z(inputFile,stat_name,modelType,OPT)
+function Data = EHY_getMapModelData_z(inputFile,OPT)
 
-%% Info in EHY_getmodeldata:
+error('working on it - function is not working correctly yet')
+
+%% Info in EHY_getMapModelData:
 % OPT.z            = ''; % z = positive up. Wanted vertical level = OPT.zRef + OPT.z
 % OPT.zRef         = ''; % choose: '' = model reference level, 'wl' = water level or 'bed' = from bottom level
 % OPT.zMethod      = ''; % interpolation method: '' = corresponding layer or 'linear' = 'interpolation between two layers'
@@ -13,7 +15,7 @@ varName0 = OPT.varName;
 %% determine wanted Z-coordinate
 if ismember(OPT0.zRef,{'wl','bed'})
     OPT.varName = OPT0.zRef;
-    Data_zRef = EHY_getmodeldata(inputFile,stat_name,modelType,OPT);
+    Data_zRef = EHY_getMapModelData(inputFile,OPT);
     refLevel = Data_zRef.val;
 else % model reference level
     refLevel = 0;
@@ -26,12 +28,12 @@ wantedZ = OPT0.z + refLevel;
 % can be done faster for z-layers once tetris-issue for FM is solved
 OPT.varName = 'Zcen_int'; % change wanted variabele to Zcen_int
 OPT.layer = 0;
-DataZ = EHY_getmodeldata(inputFile,stat_name,modelType,OPT);
+% DataZ = EHY_getMapModelData(inputFile,OPT);
 
 %% get wanted "varName"-data for all necessary layers
 % get data
 OPT.varName = varName0; % change wanted variabele back to original value
-DataAll = EHY_getmodeldata(inputFile,stat_name,modelType,OPT);
+DataAll = EHY_getMapModelData(inputFile,OPT);
 
 %% check
 dimTextInd = strfind(DataAll.dimensions,',');

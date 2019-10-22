@@ -1,7 +1,7 @@
 function values = ncread_blocks(inputFile,varName,start,count,dims)
 
 %% Identical to ncread however te speed up data is read in blocks (loop over variable 'time')
-% Note that the handling of wanted indices is done within this script, 
+% Note that the handling of wanted indices is also done within this script, 
 % it if therefore not the same as ncread without looping over blocks.
 
 no_dims     = length(dims);

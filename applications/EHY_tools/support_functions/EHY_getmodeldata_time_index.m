@@ -1,8 +1,14 @@
-function [Data,time_index,select, varargout]=EHY_getmodeldata_time_index(Data,OPT)
+function [Data,time_index,select,varargout] = EHY_getmodeldata_time_index(Data,OPT)
 
 varargout{1} = {};
 select       = [];
-if ~isempty(OPT.t0) && ~isempty(OPT.tend) 
+if ~isempty(OPT.t) && ~all(OPT.t==0)
+    select        = false(length(Data.times),1);
+    select(OPT.t) = true;
+    time_index    = OPT.t;
+    Data.times    = Data.times(time_index);
+    varargout{1}  = 1:length(time_index);
+elseif ~isempty(OPT.t0) && ~isempty(OPT.tend) 
     select=(Data.times>=OPT.t0) & (Data.times<=OPT.tend);
     time_index=find(select);
     varargout{1} = 1:length(time_index);

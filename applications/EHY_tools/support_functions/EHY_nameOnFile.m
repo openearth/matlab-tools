@@ -7,11 +7,11 @@ function [newName,varNameInput] = EHY_nameOnFile(fName,varName)
 % Useful to deal with the changing variable names in the FM output files,
 % like NetNode_x (old) which is the same as mesh2d_node_x (newer)
 %
-% Example1: newName = EHY_fmName('D:\runid_his.nc','sal')
+% Example1: newName = EHY_nameOnFile('D:\runid_his.nc','sal')
 %   returns newName = 'salinity';
-% Example2: newName = EHY_fmName('D:\runid_map.nc','waterlevel')
+% Example2: newName = EHY_nameOnFile('D:\runid_map.nc','waterlevel')
 %   returns newName = 'mesh2d_s1';
-% Example3: newName = EHY_fmName('D:\runid_his.nc','nmesh2d_layer')
+% Example3: newName = EHY_nameOnFile('D:\runid_his.nc','nmesh2d_layer')
 %   returns newName = laydim;
 %
 % E: Julien.Groenenboom@deltares.nl
@@ -29,7 +29,7 @@ if strcmpi(varName,'sal'                  ) varName = 'salinity'   ; end
 if strcmpi(varName,'tem'                  ) varName = 'temperature'; end
 if strcmpi(varName,'waterlevel'           ) varName = 'wl'         ; end
 if strcmpi(varName,'waterdepth'           ) varName = 'wd'         ; end
-if strcmpi(varName,'bedlevel'             ) varName = 'dps'        ; end
+if strcmpi(varName,'bed'                  ) varName = 'bedlevel'   ; end
 if strcmpi(varName,'suspendedload'        ) varName = 'suspload'   ; end
 if strcmpi(varName,'sedimentconcentration') varName = 'sedconc'    ; end
 
@@ -40,7 +40,6 @@ switch typeOfModelFileDetail
         % Get the name of varName as specified on the history file of a simulation
         if strcmpi(varName,'wl'         ) newName = 'waterlevel'   ; end
         if strcmpi(varName,'wd'         ) newName = 'waterdepth'   ; end
-        if strcmpi(varName,'dps'        ) newName = 'bedlevel'     ; end
         if strcmpi(varName,'uv'         ) newName = 'x_velocity'   ; end
         if strcmpi(varName,'Zcen'       ) newName = 'zcoordinate_c'; end
         if strcmpi(varName,'Zint'       ) newName = 'zcoordinate_w'; end
@@ -54,6 +53,7 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'temperature') newName = 'tem1'       ; end
         if strcmpi(varName,'uv'         ) newName = 'ucx'        ; end
         if strcmpi(varName,'wd'         ) newName = 'waterdepth' ; end
+        if strcmpi(varName,'bedlevel'   ) newName = 'FlowElem_bl'; end
         
     case 'trim' % d3d
         % Get the name of varName as specified on the map file of a simulation
@@ -118,7 +118,6 @@ if strcmp(modelType,'dfm') && strcmp(fName(end-2:end),'.nc')
     end
 end
 end
-
 
 function fmNames = getFmNames
 

@@ -31,7 +31,11 @@ Data.requestedStations=requestedStations;
 %% Determine station numbers of the requested stations
 stationNr(1:length(requestedStations),1)=NaN;
 for i_stat = 1:length(requestedStations)
+    if 1
+         nr_stat  = get_nr(strrep(Data.stationNames,' ',''),strrep(requestedStations{i_stat},' ',''));
+    else
     nr_stat  = get_nr(Data.stationNames,requestedStations{i_stat});
+    end
     if isempty(nr_stat)
         Data.exist_stat(i_stat,1) = false;
         disp(['Station : ' requestedStations{i_stat} ' does not exist']);
