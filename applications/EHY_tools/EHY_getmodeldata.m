@@ -266,13 +266,13 @@ switch modelType
         % open data file
         sds=qpfopen(inputFile);
         
-        if ~isempty(layersInd)
+        if exist('layersInd','var')
             no_layers = dims(layersInd).size;
             layerInd  = dims(layersInd).index;
         else
             no_layers = 1;
         end
-        
+          
         % location info: [m,n] and [x,y]
         if strcmp(OPT.varName,'uv')
             mn                        = waquaio(sds,[],'uv-mn');
@@ -281,14 +281,15 @@ switch modelType
             mn                        = waquaio(sds,[],'wl-mn');
             [x,y]                     = waquaio(sds,[],'wl-xy');
         end
-        Data.locationMN(i_stat,:) = mn(stat_ind,:);
-        Data.locationXY(i_stat,:) = [x(stat_ind) y(stat_ind)];
+        time_ind  = dims(timeInd).index;
         
-        time_ind  = dims(time_ind).index;
         % loop over stations
         for i_stat = 1:dims(stationsInd).sizeOut
             stat_ind  = dims(stationsInd).index(i_stat);
             indexOut = dims(stationsInd).indexOut(i_stat);
+
+            Data.locationMN(i_stat,:) = mn(stat_ind,:);
+            Data.locationXY(i_stat,:) = [x(stat_ind) y(stat_ind)];
             
             switch OPT.varName
                 case 'wl' % ref to wl
