@@ -93,6 +93,15 @@ if strcmp(OPT.varName,'noMatchFound')
     error(['Requested variable (' varNameInput ') not available in model output'])
 end
 
+%% temp fix for incorrect z-coordinates in dfm
+if strcmp(modelType,'dfm') && strcmp(OPT.varName,'zcoordinate_w')
+    Data = EHY_getmodeldata_zcen_int(inputFile,stat_name,modelType,OPT);
+    if nargout==1
+        varargout{1} = Data;
+    end
+    return
+end
+
 %% return output at specified reference level
 if ~isempty(OPT.z)
     Data = EHY_getmodeldata_z(inputFile,stat_name,modelType,OPT);
@@ -281,15 +290,15 @@ switch modelType
             mn                        = waquaio(sds,[],'wl-mn');
             [x,y]                     = waquaio(sds,[],'wl-xy');
         end
-        time_ind  = dims(timeInd).index;
         
+        time_ind  = dims(timeInd).index;
         % loop over stations
         for i_stat = 1:dims(stationsInd).sizeOut
-            stat_ind  = dims(stationsInd).index(i_stat);
+            stat_ind = dims(stationsInd).index(i_stat);
             indexOut = dims(stationsInd).indexOut(i_stat);
 
-            Data.locationMN(i_stat,:) = mn(stat_ind,:);
-            Data.locationXY(i_stat,:) = [x(stat_ind) y(stat_ind)];
+            Data.locationMN(indexOut,:) = mn(stat_ind,:);
+            Data.locationXY(indexOut,:) = [x(stat_ind) y(stat_ind)];
             
             switch OPT.varName
                 case 'wl' % ref to wl
@@ -445,3 +454,83 @@ if nargout==1
 end
 
 end
+
+function Data = EHY_getmodeldata_zcen_int(inputFile,stat_name,modelType,OPT)
+%% temp fix for incorrect z-coordinates in dfm
+disp('Temp fix for DFM: Reconstructing Zcen_int based on water level and z-coordinates of cell centers')
+
+Data_wl       = EHY_getmodeldata(inputFile,stat_name,modelType,OPT,'varName','wl');
+Data_zcen_cen = EHY_getmodeldata(inputFile,stat_name,modelType,OPT,'varName','zcen_cen');
+gridInfo      = EHY_getGridInfo(inputFile,{'layer_model','no_layers'});
+Data_bed      = EHY_getmodeldata(inputFile,stat_name,modelType,OPT,'varName','bed');
+
+Data = Data_zcen_cen;
+Data.val = NaN*Data.val;
+Data.OPT.varName = 'zcen_int';
+
+% short names
+no_lay = gridInfo.no_layers;
+wl     = Data_wl.val;
+cen    = Data_zcen_cen.val;
+% int is going to be Data.val
+int    = NaN(size(Data.val)+[0 0 1]);
+
+if strcmp(gridInfo.layer_model,'sigma-model')
+    int(:,:,no_lay+1) = wl;
+    for i_lay = no_lay:-1:1
+        int(:,:,i_lay) = int(:,:,i_lay + 1) -2*(int(:,:,i_lay + 1) - cen(:,:,i_lay));
+    end
+    
+elseif strcmp(gridInfo.layer_model,'z-model')
+    
+       % fix for DFM z-layer models: non-active layers have value of top layer
+       nS = size(cen,2);  %no_stations
+       nZ = size(cen,3); %no_z-layers
+       for iS=1:nS % stations
+            zloc_cen_stat = squeeze(cen(:,iS,:));
+            surface_layer = 0;
+            for iZ = 1:nZ %z-layers
+                zloc = squeeze(zloc_cen_stat(:,iZ));
+                dzloc = diff(zloc);
+                if sum(dzloc)==0 && surface_layer == 0
+                    logi(:,iS,iZ) = false(size(zloc));
+                elseif ~(sum(dzloc) == 0) && (surface_layer == 0)
+                    logi(:,iS,iZ) = false(size(zloc));
+                    surface_layer = 1;
+                    dzloc_last_active_layer = dzloc;
+                elseif ~(sum(dzloc - dzloc_last_active_layer) == 0)
+                    %the water surface changes z-layer over time
+                    logi(:,iS,iZ) = [false; (dzloc == dzloc_last_active_layer)];
+                    dzloc_last_active_layer = dzloc;
+                elseif sum(dzloc - dzloc_last_active_layer) == 0
+                    % the water surface does not reach the next z-layer, 
+                    %therefore for this and all the next layers: set to NaN
+                    for iZleft = iZ:nZ
+                        logi(:,iS,iZleft) = true(size(zloc));                       
+                    end
+                    break %stop looping over rest of layers
+                end
+            end
+        end
+       % set top layers to NaNs
+       cen(logi) = NaN;
+    
+       % reconstruct interfaces based on water level and centers
+       for iT = 1:size(cen,1) % time
+           for iS = 1:size(cen,2) % stations
+               topActiveLayerNr = min([find(isnan(squeeze(cen(iT,iS,:))),1)-1 no_lay]);
+               int(iT,iS,(topActiveLayerNr+1):(no_lay+1)) = NaN; % above active layer = NaN
+               int(iT,iS,(topActiveLayerNr+1)) = wl(iT,iS); % active layer interface = water level
+               for i_lay=topActiveLayerNr:-1:1 % layers below, reconstruct
+                   int(iT,iS,i_lay) = int(iT,iS,i_lay + 1) -2*(int(iT,iS,i_lay + 1) - cen(iT,iS,i_lay));
+               end
+               % In a z-layer model, the lowest interface can be deeper than the
+               % bed level (keepzlayeringatbed =1 )
+           end
+       end
+    
+end 
+    
+Data.val = int;
+
+end  
