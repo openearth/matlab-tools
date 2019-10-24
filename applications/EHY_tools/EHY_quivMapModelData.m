@@ -24,9 +24,10 @@ function varargout = EHY_quivMapModelData(gridInfo,vel_x,vel_y,varargin)
 % created by Julien Groenenboom, October 2019
 %
 %% Settings
-OPT.color    = 'k'; % color of the vectors
-OPT.scaling  = 1;   % scale factor: the velocity vectors are multiplied by this factor
-OPT.thinning = 1;   % thinning factor, should be integer (velocity vectors are spatially-thinned by this factor)
+OPT.color         = 'k';       % color of the vectors
+OPT.scaling       = 1;         % scale factor: the velocity vectors are multiplied by this factor
+OPT.thinningStyle = 'uniform'; % 'uniform' or 'distance' (in model coordinates)
+OPT.thinning      = 1;         % thinning factor, if thinningStyle is 'uniform', than this should be integer
 
 % if pairs were given as input OPT
 if ~isempty(varargin)
@@ -38,7 +39,10 @@ if ~isempty(varargin)
 end
 
 %% check input
-OPT.thinning = round(OPT.thinning);
+if strcmp(OPT.thinningStyle,'uniform')
+    OPT.thinning = round(OPT.thinning);
+end
+
 if ~isnumeric(OPT.scaling);  OPT.scaling  = str2num(OPT.scaling);  end
 if ~isnumeric(OPT.thinning); OPT.thinning = str2num(OPT.thinning); end
 
@@ -56,14 +60,12 @@ if ~all(ismember({'Xcen','Ycen'},fieldnames(gridInfo)))
     gridInfo.Ycen = nanmean(gridInfo.face_nodes_y,1);
 end
 
-
 if size(gridInfo.Xcen,2) == 1
     gridInfo.Xcen = gridInfo.Xcen';
 end
 if size(gridInfo.Ycen,2) == 1
     gridInfo.Ycen = gridInfo.Ycen';
 end
-
 
 if any(size(vel_x)~=size(vel_y))
     error('size(vel_x) should be equal to size(vel_y)')
@@ -73,23 +75,38 @@ elseif isfield(gridInfo,'Xcen') && any(size(gridInfo.Xcen)~=size(vel_x))
     error('size(gridInfo.Xcor) and size(vel_x) should be the same')
 end
 
-%% quiver
-
-% thinning
-if ndims(vel_x) == 2 && min(size(vel_x)) == 1
-    vel_x = vel_x(1:OPT.thinning:end);
-    vel_y = vel_y(1:OPT.thinning:end);
-    gridInfo.Xcen = gridInfo.Xcen(1:OPT.thinning:end);
-    gridInfo.Ycen = gridInfo.Ycen(1:OPT.thinning:end);
-elseif ndims(vel_x) == 2 && min(size(vel_x)) > 1
-    vel_x = vel_x(1:OPT.thinning:end,1:OPT.thinning:end);
-    vel_y = vel_y(1:OPT.thinning:end,1:OPT.thinning:end);
-    gridInfo.Xcen = gridInfo.Xcen(1:OPT.thinning:end,1:OPT.thinning:end);
-    gridInfo.Ycen = gridInfo.Ycen(1:OPT.thinning:end,1:OPT.thinning:end);
+%% thinning
+switch OPT.thinningStyle
+    case 'uniform'
+        if ndims(vel_x) == 2 && min(size(vel_x)) == 1
+            vel_x = vel_x(1:OPT.thinning:end);
+            vel_y = vel_y(1:OPT.thinning:end);
+            gridInfo.Xcen = gridInfo.Xcen(1:OPT.thinning:end);
+            gridInfo.Ycen = gridInfo.Ycen(1:OPT.thinning:end);
+        elseif ndims(vel_x) == 2 && min(size(vel_x)) > 1
+            vel_x = vel_x(1:OPT.thinning:end,1:OPT.thinning:end);
+            vel_y = vel_y(1:OPT.thinning:end,1:OPT.thinning:end);
+            gridInfo.Xcen = gridInfo.Xcen(1:OPT.thinning:end,1:OPT.thinning:end);
+            gridInfo.Ycen = gridInfo.Ycen(1:OPT.thinning:end,1:OPT.thinning:end);
+        end
+        
+    case 'distance'
+        % Make use of QuickPlot-functionality, since reducepoints_r2007a_7p4.mexw64 is in private folder,
+        % make a temporary copy of reducepoints_r2007a_7p4.mexw64
+        copyfile([fileparts(which('d3d_qp')) filesep 'private' filesep 'reducepoints_r2007a_7p4.mexw64'],pwd)
+        keep_index = calldll('reducepoints_r2007a_7p4',OPT.thinning,gridInfo.Xcen,gridInfo.Ycen);
+        
+        % delete copied file
+        delete([pwd filesep 'reducepoints_r2007a_7p4.mexw64'])
+        
+        % next step works for both structured and unstructured grids
+        vel_x = vel_x(keep_index);
+        vel_y = vel_y(keep_index);
+        gridInfo.Xcen = gridInfo.Xcen(keep_index);
+        gridInfo.Ycen = gridInfo.Ycen(keep_index);
 end
 
-
-% quiver
+%% quiver
 hQuiver = quiver(gridInfo.Xcen,gridInfo.Ycen,OPT.scaling*vel_x,OPT.scaling*vel_y,0);
 
 % color
