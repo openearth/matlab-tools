@@ -96,7 +96,7 @@ if strcmp(modelType,'delwaq')
 end
 
 %% check which dimensions/info is needed from user
-[~,dimsInd] = EHY_getDimsInfo(outputfile,OPT,modelType);
+[dims,dimsInd] = EHY_getDimsInfo(outputfile,OPT,modelType);
 
 %% get required input from user
 if ~isempty(dimsInd.time)
@@ -118,12 +118,22 @@ end
 if ~isempty(dimsInd.layers)
     gridInfo = EHY_getGridInfo(outputfile,{'no_layers'},'gridFile',gridFile);
     if gridInfo.no_layers>1
-        option = listdlg('PromptString',{'Want to load data from a specific layer?','(Default is, in case of 3D-model, all layers)'},'SelectionMode','single','ListString',...
-            {'Yes','No'},'ListSize',[300 50]);
-        if isempty(option)
-            disp('EHY_getMapModelData_interactive was stopped by user');return;
-        elseif option == 1
-            OPT.layer = cell2mat(inputdlg('Layer nr:','',1,{num2str(gridInfo.no_layers)}));
+        option = listdlg('PromptString',{'Want to load data from a specific layer or','at a certain reference level?'},'SelectionMode','single','ListString',...
+            {'Specific model layer','Certain reference level'},'ListSize',[300 50]);
+        if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return;
+        elseif option == 1 % Specific model layer
+            nol = num2str(gridInfo.no_layers);
+            OPT.layer = cell2mat(inputdlg(['Layer nr (1-' nol '):'],'',1,{nol}));
+        elseif option == 2 % Certain reference level
+            option = listdlg('PromptString',{'Referenced to:'},'SelectionMode','single','ListString',...
+                {'Model reference level','Water level','Bed level'},'ListSize',[300 50]);
+            if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return;
+            elseif option == 2 % Water level
+                OPT.zRef = 'wl';
+            elseif option == 3 % Bed level
+                OPT.zRef = 'bed';
+            end
+            OPT.z = cell2mat(inputdlg('height (m) from ref. level (pos. up)','',1,{'0'}));
         end
     end
 end

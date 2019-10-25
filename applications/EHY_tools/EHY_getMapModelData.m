@@ -62,12 +62,13 @@ OPT                 = setproperty(OPT,varargin);
 inputFile = strtrim(inputFile);
 if ~isempty(OPT.t0)        OPT.t0      = datenum(OPT.t0);      end
 if ~isempty(OPT.tend)      OPT.tend    = datenum(OPT.tend);    end
-if ~isempty(OPT.tint )     OPT.tint    = OPT.tint/1440      ;  end % from minutes to days
+if ~isempty(OPT.tint )     OPT.tint    = OPT.tint/1440;        end % from minutes to days
 if ~isnumeric(OPT.layer)   OPT.layer   = str2num(OPT.layer);   end
 if ~isnumeric(OPT.t)       OPT.m       = str2num(OPT.t);       end
 if ~isnumeric(OPT.m)       OPT.m       = str2num(OPT.m);       end
 if ~isnumeric(OPT.n)       OPT.n       = str2num(OPT.n);       end
 if ~isnumeric(OPT.k)       OPT.k       = str2num(OPT.k);       end
+if ~isnumeric(OPT.z )      OPT.z       = str2num(OPT.z);       end
 if ~isempty(OPT.sgft0)     OPT.sgft0   = datenum(OPT.sgft0);   end
 if ~isnumeric(OPT.sgfkmax) OPT.sgfkmax = str2num(OPT.sgfkmax); end
 
@@ -86,7 +87,7 @@ end
 
 %% return output at specified reference level
 if ~isempty(OPT.z)
-    Data = EHY_getMapModelData_z(inputFile,OPT);
+    Data = EHY_getMapModelData_z(inputFile,modelType,OPT);
     if nargout==1
         varargout{1} = Data;
     end
@@ -265,18 +266,29 @@ switch modelType
             error('to do')
         end
         
-        % swap m,n-indices (from vs_let) from [n,m] to [time,m,n(,layers)]
+        % get active/inactive mask
+        mask = vs_let(trim,'map-const',{1},'KCS',{n_ind,m_ind},'quiet');
+        mask(mask==0) = NaN;
+        mask = mask*0+1;
+
+        % mask data and swap m,n-indices (from vs_let) from [n,m] to [time,m,n(,layers)]
         fns = intersect(fieldnames(Data),{'val','vel_x','vel_y','vel_mag','val_x','val_max','val_mag'});
         for iFns = 1:length(fns)
             if isfield(Data,fns{iFns})
+                Data.(fns{iFns})(Data.(fns{iFns}) == -999) = NaN;
+                Data.(fns{iFns}) = Data.(fns{iFns}).*mask;
                 Data.(fns{iFns}) = permute(Data.(fns{iFns}),[1 3 2 4]);
             end
         end
         
-        % delete ghost cells
+        % delete ghost cells // aim: get same result as 'loaddata' from d3d_qp
         for iFns = 1:length(fns)
+            % delete
             if m_ind(1)==1; Data.(fns{iFns}) = Data.(fns{iFns})(:,2:end,:,:); end
             if n_ind(1)==1; Data.(fns{iFns}) = Data.(fns{iFns})(:,:,2:end,:); end
+            % set to NaN
+            if m_ind(end)==dims(mInd).size; Data.(fns{iFns})(:,end,:,:) = NaN; end
+            if n_ind(end)==dims(nInd).size; Data.(fns{iFns})(:,:,end,:) = NaN; end
         end
         
     case 'delwaq'
@@ -337,7 +349,7 @@ switch modelType
             dims(2).name = 'segments';
             
         end
-        Data.val(Data.val==-999) = NaN;
+        Data.val(Data.val == -999) = NaN;
 
     case 'simona'
         %% SIMONA (WAQUA/TRIWAQ)

@@ -159,11 +159,13 @@ if nargout > 2
         dims(dimsInd.faces).indexOut = 1:dims(dimsInd.faces).size;
     end
     if ~isempty(dimsInd.m)
-        OPT = EHY_getmodeldata_mn_index(OPT,inputFile);
-        dims(dimsInd.m).index   = OPT.m;
+        [OPT,msize,nsize] = EHY_getmodeldata_mn_index(OPT,inputFile);
+        dims(dimsInd.m).index    = OPT.m;
         dims(dimsInd.m).indexOut = 1:length(OPT.m);
-        dims(dimsInd.n).index   = OPT.n;
+        dims(dimsInd.m).size     = msize;
+        dims(dimsInd.n).index    = OPT.n;
         dims(dimsInd.n).indexOut = 1:length(OPT.n);
+        dims(dimsInd.n).size     = nsize;
     end
     
     %% Get sediment fractions information

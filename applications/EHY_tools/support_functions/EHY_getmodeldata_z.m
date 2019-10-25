@@ -32,7 +32,7 @@ DataAll = EHY_getmodeldata(inputFile,stat_name,modelType,OPT);
 
 %% check
 dimTextInd = strfind(DataAll.dimensions,',');
-if isempty(strfind(DataAll.dimensions(dimTextInd(end)+1:end-1),'lay'))
+if isempty(strfind(lower(DataAll.dimensions(dimTextInd(end)+1:end-1)),'lay'))
     error('Last dimension is not the layer-dimension and that is what this script uses. Please contact Julien.Groenenboom@deltares.nl')
 elseif isempty(strfind(DataAll.dimensions(2:dimTextInd(1)-1),'time'))
     error('First dimension is not the time-dimension and that is what this script uses. Please contact Julien.Groenenboom@deltares.nl')

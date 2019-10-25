@@ -74,11 +74,11 @@ OPT              = setproperty(OPT,varargin);
 
 %% modify input
 inputFile = strtrim(inputFile);
-if ~isempty  (OPT.t0   ) OPT.t0    = datenum(OPT.t0)    ; end
-if ~isempty  (OPT.tend ) OPT.tend  = datenum(OPT.tend)  ; end
-if ~isempty  (OPT.tint ) OPT.tint  = OPT.tint/1440      ; end % from minutes to days
-if ~isnumeric(OPT.layer) OPT.layer = str2num(OPT.layer) ; end
-if ~isnumeric(OPT.z )    OPT.z     = str2num(OPT.z)     ; end
+if ~isempty(OPT.t0)        OPT.t0      = datenum(OPT.t0);      end
+if ~isempty(OPT.tend)      OPT.tend    = datenum(OPT.tend);    end
+if ~isempty(OPT.tint )     OPT.tint    = OPT.tint/1440;        end % from minutes to days
+if ~isnumeric(OPT.layer)   OPT.layer   = str2num(OPT.layer);   end
+if ~isnumeric(OPT.z )      OPT.z       = str2num(OPT.z);       end
 
 %% Get model type
 if isempty(modelType);                                              modelType = EHY_getModelType(inputFile);
