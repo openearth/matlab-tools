@@ -71,6 +71,13 @@ if ischar(fileInp)
         modelType = 'delwaq';
     end
     
+    % CMEMS // HiRLAM (i.e. [lat,lon]- or[x,y]-data) -->> treat as dfm
+    if isempty(modelType) && strcmp(ext,'.nc')
+        if nc_isvar(fileInp,'longitude') ||  nc_isvar(fileInp,'x')
+            modelType = 'dfm';
+        end
+    end
+    
 elseif isstruct(fileInp)
     
     % Delft3D 4

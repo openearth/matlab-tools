@@ -30,53 +30,25 @@ if isempty(modelType)
 end
 
 % varName
-varNames = {'Water level','waterlevel';
-    'Water depth','waterdepth';
-    'x,y-velocity','uv';
-    'Salinity','salinity';
-    'Temperature','temperature'};
-if strcmp(modelType,'dfm');    varNames{end+1,1} = 'Other info from .nc-file';    end
-if strcmp(modelType,'delwaq'); varNames{end+1,1} = 'Other info from delwaq-file'; end
-option = listdlg('PromptString','What kind of time series do you want to load?','SelectionMode','single','ListString',...
-    varNames(:,1),'ListSize',[300 150]);
-if isempty(option); disp('EHY_getMapModelData_interactive was stopped by user');return; end
-OPT.varName = varNames{option,2};
+[variables,varAndDescr] = EHY_variablesOnFile(outputfile,modelType);
 
-% Option = Other info from .nc-file
-if ismember(modelType,{'dfm','delwaq'}) && option == length(varNames)
-    if strcmp(modelType,'dfm')
-        infonc           = ncinfo(outputfile);
-        variablesOnFile  = {infonc.Variables.Name};
-        variablesOnFileInclAttr = variablesOnFile;
-        cellFaceDataInd  = [];
-        for iV = 1:length(variablesOnFile)
-            % add attribute info - long_name
-            indAttr =  strmatch('long_name',{infonc.Variables(iV).Attributes.Name},'exact');
-            if ~isempty(indAttr)
-                variablesOnFileInclAttr{iV} = strcat(variablesOnFile{iV},' [', infonc.Variables(iV).Attributes(indAttr).Value,']');
-            end
-            
-            % keep variables that have cell face data
-            if numel(infonc.Variables(iV).Dimensions)>0 && any(ismember({infonc.Variables(iV).Dimensions.Name},{'nmesh2d_face','nFlowElem','mesh2d_nFaces'}))
-                cellFaceDataInd = [cellFaceDataInd; iV];
-            end
+if strcmp(modelType,'dfm')
+    % For now, ONLY keep variables that have cell face data
+    cellFaceDataInd = [];
+    for iV = 1:length(variables)
+        infonc = ncinfo(outputfile,variables{iV});
+        if numel(infonc.Dimensions)>0 && any(ismember({infonc.Dimensions.Name},{'nmesh2d_face','nFlowElem','mesh2d_nFaces','longitude','dim_x'}))
+            cellFaceDataInd = [cellFaceDataInd; iV];
         end
-        variablesOnFile         = variablesOnFile(cellFaceDataInd);
-        variablesOnFileInclAttr = variablesOnFileInclAttr(cellFaceDataInd);
-    elseif strcmp(modelType,'delwaq')
-        dw = delwaq('open',outputfile);
-        variablesOnFile = dw.SubsName;
-        variablesOnFileInclAttr = variablesOnFile;
     end
-    
-    if isempty(variablesOnFileInclAttr)
-        error('There is no cell face data available to plot in this file')
-    end
-    option = listdlg('PromptString','What kind of time series do you want to load?','SelectionMode','single','ListString',...
-        variablesOnFileInclAttr,'ListSize',[600 300]);
-    if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end
-    OPT.varName = variablesOnFile{option};
+    variables   = variables(cellFaceDataInd);
+    varAndDescr = varAndDescr(cellFaceDataInd);
 end
+
+option=listdlg('PromptString','What kind of data do you want to load?','SelectionMode','single','ListString',...
+    varAndDescr,'ListSize',[500 600]);
+if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end
+OPT.varName = variables{option};          
 
 [OPT.varName,varNameInput] = EHY_nameOnFile(outputfile,OPT.varName);
 if strcmp(OPT.varName,'noMatchFound')
@@ -96,7 +68,7 @@ if strcmp(modelType,'delwaq')
 end
 
 %% check which dimensions/info is needed from user
-[dims,dimsInd] = EHY_getDimsInfo(outputfile,OPT,modelType);
+[~,dimsInd] = EHY_getDimsInfo(outputfile,OPT,modelType);
 
 %% get required input from user
 if ~isempty(dimsInd.time)
@@ -118,13 +90,18 @@ end
 if ~isempty(dimsInd.layers)
     gridInfo = EHY_getGridInfo(outputfile,{'no_layers'},'gridFile',gridFile);
     if gridInfo.no_layers>1
-        option = listdlg('PromptString',{'Want to load data from a specific layer or','at a certain reference level?'},'SelectionMode','single','ListString',...
-            {'Specific model layer','Certain reference level'},'ListSize',[300 50]);
+        optionTxt = {'All 3D-data','From 1 specific model layer','At a certain reference level'};
+        typeOfModelFile = EHY_getTypeOfModelFile(outputfile);
+        if strcmp(typeOfModelFile,'nc_griddata'); optionTxt(end)=[]; end
+        option = listdlg('PromptString',{'Do you want to load:'},'SelectionMode','single','ListString',...
+            optionTxt,'ListSize',[300 50]);
         if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return;
-        elseif option == 1 % Specific model layer
+        elseif option == 1 % all 3D-data
+            OPT.layer = 0;
+        elseif option == 2 % Specific model layer
             nol = num2str(gridInfo.no_layers);
             OPT.layer = cell2mat(inputdlg(['Layer nr (1-' nol '):'],'',1,{nol}));
-        elseif option == 2 % Certain reference level
+        elseif option == 3 % Certain reference level
             option = listdlg('PromptString',{'Referenced to:'},'SelectionMode','single','ListString',...
                 {'Model reference level','Water level','Bed level'},'ListSize',[300 50]);
             if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return;

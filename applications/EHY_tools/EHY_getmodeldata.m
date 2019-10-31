@@ -440,6 +440,9 @@ fn = char(intersect(fieldnames(Data),{'val','vel_x','val_x'}));
 while ~isempty(fn) && ndims(Data.(fn))<numel(dimensionsComment)
     dimensionsComment(end) = [];
 end
+while ~isempty(fn) && ndims(Data.(fn))>numel(dimensionsComment)
+    dimensionsComment{end+1,1} = '-';
+end
 
 % add to Data-struct
 dimensionsComment = sprintf('%s,',dimensionsComment{:});

@@ -14,6 +14,9 @@ function factor=timeFactor(fromTunit,toTunit)
 tunits={'S','M','H','D','Y'};
 factors=[60 60 24 365.25];
 
+if length(fromTunit)>1; fromTunit = fromTunit(1); end
+if length(toTunit)>1;   toTunit   = toTunit(1);   end
+
 if ~ismember(lower(fromTunit),lower(tunits)) || ~ismember(lower(toTunit),lower(tunits))
    error(['fromTunit and toTunit have to be: ' strtrim(sprintf('%s ',tunits{1:end-1})) ' or ' tunits{end}]) 
 end

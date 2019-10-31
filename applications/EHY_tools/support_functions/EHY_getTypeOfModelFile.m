@@ -54,6 +54,12 @@ if isempty(typeOfModelFile)
     end
 end
 
+% nc_griddata (e.g. CMEMS or HiRLAM)
+if isempty(typeOfModelFile) && strcmp(ext,'.nc') && ...
+        or(nc_isvar(fileInp,'x'),nc_isvar(fileInp,'longitude'))
+    typeOfModelFile = 'nc_griddata';
+end
+
 %% typeOfModelFileDetail
 if nargout==2
     typeOfModelFileDetail='';

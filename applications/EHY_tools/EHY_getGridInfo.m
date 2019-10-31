@@ -65,8 +65,8 @@ if ~isnumeric(OPT.m); OPT.m=str2num(OPT.m); end
 if ~isnumeric(OPT.n); OPT.n=str2num(OPT.n); end
 
 %% determine type of model and type of inputFile
-modelType=EHY_getModelType(inputFile);
-[typeOfModelFile,typeOfModelFileDetail]=EHY_getTypeOfModelFile(inputFile);
+modelType = EHY_getModelType(inputFile);
+[typeOfModelFile,typeOfModelFileDetail] = EHY_getTypeOfModelFile(inputFile);
 [pathstr, name, ext] = fileparts(lower(inputFile));
 
 if EHY_isPartitioned(inputFile,modelType)
@@ -77,7 +77,7 @@ end
 
 if strcmp(modelType,'dfm') && strcmp(typeOfModelFile,'network')
     % if network, treat as outputfile (.nc)
-    typeOfModelFile='outputfile';
+    typeOfModelFile = 'outputfile';
 end
 
 %% check if output data is in several partitions and merge if necessary
@@ -485,6 +485,30 @@ switch modelType
                         end
                     end
                     
+                case 'nc_griddata'
+                    if any(ismember({'face_nodes_xy','XYcor'},wantedOutput))
+                        if nc_isvar(inputFile,'x')
+                            x = ncread(inputFile,'x')';
+                            y = ncread(inputFile,'y')';
+                        elseif nc_isvar(inputFile,'longitude')
+                            x = ncread(inputFile,'longitude');
+                            y = ncread(inputFile,'latitude');
+                        end
+                        if any(size(x)==1)
+                            xsize = numel(x); ysize = numel(y);
+                            y = repmat(reshape(y,numel(y),1),1,xsize);
+                            x = repmat(reshape(x,1,numel(x)),ysize,1);
+                        end
+                        E.Xcor = center2corner(x);
+                        E.Ycor = center2corner(y);
+                    end
+                    if ismember('no_layers',wantedOutput)
+                       if nc_isvar(inputFile,'depth')
+                           infonc = ncinfo(inputFile,'depth');
+                           E.no_layers = infonc.Size;
+                       end
+                    end
+                          
             end % typeOfModelFile
             
         end % OPT.mergePartitions

@@ -46,9 +46,9 @@ for iPI=1:max([1 length(plotInd)])
             disp(['Plotting top-views: ' num2str(iPI) '/' num2str(length(plotInd))])
         end
         if isfield(Data,'vel_mag')
-            EHY_plotMapModelData(gridInfo,Data.vel_mag(iT,:,:))
+            EHY_plotMapModelData(gridInfo,Data.vel_mag(iT,:,:,:))
         else
-            EHY_plotMapModelData(gridInfo,Data.val(iT,:,:))
+            EHY_plotMapModelData(gridInfo,Data.val(iT,:,:,:))
         end
         title(datestr(Data.times(plotInd(iPI)),'dd-mmm-yyyy HH:MM'))
     else

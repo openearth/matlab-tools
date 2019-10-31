@@ -4,23 +4,30 @@ modelType = EHY_getModelType(inputFile);
  
 switch modelType
     case 'dfm'
-        infonc       = ncinfo(inputFile);
-        ncVarInd     = strmatch('time',{infonc.Variables.Name},'exact');
-        ncAttrInd    = strmatch('units',{infonc.Variables(ncVarInd).Attributes.Name},'exact');
-        nr_times     = infonc.Variables(ncVarInd).Size;
+        infonc       = ncinfo(inputFile,'time');       
+        nr_times     = infonc.Size;
         if nr_times<3
             seconds      = ncread(inputFile, 'time');
         else % - to enhance speed, reconstruct time array from start time, numel and interval
             seconds_int  = ncread(inputFile, 'time', 1, 3);
             interval     = seconds_int(3)-seconds_int(2);
+            if ~strcmp(infonc.Datatype,'double')
+                seconds_int = double(seconds_int); 
+                interval    = double(interval); 
+            end
             seconds      = [seconds_int(1) seconds_int(2) + interval*[0:nr_times-2] ]';
             seconds(end) = ncread(inputFile, 'time', nr_times, 1); % overwrite, end time could be different when interval is specified
         end
-        days         = seconds / (24*60*60);
-        attri        = infonc.Variables(ncVarInd).Attributes(ncAttrInd).Value;
-        itdate       = attri(15:end);
-        datenums     = datenum(itdate, 'yyyy-mm-dd HH:MM:SS')+days;
-        varargout{1} = datenum(itdate,'yyyy-mm-dd  HH:MM:SS');
+        days          = seconds / (24*60*60);
+        
+        AttrInd       = strmatch('units',{infonc.Attributes.Name},'exact');
+        [tUnit,since] = strtok(infonc.Attributes(AttrInd).Value,' ');
+        if ~strcmp(tUnit,'seconds') % apparently, time was NOT in seconds (e.g. CMEMS-data) - correct for this
+           days = days * timeFactor(tUnit,'s');
+        end
+        itdate       = datenum(strtrim(strrep(since,'since','')),'yyyy-mm-dd HH:MM:SS');
+        datenums     = itdate + days;
+        varargout{1} = itdate;
         
     case 'd3d'
         if ~isempty(strfind(inputFile,'mdf'))

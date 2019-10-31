@@ -33,6 +33,8 @@ if ~isempty(varargin)
     end
 end
 
+if isempty(OPT.linestyle); OPT.linestyle='none'; end
+
 %% check input
 if ~all([exist('gridInfo','var') exist('zData','var')])
     % no input, start interactive script

@@ -112,7 +112,7 @@ end
 if nargout > 1
     dimsInd.stations = find(ismember({dims(:).name},{'stations','cross_section','general_structures'}));
     dimsInd.time = find(ismember({dims(:).name},'time'));
-    dimsInd.layers = find(ismember({dims(:).name},{'layers','laydim','nmesh2d_layer','mesh2d_nLayers'}));
+    dimsInd.layers = find(ismember({dims(:).name},{'layers','laydim','nmesh2d_layer','mesh2d_nLayers','depth'})); % depth is needed for cmems
     dimsInd.faces = find(ismember({dims(:).name},{'faces','nmesh2d_face','mesh2d_nFaces','nFlowElem','nNetElem'}));
     dimsInd.m = find(ismember({dims(:).name},'m')); % structured grid
     dimsInd.n = find(ismember({dims(:).name},'n'));
