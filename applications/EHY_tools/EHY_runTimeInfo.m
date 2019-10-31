@@ -64,7 +64,7 @@ try % if simulation has finished
             fileSize = ftell(fid);
             charperline = 88;
             out = {};
-            while length(out)<100 && fileSize/charperline>2 %minimum of read lines at end of file is 100, add safety for short files
+            while length(out)<200 && fileSize/charperline>2 %minimum of read lines at end of file is 200, add safety for short files
                 %length(out)
                 HeaderLines = round(fileSize/charperline); % skip big part of out.txt/*.dia.
                 fseek(fid, 0, 'bof'); % set position indicator to begin of file
