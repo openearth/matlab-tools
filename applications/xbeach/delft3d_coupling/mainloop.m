@@ -4,6 +4,7 @@
 % v1.5  Johnson     Nov-18
 % v1.5.1 Johnson    Jan-19
 % v1.5.2 Johnson    May-13
+% v1.6 Johnson      Oct-04
 
 %% prepare environment
 clear all;
@@ -19,64 +20,54 @@ warning off;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Model setups
-home_dir        = pwd                                                           ;
-d3d_mdf         = 'barrier'                                                     ;
-restart_name    = 'tri-rst.barrier'                                             ;
-path_d3d_in     = '/work/cjoh296/coupled_delft3d_xbeach.wd/models/delft3d/setup' ;
-path_XB_in      = '/work/cjoh296/coupled_delft3d_xbeach.wd/models/xbeach'  ;
-path_out        = '/work/cjoh296/coupled_delft3d_xbeach.wd/testing/output_';
-path_out        = [path_out, datestr(datetime('today'), 'YYYYmmdd')];
+home_dir        = pwd;
+d3d_mdf         = 'barrier';
+restart_name    = 'tri-rst.barrier';
+path_d3d_in     = '/work/cjoh296/coupled_delft3d_xbeach.wd/models/delft3d/setup';
+path_XB_in      = '/work/cjoh296/coupled_delft3d_xbeach.wd/models/xbeach';
+path_out        = '/work/cjoh296/coupled_delft3d_xbeach.wd/testing/output';
 
-% output
-if exist(path_out, 'dir')
-    path_out_bak = [path_out, '_backup'];
-    movefile(path_out, path_out_bak);
-    mkdir(path_out);
-else
-    mkdir(path_out);
-end
-
-delft3d_CRS     = 'WGS 84'                                                      ;
-xbeach_CRS      = 'WGS 84 / UTM zone 15N'                                       ;
+delft3d_CRS     = 'WGS 84';
+xbeach_CRS      = 'WGS 84 / UTM zone 15N';
 
 
 % Coupling setup options
-morpho_update   = 1 ; % turns off morpho in delft3d and xb
-change_restart  = 1 ; % keep this option on. if off, then the restart file is copied
-HS_XB_threshold = 0 ; % this is wave height in meters. when delft3d results exceed this value switch to xb
+morpho_update   = 1; % turns off morpho in delft3d and xb
+change_restart  = 1; % keep this option on. if off, then the restart file is copied
+HS_XB_threshold = 0; % this is wave height in meters. when delft3d results exceed this value switch to xb
+swan_locs       = 3; % number of swan output locations used as XBeach boundary conditions
 
 
 % Time management
-Itdate_jd         = datenum(2008, 7, 25)                ;  % julian day for Itdate
-simulation_dur    = 1*24*60*60 + 21*60*60               ;  % [s] simulation duration
-dt_coupling       = 30*60                               ;  % [s] coupling xbeach/delft3d timestep
-timesteps         = simulation_dur / dt_coupling        ;  % number of delft3d runs
-dt_times          = ones(timesteps, 1) * dt_coupling    ;  % [s]   so 30 minutes = 30 x 60 = 1800 s
-%dt_times(1)       = 60*60*6                             ;  % [s]   spin-up time for Delft3D. inputs/BCs need to reflect this
-%mor_start         = dt_times(1)                         ;  % [s]   D3D spinup
+Itdate_jd         = datenum(2008, 7, 25);             % julian day for Itdate
+simulation_dur    = 1*24*60*60 + 21*60*60;            % [s] simulation duration
+dt_coupling       = 10*60;                            % [s] coupling xbeach/delft3d timestep
+timesteps         = simulation_dur / dt_coupling;     % number of delft3d runs
+dt_times          = ones(timesteps, 1) * dt_coupling; % [s]   so 30 minutes = 30 x 60 = 1800 s
+%dt_times(1)       = 60*60*6;                         % [s]   spin-up time for Delft3D. inputs/BCs need to reflect this
+%mor_start         = dt_times(1);                     % [s]   D3D spinup
 
 %timesteps         = 243 ;                                  % ad-hoc to optimize run time based on maximum bed level change -- CJ
 %dt_times          = 60*[ones(1,24)*30 ones(1,36)*10 ones(1,144)*5 ones(1,30)*30]; % ad-hoc as above -- CJ
 mor_start         = 0                                   ;
-spinup_xb         = 1200                                 ;  % [s]  model schematization dependent. using an ad-hoc number for now
-
+spinup_xb         = 0                                 ;  % [s]  model schematization dependent. using an ad-hoc number for now
 time_start        = '20080831.150000'                   ;  % yyyymmdd
 time_start_offset = 54180*60                            ;  % [s] start of delft3d from Itdate
 
+
 % profiling
 profile_table_fn = [path_out, '/comp_times.mat'];
-varTypes = {'int16', 'double', 'double', 'double'};
-varNames =  {'dt', 'matlab', 'XB', 'D3D'};
-comp_times        = zeros(timesteps, 4);
-T_matlab          = 0;
-T_XB              = 0;
-T_D3D             = 0;
+varTypes         = {'int16', 'double', 'double', 'double'};
+varNames         =  {'dt', 'matlab', 'XB', 'D3D'};
+comp_times       = zeros(timesteps, 4);
+T_matlab         = 0;
+T_XB             = 0;
+T_D3D            = 0;
 
-% use QueenBee II
-use_qb          = 1;
-
-% use SuperMIC
-use_smic        = 0;
+% HPC setup
+xb_exec         = 'xbeach';
+use_qb          = 0; % use QueenBee II
+use_smic        = 1; % use SuperMIC
 
 % Calculation H6
 useh6           = 0;
@@ -84,7 +75,6 @@ user            = 'nederhof';
 pass            = 'pllcmn2018!';
 type            = 'normal-e5';
 plink           = 'p:\11200397-lsu-xbeach-delft3d4\04_conceptual\03_running_scripts\plink.exe';
-
 
 
 
@@ -148,8 +138,7 @@ for dt = 1:timesteps
     % Print information on coupling time step and simulation datetime
     if dt == 1
         totalduration   = sum(dt_times)/60/60/24                                ; % in days
-        dstr = sprintf('Total simulation time (days): %11.2f\n', totalduration) ;
-		disp(dstr)                                                              ;
+        fprintf(1, 'Total simulation time (days): %11.2f\n', totalduration)     ;
         dt_time     = dt_times(dt)                                              ;
         time_now    = 0                                                         ;
         time_going  = dt_time                                                   ;
@@ -161,12 +150,8 @@ for dt = 1:timesteps
 		jd_now      = Itdate_jd + (time_now + time_start_offset)/60/60/24       ;
     end
 
-	dstr = sprintf('Working on: %21u of %u', [dt, timesteps])                   ;
-	disp(dstr)                                                                  ;
-
-	dstr = sprintf('Simulation datetime: %20s\n', datestr(jd_now))              ;
-	disp(dstr)                                                                  ;
-
+	fprintf(1, 'Working on: %21u of %u\n', [dt, timesteps]);
+	fprintf(1, 'Simulation datetime: %20s\n', datestr(jd_now));
 
 
 
@@ -214,6 +199,11 @@ for dt = 1:timesteps
     text_to_search  = 'TTSTOP'                                                      ;
     text_to_replace_stop = [' ', num2str((time_going + time_start_offset)/60), ' '] ;
     X = strrep(X, text_to_search, text_to_replace_stop)                             ;
+    
+    % Replace coupling information
+    text_to_search = 'TTCOUPLE';
+    text_to_replace_couple = [' ', num2str(dt_coupling/60), ' '];
+    X = strrep(X, text_to_search, text_to_replace_couple);
 
 
     % Safe new MDF
@@ -224,14 +214,10 @@ for dt = 1:timesteps
 
 
 	% Log changes
-	dstr = sprintf('%s.mdf was modified for timestep: %04u', d3d_mdf, dt)           ;
-	disp(dstr)                                                                      ;
-	
-	dstr = sprintf('TTSTART was replaced with: %17s', text_to_replace_start)        ;
-	disp(dstr)                                                                      ;
-
-	dstr = sprintf('TTSTOP was replaced with: %18s\n', text_to_replace_stop)        ;
-	disp(dstr)                                                                      ;
+	fprintf(1, '%s.mdf was modified for timestep: %04u\n', d3d_mdf, dt);
+	fprintf(1, 'TTSTART was replaced with: %17s\n', text_to_replace_start);
+	fprintf(1, 'TTSTOP was replaced with: %18s\n', text_to_replace_stop);
+    fprintf(1, 'TTCOUPLE was replace with: %16s\n', text_to_replace_couple);
     
     % log matlab time
     T_matlab = T_matlab + toc;
@@ -266,7 +252,7 @@ for dt = 1:timesteps
 
 		% I think there is a bug here. Each new SWAN timestep starts with a wave field smaller than
 		% the last output of the previous timestep -- CJ Thu 23 May 2019 05:30:30 PM CDT
-        tmp5        = qpread(Fil,'significant wave height','data',0,[1]);
+        tmp5        = qpread(Fil, 'significant wave height', 'data', 0, [1]);
 
         if mean(tmp5.Val) > 0.005
             S = dir(['hot_1_', datestr(datetime_now, format_st)]) ;
@@ -283,8 +269,7 @@ for dt = 1:timesteps
         %end
 
 		% log processing output
-		dstr = ['Processing sediment transport for time step: ', num2str(dt)] ;
-		disp(dstr)                                                           ;
+		fprintf(1, 'Processing sediment transport for time step: %i\n', dt);
 
         % Get Delft3D grid
         cd(path_d3d_old)
@@ -514,12 +499,10 @@ for dt = 1:timesteps
             wldep('write',filename,DP)
 		
 			% log processing output
-			dstr = sprintf('Time elapsed for sediment transport processing (min): %.2f\n\n', toc/60);
-			disp(dstr)                                                                      ;
+			fprintf(1, 'Time elapsed for sediment transport processing (min): %.2f\n\n', toc/60);
         end
         
-        % log matlab time
-        T_matlab = T_matlab + toc;
+
     end
 
 
@@ -552,17 +535,17 @@ for dt = 1:timesteps
 
         disp(['Running Delft3D for time step: ', num2str(dt)]) ;
 
-		% This block runs the mpi job and moves on if successful
-		tic                                                              ;
+		% This block runs the mpi job and moves on if successful. The value
+		% of status is the return value of the new process and is zero if
+		% successful.
+        T_matlab = T_matlab + toc; % log matlab exec time
+		tic; % start D3D timer
 		status = system('mpirun -np 24 d_hydro "config_d_hydro.xml" & wave barrier.mdw 1');
-		if status == 0;
+		if status == 0
 			exec_time = round(toc / 60)                                  ;
 			
-			dstr = sprintf('Delft3D run has taken (min): %3u', exec_time) ;
-			disp(dstr)                                               ;
-			
-			dstr = sprintf('\nDelft3D run %04u has finished.\n', dt) ;
-			disp(dstr)                                               ;
+			fprintf(1, 'Delft3D run has taken (min): %3u\n', exec_time) ;			
+			fprintf(1, 'Delft3D run %04u has finished.\n', dt) ;
 		else
 			exit
 		end
@@ -578,16 +561,14 @@ for dt = 1:timesteps
         disp(['Running Delft3D for time step: ', num2str(dt)]) ;
 
 		% This block runs the mpi job and moves on if successful
-		tic                                                              ;
+        T_matlab = T_matlab + toc; % log matlab exec tim
+		tic; % start matlab clock
 		status = system('mpirun -np 24 d_hydro "config_d_hydro.xml" & wave barrier.mdw 1');
-		if status == 0;
+		if status == 0
 			exec_time = round(toc / 60)                                  ;
 			
-			dstr = sprintf('Delft3D run has taken (min): %3u', exec_time) ;
-			disp(dstr)                                               ;
-			
-			dstr = sprintf('\nDelft3D run %04u has finished.\n', dt) ;
-			disp(dstr)                                               ;
+			fprintf(1, 'Delft3D run has taken (min): %3u\n', exec_time);			
+			fprintf(1, 'Delft3D run %04u has finished.\n', dt);
 		else
 			exit
 		end
@@ -601,15 +582,15 @@ for dt = 1:timesteps
 	%% 2. Part 2: XBeach %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+    tic; % start matlab timer
     d3d_nc      = [path_d3d_new, '/trih-', d3d_mdf , '.dat'];
     Fil         = qpfopen(d3d_nc);
-    tmp4        = qpread(Fil,'water level', 'data', 0, [1:4]);
+    tmp4        = qpread(Fil,'water level', 'data', 0, 1:4);
+    tmp_times   = tmp4.Time;
     tmp5        = qpread(Fil,'significant wave height','data', 0, [1]);
     Hs_offshore = nanmean(tmp5.Val(:,1));
-    SE    = round(nanmean(tmp4.Val(:,1))*1000)/1000;
-    SW    = round(nanmean(tmp4.Val(:,2))*1000)/1000;
-    NW    = round(nanmean(tmp4.Val(:,3))*1000)/1000;
-    NE    = round(nanmean(tmp4.Val(:,4))*1000)/1000;
+
+    
 %    offshore    = round(nanmean(tmp4.Val(:,1))*1000)/1000;
 %    backshore   = round(nanmean(tmp4.Val(:,2))*1000)/1000;
 
@@ -623,22 +604,35 @@ for dt = 1:timesteps
 
 		tide_file = [path_XB_new, '/tide.txt'];
 		fid       = fopen(tide_file, 'wb');
-		fprintf(fid, '%f %f %f %f %f\n', 0, SE, SW, NW, NE);
-		fprintf(fid, '%f %f %f %f %f\n', spinup_xb + dt_time, SE, SW, NW, NE);
+        
+        for t=1:length(tmp_times)           
+            % duration in seconds
+            duration = round((tmp_times(t) - tmp_times(1)) * 24 * 60 * 60);
+            
+            % output
+            SE    = round(nanmean(tmp4.Val(1,1))*1000)/1000;
+            SW    = round(nanmean(tmp4.Val(1,2))*1000)/1000;
+            NW    = round(nanmean(tmp4.Val(1,3))*1000)/1000;
+            NE    = round(nanmean(tmp4.Val(1,4))*1000)/1000;
+            
+            % write		
+            fprintf(fid, '%-5i %.3f %.3f %.3f %.3f\n', duration, SE, SW, NW, NE);
+        end
 		fclose(fid);
 
         % B. Copy D3D waves (only possible when known, otherwise use 'old'
         needed_sp2  = [path_d3d_new, '/barriern2t000001.sp2'] ;
 
 		% C. convert sp2 to XBeach's CRS
-		sp2_delft3d = xb_swan_read(needed_sp2)           ;
+		sp2_delft3d = xb_swan_read(needed_sp2);
 		sp2_xbeach = xb_swan_coords(sp2_delft3d, delft3d_CRS, 'geo', xbeach_CRS, 'xy');
 
 		% D. write sp2 files 
         cd(path_XB_new);
 		sp2_fnames = 'waves_';
-		sp2_xbeach = xb_swan_split(sp2_xbeach, 'location');
-		sp2_files = xb_swan_write(sp2_fnames, sp2_xbeach);
+		sp2_split  = xb_swan_split(sp2_xbeach, 'location');
+		sp2_xbeach = sp2_xbeach(1:swan_locs);
+		sp2_files  = xb_swan_write(sp2_fnames, sp2_xbeach);
 
 		% E. write loclist
 		fid = fopen('loclist.txt', 'wt');
@@ -654,63 +648,28 @@ for dt = 1:timesteps
 		fclose(fid);
 
         % F. Change bathymetry based on previous runs
-        if dt > 1
-            try
-                cd(path_XB_old)
-                xb_x        = nc_varget('xboutput.nc', 'globalx');
-                xb_y        = nc_varget('xboutput.nc', 'globaly');
-                xb_z        = nc_varget('xboutput.nc', 'zb');
-                xb_z        = squeeze(xb_z(end,:,:));
-                cd(path_XB_new);
-                save('bed.dep', 'xb_z' ,'-ascii')
-            catch
-            end
-        end
+%        if dt > 1
+%            try
+%                cd(path_XB_old)
+%                xb_x        = nc_varget('xboutput.nc', 'globalx');
+%                xb_y        = nc_varget('xboutput.nc', 'globaly');
+%                xb_z        = nc_varget('xboutput.nc', 'zb');
+%                xb_z        = squeeze(xb_z(end,:,:));
+%                cd(path_XB_new);
+%                save('bed.dep', 'xb_z' ,'-ascii')
+%            catch
+%            end
+%        end
 
-		% G. conditionally set up hotstart
+		% G. conditionally copy new hotstart files
 		if dt > 1
 			copyfile([path_XB_old, '/hotstart_*.dat']);
-			
-			% turn on hotstart
-			cd(path_XB_new)                                                               ;
-			fid = fopen(['params.txt'], 'rt')                                             ;
-			X   = fread(fid)                                                              ;
-			fclose(fid)                                                                   ;
-			X = char(X.')                                                                 ;
-
-			% Replace hotstart
-			text_to_search         = 'HOTSTART'                                          ;
-			text_to_replace_spinup = '1'
-			X                      = strrep(X, text_to_search, text_to_replace_spinup)   ;
-
-			fid2 = fopen(['params.txt'],'wt')                                            ;
-			fwrite(fid2,X)                                                               ;
-			fclose (fid2)                                                                ;
-		
-		else 
-			% turn off hotstart
-			cd(path_XB_new)                                                               ;
-			fid = fopen(['params.txt'], 'rt')                                             ;
-			X   = fread(fid)                                                              ;
-			fclose(fid)                                                                   ;
-			X = char(X.')                                                                 ;
-
-			% Replace hotstart
-			text_to_search         = 'HOTSTART'                                          ;
-			text_to_replace_spinup = '0'
-			X                      = strrep(X, text_to_search, text_to_replace_spinup)   ;
-
-			fid2 = fopen(['params.txt'],'wt')                                            ;
-			fwrite(fid2,X)                                                               ;
-			fclose (fid2)                                                                ;
-		
 		end 
 
 
 
 		% log some information about XBeach step
-		dstr = sprintf('Entering incremental XBeach directory:\n\t%s\n', path_XB_new) ;
-		disp(dstr)                                                                    ;
+		fprintf(1, 'Entering incremental XBeach directory:\n\t%s\n', path_XB_new) ;
 
 		% H. Change times in params
         cd(path_XB_new)                                                               ;
@@ -736,14 +695,9 @@ for dt = 1:timesteps
         fclose('all')                                                                ;
 
 		% Log changes
-		dstr = sprintf('params.txt was modified for timestep: %04u', dt)             ;
-		disp(dstr)                                                                   ;
-
-		dstr = sprintf('SPINUP was replaced with: %18s', text_to_replace_spinup)     ;
-		disp(dstr)                                                                   ;
-
-		dstr = sprintf('TTSTOP was replaced with: %18s\n', text_to_replace_stop)     ;
-		disp(dstr)                                                                   ;
+		fprintf(1, 'params.txt was modified for timestep: %04u\n', dt);
+		fprintf(1, 'SPINUP was replaced with: %18s\n', text_to_replace_spinup);
+		fprintf(1, 'TTSTOP was replaced with: %18s\n', text_to_replace_stop);
 
 
 
@@ -791,16 +745,14 @@ for dt = 1:timesteps
 			fwrite(fid4, X2)                                       ;
 			fclose(fid4)                                           ;
 			
-			tic                                                              ;
-			status = system('mpirun -np 240 xbeach5577_hs')  ;
-			if status == 0;
+            T_matlab = T_matlab + toc; % cumulate matlab exec duration
+			tic; % start XB exec timer
+			status = system(['mpirun -np 240 ' xb_exec])  ;
+			if status == 0
 				exec_time = round(toc / 60)                                  ;
 				
-				dstr = sprintf('XBeach run has taken (min): %3u', exec_time) ;
-				disp(dstr)                                               ;
-				
-				dstr = sprintf('\nXBeach run %04u has finished.\n', dt)  ;
-				disp(dstr)                                               ;
+				fprintf(1, 'XBeach run has taken (min): %3u\n', exec_time);
+				fprintf(1, 'XBeach run %04u has finished.\n', dt);
 			else
 				exit
 			end
@@ -811,17 +763,15 @@ for dt = 1:timesteps
 		% Note: The incremental run number is replaced in the pbs script and submitted to the queue
 		% D3D_RUN_NUM is the placeholder dt in the pbs script.
 		elseif use_smic == 1
-
-			tic                                                              ;
-			status = system('mpirun -np 240 xbeach5577_hs')  ;
-			if status == 0;
+            
+            T_matlab = T_matlab + toc; % cumulate matlab exec duration
+			tic; % start XB exec timer
+			status = system(['mpirun -np 240 ' xb_exec]);
+			if status == 0
 				exec_time = round(toc / 60)                                  ;
 				
-				dstr = sprintf('XBeach run has taken (min): %3u', exec_time) ;
-				disp(dstr)                                               ;
-				
-				dstr = sprintf('\nXBeach run %04u has finished.\n', dt)  ;
-				disp(dstr)                                               ;
+				fprintf(1, 'XBeach run has taken (min): %3u\n', exec_time);
+				fprintf(1, 'XBeach run %04u has finished.\n', dt);
 			else
 				exit
 			end
@@ -837,8 +787,8 @@ for dt = 1:timesteps
     
     % write compt times
     comp_times(dt, 1) = dt;
-    comp_times(dt, 2) = T_matlab;
-    comp_times(dt, 3) = T_XB;
-    comp_times(dt, 4) = T_D3D;
+    comp_times(dt, 2) = T_matlab; T_matlab = 0;
+    comp_times(dt, 3) = T_XB; T_XB = 0;
+    comp_times(dt, 4) = T_D3D; T_D3D = 0;
     save(profile_table_fn, 'comp_times');
 end
