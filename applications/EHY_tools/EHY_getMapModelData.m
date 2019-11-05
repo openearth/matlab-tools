@@ -56,7 +56,7 @@ OPT.z            = ''; % z = positive up. Wanted vertical level = OPT.zRef + OPT
 OPT.zRef         = ''; % choose: '' = model reference level, 'wl' = water level or 'bed' = from bottom level
 OPT.zMethod      = ''; % interpolation method: '' = corresponding layer or 'linear' = 'interpolation between two layers'
 
-OPT                 = setproperty(OPT,varargin);
+OPT              = setproperty(OPT,varargin);
 
 %% modify input
 inputFile = strtrim(inputFile);
@@ -111,7 +111,7 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile)
             disp(['Reading and merging map model data from partitions: ' num2str(iF) '/' num2str(length(ncFiles))])
         end
         ncFile = ncFiles{iF};
-        DataPart = EHY_getMapModelData(ncFile,varargin{:},'mergePartitions',0);
+        DataPart = EHY_getMapModelData(ncFile,OPT,'mergePartitions',0);
         if iF==1
             Data = DataPart;
         else
