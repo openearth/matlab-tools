@@ -128,7 +128,13 @@ try
         offset=0;
         Data=repmat(NaN,Sz);
         for i=1:length(T.Field)
-            Data(offset+(1:T.Field(i).Size(1)),:)=tekal('read',T,i);
+            Data_block = tekal('read',T,i);
+            if size(Data,2)-size(Data_block,2) == 1 && iscell(Data_block{2}) % FM pli-name
+                Data = Data(:,1:end-1);
+                Data(offset+(1:T.Field(i).Size(1)),:)=Data_block{1};
+            else
+                Data(offset+(1:T.Field(i).Size(1)),:)=Data_block;
+            end
             offset=offset+T.Field(i).Size(1)+1;
         end
         Data( (Data(:,1)==999.999) & (Data(:,2)==999.999) ,:)=NaN;
