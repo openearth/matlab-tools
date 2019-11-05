@@ -2,7 +2,9 @@ function [zcen_int,zcen_cen] = EHY_getMapModelData_construct_zcoordinates(inputF
 
 gridInfo = EHY_getGridInfo(inputFile,{'no_layers','layer_model'},'mergePartitions',0);
 no_lay   = gridInfo.no_layers;
-DataWL   = EHY_getMapModelData(inputFile,OPT,'varName','waterlevel','disp',0);
+OPT.varName = 'waterlevel';
+OPT.disp = 0;
+DataWL   = EHY_getMapModelData(inputFile,OPT);
 wl       = DataWL.val;
 
 %% from [m,n] to cells (like FM)
