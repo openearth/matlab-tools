@@ -1,4 +1,4 @@
-function [zcen_int,zcen_cen] = EHY_getMapModelData_construct_zcoordinates(inputFile,modelType,OPT)
+function [zcen_int,zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates(inputFile,modelType,OPT)
 
 gridInfo = EHY_getGridInfo(inputFile,{'no_layers','layer_model'},'mergePartitions',0);
 no_lay   = gridInfo.no_layers;
@@ -123,6 +123,8 @@ end
 if strcmp(modelType,'d3d')
     cen = reshape(cen,[modelSize no_lay]);
     int = reshape(int,[modelSize no_lay+1]);
+    wl  = reshape(wl , modelsize          );
+    bl  = reshape(bl , modelsize          );
 end
 
 zcen_cen = cen;

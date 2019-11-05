@@ -115,7 +115,9 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
                 if any(strcmp(fn{iFN},{'face_nodes_x','face_nodes_y'}))
                     gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
                 elseif strcmp(fn{iFN},{'face_nodes'})
-                    gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) length(gridInfo.Xcor)+gridInfoPart.(fn{iFN})];
+                    varName = EHY_nameOnFile(inputFile,'mesh2d_node_x');
+                    infonc = ncinfo(inputFile,varName);
+                    gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) infonc.Size+gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'Xcor','Xcen','Ycor','Ycen','Zcor','Zcen'}))
                     gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}); gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'no_NetNode','no_NetElem'}))
