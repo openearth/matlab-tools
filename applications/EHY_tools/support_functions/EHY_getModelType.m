@@ -46,16 +46,14 @@ if ischar(fileInp)
     end
     
     % Delft3D-FM or Sobek3 netcdf outputfile
-    if isempty(modelType)
-        if ismember(ext,{'.nc'})
-            if ~isempty(strfind(fileInp,'_his.nc')) || ~isempty(strfind(fileInp,'_map.nc')) || ~isempty(strfind(fileInp,'_net.nc')) || ...
-                    ~isempty(strfind(fileInp,'_fou.nc')) || ~isempty(strfind(fileInp,'_waqgeom.nc')) 
-                modelType = 'dfm';
-            elseif ~isempty(strfind(name,'observations'))
-                modelType = 'sobek3_new';
-            elseif ~isempty(strfind(name,'water level (op)-'))
-                modelType = 'sobek3';
-            end
+    if ismember(ext,{'.nc'})
+        if ~isempty(strfind(fileInp,'_his.nc')) || ~isempty(strfind(fileInp,'_map.nc')) || ~isempty(strfind(fileInp,'_net.nc')) || ...
+                ~isempty(strfind(fileInp,'_fou.nc')) || ~isempty(strfind(fileInp,'_waqgeom.nc'))
+            modelType = 'dfm';
+        elseif ~isempty(strfind(name,'observations'))
+            modelType = 'sobek3_new';
+        elseif ~isempty(strfind(name,'water level (op)-'))
+            modelType = 'sobek3';
         end
     end
     
@@ -73,7 +71,7 @@ if ischar(fileInp)
     
     % CMEMS // HiRLAM (i.e. [lat,lon]- or[x,y]-data) -->> treat as dfm
     if isempty(modelType) && strcmp(ext,'.nc')
-        if nc_isvar(fileInp,'longitude') ||  nc_isvar(fileInp,'x')
+        if nc_isvar(fileInp,'longitude') ||  nc_isvar(fileInp,'x') ||  nc_isvar(fileInp,'X')
             modelType = 'dfm';
         end
     end
