@@ -519,23 +519,27 @@ end
         indInitialvertical = find(not(cellfun('isempty',indInitialvertical)))+1;
         indPli(ismember(indPli,indInitialvertical))=[];
         [~,pliFiles]=strtok({ext{indPli}},'=');
-        pliFiles=strtrim(strrep(pliFiles,'=',''));
-        pliFiles=cellstr(EHY_getFullWinPath(pliFiles,fileparts(inputFile)));
-        PLI=[];
-        for iF=1:length(pliFiles)
-            pol=io_polygon('read',pliFiles{iF});
-            pol(pol==-999)=NaN;
-            xyn.x(iF)=nanmean(pol(:,1));xyn.y(iF)=nanmean(pol(:,2));
-            [~,xyn.name{iF}]=fileparts(pliFiles{iF});
-            PLI=[PLI;NaN NaN; pol(:,1:2)];
+        if isempty(pliFiles)
+            output = [];
+        else
+            pliFiles=unique(strtrim(strrep(pliFiles,'=','')));
+            pliFiles=cellstr(EHY_getFullWinPath(pliFiles,fileparts(inputFile)));
+            PLI=[];
+            for iF=1:length(pliFiles)
+                pol=io_polygon('read',pliFiles{iF});
+                pol(pol==-999)=NaN;
+                xyn.x(iF)=nanmean(pol(:,1));xyn.y(iF)=nanmean(pol(:,2));
+                [~,xyn.name{iF}]=fileparts(pliFiles{iF});
+                PLI=[PLI;NaN NaN; pol(:,1:2)];
+            end
+            [PLI(:,1),PLI(:,2),OPT]=EHY_convert_coorCheck(PLI(:,1),PLI(:,2),OPT);
+            [xyn.x,xyn.y,OPT]=EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
+            if OPT.saveOutputFile
+                ldb2kml(PLI(:,1:2),strrep(outputFile,'.kml','_lines.kml'),OPT.lineColor,OPT.lineWidth);
+                KMLPlaceMark(xyn.y,xyn.x,strrep(outputFile,'.kml','_names.kml'),'name',xyn.name,'icon',OPT.iconFile);
+            end
+            output=PLI;
         end
-        [PLI(:,1),PLI(:,2),OPT]=EHY_convert_coorCheck(PLI(:,1),PLI(:,2),OPT);
-        [xyn.x,xyn.y,OPT]=EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
-        if OPT.saveOutputFile
-            ldb2kml(PLI(:,1:2),strrep(outputFile,'.kml','_lines.kml'),OPT.lineColor,OPT.lineWidth);
-            KMLPlaceMark(xyn.y,xyn.x,strrep(outputFile,'.kml','_names.kml'),'name',xyn.name,'icon',OPT.iconFile);
-        end
-        output=PLI;
     end
 % grd2kml
     function [output,OPT]=EHY_convert_grd2kml(inputFile,outputFile,OPT)
@@ -1090,21 +1094,22 @@ end
     end
 % xyz2kml
     function [output,OPT]=EHY_convert_xyz2kml(inputFile,outputFile,OPT)
-        xyz=dlmread(inputFile);
-        [lon,lat,OPT]=EHY_convert_coorCheck(xyz(:,1),xyz(:,2),OPT);
+        xyz = dlmread(inputFile);
+        [lon,lat,OPT] = EHY_convert_coorCheck(xyz(:,1),xyz(:,2),OPT);
         if OPT.saveOutputFile
-            [~,name]=fileparts(outputFile);
-            tempFile=[tempdir name '.kml'];
-            skipIndex=find(max(lat) > 90 | min(lat) < -90 | max(lon) > 180 | min(lon) < -180);
+            [~,name] = fileparts(outputFile);
+            tempFile = [tempdir name '.kml'];
+            skipIndex = find(max(lat) > 90 | min(lat) < -90 | max(lon) > 180 | min(lon) < -180);
             if ~isempty(skipIndex)
                 disp('Some points outside [lat,lon]-range of [-90:90,-180:180]. These points will be skipped')
-                lat(skipIndex)=[];lon(skipIndex)=[];
+                lat(skipIndex) = [];lon(skipIndex) = [];
             end
-            KMLPlaceMark(lat,lon,tempFile,'icon',OPT.iconFile);
+            KMLscatter(lat,lon,xyz(:,3),'fileName',tempFile)
+%             KMLPlaceMark(lat,lon,tempFile,'icon',OPT.iconFile);
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
-        output=[lon lat];
+        output = [lon lat];
     end
 % xyz2xdrykml
     function [output,OPT]=EHY_convert_xyz2xdrykml(inputFile,outputFile,OPT)
