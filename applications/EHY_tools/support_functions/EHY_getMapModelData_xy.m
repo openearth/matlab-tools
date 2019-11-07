@@ -1,5 +1,5 @@
 function Data = EHY_getMapModelData_xy(inputFile,pliFile, varargin)
-% 
+% TODO check arbcross (too many points now)
 % Function: Create data needed for plotting of cross section information
 modelType = EHY_getModelType(inputFile);
 
