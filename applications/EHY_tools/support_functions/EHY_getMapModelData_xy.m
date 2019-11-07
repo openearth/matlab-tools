@@ -1,5 +1,4 @@
 function Data = EHY_getMapModelData_xy(inputFile,pliFile, varargin)
-
 % 
 % Function: Create data needed for plotting of cross section information
 modelType = EHY_getModelType(inputFile);
@@ -15,10 +14,10 @@ OPT                 = setproperty(OPT,varargin);
 thalweg  = readldb(pliFile);
 
 %% Horizontal (x,y) coordinates 
-DataXY    = EHY_getGridInfo(inputFile,'XYcen');
+DataXY    = EHY_getGridInfo(inputFile,{'XYcor', 'XYcen','face_nodes'},'mergePartitions',OPT.mergePartitions);
 
 %% get "z-data"
-[DataZ.val_int,DataZ.val_cen,DataZ.wl,DataZ.wd] = EHY_getMapModelData_construct_zcoordinates(inputFile,modelType,OPT);
+[DataZ.val_int,DataZ.val_cen,DataZ.wl,DataZ.bed] = EHY_getMapModelData_construct_zcoordinates(inputFile,modelType,OPT);
 no_layers = size(DataZ.val_cen,3);
 
 %% get wanted "varName"-data for all points
@@ -35,13 +34,20 @@ end
 %% from [m,n] to cells (like FM)
 if strcmp(modelType,'d3d')
     modelSize = size(DataAll.val);
-    DataAll.val  = reshape(DataAll.val,[modelSize(1) prod(modelSize(2:3)) modelSize(4)]);
-    DataZ.val    = reshape(DataZ.val  ,[modelSize(1) prod(modelSize(2:3)) modelSize(4)+1]);  
+    DataAll.val   = reshape(DataAll.val   ,[modelSize(1) prod(modelSize(2:3)) modelSize(4)]);
+    DataZ.val_cen = reshape(DataZ.val_cen ,[modelSize(1) prod(modelSize(2:3)) modelSize(4)  ]);  
+    DataZ.val_int = reshape(DataZ.val_int ,[modelSize(1) prod(modelSize(2:3)) modelSize(4)+1]);
+    DataZ.wl      = reshape(DataZ.wl      ,[modelSize(1) prod(modelSize(2:3))               ]);
+    DataZ.bed     = reshape(DataZ.bed     ,[modelSize(1) prod(modelSize(2:3))               ]);  
 end
 
 %% Calculate values at pli locations
-%  Start with Arccrossing 
-[Data.xcor,Data.ycor] = arbcross(DataXY.Xcen,DataXY.Ycen,thalweg.x,thalweg.y);
+%  Start with Arccrossing
+if strcmp(modelType,'d3d')
+    [Data.xcor,Data.ycor] = arbcross(DataXY.Xcor,DataXY.Ycor,thalweg.x,thalweg.y);
+elseif strcmp(modelType,'dfm')
+    [Data.xcor,Data.ycor] = arbcross(DataXY.face_nodes',DataXY.Xcor,DataXY.Ycor,thalweg.x,thalweg.y);
+end
 
 Data.xcor = Data.xcor(~isnan(Data.xcor));
 Data.ycor = Data.ycor(~isnan(Data.ycor));
@@ -51,15 +57,17 @@ Data.xcen = (Data.xcor(1:end-1) + Data.xcor(2:end)) ./ 2;
 Data.ycen = (Data.ycor(1:end-1) + Data.ycor(2:end)) ./ 2;
 Data.scen = (Data.scor(1:end-1) + Data.scor(2:end)) ./ 2;
 
-%  Determine vertival levels at scen locations and corresponding values
+%  Determine vertical levels at scen locations and corresponding values
 for k = 1: no_layers
     Data.zcen (:,k) = griddata(DataXY.Xcen,DataXY.Ycen,DataZ.val_cen(1,:,k),Data.xcen,Data.ycen,'nearest');
     Data.value(:,k) = griddata(DataXY.Xcen,DataXY.Ycen,DataAll.val  (1,:,k),Data.xcen,Data.ycen,'nearest');  
 end
 
-Data.wl = griddata(DataXY.Xcen,DataXY.Ycen,DataZ.wl,Data.xcen,Data.ycen,'nearest');
-Data.wd = griddata(DataXY.Xcen,DataXY.Ycen,DataZ.wd,Data.xcen,Data.ycen,'nearest');
+%  Determine waterlevel and bed level along a cross section
+Data.wl  = griddata(DataXY.Xcen,DataXY.Ycen,DataZ.wl ,Data.xcen,Data.ycen,'nearest');
+Data.bed = griddata(DataXY.Xcen,DataXY.Ycen,DataZ.bed,Data.xcen,Data.ycen,'nearest');
 
+%% Fill dum array for plotting with pcolor. Maybe this should not be done here, restrict this function to just getting the data
 for i = 1:size(Data.xcen,1)
     Data.value_dum((2*i)-1,:,:)      = Data.value(i,:);
         if i ~= size(Data.xcen,1)
@@ -74,8 +82,8 @@ for i = 1:size(Data.xcen,1)
     Data.scor_dum( 2*i   )           = Data.scor(i+1);
     Data.zcor_intface_dum((2*i)-1,:) = Data.zcen(i,:);
     Data.zcor_intface_dum( 2*i   ,:) = Data.zcen(i,:);
-    Data.depcen_dum((2*i)-1)         = Data.wd(i);
-    Data.depcen_dum( 2*i   )         = Data.wd(i);
+    Data.depcen_dum((2*i)-1)         = Data.bed(i);
+    Data.depcen_dum( 2*i   )         = Data.bed(i);
     Data.surcen_dum((2*i)-1)         = Data.wl(i);
     Data.surcen_dum( 2*i   )         = Data.wl(i);
 end
