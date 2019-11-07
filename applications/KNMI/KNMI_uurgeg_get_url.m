@@ -75,7 +75,7 @@ function varargout = KNMI_uurgeg_get_url(varargin)
    OPT.directory_raw   = [basepath,filesep,'raw'      ,filesep]; % zip files
    OPT.directory_nc    = [basepath,filesep,'processed',filesep];
    OPT.url             = '"datafiles/'; % unique string to recognize datafiles in html page
-   OPT.preurl          = 'http://www.knmi.nl/klimatologie/uurgegevens/'; % prefix to relative link in OPT.url
+   OPT.preurl          = 'http://projects.knmi.nl/klimatologie/uurgegevens/'; % prefix to relative link in OPT.url
 
    OPT = setproperty(OPT,varargin{:});
 
