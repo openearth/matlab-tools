@@ -89,8 +89,10 @@ if strcmp(OPT.type,'xyz')
     while ~isempty(tLine)
         if ischar(tLine)
             p                   = p+1;
-            id                  = strfind(tLine,'=');
-            CRS.PROFNR(p,1)     = str2double(tLine(id+1:end));
+            id1                 = strfind(tLine,'=');
+            id2                 = strfind(tLine,'*');
+            CRS.PROFNR(p,1)     = str2double(tLine(id+1:id2-1));
+            CRS.PROFNRmeta{p}   = cellstr(tLine(id2+1:end));
             rc                  = textscan(fgetl(fid),'%f%f',1);
             xyz                 = textscan(fid,'%f%f%f',rc{1});
             CRS.data(p).x       = xyz{1};
