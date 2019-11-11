@@ -78,11 +78,11 @@ end
 % overwrite defaults with user arguments
 OPT = setproperty(OPT, varargin);
 %% code
-CRS.PROFNR = [];
-CRS.data   = [];
+CRS.PROFNR      = [];
+CRS.PROFNRmeta  = [];
+CRS.data        = [];
 
 fid = fopen(OPT.fname,'r');
-
 if strcmp(OPT.type,'xyz')
     p = 0;
     tLine = fgetl(fid);
@@ -91,8 +91,8 @@ if strcmp(OPT.type,'xyz')
             p                   = p+1;
             id1                 = strfind(tLine,'=');
             id2                 = strfind(tLine,'*');
-            CRS.PROFNR(p,1)     = str2double(tLine(id+1:id2-1));
-            CRS.PROFNRmeta{p}   = cellstr(tLine(id2+1:end));
+            CRS.PROFNR(p,1)     = str2double(tLine(id1+1:id2-1));
+            CRS.PROFNRmeta{p,1} = tLine(id2+1:end);
             rc                  = textscan(fgetl(fid),'%f%f',1);
             xyz                 = textscan(fid,'%f%f%f',rc{1});
             CRS.data(p).x       = xyz{1};
