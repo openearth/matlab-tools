@@ -19,13 +19,27 @@ function modelType = EHY_getModelType(fileInp)
 %%
 if ischar(fileInp)
     
-    [pathstr, name, ext] = fileparts(lower(fileInp));
+    [~, name, ext] = fileparts(lower(fileInp));
     modelType='';
     
     % Delft3D-FM
     if isempty(modelType)
         if ismember(ext,{'.mdu','.ext','.bc','.pli','.xyn','.tim'})
             modelType = 'dfm';
+        end
+    end
+    
+    % Delft3D-FM or Sobek3 netcdf outputfile
+    if isempty(modelType)
+        if ismember(ext,{'.nc'})
+            if ~isempty(strfind(fileInp,'_his.nc')) || ~isempty(strfind(fileInp,'_map.nc')) || ~isempty(strfind(fileInp,'_net.nc')) || ...
+                    ~isempty(strfind(fileInp,'_fou.nc')) || ~isempty(strfind(fileInp,'_waqgeom.nc'))
+                modelType = 'dfm';
+            elseif ~isempty(strfind(name,'observations'))
+                modelType = 'sobek3_new';
+            elseif ~isempty(strfind(name,'water level (op)-'))
+                modelType = 'sobek3';
+            end
         end
     end
     
@@ -45,25 +59,6 @@ if ischar(fileInp)
         end
     end
     
-    % Delft3D-FM or Sobek3 netcdf outputfile
-    if ismember(ext,{'.nc'})
-        if ~isempty(strfind(fileInp,'_his.nc')) || ~isempty(strfind(fileInp,'_map.nc')) || ~isempty(strfind(fileInp,'_net.nc')) || ...
-                ~isempty(strfind(fileInp,'_fou.nc')) || ~isempty(strfind(fileInp,'_waqgeom.nc'))
-            modelType = 'dfm';
-        elseif ~isempty(strfind(name,'observations'))
-            modelType = 'sobek3_new';
-        elseif ~isempty(strfind(name,'water level (op)-'))
-            modelType = 'sobek3';
-        end
-    end
-    
-    % Implic
-    if isempty(modelType)
-        if isdir(fileInp)
-            modelType = 'implic';
-        end
-    end
-    
     % delwaq
     if ismember(ext,{'.map','.his','.lga','.cco','.sgf'})
         modelType = 'delwaq';
@@ -73,6 +68,13 @@ if ischar(fileInp)
     if isempty(modelType) && strcmp(ext,'.nc')
         if nc_isvar(fileInp,'longitude') ||  nc_isvar(fileInp,'x') ||  nc_isvar(fileInp,'X')
             modelType = 'dfm';
+        end
+    end
+    
+     % Implic
+    if isempty(modelType)
+        if isdir(fileInp)
+            modelType = 'implic';
         end
     end
     

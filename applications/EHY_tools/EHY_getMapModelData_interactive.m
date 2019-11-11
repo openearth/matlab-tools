@@ -37,7 +37,7 @@ if strcmp(modelType,'dfm')
     cellFaceDataInd = [];
     for iV = 1:length(variables)
         infonc = ncinfo(outputfile,variables{iV});
-        if numel(infonc.Dimensions)>0 && any(ismember({infonc.Dimensions.Name},{'nmesh2d_face','nFlowElem','mesh2d_nFaces','longitude','dim_x'}))
+        if numel(infonc.Dimensions)>0 && any(ismember({infonc.Dimensions.Name},{'nmesh2d_face','nFlowElem','mesh2d_nFaces','longitude','dim_x','x'}))
             cellFaceDataInd = [cellFaceDataInd; iV];
         end
     end

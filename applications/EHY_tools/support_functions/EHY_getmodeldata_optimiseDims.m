@@ -1,4 +1,4 @@
-function [dims,start,count] = EHY_getmodeldata_optimiseDims(dims,dimsInd)
+function [dims,start,count] = EHY_getmodeldata_optimiseDims(dims)
 
 start = ones(1,numel(dims));
 count = [dims.size];
@@ -29,4 +29,5 @@ if numel(dims)==1
     dims(end).nameOnFile = '-';
     dims(end).index = 1;
     dims(end).indexOut = 1;
+    dims(end).sizeOut = 1;
 end

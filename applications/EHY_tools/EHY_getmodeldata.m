@@ -136,7 +136,7 @@ switch modelType
         end
         
         % initialise start+count and optimise if possible
-        [dims,start,count] = EHY_getmodeldata_optimiseDims(dims,dimsInd);
+        [dims,start,count] = EHY_getmodeldata_optimiseDims(dims);
         
         % The handling of all the wanted indices (like times, stations and layers) is done within ncread_blocks
         if ~strcmp(OPT.varName,{'x_velocity'})

@@ -1,4 +1,4 @@
-function hSurf=EHY_plot_satellite_map(varargin)
+function varargout = EHY_plot_satellite_map(varargin)
 %% EHY_plot_satellite_map
 %
 % This functions plots a esri world image in your current figure
@@ -126,6 +126,9 @@ hSurf = surface(lon,lat,zeros(length(lat),length(lon)),'cdata',IMG,'facecolor','
     'edgecolor','none','cLimInclude','off','ZData',repmat(-10^9,length(lat),length(lon)));
 set(hSurf,'FaceAlpha', OPT.FaceAlpha, 'AlphaDataMapping', 'none');
 
+if nargout == 1
+   varargout{1} = hSurf;
+end
 end
 
 function [x,y] = latLonToMeters(lat, lon )

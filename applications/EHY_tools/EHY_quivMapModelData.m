@@ -55,9 +55,15 @@ end
 
 % make sure we have cell center coordinates
 if ~all(ismember({'Xcen','Ycen'},fieldnames(gridInfo)))
-    disp('Taking nanmean of face_nodes_x/y to get the (approximated) cell center coordinates')
-    gridInfo.Xcen = nanmean(gridInfo.face_nodes_x,1);
-    gridInfo.Ycen = nanmean(gridInfo.face_nodes_y,1);
+    if isfield(gridInfo,'face_nodes_x')
+        disp('Taking nanmean of face_nodes_x/y to get the (approximated) cell center coordinates')
+        gridInfo.Xcen = nanmean(gridInfo.face_nodes_x,1);
+        gridInfo.Ycen = nanmean(gridInfo.face_nodes_y,1);
+    elseif isfield(gridInfo,'Xcor')
+        disp('Using corner2center to get cell center coordinates')
+        gridInfo.Xcen = corner2center(gridInfo.Xcor);
+        gridInfo.Ycen = corner2center(gridInfo.Ycor);
+    end
 end
 
 if size(gridInfo.Xcen,2) == 1

@@ -123,8 +123,8 @@ end
 if strcmp(modelType,'d3d')
     cen = reshape(cen,[modelSize no_lay]);
     int = reshape(int,[modelSize no_lay+1]);
-    wl  = reshape(wl , modelsize          );
-    bl  = reshape(bl , modelsize          );
+    wl  = reshape(wl , modelSize);
+    bl  = reshape(bl , [1 modelSize(2:3)]);
 end
 
 zcen_cen = cen;

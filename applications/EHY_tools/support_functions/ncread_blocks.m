@@ -14,6 +14,7 @@ if no_dims == 1
 else
     values = NaN(dims(order).sizeOut);
 end
+
 % check if output is char or double 
 infonc = ncinfo(inputFile,varName);
 if strcmp(infonc.Datatype,'char')
@@ -34,8 +35,14 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count s
     
     % assuming timeInd==length(dims)
     if timeInd ~= length(dims)
-        error(['timeInd is not last variable, ncread_blocks does not work correctly in that case' char(10) ...
-            'Please contact Julien Groenenboom or Theo van der Kaaij'])
+        if ~(strcmp(dims(end).name,'-') && timeInd == length(dims)-1)
+            error(['timeInd is not last variable, ncread_blocks does not work correctly in that case' char(10) ...
+                'Please contact Julien.Groenenboom@deltares.nl'])
+        else
+            % correction for 1D-data (was added by EHY_getmodeldata_optimiseDims for easier handling)
+            no_dims = no_dims - 1; 
+            values = values';
+        end
     end
        
     % cycle over blocks

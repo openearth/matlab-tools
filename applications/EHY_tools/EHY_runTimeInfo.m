@@ -64,13 +64,18 @@ try % if simulation has finished
             fileSize = ftell(fid);
             charperline = 88;
             out = {};
-            while length(out)<200 && fileSize/charperline>2 %minimum of read lines at end of file is 200, add safety for short files
-                %length(out)
-                HeaderLines = round(fileSize/charperline); % skip big part of out.txt/*.dia.
-                fseek(fid, 0, 'bof'); % set position indicator to begin of file
-                out = textscan(fid,'%s','delimiter','\n','HeaderLines',HeaderLines,'CommentStyle','** INFO   :  Solver converged in');
+            fseek(fid, 0, 'bof'); % set position indicator to begin of file
+            if fileSize < 10*10^6 % small file
+                out = textscan(fid,'%s','delimiter','\n','CommentStyle','** INFO   :  Solver converged in');
                 out = out{1,1};
-                charperline = charperline+1;
+            else % big file
+                while length(out)<200 && fileSize/charperline>2 %minimum of read lines at end of file is 200, add safety for short files
+                    %length(out)
+                    HeaderLines = round(fileSize/charperline); % skip big part of out.txt/*.dia.
+                    out = textscan(fid,'%s','delimiter','\n','HeaderLines',HeaderLines,'CommentStyle','** INFO   :  Solver converged in');
+                    out = out{1,1};
+                    charperline = charperline+1;
+                end
             end
             fclose(fid);
 

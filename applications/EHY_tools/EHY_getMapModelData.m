@@ -95,7 +95,7 @@ if ~isempty(OPT.z)
 end
 
 %% Get the available and requested dimensions
-[dims,dimsInd,Data] = EHY_getDimsInfo(inputFile,OPT,modelType);
+[dims,~,Data] = EHY_getDimsInfo(inputFile,OPT,modelType);
 
 %% check if output data is in several partitions and merge if necessary
 if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile)
@@ -124,8 +124,9 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile)
             end
         end
     end
-    Data.OPT.mergePartitions=1;
+    Data.OPT.mergePartitions = 1;
     modelType = 'partitionedFmRun';
+    dims = EHY_getmodeldata_optimiseDims(dims);
 end
 
 %% Get the computational data
@@ -133,8 +134,8 @@ switch modelType
     case 'dfm'
         %%  Delft3D-Flexible Mesh
         % initialise start+count and optimise if possible
-        [dims,start,count] = EHY_getmodeldata_optimiseDims(dims,dimsInd);
-        order = length(dims):-1:1;
+        [dims,start,count] = EHY_getmodeldata_optimiseDims(dims);
+        order = numel(dims):-1:1;
         
         if ~isempty(strfind(OPT.varName,'ucx')) || ~isempty(strfind(OPT.varName,'ucy')) 
             value_x   =  ncread(inputFile,strrep(OPT.varName,'ucy','ucx'),start,count);
@@ -318,7 +319,7 @@ switch modelType
             elseif strcmp(typeOfModelFileDetail, 'nc')
                 no_segm_perlayer = dims(facesInd).size;
                 
-                if ~isempty(layersInd)
+                if exist('layersInd','var') && ~isempty(layersInd)
                     layer_ind = dims(layersInd).index;
                 else
                     layer_ind = 1;
