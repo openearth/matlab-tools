@@ -1,23 +1,26 @@
-function Data = EHY_getMapModelData_xy(inputFile,pliFile, varargin)
+function Data = EHY_getMapModelData_xy(inputFile,varargin)
 % TODO check arbcross (too many points now)
 % Function: Create data needed for plotting of cross section information
 modelType = EHY_getModelType(inputFile);
 
 %% Initialise:
-OPT.varName         = 'salinity';
-OPT.t0              = datenum(2011,12,05);
-OPT.tend            = datenum(2011,12,05);
-OPT.mergePartitions = 1;
-OPT                 = setproperty(OPT,varargin);
+OPT                 = varargin{1};
 
 %% Read the pli file
-thalweg  = readldb(pliFile);
+thalweg  = readldb(OPT.pliFile);
+OPT = rmfield(OPT,'pliFile');
 
-%% Horizontal (x,y) coordinates 
-DataXY    = EHY_getGridInfo(inputFile,{'XYcor', 'XYcen','face_nodes'},'mergePartitions',OPT.mergePartitions);
+%% Horizontal (x,y) coordinates (TODO: edge nodes for delft3d-flow, than it is no longer needed to seperate between d3d and dfm) 
+DataXY      = EHY_getGridInfo(inputFile,{'XYcor', 'XYcen','edge_nodes'},'mergePartitions',OPT.mergePartitions);
+if strcmp(modelType,'dfm')
+    coor_edge.x = DataXY.Xcor(DataXY.edge_nodes);
+    coor_edge.y = DataXY.Ycor(DataXY.edge_nodes);
+    no_edges    = size(coor_edge.x,2);
+end
 
 %% get "z-data"
 [DataZ.val_int,DataZ.val_cen,DataZ.wl,DataZ.bed] = EHY_getMapModelData_construct_zcoordinates(inputFile,modelType,OPT);
+DataZ.wl  = DataZ.wl'; % same order of dimensions as other quantities (DataZ.val_cen, DataAll.val etc)
 no_layers = size(DataZ.val_cen,3);
 
 %% get wanted "varName"-data for all points
@@ -26,9 +29,9 @@ DataAll = EHY_getMapModelData(inputFile,OPT);
 %% check
 dimTextInd = strfind(DataAll.dimensions,',');
 if isempty(strfind(lower(DataAll.dimensions(dimTextInd(end)+1:end-1)),'lay'))
-    error('Last dimension is not the layer-dimension and that is what this script useData. Please contact Julien.Groenenboom@deltareData.nl')
+    error('Last dimension is not the layer-dimension and that is what this script useData. Please contact Julien.Groenenboom@deltares.nl')
 elseif isempty(strfind(DataAll.dimensions(2:dimTextInd(1)-1),'time'))
-    error('First dimension is not the time-dimension and that is what this script useData. Please contact Julien.Groenenboom@deltareData.nl')
+    error('First dimension is not the time-dimension and that is what this script useData. Please contact Julien.Groenenboom@deltares.nl')
 end
 
 %% from [m,n] to cells (like FM)
@@ -46,45 +49,64 @@ end
 if strcmp(modelType,'d3d')
     [Data.xcor,Data.ycor] = arbcross(DataXY.Xcor,DataXY.Ycor,thalweg.x,thalweg.y);
 elseif strcmp(modelType,'dfm')
-    [Data.xcor,Data.ycor] = arbcross(DataXY.face_nodes',DataXY.Xcor,DataXY.Ycor,thalweg.x,thalweg.y);
+%   original (did not work properly anymore): [Data.xcor,Data.ycor] = arbcross(DataXY.face_nodes,DataXY.Xcor,DataXY.Ycor,thalweg.x,thalweg.y);
+    Data.xcor = [];
+    Data.ycor = [];
+    for i_edge = 1: no_edges
+        intersection = InterX([coor_edge.x(:,i_edge),coor_edge.y(:,i_edge)]',[thalweg.x,thalweg.y]');
+        if ~isempty(intersection)
+            Data.xcor(end + 1) = intersection(1);
+            Data.ycor(end + 1) = intersection(2);
+        end
+    end
 end
 
-Data.xcor = Data.xcor(~isnan(Data.xcor));
-Data.ycor = Data.ycor(~isnan(Data.ycor));
-Data.scor = distance(Data.xcor,Data.ycor);
+[Data.xcor,index] = sort(Data.xcor);
+Data.ycor         = Data.ycor(index);
+Data.scor         = distance(Data.xcor,Data.ycor);
 
 Data.xcen = (Data.xcor(1:end-1) + Data.xcor(2:end)) ./ 2;
 Data.ycen = (Data.ycor(1:end-1) + Data.ycor(2:end)) ./ 2;
 Data.scen = (Data.scor(1:end-1) + Data.scor(2:end)) ./ 2;
 
+Data.bed  = griddata(DataXY.Xcen,DataXY.Ycen,DataZ.bed,Data.xcen,Data.ycen,'nearest');
+
 %  Determine vertical levels at scen locations and corresponding values
-for k = 1: no_layers
-    Data.zcen (:,k) = griddata(DataXY.Xcen,DataXY.Ycen,DataZ.val_cen(1,:,k),Data.xcen,Data.ycen,'nearest');
-    Data.value(:,k) = griddata(DataXY.Xcen,DataXY.Ycen,DataAll.val  (1,:,k),Data.xcen,Data.ycen,'nearest');  
+Data.times = DataAll.times;
+no_times   = length(Data.times);
+
+for i_time = 1: no_times
+    for i_lay = 1: no_layers
+        Data.zcen (i_time,:,i_lay) = griddata(DataXY.Xcen,DataXY.Ycen,DataZ.val_cen(i_time,:,i_lay),Data.xcen,Data.ycen,'nearest');
+        Data.value(i_time,:,i_lay) = griddata(DataXY.Xcen,DataXY.Ycen,DataAll.val  (i_time,:,i_lay),Data.xcen,Data.ycen,'nearest');
+    end
+    
+    %  Determine waterlevel along a cross section
+    Data.wl(i_time,:)  = griddata(DataXY.Xcen,DataXY.Ycen,DataZ.wl(i_time,:) ,Data.xcen,Data.ycen,'nearest');
 end
-
-%  Determine waterlevel and bed level along a cross section
-Data.wl  = griddata(DataXY.Xcen,DataXY.Ycen,DataZ.wl ,Data.xcen,Data.ycen,'nearest');
-Data.bed = griddata(DataXY.Xcen,DataXY.Ycen,DataZ.bed,Data.xcen,Data.ycen,'nearest');
-
+    
 %% Fill dum array for plotting with pcolor. Maybe this should not be done here, restrict this function to just getting the data
-for i = 1:size(Data.xcen,1)
-    Data.value_dum((2*i)-1,:,:)      = Data.value(i,:);
-        if i ~= size(Data.xcen,1)
-            Data.value_dum( 2*i,:) = nan;
+for i_pos = 1:length(Data.xcen)
+    Data.xcor_dum((2*i_pos)-1)           = Data.xcor(i_pos);
+    Data.xcor_dum( 2*i_pos   )           = Data.xcor(i_pos+1);
+    Data.ycor_dum((2*i_pos)-1)           = Data.ycor(i_pos);
+    Data.ycor_dum( 2*i_pos   )           = Data.ycor(i_pos+1);
+    Data.scor_dum((2*i_pos)-1)           = Data.scor(i_pos);
+    Data.scor_dum( 2*i_pos   )           = Data.scor(i_pos+1);
+    
+    Data.depcen_dum((2*i_pos)-1)         = Data.bed(i_pos);
+    Data.depcen_dum( 2*i_pos   )         = Data.bed(i_pos);
+    
+    for i_time = 1: no_times
+        Data.surcen_dum(i_time,(2*i_pos)-1)         = Data.wl(i_time,i_pos);
+        Data.surcen_dum(i_time, 2*i_pos   )         = Data.wl(i_time,i_pos);
+        
+        Data.zcor_intface_dum(i_time,(2*i_pos)-1,:) = Data.zcen(i_time,i_pos,:);
+        Data.zcor_intface_dum(i_time, 2*i_pos   ,:) = Data.zcen(i_time,i_pos,:);
+        
+        Data.value_dum(i_time,(2*i_pos)-1,:)        = Data.value(i_time,i_pos,:);
+        if i_pos ~= size(Data.xcen,1)
+            Data.value_dum(i_time, 2*i_pos,:)       = nan;
         end
     end
-    Data.xcor_dum((2*i)-1)           = Data.xcor(i);
-    Data.xcor_dum( 2*i   )           = Data.xcor(i+1);
-    Data.ycor_dum((2*i)-1)           = Data.ycor(i);
-    Data.ycor_dum( 2*i   )           = Data.ycor(i+1);
-    Data.scor_dum((2*i)-1)           = Data.scor(i);
-    Data.scor_dum( 2*i   )           = Data.scor(i+1);
-    Data.zcor_intface_dum((2*i)-1,:) = Data.zcen(i,:);
-    Data.zcor_intface_dum( 2*i   ,:) = Data.zcen(i,:);
-    Data.depcen_dum((2*i)-1)         = Data.bed(i);
-    Data.depcen_dum( 2*i   )         = Data.bed(i);
-    Data.surcen_dum((2*i)-1)         = Data.wl(i);
-    Data.surcen_dum( 2*i   )         = Data.wl(i);
 end
-

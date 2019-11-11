@@ -13,6 +13,8 @@ function gridInfo = EHY_getGridInfo(inputFile,varargin)
 %               XYu                     E.Xu & E.Yu (=velocity points)
 %               layer_model             E.layer_model (sigma-model or z-model)
 %               face_nodes_xy           E.face_nodes_x & E.face_nodes_y
+%               edge_nodes              E.edge_nodes
+%               edge_nodes_xy           E.edge_nodes_x & E.edge_nodes_y
 %               area                    E.area
 %         Zcen (top-view info/depth)    E.Zcen (& E.Zcor)
 %         Z    (side-view info/profile) E.Zcen (& E.Zcor), E.Zcen_cen & E.Zcen_int(in NetElem/faces)
@@ -114,8 +116,8 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
                 
                 if any(strcmp(fn{iFN},{'face_nodes_x','face_nodes_y'}))
                     gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
-                elseif strcmp(fn{iFN},{'face_nodes'})
-                    gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) max(max(gridInfo.face_nodes))+gridInfoPart.(fn{iFN})];
+                elseif any(strcmp(fn{iFN},{'face_nodes','edge_nodes'}))
+                    gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) max(max(gridInfo.(fn{iFN})))+gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'Xcor','Xcen','Ycor','Ycen','Zcor','Zcen'}))
                     gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}); gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'no_NetNode','no_NetElem'}))
@@ -401,6 +403,7 @@ switch modelType
                             end
                         end
                     end
+                    
                     if ismember('face_nodes',wantedOutput)
                         E.face_nodes=ncread(inputFile,'mesh2d_face_nodes');
                     end
@@ -413,6 +416,11 @@ switch modelType
                             disp('Face_x_bnd-info not found in network. Import grid>export grid in RGFGRID and try again')
                         end
                     end
+     
+                    if ismember('edge_nodes',wantedOutput)
+                        E.edge_nodes=ncread(inputFile,'mesh2d_edge_nodes');
+                    end
+                                        
                     if ismember('dimensions',wantedOutput)
                         % no_NetNode
                         dimName = EHY_nameOnFile(inputFile,'mesh2d_nNodes');

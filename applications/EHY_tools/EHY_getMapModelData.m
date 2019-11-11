@@ -56,6 +56,9 @@ OPT.z            = ''; % z = positive up. Wanted vertical level = OPT.zRef + OPT
 OPT.zRef         = ''; % choose: '' = model reference level, 'wl' = water level or 'bed' = from bottom level
 OPT.zMethod      = ''; % interpolation method: '' = corresponding layer or 'linear' = 'interpolation between two layers'
 
+% return output (cross section view) along a pli file
+OPT.pliFile      = '';
+
 OPT              = setproperty(OPT,varargin);
 
 %% modify input
@@ -88,6 +91,15 @@ end
 %% return output at specified reference level
 if ~isempty(OPT.z)
     Data = EHY_getMapModelData_z(inputFile,modelType,OPT);
+    if nargout==1
+        varargout{1} = Data;
+    end
+    return
+end
+
+%% return sideview output along a pli file
+if ~isempty(OPT.pliFile)
+    Data = EHY_getMapModelData_xy(inputFile,OPT);
     if nargout==1
         varargout{1} = Data;
     end
