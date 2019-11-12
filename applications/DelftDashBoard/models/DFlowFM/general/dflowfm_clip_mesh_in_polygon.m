@@ -1,7 +1,7 @@
 function netstruc1=dflowfm_clip_mesh_in_polygon(netstruc,xpol,ypol)
 
-x=netstruc.node.x;
-y=netstruc.node.y;
+x=netstruc.node.mesh2d_node_x;
+y=netstruc.node.mesh2d_node_y;
 inp=inpolygon(x,y,xpol,ypol);
 netlink=netstruc.edge.mesh2d_edge_nodes;
 netelemnode=netstruc.face.mesh2d_face_nodes;

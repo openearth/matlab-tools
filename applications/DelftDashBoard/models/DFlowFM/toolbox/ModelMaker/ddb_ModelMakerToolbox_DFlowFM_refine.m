@@ -84,8 +84,8 @@ else
             savePolygon;
         case{'clipmeshpolygon'}
             clipMeshPolygon;
-        case{'clipmeshelevation'}
-            clipMeshElevation;
+        case{'clipmeshelevationabove'}
+            clipMeshElevationAbove;
         case{'clipmeshelevationbelow'}
             clipMeshElevationbelow;
     end
@@ -119,10 +119,10 @@ if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
 end
 
 %% Extent of data to be downloaded
-xl(1)=min(handles.model.dflowfm.domain(ad).netstruc.node.x);
-xl(2)=max(handles.model.dflowfm.domain(ad).netstruc.node.x);
-yl(1)=min(handles.model.dflowfm.domain(ad).netstruc.node.y);
-yl(2)=max(handles.model.dflowfm.domain(ad).netstruc.node.y);
+xl(1)=min(handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_x);
+xl(2)=max(handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_x);
+yl(1)=min(handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_y);
+yl(2)=max(handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_y);
 dx=xl(2)-xl(1);
 dy=yl(2)-yl(1);
 xl(1)=xl(1)-0.05*dx;
@@ -163,12 +163,32 @@ maxlevel=1;
 drypointsfile='testing123.pol';
 drypointsfile='';
 
+% % First write the net file in the old format ... Sigh...
+% filename_ori='_TMP_net.nc';
+% %netstruc2netcdf_v2(filename_ori,handles.model.dflowfm.domain(ad).netstruc,'cs',handles.screenParameters.coordinateSystem,'format','old');
+% 
+% netstruc_tmp=handles.model.dflowfm.domain(ad).netstruc;
+% 
+% netstruc_tmp.edge.NetLink=netstruc_tmp.edge.mesh2d_edge_nodes;
+% 
+%     netstruc_tmp.node.x=netstruc_tmp.node.mesh2d_node_x;
+%     netstruc_tmp.node.y=netstruc_tmp.node.mesh2d_node_y;
+%     netstruc_tmp.node.z=netstruc_tmp.node.mesh2d_node_z;
+% 
+%     if isfield(netstruc_tmp,'face')
+%         netstruc_tmp.face.NetElemNode=netstruc_tmp.face.mesh2d_face_nodes';
+%     end
+% 
+% netStruc2nc(filename_ori,netstruc_tmp,'cs',handles.screenParameters.coordinateSystem);
+
 refine_netfile(filename_ori,filename,'TMP.xyz',nrref,hmin,dtmax,directional,outsidecell,connect,maxlevel,drypointsfile, handles.model.dflowfm.exedir);
 
 handles.model.dflowfm.domain(ad).netfile=filename;
 
-handles.model.dflowfm.domain(ad).netstruc=dflowfm.readNet(filename);
-handles.model.dflowfm.domain(ad).netstruc.edge.NetLink=handles.model.dflowfm.domain(ad).netstruc.edge.NetLink';
+netstruc=ddb_DFlowFM_read_netstruc(filename);
+
+handles.model.dflowfm.domain(ad).netstruc=netstruc;
+
 close(wb);
 
 %handles.model.dflowfm.domain(ad).netstruc=loadnetstruc2(filename);
@@ -267,7 +287,7 @@ if ~ok
     return
 end
 
-if isnan(nanmax(handles.model.dflowfm.domain(ad).netstruc.node.z))
+if isnan(nanmax(handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_z))
     ddb_giveWarning('text','Could not clip polygon! Please generate bathymetry first.');
     return
 end
@@ -296,7 +316,7 @@ handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',ad);
 setHandles(handles);
 
 %%
-function clipMeshElevation
+function clipMeshElevationAbove
 
 handles=getHandles;
 
@@ -305,14 +325,18 @@ if ~ok
     return
 end
 
-if isnan(nanmax(handles.model.dflowfm.domain(ad).netstruc.node.z))
+if isnan(nanmax(handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_z))
     ddb_giveWarning('text','Could not clip maximum elevation! Please generate bathymetry first.');
     return
 end
 
 handles.model.dflowfm.domain(ad).netfile=filename;
 
-handles.model.dflowfm.domain(ad).netstruc=dflowfm_clip_shallow_areas(handles.model.dflowfm.domain(ad).netstruc,handles.toolbox.modelmaker.zMax, 'max');
+zmax=handles.toolbox.modelmaker.clipzmax;
+
+xp=handles.toolbox.modelmaker.polygonX;
+yp=handles.toolbox.modelmaker.polygonY;
+handles.model.dflowfm.domain(ad).netstruc=dflowfm_clip_shallow_areas(handles.model.dflowfm.domain(ad).netstruc,zmax,'max',xp,yp);
 
 % netStruc2nc(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domain(ad).netstruc,'cstype',handles.screenParameters.coordinateSystem.type,'csname', handles.screenParameters.coordinateSystem.name);
 
@@ -341,20 +365,25 @@ if ~ok
     return
 end
 
-if isnan(nanmax(handles.model.dflowfm.domain(ad).netstruc.node.z))
+if isnan(nanmax(handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_z))
     ddb_giveWarning('text','Could not clip minimum elevation! Please generate bathymetry first.');
     return
 end
 
 handles.model.dflowfm.domain(ad).netfile=filename;
 
-handles.model.dflowfm.domain(ad).netstruc=dflowfm_clip_shallow_areas(handles.model.dflowfm.domain(ad).netstruc,handles.toolbox.modelmaker.zMax, 'min');
+zmin=handles.toolbox.modelmaker.clipzmin;
 
-netStruc2nc(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domain(ad).netstruc,'cstype',handles.screenParameters.coordinateSystem.type,'csname', handles.screenParameters.coordinateSystem.name);
+xp=handles.toolbox.modelmaker.polygonX;
+yp=handles.toolbox.modelmaker.polygonY;
+handles.model.dflowfm.domain(ad).netstruc=dflowfm_clip_shallow_areas(handles.model.dflowfm.domain(ad).netstruc,zmin, 'min', xp, yp);
+
+netstruc2netcdf(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domain(ad).netstruc,'cs',handles.screenParameters.coordinateSystem);
+%netStruc2nc(handles.model.dflowfm.domain(ad).netfile,handles.model.dflowfm.domain(ad).netstruc,'cstype',handles.screenParameters.coordinateSystem.type,'csname', handles.screenParameters.coordinateSystem.name);
 
 handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',ad);
 
-clipMeshElevationbelowNewboundarypoints(handles); % call new basic function to change the boundary location points and reload the boundary conditions
+%clipMeshElevationbelowNewboundarypoints(handles); % call new basic function to change the boundary location points and reload the boundary conditions
 
 setHandles(handles);
 
@@ -368,8 +397,8 @@ function clipMeshElevationbelowNewboundarypoints(handles)
 boundaries = handles.model.dflowfm.domain.boundaries;
 ipol=length(boundaries);
 
-xmodel = handles.model.dflowfm.domain.netstruc.node.x; %active model
-ymodel = handles.model.dflowfm.domain.netstruc.node.y;
+xmodel = handles.model.dflowfm.domain.netstruc.node.mesh2d_node_x; %active model
+ymodel = handles.model.dflowfm.domain.netstruc.node.mesh2d_node_y;
 
 xnew = [];
 ynew = [];

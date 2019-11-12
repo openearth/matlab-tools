@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <root>
   <model>DFlowFM</model>
-  <longname>D-FLOW FM</longname>
+  <longname>Delft3D-FM</longname>
   <multipledomains>no</multipledomains>
   <enable>1</enable>
   <menu>

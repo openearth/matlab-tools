@@ -1,4 +1,12 @@
-function netstruc1=dflowfm_clip_shallow_areas(netstruc,mindep, type)
+function netstruc1=dflowfm_clip_shallow_areas(netstruc,mindep, type, varargin)
+
+xpol=[];
+ypol=[];
+
+if ~isempty(varargin)
+    xpol=varargin{1};
+    ypol=varargin{2};
+end
 
 x=netstruc.node.mesh2d_node_x;
 y=netstruc.node.mesh2d_node_y;
@@ -25,15 +33,23 @@ elseif strcmp(type, 'min')
     imin=find(zzmin>mindep);
 end
 
+if ~isempty(xpol)
+    inpol=inpolygon(x,y,xpol,ypol);
+else
+    inpol=zeros(size(x))+1;
+end
+
 netelemnode(netelemnode==nz1)=NaN;
 
 % Now
 inp=false(size(x));
 for ii=1:length(imin)
     for jj=1:ncol
-        if netelemnode(jj,imin(ii))<nz1
+        if netelemnode(jj,imin(ii))<nz1 
             ind=netelemnode(jj,imin(ii));
-            inp(ind)=true;
+            if inpol(ind)
+                inp(ind)=true;
+            end
         end
     end
 end

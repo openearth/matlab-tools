@@ -144,10 +144,11 @@ ddb_plotDFlowFM('delete','domain',id);
 handles=ddb_initializeDFlowFMdomain(handles,'griddependentinput',id,handles.model.dflowfm.domain(id).runid);
 set(gcf,'Pointer','arrow');
 
-[netstruc,circ]=curv2net_new(x,y,z);
+%[netstruc,circ]=curv2net_new(x,y,z);
+[netstruc,circ]=curv2net_v3(x,y,z);
 
 % Set depths to NaN
-nans=zeros(size(netstruc.node.z));
+nans=zeros(size(netstruc.node.mesh2d_node_z));
 nans(nans==0)=NaN;
 netstruc.node.z=nans;
 
@@ -159,9 +160,11 @@ handles.model.dflowfm.domain(id).circumference=circ;
 % % Clip shallow areas
 % netstruc=dflowfm_clip_shallow_areas(netstruc,zmax);
 
-netstruc.edge.NetLink=netstruc.edge.NetLink';
+%netstruc.edge.NetLink=netstruc.edge.NetLink';
 
-netStruc2nc(handles.model.dflowfm.domain(id).netfile,netstruc,'cstype',handles.screenParameters.coordinateSystem.type, 'csname', handles.screenParameters.coordinateSystem.name);
+netstruc2netcdf(handles.model.dflowfm.domain(id).netfile,handles.model.dflowfm.domain(ad).netstruc,'cs',handles.screenParameters.coordinateSystem);
+
+%netStruc2nc(handles.model.dflowfm.domain(id).netfile,netstruc,'cstype',handles.screenParameters.coordinateSystem.type, 'csname', handles.screenParameters.coordinateSystem.name);
 
 handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',id);
 

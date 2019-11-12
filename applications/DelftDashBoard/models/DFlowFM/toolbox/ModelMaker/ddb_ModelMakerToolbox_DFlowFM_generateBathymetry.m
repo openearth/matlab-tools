@@ -88,4 +88,4 @@ end
 netstruc2netcdf(handles.model.dflowfm.domain(id).netfile,handles.model.dflowfm.domain(id).netstruc,'cs',cs);
 % Plot
 % TODO handles=ddb_DFlowFM_plotBathymetry(handles,'plot');
-
+handles=ddb_DFlowFM_plotBathymetry(handles,'plot');

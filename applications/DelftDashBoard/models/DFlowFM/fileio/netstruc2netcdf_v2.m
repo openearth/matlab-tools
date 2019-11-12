@@ -43,13 +43,39 @@ globalID = netcdf.getConstant('NC_GLOBAL');
 
 grdmapping='wgs84';
 
-% Dimensions
-nmesh2d_edge           = netcdf.defDim(NCid,          'nmesh2d_edge',           nedges);
-nmesh2d_node           = netcdf.defDim(NCid,          'nmesh2d_node',           nnodes);
-Two                    = netcdf.defDim(NCid,          'Two',                    2);
+if strcmpi(format,'new')
+    name_nmesh2d_edge='nmesh2d_edge';
+    name_nmesh2d_node='nmesh2d_node';
+    name_Two='Two';
+    name_nmesh2d_face='nmesh2d_face';
+    name_max_nmesh2d_face_nodes='nmesh2d_face_nodes_nodes';
+    name_mesh2d_node_x='mesh2d_node_x';
+    name_mesh2d_node_y='mesh2d_node_y';
+    name_mesh2d_node_z='mesh2d_node_z';
+    name_mesh2d_edge_nodes='mesh2d_edge_nodes';
+    name_mesh2d_edge_types=mesh2d_edge_types;
+    name_mesh2d_face_nodes='mesh2d_edge_faces';
+else
+    name_nmesh2d_edge='nNetNode';
+    name_nmesh2d_node='nNetLink';
+    name_Two='nNetLinkPts';
+    name_nmesh2d_face='nNetElem';
+    name_max_nmesh2d_face_nodes='nNetElemMaxNode';
+    name_mesh2d_node_x='NetNode_x';
+    name_mesh2d_node_y='NetNode_y';
+    name_mesh2d_node_z='NetNode_z';
+    name_mesh2d_edge_nodes='NetLink';
+    name_mesh2d_edge_types='NetLinkType';
+    name_mesh2d_face_nodes='NetElemNode';
+end
 
-nmesh2d_face           = netcdf.defDim(NCid,          'nmesh2d_face',           nfaces);
-max_nmesh2d_face_nodes = netcdf.defDim(NCid,          'max_nmesh2d_face_nodes', nfacenodes);
+% Dimensions
+nmesh2d_edge           = netcdf.defDim(NCid,          name_nmesh2d_edge,           nedges);
+nmesh2d_node           = netcdf.defDim(NCid,          name_nmesh2d_node,           nnodes);
+Two                    = netcdf.defDim(NCid,          name_Two,                    2);
+
+nmesh2d_face           = netcdf.defDim(NCid,          name_nmesh2d_face,           nfaces);
+max_nmesh2d_face_nodes = netcdf.defDim(NCid,          name_max_nmesh2d_face_nodes, nfacenodes);
 
 % Global attributes
 tstr=datestr(now,'yyyy-mm-ddTHH:MM:SS');
@@ -82,7 +108,7 @@ netcdf.endDef(NCid);
 
 % Node x
 netcdf.reDef(NCid);
-varid = netcdf.defVar(NCid,'mesh2d_node_x','double',nmesh2d_node);
+varid = netcdf.defVar(NCid,name_mesh2d_node_x,'double',nmesh2d_node);
 netcdf.putAtt(NCid,varid,'units',xunits);
 netcdf.putAtt(NCid,varid,'standard_name',xstd);
 netcdf.putAtt(NCid,varid,'long_name','x-coordinate of net nodes');
@@ -93,7 +119,7 @@ netcdf.putVar(NCid,varid,netstruc.node.mesh2d_node_x);
 
 % Node y
 netcdf.reDef(NCid);
-varid = netcdf.defVar(NCid,'mesh2d_node_y','double',nmesh2d_node);
+varid = netcdf.defVar(NCid,name_mesh2d_node_y,'double',nmesh2d_node);
 netcdf.putAtt(NCid,varid,'units',yunits);
 netcdf.putAtt(NCid,varid,'standard_name',ystd);
 netcdf.putAtt(NCid,varid,'long_name','y-coordinate of net nodes');
@@ -103,7 +129,7 @@ netcdf.putVar(NCid,varid,netstruc.node.mesh2d_node_y);
 
 % Node z
 netcdf.reDef(NCid);
-varid = netcdf.defVar(NCid,'mesh2d_node_z','double',nmesh2d_node);
+varid = netcdf.defVar(NCid,name_mesh2d_node_z,'double',nmesh2d_node);
 netcdf.putAtt(NCid,varid,'mesh','mesh2d');
 netcdf.putAtt(NCid,varid,'location','node');
 netcdf.putAtt(NCid,varid,'coordinates','mesh2d_node_x mesh2d_node_y');
@@ -119,7 +145,7 @@ netcdf.putVar(NCid,varid,netstruc.node.mesh2d_node_z);
 %% Edges
 
 netcdf.reDef(NCid);
-varid = netcdf.defVar(NCid,'mesh2d_edge_nodes','int',[Two nmesh2d_edge]);
+varid = netcdf.defVar(NCid,name_mesh2d_edge_nodes,'int',[Two nmesh2d_edge]);
 netcdf.putAtt(NCid,varid,'cf_role','edge_node_connectivity');
 netcdf.putAtt(NCid,varid,'mesh','mesh2d');
 netcdf.putAtt(NCid,varid,'location','edge');
@@ -131,7 +157,7 @@ netcdf.putVar(NCid,varid,netstruc.edge.mesh2d_edge_nodes);
 
 if isfield(netstruc.edge,'mesh2d_edge_types')
     netcdf.reDef(NCid);
-    varid = netcdf.defVar(NCid,'mesh2d_edge_types','int',nmesh2d_edge);
+    varid = netcdf.defVar(NCid,name_mesh2d_edge_types,'int',nmesh2d_edge);
     netcdf.putAtt(NCid,varid,'mesh','mesh2d');
     netcdf.putAtt(NCid,varid,'location','edge');
     netcdf.putAtt(NCid,varid,'coordinates','mesh2d_edge_x mesh2d_edge_y');
@@ -197,7 +223,7 @@ end
 
 if isfield(netstruc.edge,'mesh2d_edge_faces')
     netcdf.reDef(NCid);
-    varid = netcdf.defVar(NCid,'mesh2d_edge_faces','int',[Two nmesh2d_edge]);
+    varid = netcdf.defVar(NCid,'name_mesh2d_edge_faces','int',[Two nmesh2d_edge]);
     netcdf.putAtt(NCid,varid,'cf_role','edge_face_connectivity');
     netcdf.putAtt(NCid,varid,'long_name','Mapping from every edge to the two faces that it separates');
     netcdf.putAtt(NCid,varid,'start_index',1.0);
@@ -211,7 +237,7 @@ end
 if isfield(netstruc,'face')
     
     netcdf.reDef(NCid);
-    varid = netcdf.defVar(NCid,'mesh2d_face_nodes','int',[max_nmesh2d_face_nodes nmesh2d_face]);
+    varid = netcdf.defVar(NCid,name_mesh2d_face_nodes,'int',[max_nmesh2d_face_nodes nmesh2d_face]);
     netcdf.putAtt(NCid,varid,'cf_role','face_node_connectivity');
     netcdf.putAtt(NCid,varid,'mesh','mesh2d');
     netcdf.putAtt(NCid,varid,'location','face');
