@@ -82,36 +82,35 @@
     <callback>ddb_ModelMakerToolbox_DFlowFM_refine</callback>
     <option1>clipmeshpolygon</option1>
   </element>
-
   <element>
     <style>edit</style>
-    <position>550 110 30 20</position>
+    <position>550 110 40 20</position>
     <tooltipstring>Maximum elevation for clipping (cells above value will be clipped)</tooltipstring>
     <text>Zmax</text>
     <textposition>left</textposition>
     <type>int</type>
-    <variable>handles.toolbox.modelmaker.zMax</variable>
+    <variable>handles.toolbox.modelmaker.clipzmax</variable>
   </element>
     <element>
       <style>edit</style>
-      <position>550 85 30 20</position>
+      <position>550 85 40 20</position>
       <tooltipstring>Minimum elevation for clipping (cells below value will be clipped)</tooltipstring>
       <text>Zmin</text>
       <textposition>left</textposition>
       <type>int</type>
-      <variable>handles.toolbox.modelmaker.zMax</variable>
+      <variable>handles.toolbox.modelmaker.clipzmin</variable>
   </element>
   <element>
     <style>pushbutton</style>
     <position>600 110 80 20</position>
-    <text>CLIP</text>
+    <text>Clip Above</text>
     <callback>ddb_ModelMakerToolbox_DFlowFM_refine</callback>
-    <option1>clipmeshelevation</option1>
+    <option1>clipmeshelevationabove</option1>
   </element>
   <element>
     <style>pushbutton</style>
     <position>600 85 80 20</position>
-    <text>CLIP</text>
+    <text>Clip Below</text>
     <callback>ddb_ModelMakerToolbox_DFlowFM_refine</callback>
     <option1>clipmeshelevationbelow</option1>
   </element>

@@ -209,6 +209,8 @@ handles.toolbox.modelmaker.dflowfm.nr_refinement_steps=1;
 handles.toolbox.modelmaker.dflowfm.dtmax=60;
 handles.toolbox.modelmaker.polyLength=0;
 handles.toolbox.modelmaker.polygonFile='';
+handles.toolbox.modelmaker.clipzmax=10000;
+handles.toolbox.modelmaker.clipzmin=-10000;
 
 %% SFINCS
 handles.toolbox.modelmaker.sfincs.zmin=-2;
