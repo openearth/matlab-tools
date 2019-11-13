@@ -72,6 +72,7 @@ try % if simulation has finished
                 while length(out)<200 && fileSize/charperline>2 %minimum of read lines at end of file is 200, add safety for short files
                     %length(out)
                     HeaderLines = round(fileSize/charperline); % skip big part of out.txt/*.dia.
+                    fseek(fid, 0, 'bof'); % set position indicator to begin of file
                     out = textscan(fid,'%s','delimiter','\n','HeaderLines',HeaderLines,'CommentStyle','** INFO   :  Solver converged in');
                     out = out{1,1};
                     charperline = charperline+1;
