@@ -16,7 +16,7 @@ if ismember(OPT0.zRef,{'wl','bed'})
     Data_zRef = EHY_getmodeldata(inputFile,stat_name,modelType,OPT);
     refLevel = Data_zRef.val;
 else % model reference level
-    refLevel = 0;
+    refLevel = repmat(0,1,length(stat_name));
 end
 
 %% get "zcen_int"-data
@@ -83,16 +83,17 @@ for iZ = 1:length(OPT0.z)
                     DataZ.val_cen(:,:,iL) = mean(DataZ.val(:,:,iL:iL+1),3);
                 end
                 
-                % add surface and bed layer
-                DataZ.val_cen = cat(3,DataZ.val(:,:,1),DataZ.val_cen,DataZ.val(:,:,end));
-                DataAll.val   = cat(3,DataAll.val(:,:,1),DataAll.val,DataAll.val(:,:,end));
+                DataZ.val_cen = cat(3,DataZ.val(:,:,1),DataZ.val_cen,DataZ.val(:,:,end)); % add surface and bed layer
             end
             
             for iV = 1:length(v) % loop over fieldname 'val','vel_x','vel_mag',etc.
+                if iZ == 1
+                    DataAll.(v{iV})   = cat(3,DataAll.(v{iV})(:,:,1),DataAll.(v{iV}),DataAll.(v{iV})(:,:,end)); % add surface and bed layer
+                end
                 for iT = 1:length(DataAll.times) % loop over time
                     for iS = 1:length(DataAll.requestedStations) % loop over stations
                         if ~isnan(wantedZ(iS))
-                            Data.(v{iV})(iT,iS,iZ) = interp1(squeeze(DataZ.val_cen(iT,iS,:)),squeeze(DataAll.val(iT,iS,:)),wantedZ(iS));
+                            Data.(v{iV})(iT,iS,iZ) = interp1(squeeze(DataZ.val_cen(iT,iS,:)),squeeze(DataAll.(v{iV})(iT,iS,:)),wantedZ(iS));
                         end
                     end
                 end
