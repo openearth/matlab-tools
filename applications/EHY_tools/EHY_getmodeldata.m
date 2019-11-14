@@ -256,7 +256,9 @@ switch modelType
                     
                 case {'salinity' 'temperature'}
                     consInd                 = strmatch(lower(OPT.varName),lower(constituents),'exact');
-                    Data.val(:, indexOut,:) = cell2mat(vs_get(trih,'his-series',{time_ind},'GRO',{stat_ind,layerInd,consInd},'quiet'));
+                    tmp                     = vs_get(trih,'his-series',{time_ind},'GRO',{stat_ind,layerInd,consInd},'quiet');
+                    if iscell(tmp); cell2mat(tmp); end
+                    Data.val(:, indexOut,:) = tmp;
                 case 'zrho' %density
                     zrho                   = cell2mat(vs_get(trih,'his-series',{time_ind},'ZRHO',{stat_ind,layerInd},'quiet'));
                     Data.val(:,indexOut,:) = zrho;
@@ -443,7 +445,9 @@ end
 while ~isempty(fn) && ndims(Data.(fn))>numel(dimensionsComment)
     dimensionsComment{end+1,1} = '-';
 end
-
+if numel(dimensionsComment)==2 && strcmp(dimensionsComment{1},'-') && strcmp(dimensionsComment{2},'time') 
+    dimensionsComment = flip(dimensionsComment); % correct for added dimensions in case of 1D-time
+end
 % add to Data-struct
 dimensionsComment = sprintf('%s,',dimensionsComment{:});
 Data.dimensions = ['[' dimensionsComment(1:end-1) ']'];

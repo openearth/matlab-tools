@@ -204,7 +204,8 @@ switch modelType
         % vertical grid info
         if exist('layersInd','var')
             no_layers = dims(layersInd).size;
-            layerInd  = dims(layersInd).index;
+            layer_ind = dims(layersInd).index;
+            layer_ind = reshape(layer_ind,1,numel(layer_ind));
         else
             no_layers = 1;
         end
@@ -239,11 +240,11 @@ switch modelType
 %             Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
             
         elseif ismember(OPT.varName,{'salinity' 'temperature'})
-            consInd                 = strmatch(lower(OPT.varName),lower(constituents),'exact');
+            cons_ind     = strmatch(lower(OPT.varName),lower(constituents),'exact');
             if no_layers == 1
-                Data.val = vs_let(trim,'map-series',{time_ind},'R1',{n_ind,m_ind,consInd},'quiet');
+                Data.val = vs_let(trim,'map-series',{time_ind},'R1',{n_ind,m_ind,cons_ind},'quiet');
             else
-                Data.val = vs_let(trim,'map-series',{time_ind},'R1',{n_ind,m_ind,layerInd,consInd},'quiet');
+                Data.val = vs_let(trim,'map-series',{time_ind},'R1',{n_ind,m_ind,layer_ind,cons_ind},'quiet');
             end
             
         elseif strcmp(OPT.varName,'SBUU') % bed load
