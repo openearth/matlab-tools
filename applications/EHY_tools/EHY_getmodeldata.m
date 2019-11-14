@@ -257,7 +257,7 @@ switch modelType
                 case {'salinity' 'temperature'}
                     consInd                 = strmatch(lower(OPT.varName),lower(constituents),'exact');
                     tmp                     = vs_get(trih,'his-series',{time_ind},'GRO',{stat_ind,layerInd,consInd},'quiet');
-                    if iscell(tmp); cell2mat(tmp); end
+                    if iscell(tmp); tmp = cell2mat(tmp); end
                     Data.val(:, indexOut,:) = tmp;
                 case 'zrho' %density
                     zrho                   = cell2mat(vs_get(trih,'his-series',{time_ind},'ZRHO',{stat_ind,layerInd},'quiet'));
@@ -426,7 +426,11 @@ else
     % station at 2nd dimension
     fns = intersect(fieldnames(Data),{'val','vel_x','vel_y','vel_u','vel_v','locationX','locationY'});
     for iFns = 1:length(fns)
+        try
         Data.(fns{iFns})(:,~Data.exist_stat,:) = NaN;
+        catch
+            stop
+        end
     end
 end
 
