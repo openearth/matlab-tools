@@ -455,7 +455,7 @@ switch modelType
                     % If partitioned run, delete ghost cells
                     [~, name]=fileparts(inputFile);
                     varName = EHY_nameOnFile(inputFile,'FlowElemDomain');
-                    if length(name)>=10 && all(ismember(name(end-7:end-4),'0123456789')) && nc_isvar(inputFile,varName)
+                    if EHY_isPartitioned(inputFile,modelType) && nc_isvar(inputFile,varName)
                         domainNr = str2num(name(end-7:end-4));
                         FlowElemDomain = ncread(inputFile,varName);
 
@@ -510,8 +510,7 @@ switch modelType
                             y = repmat(reshape(y,numel(y),1),1,xsize);
                             x = repmat(reshape(x,1,numel(x)),ysize,1);
                         end
-                        E.Xcor = center2corner(x);
-                        E.Ycor = center2corner(y);
+                        E.Xcor = double(x); E.Ycor = double(y);
                     end
                     if ismember('no_layers',wantedOutput)
                        if nc_isvar(inputFile,'depth')

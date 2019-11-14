@@ -42,6 +42,7 @@ if ~all([exist('gridInfo','var') exist('zData','var')])
     return
 end
 
+%% structured or unstructured grid
 if isstruct(gridInfo)
     if isfield(gridInfo,'face_nodes_x') && isfield(gridInfo,'face_nodes_y')
         modelType= 'dfm';
@@ -60,18 +61,35 @@ elseif size(zData,1)==1
     zData = squeeze(zData);
 end
 
-if strcmp(modelType,'dfm') && size(gridInfo.face_nodes_x,2)~=numel(zData)
-    error('size(gridInfo.face_nodes_x,2) should be the same as  prod(size(zData))')
-elseif strcmp(modelType,'d3d') && ~all(size(gridInfo.Xcor)==size(gridInfo.Ycor))
-    error('size(gridInfo.Xcor) and size(gridInfo.Ycor) should be the same')
-elseif strcmp(modelType,'d3d') && ~all( (size(gridInfo.Xcor)-size(zData))==1 )
-    error('size(gridInfo.Xcor) and size(gridInfo) should be one size bigger than size(zData)')
+%% check for unstructured grids (modelType = 'dfm')
+if strcmp(modelType,'dfm')
+    if size(gridInfo.face_nodes_x,2)~=numel(zData)
+        error('size(gridInfo.face_nodes_x,2) should be the same as  prod(size(zData))')
+    end
 end
 
+%% check for structured grids (modelType = 'd3d')
 if strcmp(modelType,'d3d')
-    % add dummy row and column for plotting of grid
-    zData(end+1,:)=NaN;
-    zData(:,end+1)=NaN;
+    if ~all(size(gridInfo.Xcor)==size(gridInfo.Ycor))
+        error('size(gridInfo.Xcor) and size(gridInfo.Ycor) should be the same')
+    end
+    
+    if all(size(gridInfo.Xcor)-size(zData) == [1 1])
+        % this is needer for info in cell center, like delft3d 4 output
+        zData(end+1,:) = NaN;
+        zData(:,end+1) = NaN;
+    elseif all(size(gridInfo.Xcor)-size(zData) == [0 0])
+        % this is needer for info in cell corners, like griddata_netcdf
+        % for plotting with pcolor > apply center2corner and
+        % add dummy row and column in zData
+        gridInfo.Xcor = center2corner(gridInfo.Xcor);
+        gridInfo.Ycor = center2corner(gridInfo.Ycor);
+        zData(end+1,:) = NaN;
+        zData(:,end+1) = NaN;
+    else
+         error('size(gridInfo.Xcor/Ycor) should be equal or one size bigger than size(zData)')
+    end
+
 end
 
 %% plot figure

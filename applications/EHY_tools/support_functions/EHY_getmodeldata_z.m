@@ -76,7 +76,27 @@ for iZ = 1:length(OPT0.z)
     % get corresponding layer/apply interpolation
     switch OPT0.zMethod
         case 'linear'
-            error('to do')
+            
+            if iZ == 1
+                % cell interfaces to cell centers
+                for iL = 1:size(DataZ.val,3)-1
+                    DataZ.val_cen(:,:,iL) = mean(DataZ.val(:,:,iL:iL+1),3);
+                end
+                
+                % add surface and bed layer
+                DataZ.val_cen = cat(3,DataZ.val(:,:,1),DataZ.val_cen,DataZ.val(:,:,end));
+                DataAll.val   = cat(3,DataAll.val(:,:,1),DataAll.val,DataAll.val(:,:,end));
+            end
+            
+            for iV = 1:length(v) % loop over fieldname 'val','vel_x','vel_mag',etc.
+                for iT = 1:length(DataAll.times) % loop over time
+                    for iS = 1:length(DataAll.requestedStations) % loop over stations
+                        if ~isnan(wantedZ(iS))
+                            Data.(v{iV})(iT,iS,iZ) = interp1(squeeze(DataZ.val_cen(iT,iS,:)),squeeze(DataAll.val(iT,iS,:)),wantedZ(iS));
+                        end
+                    end
+                end
+            end
             
         otherwise % corresponding layer
             
