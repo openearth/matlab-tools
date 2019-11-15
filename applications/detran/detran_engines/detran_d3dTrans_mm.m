@@ -123,9 +123,9 @@ patName = fliplr(patName);
 curDir = pwd;
 
 %if exist([patName '\merge'],'dir') 
-if exist([patName '..\merge'],'dir') 
-    cd([patName]);
-    %cd([patName '\merge']);
+if exist([patName '\merge'],'dir') 
+    %cd([patName]);
+    cd([patName '\merge']);
     mergeFile = dir('*.mm');
     if length(mergeFile) > 1
         disp('**** ERROR : please verify that only 1 mm-file is present...');
