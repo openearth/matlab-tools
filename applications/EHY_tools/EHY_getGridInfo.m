@@ -441,7 +441,11 @@ switch modelType
                     if ismember('area',wantedOutput)
                         varName = EHY_nameOnFile(inputFile,'mesh2d_flowelem_ba');
                         if nc_isvar(inputFile,varName)
-                            E.area=ncread(inputFile,varName);
+                            E.area = ncread(inputFile,varName);
+                        end
+                        if ~exist('E','var') || ~isfield(E,'area') % could not load area for file
+                            tmp = EHY_getGridInfo(inputFile,{'face_nodes_xy'},'disp',0);
+                            E.area = polyarea(tmp.face_nodes_x,tmp.face_nodes_y);
                         end
                     end
                     if ismember('spherical', wantedOutput)
