@@ -118,7 +118,7 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
                     gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'face_nodes','edge_nodes'}))
                     gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) max(max(gridInfo.(fn{iFN})))+gridInfoPart.(fn{iFN})];
-                elseif any(strcmp(fn{iFN},{'Xcor','Xcen','Ycor','Ycen','Zcor','Zcen'}))
+                elseif any(strcmp(fn{iFN},{'Xcor','Xcen','Ycor','Ycen','Zcor','Zcen','area'}))
                     gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}); gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'no_NetNode','no_NetElem'}))
                     gridInfo.(fn{iFN})=gridInfo.(fn{iFN})+gridInfoPart.(fn{iFN});
@@ -490,6 +490,9 @@ switch modelType
                         end
                         if isfield(E,'Zcen')
                             E.Zcen(ghostCellsCenter)=[];
+                        end
+                        if isfield(E,'area')
+                            E.area(ghostCellsCenter)=[];
                         end
                     end
                     

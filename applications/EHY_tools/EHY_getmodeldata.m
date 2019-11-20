@@ -426,11 +426,7 @@ else
     % station at 2nd dimension
     fns = intersect(fieldnames(Data),{'val','vel_x','vel_y','vel_u','vel_v','locationX','locationY'});
     for iFns = 1:length(fns)
-        try
         Data.(fns{iFns})(:,~Data.exist_stat,:) = NaN;
-        catch
-            stop
-        end
     end
 end
 
