@@ -113,7 +113,7 @@ netcdf.putVar(ncid,bzs_ID,bzsnew);
 
 bzinew      = permute(squeeze(bzi), [2,1]); %set input to right dimensions
 bzinew      = single(bzinew); %needed to specify as single?
-netcdf.putVar(ncid,bzs_ID,bzinew);
+netcdf.putVar(ncid,bzi_ID,bzinew);
 
 % We're done, close the netcdf input file
 netcdf.close(ncid)
