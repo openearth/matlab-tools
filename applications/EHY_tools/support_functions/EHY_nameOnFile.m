@@ -66,6 +66,8 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'suspload'   ) newName = 'SSUU'       ; end
         if strcmpi(varName,'tau'        ) newName = 'TAUKSI'     ; end
         if strcmpi(varName,'sedconc'    ) newName = 'RSEDEQ'     ; end
+    case 'sds' % simona
+        if strcmpi(varName,'x_velocity' ) newName = 'uv'         ; end
 end
 
 %% for FM output (netCDF files)
