@@ -55,7 +55,13 @@ switch modelType
         
     case 'simona'
         sds=qpfopen(inputFile);
-        datenums     = qpread(sds,1,'water level (station)','times');
+        datenums_wl   = qpread(sds,1,'water level (station)','times');
+        datenums_vel  = qpread(sds,1,'velocity (station)','times');
+        if length(datenums_wl)<length(datenums_vel)
+            datenums  = datenums_vel;
+        else
+            datenums  = datenums_wl;
+        end
         varargout{1} = waquaio(sds,'','refdate');
         
     case 'sobek3' 
