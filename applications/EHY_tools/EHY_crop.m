@@ -30,6 +30,7 @@ else
     file=[pathname filename];
 end
 [pathstr,name,ext]=fileparts(file);
+if isempty(pathstr); pathstr = '.'; end
 
 % set <keyword>,<values>
 if length(varargin)>1

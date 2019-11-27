@@ -208,6 +208,7 @@ switch modelType
             layer_ind = reshape(layer_ind,1,numel(layer_ind));
         else
             no_layers = 1;
+            layer_ind = 1;
         end
         
         time_ind  = dims(timeInd).index;
@@ -240,12 +241,8 @@ switch modelType
 %             Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
             
         elseif ismember(OPT.varName,{'salinity' 'temperature'})
-            cons_ind     = strmatch(lower(OPT.varName),lower(constituents),'exact');
-            if no_layers == 1
-                Data.val = vs_let(trim,'map-series',{time_ind},'R1',{n_ind,m_ind,cons_ind},'quiet');
-            else
-                Data.val = vs_let(trim,'map-series',{time_ind},'R1',{n_ind,m_ind,layer_ind,cons_ind},'quiet');
-            end
+            cons_ind = strmatch(lower(OPT.varName),lower(constituents),'exact');
+            Data.val = vs_let(trim,'map-series',{time_ind},'R1',{n_ind,m_ind,layer_ind,cons_ind},'quiet');
             
         elseif strcmp(OPT.varName,'SBUU') % bed load
             Data.val_x   = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,dims(sedfracInd).index},'quiet');

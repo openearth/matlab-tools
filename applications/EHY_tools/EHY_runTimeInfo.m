@@ -65,7 +65,7 @@ try % if simulation has finished
             charperline = 88;
             out = {};
             fseek(fid, 0, 'bof'); % set position indicator to begin of file
-            if fileSize < 10*10^6 % small file
+            if fileSize < 10*10^7 % small file
                 out = textscan(fid,'%s','delimiter','\n','CommentStyle','** INFO   :  Solver converged in');
                 out = out{1,1};
             else % big file
@@ -248,8 +248,11 @@ if exist('realTime_S','var') % if simulation has finished
 else
     runTimeInfo.comment='Simulation has probably not finished yet or crashed';
     try 
-        percentage=EHY_simulationStatus(mdFile);
+        [percentage,ETAline] = EHY_simulationStatus(mdFile);
         runTimeInfo.status=[num2str(percentage,'%0.1f') '%'];
+        if ~isempty(ETAline)
+           runTimeInfo.ETA = ETAline;
+        end
     end
     
 end

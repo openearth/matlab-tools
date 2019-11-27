@@ -443,7 +443,7 @@ switch modelType
                         if nc_isvar(inputFile,varName)
                             E.area = ncread(inputFile,varName);
                         end
-                        if ~exist('E','var') || ~isfield(E,'area') % could not load area for file
+                        if ~exist('E','var') || ~isfield(E,'area') % could not load area from file
                             tmp = EHY_getGridInfo(inputFile,{'face_nodes_xy'},'disp',0);
                             E.area = polyarea(tmp.face_nodes_x,tmp.face_nodes_y);
                         end

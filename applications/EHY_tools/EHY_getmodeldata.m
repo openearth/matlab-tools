@@ -178,9 +178,10 @@ switch modelType
         end
         if exist('layersInd','var')
             no_layers = dims(layersInd).size;
-            layerInd  = dims(layersInd).index;
+            layer_ind  = dims(layersInd).index;
         else
             no_layers = 1;
+            layer_ind = 1;
         end
         
         time_ind  = dims(timeInd).index;
@@ -214,8 +215,8 @@ switch modelType
                         data=qpread(trih,1,'horizontal velocity','griddata',time_ind,stat_ind,0);
                         Data.vel_x(:,indexOut,:) = squeeze(data.XComp(:,1,dims(layersInd).index));
                         Data.vel_y(:,indexOut,:) = squeeze(data.YComp(:,1,dims(layersInd).index));
-                        Data.vel_u(:,indexOut,:) = cell2mat(vs_get(trih,'his-series',{time_ind},'ZCURU',{stat_ind,layerInd},'quiet'));
-                        Data.vel_v(:,indexOut,:) = cell2mat(vs_get(trih,'his-series',{time_ind},'ZCURV',{stat_ind,layerInd},'quiet'));
+                        Data.vel_u(:,indexOut,:) = cell2mat(vs_get(trih,'his-series',{time_ind},'ZCURU',{stat_ind,layer_ind},'quiet'));
+                        Data.vel_v(:,indexOut,:) = cell2mat(vs_get(trih,'his-series',{time_ind},'ZCURV',{stat_ind,layer_ind},'quiet'));
                     end
                     Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
                 case {'Zcen_cen' 'Zcen_int'}
@@ -255,20 +256,20 @@ switch modelType
                     end
                     
                 case {'salinity' 'temperature'}
-                    consInd                 = strmatch(lower(OPT.varName),lower(constituents),'exact');
-                    tmp                     = vs_get(trih,'his-series',{time_ind},'GRO',{stat_ind,layerInd,consInd},'quiet');
+                    cons_ind                = strmatch(lower(OPT.varName),lower(constituents),'exact');
+                    tmp                     = vs_get(trih,'his-series',{time_ind},'GRO',{stat_ind,layer_ind,cons_ind},'quiet');
                     if iscell(tmp); tmp = cell2mat(tmp); end
                     Data.val(:, indexOut,:) = tmp;
                 case 'zrho' %density
-                    zrho                   = cell2mat(vs_get(trih,'his-series',{time_ind},'ZRHO',{stat_ind,layerInd},'quiet'));
+                    zrho                   = cell2mat(vs_get(trih,'his-series',{time_ind},'ZRHO',{stat_ind,layer_ind},'quiet'));
                     Data.val(:,indexOut,:) = zrho;
                 case 'zvicww' %vertical eddy viscosity
-                    zvicww                 = cell2mat(vs_get(trih,'his-series',{time_ind},'ZVICWW',{stat_ind,layerInd},'quiet'));
+                    zvicww                 = cell2mat(vs_get(trih,'his-series',{time_ind},'ZVICWW',{stat_ind,layer_ind},'quiet'));
                     Data.val(:,indexOut,:) = zvicww;
                 otherwise
                     warning('Non-standard varName requested, treated as constituent name')
-                    consInd                 = get_nr(lower(constituents),OPT.varName);
-                    Data.val(:, indexOut,:) = cell2mat   (vs_get(trih,'his-series',{time_ind},'GRO',{stat_ind,layerInd,consInd},'quiet'));
+                    cons_ind                = get_nr(lower(constituents),OPT.varName);
+                    Data.val(:, indexOut,:) = cell2mat   (vs_get(trih,'his-series',{time_ind},'GRO',{stat_ind,layer_ind,cons_ind},'quiet'));
             end
         end
         
@@ -279,7 +280,7 @@ switch modelType
         
         if exist('layersInd','var')
             no_layers = dims(layersInd).size;
-            layerInd  = dims(layersInd).index;
+            layer_ind = dims(layersInd).index;
         else
             no_layers = 1;
         end
@@ -319,15 +320,15 @@ switch modelType
                         Data.vel_x(:,indexOut) = uu;
                         Data.vel_y(:,indexOut) = vv;
                     else
-                        Data.vel_x(:,indexOut,:) = waquaio(sds,[],'u-stat',time_ind,stat_ind,layerInd);
-                        Data.vel_y(:,indexOut,:) = waquaio(sds,[],'v-stat',time_ind,stat_ind,layerInd);
+                        Data.vel_x(:,indexOut,:) = waquaio(sds,[],'u-stat',time_ind,stat_ind,layer_ind);
+                        Data.vel_y(:,indexOut,:) = waquaio(sds,[],'v-stat',time_ind,stat_ind,layer_ind);
                     end
                     Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
                 case 'salinity'
                     if no_layers==1
                         Data.val(:,indexOut) = waquaio(sds,[],'stsubst:            salinity',time_ind,stat_ind);
                     else
-                        Data.val(:,indexOut,:) = waquaio(sds,[],'stsubst:            salinity',time_ind,stat_ind,layerInd);
+                        Data.val(:,indexOut,:) = waquaio(sds,[],'stsubst:            salinity',time_ind,stat_ind,layer_ind);
                     end
             end
         end

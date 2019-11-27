@@ -134,18 +134,23 @@ disp(['Status of ' name ext ': ' num2str(round(runPeriod_D)) '/' num2str(round(s
     sprintf('%0.1f',percentage) '%']);
 
 if strcmp(modelType,'dfm')
+    ETAline = '';
     try
-        ETA(mdFile,percentage);
+        ETAline = ETA(mdFile,percentage);
+        disp(ETAline)
     end
 end
 
 if nargout==1
-    varargout{1}=percentage;
+    varargout{1} = percentage;
+elseif nargout==2
+    varargout{1} = percentage;
+    varargout{2} = ETAline;
 end
 
 end
 
-function ETA(mdFile,percentage)
+function ETAline = ETA(mdFile,percentage)
 % Estimated time of arrival (when is simulation expected to be done?)
 
 outFile = [fileparts(mdFile) filesep 'out.txt'];
@@ -186,13 +191,13 @@ end
 timeNeededToFinish = (now-datenumStart)/percentage*(100-percentage);
 datenumEnd = datestr(now + timeNeededToFinish);
 if timeNeededToFinish > 1
-    disp(['Simulation is expected to be finished in ' sprintf('%.2f',timeNeededToFinish) ' days at ' datenumEnd ])
+    ETAline = ['Simulation is expected to be finished in ' sprintf('%.2f',timeNeededToFinish) ' days at ' datenumEnd];
 elseif timeNeededToFinish*24 > 1
     timeNeededToFinish = timeNeededToFinish*timeFactor('d','h');
-    disp(['Simulation is expected to be finished in ' sprintf('%.2f',timeNeededToFinish) ' hours at ' datenumEnd ])
+    ETAline = ['Simulation is expected to be finished in ' sprintf('%.2f',timeNeededToFinish) ' hours at ' datenumEnd];
 else
     timeNeededToFinish = timeNeededToFinish*timeFactor('d','m');
-    disp(['Simulation is expected to be finished in ' sprintf('%.2f',timeNeededToFinish) ' minutes at ' datenumEnd ])
+    ETAline = ['Simulation is expected to be finished in ' sprintf('%.2f',timeNeededToFinish) ' minutes at ' datenumEnd];
 end
 
 end
