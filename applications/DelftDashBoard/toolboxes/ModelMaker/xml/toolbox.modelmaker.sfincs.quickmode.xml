@@ -103,6 +103,15 @@
     <enable>1</enable>
   </element>
   <element>
+    <style>pushbutton</style>
+    <position>320 60 160 20</position>
+    <tooltipstring>Push to generate initial zero water level-file and csv-file with grid coordinates</tooltipstring>
+    <text>Prepare for FEWS</text>
+    <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
+    <option1>prepare_for_fews</option1>
+    <enable>1</enable>
+  </element>  
+  <element>
     <style>edit</style>
     <position>550 110 50 20</position>
     <tooltipstring>Edit maximum elevation SFINCS model</tooltipstring>

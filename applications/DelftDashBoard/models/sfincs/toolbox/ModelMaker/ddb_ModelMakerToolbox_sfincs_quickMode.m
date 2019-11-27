@@ -80,6 +80,8 @@ else
             generateGrid('new');
         case{'generatebathymetry'}
             generateBathymetry;
+        case{'prepare_for_fews'}    
+            prepare_for_fews;
         case{'edittimes'}
             edit_times;
     end
@@ -212,6 +214,36 @@ handles=getHandles;
 % Use background bathymetry data
 datasets(1).name=handles.screenParameters.backgroundBathymetry;
 handles=ddb_ModelMakerToolbox_sfincs_generateBathymetry(handles,ad,datasets);
+setHandles(handles);
+
+%%
+function prepare_for_fews
+handles=getHandles;
+
+% These are the centre points !
+id = 1; %needed to have more than 1?
+xg=handles.model.sfincs.domain(id).gridx;
+yg=handles.model.sfincs.domain(id).gridy;
+
+% Write ascii inifile of shape of grid with all zeros
+clear inifile
+
+inifile = zeros(size(xg));
+save('sfincs.ini','inifile','-ascii')
+
+% Write csv-file of grid x&y in FEWS standard
+wb = waitbox('Generating csv-file of grid ...');pause(0.1);
+
+clear csv_out 
+
+csv_out = num2cell([xg(:),yg(:)]);
+csv_out = [['X'; csv_out(:,1)],[ 'Y'; csv_out(:,2)]];
+
+T = cell2table(csv_out(2:end,:),'VariableNames',csv_out(1,:));
+writetable(T,['sfincs_grid.csv']);
+
+close(wb);
+
 setHandles(handles);
 
 %%

@@ -104,18 +104,7 @@ end
 
 handles = ddb_sfincs_plot_mask(handles, 'plot');
 
-%% Write csv-file of grid x&y in FEWS standard (todo: put under separate button 'prepare for FEWS')
-wb = waitbox('Generating csv-file of grid ...');pause(0.1);
 
-clear csv_out 
-
-csv_out = num2cell([xg(:),yg(:)]);
-csv_out = [['X'; csv_out(:,1)],[ 'Y'; csv_out(:,2)]];
-
-T = cell2table(csv_out(2:end,:),'VariableNames',csv_out(1,:));
-writetable(T,['sfincs_grid.csv']);
-
-close(wb);
 
 
 
