@@ -470,7 +470,6 @@ disp('Temp fix for DFM: Reconstructing Zcen_int based on water level and z-coord
 Data_wl       = EHY_getmodeldata(inputFile,stat_name,modelType,OPT,'varName','wl');
 Data_zcen_cen = EHY_getmodeldata(inputFile,stat_name,modelType,OPT,'varName','zcen_cen');
 gridInfo      = EHY_getGridInfo(inputFile,{'layer_model','no_layers'});
-Data_bed      = EHY_getmodeldata(inputFile,stat_name,modelType,OPT,'varName','bed');
 
 Data = Data_zcen_cen;
 Data.val = NaN*Data.val;
