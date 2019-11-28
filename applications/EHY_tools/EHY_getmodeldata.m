@@ -405,6 +405,36 @@ switch modelType
         end
         clear tmp
         
+    case 'waqua_scaloost'
+        %% ASCII data Scaloost as supplied by Zeeland
+        for i_stat = 1: length(Data.stationNames)
+            fileName = [strrep(inputFile,'**stationName**',Data.stationNames{i_stat}) '.dat'];
+            fid      = fopen(fileName,'r');
+            line     = fgetl(fid);
+            line     = fgetl(fid);
+            line     = fgetl(fid);
+            i_time   = 0;
+            while ~feof(fid)
+                i_time  = i_time + 1;
+                line    = fgetl(fid);
+                r_val   = str2num(line(18:end))/100.;
+                tmp.val_tmp (i_time,i_stat)  = r_val;
+            end
+            fclose(fid);
+        end
+        tmp.times = Data.times;
+        
+        % loop over stations
+        for i_stat = 1:dims(stationsInd).sizeOut
+            stat_ind  = dims(stationsInd).index(i_stat);
+            indexOut = dims(stationsInd).indexOut(i_stat);
+            switch OPT.varName
+                case 'wl'
+                    Data.val(:,indexOut) = tmp.val_tmp(:,stat_ind);
+            end
+        end
+        clear tmp
+        
     case 'delwaq'
         %% DELWAQ
         dw = delwaq('open',inputFile);
