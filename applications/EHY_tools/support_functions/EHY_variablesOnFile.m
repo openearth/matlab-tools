@@ -29,9 +29,11 @@ switch modelType
         description(1:numel(variables),1) = {''};
         for iV = 1:length(variables)
             % add attribute info - long_name
-            AttrInd =  strmatch('long_name',{infonc.Variables(iV).Attributes.Name},'exact');
-            if ~isempty(AttrInd)
-                description{iV,1} = infonc.Variables(iV).Attributes(AttrInd).Value;
+            if ~isempty(infonc.Variables(iV).Attributes)
+                AttrInd =  strmatch('long_name',{infonc.Variables(iV).Attributes.Name},'exact');
+                if ~isempty(AttrInd)
+                    description{iV,1} = infonc.Variables(iV).Attributes(AttrInd).Value;
+                end
             end
         end
         
