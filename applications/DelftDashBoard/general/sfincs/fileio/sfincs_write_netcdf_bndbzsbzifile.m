@@ -14,7 +14,7 @@ function sfincs_write_netcdf_bndbzsbzifile(filename, x, y, EPSGcode, UTMname, re
 % - data is now written away as singles
 % 
 % Example:
-% filename = 'sfincs_netbndbzsfile.nc';
+% filename = 'sfincs_netbndbzsbzifile.nc';
 % 
 % x = [0, 100, 200];
 % y = [50, 150, 250];
