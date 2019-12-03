@@ -1,0 +1,7 @@
+from kmldap.tests import *
+
+class TestDeltaresController(TestController):
+
+    def test_index(self):
+        response = self.app.get(url(controller='deltares', action='index'))
+        # Test response...

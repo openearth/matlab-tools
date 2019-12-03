@@ -1,0 +1,44 @@
+[
+    {
+        "template": "grid",
+        "description": "Data represented or projected on a regular or irregular grid."
+    }, {
+        "template": "point",
+        "description": "A single data point (having no implied coordinate relationship to other points)."
+    }, {
+       "template": "profileIncomplete",
+       "description": "An ordered set of data points along a vertical line at a fixed horizontal position and fixed time."
+    }, {
+       "template": "profileOrthogonal",
+       "description": "An ordered set of data points along a vertical line at a fixed horizontal position and fixed time."
+    }, {
+       "template": "timeSeriesIncomplete",
+       "description": "A series of data points at the same spatial location with monotonically increasing times."
+    }, {
+       "template": "timeSeriesOrthogonal",
+       "description": "A series of data points at the same spatial location with monotonically increasing times."
+    }, {
+       "template": "timeSeriesProfileIncomVIncomT",
+       "description": "A series of profile features at the same horizontal position with monotonically increasing times."
+    }, {
+       "template": "timeSeriesProfileIncomVOrthoT",
+       "description": "A series of profile features at the same horizontal position with monotonically increasing times."
+    }, {
+       "template": "timeSeriesProfileOrthoVIncomT",
+       "description": "A series of profile features at the same horizontal position with monotonically increasing times."
+    }, {
+       "template": "timeSeriesProfileOrthoVOrthoT",
+       "description": "A series of profile features at the same horizontal position with monotonically increasing times."
+    }, {
+       "template": "trajectoryIncomplete",
+       "description": "A series of data points along a path through space with monotonically increasing times."
+    }, {
+       "template": "A series of profile features located at points ordered along a trajectory."
+    }, {
+       "template": "trajectoryProfileOrtho",
+       "description": "A series of profile features located at points ordered along a trajectory."
+    }, {
+       "template": "",
+       "description": ""
+    }
+]

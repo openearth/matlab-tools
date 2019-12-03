@@ -1,0 +1,33 @@
+#! /bin/csh -f
+#===============================================================================
+# SVN $Id: runoff.bluefire.run 41883 2012-11-13 16:51:15Z mlevy@ucar.edu $
+# SVN $URL: https://svn-ccsm-models.cgd.ucar.edu/tools/mapping/trunk_tags/mapping_121113b/gen_mapping_files/runoff_to_ocn/runoff.bluefire.run $
+#===============================================================================
+#  This is an LSF batch job script for runoff computation
+#===============================================================================
+#BSUB -n 1
+#BSUB -R "span[hosts=1]"
+#BSUB -q regular
+#BSUB -N
+#BSUB -a poe
+#BSUB -o poe.stdout.%J
+#BSUB -e poe.stderr.%J
+#BSUB -J maprunoff
+#BSUB -W 0:28
+#BSUB -P 39310004
+
+setenv LID "`date +%y%m%d-%H%M%S`"
+
+setenv OMP_NUM_THREADS 32
+
+# cd /CESM/cseg/mapping/makemaps/r05_??? <- run from your scripts dir
+#set SRCDIR = /CESM/cseg/mapping/code/<location of runoff_map binary>
+set SRCDIR = /glade/home/mlevy/codes/mapping_trunk/gen_mapping_files/runoff_to_ocn
+#set SRCDIR = /glade/home/dbailey/mapping/gen_runoff_ocn_maps
+
+echo "start    computing smoothed map " `date`
+time $SRCDIR/runoff_map | tee out.$LID
+echo "finished computing smoothed map " `date`
+
+# tail -200 out.$LID
+

@@ -1,0 +1,308 @@
+// ~->[DNET-1]->~
+
+// File created by Norsys using Netica 3.25+ on Sep 19, 2007 at 04:36:35.
+
+bnet Bouncing {
+numdimensions = 1;
+autoupdate = TRUE;
+comment = "\n\
+	\|    Bouncing Ball                            Copyright 1997-2006 Norsys Software Corp.\n\
+	\|                                             From Brent Boerlage.\n\n\
+	This is a \"time delay\" bayes net to model a ball which bounces back and forth in a straight \n\
+	line between two parallel barriers without loosing any energy at each bounce.  \n\
+	Initially we have no knowledge of the position or velocity of the ball.\n\n\
+	The Position and Velocity nodes stand for the position and velocity at each instant of time, \n\
+	and are connected together with brown time delay links as well as a regular black link.  \n\
+	If you double-click on the Position node you can see the equation which defines the new \n\
+	position in terms of the old position, and the velocity.  It involves the constant \"dt\", \n\
+	whose value may be changed (by right-clicking on the dt node) to provide a different amount \n\
+	of time between time slices.  \n\n\
+	By clicking down on the selector that originally says \"Equation\", you can choose \"Ranges\" \n\
+	to see how the node has been discretized.  Later, you can edit this list to change the \n\
+	discretization.\n\n\
+	The first step is to generate probability tables (CPTs) for the current discretization.  \n\
+	Make sure no nodes are selected and choose Relation -> Equation\A0to\A0Table from the main \
+	menu.  \n\
+	Enter 100 when prompted for the number of samples per cell and press \"No\" when asked about \n\
+	including sampling uncertainty.\n\n\
+	Next you generate a time expanded version of the net by doing Network -> Expand\A0Time.  \n\
+	This will make a new window with a new net in it.  You will probably want to resize this window \n\
+	to make it wider.  The new net is a regular bayes net with each Position and Velocity node \n\
+	representing the position and velocity at a new point in time, with nodes to the right \n\
+	corresponding to later times.\n\n\
+	There are 3 disconnected links on the two first nodes.  We have no initial knowledge of the \n\
+	position or velocity, so we delete them by clicking on each link to select it and pressing the \n\
+	DELETE key.  Then select the first two nodes and do Relation -> Uniform\A0Probabilities.  \n\
+	This will give the first two nodes uniform probability distributions, indicating we don\92t know \
+	\|\n\
+	anything about the initial position or velocity.\n\n\
+	Finally we can compile the bayes net for probabilistic inference with Network -> Compile.  \n\
+	Turn on automatic updating, if it isn't already, by toggling Network -> Automatic\A0Updating, \n\
+	so the menu item is checkmarked.  Experiment with setting the position or velocity (by clicking \n\
+	on the desired range) to indicate observations at certain times, and see how the beliefs for \n\
+	position and velocity at all other times change.\n\n\
+	An interesting situation is when the ball is near the boundary, but you don\92t know which way \
+	it \n\
+	is going, since after a little while it will surely be moving away from the boundary (perhaps \
+	due \n\
+	to a bounce).  Or if the positions at 2 times are known, can it infer the velocity?  Or if just \n\
+	the velocities at two adjacent times are known, and one is the negative of the other, can it \
+	infer \n\
+	the position (because it must have bounced).  You can also try entering some negative findings \n\
+	(that the ball isn't at some particular position or velocity) by holding down the SHIFT key when \
+	\|\n\
+	you click on the range.\n\n\
+	Remember that the numerical results will not be exact, due to the discretization and sampling \n\
+	error in converting the equations to probability tables.  You may also want to try a finer \n\
+	discretization by changing the Ranges of the original unexpanded net.\n\n\
+	When you build your own time delay nets, to make some links represent a time delay, select the \n\
+	links, then choose Modify -> Delay Links.  Or you can use the node dialog box, choosing \"Delay\" \
+	\|\n\
+	from the multi-purpose selector at the bottom.\n\n\
+	";
+author = "BoerlageB";
+whenchanged = 1190150548;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 10;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	windowposn = (65, 54, 355, 545);
+	CommentShowing = TRUE;
+	CommentWindowPosn = (201, 169, 1017, 669);
+	resolution = 72;
+	drawingbounds = (1104, 730);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0xc0c0c0;};
+	NodeSet Nature {BuiltIn = 1; Color = 0xf8eed2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0xd3caa6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0xc8c8c8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0xffffff;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0xffffb4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0xffbdbd;};
+	NodeSet Decision {BuiltIn = 1; Color = 0xdee8ff;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0xf0fafa;};
+	NodeSet Title {BuiltIn = 1; Color = 0xffffff;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		landscape = FALSE;
+		magnify = 1;
+		};
+	};
+
+node x {
+	kind = NATURE;
+	discrete = FALSE;
+	chance = CHANCE;
+	levels = (0, 0, 2, 4, 6, 8, 10, 10);
+	inputs = (xd, vd);
+	parents = (x, v);
+	probs = 
+		// 0            0 to 2       2 to 4       4 to 6       6 to 8       8 to 10      10              // xd      vd        
+		(((1,           0,           0,           0,           0,           0,           0),             // 0       -10 to -8 
+		  (1,           0,           0,           0,           0,           0,           0),             // 0       -8 to -6  
+		  (1,           0,           0,           0,           0,           0,           0),             // 0       -6 to -4  
+		  (1,           0,           0,           0,           0,           0,           0),             // 0       -4 to -2  
+		  (1,           0,           0,           0,           0,           0,           0),             // 0       -2 to 0   
+		  (0,           1,           0,           0,           0,           0,           0),             // 0       0 to 2    
+		  (0,           1,           0,           0,           0,           0,           0),             // 0       2 to 4    
+		  (0,           1,           0,           0,           0,           0,           0),             // 0       4 to 6    
+		  (0,           1,           0,           0,           0,           0,           0),             // 0       6 to 8    
+		  (0,           0,           1,           0,           0,           0,           0)),            // 0       8 to 10   
+		 ((1,           0,           0,           0,           0,           0,           0),             // 0 to 2  -10 to -8 
+		  (0.8782,      0.1218,      0,           0,           0,           0,           0),             // 0 to 2  -8 to -6  
+		  (0.6233,      0.3767,      0,           0,           0,           0,           0),             // 0 to 2  -6 to -4  
+		  (0.3763,      0.6237,      0,           0,           0,           0,           0),             // 0 to 2  -4 to -2  
+		  (0.1279,      0.8721,      0,           0,           0,           0,           0),             // 0 to 2  -2 to 0   
+		  (0,           0.877,       0.123,       0,           0,           0,           0),             // 0 to 2  0 to 2    
+		  (0,           0.6236,      0.3764,      0,           0,           0,           0),             // 0 to 2  2 to 4    
+		  (0,           0.3784,      0.6216,      0,           0,           0,           0),             // 0 to 2  4 to 6    
+		  (0,           0.1245,      0.8755,      0,           0,           0,           0),             // 0 to 2  6 to 8    
+		  (0,           0,           0.8746,      0.1254,      0,           0,           0)),            // 0 to 2  8 to 10   
+		 ((0.1225,      0.8775,      0,           0,           0,           0,           0),             // 2 to 4  -10 to -8 
+		  (0,           0.8763,      0.1237,      0,           0,           0,           0),             // 2 to 4  -8 to -6  
+		  (0,           0.6251,      0.3749,      0,           0,           0,           0),             // 2 to 4  -6 to -4  
+		  (0,           0.3754,      0.6246,      0,           0,           0,           0),             // 2 to 4  -4 to -2  
+		  (0,           0.1244,      0.8756,      0,           0,           0,           0),             // 2 to 4  -2 to 0   
+		  (0,           0,           0.8725,      0.1275,      0,           0,           0),             // 2 to 4  0 to 2    
+		  (0,           0,           0.6284,      0.3716,      0,           0,           0),             // 2 to 4  2 to 4    
+		  (0,           0,           0.3819,      0.6181,      0,           0,           0),             // 2 to 4  4 to 6    
+		  (0,           0,           0.1231,      0.8769,      0,           0,           0),             // 2 to 4  6 to 8    
+		  (0,           0,           0,           0.8759,      0.1241,      0,           0)),            // 2 to 4  8 to 10   
+		 ((0,           0.1237,      0.8763,      0,           0,           0,           0),             // 4 to 6  -10 to -8 
+		  (0,           0,           0.8741,      0.1259,      0,           0,           0),             // 4 to 6  -8 to -6  
+		  (0,           0,           0.6268,      0.3732,      0,           0,           0),             // 4 to 6  -6 to -4  
+		  (0,           0,           0.3712,      0.6288,      0,           0,           0),             // 4 to 6  -4 to -2  
+		  (0,           0,           0.1237,      0.8763,      0,           0,           0),             // 4 to 6  -2 to 0   
+		  (0,           0,           0,           0.8754,      0.1246,      0,           0),             // 4 to 6  0 to 2    
+		  (0,           0,           0,           0.6189,      0.3811,      0,           0),             // 4 to 6  2 to 4    
+		  (0,           0,           0,           0.3698,      0.6302,      0,           0),             // 4 to 6  4 to 6    
+		  (0,           0,           0,           0.1259,      0.8741,      0,           0),             // 4 to 6  6 to 8    
+		  (0,           0,           0,           0,           0.874,       0.126,       0)),            // 4 to 6  8 to 10   
+		 ((0,           0,           0.1258,      0.8742,      0,           0,           0),             // 6 to 8  -10 to -8 
+		  (0,           0,           0,           0.8728,      0.1272,      0,           0),             // 6 to 8  -8 to -6  
+		  (0,           0,           0,           0.6261,      0.3739,      0,           0),             // 6 to 8  -6 to -4  
+		  (0,           0,           0,           0.3747,      0.6253,      0,           0),             // 6 to 8  -4 to -2  
+		  (0,           0,           0,           0.1221,      0.8779,      0,           0),             // 6 to 8  -2 to 0   
+		  (0,           0,           0,           0,           0.8767,      0.1233,      0),             // 6 to 8  0 to 2    
+		  (0,           0,           0,           0,           0.6147,      0.3853,      0),             // 6 to 8  2 to 4    
+		  (0,           0,           0,           0,           0.3749,      0.6251,      0),             // 6 to 8  4 to 6    
+		  (0,           0,           0,           0,           0.1215,      0.8785,      0),             // 6 to 8  6 to 8    
+		  (0,           0,           0,           0,           0,           0.8758,      0.1242)),       // 6 to 8  8 to 10   
+		 ((0,           0,           0,           0.1272,      0.8728,      0,           0),             // 8 to 10 -10 to -8 
+		  (0,           0,           0,           0,           0.8761,      0.1239,      0),             // 8 to 10 -8 to -6  
+		  (0,           0,           0,           0,           0.6249,      0.3751,      0),             // 8 to 10 -6 to -4  
+		  (0,           0,           0,           0,           0.3783,      0.6217,      0),             // 8 to 10 -4 to -2  
+		  (0,           0,           0,           0,           0.1272,      0.8728,      0),             // 8 to 10 -2 to 0   
+		  (0,           0,           0,           0,           0,           0.8766,      0.1234),        // 8 to 10 0 to 2    
+		  (0,           0,           0,           0,           0,           0.6189,      0.3811),        // 8 to 10 2 to 4    
+		  (0,           0,           0,           0,           0,           0.3787,      0.6213),        // 8 to 10 4 to 6    
+		  (0,           0,           0,           0,           0,           0.1235,      0.8765),        // 8 to 10 6 to 8    
+		  (0,           0,           0,           0,           0,           0,           1)),            // 8 to 10 8 to 10   
+		 ((0,           0,           0,           0,           1,           0,           0),             // 10      -10 to -8 
+		  (0,           0,           0,           0,           0,           1,           0),             // 10      -8 to -6  
+		  (0,           0,           0,           0,           0,           1,           0),             // 10      -6 to -4  
+		  (0,           0,           0,           0,           0,           1,           0),             // 10      -4 to -2  
+		  (0,           0,           0,           0,           0,           1,           0),             // 10      -2 to 0   
+		  (0,           0,           0,           0,           0,           0,           1),             // 10      0 to 2    
+		  (0,           0,           0,           0,           0,           0,           1),             // 10      2 to 4    
+		  (0,           0,           0,           0,           0,           0,           1),             // 10      4 to 6    
+		  (0,           0,           0,           0,           0,           0,           1),             // 10      6 to 8    
+		  (0,           0,           0,           0,           0,           0,           1)));           // 10      8 to 10   ;
+	numcases = 10000;
+	equation = "x (xd, vd) = clip (0, 10, xd + dt * vd)";
+	delays = (
+		(1),
+		(1));
+	title = "Position";
+	comment = "Position of object bouncing back and forth between two walls with no energy loss.\n\
+		The discretization (Range) has two endpoint states that indicate a bounce is occuring, for the \
+		velocity to reverse.";
+	whenchanged = 1190150492;
+	visual V1 {
+		center = (120, 96);
+		height = 3;
+		link 1 {
+			path = ((202, 77), (222, 72), (222, 114), (202, 110));
+			};
+		link 2 {
+			path = ((206, 234), (222, 222), (222, 150), (202, 138));
+			};
+		};
+	};
+
+node v {
+	kind = NATURE;
+	discrete = FALSE;
+	chance = DETERMIN;
+	levels = (-10, -8, -6, -4, -2, 0, 2, 4, 6, 8, 10);
+	inputs = (vd, xd);
+	parents = (v, x);
+	functable = 
+		                     // vd        xd      
+		 ((#9,               // -10 to -8 0       
+		   #0,               // -10 to -8 0 to 2  
+		   #0,               // -10 to -8 2 to 4  
+		   #0,               // -10 to -8 4 to 6  
+		   #0,               // -10 to -8 6 to 8  
+		   #0,               // -10 to -8 8 to 10 
+		   #0),              // -10 to -8 10      
+		  (#8,               // -8 to -6  0       
+		   #1,               // -8 to -6  0 to 2  
+		   #1,               // -8 to -6  2 to 4  
+		   #1,               // -8 to -6  4 to 6  
+		   #1,               // -8 to -6  6 to 8  
+		   #1,               // -8 to -6  8 to 10 
+		   #1),              // -8 to -6  10      
+		  (#7,               // -6 to -4  0       
+		   #2,               // -6 to -4  0 to 2  
+		   #2,               // -6 to -4  2 to 4  
+		   #2,               // -6 to -4  4 to 6  
+		   #2,               // -6 to -4  6 to 8  
+		   #2,               // -6 to -4  8 to 10 
+		   #2),              // -6 to -4  10      
+		  (#6,               // -4 to -2  0       
+		   #3,               // -4 to -2  0 to 2  
+		   #3,               // -4 to -2  2 to 4  
+		   #3,               // -4 to -2  4 to 6  
+		   #3,               // -4 to -2  6 to 8  
+		   #3,               // -4 to -2  8 to 10 
+		   #3),              // -4 to -2  10      
+		  (#5,               // -2 to 0   0       
+		   #4,               // -2 to 0   0 to 2  
+		   #4,               // -2 to 0   2 to 4  
+		   #4,               // -2 to 0   4 to 6  
+		   #4,               // -2 to 0   6 to 8  
+		   #4,               // -2 to 0   8 to 10 
+		   #4),              // -2 to 0   10      
+		  (#5,               // 0 to 2    0       
+		   #5,               // 0 to 2    0 to 2  
+		   #5,               // 0 to 2    2 to 4  
+		   #5,               // 0 to 2    4 to 6  
+		   #5,               // 0 to 2    6 to 8  
+		   #5,               // 0 to 2    8 to 10 
+		   #4),              // 0 to 2    10      
+		  (#6,               // 2 to 4    0       
+		   #6,               // 2 to 4    0 to 2  
+		   #6,               // 2 to 4    2 to 4  
+		   #6,               // 2 to 4    4 to 6  
+		   #6,               // 2 to 4    6 to 8  
+		   #6,               // 2 to 4    8 to 10 
+		   #3),              // 2 to 4    10      
+		  (#7,               // 4 to 6    0       
+		   #7,               // 4 to 6    0 to 2  
+		   #7,               // 4 to 6    2 to 4  
+		   #7,               // 4 to 6    4 to 6  
+		   #7,               // 4 to 6    6 to 8  
+		   #7,               // 4 to 6    8 to 10 
+		   #2),              // 4 to 6    10      
+		  (#8,               // 6 to 8    0       
+		   #8,               // 6 to 8    0 to 2  
+		   #8,               // 6 to 8    2 to 4  
+		   #8,               // 6 to 8    4 to 6  
+		   #8,               // 6 to 8    6 to 8  
+		   #8,               // 6 to 8    8 to 10 
+		   #1),              // 6 to 8    10      
+		  (#9,               // 8 to 10   0       
+		   #9,               // 8 to 10   0 to 2  
+		   #9,               // 8 to 10   2 to 4  
+		   #9,               // 8 to 10   4 to 6  
+		   #9,               // 8 to 10   6 to 8  
+		   #9,               // 8 to 10   8 to 10 
+		   #0));             // 8 to 10   10      ;
+	equation = "v (xd, vd) =\n    (xd == 0  &&  vd < 0  ||  xd == 10  &&  vd > 0) ? \n    -vd : vd";
+	delays = (
+		(1),
+		(0));
+	title = "Velocity";
+	comment = "The velocity of the object (which moves back and forth\n\
+		on a straigt line).\n\
+		Its equation reverses the sign of the velocity when the\n\
+		object hits the barrier at either end.";
+	whenchanged = 1190150548;
+	visual V1 {
+		center = (120, 294);
+		height = 2;
+		link 1 {
+			path = ((206, 274), (222, 270), (222, 324), (206, 319));
+			};
+		};
+	};
+
+node dt {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	comment = "The time step (length of time between time slices).";
+	whenchanged = 880394726;
+	value = 0.25;
+	visual V1 {
+		center = (18, 30);
+		height = 1;
+		};
+	};
+};

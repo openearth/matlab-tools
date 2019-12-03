@@ -1,0 +1,180 @@
+netcdf NCEI_Grid {
+dimensions:
+        lat = ${{dim.lat}};
+        lon = ${{dim.lon}};
+        time = ${{dim.time}};
+        z = ${{dim.z}};
+        nv = 2;
+variables:
+        float lat(lat) ;//....................................... Depending on the precision used for the variable, the data type could be int or double instead of float. 
+                lat:long_name = "" ; //...................................... RECOMMENDED - Provide a descriptive, long name for this variable.
+                lat:standard_name = "latitude" ; //.......................... REQUIRED    - Do not change.
+                lat:units = "degrees_north" ; //............................. REQUIRED    - CF recommends degrees_north, but at least must use UDUNITS.
+                lat:axis = "Y" ; //.......................................... REQUIRED    - Do not change.
+                lat:valid_min = 0.0f ; //.................................... RECOMMENDED - Replace with correct value.
+                lat:valid_max = 0.0f ; //.................................... RECOMMENDED - Replace with correct value.
+                lat:bounds = "lat_bounds";//................................. REQUIRED    - Replace this with the correct value.
+                lat:ancillary_variables = "" ; //............................ RECOMMENDED - List other variables providing information about this variable.
+                lat:comment = "" ; //........................................ RECOMMENDED - Add useful, additional information here.
+       float lon(lon) ; //........................................ Depending on the precision used for the variable, the data type could be int or double instead of float. 
+                lon:long_name = "" ; //...................................... RECOMMENDED
+                lon:standard_name = "longitude" ; //......................... REQUIRED    - This is fixed, do not change.
+                lon:units = "degrees_east" ; //.............................. REQUIRED    - CF recommends degrees_east, but at least use UDUNITS.
+                lon:axis = "X" ; //.......................................... REQUIRED    - Do not change.
+                lon:valid_min = 0.0f ; //.................................... RECOMMENDED - Replace this with correct value.
+                lon:valid_max = 0.0f ; //.................................... RECOMMENDED - Replace this with correct value.
+                lon:bounds = "lon_bounds";//................................. REQUIRED    - Replace this with the correct value.    
+                lon:ancillary_variables = "" ; //............................ RECOMMENDED - List other variables providing information about this variable.
+                lon:comment = "" ; //........................................ RECOMMENDED - Add useful, additional information here.
+        double time(time) ;//........................................ Depending on the precision used for the variable, the data type could be int or double instead of float.
+                time:long_name = "" ; //..................................... RECOMMENDED - Provide a descriptive, long name for this variable. 
+                time:standard_name = "time" ; //............................. REQUIRED    - Do not change
+                time:units = "seconds since 1970-01-01 00:00:00 0:00" ; //... REQUIRED    - Use approved CF convention with approved UDUNITS.
+                time:calendar = "julian" ; //................................ REQUIRED    - IF the calendar is not default calendar, which is "gregorian".
+                time:axis = "T" ; //......................................... REQUIRED    - Do not change.
+                time:bounds = "time_bounds";//............................... REQUIRED    - Replace this with the correct value. For climatological data, replace bounds with the attribute climatology. This attribute should refer to a variable containing climatological bounds instead of regular time bounds.
+                time:ancillary_variables = "" ; //........................... RECOMMENDED - List other variables providing information about this variable.
+                time:comment = "" ; //....................................... RECOMMENDED - Add useful, additional information here.
+        float z(z) ;//........................................ Depending on the precision used for the variable, the data type could be int or double instead of float. Also the variable "z" could be substituted with a more descriptive name like "depth", "altitude", "pressure", etc.
+                z:long_name = "" ; //........................................ RECOMMENDED - Provide a descriptive, long name for this variable. 
+                z:standard_name = "" ; //.................................... REQUIRED    - Usually "depth" or "altitude" is used.
+                z:units = "" ; //............................................ REQUIRED    - Use UDUNITS.
+                z:axis = "Z" ; //............................................ REQUIRED    - Do not change.
+                z:positive = "" ; //......................................... REQUIRED    - Use "up" or "down".
+                z:valid_min = 0.0f ; //...................................... RECOMMENDED - Replace with correct value.
+                z:valid_max = 0.0f ; //...................................... RECOMMENDED - Replace with correct value.
+                z:bounds = "z_bounds";//..................................... REQUIRED    - Replace this with the correct value.
+                z:ancillary_variables = "" ; //.............................. RECOMMENDED - List other variables providing information about this variable.
+                z:comment = "" ; //.......................................... RECOMMENDED - Add useful, additional information here.
+        float lat_bounds(lat, nv);        
+                lat_bounds:units = "degrees_north";//.........................RECOMMENDED
+                lat_bounds:comment = "latitude values at the north and south bounds of each pixel.";//RECOMMENDED
+        float lon_bounds(lon, nv);      
+                lon_bounds:units = "degrees_east";//..........................RECOMMENDED  
+                lon_bounds:comment = "longitude values at the west and east bounds of each pixel.";//.RECOMMENDED
+        float time_bounds(time, nv);        
+                time_bounds:units = "seconds since 1970-01-01 00:00:00 0:00";//.......................RECOMMENDED
+                time_bounds:comment = "time bounds for each time value";//............................RECOMMENDED
+        float z_bounds(z, nv);        
+                z_bounds:units = "";//........................................RECOMMENDED
+                z_bounds:comment = "z bounds for each z value";//.............RECOMMENDED
+        float ${{var.name}}(time, z, lat, lon) ;//................................ This is an example of how each and every geophysical variable in the file should be represented. Replace the name of the variable("${{var.name}}") with a suitable name. Replace "float" by data type which is appropriate for the variable. 
+                ${{var.name}}:long_name = "${{var.long_name}}" ; //................... RECOMMENDED - Provide a descriptive, long name for this variable. 
+                ${{var.name}}:standard_name = "${{var.standard_name}}" ; //............... REQUIRED    - If using a CF standard name and a suitable name exists in the CF standard name table.
+                ${{var.name}}:ncei_name = "" ; //................... RECOMMENDED - From the NCEI variables vocabulary, if standard_name does not exist.
+                ${{var.name}}:units = "${{var.units}}" ; //....................... REQUIRED    - Use UDUNITS compatible units.
+                ${{var.name}}:scale_factor = 0.0f ; //.............. REQUIRED if the data uses a scale_factor other than 1.The data type should be the data type of the variable.
+                ${{var.name}}:add_offset = 0.0f ; // ............... REQUIRED if the data uses an add_offset other than 0. The data type should be the data type of the variable.
+                ${{var.name}}:_FillValue = 0.0f ; //................ REQUIRED  if there could be undefined values in the data.
+${{var.name}}:missing_value = 0.0f ; //................ RECOMMENDED  if there could be missing values in the data. Not necessary if there is only one value which is the same as _FillValue.
+                ${{var.name}}:valid_min = 0.0f ; //................. RECOMMENDED - Replace with correct value.
+                ${{var.name}}:valid_max = 0.0f ; //................. RECOMMENDED - Replace with correct value.
+                ${{var.name}}:coordinates = "time lat lon z" ; //... REQUIRED    - Include the auxiliary coordinate variables and optionally coordinate variables in the list. The order itself does not matter. Also, note that whenever any auxiliary coordinate variable contains a missing value, all other coordinate, auxiliary coordinate and data values corresponding to that element should also contain missing values.
+${{var.name}}:coverage_content_type = "" ; // .... RECOMMENDED - An ISO 19115-1 code to indicate the source of the data (image, thematicClassification, physicalMeasurement, auxiliaryInformation, qualityInformation, referenceInformation, modelResult, or coordinate). (ACDD)
+                ${{var.name}}:grid_mapping = "crs" ; //............. RECOMMENDED - It is highly recommended that the data provider put the data in a well known geographic coordinate system and provide the details of the coordinate system.
+                ${{var.name}}:source = "${{var.source}}" ; //...................... RECOMMENDED - The method of production of the original data
+                ${{var.name}}:references = "${{var.references}}" ; //.................. RECOMMENDED - Published or web-based references that describe the data or methods used to produce it.
+                ${{var.name}}: cell_methods = "" ; // .............. RECOMMENDED - Use the coordinate variables to define the cell values (ex., "time: point lon: point lat: point z: point").
+                ${{var.name}}:ancillary_variables = "instrument_parameter_variable platform_variable boolean_flag_variable enumerated_flag_variable" ; //......... RECOMMENDED - Identify the variable name(s) of the flag(s) and other ancillary variables relevant to this variable.  Use a space-separated list.
+                ${{var.name}}:platform = "platform_variable" ; //... RECOMMENDED - Refers to name of variable containing information on the platform from which this variable was collected.
+                ${{var.name}}:instrument = "instrument_variable";//..RECOMMENDED - Refers to name of variable containing information on the instrument from which this variable was collected.
+                ${{var.name}}:comment = "${{var.comment}}" ; //..................... RECOMMENDED - Add useful, additional information here.
+        byte boolean_flag_variable(time, z, lat, lon); //............................. A boolean flag variable, in which each bit of the flag can be a 1 or 0.
+                boolean_flag_variable:standard_name= "" ; //................. RECOMMENDED - This attribute should include the standard name of the variable which this flag contributes plus the modifier: "status_flag" (for example, "sea_water_temperature status_flag"). See CF standard name modifiers.
+                boolean_flag_variable:long_name = "" ; //.................... RECOMMENDED - Provide a descriptive, long name for this variable. 
+                boolean_flag_variable:flag_masks = ; //...................... REQUIRED    - Provide a comma-separated list describing the binary condition of the flags. 
+                boolean_flag_variable:flag_meanings = "" ; //................ REQUIRED    - Provide a comma-separated list of flag values that map to the flag_masks.
+                boolean_flag_variable:references = "" ; //................... RECOMMENDED - Published or web-based references that describe the data or methods used to produce it.
+                boolean_flag_variable:comment = "" ; //...................... RECOMMENDED - Add useful, additional information here.
+        int enumerated_flag_variable(time, z, lat, lon);  //...................... An enumerated flag variable, in which numeric values refer to defined, exclusive conditions.
+                enumerated_flag_variable:standard_name= "" ; //.............. RECOMMENDED - This attribute should include the standard name of the variable which this flag contributes plus the modifier: "status_flag" (for example, "sea_water_temperature status_flag"). See CF standard name modifiers.
+                enumerated_flag_variable:long_name = "" ; //................. RECOMMENDED - Provide a descriptive, long name for this variable. 
+                enumerated_flag_variable:flag_values = "" ; //.................. REQUIRED    - Provide a comma-separated list of flag values that map to the flag_meanings.
+                enumerated_flag_variable:flag_meanings = "" ; //............. REQUIRED    - Provide a space-separated list of meanings corresponding to each of the flag_values
+                enumerated_flag_variable:references = "" ; //................ RECOMMENDED - Published or web-based references that describe the data or methods used to produce it.
+                enumerated_flag_variable:comment = "" ; //................... RECOMMENDED - Add useful, additional information here.
+        int platform_variable; //............................................ RECOMMENDED - a container variable storing information about the platform. If more than one, can expand each attribute into a variable. For example, platform_call_sign and platform_ncei_code. See instrument_parameter_variable for an example.
+                platform_variable:long_name = "" ; //........................ RECOMMENDED - Provide a descriptive, long name for this variable. 
+                platform_variable:comment = "" ; //.......................... RECOMMENDED - Add useful, additional information here.
+                platform_variable:call_sign = "" ; //........................ RECOMMENDED - This attribute identifies the call sign of the platform.          
+                platform_variable:ncei_code = ""; //......................... RECOMMENDED - This attribute identifies the NCEI code of the platform. Look at http://www.nodc.noaa.gov/cgi-bin/OAS/prd/platform to find if NCEI codes are available.          
+                platform_variable:wmo_code = "";//........................... RECOMMENDED - This attribute identifies the wmo code of the platform. Information on getting WMO codes is available at http://www.wmo.int/pages/prog/amp/mmop/wmo-number-rules.html          
+                platform_variable:imo_code  = "";//.......................... RECOMMENDED - This attribute identifies the International Maritime Organization (IMO) number assigned by Lloyd's register. 
+        int instrument_parameter_variable; //.................................. RECOMMENDED - an instrument variable storing information about a parameter of the instrument used in the measurement, the dimensions don't have to be specified if the same instrument is used for all the measurements. 
+                instrument_parameter_variable:long_name = "" ; //................ RECOMMENDED - Provide a descriptive, long name for this variable.
+                instrument_parameter_variable:comment = "" ;   //................ RECOMMENDED - Add useful, additional information here.
+        double crs; //.......................................................... RECOMMENDED - A container variable storing information about the grid_mapping. All the attributes within a grid_mapping variable are described in http://cfconventions.org/Data/cf-conventions/cf-conventions-1.6/build/cf-conventions.html#grid-mappings-and-projections. For all the measurements based on WSG84, the default coordinate system used for GPS measurements, the values shown here should be used.
+                crs:grid_mapping_name = "latitude_longitude"; //............. RECOMMENDED
+                crs:epsg_code = "EPSG:4326" ; //............................. RECOMMENDED - European Petroleum Survey Group code for the grid mapping name.
+                crs:semi_major_axis = 6378137.0d ; //......................... RECOMMENDED
+                crs:inverse_flattening = 298.257223563d ; //.................. RECOMMENDED
+
+
+// global attributes:
+        :ncei_template_version = "NCEI_NetCDF_Grid_Template_v2.0" ; //............. REQUIRED (NCEI)
+        :title = "${{user.title}}" ; //............................................................... HIGHLY RECOMMENDED - Provide a useful title for the data in the file. (ACDD)
+        :summary = "${{user.summary}}" ; //....................................................... HIGHLY RECOMMENDED - Provide a useful summary or abstract for the data in the file. (ACDD)
+        :keywords = "${{user.keywords}}" ; //...................................................... HIGHLY RECOMMENDED - A comma separated list of keywords coming from the keywords_vocabulary. (ACDD)
+        :Conventions = "CF-1.6, ACDD-1.3" ; //.................................................. HIGHLY RECOMMENDED    - A comma separated list of the conventions being followed. Always try to use latest version. (CF/ACDD)
+       :id = "${{user.id}}" ; //.................................................................... RECOMMENDED - Should be a human readable unique identifier for data set. (ACDD)
+       :naming_authority = "${{user.naming_authority}}" ; //........................................... RECOMMENDED - Backward URL of institution (for example, gov.noaa.ncei). (ACDD)
+       :history = "${{user.history}}" ; //............................................................ RECOMMENDED - Provides an audit trail for modifications to the original data. (ACDD)
+       :source = "${{user.source}}" ; //............................................................. RECOMMENDED - The method of production of the original data. (CF)
+       :processing_level = "${{user.processing_level}}" ; //............................................. RECOMMENDED - Provide a description of the processing or quality control level of the data. (ACDD)
+       :comment = "${{user.comment}}" ; //........................................................ RECOMMENDED - Provide useful additional information here. (CF)
+       :acknowledgment = "${{user.acknowledgment}}" ; //............................................ RECOMMENDED - A place to acknowledge various types of support for the project that produced this data. (ACDD)
+       :license = "${{user.license}}" ; //............................................................ RECOMMENDED - Describe the restrictions to data access and distribution. (ACDD)
+       :standard_name_vocabulary = "CF Standard Name Table vNN" ; //........ RECOMMENDED   - If using CF standard name attribute for variables. Replace NN with the CF standard name table number  (CF)
+       :date_created = "${{sys.date_created}}" ; //.................................................. RECOMMENDED - Creation date of this version of the data(netCDF).  Use ISO 8601:2004 for date and time. (ACDD)
+       :creator_name = "${{user.creator_name}}" ; //................................................. RECOMMENDED - The name of the person (or other creator type specified by the creator_type attribute) principally responsible for creating this data. (ACDD)
+       :creator_email = "${{user.creator_email}}" ; //................................................. RECOMMENDED - The email address of the person (or other creator type specified by the creator_type attribute) principally responsible for creating this data. (ACDD)
+       :creator_url = "${{user.creator_url}}" ; //...................................................... RECOMMENDED - The URL of the person (or other creator type specified by the creator_type attribute) principally responsible for creating this data. (ACDD)
+       :institution = "${{user.institution}}" ; //....................................................... RECOMMENDED -The name of the institution principally responsible for originating this data..  An institution attribute can be used for each variable if variables come from more than one institution. (CF/ACDD)
+       :project = "${{user.project}}" ; //............................................................ RECOMMENDED - The name of the project(s) principally responsible for originating this data. Multiple projects can be separated by commas. (ACDD)
+       :publisher_name = "${{user.publisher_name}}" ; //.............................................. RECOMMENDED - The name of the person (or other entity specified by the publisher_type attribute) responsible for publishing the data file or product to users, with its current metadata and format. (ACDD)
+       :publisher_email = "${{user.publisher_email}}" ; //.............................................. RECOMMENDED - The email address of the person (or other entity specified by the publisher_type attribute) responsible for publishing the data file or product to users, with its current metadata and format. (ACDD)
+       :publisher_url = "${{user.publisher_url}}" ; //................................................... RECOMMENDED - The URL of the person (or other entity specified by the publisher_type attribute) responsible for publishing the data file or product to users, with its current metadata and format. (ACDD)
+       :geospatial_bounds = "" ; //...........................................RECOMMENDED - Describes the data's 2D or 3D geospatial extent in OGC's Well-Known Text (WKT) Geometry format. (ACDD)
+       :geospatial_bounds_crs = "" ; //.....................................RECOMMENDED - The coordinate reference system (CRS) of the point coordinates in the geospatial_bounds attribute. (ACDD)
+       :geospatial_bounds_vertical_crs = "" ; //........................RECOMMENDED - The vertical coordinate reference system (CRS) for the Z axis of the point coordinates in the geospatial_bounds attribute. (ACDD)
+       :geospatial_lat_min = 0.0d ; //.......................................... RECOMMENDED - Describes a simple lower latitude limit. (ACDD)
+       :geospatial_lat_max = 0.0d ; //......................................... RECOMMENDED - Describes a simple upper latitude limit. (ACDD)
+       :geospatial_lon_min = 0.0d ; //......................................... RECOMMENDED - Describes a simple lower longitude limit. (ACDD)
+       :geospatial_lon_max = 0.0d ; //........................................ RECOMMENDED - Describes a simple upper longitude limit. (ACDD)
+       :geospatial_vertical_min = 0.0d ; //.................................. RECOMMENDED - Describes the numerically smaller vertical limit. (ACDD)
+       :geospatial_vertical_max = 0.0d ; //.................................. RECOMMENDED - Describes the numerically larger vertical limit. (ACDD)
+       :geospatial_vertical_positive = "" ; //............................ RECOMMENDED - Use "up" or "down". (ACDD)
+       :time_coverage_start = "" ; //........................................ RECOMMENDED - Describes the time of the first data point in the data set. Use ISO 8601:2004 for date and time. (ACDD)
+       :time_coverage_end = "" ; //......................................... RECOMMENDED - Describes the time of the last data point in the data set. Use ISO 8601:2004 for date and time.(ACDD)
+       :time_coverage_duration = "" ; //.................................. RECOMMENDED - Describes the duration of the data set. Use ISO 8601:2004 for date and time. (ACDD)
+       :time_coverage_resolution = "" ; //............................... RECOMMENDED - Describes the targeted time period between each value in the data set. Use ISO 8601:2004 for date and time. (ACDD)
+       :uuid = "" ; //................................................................. RECOMMENDED - Machine readable unique identifier for each file. A new uuid is created whenever the file is changed. (NCEI)
+       :sea_name = "" ; //........................................................ RECOMMENDED - The names of the sea in which the data were collected. Use NCEI sea names table. (NCEI)
+       :creator_type = "" ; //.................................................... SUGGESTED - Specifies type of creator with one of the following: 'person', 'group', 'institution', or 'position'. (ACDD)
+       :creator_institution = "" ; //........................................... SUGGESTED - The institution of the creator; should uniquely identify the creator's institution. (ACDD)
+       :publisher_type = "" ; //................................................ SUGGESTED - Specifies type of publisher with one of the following: 'person', 'group', 'institution', or 'position'. (ACDD)
+       :publisher_institution = "${{user.publisher_institution}}" ; //....................................... SUGGESTED - The institution that presented the data file or equivalent product to users; should uniquely identify the institution. (ACDD)
+       :program = "" ; //........................................................... SUGGESTED - The overarching program(s) of which the dataset is a part. (ACDD)
+       :contributor_name = "${{user.contributor_name}}" ; //............................................ SUGGESTED - The name of any individuals, projects, or institutions that contributed to the creation of this data. (ACDD)
+       :contributor_role = "${{user.contributor_role}}" ; //............................................... SUGGESTED - The role of any individuals, projects, or institutions that contributed to the creation of this data. (ACDD)
+       :geospatial_lat_units = "degrees_north" ; //..................  SUGGESTED - Units for the latitude axis described in "geospatial_lat_min" and "geospatial_lat_max" attributes. Use UDUNITS compatible units. (ACDD)
+       :geospatial_lat_resolution= "" ; //.................................. SUGGESTED - Information about the targeted spacing of points in latitude. Examples: '100 meters' , '0.1 degree'. (ACDD)
+       :geospatial_lon_units = "degrees_east"; //..................... SUGGESTED - Units for the longitude axis described in "geospatial_lon_min" and "geospatial_lon_max" attributes. Use UDUNITS compatible units. (ACDD)
+       :geospatial_lon_resolution= "" ; //................................. SUGGESTED - Information about the targeted spacing of points in longitude. Examples: '100 meters' , '0.1 degree'. (ACDD)     
+       :geospatial_vertical_units = "" ; //.................................. SUGGESTED - Units for the vertical axis described in "geospatial_vertical_min" and "geospatial_vertical_max" attributes. The default is EPSG:4979. (ACDD)
+       :geospatial_vertical_resolution = "" ; //.......................... SUGGESTED - Information about the targeted vertical spacing of points. Example: '25 meters' (ACDD)
+       :date_modified = "${{sys.date_modified}}" ; //.................................................. SUGGESTED - The date on which the data was last modified. Note that this applies just to the data, not the metadata. Use ISO 8601:2004 for date and time. (ACDD)
+       :date_issued = "${{sys.date_issued}}" ; //...................................................... SUGGESTED - The date on which this data (including all modifications) was formally issued (i.e., made available to a wider audience). Note that these apply just to the data, not the metadata. Use ISO 8601:2004 for date and time. (ACDD)
+       :date_metadata_modified = "" ; //................................. SUGGESTED - The date on which the metadata was last modified. Use ISO 8601:2004 for date and time. (ACDD)
+       :product_version = "" ; //............................................... SUGGESTED - Version identifier of the data file or product as assigned by the data creator. (ACDD)
+       :keywords_vocabulary = "" ; //....................................... SUGGESTED - Identifies the controlled keyword vocabulary used to specify the values within the attribute "keywords". Example: 'GCMD:GCMD Keywords' ACDD)
+       :platform = "" ; //........................................................... SUGGESTED - Name of the platform(s) that supported the sensor data used to create this data set or product. Platforms can be of any type, including satellite, ship, station, aircraft or other. (ACDD)
+       :platform_vocabulary = "" ; //......................................... SUGGESTED - Controlled vocabulary for the names used in the "platform" attribute. Example: NASA/GCMD Platform Keywords. Version 8.1(ACDD)
+       :instrument = "" ; //........................................................ SUGGESTED - Name of the contributing instrument(s) or sensor(s) used to create this data set or product. (ACDD)
+       :instrument_vocabulary = "" ; //..................................... SUGGESTED - Controlled vocabulary for the names used in the "instrument" attribute.Example: NASA/GCMD Instrument Keywords. Version 8.1 (ACDD)
+       :cdm_data_type = "Grid" ; //.................................. SUGGESTED - The data type, as derived from Unidata's Common Data Model Scientific Data types and understood by THREDDS. (ACDD)
+       :metadata_link = "${{sys.metadata_link}}" ; //................................................... SUGGESTED - A URL that gives the location of more complete metadata. A persistent URL is recommended for this attribute. (ACDD)
+       :references = "${{user.references}}" ; //.........................................................SUGGESTED - Published or web-based references that describe the data or methods used to produce it. Recommend URIs (such as a URL or DOI) for papers or other references. (CF) 
+       
+      
+}

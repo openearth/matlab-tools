@@ -1,0 +1,24 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"type": "object",
+	"properties": {
+		"code": {
+			"type": "string"
+		},
+		"definition": {
+			"$ref": "ExpandEntityBase_schema.json"
+		},
+		"name": {
+			"type": "string"
+		},
+		"numericcode": {
+			"type": "number"
+		}
+	},
+	"required": [
+		"definition",
+		"code",
+		"name",
+		"numericcode"
+	]
+}

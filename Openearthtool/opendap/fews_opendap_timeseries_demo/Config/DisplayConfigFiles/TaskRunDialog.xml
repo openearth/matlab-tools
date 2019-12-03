@@ -1,0 +1,40 @@
+<!-- edited with XMLSpy v2009 sp1 (http://www.altova.com) by ICT (Stichting Deltares) -->
+<taskRunDialog xmlns="http://www.wldelft.nl/fews" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wldelft.nl/fews 
+http://fews.wldelft.nl/schemas/version1.0/taskRunDialog.xsd">
+	<taskGroup name="Workflows">
+		<!-- KNMI -->
+		<simpleTask name="Import: KNMI: potwind (full OPeNDAP catalog)" workflowId="Importeer.KNMI.potwind.all">
+			<relativePeriod unit="day" start="-30" end="0"/>
+		</simpleTask>
+		<simpleTask name="Import: KNMI: potwind (OPeNDAP subset to test)" workflowId="Importeer.KNMI.potwind.selection">
+			<relativePeriod unit="day" start="-30" end="0"/>
+		</simpleTask>
+		<!-- RWS -->
+		<simpleTask name="Import: RWS: waterbase (full OPeNDAP catalog)" workflowId="Importeer.RWS.waterbase.all">
+			<relativePeriod unit="day" start="-30" end="0"/>
+		</simpleTask>
+		<simpleTask name="Import: RWS: waterbase (OPeNDAP subset to test)" workflowId="Importeer.RWS.waterbase.selection">
+			<relativePeriod unit="day" start="-30" end="0"/>
+		</simpleTask>
+		<!-- NOAA -->
+		<simpleTask name="Import: NOAA: dart buoys (full OPeNDAP catalog)" workflowId="Importeer.NOAA.ndbc.dart.all">
+			<relativePeriod unit="day" start="-30" end="0"/>
+		</simpleTask>
+		<simpleTask name="Import: NOAA: ocean buoys (full OPeNDAP catalog)" workflowId="Importeer.NOAA.ndbc.ocean.all">
+			<relativePeriod unit="day" start="-30" end="0"/>
+		</simpleTask>
+		<simpleTask name="Import: NOAA: ocean buoys (OPeNDAP subset to test)" workflowId="Importeer.NOAA.ndbc.ocean.selection">
+			<relativePeriod unit="day" start="-30" end="0"/>
+		</simpleTask>
+		<!--HYMOS-->
+		<simpleTask name="Import: HYMOS: ssh grid (full OPeNDAP catalog)" workflowId="Importeer.HYMOS.all">
+			<relativePeriod unit="day" start="-30" end="0"/>
+		</simpleTask>
+		<simpleTask name="Import: NOAA: ocean buoys (full OPeNDAP catalog)" workflowId="Importeer.NOAA.ndbc.ocean.all">
+			<relativePeriod unit="day" start="-30" end="0"/>
+		</simpleTask>
+		<simpleTask name="Import: NOAA: ocean buoys (OPeNDAP subset to test)" workflowId="Importeer.NOAA.ndbc.ocean.selection">
+			<relativePeriod unit="day" start="-30" end="0"/>
+		</simpleTask>
+	</taskGroup>
+</taskRunDialog>

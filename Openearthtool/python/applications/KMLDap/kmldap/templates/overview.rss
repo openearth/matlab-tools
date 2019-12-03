@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" 
+  xmlns:georss="http://www.georss.org/georss">
+  <title>Jarkus transects</title>
+  <subtitle>Jarkus transects</subtitle>
+  <link href="http://openearth.deltares.nl"/>
+  <updated></updated>
+  % for i, id in enumerate(overview.id):
+  <entry>
+    <title>Transect ${id}</title>
+    <link href="${h.url(controller='jarkus', action='transect', id=id, qualified=True)}"/>
+    <updated></updated>
+    <summary>Transect at ${h.textcoordinates(overview.lon[i], overview.lat[i])} with id ${id}</summary>
+    <georss:point>${overview.lon[i]}, ${overview.lat[i]}</georss:point>
+    <content type="html">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+      <p><img src="${h.url(controller='jarkus', action='transectplot', id=id, qualified=True)}" alt="Timeseries of ${id}" width="300px" height="200px"/></p>
+      </div>
+    </content>
+
+  </entry>
+  % endfor
+</feed>

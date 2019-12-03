@@ -1,0 +1,1 @@
+curl --insecure -X POST -H "Content-Type: application/xml" -d @request_culverts.xml https://ri2de.openearth.eu/wps

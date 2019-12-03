@@ -1,0 +1,24 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"type": "object",
+	"properties": {
+		"codeInStandard": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"reference": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"standardCode": {
+			"type": [
+				"string",
+				"null"
+			]
+		}
+	}
+}

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2009 sp1 (http://www.altova.com) by ICT (Stichting Deltares) -->
+<workflowDescriptors xmlns="http://www.wldelft.nl/fews" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wldelft.nl/fews http://fews.wldelft.nl/schemas/version1.0/workflowDescriptors.xsd" version="1.0">
+	<workflowDescriptor id="RollingBarrel" forecast="false" visible="false" autoApprove="false">
+		<description>Database Rolling Barrel</description>
+	</workflowDescriptor>
+	<workflowDescriptor id="Importeer.KNMI.potwind.all" forecast="false" visible="true" autoApprove="false">
+		<description>Import data from KNMI OPeNDAP server. Import refers to catalog.xml.</description>
+		<schedulingAllowed>true</schedulingAllowed>
+		<maxSchedulingPeriod unit="day" multiplier="7"/>
+		<minSchedulingInterval unit="hour" multiplier="1"/>
+		<maxNumberRuns>14</maxNumberRuns>
+	</workflowDescriptor>
+	<workflowDescriptor id="Importeer.KNMI.potwind.selection" forecast="false" visible="true" autoApprove="false">
+		<description>Import data from KNMI OPeNDAP server. Import refers to a number of remote netCDF files.</description>
+		<schedulingAllowed>true</schedulingAllowed>
+		<maxSchedulingPeriod unit="day" multiplier="7"/>
+		<minSchedulingInterval unit="hour" multiplier="1"/>
+		<maxNumberRuns>14</maxNumberRuns>
+	</workflowDescriptor>
+	<workflowDescriptor id="Importeer.RWS.waterbase.all" forecast="false" visible="true" autoApprove="false">
+		<description>Import Waterbase data from Rijkswaterstaat OPeNDAP server. Import refers to a catalog.xml.</description>
+		<schedulingAllowed>true</schedulingAllowed>
+		<maxSchedulingPeriod unit="day" multiplier="7"/>
+		<minSchedulingInterval unit="hour" multiplier="1"/>
+		<maxNumberRuns>14</maxNumberRuns>
+	</workflowDescriptor>
+	<workflowDescriptor id="Importeer.RWS.waterbase.selection" forecast="false" visible="true" autoApprove="false">
+		<description>Import Waterbase data from Rijkswaterstaat OPeNDAP server. Import refers to a number of remote netCDF files.</description>
+		<schedulingAllowed>true</schedulingAllowed>
+		<maxSchedulingPeriod unit="day" multiplier="7"/>
+		<minSchedulingInterval unit="hour" multiplier="1"/>
+		<maxNumberRuns>14</maxNumberRuns>
+	</workflowDescriptor>
+	<workflowDescriptor id="Importeer.NOAA.ndbc.dart.all" forecast="false" visible="true" autoApprove="false">
+		<description>Import data from NOAA OPeNDAP server. Import refers to a catalog.xml.</description>
+		<schedulingAllowed>true</schedulingAllowed>
+		<maxSchedulingPeriod unit="day" multiplier="7"/>
+		<minSchedulingInterval unit="hour" multiplier="1"/>
+		<maxNumberRuns>14</maxNumberRuns>
+	</workflowDescriptor>
+	<workflowDescriptor id="Importeer.NOAA.ndbc.ocean.all" forecast="false" visible="true" autoApprove="false">
+		<description>Import data from NOAA OPeNDAP server. Import refers to a catalog.xml.</description>
+		<schedulingAllowed>true</schedulingAllowed>
+		<maxSchedulingPeriod unit="day" multiplier="7"/>
+		<minSchedulingInterval unit="hour" multiplier="1"/>
+		<maxNumberRuns>14</maxNumberRuns>
+	</workflowDescriptor>
+	<workflowDescriptor id="Importeer.NOAA.ndbc.ocean.selection" forecast="false" visible="true" autoApprove="false">
+		<description>Import data from NOAA OPeNDAP server. Import refers to a number of remote netCDF files.</description>
+		<schedulingAllowed>true</schedulingAllowed>
+		<maxSchedulingPeriod unit="day" multiplier="7"/>
+		<minSchedulingInterval unit="hour" multiplier="1"/>
+		<maxNumberRuns>14</maxNumberRuns>
+	</workflowDescriptor>
+	<workflowDescriptor id="Importeer.HYMOS.all" forecast="false" visible="true" autoApprove="false">
+		<description>Import data from NOAA OPeNDAP server. Import refers to a number of remote netCDF files.</description>
+		<schedulingAllowed>true</schedulingAllowed>
+		<maxSchedulingPeriod unit="day" multiplier="7"/>
+		<minSchedulingInterval unit="hour" multiplier="1"/>
+		<maxNumberRuns>14</maxNumberRuns>
+	</workflowDescriptor>
+</workflowDescriptors>

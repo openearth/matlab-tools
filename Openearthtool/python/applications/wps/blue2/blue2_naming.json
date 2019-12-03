@@ -1,0 +1,142 @@
+{
+	"lisflood": {
+		"sld_style" : "lisflood",
+		"epsg": 3035,
+		"divisions": {			
+			"NUTS level 2 - Sub-regions": ["nuts2", "nuts_id"],
+			"NUTS level 1 - Regions": ["nuts1", "nuts_id"],
+			"NUTS level 0 - Member states": ["nuts0", "nuts_id"],
+			"EEA river basin district": ["rbd", "thematicId"]
+		},
+		"scenarios": {
+			"BAU: Measures and current climate 1990-2016": "AllBAUObs2016",
+			"BAU: Measures and climate change 2011-2060": "AllBAUCC2060",
+			"MFTR: Measures and current climate 1990-2016": "AllMTFObs2016",
+			"MTFR: Measures and climate change 2011-2060": "AllMTFCC2060",					
+			"REF: No measures and current climate 1990-2016": "RefObs2016",
+			"REF: No measures and climate change 2011-2060": "RefCC2060"
+		},
+		"timeperiods": {
+			"1990-2016" : ["1990-01", "2016-12"],
+			"2011-2040" : ["2011-01", "2040-12"],
+			"2021-2050" : ["2021-01", "2050-12"],
+			"2031-2060" : ["2031-01", "2060-12"]
+		},
+		"variables": {
+			"Discharge monthly minimum [m3/s]": "dismonmin_dis",						
+			"Discharge monthly average [m3/s]": "disMonAvg_dis",
+			"EFlow indicator": "EflowMonAvg_Eflow",			
+			"[*thr] Wei Cns": "WeiC_WeiC"
+		},
+		"thresholds_mapping": {			
+			"WeiC_WeiC": "wfd_wei_plus"			
+		}
+	},
+	"green": {
+		"sld_style" : "green",
+		"epsg": 3035,
+		"divisions": {			
+			"NUTS level 2 - Sub-regions": ["nuts2", "nuts_id"],
+			"NUTS level 1 - Regions": ["nuts1", "nuts_id"],
+			"NUTS level 0 - Member states": ["nuts0", "nuts_id"],
+			"EEA river basin district": ["rbd", "thematicId"]
+		},
+		"scenarios": {
+			"Reference Nitrogen REF": "n_ref",
+			"Scenario Nitrogen BAU": "n_bau",
+			"Scenario Nitrogen NUTR": "n_nutr",
+			"Scenario Nitrogen MTFR": "n_mtfr",
+			"Reference Phosphorus REF": "p_ref",
+			"Scenario Phosphorus BAU": "p_bau",
+			"Scenario Phosphorus NUTR": "p_nutr",
+			"Scenario Phosphorus MTFR": "p_mtfr"
+		},
+		"variables": {
+			"Estimated load at FEC outlet [tonN/yr]": "catchload",
+			"Estimated specific load at FEC outlet [tonN/km2]": "specload",
+			"Estimated concentration [mgN/l]": "concnmgl",
+			"Estimated concentration [mgP/l]": "concpmgl"
+		},
+		"thresholds_mapping": {			
+			"": ""			
+		}
+	},	
+	"mmf": {
+		"sld_style" : "mmf",
+		"epsg": 4326,		
+		"divisions": {
+			"Marine Strategy Framework Directive (MSFD) regions": ["MarineSubregions", "localId"]			
+		},
+		"scenarios": {
+			"Scenario not available 1": "coming soon1",
+			"Scenario not available 2": "coming soon2"
+		},
+		"variables": {
+			"[*thr] phosphate conc in phosphorus mass unit [mgPO4P/m**3]": "jrc_medergom_Pho",
+			"[*thr] phosphate conc in phosphorus mass unit bottom [mgPO4P/m**3]": "jrc_medergom_Pho_b",
+			"phosphate conc in phosphorus mass unit stdev [mgPO4P/m**3]" : "jrc_medergom_Pho_sd",			
+			"mean zonal vel. stdev [m/s]": "uumean_sd",
+			"mean zonal vel. [m/s]": "uumean",
+			"mean zonal vel. bottom [m/s]": "uumean_b",			
+			"mean meridional vel. stdev [m/s]": "vvmean_sd",
+			"mean salinity [PSU]": "saltmean",
+			"mean salinity [PSU] bottom": "saltmean_b",			
+			"mean salinity stdev [PSU]" : "saltmean_sd",
+			"mean temperature [degC]": "tempmean",
+			"mean temperature bottom [degC]": "tempmean_b",			
+			"mean temperature stdev [degC]" : "tempmean_sd",
+			"[*thr] nitrate conc in mass unit [mgNO3N/m**3]": "jrc_medergom_Nit",
+			"nitrate conc in mass unit stdev [mgNO3N/m**3]": "jrc_medergom_Nit_sd",
+			"[*thr] nitrate conc in mass unit bottom [mgNO3N/m**3]" : "jrc_medergom_Nit_b",
+			"total nitrogen conc in nitrogen mass unit stdev [mgTN/m**3]" : "jrc_medergom_TN_sd",			
+			"total phosphorus in phosphorus mass unit stdev [mgTP/m**3]" : "jrc_medergom_TP_sd",
+			"total phosphorus in phosphorus mass unit [mgTP/m**3]": "jrc_medergom_TP",
+			"total phosphorus in phosphorus mass unit bottom [mgTP/m**3]": "jrc_medergom_TP_b",			
+			"oxygen in O2 mass unit bottom [mgO2/m**3]": "jrc_medergom_DO_mg_b",
+			"oxygen in O2 mass unit stdev [mgO2/m**3]": "jrc_medergom_DO_mg_sd",
+			"total chlorophyll a stdev [mgchla/m**3]" : "jrc_medergom_tot_chla_sd",
+			"[*thr] total chlorophyll a bottom [mgchla/m**3]": "jrc_medergom_tot_chla_b",
+			"[*thr] total chlorophyll [mgchla/m**3]": "jrc_medergom_tot_chla",
+			"total nitrogen conc in nitrogen mass unit [mgTN/m**3]": "jrc_medergom_TN",
+			"total nitrogen conc in nitrogen mass unit bottom [mgTN/m**3]": "jrc_medergom_TN_b",		
+			"mean meridional vel. [m/s]": "vvmean",
+			"mean meridional vel. bottom [m/s]": "vvmean_b"
+		},
+		"thresholds_mapping": {
+			"jrc_medergom_Nit": "msfd_n",
+			"jrc_medergom_Nit_b": "msfd_n",
+			"jrc_medergom_Pho": "msfd_p",
+			"jrc_medergom_Pho_b": "msfd_p",
+			"jrc_medergom_tot_chla": "msfd_chla",
+			"jrc_medergom_tot_chla_b": "msfd_chla"				
+		}
+	},
+	"scenario_generation": {
+		"Irrigation | Investment distribution [eur]": "irr_investment",
+		"Irrigation | Additional operation cost [eur/yr]": "irr_additional_operation_cost",
+		"Irrigation | Performance improvement [%]": "irr_performance_improvement",
+		"Irrigation | Total irrigation efficiency [%]": "irr_total_efficiency",
+		"Irrigation | Estimated improved surface area [ha]": "improved_irr_area_ha",
+		"Urban | Water savings investment distribution [eur]": "urb_investment",
+		"Urban | Additional operation cost [eur/yr]": "urb_additional_operation_cost",
+		"Urban | Water savings performance improvement [%]": "urb_performance_improvement",
+		"Urban | Total urban water abstraction efficiency [%]": "urb_total_efficiency",
+		"Urban | Estimated population equivalent improvement [Residents]": "urb_improved_pop_eqv",
+		"Wastewater | Wastewater treatment investment distribution [eur]": "nu_investment",
+		"Wastewater | UWWTP additional operation cost [eur/yr]": "nu_additional_operation_cost",
+		"Wastewater | BOD5 load [kg/d]": "nu_load_bod5",            
+		"Wastewater | Nitrogen load [kg/d]": "nu_load_n",
+		"Wastewater | Phosphorus load [kg/d]": "nu_load_p",
+		"Wastewater | BOD5 treatment efficiency [%]": "nu_efficiency_bod5",
+		"Wastewater | Nitrogen treatment efficiency [%]": "nu_efficiency_n",
+		"Wastewater | Phosphorus treatment efficiency [%]": "nu_efficiency_p",
+		"CSO | Investment distribution [eur]": "cso_investment",
+		"CSO | Additional operation cost [eur/yr]": "cso_additional_operation_cost",
+		"CSO | BOD5 load [kg/d]": "cso_load_bod5",
+		"CSO | Nitrogen load [kg/d]": "cso_load_n",
+		"CSO | Phosphorous load [kg/d]": "cso_load_p",
+		"CSO | BOD5 improvement [%]": "cso_improvement_bod5",
+		"CSO | Nitrogen improvement [%]": "cso_improvement_n",
+		"CSO | Phosphorous improvement [%]": "cso_improvement_p"
+	}
+}

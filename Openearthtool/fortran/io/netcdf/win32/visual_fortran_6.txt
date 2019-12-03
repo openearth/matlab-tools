@@ -1,0 +1,98 @@
+There are 2 ways to make netCDF work in compaq visual fortran 6 on windows machines.
+Both are included in the workspace  file (*.dsw) as separate projects (*.dsp).
+----------------------------------
+I ) Using binaries from unidata and compiling the f90 layer and typesizes yourselves. 
+See http://publicwiki.deltares.nl/display/NETCDF/netcdf+access+with+compaq+visual+fortran
+This requires tweaking compiler options to your *.dsp file to deal with C-fortran name mangling options correctly.
+This is what we recommend as it relies solely on unidata binaries and fully known dsp files.
+We made this work for debug mode only currently, based in the working example in the Xbeach code
+$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/fortran/io/netcdf/win32/visual_fortran_6.txt $
+$Revision: 9060 $
+Libraries needed to built netcdf support (based on 4.0.1, see http://www.unidata.ucar.edu/software/netcdf/docs/faq.html#windows_netcdf4).
+NetCDF is linked dynamically, therefore you need to have the dll's next to the your *.exe (or in windows\system32 ).
+The required dll's are netcdf, hdf5, szip, because netcdf is based on hdf. 
+The PG version is based on the 
+* lowercase (/names:lowercase)           
+* underscore after (/assume:underscore)         
+* string length after args (/iface:nomixed_str_len_arg)
+  convention for external procedures (needed to link).
+Additional keywords are:  
+* Specify additional settings to use pre-compiler options to optionally 
+  exlude netcdf code upon compilation (/fpp /define:"DLL_NETCDF" /define:"USENETCDF").
+  Using /fpp This results in intermediate files (*.i90). Example:
+  +----------------------------------
+  |module ncoutput_module
+  |#ifdef HAVE_NETCDF
+  |#define NC_ERROR_CHECK=if (status) write(*,*) nf90_message(status)
+  |use netcdf
+  |status = nf90_create(...
+  |NC_ERROR_CHECK
+  |status = nf90_addvar(...
+  |status = nf90_putvar(...
+  |#endif
+  +----------------------------------
+* Do not use any settings to change fortran datatypes, as it will result in a crash when interfacing netcdf.dll (/real_size:64)
+
+----------------------------------
+II) using only dlls from unidata and a pre-compiled f90 layer and typesizes.
+In the example below someone managed to compile these libraries to work as includes.
+This is what we DO NOT recommend as it relies not only on unidata binaries, but also on binaries of unknown origin.
+
+ 1) download from http://www.whigg.ac.cn/yanhm/fortran.htm
+ 
+    +----------------------------------
+    | New:  Pre-built NetCDF 3.6.1 Beta1 Win32 Fortran library for IVF and CVF (1.17Mb)
+    | 
+    | New: Add Fortran90 interface to NetCDF 3.6.1 beta1 Win32 version (Dec 12, 2007)
+    | Bug fixed for CVF6.5
+    | Bug fixed for IVF9.1.032, IVF10.*
+    | Release Date: Dec 12, 2007.
+    | This Win32 version can be used in both CVF6.* and IVF9.*, IVF10.* compiler under Windows2000/XP.
+    +----------------------------------
+ 
+    Pre-built NetCDF 3.6.1 Beta1 Win32 Fortran library for IVF and CVF (1.17Mb)
+    File is called: NetCDF3.6.1Beta1.Win32.for.CVF.IVF.rar
+
+ 2) From NetCDF3.6.1Beta1.Win32.for.CVF.IVF.rar
+    get \F90\netcdf_test.f90
+    and open it in Compaq Visual Fortran. Compile it so it asks for 
+    "This build command requires an active project. Would you like to create a default project workspace?"
+    Click yes so that it creates an accompanying project/workspace.
+
+ 3) Compile it so the Debug and Release directories appear, and save all (workspace *.dsw, project *.dsp)
+
+ 4) After Debug and Release appeared put there from NetCDF3.6.1Beta1.Win32.for.CVF.IVF.rar:
+
+    \F90\CVF\include\netcdf90.mod
+    \F90\CVF\include\typesizes.mod
+    \F90\CVF\lib\netcdf90.lib
+    \lib\netcdf.lib
+    \lib\netcdfs.lib (this seems not to be essential)
+    \include\netcdf.inc
+    \bin\netcdf.dll
+    
+    (in total 7 files: 3 *.lib, 2 *.mod, 1 *.inc, 1 *.dll to Debug and Release)
+    
+ 5) remove the include line from code netcdf_test.f90
+
+ 6) add the 3 *.lib to menu item: 
+    Project > settings > tab:link > box:object/libray modules so that that box looks like:
+    kernel32.lib ... *.lib ... Debug/netcdf.lib Debug/netcdfs.lib Debug/netcdf90.lib
+
+ 7) Compile again
+
+ 8) Resulting executable should be OK despite the following warning
+
+    +----------------------------------
+    | --------------------Configuration: netcdf_test - Win32 Debug--------------------
+    | Compiling Fortran...
+    | d:\checkouts\openearthtools\fortran\io\netcdf\win32\visual_fortran_6\netcdf_test.f90
+    | Linking...
+    | LINK : warning LNK4098: defaultlib "libc.lib" conflicts with use of other libs; use /NODEFAULTLIB:library
+    | 
+    | netcdf_test.exe - 0 error(s), 1 warning(s)
+    +----------------------------------
+
+ 9) run the executable netcdf_test.exe (this will only work when the netcdf.dll is in the same directory or in PATH)
+
+10) the file example.nc should appear

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2009 sp1 (http://www.altova.com) by ICT (Stichting Deltares) -->
+<!-- created with OpenEarthTools $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/+fews/locations_write.m $ $Id: locations_write.m 8361 2013-03-20 16:20:01Z boer_g $-->
+<idMap xmlns="http://www.wldelft.nl/fews" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wldelft.nl/fews http://fews.wldelft.nl/schemas/version1.0/idMap.xsd" version="1.1">
+	<!--PARAMETER-->
+	<parameter external="Water Surface Elevation" internal="H.meting"/>
+	<!--LOCATION-->
+	<location external="Date" internal="Region 1"/>
+	<location external="Date" internal="Region 2"/>
+	<location external="Date" internal="Region 7"/>
+</idMap>

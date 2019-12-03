@@ -1,0 +1,22 @@
+netcdf coads {
+dimensions:
+	COADSX = 5000 ;
+	COADSY = 5000 ;
+variables:
+	double COADSX(COADSX) ;
+		COADSX:units = "degrees_east" ;
+		COADSX:modulo = " " ;
+		COADSX:point_spacing = "even" ;
+	double COADSY(COADSY) ;
+		COADSY:units = "degrees_north" ;
+		COADSY:point_spacing = "even" ;
+	float SST(COADSY, COADSX) ;
+		SST:missing_value = -1.e+34f ;
+		SST:_FillValue = -1.e+34f ;
+		SST:long_name = "SEA SURFACE TEMPERATURE" ;
+		SST:history = "From coads_climatology" ;
+		SST:units = "Deg C" ;
+
+// global attributes:
+		:history = "manually edited" ;
+}

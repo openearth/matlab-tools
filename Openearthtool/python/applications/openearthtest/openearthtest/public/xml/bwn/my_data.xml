@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- Specify data sources for case Markermeer/IJsselmeer (MY)   -->
+<!-- ********************************************************** -->
+<!-- Title: Short description of dataset                        -->
+<!-- Categories: hydro, meteo, geo, eco                         -->
+<!-- Type: data type: 2dmap, 3dmap, station, info               -->
+<!-- Kml: link to kml-file                                      -->
+<!-- Actions: Define possible actions for this data         -->
+
+<si_data>
+  <data>
+    <title>IJselmeer stuff</title>
+    <category>unknown</category>
+    <type>2dmap</type>
+    <kml>http://kml.deltares.nl/kml/deltares/q4408-mkm/stationair2/Markermeer.kml </kml>
+    <actions></actions>   
+  </data>
+</si_data>

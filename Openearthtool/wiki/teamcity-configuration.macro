@@ -1,0 +1,14 @@
+## Macro name: teamcity-configuration
+## Macro has a body: N
+## Output: html
+##
+## Version: 0.1
+##
+## Developed by: Pieter van Geer
+## Date created: 08/06/2010
+## Installed by: <admin>
+ 
+## This macro produces a reference string that can be used inside the body of a teamcity macro.
+
+## Create string
+&buildTypeId=bt$param0

@@ -1,0 +1,2 @@
+gdal_rasterize --config GDAL_CACHEMAX 4096 -burn 1 -a_nodata 0.0 -tr 0.5 0.5 -of GTiff -co COMPRESS=LZW -ot Byte -co TILED=YES PG:"host=al-pg010.xtr.deltares.nl dbname=hobbelkaart user=admin password=&Ez3)r5{Gc" -l wegverharding roads_mask_0.5.tif
+python C:\ProgramData\Anaconda3\Scripts\gdal_proximity.py -values 1 -distunits GEO -maxdist 1000 -nodata 99999 -co BIGTIFF=YES -co COMPRESS=LZW roads_mask_0.5.tif roads_dist_0.5.tif

@@ -1,0 +1,39 @@
+# This file contains metadata for your plugin. Since 
+# version 2.0 of QGIS this is the proper way to supply 
+# information about a plugin. The old method of 
+# embedding metadata in __init__.py will 
+# is no longer supported since version 2.0.
+
+# This file should be included when you package your plugin.# Mandatory items:
+
+[general]
+name=osm2dhydro
+qgisMinimumVersion=2.0
+description=OSM to D-HYDRO conversion
+version=0.1
+author=Deltares
+email=hessel.winsemius@deltares.nl
+
+about=Convert OpenStreetMap into consistent line and point data and export to D-HYDRO model inputs (.pli, .pliz, .xyz, .pol files). Included: - channels - culverts/tunnels - boundary conditions (constant energy slope) - channel profiles
+
+tracker=https://svn.oss.deltares.nl/repos/openearthtools/trunk/python/applications/hydrotools/sandbox/osmmodelbuilding/
+repository=https://svn.oss.deltares.nl/repos/openearthtools/trunk/python/applications/hydrotools/sandbox/osmmodelbuilding/
+# End of mandatory metadata
+
+# Recommended items:
+
+# Uncomment the following line and add your changelog:
+# changelog=
+
+# Tags are comma separated with spaces allowed
+tags=
+
+homepage=
+category=Plugins
+icon=icon.png
+# experimental flag
+experimental=False
+
+# deprecated flag (applies to the whole plugin, not just a single version)
+deprecated=False
+

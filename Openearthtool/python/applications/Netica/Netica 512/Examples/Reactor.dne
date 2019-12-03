@@ -1,0 +1,303 @@
+// ~->[DNET-1]->~
+
+// File created by YendallJ at Norsys using Netica 5.00 on Mar 29, 2011 at 19:36:18.
+
+bnet Reactor {
+AutoCompile = TRUE;
+autoupdate = TRUE;
+comment = "\n\
+	\|      Importance of Modelling Root Causes\n\
+	\|      -----------------------------------\n\n\
+	Catastrophic failure only occurs if all 3 subsystems fail.\n\n\
+	The probability of Catastrophic_Failure1 (with no findings) is 2.9791e-011, \n\
+	which may be an acceptable risk.\n\n\
+	However, more careful modeling leads to the addition of the \n\
+	Incorrect_Test_Procedure node.  With only this change, the failure \n\
+	probability jumps to 0.003%, which is unacceptable.\n\n\
+	Notice that the failure probability of the subsystems remains 0.031%\n\
+	in both cases, and the CPT of Catastrophic_Failure remains unchanged.\n\n\n\
+	Copyright 2011 Norsys Software Corp.\n\
+	This net may be copied freely, provided\n\
+	this copyright notice is left intact.";
+whenchanged = 1301441727;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 10;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	windowposn = (36, -1, 999, 818);
+	CommentShowing = TRUE;
+	resolution = 72;
+	drawingbounds = (1080, 804);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0xc0c0c0;};
+	NodeSet Nature {BuiltIn = 1; Color = 0xf8eed2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0xd3caa6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0xc8c8c8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0xffffff;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0xffffb4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0xffbdbd;};
+	NodeSet Decision {BuiltIn = 1; Color = 0xdee8ff;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0xf0fafa;};
+	NodeSet Title {BuiltIn = 1; Color = 0xffffff;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		landscape = FALSE;
+		magnify = 1;
+		};
+	};
+
+node Incorrect_Test_Procedure {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = ();
+	probs = 
+		// true         false        
+		  (0.001,       0.999);
+	whenchanged = 1046199884;
+	belief = (0.001, 0.999);
+	visual V1 {
+		center = (318, 432);
+		height = 4;
+		};
+	};
+
+node Subsystem_A {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, faulty);
+	parents = (Incorrect_Test_Procedure);
+	probs = 
+		// okay         faulty        // Incorrect_Test_Procedure 
+		  (0.7,         0.3,          // true                     
+		   0.99999,     1e-5);        // false                    ;
+	whenchanged = 1046136849;
+	belief = (0.99969, 3.0999e-4);
+	visual V1 {
+		center = (114, 570);
+		height = 2;
+		link 1 {
+			path = ((279, 460), (154, 543));
+			};
+		};
+	};
+
+node Subsystem_B {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, faulty);
+	parents = (Incorrect_Test_Procedure);
+	probs = 
+		// okay         faulty        // Incorrect_Test_Procedure 
+		  (0.7,         0.3,          // true                     
+		   0.99999,     1e-5);        // false                    ;
+	whenchanged = 1046136856;
+	belief = (0.99969, 3.0999e-4);
+	visual V1 {
+		center = (318, 570);
+		height = 3;
+		};
+	};
+
+node Subsystem_C {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, faulty);
+	parents = (Incorrect_Test_Procedure);
+	probs = 
+		// okay         faulty        // Incorrect_Test_Procedure 
+		  (0.7,         0.3,          // true                     
+		   0.99999,     1e-5);        // false                    ;
+	whenchanged = 1046136860;
+	belief = (0.99969, 3.0999e-4);
+	visual V1 {
+		center = (528, 570);
+		height = 10;
+		};
+	};
+
+node Catastrophic_Failure {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	parents = (Subsystem_A, Subsystem_B, Subsystem_C);
+	functable = 
+		                    // Subsystem_A Subsystem_B Subsystem_C 
+		  (false,           // okay        okay        okay        
+		   false,           // okay        okay        faulty      
+		   false,           // okay        faulty      okay        
+		   false,           // okay        faulty      faulty      
+		   false,           // faulty      okay        okay        
+		   false,           // faulty      okay        faulty      
+		   false,           // faulty      faulty      okay        
+		   true);           // faulty      faulty      faulty      ;
+	equation = "Catastrophic_Failure (Subsystem_A, Subsystem_B,Subsystem_C) = \n\
+		\|  Subsystem_A==faulty && \n\
+		\|  Subsystem_B==faulty && \n\
+		\|  Subsystem_C==faulty";
+	whenchanged = 1046203153;
+	belief = (2.7e-5, 0.999973);
+	visual V1 {
+		center = (318, 708);
+		height = 5;
+		link 1 {
+			path = ((153, 598), (278, 681));
+			};
+		};
+	};
+
+node Subsystem_A1 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, faulty);
+	parents = ();
+	probs = 
+		// okay         faulty       
+		  (0.99969,     3.1e-4);
+	whenchanged = 1046137242;
+	belief = (0.99969, 3.1e-4);
+	visual V1 {
+		center = (108, 120);
+		height = 6;
+		};
+	};
+
+node Subsystem_B1 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, faulty);
+	parents = ();
+	probs = 
+		// okay         faulty       
+		  (0.99969,     3.1e-4);
+	whenchanged = 1046137248;
+	belief = (0.99969, 3.1e-4);
+	visual V1 {
+		center = (312, 120);
+		height = 7;
+		};
+	};
+
+node Subsystem_C1 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, faulty);
+	parents = ();
+	probs = 
+		// okay         faulty       
+		  (0.99969,     3.1e-4);
+	whenchanged = 1046137251;
+	belief = (0.99969, 3.1e-4);
+	visual V1 {
+		center = (522, 120);
+		height = 9;
+		};
+	};
+
+node Catastrophic_Failure1 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	parents = (Subsystem_A1, Subsystem_B1, Subsystem_C1);
+	functable = 
+		                    // Subsystem_A1 Subsystem_B1 Subsystem_C1 
+		  (false,           // okay         okay         okay         
+		   false,           // okay         okay         faulty       
+		   false,           // okay         faulty       okay         
+		   false,           // okay         faulty       faulty       
+		   false,           // faulty       okay         okay         
+		   false,           // faulty       okay         faulty       
+		   false,           // faulty       faulty       okay         
+		   true);           // faulty       faulty       faulty       ;
+	equation = "Catastrophic_Failure1 (Subsystem_A1, Subsystem_B1,Subsystem_C1) = \n\
+		\|  Subsystem_A1==faulty && \n\
+		\|  Subsystem_B1==faulty && \n\
+		\|  Subsystem_C1==faulty";
+	whenchanged = 1046203137;
+	belief = (2.9791e-11, 1);
+	visual V1 {
+		center = (312, 258);
+		height = 8;
+		link 1 {
+			path = ((147, 148), (272, 231));
+			};
+		};
+	};
+
+node NOTE1 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "To observe the probability of this node,\n\
+		select it and type Ctrl-B (with the net compiled).\n\
+		It will be 2.9791e-011";
+	whenchanged = 1046138145;
+	visual V1 {
+		center = (540, 258);
+		font = font {shape= "Arial"; size= 9;};
+		height = 11;
+		};
+	};
+
+node TITLE1 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Importance of Modelling Root Causes";
+	whenchanged = 1046137887;
+	visual V1 {
+		center = (330, 36);
+		font = font {shape= "Times New Roman"; size= 18;};
+		height = 1;
+		};
+	};
+
+node NOTE2 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Copyright 2003 Norsys Software Corp.\n\
+		This net may be copied and distributed freely, \n\
+		provided this copyright notice is left intact.";
+	whenchanged = 1046199241;
+	visual V1 {
+		center = (618, 714);
+		font = font {shape= "Times New Roman"; size= 9;};
+		height = 12;
+		};
+	};
+
+node NOTE3 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Catastrophic failure occurs only if all 3 subsystems fail.\n\n\
+		The probability of Catastrophic_Failure1 (with no findings) is 2.9791e-011, \n\
+		which may be an acceptable risk.\n\n\
+		However, more careful modeling leads to the addition of the \n\
+		Incorrect_Test_Procedure node.  With only this change, the failure \n\
+		probability jumps to 0.003%, which is unacceptable.\n\n\
+		Notice that the failure probability of the subsystems remains 0.031%\n\
+		in both cases, and the CPT of Catastrophic_Failure remains unchanged.";
+	whenchanged = 1046141952;
+	visual V1 {
+		center = (702, 432);
+		height = 13;
+		};
+	};
+ElimOrder = (Incorrect_Test_Procedure, Subsystem_A, Subsystem_B, Subsystem_C, Catastrophic_Failure, Subsystem_A1, Subsystem_B1, Subsystem_C1, Catastrophic_Failure1);
+};

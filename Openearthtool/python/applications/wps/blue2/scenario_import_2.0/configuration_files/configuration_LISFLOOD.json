@@ -1,0 +1,36 @@
+{
+	"crs": 3035,
+	"inputDir": "D:\\JRC_TEST\\lisflood_scenarios",
+	"outputDir": "D:\\JRC_TEST\\lisflood_output",
+	"modelMask": ".\\model_masks\\lisflood_mask.tif",	
+	"tmpDir": "D:\\JRC_TEST\\temp",	
+	"shapefiles": {
+		"nuts0" : {
+			"file" : ".\\shapefiles_division\\nuts_rg_01m_2013_3035_levl_0.shp",
+			"field" : "NUTS_ID",
+			"otherfields": ["cntr_code"]
+		},
+		"nuts1" : {
+			"file" : ".\\shapefiles_division\\nuts_rg_01m_2013_3035_levl_1.shp",
+			"field" : "NUTS_ID",
+			"otherfields": ["cntr_code"]
+		},
+		"nuts2" : {
+			"file" : ".\\shapefiles_division\\nuts_rg_01m_2013_3035_levl_2.shp",
+			"field" : "NUTS_ID",
+			"otherfields": ["cntr_code"]
+		},
+		"rbd" : {
+			"file" : ".\\shapefiles_division\\RiverBasinDistrict.shp",
+			"field" : "thematicId",
+			"otherfields": ["country", "nametext"]
+		}	
+	},
+	"outputDB": {
+		"host" : "localhost",
+		"user" : "postgres",
+		"pass" : "postgres",
+		"db" : "jrc_test",
+		"schema" : "lisflood"
+	}
+}

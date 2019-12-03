@@ -1,0 +1,50 @@
+Code,Omschrijving,Groep
+BER,Berekend,Methodiek
+C10,CUWVO 10 percentiel,Richtlijn/protocol
+C90,CUWVO 90 percentiel,Richtlijn/protocol
+GEM,Gemiddelde,Statistiek
+GSD,Gestandaardiseerde waarde,Richtlijn/protocol
+JGM,Jaargemiddelde,Richtlijn/protocol
+MAX,Maximum,Statistiek
+MED,50-Percentiel (mediaan),Percentielen
+MIN,Minimum,Statistiek
+NBO,Aantal meetwaarden boven maximum detectiegrens,Statistiek
+NON,Aantal meetwaarden onder minimum detectiegrens,Statistiek
+NUM,Aantal meetwaarden,Statistiek
+NVT,Niet van toepassing,(technisch)
+P05,5-Percentiel,Percentielen
+P10,10-Percentiel,Percentielen
+P15,15-Percentiel,Percentielen
+P20,20-Percentiel,Percentielen
+P25,25-Percentiel,Percentielen
+P30,30-Percentiel,Percentielen
+P35,35-Percentiel,Percentielen
+P40,40-Percentiel,Percentielen
+P45,45-Percentiel,Percentielen
+P55,55-Percentiel,Percentielen
+P60,60-Percentiel,Percentielen
+P65,65-Percentiel,Percentielen
+P67,67-Percentiel,Percentielen
+P70,70-Percentiel,Percentielen
+P75,75-Percentiel,Percentielen
+P80,80-Percentiel,Percentielen
+P85,85-Percentiel,Percentielen
+P90,90-Percentiel,Percentielen
+P90ZWR,90 percentiel volgens Zwemwaterrichtlijn 2006,Percentielen
+P95,95-Percentiel,Percentielen
+P95ZWR,95 percentiel volgens Zwemwaterrichtlijn 2006 ,Percentielen
+P96,96-Percentiel,Percentielen
+P97,97-Percentiel,Percentielen
+P98,98-Percentiel,Percentielen
+P98MAX,98-Percentiel van de maximale dagwaarde,Richtlijn/protocol
+P99,99-Percentiel,Percentielen
+S07,Sommatie waarden deelparameters (factor 0.7 als onder bepg),Sommatie deelparameters
+S10,Sommatie waarden deelparameters boven bepalingsgrens,Sommatie deelparameters
+SOM,Sommatie waarden,Sommatie deelparameters
+STD,Standaarddeviatie,Statistiek
+VAR,Variantie,Statistiek
+WGM,Wintergemiddelde,Richtlijn/protocol
+ZGM,Zomergemiddelde,Richtlijn/protocol
+ZHJ,Zomerhalfjaar,Richtlijn/protocol
+ZHM,Zomerhalfjaar doorzicht,Richtlijn/protocol
+ZPH,Zomerhalfjaar ionenconcentratie,Richtlijn/protocol

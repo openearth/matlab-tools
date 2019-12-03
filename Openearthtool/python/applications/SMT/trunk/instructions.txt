@@ -1,0 +1,5 @@
+* Install python 2.x (This can be downloaded from: https://www.continuum.io/downloads)
+* Make sure python is on your path 
+* SMT is an open-source utility available from https://svn.oss.deltares.nl/repos/openearthtools/trunk/python/applications/SMT/trunk under GPLv3 conditions (see model\simulation\license.txt)
+* Use run_delft3d_smt.bat to start your simulation on windows (run_delft3d_smt.sh can be used for linux based systems)
+

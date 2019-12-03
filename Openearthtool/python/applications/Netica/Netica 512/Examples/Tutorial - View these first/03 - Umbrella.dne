@@ -1,0 +1,246 @@
+// ~->[DNET-1]->~
+
+// File created by Norsys using Netica 5.02 on May 08, 2011 at 16:37:09.
+
+bnet Umbrella {
+autoupdate = TRUE;
+comment = "\n\
+	Umbrella                               Copyright 1998-2011 Norsys Software Corp.\n\n\
+	This is a tiny decision network from Ross Shachter which serves as a good \n\
+	simple example.  It is for the decision of whether to take an umbrella given \n\
+	the weather forecast.\n\n\
+	It has 2 nature nodes representing the weather forecast in the morning (sunny, \n\
+	cloudy or rainy), and whether or not it actually rains during the day (rain or \n\
+	no_rain).  It has a decision node of whether or not to take an umbrella, and a \n\
+	utility node that measures the decision maker's level of satisfaction.  \n\n\
+	There is a link from Weather to Forecast capturing the believed correlation \n\
+	between the two (perhaps based on previous observations).\n\
+	There is a link from Forecast to Umbrella indicating that the decision maker \n\
+	will know the forecast when he makes the decision, but no link from Weather to \n\
+	Umbrella; if he knew for certain what the weather was going to be, it would be \n\
+	easy to decide whether or not to take the umbrella.\n\n\
+	There are links from Weather and Umbrella to Satisfaction, capturing the idea \n\
+	that he is most happy when it is not raining and he doesn't take an umbrella \n\
+	(utility = 100), next most when it is raining and he takes an umbrella \n\
+	(utility = 70).  He hates carrying an umbrella on a sunny day (utility = 20), \n\
+	but is most unhappy if it is raining and he doesn't have one (utility = 0).  \n\n\n\
+	TUTORIAL:                Basic Decision Making\n\
+	--------\n\n\
+	You can examine the utility values by selecting node Satisfaction, and then \n\
+	choosing Table->View/Edit (or by right-clicking and choosing Table).  \n\
+	If you examine the relation table of the Decide_Umbrella node in the \n\
+	same way, you will see that no entries have been made (Netica will fill \n\
+	this table when it solves the decision network).\n\n\
+	To compile this decision network choose Network->Compile.  Auto-updating \n\
+	is turned on for this decision network, so as soon as you compile it, updating \n\
+	will occur (i.e. it will be \"solved\").\n\n\
+	The number beside each decision choice indicates the expected utility of making \n\
+	that choice.  So before any information is known, deciding to take the umbrella \n\
+	results in an expected value of 35, while leaving it at home gives 70.  Clearly \n\
+	the best choice given the available information is to leave the umbrella at home.\n\n\
+	If the decision maker hears that the weather forecast is sunny, then this can be \n\
+	entered by clicking on the word \"sunny\" of the Forecast node.  The expected \n\
+	utilities corresponding to each decision choice change.  The best decision is \n\
+	still to leave the umbrella at home, but the expected utility has increased to \n\
+	91.59, because the extra information indicates it is now more likely that the \n\
+	umbrella won't be needed.\n\n\
+	Say instead the forecast was cloudy.  Click on the word \"cloudy\" to change the \n\
+	finding.  Still the best decision is to leave the umbrella at home, but the \n\
+	expected utility has decreased to 65.12, because of the increased chance of rain.\n\n\
+	Try a forecast of rainy.  The best decision changes to \"take the umbrella\", \n\
+	and the expected utility of that decision is 56.\n\n\
+	With no findings entered for node Forecast (since it is the parent node), \n\
+	select node \"Decide Umbrella\", and choose Table->View/Edit.  The relation \n\
+	dialog box will open, and there you can see the optimal decision function, which \n\
+	is to leave the umbrella at home unless the forecast is rainy.\n\n\
+	Value of Information\n\n\
+	This net can also be used to demonstrate finding the \"value of information\".  \n\
+	Say that the numbers in the table for node Satisfaction actually represent\n\
+	your monetary worth of the different outcomes.  Okay, perhaps $100 for the\n\
+	beneficial situation of No_Rain and Leave_At_Home umbrella is a little high,\n\
+	but the numbers could be scaled to be appropriate.\n\n\
+	What we wish to determine is the monetary value of knowing what the weather\n\
+	forecast is.  To start with, choose \"Network->Optimize Decisions\" from the\n\
+	menu.  The overall expected utility is printed in the Messages window as 77.\n\
+	Now remove the link from node Forecast to Decide_Umbrella (by clicking on it\n\
+	to select it, and then pressing the <Del> key.  What this\n\
+	indicates is that you as the decision maker will no longer know the \n\
+	forecast when you make your decision.\n\n\
+	If you now choose \"Network->Optimize Decisions\", the expected utility is 70.\n\
+	That is a drop of 7, and so if the numbers in the Satisfaction table are in\n\
+	dollars, it means that it is worth $7 for you to know the Forecast before \n\
+	deciding.  That takes into account how the Forecast is going to affect your \n\
+	decision, the reliability of the forecast, the prior probabilities for the \n\
+	weather, the values of the outcomes in dollars, etc.\n\n\
+	Suppose you had \"perfect information\" about what the weather was going to be.\n\
+	To represent that in the model, you draw a link from node Weather to node\n\
+	Decide_Umbrella, to show that you will know what the actual weather is going\n\
+	to be before you make the decision (you can right-click the Decide Umbrella\n\
+	node and choose Links->Add Link From->Weather, or you can click on the \n\
+	link-adding button on the tool bar and then draw it).  \n\
+	Choosing \"Network->Optimize Decisions\" results in an expected utility of 91.  \n\
+	That means the value of a perfect forecast over no forecast is 91 - 70 = $21.\n\n\
+	In this simple example it may not seem that useful that Netica can provide a\n\
+	well-defined numerical amount for the value of information, but in many \n\
+	settings it can be extremely useful.  For example, it can be used to determine\n\
+	whether a $45000 geological test is worthwhile in searching for oil or ore\n\
+	(by seeing if it increases the expected value by more than $45000).\n\
+	Or it can be used to decide whether to perform a certain medical test or\n\
+	whether to further test some software, or whether to buy some information\n\
+	to be used to help make a decision.\n\n\
+	Also, it can be used to determine whether it is worthwhile to put more\n\
+	effort into perfecting a predictive or diagnostic test procedure.  \n\
+	In the above example, we found the value of the forecast to be $7, and the\n\
+	value of a perfect forecast to be $21, so we can see that the loss due to\n\
+	the inaccuracy of the forecast is costing us $14 per decision.\n\n\
+	Another technique is to explore combinations of tests.  Say node TestA gives\n\
+	the result of test A, and node TestB gives the result of test B.  If we draw\n\
+	a link from node TestA to a decision node D, the expected utility will \n\
+	indicate how valuable it is to have that test result known when you are about\n\
+	to make decision D.  The same goes for TestB.  Now, if you draw links from\n\
+	both TestA and TestB to D, you get the value of both pieces of information\n\
+	together, which generally is not the same as the sum of the individual values,\n\
+	since some of the information may be redundant (resulting in less than the\n\
+	sum), or it may be synergetic (resulting in more than the sum).\n\n\
+	If you have several decisions in a time sequence, you can also determine\n\
+	how valuable it is to have some knowledge earlier, by providing it to a\n\
+	decision node earlier in the sequence (remember to add all no-forgetting\n\
+	links).  It turns out that it is always of equal or greater value to have\n\
+	the information earlier, and you can calculate a dollar value for the\n\
+	expediency of the information.\n\n\
+	Using these techniques, you can compare the dollar values of tests having\n\
+	different reliabilities, expediency, cost and synergy with other tests.\n\
+	";
+whenchanged = 1304897829;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 10;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	windowposn = (11, 12, 554, 417);
+	CommentShowing = TRUE;
+	CommentWindowPosn = (10, 418, 710, 761);
+	resolution = 72;
+	drawingbounds = (1152, 752);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0x00C0C0C0;};
+	NodeSet Nature {BuiltIn = 1; Color = 0x00F8EED2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0x00D3CAA6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0x00A0A0A0;};
+	NodeSet Constant {BuiltIn = 1; Color = 0x00FFFFFF;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0x00FFFFB4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0x00FFBDBD;};
+	NodeSet Decision {BuiltIn = 1; Color = 0x00DEE8FF;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0x00F0FAFA;};
+	NodeSet Title {BuiltIn = 1; Color = 0x00FFFFFF;};
+	NodeSet node {Color = 0x00FFFFFF;};
+	NodeSet nature {Color = 0x00FFFFFF;};
+	NodeSet utility {Color = 0x00FFFFFF;};
+	NodeSet decision {Color = 0x00FFFFFF;};
+	NodeSet finding {Color = 0x00FFFFFF;};
+	NodeSet constant {Color = 0x00FFFFFF;};
+	NodeSet constant_set {Color = 0x00FFFFFF;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		landscape = FALSE;
+		magnify = 1;
+		};
+	};
+
+node Weather {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (no_rain, rain);
+	parents = ();
+	probs = 
+		// no rain      rain         
+		  (0.7,         0.3);
+	whenchanged = 1080241150;
+	visual V1 {
+		center = (366, 54);
+		height = 1;
+		};
+	};
+
+node Forecast {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (sunny, cloudy, rainy);
+	parents = (Weather);
+	probs = 
+		// sunny        cloudy       rainy         // Weather 
+		  (0.7,         0.2,         0.1,          // no rain 
+		   0.15,        0.25,        0.6);         // rain    ;
+	whenchanged = 1080241171;
+	visual V1 {
+		center = (162, 186);
+		height = 4;
+		};
+	};
+
+node Decide_Umbrella {
+	kind = DECISION;
+	discrete = TRUE;
+	states = (take_it, leave_at_home);
+	parents = (Forecast);
+	title = "Decide Umbrella";
+	whenchanged = 1168397072;
+	visual V1 {
+		center = (162, 294);
+		height = 3;
+		};
+	};
+
+node Satisfaction {
+	kind = UTILITY;
+	discrete = FALSE;
+	chance = DETERMIN;
+	parents = (Weather, Decide_Umbrella);
+	functable = 
+		                 // Weather Decide_Umbrella 
+		  (20,           // no rain take it         
+		   100,          // no rain leave at home   
+		   70,           // rain    take it         
+		   0);           // rain    leave at home   ;
+	whenchanged = 903664205;
+	visual V1 {
+		center = (366, 294);
+		height = 2;
+		};
+	};
+
+node TITLE1 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Umbrella";
+	whenchanged = 1080241901;
+	visual V1 {
+		center = (72, 48);
+		dispform = LABELBOX;
+		font = font {shape= "Times New Roman"; size= 20;};
+		height = 5;
+		};
+	};
+
+node TITLE2 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Distributed by Norsys Software Corp.";
+	whenchanged = 1080241961;
+	visual V1 {
+		center = (134, 72);
+		dispform = LABELBOX;
+		font = font {shape= "Times New Roman"; size= 11;};
+		height = 6;
+		};
+	};
+ElimOrder = (Weather, Decide_Umbrella, Forecast);
+};

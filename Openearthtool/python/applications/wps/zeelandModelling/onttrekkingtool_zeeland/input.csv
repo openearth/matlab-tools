@@ -1,0 +1,4 @@
+horizontal coordinate (RD);vertical coordinate (RD);time;volumetric discharge rate;top filter relative to ground level; length of the filter; (elastic) specific storage ;specific yield
+m NAP;m;m;d;m^3/d;m;m;m^-1;-
+x;y;t;Q;Tf;Lf;Ss;Sy
+24008;394997;30;50;12;10;0.0001;0.2

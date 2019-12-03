@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<bwn>
+  <case>
+    <title>Hollandse Kust</title>
+    <admin>arjen.luijendijk@deltares.nl</admin>
+    <datafile>hk_data.xml</datafile>
+    <modelfile>hk_models.xml</modelfile>
+    <toolfile>hk_tools.xml</toolfile>
+    <zoom>
+      <lat>52.05249</lat>
+      <lon>4.58105</lon>
+      <height>750000</height>
+    </zoom>
+  </case>
+  <case>
+    <title>Zuidwestelijke Delta</title>
+    <admin>arjan.mol@deltares.nl</admin>
+    <datafile>zd_data.xml</datafile>
+    <modelfile>zd_models.xml</modelfile>
+    <toolfile>zd_tools.xml</toolfile>
+    <zoom>
+      <lat>51.550461</lat>
+      <lon>4.0029556</lon>
+      <height>200000</height>
+    </zoom>
+  </case>
+  <case>
+    <title>Markermeer/IJselmeer</title>
+    <admin>gerben.deboer@deltares.nl</admin>
+    <datafile>my_data.xml</datafile>
+    <modelfile>my_models.xml</modelfile>
+    <toolfile>my_tools.xml</toolfile>    
+    <zoom>
+      <lat>52.764275</lat>
+      <lon>5.4230000</lon>
+      <height>200000</height>
+    </zoom>
+  </case>
+  <case>
+    <title>Singapore</title>
+    <admin>Wiebe.deBoer@deltares.nl</admin>
+    <datafile>si_data.xml</datafile>
+    <modelfile>si_models.xml</modelfile>
+    <toolfile>si_tools.xml</toolfile>
+    <zoom>
+      <lat>1.2904917</lat>
+      <lon>103.85143</lon>
+      <height>200000</height>
+    </zoom>
+  </case>
+</bwn>

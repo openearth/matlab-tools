@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idMap xmlns="http://www.wldelft.nl/fews" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wldelft.nl/fews http://fews.wldelft.nl/schemas/version1.0/idMap.xsd" version="1.1">
+<!--PARAMETER-->
+	<parameter external="wind_speed" internal="wind speed"/>
+<!--LOCATION-->
+	<location external="210"	internal="210"/>
+	<location external="225"	internal="225"/>
+	<location external="229"	internal="229"/>
+	<location external="235"	internal="235"/>
+	<location external="240"	internal="240"/>
+	<location external="242"	internal="242"/>
+	<location external="248"	internal="248"/>
+	<location external="249"	internal="249"/>
+	<location external="250"	internal="250"/>
+	<location external="251"	internal="251"/>
+	<location external="252"	internal="252"/>
+	<location external="253"	internal="253"/>
+	<location external="254"	internal="254"/>
+	<location external="258"	internal="258"/>
+	<location external="260"	internal="260"/>
+	<location external="265"	internal="265"/>
+	<location external="267"	internal="267"/>
+	<location external="268"	internal="268"/>
+	<location external="269"	internal="269"/>
+	<location external="270"	internal="270"/>
+	<location external="271"	internal="271"/>
+	<location external="273"	internal="273"/>
+	<location external="275"	internal="275"/>
+	<location external="277"	internal="277"/>
+	<location external="278"	internal="278"/>
+	<location external="279"	internal="279"/>
+	<location external="280"	internal="280"/>
+	<location external="283"	internal="283"/>
+	<location external="285"	internal="285"/>
+	<location external="286"	internal="286"/>
+	<location external="290"	internal="290"/>
+	<location external="308"	internal="308"/>
+	<location external="310"	internal="310"/>
+	<location external="311"	internal="311"/>
+	<location external="312"	internal="312"/>
+	<location external="313"	internal="313"/>
+	<location external="315"	internal="315"/>
+	<location external="316"	internal="316"/>
+	<location external="319"	internal="319"/>
+	<location external="320"	internal="320"/>
+	<location external="321"	internal="321"/>
+	<location external="323"	internal="323"/>
+	<location external="324"	internal="324"/>
+	<location external="330"	internal="330"/>
+	<location external="331"	internal="331"/>
+	<location external="340"	internal="340"/>
+	<location external="343"	internal="343"/>
+	<location external="344"	internal="344"/>
+	<location external="348"	internal="348"/>
+	<location external="350"	internal="350"/>
+	<location external="356"	internal="356"/>
+	<location external="370"	internal="370"/>
+	<location external="375"	internal="375"/>
+	<location external="377"	internal="377"/>
+	<location external="380"	internal="380"/>
+	<location external="391"	internal="391"/>
+
+</idMap>

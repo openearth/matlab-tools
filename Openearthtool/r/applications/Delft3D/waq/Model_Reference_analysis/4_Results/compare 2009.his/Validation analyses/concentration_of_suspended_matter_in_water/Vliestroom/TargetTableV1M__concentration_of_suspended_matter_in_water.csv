@@ -1,0 +1,3 @@
+model;substance;location;season;observed;modelled;nuRMSD;nBIAS
+model;concentration_of_suspended_matter_in_water;Vliestroom;summer;0.0158000001683831;27.6408274968465;1128.48355007058;3501.61127244769
+model;concentration_of_suspended_matter_in_water;Vliestroom;winter;0.0396666669597228;42.7799342473348;508.755241029134;1886.17111007989

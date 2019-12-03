@@ -1,0 +1,21 @@
+{
+	"crs": 3035,
+	"inputDir": "D:\\JRC models\\LISFLOOD",
+	"outputDir": "D:\\JRC models\\Temp\\shp_lisflood_nuts3",
+	"modelMask": "D:\\JRC models\\MODEL_MASKS\\lisflood_mask.tif",	
+	"tmpDir": "D:\\JRC models\\Temp\\masks_lisflood",	
+	"shapefiles": {
+		"nuts3" : {
+			"file" : "D:\\JRC models\\NUTS_POLYGONS\\nuts_rg_01m_2013_3035_levl_3.shp",
+			"field" : "NUTS_ID",
+			"otherfields": ["cntr_code"]
+		}	
+	},
+	"outputDB": {
+		"host" : "localhost",
+		"user" : "postgres",
+		"pass" : "",
+		"db" : "blue2_scenario_import",
+		"schema" : "lisflood"
+	}
+}

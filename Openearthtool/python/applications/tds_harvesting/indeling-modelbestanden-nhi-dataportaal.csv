@@ -1,0 +1,90 @@
+DATASET;TITLE;WORKSPACE;STYLE;PATH
+sprinkling_location.nc;beregenings locatie;beregening_model;beregening;NHI-data/Modellen/NHI/modelinvoer/metaswap/sprinkling_location.nc
+sprinkling_layer.nc;modellaag voor beregening;beregening_model;sprinklinglayer;NHI-data/Modellen/NHI/modelinvoer/metaswap/sprinkling_layer.nc
+soil_rootzone_thickness.nc;wortelzonedikte;bodem;wortelzonedikte;NHI-data/Modellen/NHI/modelinvoer/metaswap/soil_rootzone_thickness.nc
+soil_physical_unit.nc;bodem fysiche eenheid;bodem;bodemfysischeeenheid;NHI-data/Modellen/NHI/modelinvoer/metaswap/soil_physical_unit.nc
+landuse.nc;landgebruik;landgebruik_ahn2;landgebruik;NHI-data/Modellen/NHI/modelinvoer/metaswap/landuse.nc
+land_use_area_surfacewater.nc;Areaal oppervlaktewater;landgebruik_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/metaswap/land_use_area_surfacewater.nc
+top_impermeable_layer_6.nc;top ondoorlatende laag 6;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/tops_bottoms/top_impermeable_layer_6.nc
+top_impermeable_layer_5.nc;top ondoorlatende laag 5;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/tops_bottoms/top_impermeable_layer_5.nc
+top_impermeable_layer_4.nc;top ondoorlatende laag 4;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/tops_bottoms/top_impermeable_layer_4.nc
+top_impermeable_layer_3.nc;top ondoorlatende laag 3;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/tops_bottoms/top_impermeable_layer_3.nc
+top_impermeable_layer_2.nc;top ondoorlatende laag 2;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/tops_bottoms/top_impermeable_layer_2.nc
+top_impermeable_layer_1.nc;top ondoorlatende laag 1;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/tops_bottoms/top_impermeable_layer_1.nc
+geohydrological_base_layer.nc;geohydrologische basis;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/tops_bottoms/geohydrological_base_layer.nc
+base_impermeable_layer_6.nc;bodem ondoorlatende laag 6;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/tops_bottoms/base_impermeable_layer_6.nc
+base_impermeable_layer_5.nc;bodem ondoorlatende laag 5;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/tops_bottoms/base_impermeable_layer_5.nc
+base_impermeable_layer_4.nc;bodem ondoorlatende laag 4;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/tops_bottoms/base_impermeable_layer_4.nc
+base_impermeable_layer_3.nc;bodem ondoorlatende laag 3;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/tops_bottoms/base_impermeable_layer_3.nc
+base_impermeable_layer_2.nc;bodem ondoorlatende laag 2;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/tops_bottoms/base_impermeable_layer_2.nc
+base_impermeable_layer_1.nc;bodem ondoorlatende laag 1;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/tops_bottoms/base_impermeable_layer_1.nc
+transmissivity_layer7.nc;doorlatendheid laag 7;ondergrond_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/transmissivity/transmissivity_layer7.nc
+transmissivity_layer6.nc;doorlatendheid laag 6;ondergrond_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/transmissivity/transmissivity_layer6.nc
+transmissivity_layer5.nc;doorlatendheid laag 5;ondergrond_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/transmissivity/transmissivity_layer5.nc
+transmissivity_layer4.nc;doorlatendheid laag 4;ondergrond_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/transmissivity/transmissivity_layer4.nc
+transmissivity_layer3.nc;doorlatendheid laag 3;ondergrond_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/transmissivity/transmissivity_layer3.nc
+transmissivity_layer2.nc;doorlatendheid laag 2;ondergrond_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/transmissivity/transmissivity_layer2.nc
+transmissivity_layer1.nc;doorlatendheid laag 1;ondergrond_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/transmissivity/transmissivity_layer1.nc
+vertical_resistance_layer6.nc;vertical weerstand laag 6;ondergrond_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/verical_resistance/vertical_resistance_layer6.nc
+vertical_resistance_layer5.nc;vertical weerstand laag 5;ondergrond_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/verical_resistance/vertical_resistance_layer5.nc
+vertical_resistance_layer4.nc;vertical weerstand laag 4;ondergrond_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/verical_resistance/vertical_resistance_layer4.nc
+vertical_resistance_layer3.nc;vertical weerstand laag 3;ondergrond_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/verical_resistance/vertical_resistance_layer3.nc
+vertical_resistance_layer2.nc;vertical weerstand laag 2;ondergrond_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/verical_resistance/vertical_resistance_layer2.nc
+vertical_resistance_layer1.nc;vertical weerstand laag 1;ondergrond_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/verical_resistance/vertical_resistance_layer1.nc
+maaiveld.nc;maaiveld;maaiveld;ahn;NHI-data/Modellen/NHI/modelinvoer/ahn/maaiveld.nc
+model_boundary_layer7.nc;modelgrens laag 7;modelgrens;boundary;NHI-data/Modellen/NHI/modelinvoer/ibound/model_boundary_layer7.nc
+model_boundary_layer6.nc;modelgrens laag 6;modelgrens;boundary;NHI-data/Modellen/NHI/modelinvoer/ibound/model_boundary_layer6.nc
+model_boundary_layer5.nc;modelgrens laag 5;modelgrens;boundary;NHI-data/Modellen/NHI/modelinvoer/ibound/model_boundary_layer5.nc
+model_boundary_layer4.nc;modelgrens laag 4;modelgrens;boundary;NHI-data/Modellen/NHI/modelinvoer/ibound/model_boundary_layer4.nc
+model_boundary_layer3.nc;modelgrens laag 3;modelgrens;boundary;NHI-data/Modellen/NHI/modelinvoer/ibound/model_boundary_layer3.nc
+model_boundary_layer2.nc;modelgrens laag 2;modelgrens;boundary;NHI-data/Modellen/NHI/modelinvoer/ibound/model_boundary_layer2.nc
+model_boundary_layer1.nc;modelgrens laag 1;modelgrens;boundary;NHI-data/Modellen/NHI/modelinvoer/ibound/model_boundary_layer1.nc
+water_floor_elevation_winter_tertiary_system.nc;waterbodemhoogte tertiair systeem (winter);ontwatering_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/tertiary/water_floor_elevation_winter_tertiary_system.nc
+water_floor_elevation_summer_tertiary_system.nc;waterbodemhoogte tertiair systeem (zomer);ontwatering_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/tertiary/water_floor_elevation_summer_tertiary_system.nc
+stage_winter_tertiary_system.nc;waterpeil tertiair systeem (winter);oppervlaktewater_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/tertiary/stage_winter_tertiary_system.nc
+stage_summer_tertiary_system.nc;waterpeil tertiair systeem (zomer);oppervlaktewater_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/tertiary/stage_summer_tertiary_system.nc
+factor_of_infiltration_tertiary_system.nc;infiltratiefactor tertiair systeem;ontwatering_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/rivers/tertiary/factor_of_infiltration_tertiary_system.nc
+conductance_tertiary_system.nc;doorlatendheid tertiair systeem;ontwatering_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/rivers/tertiary/conductance_tertiary_system.nc
+water_floor_elevation_winter_secundary_system.nc;waterbodemhoogte secundair systeem (winter);ontwatering_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/secundary/water_floor_elevation_winter_secundary_system.nc
+water_floor_elevation_summer_secundary_system.nc;waterbodemhoogte secundair systeem (zomer);ontwatering_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/secundary/water_floor_elevation_summer_secundary_system.nc
+stage_winter_secundary_system.nc;waterpeil secundair systeem (winter);oppervlaktewater_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/secundary/stage_winter_secundary_system.nc
+stage_summer_secundary_system.nc;waterpeil secundair systeem (zomer);oppervlaktewater_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/secundary/stage_summer_secundary_system.nc
+factor_of_infiltration_secundary_system.nc;infiltratiefactor secundair systeem;ontwatering_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/rivers/secundary/factor_of_infiltration_secundary_system.nc
+conductance_secundary_system.nc;doorlatendheid secundair systeem;ontwatering_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/rivers/secundary/conductance_secundary_system.nc
+water_floor_elevation_winter_primary_system.nc;waterbodemhoogte primair systeem (winter);ontwatering_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/primary/water_floor_elevation_winter_primary_system.nc
+water_floor_elevation_summer_primary_system.nc;waterbodemhoogte primair systeem (zomer);ontwatering_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/primary/water_floor_elevation_summer_primary_system.nc
+stage_winter_primary_system.nc;waterpeil primair systeem (winter);oppervlaktewater_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/primary/stage_winter_primary_system.nc
+stage_summer_primary_system.nc;waterpeil primair systeem (zomer);oppervlaktewater_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/primary/stage_summer_primary_system.nc
+factor_of_infiltration_primary_system.nc;infiltratiefactor waterbodem primair systeem;ontwatering_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/rivers/primary/factor_of_infiltration_primary_system.nc
+conductance_primary_system.nc;doorlatendheid waterbodem primair systeem;ontwatering_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/rivers/primary/conductance_primary_system.nc
+water_floor_elevation_winter_main_system_level_2.nc;waterbodemhoogte hoofdsysteem niveau 2 (winter);ontwatering_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/main/water_floor_elevation_winter_main_system_level_2.nc
+water_floor_elevation_winter_main_system_level_1.nc;waterbodemhoogte hoofdsysteem niveau 1 (winter);ontwatering_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/main/water_floor_elevation_winter_main_system_level_1.nc
+water_floor_elevation_summer_main_system_level_2.nc;waterbodemhoogte hoofdsysteem niveau 2 (zomer);ontwatering_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/main/water_floor_elevation_summer_main_system_level_2.nc
+water_floor_elevation_summer_main_system_level_1.nc;waterbodemhoogte hoofdsysteem niveau 1 (zomer);ontwatering_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/main/water_floor_elevation_summer_main_system_level_1.nc
+factor_of_infiltration_main_system_level_2.nc;infiltratiefactor waterbodem hoofdsysteem niveau 2;ontwatering_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/rivers/main/factor_of_infiltration_main_system_level_2.nc
+factor_of_infiltration_main_system_level_1.nc;infiltratiefactor waterbodem hoofdsysteem niveau 1;ontwatering_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/rivers/main/factor_of_infiltration_main_system_level_1.nc
+conductance_main_system_level_2.nc;doorlatendheid waterbodem hoofdsysteem niveau 2;ontwatering_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/rivers/main/conductance_main_system_level_2.nc
+conductance_main_system_level_1.nc;doorlatendheid waterbodem hoofdsysteem niveau 1;ontwatering_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/rivers/main/conductance_main_system_level_1.nc
+water_floor_elevation_winter_boils_system.nc;waterbodemhoogte wellen (winter);ontwatering_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/boils/water_floor_elevation_winter_boils_system.nc
+water_floor_elevation_summer_boils_system.nc;waterbodemhoogte wellen (zomer);ontwatering_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/boils/water_floor_elevation_summer_boils_system.nc
+stage_winter_boils_system.nc;peil wellen (winter);ontwatering_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/boils/stage_winter_boils_system.nc
+stage_summer_boils_system.nc;peil wellen (zomer);ontwatering_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/rivers/boils/stage_summer_boils_system.nc
+factor_of_infiltration_boils_system.nc;infiltratiefactor waterbodem wellen;ontwatering_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/rivers/boils/factor_of_infiltration_boils_system.nc
+conductance_boils_system.nc;doorlatendheid waterbodem wellen;ontwatering_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/rivers/boils/conductance_boils_system.nc
+sub-surface_anisotropy_factor_layer_5.nc;anisotropie factor laag 5;ondergrond_ahn2;anisotropie_factor;NHI-data/Modellen/NHI/modelinvoer/anisotropy/sub-surface_anisotropy_factor_layer_5.nc
+sub-surface_anisotropy_factor_layer_4.nc;anisotropie factor laag 4;ondergrond_ahn2;anisotropie_factor;NHI-data/Modellen/NHI/modelinvoer/anisotropy/sub-surface_anisotropy_factor_layer_4.nc
+sub-surface_anisotropy_factor_layer_3.nc;anisotropie factor laag 3;ondergrond_ahn2;anisotropie_factor;NHI-data/Modellen/NHI/modelinvoer/anisotropy/sub-surface_anisotropy_factor_layer_3.nc
+sub-surface_anisotropy_factor_layer_2.nc;anisotropie factor laag 2;ondergrond_ahn2;anisotropie_factor;NHI-data/Modellen/NHI/modelinvoer/anisotropy/sub-surface_anisotropy_factor_layer_2.nc
+sub-surface_anisotropy_angle_layer_5.nc;anisotropie hoek laag 5;ondergrond_ahn2;anisotropie_hoek;NHI-data/Modellen/NHI/modelinvoer/anisotropy/sub-surface_anisotropy_angle_layer_5.nc
+sub-surface_anisotropy_angle_layer_4.nc;anisotropie hoek laag 4;ondergrond_ahn2;anisotropie_hoek;NHI-data/Modellen/NHI/modelinvoer/anisotropy/sub-surface_anisotropy_angle_layer_4.nc
+sub-surface_anisotropy_angle_layer_3.nc;anisotropie hoek laag 3;ondergrond_ahn2;anisotropie_hoek;NHI-data/Modellen/NHI/modelinvoer/anisotropy/sub-surface_anisotropy_angle_layer_3.nc
+sub-surface_anisotropy_angle_layer_2.nc;anisotropie hoek laag 2;ondergrond_ahn2;anisotropie_hoek;NHI-data/Modellen/NHI/modelinvoer/anisotropy/sub-surface_anisotropy_angle_layer_2.nc
+drainage_elevation.nc;hoogte drainage niveau;ontwatering_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/drainage/drainage_elevation.nc
+drainage_conductance.nc;doorlatendheid drainage;ontwatering_ahn2;kd-c;NHI-data/Modellen/NHI/modelinvoer/drainage/drainage_conductance.nc
+starting_head_layer7.nc;startstijghoogte laag 7;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/starting_heads/starting_head_layer7.nc
+starting_head_layer6.nc;startstijghoogte laag 6;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/starting_heads/starting_head_layer6.nc
+starting_head_layer5.nc;startstijghoogte laag 5;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/starting_heads/starting_head_layer5.nc
+starting_head_layer4.nc;startstijghoogte laag 4;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/starting_heads/starting_head_layer4.nc
+starting_head_layer3.nc;startstijghoogte laag 3;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/starting_heads/starting_head_layer3.nc
+starting_head_layer2.nc;startstijghoogte laag 2;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/starting_heads/starting_head_layer2.nc
+starting_head_layer1.nc;startstijghoogte laag 1;ondergrond_ahn2;ahn;NHI-data/Modellen/NHI/modelinvoer/starting_heads/starting_head_layer1.nc

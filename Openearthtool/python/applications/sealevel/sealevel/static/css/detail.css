@@ -1,0 +1,48 @@
+@font-face {
+  font-family: "AverageSans";
+  font-style: normal;
+  font-weight: normal;
+  src: url("../fonts/average-sans-webfont.eot");
+}
+
+.AverageSans {
+  font-family: AverageSans, Helvetica, Arial, Geneva, sans-serif;
+}
+
+@font-face {
+  font-family: "AmericanTypewriter";
+  font-style: normal;
+  font-weight: normal;
+  src: url("../fonts/americantypewriterstd-bold.eot");
+}
+
+.AmericanTypewriter {
+  font-family: AmericanTypewriter, Helvetica, Arial, Geneva, sans-serif;
+}
+
+* html {
+  font-size: 87.5%;
+}
+
+html {
+  font-size: 14px;
+  line-height: 1.28571em;
+}
+
+html, body {
+  font-family: AverageSans, Helvetica, Arial, Geneva, sans-serif;
+  color: #2b2b2d;
+}
+
+a, a:visited {
+  color: #489ac1;
+  -webkit-transition: color 0.25s;
+  -moz-transition: color 0.25s;
+  -o-transition: color 0.25s;
+  transition: color 0.25s;
+}
+a:hover, a:focus {
+  color: #198d98;
+  text-decoration: underline;
+}
+

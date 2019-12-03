@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- Specify model sources for case Hollandse Kust (HK)     -->
+<!-- ****************************************************** -->
+<!-- Title: Short description of dataset                    -->
+<!-- Categories: hydro, meteo, geo, eco                     -->
+<!-- Type: data type: 2dmap, 3dmap, station, info           -->
+<!-- Kml: link to kml-file                                  -->
+<!-- Actions: Define possible actions for this data         -->
+
+<hk_model>
+  <model>
+    <title>Kustlijn posities 1965-2005 berekend met Unibest</title>
+    <category>hydro</category>
+    <type>2dmap</type>
+    <kml>http://kml.deltares.nl/kml/test_arjan/hk_models/HollandCoast_1965_2005.kml</kml>
+    <actions></actions>
+  </model>
+  <model>
+    <title>Zandmotor model</title>
+    <category>geo</category>
+    <type>2dmap</type>
+    <kml>http://kml.deltares.nl/kml/test_arjan/hk_models/g02.kmz</kml>
+    <actions></actions>
+  </model>
+</hk_model>

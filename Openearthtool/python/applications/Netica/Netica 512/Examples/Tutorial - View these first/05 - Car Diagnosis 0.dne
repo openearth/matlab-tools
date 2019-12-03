@@ -1,0 +1,336 @@
+// ~->[DNET-1]->~
+
+// File created by Norsys using Netica 5.02 on May 08, 2011 at 16:51:59.
+
+bnet N5___Car_Diagnosis_0 {
+autoupdate = TRUE;
+comment = "\n\
+	Car Diagnosis 0                      Copyright 1998-2011 Norsys Software Corp.\n\n\
+	This is a simplified example Bayes net to represent the working \n\
+	relationships between parts of a car.\n\n\
+	It has only the nodes and links; it does not have any probabilistic\n\
+	relations (CPTs) entered.  If it had CPTs, it could be used \n\
+	for diagnosing car problems, among other things.\n\n\
+	This network was designed by Norsys Software Corp.\n\n\n\
+	TUTORIAL:          Automatic Learning of Probabilities\n\
+	--------\n\n\
+	As mentioned above, this Bayes net does not have any CPTs\n\
+	(conditional probability tables).  You can verify that by clicking\n\
+	on a node to select it, and then choosing Table->View/Edit (or right-click\n\
+	and choose Table...).\n\
+	The table will be empty.  You can tell that ALL the tables are empty\n\
+	because if you select all the nodes and try to choose Report->CPT Tables \n\
+	you will see that the menu entry is dimmed.\n\n\
+	Choose File->Open As Text, and open \"Car Cases.cas\".  The columns don't line\n\
+	up very well because of the tab stop settings, but you can see that it has\n\
+	a line near the top with headings for the columns, which are the node names.\n\
+	Each subsequent line stands for observations made during a diagnosis \n\
+	situation with a particular car.  An asterisk indicates an observation that\n\
+	wasn't made.\n\n\
+	We can use this set of past observations to learn the probabilities for the\n\
+	car diagnosis Bayes net.  Click in the Bayes net to make it active\n\
+	(but make sure no nodes are selected), and choose Cases->Learn->Incorp Case File.  \n\
+	Select \"Car Cases.cas\" from the dialog box, and accept the default of 1 for \n\
+	the degree.  The CPTs will be learned very quickly.\n\n\
+	Click on \"Spark Quality\" and then choose Table->View/Edit to see one of\n\
+	the tables learned.  Then using the pull-down menu in the upper left of that\n\
+	window, you can view the learned CPTs of other nodes.\n\n\
+	If you now have further data of more observations, it is easy to combine\n\
+	it with what has already been learned.  Choose Cases->Learn->Incorp Case File,  \n\
+	this time select \"More Car Cases.cas\" from the dialog box. Do not remove \n\
+	existing CPTs when prompted, and again accept the default of 1 for the degree.  \n\
+	After the learning, it will be as if Netica learned from one large file of \n\
+	cases containing the cases from both files.\n\n\
+	At this point you may want to compile the network and try some inference\n\
+	to see if the results make sense.  For example, try entering findings of\n\
+	bright, dim and off to Headlights (indicating how the headlights look when\n\
+	they are turned on).  If the headlights are dim, then it is believed that\n\
+	Voltage at Plug will be weak, but if Battery Voltage is measured as strong,\n\
+	then the plug voltage changes to strong as well, overriding the headlight\n\
+	observation.\n\n\
+	If you want to remove the effects of learning from \"Car Cases.cas\", so that\n\
+	the network will be as if it had only learned from \"More Car Cases.cas\", \n\
+	then choose Cases->Learn->Incorp Case File, select \"Car Cases.cas\" \n\
+	from the dialog box, and this time change the degree to -1 (to unlearn). \n\
+	After the unlearning, it will be as if the network had only learned from\n\
+	\"More Car Cases.cas\".\n\n\
+	Now we can test the performance of this network using the case file\n\
+	\"Car Cases.cas\".  In general, you can use a file of cases that were used\n\
+	during the learning to also test the performance, but that can produce\n\
+	misleading results, and it is better to use a set of test cases that were\n\
+	not used during the learning, as we will do now.\n\n\
+	Suppose we want all the nodes except Headlights, Battery Age, Car Cranks,\n\
+	and Car Starts to be unobserved.  That is fairly difficult diagnosis,\n\
+	since so few things are being observed.  Select those nodes (by holding down\n\
+	the <Ctrl> key while clicking on the node titles), and then choose \n\
+	Edit->Select Nodes->Invert Selection, to reverse the selection (since we want \n\
+	the unobserved nodes to be selected).  \n\
+	Then choose Cases->Test With Cases, and select \"Car Cases.cas\".\n\n\
+	A report will be generated for each node being diagnosed (i.e. unobserved).\n\
+	For other networks, depending on what the nodes represent, these could be \n\
+	diagnosis, predictions, classifications, or a combination.\n\n\
+	Look at the report for PlugVolt:Voltage At Plug.  The confusion matrix shows \n\
+	that most of the diagnosis were correct (9.78% in error).  Each number in the\n\
+	matrix corresponds to how many of the test cases fell into that category.\n\
+	See the Netica onscreen help on Test With Cases for further information.\n\n\n\
+	";
+author = "BoerlageB";
+whenchanged = 1304898719;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 10;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	windowposn = (27, 2, 752, 632);
+	CommentShowing = TRUE;
+	CommentWindowPosn = (23, 611, 764, 924);
+	resolution = 72;
+	drawingbounds = (700, 579);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0x00C0C0C0;};
+	NodeSet Nature {BuiltIn = 1; Color = 0x00F8EED2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0x00D3CAA6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0x00C8C8C8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0x00FFFFFF;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0x00FFFFB4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0x00FFBDBD;};
+	NodeSet Decision {BuiltIn = 1; Color = 0x00DEE8FF;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0x00F0FAFA;};
+	NodeSet Title {BuiltIn = 1; Color = 0x00FFFFFF;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		landscape = FALSE;
+		magnify = 1;
+		};
+	};
+
+node Alter {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (okay, faulty);
+	parents = ();
+	title = "Alternator";
+	whenchanged = 1166679051;
+	visual V1 {
+		center = (588, 54);
+		height = 8;
+		};
+	};
+
+node Charging {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (okay, faulty);
+	parents = (Alter);
+	title = "Charging system";
+	whenchanged = 1166679051;
+	visual V1 {
+		center = (588, 132);
+		height = 9;
+		};
+	};
+
+node BatAge {
+	kind = NATURE;
+	discrete = FALSE;
+	states = (new, old, very_old);
+	levels = (0, 2, 5, INFINITY);
+	parents = ();
+	title = "Battery age";
+	comment = "New 0-2 yrs, Old 3-5 yrs, Very-old >5 yrs";
+	whenchanged = 904528887;
+	visual V1 {
+		center = (384, 102);
+		height = 11;
+		};
+	};
+
+node BatVolt {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (strong, weak, dead);
+	parents = (Charging, BatAge);
+	title = "Battery voltage";
+	whenchanged = 904528887;
+	visual V1 {
+		center = (588, 222);
+		height = 10;
+		};
+	};
+
+node MFuse {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (okay, blown);
+	parents = ();
+	title = "Main fuse";
+	whenchanged = 904528887;
+	visual V1 {
+		center = (186, 90);
+		height = 12;
+		};
+	};
+
+node Dist {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (okay, faulty);
+	parents = ();
+	title = "Distributer";
+	whenchanged = 1166679119;
+	visual V1 {
+		center = (114, 198);
+		height = 5;
+		};
+	};
+
+node PlugVolt {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (strong, weak, none);
+	parents = (MFuse, Dist, BatVolt);
+	title = "Voltage at plug";
+	whenchanged = 904528887;
+	visual V1 {
+		center = (294, 198);
+		height = 15;
+		};
+	};
+
+node StMotor {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (okay, faulty);
+	parents = ();
+	title = "Starter Motor";
+	whenchanged = 1166679051;
+	visual V1 {
+		center = (138, 468);
+		height = 14;
+		};
+	};
+
+node Starter {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (okay, faulty);
+	parents = (MFuse, StMotor, BatVolt);
+	title = "Starter system";
+	whenchanged = 1166679051;
+	visual V1 {
+		center = (330, 468);
+		height = 13;
+		link 1 {
+			path = ((108, 115), (18, 144), (18, 432), (228, 432), (254, 441));
+			};
+		};
+	};
+
+node Lights {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (bright, dim, off);
+	parents = (BatVolt);
+	title = "Headlights";
+	whenchanged = 904528887;
+	visual V1 {
+		center = (588, 336);
+		height = 16;
+		};
+	};
+
+node Plugs {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (okay, too_wide, fouled);
+	parents = ();
+	title = "Spark plugs";
+	whenchanged = 904528887;
+	visual V1 {
+		center = (390, 282);
+		height = 3;
+		};
+	};
+
+node SpkQual {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (good, bad, very_bad);
+	parents = (Plugs, PlugVolt);
+	title = "Spark quality";
+	whenchanged = 904528887;
+	visual V1 {
+		center = (312, 366);
+		height = 4;
+		link 2 {
+			path = ((282, 234), (282, 288), (299, 331));
+			};
+		};
+	};
+
+node Cranks {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (true, false);
+	parents = (Starter);
+	title = "Car cranks";
+	whenchanged = 1166679093;
+	visual V1 {
+		center = (438, 540);
+		height = 2;
+		link 1 {
+			path = ((370, 496), (397, 513));
+			};
+		};
+	};
+
+node Timing {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (good, bad, very_bad);
+	parents = (Dist);
+	title = "Spark timing";
+	whenchanged = 904528887;
+	visual V1 {
+		center = (114, 378);
+		height = 6;
+		};
+	};
+
+node Starts {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (true, false);
+	parents = (Cranks, Timing, SpkQual);
+	title = "Car starts";
+	whenchanged = 1166679093;
+	visual V1 {
+		center = (612, 540);
+		height = 7;
+		link 2 {
+			path = ((200, 403), (234, 414), (492, 414), (587, 513));
+			};
+		link 3 {
+			path = ((398, 374), (552, 390), (602, 513));
+			};
+		};
+	};
+
+node TITLE1 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Car Diagnosis 0";
+	whenchanged = 904506242;
+	visual V1 {
+		center = (318, 24);
+		font = font {shape= "Times New Roman"; size= 18;};
+		height = 1;
+		};
+	};
+ElimOrder = (Alter, Lights, Charging, BatAge, StMotor, Starter, Plugs, Starts, Timing, SpkQual, BatVolt, MFuse, Dist, PlugVolt, Cranks);
+};

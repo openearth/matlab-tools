@@ -1,0 +1,11 @@
+<regular locationId="GRID_NAME">
+	<rows>414</rows>
+	<columns>1050</columns>
+	<geoDatum>GEODATUM</geoDatum>
+	<firstCellCenter>
+		<x>116.7125</x>
+		<y>-8.08084</y>
+	</firstCellCenter>
+	<xCellSize>0.0025</xCellSize>
+	<yCellSize>0.0025</yCellSize>
+</regular>

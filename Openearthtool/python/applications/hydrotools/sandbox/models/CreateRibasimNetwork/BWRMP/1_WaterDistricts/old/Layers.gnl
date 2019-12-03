@@ -1,0 +1,10 @@
+[Branchtype BNA files]
+Flow - Channel: d:\projects\1209057-bwrmp\ribasim\newmodels\sumbawa\modelbuild\1_waterdistricts\sbk_chan_l.shp
+NotUsed: d:\projects\1209057-bwrmp\ribasim\newmodels\sumbawa\modelbuild\1_waterdistricts\sbk_channel&lat_notused_l.shp
+
+[Nodetype BNA files]
+Terminal: d:\projects\1209057-bwrmp\ribasim\newmodels\sumbawa\modelbuild\1_waterdistricts\sbk_boundary_terminal_n.shp
+Inflow: d:\projects\1209057-bwrmp\ribasim\newmodels\sumbawa\modelbuild\1_waterdistricts\sbk_boundary_inflow_n.shp
+Confluence: d:\projects\1209057-bwrmp\ribasim\newmodels\sumbawa\modelbuild\1_waterdistricts\sbk_sbk-3b-node_confluence_n.shp
+Reservoir: d:\projects\1209057-bwrmp\ribasim\newmodels\sumbawa\modelbuild\1_waterdistricts\sbk_sbk-3b-node_reservoir_n.shp
+Weir: d:\projects\1209057-bwrmp\ribasim\newmodels\sumbawa\modelbuild\1_waterdistricts\sbk_sbk-3b-node_weir_n.shp

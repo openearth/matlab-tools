@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idMap xmlns="http://www.wldelft.nl/fews" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wldelft.nl/fews http://fews.wldelft.nl/schemas/version1.0/idMap.xsd" version="1.1">
+<!--PARAMETER-->
+	<parameter external="sea_surface_height" internal="H.meting"/>
+<!--LOCATION-->
+	<location external="lobh" internal="lobh"/>
+	<location external="emmrh" internal="emmrh"/>
+	<location external="maastt" internal="maastt"/>
+	<location external="aukfpfm" internal="aukfpfm"/>
+	<location external="hoekvhld" internal="hoekvhld"/>
+	<location external="k13apfm" internal="k13apfm"/>
+	<location external="eurpfm" internal="eurpfm"/>
+
+</idMap>

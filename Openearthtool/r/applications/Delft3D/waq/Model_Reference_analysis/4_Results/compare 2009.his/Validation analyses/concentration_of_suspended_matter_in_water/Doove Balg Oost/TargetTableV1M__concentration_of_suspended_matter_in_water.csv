@@ -1,0 +1,3 @@
+model;substance;location;season;observed;modelled;nuRMSD;nBIAS
+model;concentration_of_suspended_matter_in_water;Doove Balg Oost;summer;0.0494999997317791;23.335036277771;333.784722832489;1062.28147442046
+model;concentration_of_suspended_matter_in_water;Doove Balg Oost;winter;0.0457499995827675;40.1035063266754;1865.78234598417;4547.81141383499

@@ -1,0 +1,18 @@
+Tidal Analysis Output Statistics
+================================
+Run by: friedman
+Run on: 2015-03-12 14:12:51.226000
+================================
+
+Parameter, Value [m]
+MHWN, 0.82
+LAT, -1.46
+HAT, 1.47
+MLWS, -0.93
+MSL, 0.02
+MHWS, 1.20
+MLWN, -0.52
+
+========================
+
+Name, Amplitude [m], Phase [deg]

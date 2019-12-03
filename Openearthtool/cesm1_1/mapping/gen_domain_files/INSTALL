@@ -1,0 +1,64 @@
+==========================================================================
+$Id: INSTALL 39483 2012-08-16 17:35:52Z mlevy@ucar.edu $ 
+$URL: https://svn-ccsm-models.cgd.ucar.edu/tools/mapping/trunk_tags/mapping_121113b/gen_domain_files/INSTALL $
+==========================================================================
+
+
+============
+HOW TO BUILD
+============
+
+Prior to building, you must make sure $CCSMROOT is set.
+
+$ cd src
+$ ../../../scripts/ccsm_utils/Machines/configure -mach [machine name]
+$ gmake
+
+Note: in the second step, replace [machine name] with the machine you are
+building on. Also, some machines (such as janus) have dedicated build nodes,
+so you might need to SSH to another node before the 'gmake' step.
+
+==============================
+COMMON BUILD ISSUE ON BLUEFIRE
+==============================
+
+If you are on bluefire and get build errors similar to
+
+ld: 0711-317 ERROR: Undefined symbol: .nf_strerror
+
+Then you need to include the netcdf module. To do this, you need to run
+
+$ module load netcdf
+
+If you get a "command not found" error running module, run
+
+$ source /contrib/Modules/3.2.6/init/$SHELL
+
+and then try to load the module again. You can also go to
+
+http://www2.cisl.ucar.edu/docs/bluefire/getting-started
+
+and click on the "Modules utility" tab to see more details.
+
+==================================
+COMMON BUILD / RUN ISSUES ON JANUS
+==================================
+
+1) As hinted at in the "How to Build" section, you can not build on the login
+  nodes on janus. If you see the error
+
+  ld: cannot find -lrdmacm
+  ld: cannot find -libverbs
+
+  you are still on the headnode and need to SSH to node0001.
+
+2) At present, the netCDF libraries available on janus have all been built
+   with mpif90, which means that everything linking with netCDF must also
+   be built in parallel. Unfortunately, this means you can not run gen_domains
+   from the head node -- you either need to push it through the queue or just
+   run it from node0001. Running on node0001 is easier, but to run from the
+   queue, edit gen_domain.janus.run (both the header info to set the requested
+   walltime and the body of the script to point to the correct mapping file and
+   name the domain files appropriately), and then run
+
+   qsub gen_domain.janus.run

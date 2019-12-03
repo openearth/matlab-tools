@@ -1,0 +1,183 @@
+[  8%] Built target dispatch
+[ 11%] Built target oc2
+[ 14%] Built target netcdf4
+[ 17%] Built target netcdf3
+[ 17%] Built target manpage
+[ 21%] Built target dap2
+[ 22%] Built target nctrunc
+[ 26%] Built target dap4
+[ 26%] Built target netcdf
+[ 27%] Built target ncgen3
+[ 33%] Built target ncgen
+[ 34%] Built target ref_ctest64
+[ 34%] Built target tst_fileinfo
+[ 34%] Built target tst_comp
+[ 34%] Built target tst_dimsizes
+[ 35%] Built target tst_comp2
+[ 36%] Built target tst_fillbug
+[ 36%] Built target ref_ctest
+[ 37%] Built target tst_enum_data
+[ 38%] Built target ncdump
+[ 38%] Built target bom
+[ 39%] Built target tst_create_files
+[ 39%] Built target rewrite-scalar
+[ 39%] Built target tst_compress
+[ 39%] Built target tst_unicode
+[ 39%] Built target tst_group_data
+[ 39%] Built target tst_h_rdc0
+[ 40%] Built target tst_string_data
+[ 40%] Built target tst_special_atts
+[ 41%] Built target tst_utf8
+[ 42%] Built target nccopy
+[ 43%] Built target tst_opaque_data
+[ 43%] Built target tst_nans
+[ 43%] Built target tst_chunking
+[ 44%] Built target tst_vlen_data
+[ 45%] Built target tst_h_scalar
+[ 45%] Built target tst_rename
+[ 49%] Built target nctest
+[ 49%] Built target nc_test_tst_norm
+[ 49%] Built target tst_diskless3
+[ 49%] Built target nc_test_tst_nofill
+[ 50%] Built target nc_test_tst_nofill3
+[ 51%] Built target tst_diskless2
+[ 51%] Built target nc_test_tst_misc
+[ 51%] Built target tst_diskless5
+[ 51%] Built target nc_test_tst_small
+[ 54%] Built target nc_test
+[ 55%] Built target nc_test_t_nc
+[ 55%] Built target nc_test_tst_nofill2
+[ 55%] Built target tst_diskless
+[ 56%] Built target nc_test_tst_meta
+[ 57%] Built target nc_test_tst_elatefill
+[ 58%] Built target nc_test_tst_names
+[ 59%] Built target tst_diskless4
+[ 59%] Built target nc_test_tst_inq_type
+[ 59%] Built target nc_test_tst_global_fillval
+[ 59%] Built target nc_test_tst_atts
+[ 60%] Built target nc_test_tst_put_vars
+[ 61%] Built target nc_test4_tst_camrun
+[ 61%] Built target nc_test4_tst_xplatform
+[ 62%] Built target nc_test4_tst_fill_attr_vanish
+[ 63%] Built target nc_test4_tst_hdf5_file_compat
+[ 64%] Built target nc_test4_tst_interops5
+[ 64%] Built target nc_test4_tst_h5_endians
+[ 65%] Built target nc_test4_tst_rename
+[ 65%] Built target nc_test4_tst_h_refs
+[ 65%] Built target nc_test4_tst_h_strbug
+[ 66%] Built target nc_test4_tst_atts2
+[ 67%] Built target nc_test4_tst_grps2
+[ 67%] Built target nc_test4_tst_files
+[ 68%] Built target nc_test4_tst_vars3
+[ 68%] Built target nc_test4_tst_atts1
+[ 68%] Built target nc_test4_tst_endian_fill
+[ 69%] Built target nc_test4_tst_unlim_vars
+[ 69%] Built target nc_test4_tst_dims
+[ 70%] Built target nc_test4_tst_dims3
+[ 71%] Built target nc_test4_tst_strings2
+[ 72%] Built target nc_test4_tst_varms
+[ 72%] Built target nc_test4_tst_vars4
+[ 72%] Built target nc_test4_tst_vars
+[ 72%] Built target nc_test4_tst_types
+[ 73%] Built target nc_test4_tst_fills2
+[ 73%] Built target nc_test4_tst_vars2
+[ 74%] Built target nc_test4_tst_files5
+[ 75%] Built target nc_test4_tst_compounds3
+[ 76%] Built target test_szip
+[ 76%] Built target nc_test4_tst_compounds2
+[ 76%] Built target nc_test4_tst_put_vars_two_unlim_dim
+[ 76%] Built target nc_test4_tst_atts_string_rewrite
+[ 76%] Built target nc_test4_tst_chunks2
+[ 76%] Built target test_filter_misc
+[ 77%] Built target test_filter
+[ 77%] Built target tst_v2
+[ 77%] Built target nc_test4_tst_fills
+[ 77%] Built target tst_empty_vlen_unlim
+[ 77%] Built target nc_test4_tst_dims2
+[ 77%] Built target nc_test4_tst_sync
+[ 77%] Built target nc_test4_tst_converts2
+[ 77%] Built target h5testszip
+[ 77%] Built target renamegroup
+[ 77%] Built target nc_test4_tst_strings
+[ 77%] Built target nc_test4_tst_grps
+[ 77%] Built target nc_test4_tst_interops
+[ 77%] Built target nc_test4_tst_coords2
+[ 78%] Built target nc_test4_tst_vl
+[ 78%] Built target nc_test4_tst_files6
+[ 78%] Built target nc_test4_tst_rehash
+[ 79%] Built target nc_test4_tst_opaques
+[ 79%] Built target nc_test4_tst_interops4
+[ 80%] Built target nc_test4_tst_enums
+[ 80%] Built target nc_test4_tst_fillbug
+[ 81%] Built target nc_test4_tst_compounds
+[ 81%] Built target nc_test4_tst_chunks
+[ 82%] Built target nc_test4_tst_h_scalar
+[ 82%] Built target nc_test4_tst_converts
+[ 82%] Built target nc_test4_tst_xplatform2
+[ 82%] Built target nc_test4_tst_files4
+[ 82%] Built target nc_test4_tst_interops6
+[ 82%] Built target nc_test4_tst_utf8
+[ 83%] Built target nc_test4_tst_coords
+[ 83%] Built target nc_test4_tst_atts
+[ 84%] Built target nc_test4_tst_coords3
+[ 85%] Built target nc_test4_t_type
+[ 85%] Built target tst_h_enums
+[ 86%] Built target tst_h_dimscales3
+[ 86%] Built target nc_test4_cdm_sea_soundings
+[ 86%] Built target tst_h_grps
+[ 86%] Built target tst_h_files2
+[ 86%] Built target tst_h_vars3
+[ 87%] Built target tst_h_vars2
+[ 87%] Built target tst_h_vars
+[ 87%] Built target tst_h_atts4
+[ 88%] Built target tst_h_files
+[ 89%] Built target tst_h_atts3
+[ 90%] Built target tst_h_compounds
+[ 90%] Built target tst_h_dimscales2
+[ 90%] Built target tst_h_atts
+[ 90%] Built target tst_h_compounds2
+[ 91%] Built target tst_h_wrt_cmp
+[ 91%] Built target tst_h_strings1
+[ 92%] Built target tst_h_opaques
+[ 92%] Built target tst_h_vl
+[ 92%] Built target tst_h_dimscales4
+[ 92%] Built target tst_h_strings
+[ 92%] Built target tst_h_dimscales
+[ 93%] Built target tst_h_strings2
+[ 93%] Built target tst_h_ints
+[ 93%] Built target findtestserver
+[ 94%] Built target tst_h_dimscales1
+[ 94%] Built target ncdap_test_vara
+[ 95%] Built target tst_h_files4
+[ 95%] Built target ncdap_test_cvt
+[ 96%] Built target findtestserver4
+[ 97%] Built target ncdap_test_varm3
+[ 98%] Built target C_tests_sfc_pres_temp_rd
+[ 99%] Built target ncdap_t_dap3a
+[ 99%] Built target C_tests_sfc_pres_temp_wr
+[100%] Built target C_tests_simple_xy_rd
+[100%] Built target C_tests_simple_xy_wr
+[100%] Built target C_tests_pres_temp_4D_wr
+[100%] Built target C_tests_pres_temp_4D_rd
+[36mInstall the project...[0m
+-- Install configuration: "RELEASE"
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/lib/pkgconfig/netcdf.pc
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/bin/nc-config
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/lib/libnetcdf.settings
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/lib/cmake/netCDF/netCDFTargets.cmake
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/lib/cmake/netCDF/netCDFTargets-release.cmake
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/lib/cmake/netCDF/netCDFConfig.cmake
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/lib/cmake/netCDF/netCDFConfigVersion.cmake
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/include/netcdf.h
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/include/netcdf_mem.h
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/include/netcdf_meta.h
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/share/man/man3/netcdf.3
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/lib/libnetcdf.a
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/bin/ncgen.exe
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/share/man/man1/ncgen.1
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/bin/ncgen3.exe
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/share/man/man1/ncgen3.1
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/bin/ncdump.exe
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/bin/nccopy.exe
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/share/man/man1/nccopy.1
+-- Installing: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/pkg/mingw-w64-x86_64-netcdf/mingw64/share/man/man1/ncdump.1

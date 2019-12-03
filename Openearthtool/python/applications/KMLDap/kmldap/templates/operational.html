@@ -1,0 +1,52 @@
+<%inherit file="deltares-base.html"/>
+
+<%def name="title()">
+ Overview
+</%def>
+
+<%def name="head()">
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<!-- jquery -->
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+</%def>
+
+<div>
+	<div>
+		<h1>Operational model</h1>
+		<p><img src="${url(controller='operational', action='plot3d', t=100, colorbar=True)}" /></p>
+
+		<h1>Evacuation preperation</h1>
+		<dl>
+			<dt>Strategic objective</dt>
+				<dd>Guarantee a minimum threat to human life in coastal areas during major storms</dd>
+			<dt>Operational objective</dt>
+				<dd>minimize the number of people in hazard zones.</dd>
+			<dt>Qualitative state concept</dt>
+				<dd>space-time map of areas that are "safe" or "unsafe". </dd>
+		</dl>
+		<p><img src="${url(controller='operational', action='plot', var='ssi_depvel', t=100, colorbar=True)}" /></p>
+
+		<h1>Swimmer safety</h1>
+		<dl>
+			<dt>Strategic Objective</dt>
+				<dd>Provide safe environment for recreational beach-goers during everyday conditions.</dd>
+			<dt>Operational Objective</dt>
+				<dd>Identify (time and space) the areas in the surfzone where hazardous currents occurs.</dd>
+			<dt>Qualitative state concept</dt>
+				<dd>Space-time map of areas that are unsafe for swimming </dd>
+		</dl>
+		<p><img src="${url(controller='operational', action='plot', var='ssi_vel', t=100, colorbar=True)}" /></p>
+
+		<h1>Other variables</h1>
+		% for var in variables:
+			<p><img src="${url(controller='operational', action='plot', var=var, t=100, colorbar=True)}" /></p>
+		% endfor
+	</div>
+
+	<div>
+	</div>
+</div>
+
+

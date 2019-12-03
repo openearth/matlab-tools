@@ -1,0 +1,2 @@
+[InternetShortcut]
+URL=http://localhost/cgi-bin/pywps.cgi?service=wps&request=Execute&Identifier=cdi_plot_map&DataInputs=[EDMO_code=486;LOCAL_CDI_ID=FI35200345015_24FA0_H09;parameter=NTRZZZXX;clim0=5;clim1=20;colormap=jet;]&responsedocument=mapname=@mimetype=application/vnd.google-earth.kmz&version=1.0.0

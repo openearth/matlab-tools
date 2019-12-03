@@ -1,0 +1,2724 @@
+#%RAML 1.0
+title: Digital Delta Eco Extensions
+types:
+  BaseListResponse:
+    properties:
+      count:
+        description: Number of records satisfying the query parameters.
+        type: integer
+        example: 1123
+        required: true
+      previous:
+        description: Url to the API holding the previous page. null if the requested page is the first page.
+        type: string
+        required: false
+      next:
+        description: Url to the API holding the next page. null if the requested page is the last page.
+        type: string
+        required: false
+      maxPageSize:
+        description: Maximum page size, as allowed by the service.
+        type: integer
+        required: false
+      defaultPageSize:
+        type: integer
+        description: Default page size that the provider uses, if not provided by the consumer.
+
+  Compartment:
+    properties:
+      code:   
+        type: string
+      name:   
+        type: string
+
+  CompartmentsListResponse:
+    type: BaseListResponse
+    properties:
+      result: Compartment[]
+
+  Definition:
+    required: false
+    properties:
+      standardCode:
+        type: string
+        required: false
+      codeInStandard:
+        type: string
+        required: false
+      reference:
+        description: Link to the specific item within the standard.
+        type: string
+        required: false
+
+  Double:
+    description: A value of type Double (float).
+    type: number
+    format: double
+
+  ExchangeSystem:
+    properties:
+      code: 
+        type: string
+      name:
+        type: string
+
+  ExchangeSystemsListResponse:
+    type: BaseListResponse
+    properties:
+      result: ExchangeSystem[]
+
+  ExpandedCompartment:
+    type: Compartment
+    properties:
+      definition:
+        type: ExpandEntityBase
+        required: true
+
+  ExpandedCompartmentsListResponse:
+    type: BaseListResponse
+    properties:
+      result: ExpandedCompartment[]
+
+  ExpandEntityBase:
+    type: Definition[]
+    required: true
+
+  ExpandedInstitute:
+    type: Institute
+    properties:
+      definition:
+        type: ExpandEntityBase
+        required: true
+
+  ExpandedInstitutesListResponse:
+    type: BaseListResponse
+    properties:
+      result: ExpandedInstitute[]
+
+  ExpandedMeasurementsListResponse:
+    type: BaseListResponse
+    properties:
+      result: GeoJSON[]
+
+  ExpandedMethodsListResponse:
+    type: BaseListResponse
+    properties:
+      result: ExpandedMethod[]
+
+  ExpandedOrganisation:
+    type: Organisation
+    properties:
+      definition:
+        type: ExpandEntityBase
+        required: true
+  
+  ExpandedOrganisationsListResponse:
+    type: BaseListResponse
+    properties:
+      result: ExpandedOrganisation[]
+
+  ExpandedParameter:
+    type: Parameter
+    properties:
+      definition:
+        type: ExpandEntityBase
+        required: true
+
+  ExpandedMeasurementAttribute:
+    type: MeasurementAttribute
+    properties:
+      definition:
+        type: ExpandEntityBase
+        required: true
+
+  ExpandedMeasurementObject:
+    type: MeasurementObject
+    properties:
+      definition:
+        type: ExpandEntityBase
+        required: true
+      monitoringNetworks:
+        type: string[]
+
+  ExpandedMeasurementObjectsListResponse:
+    type: BaseListResponse
+    properties:
+      result: ExpandedMeasurementObject[]
+
+  ExpandedMeasurementPackage:
+    type: MeasurementPackage
+    properties:
+      definition:
+        type: ExpandEntityBase
+        required: false
+      parametertypes:
+        type: string[]
+        required: false
+      parameters:
+        type: string[]
+        required: false
+      quantitytypes:
+        type: string[]
+        required: false
+      attributetypes:
+        type: string[]
+        required: false
+      exchangesystems:
+        type: string[]
+        required: false
+      parameterpackage:
+        type: string
+        required: false
+
+  ExpandedMeasurementPurpose:
+    type: MeasurementPurpose
+    properties:
+      definition:
+        type: ExpandEntityBase
+        required: true
+
+  ExpandedMethod:
+    type: Method
+    properties:
+      definition:
+        type: ExpandEntityBase
+        required: true
+ 
+  ExpandedMonitoringNetwork:
+    type: MonitoringNetwork
+    properties:
+      definition:
+        type: ExpandEntityBase
+        required: true
+      locations:
+        type: string[]
+
+  ExpandedMonitoringNetworksListResponse:
+    type: BaseListResponse
+    properties:
+      result: ExpandedMonitoringNetwork[]
+
+  ExpandedParameterPackage:
+    type: ParameterPackage
+    properties:
+      definition:
+        type: ExpandEntityBase
+        required: false
+      parametertype: 
+        type: string
+        required: false
+      taxontype: 
+        type: string
+        required: false
+      parameters: 
+        type: string[]
+        required: false
+
+  ExpandedParameterPackagesListResponse:
+    type: BaseListResponse
+    properties:
+      result: ExpandedParameterPackage[]
+      
+  ExpandedParametersListResponse:
+    type: BaseListResponse
+    properties:
+      result: ExpandedParameter[]
+
+  ExpandedParameterType:
+    type: ParameterType
+    properties:
+      definition:
+        type: ExpandEntityBase
+        required: true
+
+  ExpandedParameterTypesListResponse:
+    type: BaseListResponse
+    properties:
+      result: ExpandedParameterType[]
+
+  ExpandedProject:
+    type: Project
+    properties:
+      definition: 
+        type: ExpandEntityBase
+        required: true
+
+  ExpandedPurpose:
+    type: Purpose
+    properties:
+      definition:
+        type: ExpandEntityBase
+        required: true
+ 
+  ExpandedPurposesListResponse:
+    type: BaseListResponse
+    properties:
+      result: ExpandedPurpose[]
+
+  ExpandedQuantitiesListResponse:
+    type: BaseListResponse
+    properties:
+      result: ExpandedQuantity[]
+
+  ExpandedQuantity:
+    type: Quantity
+    properties:
+      definition:
+        type: ExpandEntityBase
+        required: true
+
+  ExpandedStandard:
+    type: Standard
+    properties:
+      definition:
+        type: ExpandEntityBase
+        required: true
+
+  ExpandedStandardsListResponse:
+    type: BaseListResponse
+    properties:
+      result: ExpandedStandard[]
+
+  ExpandedUnit:
+    type: Unit
+    properties:
+      definition:
+        type: ExpandEntityBase
+        required: true
+
+  ExpandedUnitsListResponse:
+    type: BaseListResponse
+    properties:
+      result: ExpandedUnit[]
+
+  ExpandedMeasurementPackagesListResponse:
+    type: BaseListResponse
+    properties:
+      result: ExpandedMeasurementPackage[]
+
+  Filter:
+    description: Specifies a filter(part).
+    properties:
+      fieldname:
+        description: Field name.
+        type: string
+      comparer:  
+        description: Filter comparer.
+        type: string
+      datatype:          
+        description: Filter data type.
+        type: string
+      
+  FilterError:
+    properties:
+      ErrorType: string
+      Context: string
+
+  FilterErrors:
+    type: FilterError[]
+
+  FiltersListResponse:
+    type: BaseListResponse
+    properties:
+      result: Filter[]
+  GeoJSON:
+    description: A geometry in GeoJSON format.
+    type: string
+
+  Geometry:
+    description: A geometry in WKT. Digital Delta currently only supports the Point type.
+    properties:
+      type:
+        description: The geometry type. Must have the value "Point".
+        type: string
+        example: "Point"
+      coordinates:
+        type: Double[]
+        description: An array of doubles, representing a coordinate.
+        example: [ 4.234, 52.3423 ]
+
+  Institute:
+    properties:
+      code: 
+        description: Code of the institute.
+        type: string
+        required: true
+      name: 
+        description: Name of the institute.
+        type: string
+        required: true
+      reference: 
+        description: URL of the institute.
+        type: string
+        required: false
+
+
+  InstitutesListResponse:
+    type: BaseListResponse
+    properties:
+      result: Institute[]
+
+  Measurement:
+    properties:
+      organisation:   
+        description: The code of the organisations that owns the data.
+        type: string
+      measurementObject:   
+        description: The location where the measurements were sampled.
+        type: string
+      locationgeography:   
+        description: Coordinates of the measurementobject associated with the measurement if it 
+                     differentiates from the measurement object. 
+        type: GeoJSON
+        required: false
+      measurementgeography:   
+        description: Coordinates of the geographycal position on which the measurement took place. 
+        type: GeoJSON
+        required: false
+      measurementPackage:   
+        description: The measurement package used for the measurement.
+        type: string
+        required: false
+      measurementPurpose:   
+        description: The purpose of the measurement.
+        type: string
+        required: false
+      methods:   
+        description: The methods used for sampling and analysing.
+        type: string[]
+        required: false
+      status:   
+        description: Status of the measurement.
+        type: string
+      compartment:   
+        description: The compartment where the sample was taken from.
+        type: string
+      measurementDate:   
+        description: Date/time of the measurement.
+        type: datetime-only
+      quantity:   
+        description: The quantity the measured value is expressed in.
+        type: string
+      parameterType:   
+        description: Type of parameter measured.
+        type: string
+        required: false
+      parameterGroup:   
+        description: The parameter group used for measuring.
+        type: string
+        required: false
+      taxonType:   
+        description: The type of taxon if the parameter was a taxon.
+        type: string
+        required: false
+      parameter:   
+        description: The code of the parameter measured.
+        type: string
+        required: false
+      note:   
+        description: Specification of the measurement.
+        type: string
+        required: false
+      limitSymbol:   
+        description: Limit symbol as a specification of the measured value.
+        type: string
+        required: false
+      measuredValue:   
+        description: The value measured.
+        type: number
+        required: false
+      measuredUnit:   
+        description: The unit of the measured value.
+        type: string
+      calculatedValue:   
+        description: The calculated value (mostly micro-biology).
+        type: number
+        required: false
+      calculatedUnit:   
+        description: The unit of the calculated value.
+        type: string
+        required: false
+      classifiedValue:   
+        description: Classification of the measurement.
+        type: string
+        required: false
+      projects:   
+        description: Projects for which the measurement took place.
+        type: string[]
+        required: false
+      measurementAttributes:   
+        description: Qualification of what was measured, i.e. gender, life form.
+        type: string[]
+        required: false
+      collectionDate:   
+        description: The date the measurement took place.
+        type: datetime-only
+      changedate:   
+        description: Measurement change date.
+        type: datetime-only
+  
+  MeasurementAttribute:
+    properties:
+      code:     
+        type: string
+      name:     
+        type: string
+      measurementAttributeType:     
+        type: string
+      measurementAttributeTypeName:     
+        type: string
+
+  MeasurementObject:
+    properties:
+      code:   
+        type: string
+      description:   
+        type: string
+      organisation:   
+        type: string
+        
+  MeasurementObjectsListResponse:
+    type: BaseListResponse
+    properties:
+      result: MeasurementObject[]
+
+  MeasurementPackage:
+    properties:
+      code:   
+        type: string
+      name:   
+        type: string
+      description:   
+        type: string
+        required: false
+      changedate:
+        type: datetime-only
+        required: false
+
+  MeasurementPackagesListResponse:
+    type: BaseListResponse
+    properties:
+      result: MeasurementPackage[]
+
+  MeasurementPurpose:
+    properties:
+      code:   
+        type: string
+      name:   
+        type: string
+        
+  MeasurementsListResponse:
+    type: BaseListResponse
+    properties:
+      result: Measurement[]
+
+  Method:
+    properties:
+      code:     
+        type: string
+      name:     
+        type: string
+      organisation:     
+        type: string
+      literature:     
+        type: string
+        required: false
+      methodtype:     
+        type: string
+      methodtypename:     
+        type: string
+
+  MethodsListResponse:
+    type: BaseListResponse
+    properties:
+      result: Method[]
+
+  MonitoringNetwork:
+    properties:
+      code:   
+        type: string
+      name:   
+        type: string
+      description:   
+        type: string
+        required: false
+      organisation:
+        type: string
+
+  MonitoringNetworksListResponse:
+    type: BaseListResponse
+    properties:
+      result: MonitoringNetwork[]
+
+  Organisation:
+    properties:
+      code:   
+        type: string
+      name:   
+        type: string
+      numericcode:
+        type: number
+
+  OrganisationsListResponse:
+    type: BaseListResponse
+    properties:
+      result: Organisation[]
+
+  OrganisationNote:
+    properties:
+      code:   
+        type: string
+      note:   
+        type: string
+      organisation:   
+        type: string
+
+  OrganisationNotesListResponse:
+    type: BaseListResponse
+    properties:
+      result: OrganisationNote[]
+
+  Parameter:
+    properties:
+      code:   
+        type: string
+      name:   
+        type: string
+      type:
+        type: string
+      taxontype:
+        type: string
+        required: false
+      taxongroup:
+        type: string
+        required: false
+      authors:
+        type: string
+        required: false
+      changedate:
+        type: datetime-only    
+        required: false
+        
+  ParameterGroup:
+    properties:
+      code:   
+        type: string
+      name:   
+        type: string
+
+  ParameterPackage:
+    properties:
+      code:   
+        type: string
+      name:   
+        type: string
+      changedate:
+        type: datetime-only
+        required: false
+      description:
+        type: string
+        required: false
+
+  ParameterPackagesListResponse:
+    type: BaseListResponse
+    properties:
+      result: ParameterPackage[]   
+
+  ParametersListResponse:
+    type: BaseListResponse
+    properties:
+      result: Parameter[]
+
+  ParameterType:
+    properties:
+      code:   
+        type: string
+      name:   
+        type: string
+
+  ParameterTypesListResponse:
+    type: BaseListResponse
+    properties:
+      result: ParameterType[]
+
+  Project:
+    properties:
+      code:   
+        type: string
+      name:   
+        type: string
+      organisation:   
+        type: string
+      start:   
+        type: date-only
+      end:   
+        type: date-only
+
+  ProjectsListResponse:
+    type: BaseListResponse
+    properties:
+      result: Project[]
+
+  Purpose:
+    properties:
+      code:     
+        type: string
+      name:     
+        type: string
+
+  PurposesListResponse:
+    type: BaseListResponse
+    properties:
+      result: Purpose[]
+
+  Quantity:
+    properties:
+      name:   
+        type: string
+      code:   
+        type: string
+      values:
+        type: string[]
+
+  QuantitiesListResponse:
+    type: BaseListResponse
+    properties:
+      result: Quantity[]
+
+  Standard:
+    properties:
+      institute:
+        description: Code of the institute.
+        type: string
+      standardCode:  
+        description: code of the instituteCode.
+        type: string
+        required: true
+      reference:   
+        description: Link to the standard.
+        type: string
+        required: false
+      standardsType:
+        description: Type of standard
+        type: string
+        required: false
+
+  StandardsListResponse:
+    type: BaseListResponse
+    properties:
+      result: Standard[]
+
+  TaxonGroup:
+    properties:
+      code:   
+        type: string
+      name:   
+        type: string
+      taxontype:   
+        type: string
+      taxontypename:   
+        type: string
+
+  TaxonGroupsListResponse:
+    type: BaseListResponse
+    properties:
+      result: TaxonGroup[]
+
+  TaxonType:
+    properties:
+      code:   
+        type: string
+      name:   
+        type: string
+      
+  TaxonTypesListResponse:
+    type: BaseListResponse
+    properties:
+      result: TaxonType[]
+
+  Unit:
+    properties:
+      code:   
+        type: string
+      name:   
+        type: string
+      symbol:   
+        type: string
+        required: false
+
+  UnitsListResponse:
+    type: BaseListResponse
+    properties:
+      result: Unit[]
+
+# Define resource types.
+resourceTypes:
+  collectionItem:
+    description: Retrieves a specified <<resourcePathName|!singularize>> by its code.
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+  collectionListResponse:
+    description: Retrieves a list response of <<resourcePathName|!singularize>> items that satisfy the provided filter and paging.
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+  collectionItemByParameterTypeAndCode:
+    description: Retrieves a specified <<resourcePathName|!singularize>> by its type and code.
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+  expandedCollectionListResponse:
+    description: Retrieves a list response of expanded <<resourcePathName|!singularize>> items that satisfy the provided filter and paging.
+    get:
+      description: Retrieves a list response of expanded <<resourcePathName|!singularize>> items that satisfy  the provided filter and paging.
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+  organisationAndCollectionItem:
+    description: Retrieves a specified <<resourcePathName|!singularize>> by its organisation code and its own code.
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+
+# Define the traits.
+traits:
+  expandable:
+    queryParameters:
+      expand:
+        type: string
+        required: false
+        description: Expands the data.
+  filterable:
+    queryParameters:
+      filter:
+        type: string
+        required: false
+        description: Filter the data, based on the filter. See Search syntax.
+  pageable:
+    queryParameters:
+      page:
+        type: integer
+        required: false
+        description: Page number, starting with 1.
+      pagesize:
+        type: integer
+        required: false
+        description: Page size. minimal 1.
+
+/eco:
+  /compartments:
+    description:
+      Retrieves a list of compartments (AQUO). 
+      Filterable fields are &colon;
+      <li>code (string)</li>
+      <li>name (string)</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: CompartmentsListResponse
+              example:
+                {
+                    "count": 16,
+                    "previous": null,
+                    "next": "/eco/compartments?page=2&pagesize=3",
+                    "maxPageSize": 10000,
+                    "defaultPageSize": 1000,
+                    "result": [
+                        {
+                            "code": "BS",
+                            "name": "Bodem / Sediment"
+                        },
+                        {
+                            "code": "LT",
+                            "name": "Lucht"
+                        },
+                        {
+                            "code": "NT",
+                            "name": "Niet van toepassing"
+                        }
+                    ]
+                }                
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /expand:
+      description:
+        Retrieves an expanded list of monitoring networks (a collection of measurement objects) within the provider's system. 
+        Filterable fields are &colon;
+        <li>code (string)</li>
+        <li>name (string)</li>
+      get:
+        is: [ pageable, filterable ]
+        responses:
+          200:
+            body:
+              application/json:
+                type: ExpandedCompartmentsListResponse
+                example:
+                  {
+                      "count": 16,
+                      "previous": null,
+                      "next": "/eco/compartments/expand?page=2&pagesize=3",
+                      "maxPageSize": 10000,
+                      "defaultPageSize": 1000,
+                      "result": [
+                          {
+                              "code": "BS",
+                              "name": "Bodem / Sediment",
+                              "definition": [
+                                  {
+                                      "standardCode": "AQUO",
+                                      "codeInStandard": "BS",
+                                      "reference": "http://domeintabellen-idsw.rws.nl/"
+                                  }
+                              ]
+                          },
+                          {
+                              "code": "LT",
+                              "name": "Lucht",
+                              "definition": [
+                                  {
+                                      "standardCode": "AQUO",
+                                      "codeInStandard": "LT",
+                                      "reference": "http://domeintabellen-idsw.rws.nl/"
+                                  }
+                              ]
+                          },
+                          {
+                              "code": "NT",
+                              "name": "Niet van toepassing",
+                              "definition": [
+                                  {
+                                      "standardCode": "AQUO",
+                                      "codeInStandard": "NT",
+                                      "reference": "http://domeintabellen-idsw.rws.nl/"
+                                  }
+                              ]
+                          }
+                      ]
+                  }                  
+          400:
+            body:
+              application/json:
+                type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /measurementpackages:
+    description:
+      Retrieves a list of measurement packages. 
+      Filterable fields are &colon;
+      <li>code (string)</li>
+      <li>name (string)</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: MeasurementPackagesListResponse
+              example:
+                {
+                    "count": 13,
+                    "previous": null,
+                    "next": "/eco/measurementpackages?page=1&pagesize=3",
+                    "maxPageSize": 10000,
+                    "defaultPageSize": 1000,
+                    "result": [
+                        {
+                            "changedate": "2018-04-11T13:41:38.227",
+                            "code": "FP.AC",
+                            "description": null,
+                            "name": "Fytoplankton abundantie (cellen)"
+                        },
+                        {
+                            "changedate": "2018-04-11T13:41:38.227",
+                            "code": "DT.AB",
+                            "description": null,
+                            "name": "Diatomeeën abundantie"
+                        },
+                        {
+                            "changedate": "2018-04-11T13:41:38.227",
+                            "code": "ME.AB",
+                            "description": null,
+                            "name": "Macro-evertebraten abundantie"
+                        }
+                    ]
+                }        
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /expand:
+      description:
+        Retrieves an expanded list of monitoring networks (a collection of measurement objects) within the provider's system. 
+        Filterable fields are &colon;
+        <li>code (string)</li>
+        <li>name (string)</li>
+      get:
+        is: [ pageable, filterable ]
+        responses:
+          200:
+            body:
+              application/json:
+                type: ExpandedMeasurementPackagesListResponse
+                example:
+                  {
+                      "count": 13,
+                      "previous": null,
+                      "next": "/eco/measurementpackages/expand?page=2&pagesize=3",
+                      "maxPageSize": 10000,
+                      "defaultPageSize": 1000,
+                      "result": [
+                          {
+                              "code": "FP.AC",
+                              "name": "Fytoplankton abundantie (cellen)",
+                              "description": null,
+                              "parametertypes": [
+                                  "DIATM",
+                                  "FYTPT"
+                              ],
+                              "parameters": null,
+                              "quantitytypes": [
+                                  "AANTPVLME"
+                              ],
+                              "attributetypes": [
+                                  "LV"
+                              ],
+                              "exchangesystems": [
+                                  "AQUADESK",
+                                  "IM-METINGEN"
+                              ],
+                              "parameterpackage": null,
+                              "definition": null,
+                              "changedate": "2018-04-11T13:45:15.147"
+                          },
+                          {
+                              "code": "DT.AB",
+                              "name": "Diatomeeën abundantie",
+                              "description": null,
+                              "parametertypes": [
+                                  "DIATM"
+                              ],
+                              "parameters": null,
+                              "quantitytypes": [
+                                  "AANTL",
+                                  "AANTFTE"
+                              ],
+                              "attributetypes": [
+                                  ""
+                              ],
+                              "exchangesystems": [
+                                  "AQUADESK"
+                              ],
+                              "parameterpackage": null,
+                              "definition": null,
+                              "changedate": "2018-04-11T13:45:15.147"
+                          },
+                          {
+                              "code": "ME.AB",
+                              "name": "Macro-evertebraten abundantie",
+                              "description": null,
+                              "parametertypes": [
+                                  "MACEV"
+                              ],
+                              "parameters": null,
+                              "quantitytypes": [
+                                  "AANTL"
+                              ],
+                              "attributetypes": [
+                                  "GS",
+                                  "LS"
+                              ],
+                              "exchangesystems": [
+                                  "AQUADESK"
+                              ],
+                              "parameterpackage": null,
+                              "definition": null,
+                              "changedate": "2018-04-11T13:45:15.147"
+                          }
+                      ]
+                  }
+             
+          400:
+            body:
+              application/json:
+                type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /exchangesystems:
+    description:
+      Retrieves a list of exchange systems available in the provider's system.  
+      Filterable fields are &colon;
+      <li>code (string)</li>
+      <li>name (string)</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: ExchangeSystemsListResponse
+              example:
+                  {
+                    "count": 3,
+                    "previous": null,
+                    "next": null,
+                    "maxPageSize": 10000,
+                    "defaultPageSize": 1000,
+                    "result": [
+                        {
+                            "code": "EBEOSYS",
+                            "name": "EBEOsys"
+                        },
+                        {
+                            "code": "AQUADESK",
+                            "name": "AquaDesk"
+                        },
+                        {
+                            "code": "IM-METINGEN",
+                            "name": "IM-Metingen"
+                        }
+                    ]
+                }
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /institutes:
+    description:
+      Retrieves a list of institutes within the provider's system. An institute defines or manages one or more standards.
+      Filterable fields are &colon;
+      <li>code (string)</li>
+      <li>name (string)</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: InstitutesListResponse
+              example:
+                {
+                    "count": 4,
+                    "previous": null,
+                    "next": null,
+                    "maxPageSize": 10000,
+                    "defaultPageSize": 1000,
+                    "result": [
+                        {
+                            "code": "ECS",
+                            "name": "EcoSys",
+                            "reference": "https://www.ecosys.nl"
+                        },
+                        {
+                            "code": "RWS",
+                            "name": "Rijkswaterstaat",
+                            "reference": "https://www.rijkswaterstaat.nl"
+                        },
+                        {
+                            "code": "IHW",
+                            "name": "Informatiehuis Water",
+                            "reference": "https://www.ihw.nl"
+                        },
+                        {
+                            "code": "CAS",
+                            "name": "American Chemical Society",
+                            "reference": "https://www.cas.org/"
+                        }
+                    ]
+                }      
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+              example:
+                [
+                    {
+                        "ErrorType": "UnknownOperator",
+                        "Context": "parameter:badcomparer:\"Test\""
+                    },
+                    {
+                        "ErrorType": "InvalidSyntax",
+                        "Context": ""
+                    }
+                ]
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /measurementobjects:
+    description:
+      Retrieves a list of measurement objects within the provider's system. 
+      Filterable fields are &colon;
+      <li>code (string)</li>
+      <li>name (string)</li>
+      <li>organisation (string)</li>
+    get:
+      is: [ pageable, filterable ] 
+      responses:
+        200:
+          body:
+            application/json:
+              type: MeasurementObjectsListResponse
+              example:
+                {
+                  "count": 10961,
+                  "previous": null,
+                  "next": "/eco/measurementobjects?page=2&pagesize=3",
+                  "maxPageSize": 10000,
+                  "defaultPageSize": 1000,
+                  "result": [
+                      {
+                          "code": "AFGDM_0001",
+                          "description": "NEDHMT",
+                          "organisation": "RWS"
+                      },
+                      {
+                          "code": "AFGDM_0002",
+                          "description": "VEEN",
+                          "organisation": "RWS"
+                      },
+                      {
+                          "code": "AFGDM_0003",
+                          "description": "POEDRIJN",
+                          "organisation": "RWS"
+                      }
+                  ]
+              }
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /geojson:
+      description:
+        Retrieves a list of measurement objects within the provider's system as a GeoJSON FeatureCollection.  
+        Filterable fields are &colon;
+        <li>code (string)</li>
+        <li>name (string)</li>
+        <li>organisation (string)</li>
+      get:
+        is: [ pageable, filterable ]
+        responses:
+          200:
+            body:
+              application/json:
+                type: object
+                example:
+                  {
+                      "type": "FeatureCollection",
+                      "features": [
+                          {
+                              "type": "Feature",
+                              "geometry": {
+                                  "type": "Point",
+                                  "coordinates": [
+                                      51.7581204207227,
+                                      5.15835627200311,
+                                      0
+                                  ]
+                              },
+                              "properties": {
+                                  "Description": "NEDHMT",
+                                  "Organisation": "RWS",
+                                  "Code": "AFGDM_0001",
+                                  "MonitoringNetworks": []
+                              }
+                          },
+                          {
+                              "type": "Feature",
+                              "geometry": {
+                                  "type": "Point",
+                                  "coordinates": [
+                                      51.7800422641779,
+                                      5.11187400090377,
+                                      0
+                                  ]
+                              },
+                              "properties": {
+                                  "Description": "VEEN",
+                                  "Organisation": "RWS",
+                                  "Code": "AFGDM_0002",
+                                  "MonitoringNetworks": []
+                              }
+                          },
+                          {
+                              "type": "Feature",
+                              "geometry": {
+                                  "type": "Point",
+                                  "coordinates": [
+                                      51.7848913705971,
+                                      5.07416374190305,
+                                      0
+                                  ]
+                              },
+                              "properties": {
+                                  "Description": "POEDRIJN",
+                                  "Organisation": "RWS",
+                                  "Code": "AFGDM_0003",
+                                  "MonitoringNetworks": []
+                              }
+                          }
+                      ]
+                  }        
+          400:
+            body:
+              application/json:
+                type: FilterErrors
+    /expand:
+      description:
+        Retrieves an expanded list of measurement objects within the provider's system. 
+        Filterable fields are &colon;
+        <li>code (string)</li>
+        <li>name (string)</li>
+        <li>organisation (string)</li>
+      get:
+        is: [ pageable, filterable ]
+        responses:
+          200:
+            body:
+              application/json:
+                type: ExpandedMeasurementObjectsListResponse
+                example:
+                  {
+                      "count": 10961,
+                      "previous": null,
+                      "next": "/eco/measurementobjects/expand?page=2&pagesize=3",
+                      "maxPageSize": 10000,
+                      "defaultPageSize": 1000,
+                      "result": [
+                          {
+                              "code": "AFGDM_0001",
+                              "description": "NEDHMT",
+                              "organisation": "RWS",
+                              "definition": [],
+                              "monitoringNetworks": []
+                          },
+                          {
+                              "code": "AFGDM_0002",
+                              "description": "VEEN",
+                              "organisation": "RWS",
+                              "definition": [],
+                              "monitoringNetworks": []
+                          },
+                          {
+                              "code": "AFGDM_0003",
+                              "description": "POEDRIJN",
+                              "organisation": "RWS",
+                              "definition": [],
+                              "monitoringNetworks": []
+                          }
+                      ]
+                  }              
+          400:
+            body:
+              application/json:
+                type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /measurements:
+    description:
+      Retrieves a list of measurements.
+      Filterable fields are &colon;
+      <li>organisation (string)</li>
+      <li>measurementobject (string)</li>
+      <li>measurementpackage (string)</li>
+      <li>measurementpurpose (string)</li>
+      <li>compartment (string)</li>
+      <li>measurementdate (date)</i>
+      <li>quantity (string)</li>
+      <li>parametertype (string)</li>
+      <li>parametergroup (string)</li>
+      <li>taxonType (string)</li>
+      <li>parameter (string)</li>
+      <li>measuredValue (number)</li>
+      <li>measuredUnit (string)</li>
+      <li>calculatedValue (number)</li>
+      <li>calculatedUnit (string)</li>
+      <li>collectionDate (Date)</li>
+      <li>measurementgeography</li>
+      <li>locationgeography</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: MeasurementsListResponse
+              example:
+                {
+                    "count": 631321,
+                    "previous": null,
+                    "next": "/eco/measurements?page=2&pagesize=3",
+                    "maxPageSize": 10000,
+                    "defaultPageSize": 1000,
+                    "result": [
+                        {
+                            "calculatedUnit": "PROCENT",
+                            "calculatedValue": 1,
+                            "changedate": "2017-10-20T00:41:38",
+                            "classifiedValue": "",
+                            "collectionDate": "2014-09-09T00:00:00",
+                            "compartment": "OW",
+                            "locationgeography": "POINT (5.01948433385143 52.5829301079993)",
+                            "measurementgeography": "POINT (5.01948433385143 52.5829301079993)",
+                            "limitSymbol": "0",
+                            "measuredUnit": "PROCENT",
+                            "measuredValue": 1,
+                            "measurementAttributes": null,
+                            "measurementDate": "2014-09-09T00:00:00",
+                            "measurementObject": "570201",
+                            "measurementPackage": null,
+                            "measurementPurpose": "MT",
+                            "methods": null,
+                            "note": null,
+                            "organisation": "HHN",
+                            "parameter": "Draadalgen",
+                            "parameterGroup": null,
+                            "parameterType": "BiologicalGroup",
+                            "projects": null,
+                            "quantity": "BEDKG",
+                            "status": "60",
+                            "taxonType": null
+                        },
+                        {
+                            "calculatedUnit": "PROCENT",
+                            "calculatedValue": 0,
+                            "changedate": "2017-10-20T00:41:38",
+                            "classifiedValue": "",
+                            "collectionDate": "2014-09-09T00:00:00",
+                            "compartment": "OW",
+                            "locationgeography": "POINT (5.0317405324146 52.5436033920471)",
+                            "measurementgeography": "POINT (5.0317405324146 52.5436033920471)",
+                            "limitSymbol": "0",
+                            "measuredUnit": "PROCENT",
+                            "measuredValue": 0,
+                            "measurementAttributes": null,
+                            "measurementDate": "2014-09-09T00:00:00",
+                            "measurementObject": "5N9711",
+                            "measurementPackage": null,
+                            "measurementPurpose": "MT",
+                            "methods": null,
+                            "note": null,
+                            "organisation": "HHN",
+                            "parameter": "Draadalgen",
+                            "parameterGroup": null,
+                            "parameterType": "BiologicalGroup",
+                            "projects": null,
+                            "quantity": "BEDKG",
+                            "status": "60",
+                            "taxonType": null
+                        },
+                        {
+                            "calculatedUnit": "PROCENT",
+                            "calculatedValue": 0.1,
+                            "changedate": "2017-10-20T00:41:38",
+                            "classifiedValue": "",
+                            "collectionDate": "2014-06-10T00:00:00",
+                            "compartment": "OW",
+                            "locationgeography": "POINT (5.06948489764371 52.5056906994118)",
+                            "measurementgeography": "POINT (5.06948489764371 52.5056906994118)",
+                            "limitSymbol": "0",
+                            "measuredUnit": "PROCENT",
+                            "measuredValue": 0.1,
+                            "measurementAttributes": null,
+                            "measurementDate": "2014-06-10T00:00:00",
+                            "measurementObject": "513007",
+                            "measurementPackage": null,
+                            "measurementPurpose": "MT",
+                            "methods": null,
+                            "note": null,
+                            "organisation": "HHN",
+                            "parameter": "Draadalgen",
+                            "parameterGroup": null,
+                            "parameterType": "BiologicalGroup",
+                            "projects": null,
+                            "quantity": "BEDKG",
+                            "status": "60",
+                            "taxonType": null
+                        }
+                    ]
+                }        
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /geojson:
+      description:
+        Retrieves a list of measurements as a GeoJSON FeatureCollection.
+        Filterable fields are &colon;
+        <li>ogranisation (string)</li>
+        <li>measurementobject (string)</li>
+        <li>measurementpackage (string)</li>
+        <li>measurementpurpose (string)</li>
+        <li>compartment (string)</li>
+        <li>measurementdate (date)i>
+        <li>quantity (string)</li>
+        <li>parametertype (string)</li>
+        <li>parametergroup (string)</li>
+        <li>taxonType (string)</li>
+        <li>parameter (string)</li>
+        <li>measuredValue (number)</li>
+        <li>measuredUnit (string)</li>
+        <li>calculatedvalue (number)</li>
+        <li>calculatedunit (string)</li>
+        <li>collectiondate (Date)</li>
+      get:
+        is: [ pageable, filterable ]
+        responses:
+          200:
+            body:
+              application/json:
+                type: object
+                example:
+                  {
+                      "type": "FeatureCollection",
+                      "features": [
+                          {
+                              "type": "Feature",
+                              "geometry": {
+                                  "type": "Point",
+                                  "coordinates": [
+                                      52.5829301079993,
+                                      5.01948433385143,
+                                      0
+                                  ]
+                              },
+                              "properties": {
+                                  "MeasuredValue": 1,
+                                  "ClassifiedValue": "",
+                                  "CalculatedValue": 1,
+                                  "MeasuredUnit": "PROCENT",
+                                  "CalculatedUnit": "PROCENT",
+                                  "Compartment": "OW",
+                                  "LimitSymbol": "0",
+                                  "MeasurementAttributes": null,
+                                  "MeasurementDate": "2014-09-09T00:00:00",
+                                  "MeasurementObject": "570201",
+                                  "MeasurementPackage": null,
+                                  "MeasurementPurpose": "MT",
+                                  "Methods": null,
+                                  "Note": null,
+                                  "Organisation": "HHN",
+                                  "Parameter": "Draadalgen",
+                                  "ParameterType": "BiologicalGroup",
+                                  "Projects": null,
+                                  "Quantity": "BEDKG",
+                                  "Status": "60",
+                                  "TaxonType": null,
+                                  "CollectionDate": "2014-09-09T00:00:00"
+                              }
+                          },
+                          {
+                              "type": "Feature",
+                              "geometry": {
+                                  "type": "Point",
+                                  "coordinates": [
+                                      52.5436033920471,
+                                      5.0317405324146,
+                                      0
+                                  ]
+                              },
+                              "properties": {
+                                  "MeasuredValue": 0,
+                                  "ClassifiedValue": "",
+                                  "CalculatedValue": 0,
+                                  "MeasuredUnit": "PROCENT",
+                                  "CalculatedUnit": "PROCENT",
+                                  "Compartment": "OW",
+                                  "LimitSymbol": "0",
+                                  "MeasurementAttributes": null,
+                                  "MeasurementDate": "2014-09-09T00:00:00",
+                                  "MeasurementObject": "5N9711",
+                                  "MeasurementPackage": null,
+                                  "MeasurementPurpose": "MT",
+                                  "Methods": null,
+                                  "Note": null,
+                                  "Organisation": "HHN",
+                                  "Parameter": "Draadalgen",
+                                  "ParameterType": "BiologicalGroup",
+                                  "Projects": null,
+                                  "Quantity": "BEDKG",
+                                  "Status": "60",
+                                  "TaxonType": null,
+                                  "CollectionDate": "2014-09-09T00:00:00"
+                              }
+                          },
+                          {
+                              "type": "Feature",
+                              "geometry": {
+                                  "type": "Point",
+                                  "coordinates": [
+                                      52.5056906994118,
+                                      5.06948489764371,
+                                      0
+                                  ]
+                              },
+                              "properties": {
+                                  "MeasuredValue": 0.1,
+                                  "ClassifiedValue": "",
+                                  "CalculatedValue": 0.1,
+                                  "MeasuredUnit": "PROCENT",
+                                  "CalculatedUnit": "PROCENT",
+                                  "Compartment": "OW",
+                                  "LimitSymbol": "0",
+                                  "MeasurementAttributes": null,
+                                  "MeasurementDate": "2014-06-10T00:00:00",
+                                  "MeasurementObject": "513007",
+                                  "MeasurementPackage": null,
+                                  "MeasurementPurpose": "MT",
+                                  "Methods": null,
+                                  "Note": null,
+                                  "Organisation": "HHN",
+                                  "Parameter": "Draadalgen",
+                                  "ParameterType": "BiologicalGroup",
+                                  "Projects": null,
+                                  "Quantity": "BEDKG",
+                                  "Status": "60",
+                                  "TaxonType": null,
+                                  "CollectionDate": "2014-06-10T00:00:00"
+                              }
+                          }
+                      ]
+                  }                
+          400:
+            body:
+              application/json:
+                type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /methods:
+    description:
+      Retrieves a list of methods used by the organisations in the provider's system.  
+      Filterable fields are &colon;
+      <li>code (string)</li>
+      <li>name (string)</li>
+      <li>organisation (string)</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: MethodsListResponse
+              example:
+                {
+                    "count": 46,
+                    "previous": null,
+                    "next": "/eco/methods?page=2&pagesize=3",
+                    "maxPageSize": 10000,
+                    "defaultPageSize": 1000,
+                    "result": [
+                        {
+                            "code": "FYTPT_A054",
+                            "name": "Fytoplankton A054",
+                            "organisation": "RWS",
+                            "literature": null,
+                            "methodtype": "AM",
+                            "methodtypename": "Analyse methode"
+                        },
+                        {
+                            "code": "FYTPT_S054",
+                            "name": "Fytoplankton S052",
+                            "organisation": "RWS",
+                            "literature": null,
+                            "methodtype": "MM",
+                            "methodtypename": "Monstermethode"
+                        },
+                        {
+                            "code": "MCFT-0823",
+                            "name": "Macrofyten",
+                            "organisation": "ECS.OW",
+                            "literature": null,
+                            "methodtype": "AM",
+                            "methodtypename": "Analyse methode"
+                        }
+                    ]
+                }                
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /expand:
+      description:
+        Retrieves an expanded list of methods used by the organisations in the provider's system.  
+        Filterable fields are &colon;
+        <li>code (string)</li>
+        <li>name (string)</li>
+        <li>organisation (string)</li>
+      get:
+        is: [ pageable, filterable ]
+        responses:
+          200:
+            body:
+              application/json:
+                type: ExpandedMethodsListResponse
+                example:
+                  {
+                      "count": 46,
+                      "previous": null,
+                      "next": "/eco/methods/expand?page=2&pagesize=3",
+                      "maxPageSize": 10000,
+                      "defaultPageSize": 1000,
+                      "result": [
+                          {
+                              "code": "FYTPT_A054",
+                              "name": "Fytoplankton A054",
+                              "organisation": "RWS",
+                              "literature": null,
+                              "methodtype": "AM",
+                              "methodtypename": "Analyse methode",
+                              "definition": [
+                                  {
+                                      "standardCode": "AQUO",
+                                      "codeInStandard": "FYTPT_A054",
+                                      "reference": "http://domeintabellen-idsw.rws.nl/"
+                                  }
+                              ]
+                          },
+                          {
+                              "code": "FYTPT_S054",
+                              "name": "Fytoplankton S052",
+                              "organisation": "RWS",
+                              "literature": null,
+                              "methodtype": "MM",
+                              "methodtypename": "Monstermethode",
+                              "definition": [
+                                  {
+                                      "standardCode": "AQUO",
+                                      "codeInStandard": "FYTPT_S054",
+                                      "reference": "http://domeintabellen-idsw.rws.nl/"
+                                  }
+                              ]
+                          },
+                          {
+                              "code": "MCFT-0823",
+                              "name": "Macrofyten",
+                              "organisation": "ECS.OW",
+                              "literature": null,
+                              "methodtype": "AM",
+                              "methodtypename": "Analyse methode",
+                              "definition": [
+                                  {
+                                      "standardCode": "AQUO",
+                                      "codeInStandard": "MCFT-0823",
+                                      "reference": "http://domeintabellen-idsw.rws.nl/"
+                                  }
+                              ]
+                          }
+                      ]
+                  }                  
+          400:
+            body:
+              application/json:
+                type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /monitoringnetworks:
+    description:
+      Retrieves a list of monitoring networks (a collection of measurement objects) within the provider's system. 
+      Filterable fields are &colon;
+      <li>code (string)</li>
+      <li>name (string)</li>
+      <li>organisation (string)</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: MonitoringNetworksListResponse
+              example:
+                {
+                    "count": 67,
+                    "previous": null,
+                    "next": "/eco/monitoringnetworks?page=2&pagesize=3",
+                    "maxPageSize": 10000,
+                    "defaultPageSize": 1000,
+                    "result": [
+                        {
+                            "code": "1",
+                            "name": "TestMeetnet",
+                            "organisation": "ECS.OW",
+                            "description": null
+                        },
+                        {
+                            "code": "5",
+                            "name": "Test",
+                            "organisation": "ECS.OW",
+                            "description": null
+                        },
+                        {
+                            "code": "TMJ",
+                            "name": "TestMeetnetJochim",
+                            "organisation": "ECS.OW",
+                            "description": null
+                        }
+                    ]
+                }            
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /expand:
+      description:
+        The expanded items include a list of measurement objects that are part of the monitoring network.
+        Filterable fields are &colon;
+        <li>code (string)</li>
+        <li>name (string)</li>
+        <li>organisation (string)</li>
+      get:
+        is: [ pageable, filterable ]
+        responses:
+          200:
+            body:
+              application/json:
+                type: ExpandedMonitoringNetworksListResponse
+                example:
+                  {
+                      "count": 67,
+                      "previous": null,
+                      "next": "/eco/monitoringnetworks/expand?page=2&pagesize=3",
+                      "maxPageSize": 10000,
+                      "defaultPageSize": 1000,
+                      "result": [
+                          {
+                              "code": "1",
+                              "name": "TestMeetnet",
+                              "organisation": "ECS.OW",
+                              "description": null,
+                              "locations": [
+                                  "BRA-01",
+                                  "STA-01",
+                                  "ALK-09",
+                                  "BER-09",
+                                  "TST"
+                              ],
+                              "definition": []
+                          },
+                          {
+                              "code": "5",
+                              "name": "Test",
+                              "organisation": "ECS.OW",
+                              "description": null,
+                              "locations": [
+                                  "GAT-01",
+                                  "MEP-01"
+                              ],
+                              "definition": []
+                          },
+                          {
+                              "code": "TMJ",
+                              "name": "TestMeetnetJochim",
+                              "organisation": "ECS.OW",
+                              "description": null,
+                              "locations": [
+                                  "BRA-01",
+                                  "GAT-01",
+                                  "KAN-01",
+                                  "MEP-01",
+                                  "SLO-01",
+                                  "ALK-09"
+                              ],
+                              "definition": []
+                          }
+                      ]
+                  }              
+          400:
+            body:
+              application/json:
+                type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /notes:
+    description:
+      Retrieves a standardised notes within organisations available in the provider's system.  
+      Filterable fields are &colon;
+      <li>code (string)</li>
+      <li>name (string)</li>
+      <li>organisation (string)</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: OrganisationNotesListResponse
+              example:
+                {
+                    "count": 8,
+                    "previous": null,
+                    "next": "/eco/notes?page=2&pagesize=3",
+                    "maxPageSize": 10000,
+                    "defaultPageSize": 1000,
+                    "result": [
+                        {
+                            "code": "NO1",
+                            "note": "Notitie 1",
+                            "organisation": "ECS.OW"
+                        },
+                        {
+                            "code": "CO3",
+                            "note": "CO3",
+                            "organisation": "HHN"
+                        },
+                        {
+                            "code": "FLPRB",
+                            "note": "FLPRB",
+                            "organisation": "HHN"
+                        }
+                    ]
+                }              
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /organisations:
+    description:
+      Retrieves a list of organisations within the provider's system.
+      Filterable fields are &colon;
+      <li>code (string)</li>
+      <li>name (string)</li>
+      <li>numericcode (number)</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: OrganisationsListResponse
+              example:
+                {
+                    "count": 5,
+                    "previous": null,
+                    "next": "/eco/organisations?page=2&pagesize=3",
+                    "maxPageSize": 10000,
+                    "defaultPageSize": 1000,
+                    "result": [
+                        {
+                            "code": "RWS",
+                            "name": "Rijkswaterstaat",
+                            "numericcode": 80
+                        },
+                        {
+                            "code": "HHN",
+                            "name": "HHRS Hollands Noorderkwartier",
+                            "numericcode": 12
+                        },
+                        {
+                            "code": "ECS.OW",
+                            "name": "EcoSys [Ontwikkeling]",
+                            "numericcode": 1001
+                        }
+                    ]
+                }            
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /expand:
+      description:
+        Retrieves an expanded list of organisations within the provider's system.
+        Filterable fields are &colon;
+        <li>code (string)</li>
+        <li>name (string)</li>
+        <li>numericcode (number)</li>
+      get:
+        is: [ pageable, filterable ]
+        responses:
+          200:
+            body:
+              application/json:
+                type: ExpandedOrganisationsListResponse
+                example:
+                  {
+                      "count": 5,
+                      "previous": null,
+                      "next": "/eco/organisations/expand?page=2&pagesize=3",
+                      "maxPageSize": 10000,
+                      "defaultPageSize": 1000,
+                      "result": [
+                          {
+                              "code": "RWS",
+                              "name": "Rijkswaterstaat",
+                              "numericcode": 80,
+                              "definition": [
+                                  {
+                                      "standardCode": "AQUO",
+                                      "codeInStandard": "80",
+                                      "reference": "http://domeintabellen-idsw.rws.nl/"
+                                  }
+                              ]
+                          },
+                          {
+                              "code": "HHN",
+                              "name": "HHRS Hollands Noorderkwartier",
+                              "numericcode": 12,
+                              "definition": [
+                                  {
+                                      "standardCode": "AQUO",
+                                      "codeInStandard": "12",
+                                      "reference": "http://domeintabellen-idsw.rws.nl/"
+                                  }
+                              ]
+                          },
+                          {
+                              "code": "ECS.OW",
+                              "name": "EcoSys [Ontwikkeling]",
+                              "numericcode": 1001,
+                              "definition": [
+                                  {
+                                      "standardCode": "AQUO",
+                                      "codeInStandard": "1001",
+                                      "reference": "http://domeintabellen-idsw.rws.nl/"
+                                  }
+                              ]
+                          }
+                      ]
+                  }              
+          400:
+            body:
+              application/json:
+                type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /parameters:
+    description:
+      Retrieves a list of parameters available in the provider's system.  
+      Filterable fields are &colon;
+      <li>code (string)</li>
+      <li>name (string)</li>
+      <li>type (string)</li>
+      <li>taxontype (string)</li>
+      <li>taxongroup (string)</li>
+      <li>changedate (datetime)</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: ParametersListResponse
+              example:
+                {
+                    "count": 25622,
+                    "previous": null,
+                    "next": "/eco/parameters?page=2&pagesize=3",
+                    "maxPageSize": 10000,
+                    "defaultPageSize": 1000,
+                    "result": [
+                        {
+                            "code": "Alytes",
+                            "name": "Alytes",
+                            "type": "Taxon",
+                            "taxontype": "AMFBE",
+                            "taxongroup": null,
+                            "authors": "Wagler, 1830"
+                        },
+                        {
+                            "code": "Alytes obstetricans",
+                            "name": "Alytes obstetricans",
+                            "type": "Taxon",
+                            "taxontype": "AMFBE",
+                            "taxongroup": null,
+                            "authors": "(Laurenti, 1768)"
+                        },
+                        {
+                            "code": "Amphibia",
+                            "name": "Amphibia",
+                            "type": "Taxon",
+                            "taxontype": "AMFBE",
+                            "taxongroup": null,
+                            "authors": "Linnaeus, 1758"
+                        }
+                    ]
+                }                
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /expand:
+      description:
+        Retrieves an expanded list of parameters available in the provider's system.  
+        Filterable fields are &colon;
+        <li>code (string)</li>
+        <li>name (string)</li>
+        <li>type (string)</li>
+        <li>taxontype (string)</li>
+        <li>taxongroup (string)</li>
+      get:
+        is: [ pageable, filterable ]
+        responses:
+          200:
+            body:
+              application/json:
+                type: ExpandedParametersListResponse
+                example:
+                  {
+                      "count": 25622,
+                      "previous": null,
+                      "next": "/eco/parameters/expand?page=2&pagesize=3",
+                      "maxPageSize": 10000,
+                      "defaultPageSize": 1000,
+                      "result": [
+                          {
+                              "code": "Alytes",
+                              "name": "Alytes",
+                              "type": "Taxon",
+                              "taxontype": "AMFBE",
+                              "taxongroup": null,
+                              "authors": "Wagler, 1830",
+                              "definition": [
+                                  {
+                                      "standardCode": "TWN",
+                                      "codeInStandard": "1000008633",
+                                      "reference": "http://sofus.ecosys.nl/Taxus/TaxaShow.exe/ShowPage?TaxonCode=1000008633&Literature=NO"
+                                  }
+                              ]
+                          },
+                          {
+                              "code": "Alytes obstetricans",
+                              "name": "Alytes obstetricans",
+                              "type": "Taxon",
+                              "taxontype": "AMFBE",
+                              "taxongroup": null,
+                              "authors": "(Laurenti, 1768)",
+                              "definition": [
+                                  {
+                                      "standardCode": "TWN",
+                                      "codeInStandard": "1000008634",
+                                      "reference": "http://sofus.ecosys.nl/Taxus/TaxaShow.exe/ShowPage?TaxonCode=1000008634&Literature=NO"
+                                  }
+                              ]
+                          },
+                          {
+                              "code": "Amphibia",
+                              "name": "Amphibia",
+                              "type": "Taxon",
+                              "taxontype": "AMFBE",
+                              "taxongroup": null,
+                              "authors": "Linnaeus, 1758",
+                              "definition": [
+                                  {
+                                      "standardCode": "TWN",
+                                      "codeInStandard": "1000008635",
+                                      "reference": "http://sofus.ecosys.nl/Taxus/TaxaShow.exe/ShowPage?TaxonCode=1000008635&Literature=NO"
+                                  }
+                              ]
+                          }
+                      ]
+                  }                  
+          400:
+            body:
+              application/json:
+                type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /parameterpackages:
+    description:
+      Retrieves a list of parameter packages available in the provider's system.  
+      Filterable fields are &colon;
+      <li>code (string)</li>
+      <li>name (string)</li>
+      <li>type (string)</li>
+      <li>taxontype (string)</li>
+      <li>taxongroup (string)</li>
+      <li>changedate (datetime)</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: ParameterPackagesListResponse
+              example:
+                {
+                    "count": 1,
+                    "previous": null,
+                    "next": null,
+                    "maxPageSize": 10000,
+                    "defaultPageSize": 1000,
+                    "result": [
+                        {
+                            "changedate": "2018-04-11T14:21:16.67",
+                            "code": "OEVRPTN",
+                            "name": "Oeverplanten"
+                        }
+                    ]
+                }        
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /expand:
+      description:
+        Retrieves an expanded list of parameter packages available in the provider's system.  
+        Filterable fields are &colon;
+        <li>code (string)</li>
+        <li>name (string)</li>
+        <li>type (string)</li>
+        <li>taxontype (string)</li>
+        <li>taxongroup (string)</li>
+      get:
+        is: [ pageable, filterable ]
+        responses:
+          200:
+            body:
+              application/json:
+                type: ExpandedParameterPackagesListResponse
+                example:
+                  {
+                      "count": 1,
+                      "previous": null,
+                      "next": null,
+                      "maxPageSize": 10000,
+                      "defaultPageSize": 1000,
+                      "result": [
+                          {
+                              "code": "OEVRPTN",
+                              "name": "Oeverplanten",
+                              "parametertype": "Taxon",
+                              "taxontype": "MACFT",
+                              "parameters": [
+                                  "Abies procera",
+                                  "Stachys sylvatica",
+                                  "Syringa"
+                              ],
+                              "definition": null,
+                              "changedate": "2018-04-11T14:20:07.173"
+                          }
+                      ]
+                  }
+               
+          400:
+            body:
+              application/json:
+                type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /parametertypes:
+    description:
+      Retrieves a list of parameter types available in the provider's system.  
+      Filterable fields are &colon;
+      <li>code (string)</li>
+      <li>name (string)</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: ParameterTypesListResponse
+              example:
+                {
+                    "count": 5,
+                    "previous": null,
+                    "next": null,
+                    "maxPageSize": 10000,
+                    "defaultPageSize": 1000,
+                    "result": [
+                        {
+                            "code": "BiologicalGroup",
+                            "name": "BiologicalGroup"
+                        },
+                        {
+                            "code": "Taxon",
+                            "name": "Taxon"
+                        },
+                        {
+                            "code": "ChemicalGroup",
+                            "name": "ChemicalGroup"
+                        },
+                        {
+                            "code": "Chemical",
+                            "name": "Chemical"
+                        },
+                        {
+                            "code": "PhysicalProperty",
+                            "name": "PhysicalProperty"
+                        }
+                    ]
+                }                
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /projects:
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: ProjectsListResponse
+              example:
+                {
+                  "count": 12,
+                  "previous": "/eco/projects?page=1&pagesize=8",
+                  "next": null,
+                  "maxPageSize": 10000,
+                  "defaultPageSize": 1000,
+                  "result": [
+                      {
+                          "code": "P-KRW2017",
+                          "name": "P-Meetnet KRW 2017",
+                          "organisation": "ECS.HD",
+                          "start": "2017-01-01",
+                          "end": "2018-01-01"
+                      },
+                      {
+                          "code": "P-BOLLEN",
+                          "name": "Project bestrijdingsmiddelen bollenteelt",
+                          "organisation": "ECS.HD",
+                          "start": "2017-01-01",
+                          "end": "2018-01-01"
+                      },
+                      {
+                          "code": "MWTL_M2016",
+                          "name": "Macev 2016 test zonder xy",
+                          "organisation": "RWS",
+                          "start": "2016-01-01",
+                          "end": "2017-01-01"
+                      },
+                      {
+                          "code": "MWTL_M2015",
+                          "name": "Macrofauna 2015",
+                          "organisation": "RWS",
+                          "start": "2015-01-01",
+                          "end": "2016-01-01"
+                      }
+                  ]
+              }
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /quantities:
+    description:
+      Retrieves a list of quantities available in the provider's system.  
+      Filterable fields are &colon;
+      <li>code (string)</li>
+      <li>name (string)</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: QuantitiesListResponse
+              example:
+                  {
+                    "count": 66,
+                    "previous": null,
+                    "next": "/eco/quantities?page=2&pagesize=3",
+                    "maxPageSize": 10000,
+                    "defaultPageSize": 1000,
+                    "result": [
+                        {
+                            "name": "Aantal",
+                            "code": "AANTL",
+                            "values": []
+                        },
+                        {
+                            "name": "Aantal per oppervlakte",
+                            "code": "AANTPOPVTE",
+                            "values": []
+                        },
+                        {
+                            "name": "Aantal per volume",
+                            "code": "AANTPVLME",
+                            "values": []
+                        }
+                    ]
+                }
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /expand:
+      description:
+        Retrieves an expanded list of quantities available in the provider's system.  
+        Filterable fields are &colon;
+        <li>code (string)</li>
+        <li>name (string)</li>
+      get:
+        is: [ pageable, filterable ]
+        responses:
+          200:
+            body:
+              application/json:
+                type: ExpandedQuantitiesListResponse
+                example:
+                  {
+                    "count": 66,
+                    "previous": null,
+                    "next": "/eco/quantities/expand?page=2&pagesize=3",
+                    "maxPageSize": 10000,
+                    "defaultPageSize": 1000,
+                    "result": [
+                        {
+                            "name": "Aantal",
+                            "code": "AANTL",
+                            "values": [],
+                            "definition": [
+                                {
+                                    "standardCode": "AQUO",
+                                    "codeInStandard": "AANTL",
+                                    "reference": "http://domeintabellen-idsw.rws.nl/"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Aantal per oppervlakte",
+                            "code": "AANTPOPVTE",
+                            "values": [],
+                            "definition": [
+                                {
+                                    "standardCode": "AQUO",
+                                    "codeInStandard": "AANTPOPVTE",
+                                    "reference": "http://domeintabellen-idsw.rws.nl/"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Aantal per volume",
+                            "code": "AANTPVLME",
+                            "values": [],
+                            "definition": [
+                                {
+                                    "standardCode": "AQUO",
+                                    "codeInStandard": "AANTPVLME",
+                                    "reference": "http://domeintabellen-idsw.rws.nl/"
+                                }
+                            ]
+                        }
+                    ]
+                }
+
+          400:
+            body:
+              application/json:
+                type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /standards:
+    description:
+      Retrieves a list of standards within the provider's system. 
+      Filterable fields are &colon;
+      <li>institute (string)</li>
+      <li>standardcode (string)</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: StandardsListResponse
+              example:
+                {
+                    "count": 5,
+                    "previous": null,
+                    "next": null,
+                    "maxPageSize": 10000,
+                    "defaultPageSize": 1000,
+                    "result": [
+                        {
+                            "institute": "ECS",
+                            "standardCode": "ECOSYS",
+                            "reference": "https://www.ecosys.nl",
+                            "standardsType": "Open"
+                        },
+                        {
+                            "institute": "ECS",
+                            "standardCode": "AQUADESK",
+                            "reference": "https://www.aquadesk.nl",
+                            "standardsType": "Open"
+                        },
+                        {
+                            "institute": "IHW",
+                            "standardCode": "AQUO",
+                            "reference": "https://www.aquo.nl",
+                            "standardsType": "Open"
+                        },
+                        {
+                            "institute": "RWS",
+                            "standardCode": "TWN",
+                            "reference": "http://sofus.ecosys.nl/taxabase.htm",
+                            "standardsType": "Open"
+                        },
+                        {
+                            "institute": "ACS",
+                            "standardCode": "CAS",
+                            "reference": "https://www.cas.org",
+                            "standardsType": "Open"
+                        }
+                    ]
+                }            
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /taxongroups:
+    description:
+      Retrieves a list of taxon groups available in the provider's system.  
+      Filterable fields are &colon;
+      <li>code (string)</li>
+      <li>name (string)</li>
+      <li>taxontype (string)</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: TaxonGroupsListResponse
+              example:
+                {
+                  "count": 62,
+                  "previous": null,
+                  "next": "/eco/taxongroups?page=2&pagesize=3",
+                  "maxPageSize": 10000,
+                  "defaultPageSize": 1000,
+                  "result": [
+                      {
+                          "code": "CRYPT",
+                          "name": "Cryptophytes",
+                          "taxontype": "FYTPT",
+                          "taxontypename": "Phytoplankton"
+                      },
+                      {
+                          "code": "PROKA",
+                          "name": "Prokaryotes",
+                          "taxontype": "FYTPT",
+                          "taxontypename": "Phytoplankton"
+                      },
+                      {
+                          "code": "EUGLE",
+                          "name": "Euglenophytes",
+                          "taxontype": "FYTPT",
+                          "taxontypename": "Phytoplankton"
+                      }
+                  ]
+              }
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /taxontypes:
+    description:
+      Retrieves a list of taxon types available in the provider's system.  
+      Filterable fields are &colon;
+      <li>code (string)</li>
+      <li>name (string)</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: TaxonTypesListResponse
+              example:
+                  {
+                    "count": 13,
+                    "previous": null,
+                    "next": "/eco/taxontypes?page=2&pagesize=3",
+                    "maxPageSize": 10000,
+                    "defaultPageSize": 1000,
+                    "result": [
+                        {
+                            "code": "ZOOPT",
+                            "name": "Zooplankton"
+                        },
+                        {
+                            "code": "DIATM",
+                            "name": "Diatoms"
+                        },
+                        {
+                            "code": "FYTPT",
+                            "name": "Phytoplankton"
+                        }
+                    ]
+                }
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse
+
+  /units:
+    description:
+      Retrieves a list of units of masurement available in the provider's system.  
+      Filterable fields are &colon;
+      <li>code (string)</li>
+      <li>name (string)</li>
+    get:
+      is: [ pageable, filterable ]
+      responses:
+        200:
+          body:
+            application/json:
+              type: UnitsListResponse
+              example: 
+                {
+                  "count": 23,
+                  "previous": null,
+                  "next": "/eco/units?page=2&pagesize=2",
+                  "maxPageSize": 10000,
+                  "defaultPageSize": 1000,
+                  "result": [
+                      {
+                          "code": "178",
+                          "name": "dimensieloos",
+                          "symbol": null
+                      },
+                      {
+                          "code": "179",
+                          "name": "exemplaren",
+                          "symbol": null
+                      }
+                  ]
+              }
+        400:
+          body:
+            application/json:
+              type: FilterErrors
+    /filters:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: FiltersListResponse

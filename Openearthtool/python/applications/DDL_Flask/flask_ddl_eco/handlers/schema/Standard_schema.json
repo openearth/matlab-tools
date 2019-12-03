@@ -1,0 +1,28 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"type": "object",
+	"properties": {
+		"institute": {
+			"type": "string"
+		},
+		"reference": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"standardCode": {
+			"type": "string"
+		},
+		"standardsType": {
+			"type": [
+				"string",
+				"null"
+			]
+		}
+	},
+	"required": [
+		"institute",
+		"standardCode"
+	]
+}

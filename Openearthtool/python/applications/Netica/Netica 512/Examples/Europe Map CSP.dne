@@ -1,0 +1,944 @@
+// ~->[DNET-1]->~
+
+// File created by Norsys using Netica 5.04- on Feb 12, 2012 at 08:54:44.
+
+bnet Europe_Map_CSP {
+AutoCompile = TRUE;
+autoupdate = TRUE;
+comment = "\n\
+	Europe Map Coloring                         Copyright 1998-2012 Norsys Software Corp.\n\n\
+	This Bayes net demonstrates how to represent constraints using Bayes nets.\n\
+	A constraint is a requirement that the values between two (or more) nodes must\n\
+	satisfy a certain relationship.\n\n\
+	A constraint satisfaction problem (CSP) consists of a number of variables, \n\
+	and some constraints between them.  The goal is to find values for the variables \n\
+	that satisfy all the constraints.  You can use Bayes nets to solve CSPs, \n\
+	but the real power comes from being able to combine CSPs with full Bayesian\n\
+	reasoning.\n\n\
+	For this example CSP, a map consisting of some of the countries in western continental \n\
+	Europe is to be colored so that no two bordering countries have the same color.  \n\
+	In a map coloring problem, four colors is enough, so we have chosen red, green, blue and \
+	yellow.  \n\
+	In this CSP the variables are the color of each country, and the constraints are that \n\
+	bordering countries must have different values.  \n\n\
+	The constraints are represented by the R nodes.  If you look at their function table,\n\
+	you will see that they are 'true' only when the two nodes they are between have\n\
+	different values.  Each has a finding of 'true' entered, to indicate that the constraint\n\
+	is satisfied.\n\n\
+	If you compile the above network, the solution is represented by the nonzero beliefs.\n\
+	The problem is under-constrained so there are lots of solutions.  Say we want Luxembourg\n\
+	to be red, and Germany green.  If you enter those as findings, you will see how choices \n\
+	for the rest of the countries become reduced (you can't make a choice with a zero belief).\n\
+	Yellow is still a possiblity for Netherlands, France and Italy.  Say we make Netherlands\n\
+	yellow.  Then we see that Italy can't be yellow, and France must be yellow.\n\n\
+	To solve general CSPs, you will make each of the variables a node with uniform probabilities\n\
+	(unless you want to express some bias).  Each constraint will also be a node, whose parents\n\
+	are the variables it contrains.  Binary constraints will have two parents, ternary \n\
+	constraints will have three, and so on.  Each constraint will be a Boolean (i.e. true/false)\n\
+	node, with a deterministic equation or function table, that indicates 'true' when the constraint \
+	\|\n\
+	is satisfied.  Then it is given a finding of 'true'.\n\n\
+	If not all the constraint nodes can be given findings of 'true' before Netica complains that\n\
+	an inconsistent finding has been entered, then the CSP does not have a solution.  You can\n\
+	turn individual constraints on and off by entering and removing their findings.  \n\
+	Sets of constraints can be saved in a case file.  A constraint can be made to depend on \n\
+	other variables by giving it additional parents.\n\n\
+	Soft constraints are possible.  The easiest way is to enter likelihood findings for the\n\
+	constraint nodes, instead of a positive finding of 'true'.\n\
+	An alternative way is to not have any finding for the contraint node, but rather add a \n\
+	utility node which is a child of the contraint node, indicating the desirability of \n\
+	having the constraint satisfied.  Then make the primary variable nodes into decision\n\
+	nodes to find the optimal decision (i.e. the best assignment of values to get the highest\n\
+	utility).\n\n\
+	You can see that belief/decision networks are powerful and practical way to represent\n\
+	CSPs, allowing for Nary constraints, soft constraints, meta constraints, easily changing \n\
+	constraint sets, other probabilistic relations, etc.\n\n\
+	Some tips: Often contraints are the same, so copy and paste a lot during construction.  \n\
+	You may want to add some constraint nodes to the Window->Node Palette.\n\
+	If you have a large network it is a good idea to put all the constraint nodes in a node-set \n\
+	called \"Contraint\".  Then you can select all the constraint nodes using \n\
+	Edit->Select Nodes->In Nodeset.  If you invert that selection with Ctrl+Shift+A, you can \n\
+	then do Network->Remove Findings to remove all the findings except constraints.\n\n\
+	This Bayes net designed by Norsys Software Corp.\n\
+	";
+whenchanged = 1329065679;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 10;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	windowposn = (7, 4, 876, 654);
+	CommentShowing = TRUE;
+	CommentWindowPosn = (6, 655, 873, 899);
+	resolution = 72;
+	drawingbounds = (1080, 740);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0x00C0C0C0;};
+	NodeSet Nature {BuiltIn = 1; Color = 0x00F8EED2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0x00D3CAA6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0x00C8C8C8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0x00FFFFFF;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0x00FFFFB4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0x00FFBDBD;};
+	NodeSet Decision {BuiltIn = 1; Color = 0x00DEE8FF;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0x00F0FAFA;};
+	NodeSet Title {BuiltIn = 1; Color = 0x00FFFFFF;};
+	NodeSet target {Disabled = 1; Color = 0x00C8C8C8;};
+	NodeSet Constraint {Disabled = 1; Color = 0x00C8C8C8;};
+	NodeSet target {Disabled = 1; Color = 0x00C8C8C8;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		magnify = 1;
+		};
+	};
+
+node Portugal {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (red, green, blue, yellow);
+	parents = ();
+	probs = 
+		// red          green        blue         yellow       
+		  (0.25,        0.25,        0.25,        0.25);
+	whenchanged = 907071384;
+	belief = (0.25, 0.25, 0.25, 0.25);
+	visual V1 {
+		center = (114, 534);
+		height = 1;
+		};
+	};
+
+node Spain {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (red, green, blue, yellow);
+	parents = ();
+	probs = 
+		// red          green        blue         yellow       
+		  (0.25,        0.25,        0.25,        0.25);
+	whenchanged = 907070062;
+	belief = (0.25, 0.25, 0.25, 0.25);
+	visual V1 {
+		center = (114, 384);
+		height = 2;
+		};
+	};
+
+node R1 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (Spain, Portugal);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R1 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329062140;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (114, 462);
+		dispform = LABELBOX;
+		height = 3;
+		};
+	};
+
+node France {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (red, green, blue, yellow);
+	parents = ();
+	probs = 
+		// red          green        blue         yellow       
+		  (0.25,        0.25,        0.25,        0.25);
+	whenchanged = 907072633;
+	belief = (0.25, 0.25, 0.25, 0.25);
+	visual V1 {
+		center = (318, 384);
+		height = 4;
+		};
+	};
+
+node R2 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (France, Spain);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R2 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329032109;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (216, 384);
+		dispform = LABELBOX;
+		height = 5;
+		};
+	};
+
+node Italy {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (red, green, blue, yellow);
+	parents = ();
+	probs = 
+		// red          green        blue         yellow       
+		  (0.25,        0.25,        0.25,        0.25);
+	whenchanged = 907070052;
+	belief = (0.25, 0.25, 0.25, 0.25);
+	visual V1 {
+		center = (528, 528);
+		height = 8;
+		};
+	};
+
+node R3 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (France, Italy);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R3 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329032185;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (420, 462);
+		dispform = LABELBOX;
+		height = 9;
+		};
+	};
+
+node Switzerland {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (red, green, blue, yellow);
+	parents = ();
+	probs = 
+		// red          green        blue         yellow       
+		  (0.25,        0.25,        0.25,        0.25);
+	whenchanged = 907070052;
+	belief = (0.25, 0.25, 0.25, 0.25);
+	visual V1 {
+		center = (528, 384);
+		height = 6;
+		};
+	};
+
+node R4 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (France, Switzerland);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R4 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329032118;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (426, 384);
+		dispform = LABELBOX;
+		height = 7;
+		};
+	};
+
+node Luxembourg {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (red, green, blue, yellow);
+	parents = ();
+	probs = 
+		// red          green        blue         yellow       
+		  (0.25,        0.25,        0.25,        0.25);
+	whenchanged = 1241733397;
+	belief = (0.25, 0.25, 0.25, 0.25);
+	visual V1 {
+		center = (318, 228);
+		height = 20;
+		};
+	};
+
+node R8 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (Luxembourg, France);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R8 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329032071;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (318, 312);
+		dispform = LABELBOX;
+		height = 14;
+		};
+	};
+
+node Belgium {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (red, green, blue, yellow);
+	parents = ();
+	probs = 
+		// red          green        blue         yellow       
+		  (0.25,        0.25,        0.25,        0.25);
+	whenchanged = 907070052;
+	belief = (0.25, 0.25, 0.25, 0.25);
+	visual V1 {
+		center = (114, 228);
+		height = 22;
+		};
+	};
+
+node R9 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (Belgium, France);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R9 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329032062;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (216, 312);
+		dispform = LABELBOX;
+		height = 16;
+		};
+	};
+
+node Germany {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (red, green, blue, yellow);
+	parents = ();
+	probs = 
+		// red          green        blue         yellow       
+		  (0.25,        0.25,        0.25,        0.25);
+	whenchanged = 907074016;
+	belief = (0.25, 0.25, 0.25, 0.25);
+	visual V1 {
+		center = (528, 228);
+		height = 18;
+		};
+	};
+
+node R10 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (Germany, France);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R10 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329032081;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (414, 312);
+		dispform = LABELBOX;
+		height = 15;
+		};
+	};
+
+node Austria {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (red, green, blue, yellow);
+	parents = ();
+	probs = 
+		// red          green        blue         yellow       
+		  (0.25,        0.25,        0.25,        0.25);
+	whenchanged = 907071390;
+	belief = (0.25, 0.25, 0.25, 0.25);
+	visual V1 {
+		center = (744, 384);
+		height = 11;
+		};
+	};
+
+node R6 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (Austria, Italy);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R6 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329032205;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (648, 462);
+		dispform = LABELBOX;
+		height = 12;
+		};
+	};
+
+node R7 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (Switzerland, Italy);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R7 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329032194;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (528, 456);
+		dispform = LABELBOX;
+		height = 13;
+		};
+	};
+
+node R5 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (Switzerland, Austria);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R5 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329032130;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (636, 384);
+		dispform = LABELBOX;
+		height = 10;
+		};
+	};
+
+node R11 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (Germany, Switzerland);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R11 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329032092;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (528, 306);
+		dispform = LABELBOX;
+		height = 17;
+		};
+	};
+
+node R12 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (Belgium, Luxembourg);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R12 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329032042;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (216, 228);
+		dispform = LABELBOX;
+		height = 21;
+		};
+	};
+
+node R13 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (Luxembourg, Germany);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R13 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329032053;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (426, 228);
+		dispform = LABELBOX;
+		height = 19;
+		};
+	};
+
+node Netherlands {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (red, green, blue, yellow);
+	parents = ();
+	probs = 
+		// red          green        blue         yellow       
+		  (0.25,        0.25,        0.25,        0.25);
+	whenchanged = 907072970;
+	belief = (0.25, 0.25, 0.25, 0.25);
+	visual V1 {
+		center = (528, 90);
+		height = 24;
+		};
+	};
+
+node R16 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (Netherlands, Belgium);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R16 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329032007;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (402, 90);
+		dispform = LABELBOX;
+		height = 26;
+		};
+	};
+
+node R17 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (Germany, Belgium);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R17 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329032019;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (348, 144);
+		dispform = LABELBOX;
+		height = 27;
+		};
+	};
+
+node R14 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (Germany, Austria);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R14 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329032100;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (642, 306);
+		dispform = LABELBOX;
+		height = 23;
+		link 1 {
+			path = ((589, 271), (627, 296));
+			};
+		};
+	};
+
+node R15 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	inputs = (V1, V2);
+	parents = (Netherlands, Germany);
+	functable = 
+		                    // V1     V2     
+		  (false,           // red    red    
+		   true,            // red    green  
+		   true,            // red    blue   
+		   true,            // red    yellow 
+		   true,            // green  red    
+		   false,           // green  green  
+		   true,            // green  blue   
+		   true,            // green  yellow 
+		   true,            // blue   red    
+		   true,            // blue   green  
+		   false,           // blue   blue   
+		   true,            // blue   yellow 
+		   true,            // yellow red    
+		   true,            // yellow green  
+		   true,            // yellow blue   
+		   false);          // yellow yellow ;
+	equation = "R15 (V1, V2) = (V1 != V2)";
+	title = "\FF\FE`\"";
+	whenchanged = 1329032031;
+	evidence = true;
+	belief = (1, 0);
+	visual V1 {
+		center = (528, 156);
+		dispform = LABELBOX;
+		height = 25;
+		};
+	};
+
+node TITLE1 {
+	kind = CONSTANT;
+	discrete = TRUE;
+	states = (true, false);
+	parents = ();
+	title = "Europe Map Coloring";
+	whenchanged = 907071069;
+	visual V1 {
+		center = (123, 42);
+		font = font {shape= "Arial"; size= 14;};
+		height = 29;
+		};
+	};
+
+node TITLE2 {
+	kind = CONSTANT;
+	discrete = TRUE;
+	states = (true, false);
+	parents = ();
+	title = "Constraint Satisfaction Problem";
+	whenchanged = 907071088;
+	visual V1 {
+		center = (144, 72);
+		font = font {shape= "Arial"; size= 12;};
+		height = 28;
+		};
+	};
+
+node NOTE1 {
+	kind = CONSTANT;
+	discrete = TRUE;
+	states = (true, false);
+	parents = ();
+	title = "Copyright 1998-2012 Norsys Software Corp.";
+	whenchanged = 1329030336;
+	visual V1 {
+		center = (162, 114);
+		height = 30;
+		};
+	};
+NodeSet Constraint {Nodes = (R1, R2, R4, R3, R5, R6, R7, R8, R10, R9, R11, R13, R12, R14, R15, R16, R17);};
+NodeSet target {Nodes = (Netherlands, Belgium, Luxembourg, Germany, Austria, Switzerland, France, Spain, Portugal, Italy);};
+ElimOrder = (Portugal, R1, Spain, R2, R3, R4, R8, R9, R10, R6, R7, R5, R11, R12, R13, R16, R17, R14, R15, Netherlands, Italy, Switzerland, Austria, France, Luxembourg, Belgium, Germany);
+};

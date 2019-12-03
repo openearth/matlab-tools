@@ -1,0 +1,171 @@
+Code,Omschrijving,Dimensie,Omrekenfactor,Groep
+%,procent,,,Overig
+/m,per meter,/L,1,SI afgeleide eenheid
+A,ampère,I,1,SI grondeenheid
+B,Beaufort,,,Overig
+Bq/kg,becquerel per kilogram,/MT,1,SI afgeleide eenheid
+Bq/m3,becquerel per kubieke meter,/L3T,1,SI afgeleide eenheid
+DIMSLS,dimensieloos,,,Overig
+EBC,European Brewery Convention Turbidity Unit,,,Overig
+FNU,Formazine Nephelometric Unit,,,Overig
+FTU,Formazine Turbidity Unit,,,Overig
+Hz,hertz,/T,1,SI afgeleide eenheid
+J,joule,L2M/T2,1,SI afgeleide eenheid
+J/cm2,joule per vierkante centimeter,L2M/L2T2,0.0001,SI afgeleide eenheid
+J/g,joule per gram,L2M/MT2,0.001,SI afgeleide eenheid
+JTU,Jackson Turbidity Unit,,,Overig
+MJ/s,megajoule per seconde,L2M/T3,1000000,SI afgeleide eenheid
+NTU,Nephelometric Turbidity Unit,,,Overig
+Pa,pascal,M/LT2,1,SI afgeleide eenheid
+S/m,siemens per meter,T3I2/L3M,1,SI afgeleide eenheid
+TJ,terajoule,L2M/T2,1.000000E+12,SI afgeleide eenheid
+TU,Toxic Unit,,,Overig
+V,volt,L2M/T3I,1,SI afgeleide eenheid
+Wh/ie,wattuur per inwoner equivalent,,,Overig
+Wh/kg,wattuur per kilogram,L2M/MT2,3600000,SI afgeleide eenheid
+a,jaar,T,,SI niet-SI-eenheid
+bar,bar,M/LT2,100000,SI niet-SI-eenheid
+cd,candela,J,1,SI afgeleide eenheid
+cd/m2,candela per vierkante meter,J/L2,1,SI afgeleide eenheid
+cm,centimeter,L,0.01,SI afgeleide eenheid
+cm/s,centimeter per seconde,L/T,0.01,SI afgeleide eenheid
+cm2,vierkante centimeter,L2,0.0001,SI afgeleide eenheid
+cm2/Hz,vierkante centimeter per hertz,L2T,0.0001,SI afgeleide eenheid
+cm2s,vierkante centimeter seconde,L2T,0.0001,SI afgeleide eenheid
+coC,centigraad Celsius,O,0.01,SI afgeleide eenheid
+cs,centiseconde,T,0.01,SI afgeleide eenheid
+d,dag,T,1.157407E-05,SI niet-SI-eenheid
+dB,decibel,,,Overig
+dbar,decibar,M/LT2,10000,SI niet-SI-eenheid
+dm,decimeter,L,0.1,SI afgeleide eenheid
+dm/s,decimeter per seconde,L/T,0.1,SI afgeleide eenheid
+dm3/s,kubieke decimeter per seconde,L3/T,0.001,SI afgeleide eenheid
+doC,decigraad Celsius,O,0.1,SI afgeleide eenheid
+ds,deciseconde,T,0.1,SI afgeleide eenheid
+g,gram,M,0.001,SI afgeleide eenheid
+g/a,gram per jaar,M/T,,SI afgeleide eenheid
+g/d,gram per dag,M/T,1.157407E-08,SI afgeleide eenheid
+g/dl,gram per deciliter,M/L3,10,SI afgeleide eenheid
+g/ie,gram per inwoner equivalent,,,Overig
+g/kg,gram per kilogram,M/M,0.001,SI afgeleide eenheid
+g/l,gram per liter,M/L3,1,SI afgeleide eenheid
+g/m2,gram per vierkante meter,M/L2,0.001,SI afgeleide eenheid
+g/m3,gram per kubieke meter,M/L3,0.001,SI afgeleide eenheid
+g/ml,gram per milliliter,M/L3,1000,SI afgeleide eenheid
+g/s,gram per seconde,M/T,0.001,SI afgeleide eenheid
+graad,graad,,,SI niet-SI-eenheid
+h,uur,T,2.777778E-04,SI niet-SI-eenheid
+hPa,hectopascal,M/LT2,100,SI afgeleide eenheid
+ha,hectare,L2,10000,SI niet-SI-eenheid
+ie,inwoner equivalent,,,Overig
+kHz,kilohertz,/T,1000,SI afgeleide eenheid
+kJ/g,kilojoule per gram,L2M/MT2,1000000,SI afgeleide eenheid
+kV,kilovolt,L2M/T3I,1000,SI afgeleide eenheid
+kW,kilowatt,L2M/T3,1000,SI afgeleide eenheid
+kWh,kilowattuur,L2M/T2,3600000,SI niet-SI-eenheid
+kWh/dam3,kilowattuur per kubieke decameter,L2M/L3T2,3.600000E+09,SI afgeleide eenheid
+kWh/m3,kilowattuur per kubieke meter,L2M/L3T2,3600000,SI afgeleide eenheid
+keV,kilo electronvolt,,,SI niet-SI-eenheid
+kg,kilogram,M,1,SI grondeenheid
+kg/a,kilogram per jaar,M/T,,SI afgeleide eenheid
+kg/h,kilogram per uur,M/T,2.777780E-04,SI afgeleide eenheid
+kg/ha,kilogram per hectare,M/L2,0.0001,SI afgeleide eenheid
+kg/ha.a,kilogram per hectare per jaar,M/L2T,,SI afgeleide eenheid
+kg/km2,kilogram per vierkante kilometer,M/L2,0.000001,SI afgeleide eenheid
+kg/m3,kilogram per kubieke meter,M/L3,1,SI afgeleide eenheid
+kg/ton,kilogram per ton,M/M,0.001,SI afgeleide eenheid
+km,kilometer,L,1000,SI afgeleide eenheid
+km2,vierkante kilometer,L2,1000000,SI afgeleide eenheid
+l,liter,L3,0.001,SI niet-SI-eenheid
+l/d,liter per dag,L3/T,1.157407E-08,SI afgeleide eenheid
+l/h,liter per uur,L3/T,2.777778E-07,SI afgeleide eenheid
+l/ie,liter per inwoner equivalent,,,Overig
+l/kg,liter per kilogram,L3/M,0.001,SI afgeleide eenheid
+l/m3,liter per kubieke meter,L3/L3,0.001,SI afgeleide eenheid
+l/min,liter per minuut,L3/T,1.666667E-05,SI afgeleide eenheid
+l/s,liter per seconde,L3/T,0.001,SI afgeleide eenheid
+l/s.ha,liter per seconde per hectare,L3/L2T,10,SI afgeleide eenheid
+m,meter,L,1,SI grondeenheid
+m/s,meter per seconde,L/T,1,SI afgeleide eenheid
+m2,vierkante meter,L2,1,SI afgeleide eenheid
+m3,kubieke meter,L3,1,SI afgeleide eenheid
+m3/a,kubieke meter per jaar,L3/T,,SI afgeleide eenheid
+m3/d,kubieke meter per dag,L3/T,1.157407E-05,SI afgeleide eenheid
+m3/h,kubieke meter per uur,L3/T,2.777778E-04,SI afgeleide eenheid
+m3/ie,kubieke meter per inwoner equivalent,,,Overig
+m3/min,kubieke meter per minuut,L3/T,1.666667E-02,SI afgeleide eenheid
+m3/s,kubieke meter per seconde,L3/T,1,SI afgeleide eenheid
+mBq/l,millibecquerel per liter,/L3T,1,SI afgeleide eenheid
+mHz,millihertz,/T,0.001,SI afgeleide eenheid
+mPa.s,millipascal seconde,M/LT,0.001,SI afgeleide eenheid
+mS/cm,millisiemens per centimeter,T3I2/L3M,0.1,SI afgeleide eenheid
+mS/m,millisiemens per meter,T3I2/L3M,0.001,SI afgeleide eenheid
+mV,millivolt,L2M/T3I,0.001,SI afgeleide eenheid
+mbar,millibar,M/LT2,100,SI niet-SI-eenheid
+meq/l,milliequivalent per liter,,,Overig
+mg/g,milligram per gram,M/M,0.001,SI afgeleide eenheid
+mg/g.h,milligram per gram uur,M/MT,2.777778E-07,SI afgeleide eenheid
+mg/kg,milligram per kilogram,M/M,0.000001,SI afgeleide eenheid
+mg/l,milligram per liter,M/L3,0.001,SI afgeleide eenheid
+mg/m2,milligram per vierkante meter,M/L2,0.000001,SI afgeleide eenheid
+mg/m2.d,milligram per vierkante meter per dag,M/L2T,1.157407E-11,SI afgeleide eenheid
+mg/m3,milligram per kubieke meter,M/L3,0.000001,SI afgeleide eenheid
+mg/ml,milligram per milliliter,M/L3,1,SI afgeleide eenheid
+min,minuut,T,1.666667E-02,SI niet-SI-eenheid
+ml,milliliter,L3,0.000001,SI afgeleide eenheid
+ml/g,milliliter per gram,L3/M,0.001,SI afgeleide eenheid
+ml/l,milliliter per liter,L3/L3,0.001,SI afgeleide eenheid
+mm,millimeter,L,0.001,SI afgeleide eenheid
+mm/d,millimeter per dag,L/T,1.157407E-08,SI afgeleide eenheid
+mm/w,millimeter per week,L/T,1.653439E-09,SI afgeleide eenheid
+mm2,vierkante millimeter,L2,0.000001,SI afgeleide eenheid
+mm3/l,kubieke millimeter per liter,L3/L3,0.000001,SI afgeleide eenheid
+mm3/ml,kubieke millimeter per milliliter,L3/L3,0.001,SI afgeleide eenheid
+mmol,millimol,N,0.001,SI afgeleide eenheid
+mmol/kg,millimol per kilogram,N/M,0.001,SI afgeleide eenheid
+mmol/l,millimol per liter,N/L3,0.000001,SI afgeleide eenheid
+mnd,maand,T,,SI niet-SI-eenheid
+mol,mol,N,1,SI grondeenheid
+mol/l,mol per liter,N/L3,0.001,SI afgeleide eenheid
+mol/m3,mol per kubieke meter,N/L3,1,SI afgeleide eenheid
+mol/mol,mol per mol,N/N,1,SI afgeleide eenheid
+n,exemplaren,X,1,Aantal
+n/dl,exemplaren per deciliter,X/L3,10000,Aantal
+n/g,exemplaren per gram,X/M,1000,Aantal
+n/ha,exemplaren per hectare,X/L2,0.0001,Aantal
+n/km,exemplaren per kilometer,X/L,0.001,Aantal
+n/km2,exemplaren per vierkante kilometer,X/L2,0.000001,Aantal
+n/l,exemplaren per liter,X/L3,1000,Aantal
+n/m,exemplaren per meter,X/L,1,Aantal
+n/m2,exemplaren per vierkante meter,X/L2,1,Aantal
+n/mg,exemplaren per milligram,X/M,1000000,Aantal
+n/min,omwentelingen per minuut,,,Overig
+n/ml,exemplaren per milliliter,X/L3,1000000,Aantal
+ng/g,nanogram per gram,M/M,0.000000001,SI afgeleide eenheid
+ng/kg,nanogram per kilogram,M/M,1E-12,SI afgeleide eenheid
+ng/l,nanogram per liter,M/L3,0.000000001,SI afgeleide eenheid
+ng/ml,nanogram per milliliter,M/L3,0.000001,SI afgeleide eenheid
+nmol/mg,nanomol per milligram,N/M,0.001,SI afgeleide eenheid
+oC,graad Celsius,O,1,SI afgeleide eenheid
+oD,Duitse graad,,,Overig
+ohm,ohm,ML2l/T3,1,
+pmol/mg,picomol per milligram,N/M,0.000001,SI afgeleide eenheid
+ppm,parts per million,,,Overig
+q,kwartaal,T,,SI niet-SI-eenheid
+s,seconde,T,1,SI grondeenheid
+ton,ton,M,1000,SI afgeleide eenheid
+ton/a,ton per jaar,M/T,,SI afgeleide eenheid
+uE,microeinstein,,,Overig
+uS/cm,microsiemens per centimeter,T3I2/L3M,0.0001,SI afgeleide eenheid
+ug/kg,microgram per kilogram,M/M,0.000000001,SI afgeleide eenheid
+ug/l,microgram per liter,M/L3,0.000001,SI afgeleide eenheid
+ug/mg,microgram per milligram,M/M,0.001,SI afgeleide eenheid
+ul/l,microliter per liter,M3/M3,1E-6,
+um,micrometer,L,0.000001,SI afgeleide eenheid
+umol/kg,micromol per kilogram,N/M,0.000001,SI afgeleide eenheid
+umol/l,micromol per liter,N/L3,0.001,SI afgeleide eenheid
+umol/m2.s,micromol per vierkante meter per seconde,N/L2T,0.000001,SI afgeleide eenheid
+us,microseconde,T,0.000001,SI afgeleide eenheid
+ve,vervuilingseenheden,,,Overig
+w,week,T,1.653439E-06,SI afgeleide eenheid
+‰,promille,,,Overig

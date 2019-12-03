@@ -1,0 +1,5 @@
+[Bokeh]
+plots_dir = d:\\webserver\\Apache24\\htdocs\\bokeh_plots
+apache_dir = localhost/bokeh_plots/
+[GeoServer]
+url = http://localhost:8080/geoserver/ows

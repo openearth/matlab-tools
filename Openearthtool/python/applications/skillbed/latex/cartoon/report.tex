@@ -1,0 +1,82 @@
+<%namespace name="tools" file="tools.tex"/>
+<%! import os %>
+
+\documentclass[10pt,a4paper,twoside,openright]{../deltares_manual}
+
+%% include packages
+\usepackage[english]{babel}
+\usepackage{nicefrac}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{float}
+\usepackage{pifont}
+
+%% auto ref names
+\def\chapterautorefname{Chapter}
+\def\sectionautorefname{Section}
+\def\appendixautorefname{Appendix}
+\def\figureautorefname{Figure}
+\def\tableautorefname{Table}
+
+\epstopdfsetup{suffix=}
+
+\begin{document}
+
+%% make title
+\program{Skillbed cartoon}
+\subtitle{status update}
+\manualtype{}
+\revision{${revision}}
+\manualtitle
+
+%% chapters
+
+<%
+    path1 = base_path
+    dirs1 = os.listdir(path1)
+    
+    for dir1 in dirs1:
+    	path2 = os.path.join(path1, dir1)
+    	
+        if path2[0] != '.' and os.path.isdir(path2):
+            context.write('\\chapter{Binary "%s"}' % tools.latex_escape(dir1))
+            
+            dirs2 = os.listdir(path2)
+            
+            for dir2 in dirs2:
+                path3 = os.path.join(path2, dir2)
+                
+                if path3[0] != '.' and os.path.isdir(path2):
+                    context.write('\\section{Type "%s"}' % tools.latex_escape(dir2))
+                    
+                    dirs3 = os.listdir(path3)
+                    
+                    for dir3 in dirs3:
+                        path4 = os.path.join(path3, dir3)
+                        
+                        if path4[0] != '.' and os.path.isdir(path4):
+                            context.write('\\subsection{Test "%s"}' % tools.latex_escape(dir3))
+                            
+                            dirs4 = os.listdir(path4)
+                            
+                            for dir4 in dirs4:
+                                path5 = os.path.join(path4, dir4)
+                                
+                                if path5[0] != '.' and os.path.isdir(path5):
+                                    context.write('\\subsubsection{Run "%s"}' % tools.latex_escape(dir4))
+                                    
+                                    dirs5 = os.listdir(path5)
+                                    
+                                    for filename in dirs5:
+                                        file, ext = os.path.splitext(filename)
+                                        
+                                        if ext == '.eps':
+                                            tools.image(path5, filename)
+                                        
+                                        if ext == '.tex':
+                                            tools.table(path5, filename)
+%>
+
+\end{document}
+

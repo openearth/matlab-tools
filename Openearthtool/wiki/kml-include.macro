@@ -1,0 +1,40 @@
+<div id='$paramid' style="height: $paramheight; width: $paramwidth;">
+</div>
+<script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRTsSk5QR9DjOytioQ1UCTYgFDFsVhTfuJE5PLM_54EWZIuj6k0EIn59Wg"> </script>
+<script type="text/javascript">
+  google.load("earth", "1");
+  var ge;
+
+  function initgoogle() 
+  {
+    obj = document.getElementById('$paramid');
+    
+    google.earth.createInstance('$paramid', function initCB(instance) 
+    {
+      ge = instance;
+      ge.getWindow().setVisibility(true);
+      ge.getNavigationControl().setVisibility(ge.VISIBILITY_SHOW);
+      google.earth.fetchKml(ge, $paramurl, function(object)
+        {
+	  if (!object)
+	  {
+	    // wrap alerts in API callbacks and event handlers
+	    // in a setTimeout to prevent deadlock in some browsers
+	    setTimeout(function() {alert('Bad or null KML.');}, 0);
+	    return;
+	  }
+	ge.getFeatures().appendChild(object);
+	var lookat = ge.createLookAt('');
+	lookat.set($paramlon, $paramlat, 0, ge.ALTITUDE_RELATIVE_TO_GROUND, $paramrotation, $paramtilt, $paramaltitude);
+	ge.getView().setAbstractView(lookat);
+        });
+    },
+    failureCB);
+  }
+
+  function failureCB(errorCode)
+  {
+  }
+
+  google.setOnLoadCallback(initgoogle);
+</script>

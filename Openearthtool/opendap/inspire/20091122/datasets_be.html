@@ -1,0 +1,2729 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title>Dataset overview</title>
+<style>
+dd{ }
+dt{ }
+tr:nth-child(even) {background: #DDD}
+tr:nth-child(odd) {background: #FFF}
+
+</style>
+</head>
+
+<body>
+<table>
+<tr>
+<th>Title</th>
+<th>Contact email</th>
+<th>Contact organization</th>
+<th>Extract</th>
+<th>Transform read</th>
+<th>Transform netcdf</th>
+<th>Load</th>
+<th>Size</th>
+<th>Legal constraints</th>
+<th>Country</th>
+<th>Remarks</th>
+<th>URL</th>
+</tr>
+<tr>
+  <td> wind </td>
+  <td><a href="mailto:piet.haerens@imdc.be">piet.haerens@imdc.be</a></td>
+  <td>IMDC</td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: red">False</span></td>
+  <td>460.9KB</td>
+  <td></td>
+  <td>be</td>
+  <td></td>
+  <td><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/wind">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/wind</a></td>
+</tr>
+<tr>
+  <td> waterlevels </td>
+  <td><a href="mailto:piet.haerens@imdc.be">piet.haerens@imdc.be</a></td>
+  <td>IMDC</td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: red">False</span></td>
+  <td>230.5KB</td>
+  <td></td>
+  <td>be</td>
+  <td></td>
+  <td><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waterlevels">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waterlevels</a></td>
+</tr>
+<tr>
+  <td> storms </td>
+  <td><a href="mailto:piet.haerens@imdc.be">piet.haerens@imdc.be</a></td>
+  <td>IMDC</td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: red">False</span></td>
+  <td><span style="color: red">False</span></td>
+  <td><span style="color: red">False</span></td>
+  <td>5.1KB</td>
+  <td></td>
+  <td>be</td>
+  <td></td>
+  <td><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/storms">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/storms</a></td>
+</tr>
+<tr>
+  <td>Unknown</td>
+  <td></td>
+  <td></td>
+  <td><span style="color: green">Data included</span></td>
+  <td><span style="color: red">Script missing</span></td>
+  <td></td>
+  <td><span style="color: red">Not loaded</span></td>
+  <td></td>
+  <td></td>
+  <td>be</td>
+  <td>Inspire description is missing</td>
+  <td><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waves">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waves</a></td>
+</tr>
+<tr>
+  <td> topography </td>
+  <td><a href="mailto:piet.haerens@imdc.be">piet.haerens@imdc.be</a></td>
+  <td>IMDC</td>
+  <td><span style="color: red">False</span></td>
+  <td><span style="color: red">False</span></td>
+  <td><span style="color: red">False</span></td>
+  <td><span style="color: red">False</span></td>
+  <td>3.3KB</td>
+  <td></td>
+  <td>be</td>
+  <td></td>
+  <td><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/topography">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/topography</a></td>
+</tr>
+<tr>
+  <td> bathymetrybaseline </td>
+  <td><a href="mailto:piet.haerens@imdc.be">piet.haerens@imdc.be</a></td>
+  <td>IMDC</td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: red">False</span></td>
+  <td>21.3MB</td>
+  <td></td>
+  <td>be</td>
+  <td></td>
+  <td><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/bathymetrybaseline">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/bathymetrybaseline</a></td>
+</tr>
+<tr>
+  <td> tide </td>
+  <td><a href="mailto:piet.haerens@imdc.be">piet.haerens@imdc.be</a></td>
+  <td>IMDC</td>
+  <td><span style="color: red">False</span></td>
+  <td><span style="color: red">False</span></td>
+  <td><span style="color: red">False</span></td>
+  <td><span style="color: red">False</span></td>
+  <td>3.3KB</td>
+  <td></td>
+  <td>be</td>
+  <td></td>
+  <td><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/tide">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/tide</a></td>
+</tr>
+<tr>
+  <td> waves </td>
+  <td><a href="mailto:piet.haerens@imdc.be">piet.haerens@imdc.be</a></td>
+  <td>IMDC</td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: red">False</span></td>
+  <td>464.3KB</td>
+  <td></td>
+  <td>be</td>
+  <td></td>
+  <td><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waves">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waves</a></td>
+</tr>
+<tr>
+  <td>Unknown</td>
+  <td></td>
+  <td></td>
+  <td><span style="color: green">Data included</span></td>
+  <td><span style="color: green">Script found</span></td>
+  <td></td>
+  <td><span style="color: red">Not loaded</span></td>
+  <td></td>
+  <td></td>
+  <td>be</td>
+  <td>in .xml file, I don't understand 'storm data selected by IMDC', what were criteria?</td>
+  <td></td>
+</tr>
+<tr>
+  <td> hydrodynamicmeasuringcampaign </td>
+  <td><a href="mailto:piet.haerens@imdc.be">piet.haerens@imdc.be</a></td>
+  <td>IMDC</td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: red">False</span></td>
+  <td>14.3MB</td>
+  <td></td>
+  <td>be</td>
+  <td></td>
+  <td><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign</a></td>
+</tr>
+</table>
+
+<h2>Definitions</h2>
+<dl>
+  <dt>Extract</dt>
+  <dd>Is there data available. Automatically checks for more than 1 filetype. If more filetypes are available but it does not say True or Data Included then it was found that data might not be present in the files.</dd>
+  <dt>Transform script</dt>
+  <dd>Automatically checks if there is a script (.m or .py) available. If it says script missing while script is available it was found not to have any code in it to read the data in the raw folder.</dd>
+  <dt>Transform netcdf</dt>
+  <dd>Automatically checks if there is a netcdf logic in the .m or .py file. Can be manually checked.</dd>
+  <dt>Load</dt>
+  <dd>Is the data available through the OpenDAP server. At the moment this is checked manually.</dd>
+</dl>
+
+<h1>Expected datasets</h1>
+<p>The following data types were expected:</p>
+<ul>
+  <li style="color:blue;">Winds - wind field</li>
+  <li style="color:blue;">Waves - Nearshore</li>
+  <li style="color:blue;">Coastal flooding</li>
+  <li style="color:blue;">Dune erosion</li>
+  <li style="color:blue;">Socio-economic indexes</li>
+  <li style="color:blue;">Storms - Historical records (up to 50-150 yr)</li>
+  <li style="color:blue;">Water levels - Surges</li>
+  <li style="color:blue;">Winds - punctual</li>
+  <li style="color:blue;">Morphology - Bathymetry</li>
+  <li style="color:blue;">Overwash/overtopping events</li>
+  <li style="color:blue;">Storms - Impact records</li>
+  <li style="color:blue;">Aerial photographs</li>
+  <li style="color:blue;">Sedimentology</li>
+  <li style="color:blue;">Morphology - Topography</li>
+  <li style="color:blue;">Water levels - Tides</li>
+  <li style="color:blue;">Shoreline evolution</li>
+  <li style="color:blue;">Waves - Offshore</li>
+  <li style="color:blue;">Currents</li>
+  <li style="color:blue;">Storms - Recent records (just last decades)</li>
+</ul>
+<p>The following data types were found:</p>
+<ul>
+  <li style="color:green;">Water levels</li>
+  <li style="color:green;">Waves</li>
+</ul>
+
+<p>The following data types are not found:</p>
+<ul>
+  <li style="color:red;">Winds - wind field</li>
+  <li style="color:red;">Waves - Offshore</li>
+  <li style="color:red;">Dune erosion</li>
+  <li style="color:red;">Socio-economic indexes</li>
+  <li style="color:red;">Storms - Historical records (up to 50-150 yr)</li>
+  <li style="color:red;">Water levels - Surges</li>
+  <li style="color:red;">Winds - punctual</li>
+  <li style="color:red;">Morphology - Bathymetry</li>
+  <li style="color:red;">Aerial photographs</li>
+  <li style="color:red;">Storms - Impact records</li>
+  <li style="color:red;">Coastal flooding</li>
+  <li style="color:red;">Morphology - Topography</li>
+  <li style="color:red;">Sedimentology</li>
+  <li style="color:red;">Overwash/overtopping events</li>
+  <li style="color:red;">Water levels - Tides</li>
+  <li style="color:red;">Shoreline evolution</li>
+  <li style="color:red;">Waves - Nearshore</li>
+  <li style="color:red;">Currents</li>
+  <li style="color:red;">Storms - Recent records (just last decades)</li>
+</ul>
+
+
+
+<h1 id=" wind "> wind </h1>
+<h2>Description</h2>
+<dl>
+  <dt>Title</dt>
+  <dd> wind </dd>
+</dl>
+<dl>
+  <dt>Dataset</dt>
+  <dd>wind</dd>
+</dl>
+<dl>
+  <dt>Abstract</dt>
+  <dd> </dd>
+</dl>
+<dl>
+  <dt>Topic</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Keywords</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Datatype</dt>
+  <dd>-</dd>
+</dl>
+<h2>Location and time</h2>
+<dl>
+  <dt>WestBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>SouthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>EastBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>NorthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Coordinates</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Resolution unit</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Resolution</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Start time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>End time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Time spans</dt>
+  <dd>[]</dd>
+</dl>
+<dl>
+  <dt>period included</dt>
+  <dd>-</dd>
+</dl>
+<h2>Contact and authors</h2>
+<dl>
+  <dt>Contact email</dt>
+  <dd><a href="mailto:piet.haerens@imdc.be">piet.haerens@imdc.be</a></dd>
+</dl>
+<dl>
+  <dt>Owner organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Contact organization</dt>
+  <dd>IMDC</dd>
+</dl>
+<dl>
+  <dt>Country</dt>
+  <dd>be</dd>
+</dl>
+<dl>
+  <dt>Organization</dt>
+  <dd>imdc</dd>
+</dl>
+<dl>
+  <dt>Author organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Author email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<dl>
+  <dt>Last Changed Author</dt>
+  <dd>fernando.toro@imdc.be</dd>
+</dl>
+<dl>
+  <dt>Last Changed Date</dt>
+  <dd>2009-11-20 16:17:34 +0100 (Fri, 20 Nov 2009)</dd>
+</dl>
+<dl>
+  <dt>Owner email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<h2>Restrictions</h2>
+<dl>
+  <dt>Access constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Legal constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Other constraints</dt>
+  <dd></dd>
+</dl>
+<h2>History of dataset</h2>
+<dl>
+  <dt>SVN Log</dt>
+  <dd><pre>------------------------------------------------------------------------
+r908 | fernando.toro@imdc.be | 2009-11-20 16:17:34 +0100 (Fri, 20 Nov 2009) | 1 line
+
+Upload additional raw data, scripts, nc files, metadata
+------------------------------------------------------------------------
+r838 | baart_f | 2009-11-11 11:44:23 +0100 (Wed, 11 Nov 2009) | 1 line
+
+fix paths and generate build scripts
+------------------------------------------------------------------------
+r807 | fernando.toro@imdc.be | 2009-10-29 14:02:21 +0100 (Thu, 29 Oct 2009) | 1 line
+
+Learning SubVersion. Test
+------------------------------------------------------------------------
+r806 | fernando.toro@imdc.be | 2009-10-29 14:01:23 +0100 (Thu, 29 Oct 2009) | 1 line
+
+Learning Subversion. Test
+------------------------------------------------------------------------
+r805 | fernando.toro@imdc.be | 2009-10-29 13:59:56 +0100 (Thu, 29 Oct 2009) | 1 line
+
+Learning Subversion. Test
+------------------------------------------------------------------------
+r804 | fernando.toro@imdc.be | 2009-10-29 13:58:07 +0100 (Thu, 29 Oct 2009) | 1 line
+
+Learning Subversion. Test
+------------------------------------------------------------------------
+r676 | piet.haerens@imdc.be | 2009-07-17 17:41:34 +0200 (Fri, 17 Jul 2009) | 1 line
+
+
+------------------------------------------------------------------------
+</pre></dd>
+</dl>
+<dl>
+  <dt>Lineage</dt>
+  <dd></dd>
+</dl>
+<h2>Status</h2>
+<dl>
+  <dt>Extract</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Transform read</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Transform netcdf</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Load</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<h2>Files</h2>
+<dl>
+  <dt>File extensions</dt>
+  <dd>.xml, .bat, .nc, .m, .txt</dd>
+</dl>
+<dl>
+  <dt>Mime types</dt>
+  <dd>text/x-msdos-batch, application/octet-stream, text/plain, application/xml</dd>
+</dl>
+<dl>
+  <dt>File types</dt>
+  <dd>ASCII English text, with CRLF line terminators, NetCDF Data Format data, ASCII text, with CRLF line terminators, DOS batch file text, XML  document text</dd>
+</dl>
+<dl>
+  <dt>Script info</dt>
+  <dd>Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/wind/scripts/readwind.m.
+No netcdf logic found in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/wind/scripts/readwind.m.
+Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/wind/scripts/wind2netcdf.m.
+Found netcdf logic in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/wind/scripts/wind2netcdf.m line: 1.
+Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/wind/scripts/windmainjob.m.
+Found netcdf logic in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/wind/scripts/windmainjob.m line: 19.</dd>
+</dl>
+<dl>
+  <dt>Size</dt>
+  <dd>460.9KB</dd>
+</dl>
+<h2>Links</h2>
+<dl>
+  <dt>URL in inspire file</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/wind">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/wind</a></dd>
+</dl>
+<dl>
+  <dt>Inspirefile</dt>
+  <dd>InspireDescription.xml</dd>
+</dl>
+<dl>
+  <dt>URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/wind">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/wind</a></dd>
+</dl>
+<dl>
+  <dt>Inspire URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/wind/InspireDescription.xml">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/wind/InspireDescription.xml</a></dd>
+</dl>
+<h2>Subversion</h2>
+<dl>
+  <dt>Path</dt>
+  <dd>/Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/wind</dd>
+</dl>
+<dl>
+  <dt>Repository Root</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData">https://repos.deltares.nl/repos/OpenEarthRawData</a></dd>
+</dl>
+<dl>
+  <dt>Repository UUID</dt>
+  <dd>4427fc4e-80cb-4e17-9138-dc45509d06e2</dd>
+</dl>
+<dl>
+  <dt>Node Kind</dt>
+  <dd>directory</dd>
+</dl>
+<dl>
+  <dt>Schedule</dt>
+  <dd>normal</dd>
+</dl>
+<dl>
+  <dt>Last Changed Rev</dt>
+  <dd>908</dd>
+</dl>
+<dl>
+  <dt>Revision</dt>
+  <dd>919</dd>
+</dl>
+<h2>Remarks</h2>
+<dl>
+  <dt>Remarks</dt>
+  <dd>-</dd>
+</dl>
+<h1 id=" waterlevels "> waterlevels </h1>
+<h2>Description</h2>
+<dl>
+  <dt>Title</dt>
+  <dd> waterlevels </dd>
+</dl>
+<dl>
+  <dt>Dataset</dt>
+  <dd>waterlevels</dd>
+</dl>
+<dl>
+  <dt>Abstract</dt>
+  <dd> </dd>
+</dl>
+<dl>
+  <dt>Topic</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Keywords</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Datatype</dt>
+  <dd>-</dd>
+</dl>
+<h2>Location and time</h2>
+<dl>
+  <dt>WestBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>SouthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>EastBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>NorthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Coordinates</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Resolution unit</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Resolution</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Start time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>End time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Time spans</dt>
+  <dd>[]</dd>
+</dl>
+<dl>
+  <dt>period included</dt>
+  <dd>-</dd>
+</dl>
+<h2>Contact and authors</h2>
+<dl>
+  <dt>Contact email</dt>
+  <dd><a href="mailto:piet.haerens@imdc.be">piet.haerens@imdc.be</a></dd>
+</dl>
+<dl>
+  <dt>Owner organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Contact organization</dt>
+  <dd>IMDC</dd>
+</dl>
+<dl>
+  <dt>Country</dt>
+  <dd>be</dd>
+</dl>
+<dl>
+  <dt>Organization</dt>
+  <dd>imdc</dd>
+</dl>
+<dl>
+  <dt>Author organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Author email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<dl>
+  <dt>Last Changed Author</dt>
+  <dd>fernando.toro@imdc.be</dd>
+</dl>
+<dl>
+  <dt>Last Changed Date</dt>
+  <dd>2009-11-20 16:17:34 +0100 (Fri, 20 Nov 2009)</dd>
+</dl>
+<dl>
+  <dt>Owner email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<h2>Restrictions</h2>
+<dl>
+  <dt>Access constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Legal constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Other constraints</dt>
+  <dd></dd>
+</dl>
+<h2>History of dataset</h2>
+<dl>
+  <dt>SVN Log</dt>
+  <dd><pre>------------------------------------------------------------------------
+r908 | fernando.toro@imdc.be | 2009-11-20 16:17:34 +0100 (Fri, 20 Nov 2009) | 1 line
+
+Upload additional raw data, scripts, nc files, metadata
+------------------------------------------------------------------------
+r838 | baart_f | 2009-11-11 11:44:23 +0100 (Wed, 11 Nov 2009) | 1 line
+
+fix paths and generate build scripts
+------------------------------------------------------------------------
+r816 | fernando.toro@imdc.be | 2009-11-02 15:16:11 +0100 (Mon, 02 Nov 2009) | 1 line
+
+
+------------------------------------------------------------------------
+r814 | fernando.toro@imdc.be | 2009-11-02 14:48:47 +0100 (Mon, 02 Nov 2009) | 1 line
+
+
+------------------------------------------------------------------------
+r677 | piet.haerens@imdc.be | 2009-07-17 17:48:32 +0200 (Fri, 17 Jul 2009) | 1 line
+
+
+------------------------------------------------------------------------
+r676 | piet.haerens@imdc.be | 2009-07-17 17:41:34 +0200 (Fri, 17 Jul 2009) | 1 line
+
+
+------------------------------------------------------------------------
+r480 | piet.haerens@imdc.be | 2009-05-26 15:59:11 +0200 (Tue, 26 May 2009) | 1 line
+
+Scripts to read and make netcdf files for IMDC water levels
+------------------------------------------------------------------------
+r479 | piet.haerens@imdc.be | 2009-05-26 15:18:23 +0200 (Tue, 26 May 2009) | 1 line
+
+Read water level function two columns date and level
+------------------------------------------------------------------------
+r478 | piet.haerens@imdc.be | 2009-05-26 15:15:05 +0200 (Tue, 26 May 2009) | 1 line
+
+
+------------------------------------------------------------------------
+r477 | baart_f | 2009-05-26 15:01:10 +0200 (Tue, 26 May 2009) | 1 line
+
+example for reading file
+------------------------------------------------------------------------
+r476 | baart_f | 2009-05-26 14:54:05 +0200 (Tue, 26 May 2009) | 1 line
+
+example for reading file
+------------------------------------------------------------------------
+r474 | piet.haerens@imdc.be | 2009-05-26 13:31:51 +0200 (Tue, 26 May 2009) | 1 line
+
+Metadata file included
+------------------------------------------------------------------------
+r473 | piet.haerens@imdc.be | 2009-05-26 11:40:09 +0200 (Tue, 26 May 2009) | 1 line
+
+First block of water level time series
+------------------------------------------------------------------------
+</pre></dd>
+</dl>
+<dl>
+  <dt>Lineage</dt>
+  <dd></dd>
+</dl>
+<h2>Status</h2>
+<dl>
+  <dt>Extract</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Transform read</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Transform netcdf</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Load</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<h2>Files</h2>
+<dl>
+  <dt>File extensions</dt>
+  <dd>.xml, .bat, .nc, .m, .txt</dd>
+</dl>
+<dl>
+  <dt>Mime types</dt>
+  <dd>text/x-msdos-batch, application/octet-stream, text/plain, application/xml</dd>
+</dl>
+<dl>
+  <dt>File types</dt>
+  <dd>ASCII English text, with CRLF line terminators, NetCDF Data Format data, ASCII text, with CRLF line terminators, DOS batch file text, XML  document text</dd>
+</dl>
+<dl>
+  <dt>Script info</dt>
+  <dd>Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/waterlevels/scripts/readwaterlevels.m.
+No netcdf logic found in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/waterlevels/scripts/readwaterlevels.m.
+Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/waterlevels/scripts/waterlevel2netcdf.m.
+Found netcdf logic in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/waterlevels/scripts/waterlevel2netcdf.m line: 1.
+Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/waterlevels/scripts/waterlevelsmainjob.m.
+Found netcdf logic in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/waterlevels/scripts/waterlevelsmainjob.m line: 19.</dd>
+</dl>
+<dl>
+  <dt>Size</dt>
+  <dd>230.5KB</dd>
+</dl>
+<h2>Links</h2>
+<dl>
+  <dt>URL in inspire file</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waterlevels">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waterlevels</a></dd>
+</dl>
+<dl>
+  <dt>Inspirefile</dt>
+  <dd>InspireDescription.xml</dd>
+</dl>
+<dl>
+  <dt>URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waterlevels">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waterlevels</a></dd>
+</dl>
+<dl>
+  <dt>Inspire URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waterlevels/InspireDescription.xml">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waterlevels/InspireDescription.xml</a></dd>
+</dl>
+<h2>Subversion</h2>
+<dl>
+  <dt>Path</dt>
+  <dd>/Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/waterlevels</dd>
+</dl>
+<dl>
+  <dt>Repository Root</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData">https://repos.deltares.nl/repos/OpenEarthRawData</a></dd>
+</dl>
+<dl>
+  <dt>Repository UUID</dt>
+  <dd>4427fc4e-80cb-4e17-9138-dc45509d06e2</dd>
+</dl>
+<dl>
+  <dt>Node Kind</dt>
+  <dd>directory</dd>
+</dl>
+<dl>
+  <dt>Schedule</dt>
+  <dd>normal</dd>
+</dl>
+<dl>
+  <dt>Last Changed Rev</dt>
+  <dd>908</dd>
+</dl>
+<dl>
+  <dt>Revision</dt>
+  <dd>919</dd>
+</dl>
+<h2>Remarks</h2>
+<dl>
+  <dt>Remarks</dt>
+  <dd>-</dd>
+</dl>
+<h1 id=" storms "> storms </h1>
+<h2>Description</h2>
+<dl>
+  <dt>Title</dt>
+  <dd> storms </dd>
+</dl>
+<dl>
+  <dt>Dataset</dt>
+  <dd>storms</dd>
+</dl>
+<dl>
+  <dt>Abstract</dt>
+  <dd> </dd>
+</dl>
+<dl>
+  <dt>Topic</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Keywords</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Datatype</dt>
+  <dd>-</dd>
+</dl>
+<h2>Location and time</h2>
+<dl>
+  <dt>WestBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>SouthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>EastBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>NorthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Coordinates</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Resolution unit</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Resolution</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Start time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>End time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Time spans</dt>
+  <dd>[]</dd>
+</dl>
+<dl>
+  <dt>period included</dt>
+  <dd>-</dd>
+</dl>
+<h2>Contact and authors</h2>
+<dl>
+  <dt>Contact email</dt>
+  <dd><a href="mailto:piet.haerens@imdc.be">piet.haerens@imdc.be</a></dd>
+</dl>
+<dl>
+  <dt>Owner organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Contact organization</dt>
+  <dd>IMDC</dd>
+</dl>
+<dl>
+  <dt>Country</dt>
+  <dd>be</dd>
+</dl>
+<dl>
+  <dt>Organization</dt>
+  <dd>imdc</dd>
+</dl>
+<dl>
+  <dt>Author organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Author email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<dl>
+  <dt>Last Changed Author</dt>
+  <dd>fernando.toro@imdc.be</dd>
+</dl>
+<dl>
+  <dt>Last Changed Date</dt>
+  <dd>2009-11-20 16:17:34 +0100 (Fri, 20 Nov 2009)</dd>
+</dl>
+<dl>
+  <dt>Owner email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<h2>Restrictions</h2>
+<dl>
+  <dt>Access constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Legal constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Other constraints</dt>
+  <dd></dd>
+</dl>
+<h2>History of dataset</h2>
+<dl>
+  <dt>SVN Log</dt>
+  <dd><pre>------------------------------------------------------------------------
+r908 | fernando.toro@imdc.be | 2009-11-20 16:17:34 +0100 (Fri, 20 Nov 2009) | 1 line
+
+Upload additional raw data, scripts, nc files, metadata
+------------------------------------------------------------------------
+r904 | fernando.toro@imdc.be | 2009-11-19 16:05:18 +0100 (Thu, 19 Nov 2009) | 1 line
+
+
+------------------------------------------------------------------------
+r903 | fernando.toro@imdc.be | 2009-11-19 15:34:01 +0100 (Thu, 19 Nov 2009) | 1 line
+
+Update directory names (lower case)
+------------------------------------------------------------------------
+r815 | piet.haerens@imdc.be | 2009-11-02 14:55:45 +0100 (Mon, 02 Nov 2009) | 1 line
+
+WP1 - deliverable 1.4
+------------------------------------------------------------------------
+</pre></dd>
+</dl>
+<dl>
+  <dt>Lineage</dt>
+  <dd></dd>
+</dl>
+<h2>Status</h2>
+<dl>
+  <dt>Extract</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Transform read</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<dl>
+  <dt>Transform netcdf</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<dl>
+  <dt>Load</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<h2>Files</h2>
+<dl>
+  <dt>File extensions</dt>
+  <dd>.xml, .csv</dd>
+</dl>
+<dl>
+  <dt>Mime types</dt>
+  <dd>text/plain, application/xml</dd>
+</dl>
+<dl>
+  <dt>File types</dt>
+  <dd>ISO-8859 text, with CRLF line terminators, XML  document text</dd>
+</dl>
+<dl>
+  <dt>Script info</dt>
+  <dd>No process scripts found</dd>
+</dl>
+<dl>
+  <dt>Size</dt>
+  <dd>5.1KB</dd>
+</dl>
+<h2>Links</h2>
+<dl>
+  <dt>URL in inspire file</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/storms">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/storms</a></dd>
+</dl>
+<dl>
+  <dt>Inspirefile</dt>
+  <dd>InspireDescription.xml</dd>
+</dl>
+<dl>
+  <dt>URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/storms">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/storms</a></dd>
+</dl>
+<dl>
+  <dt>Inspire URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/storms/InspireDescription.xml">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/storms/InspireDescription.xml</a></dd>
+</dl>
+<h2>Subversion</h2>
+<dl>
+  <dt>Path</dt>
+  <dd>/Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/storms</dd>
+</dl>
+<dl>
+  <dt>Repository Root</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData">https://repos.deltares.nl/repos/OpenEarthRawData</a></dd>
+</dl>
+<dl>
+  <dt>Repository UUID</dt>
+  <dd>4427fc4e-80cb-4e17-9138-dc45509d06e2</dd>
+</dl>
+<dl>
+  <dt>Node Kind</dt>
+  <dd>directory</dd>
+</dl>
+<dl>
+  <dt>Schedule</dt>
+  <dd>normal</dd>
+</dl>
+<dl>
+  <dt>Last Changed Rev</dt>
+  <dd>908</dd>
+</dl>
+<dl>
+  <dt>Revision</dt>
+  <dd>919</dd>
+</dl>
+<h2>Remarks</h2>
+<dl>
+  <dt>Remarks</dt>
+  <dd>-</dd>
+</dl>
+<h1 id="Unknown">Unknown</h1>
+<h2>Description</h2>
+<dl>
+  <dt>Title</dt>
+  <dd>Unknown</dd>
+</dl>
+<dl>
+  <dt>Dataset</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Abstract</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Topic</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Keywords</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Datatype</dt>
+  <dd>Waves</dd>
+</dl>
+<h2>Location and time</h2>
+<dl>
+  <dt>WestBoundLongitude</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>SouthBoundLatitude</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>EastBoundLongitude</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>NorthBoundLatitude</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Coordinates</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Resolution unit</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Resolution</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Start time</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>End time</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Time spans</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>period included</dt>
+  <dd>1993/01/01 - 2007/12/31</dd>
+</dl>
+<h2>Contact and authors</h2>
+<dl>
+  <dt>Contact email</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Owner organization</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Contact organization</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Country</dt>
+  <dd>be</dd>
+</dl>
+<dl>
+  <dt>Organization</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Author organization</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Author email</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Last Changed Author</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Last Changed Date</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Owner email</dt>
+  <dd>-</dd>
+</dl>
+<h2>Restrictions</h2>
+<dl>
+  <dt>Access constraints</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Legal constraints</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Other constraints</dt>
+  <dd>-</dd>
+</dl>
+<h2>History of dataset</h2>
+<dl>
+  <dt>SVN Log</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Lineage</dt>
+  <dd>-</dd>
+</dl>
+<h2>Status</h2>
+<dl>
+  <dt>Extract</dt>
+  <dd><span style="color: green">Data included</span></dd>
+</dl>
+<dl>
+  <dt>Transform read</dt>
+  <dd><span style="color: red">Script missing</span></dd>
+</dl>
+<dl>
+  <dt>Transform netcdf</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Load</dt>
+  <dd><span style="color: red">Not loaded</span></dd>
+</dl>
+<h2>Files</h2>
+<dl>
+  <dt>File extensions</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Mime types</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>File types</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Script info</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Size</dt>
+  <dd>-</dd>
+</dl>
+<h2>Links</h2>
+<dl>
+  <dt>URL in inspire file</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Inspirefile</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waves">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waves</a></dd>
+</dl>
+<dl>
+  <dt>Inspire URL</dt>
+  <dd><a href="http://unknown">http://unknown</a></dd>
+</dl>
+<h2>Subversion</h2>
+<dl>
+  <dt>Path</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Repository Root</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Repository UUID</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Node Kind</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Schedule</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Last Changed Rev</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Revision</dt>
+  <dd>-</dd>
+</dl>
+<h2>Remarks</h2>
+<dl>
+  <dt>Remarks</dt>
+  <dd>Inspire description is missing</dd>
+</dl>
+<h1 id=" topography "> topography </h1>
+<h2>Description</h2>
+<dl>
+  <dt>Title</dt>
+  <dd> topography </dd>
+</dl>
+<dl>
+  <dt>Dataset</dt>
+  <dd>topography</dd>
+</dl>
+<dl>
+  <dt>Abstract</dt>
+  <dd> </dd>
+</dl>
+<dl>
+  <dt>Topic</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Keywords</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Datatype</dt>
+  <dd>-</dd>
+</dl>
+<h2>Location and time</h2>
+<dl>
+  <dt>WestBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>SouthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>EastBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>NorthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Coordinates</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Resolution unit</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Resolution</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Start time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>End time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Time spans</dt>
+  <dd>[]</dd>
+</dl>
+<dl>
+  <dt>period included</dt>
+  <dd>-</dd>
+</dl>
+<h2>Contact and authors</h2>
+<dl>
+  <dt>Contact email</dt>
+  <dd><a href="mailto:piet.haerens@imdc.be">piet.haerens@imdc.be</a></dd>
+</dl>
+<dl>
+  <dt>Owner organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Contact organization</dt>
+  <dd>IMDC</dd>
+</dl>
+<dl>
+  <dt>Country</dt>
+  <dd>be</dd>
+</dl>
+<dl>
+  <dt>Organization</dt>
+  <dd>imdc</dd>
+</dl>
+<dl>
+  <dt>Author organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Author email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<dl>
+  <dt>Last Changed Author</dt>
+  <dd>fernando.toro@imdc.be</dd>
+</dl>
+<dl>
+  <dt>Last Changed Date</dt>
+  <dd>2009-11-20 16:17:34 +0100 (Fri, 20 Nov 2009)</dd>
+</dl>
+<dl>
+  <dt>Owner email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<h2>Restrictions</h2>
+<dl>
+  <dt>Access constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Legal constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Other constraints</dt>
+  <dd></dd>
+</dl>
+<h2>History of dataset</h2>
+<dl>
+  <dt>SVN Log</dt>
+  <dd><pre>------------------------------------------------------------------------
+r908 | fernando.toro@imdc.be | 2009-11-20 16:17:34 +0100 (Fri, 20 Nov 2009) | 1 line
+
+Upload additional raw data, scripts, nc files, metadata
+------------------------------------------------------------------------
+r905 | fernando.toro@imdc.be | 2009-11-19 16:20:57 +0100 (Thu, 19 Nov 2009) | 1 line
+
+Make directories to import additional data
+------------------------------------------------------------------------
+</pre></dd>
+</dl>
+<dl>
+  <dt>Lineage</dt>
+  <dd></dd>
+</dl>
+<h2>Status</h2>
+<dl>
+  <dt>Extract</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<dl>
+  <dt>Transform read</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<dl>
+  <dt>Transform netcdf</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<dl>
+  <dt>Load</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<h2>Files</h2>
+<dl>
+  <dt>File extensions</dt>
+  <dd>.xml</dd>
+</dl>
+<dl>
+  <dt>Mime types</dt>
+  <dd>application/xml</dd>
+</dl>
+<dl>
+  <dt>File types</dt>
+  <dd>XML  document text</dd>
+</dl>
+<dl>
+  <dt>Script info</dt>
+  <dd>No process scripts found</dd>
+</dl>
+<dl>
+  <dt>Size</dt>
+  <dd>3.3KB</dd>
+</dl>
+<h2>Links</h2>
+<dl>
+  <dt>URL in inspire file</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/topography">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/topography</a></dd>
+</dl>
+<dl>
+  <dt>Inspirefile</dt>
+  <dd>InspireDescription.xml</dd>
+</dl>
+<dl>
+  <dt>URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/topography">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/topography</a></dd>
+</dl>
+<dl>
+  <dt>Inspire URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/topography/InspireDescription.xml">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/topography/InspireDescription.xml</a></dd>
+</dl>
+<h2>Subversion</h2>
+<dl>
+  <dt>Path</dt>
+  <dd>/Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/topography</dd>
+</dl>
+<dl>
+  <dt>Repository Root</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData">https://repos.deltares.nl/repos/OpenEarthRawData</a></dd>
+</dl>
+<dl>
+  <dt>Repository UUID</dt>
+  <dd>4427fc4e-80cb-4e17-9138-dc45509d06e2</dd>
+</dl>
+<dl>
+  <dt>Node Kind</dt>
+  <dd>directory</dd>
+</dl>
+<dl>
+  <dt>Schedule</dt>
+  <dd>normal</dd>
+</dl>
+<dl>
+  <dt>Last Changed Rev</dt>
+  <dd>908</dd>
+</dl>
+<dl>
+  <dt>Revision</dt>
+  <dd>919</dd>
+</dl>
+<h2>Remarks</h2>
+<dl>
+  <dt>Remarks</dt>
+  <dd>-</dd>
+</dl>
+<h1 id=" bathymetrybaseline "> bathymetrybaseline </h1>
+<h2>Description</h2>
+<dl>
+  <dt>Title</dt>
+  <dd> bathymetrybaseline </dd>
+</dl>
+<dl>
+  <dt>Dataset</dt>
+  <dd>bathymetrybaseline</dd>
+</dl>
+<dl>
+  <dt>Abstract</dt>
+  <dd> </dd>
+</dl>
+<dl>
+  <dt>Topic</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Keywords</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Datatype</dt>
+  <dd>-</dd>
+</dl>
+<h2>Location and time</h2>
+<dl>
+  <dt>WestBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>SouthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>EastBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>NorthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Coordinates</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Resolution unit</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Resolution</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Start time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>End time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Time spans</dt>
+  <dd>[]</dd>
+</dl>
+<dl>
+  <dt>period included</dt>
+  <dd>-</dd>
+</dl>
+<h2>Contact and authors</h2>
+<dl>
+  <dt>Contact email</dt>
+  <dd><a href="mailto:piet.haerens@imdc.be">piet.haerens@imdc.be</a></dd>
+</dl>
+<dl>
+  <dt>Owner organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Contact organization</dt>
+  <dd>IMDC</dd>
+</dl>
+<dl>
+  <dt>Country</dt>
+  <dd>be</dd>
+</dl>
+<dl>
+  <dt>Organization</dt>
+  <dd>imdc</dd>
+</dl>
+<dl>
+  <dt>Author organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Author email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<dl>
+  <dt>Last Changed Author</dt>
+  <dd>fernando.toro@imdc.be</dd>
+</dl>
+<dl>
+  <dt>Last Changed Date</dt>
+  <dd>2009-11-20 16:17:34 +0100 (Fri, 20 Nov 2009)</dd>
+</dl>
+<dl>
+  <dt>Owner email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<h2>Restrictions</h2>
+<dl>
+  <dt>Access constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Legal constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Other constraints</dt>
+  <dd></dd>
+</dl>
+<h2>History of dataset</h2>
+<dl>
+  <dt>SVN Log</dt>
+  <dd><pre>------------------------------------------------------------------------
+r908 | fernando.toro@imdc.be | 2009-11-20 16:17:34 +0100 (Fri, 20 Nov 2009) | 1 line
+
+Upload additional raw data, scripts, nc files, metadata
+------------------------------------------------------------------------
+r906 | fernando.toro@imdc.be | 2009-11-19 16:50:35 +0100 (Thu, 19 Nov 2009) | 1 line
+
+Update directories. Additional raw data
+------------------------------------------------------------------------
+r905 | fernando.toro@imdc.be | 2009-11-19 16:20:57 +0100 (Thu, 19 Nov 2009) | 1 line
+
+Make directories to import additional data
+------------------------------------------------------------------------
+r904 | fernando.toro@imdc.be | 2009-11-19 16:05:18 +0100 (Thu, 19 Nov 2009) | 1 line
+
+
+------------------------------------------------------------------------
+r903 | fernando.toro@imdc.be | 2009-11-19 15:34:01 +0100 (Thu, 19 Nov 2009) | 1 line
+
+Update directory names (lower case)
+------------------------------------------------------------------------
+r837 | baart_f | 2009-11-10 16:36:37 +0100 (Tue, 10 Nov 2009) | 1 line
+
+ fix some filename issues
+------------------------------------------------------------------------
+r836 | baart_f | 2009-11-10 16:22:11 +0100 (Tue, 10 Nov 2009) | 1 line
+
+add automatic build scripts
+------------------------------------------------------------------------
+r821 | piet.haerens@imdc.be | 2009-11-02 16:34:45 +0100 (Mon, 02 Nov 2009) | 1 line
+
+Inspire Description for Baseline Bathymetry
+------------------------------------------------------------------------
+r820 | piet.haerens@imdc.be | 2009-11-02 16:20:55 +0100 (Mon, 02 Nov 2009) | 1 line
+
+bathymetry uploaded
+------------------------------------------------------------------------
+r819 | piet.haerens@imdc.be | 2009-11-02 15:28:58 +0100 (Mon, 02 Nov 2009) | 2 lines
+
+Scripts Bathymetry
+file rename
+------------------------------------------------------------------------
+r818 | piet.haerens@imdc.be | 2009-11-02 15:26:19 +0100 (Mon, 02 Nov 2009) | 1 line
+
+Scripts Bathymetry
+------------------------------------------------------------------------
+r817 | piet.haerens@imdc.be | 2009-11-02 15:20:40 +0100 (Mon, 02 Nov 2009) | 1 line
+
+Baseline Bathymetry Single and Multi beam data
+------------------------------------------------------------------------
+</pre></dd>
+</dl>
+<dl>
+  <dt>Lineage</dt>
+  <dd></dd>
+</dl>
+<h2>Status</h2>
+<dl>
+  <dt>Extract</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Transform read</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Transform netcdf</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Load</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<h2>Files</h2>
+<dl>
+  <dt>File extensions</dt>
+  <dd>.m, .db, .nc, .txt, .pts, .xml, .bat, .pdf</dd>
+</dl>
+<dl>
+  <dt>Mime types</dt>
+  <dd>text/x-msdos-batch, application/xml, CDF V2 Document, corrupt: Cannot read summary info, application/pdf, application/octet-stream, text/plain</dd>
+</dl>
+<dl>
+  <dt>File types</dt>
+  <dd>XML  document text, NetCDF Data Format data, ASCII English text, with CRLF line terminators, ASCII text, with CRLF, CR line terminators, CDF V2 Document, corrupt: Cannot read summary info, PDF document, version 1.4, DOS batch file text, ASCII text, with CRLF line terminators</dd>
+</dl>
+<dl>
+  <dt>Script info</dt>
+  <dd>Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/bathymetrybaseline/scripts/bathy2netcdf.m.
+Found netcdf logic in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/bathymetrybaseline/scripts/bathy2netcdf.m line: 1.
+Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/bathymetrybaseline/scripts/bathymainjob.m.
+Found netcdf logic in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/bathymetrybaseline/scripts/bathymainjob.m line: 1.
+Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/bathymetrybaseline/scripts/readbathy.m.
+No netcdf logic found in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/bathymetrybaseline/scripts/readbathy.m.</dd>
+</dl>
+<dl>
+  <dt>Size</dt>
+  <dd>21.3MB</dd>
+</dl>
+<h2>Links</h2>
+<dl>
+  <dt>URL in inspire file</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/bathymetrybaseline">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/bathymetrybaseline</a></dd>
+</dl>
+<dl>
+  <dt>Inspirefile</dt>
+  <dd>InspireDescription.xml</dd>
+</dl>
+<dl>
+  <dt>URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/bathymetrybaseline">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/bathymetrybaseline</a></dd>
+</dl>
+<dl>
+  <dt>Inspire URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/bathymetrybaseline/InspireDescription.xml">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/bathymetrybaseline/InspireDescription.xml</a></dd>
+</dl>
+<h2>Subversion</h2>
+<dl>
+  <dt>Path</dt>
+  <dd>/Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/bathymetrybaseline</dd>
+</dl>
+<dl>
+  <dt>Repository Root</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData">https://repos.deltares.nl/repos/OpenEarthRawData</a></dd>
+</dl>
+<dl>
+  <dt>Repository UUID</dt>
+  <dd>4427fc4e-80cb-4e17-9138-dc45509d06e2</dd>
+</dl>
+<dl>
+  <dt>Node Kind</dt>
+  <dd>directory</dd>
+</dl>
+<dl>
+  <dt>Schedule</dt>
+  <dd>normal</dd>
+</dl>
+<dl>
+  <dt>Last Changed Rev</dt>
+  <dd>908</dd>
+</dl>
+<dl>
+  <dt>Revision</dt>
+  <dd>919</dd>
+</dl>
+<h2>Remarks</h2>
+<dl>
+  <dt>Remarks</dt>
+  <dd>-</dd>
+</dl>
+<h1 id=" tide "> tide </h1>
+<h2>Description</h2>
+<dl>
+  <dt>Title</dt>
+  <dd> tide </dd>
+</dl>
+<dl>
+  <dt>Dataset</dt>
+  <dd>tide</dd>
+</dl>
+<dl>
+  <dt>Abstract</dt>
+  <dd> </dd>
+</dl>
+<dl>
+  <dt>Topic</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Keywords</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Datatype</dt>
+  <dd>-</dd>
+</dl>
+<h2>Location and time</h2>
+<dl>
+  <dt>WestBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>SouthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>EastBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>NorthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Coordinates</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Resolution unit</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Resolution</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Start time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>End time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Time spans</dt>
+  <dd>[]</dd>
+</dl>
+<dl>
+  <dt>period included</dt>
+  <dd>-</dd>
+</dl>
+<h2>Contact and authors</h2>
+<dl>
+  <dt>Contact email</dt>
+  <dd><a href="mailto:piet.haerens@imdc.be">piet.haerens@imdc.be</a></dd>
+</dl>
+<dl>
+  <dt>Owner organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Contact organization</dt>
+  <dd>IMDC</dd>
+</dl>
+<dl>
+  <dt>Country</dt>
+  <dd>be</dd>
+</dl>
+<dl>
+  <dt>Organization</dt>
+  <dd>imdc</dd>
+</dl>
+<dl>
+  <dt>Author organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Author email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<dl>
+  <dt>Last Changed Author</dt>
+  <dd>fernando.toro@imdc.be</dd>
+</dl>
+<dl>
+  <dt>Last Changed Date</dt>
+  <dd>2009-11-20 16:17:34 +0100 (Fri, 20 Nov 2009)</dd>
+</dl>
+<dl>
+  <dt>Owner email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<h2>Restrictions</h2>
+<dl>
+  <dt>Access constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Legal constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Other constraints</dt>
+  <dd></dd>
+</dl>
+<h2>History of dataset</h2>
+<dl>
+  <dt>SVN Log</dt>
+  <dd><pre>------------------------------------------------------------------------
+r908 | fernando.toro@imdc.be | 2009-11-20 16:17:34 +0100 (Fri, 20 Nov 2009) | 1 line
+
+Upload additional raw data, scripts, nc files, metadata
+------------------------------------------------------------------------
+r906 | fernando.toro@imdc.be | 2009-11-19 16:50:35 +0100 (Thu, 19 Nov 2009) | 1 line
+
+Update directories. Additional raw data
+------------------------------------------------------------------------
+</pre></dd>
+</dl>
+<dl>
+  <dt>Lineage</dt>
+  <dd></dd>
+</dl>
+<h2>Status</h2>
+<dl>
+  <dt>Extract</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<dl>
+  <dt>Transform read</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<dl>
+  <dt>Transform netcdf</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<dl>
+  <dt>Load</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<h2>Files</h2>
+<dl>
+  <dt>File extensions</dt>
+  <dd>.xml</dd>
+</dl>
+<dl>
+  <dt>Mime types</dt>
+  <dd>application/xml</dd>
+</dl>
+<dl>
+  <dt>File types</dt>
+  <dd>XML  document text</dd>
+</dl>
+<dl>
+  <dt>Script info</dt>
+  <dd>No process scripts found</dd>
+</dl>
+<dl>
+  <dt>Size</dt>
+  <dd>3.3KB</dd>
+</dl>
+<h2>Links</h2>
+<dl>
+  <dt>URL in inspire file</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/tide">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/tide</a></dd>
+</dl>
+<dl>
+  <dt>Inspirefile</dt>
+  <dd>InspireDescription.xml</dd>
+</dl>
+<dl>
+  <dt>URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/tide">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/tide</a></dd>
+</dl>
+<dl>
+  <dt>Inspire URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/tide/InspireDescription.xml">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/tide/InspireDescription.xml</a></dd>
+</dl>
+<h2>Subversion</h2>
+<dl>
+  <dt>Path</dt>
+  <dd>/Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/tide</dd>
+</dl>
+<dl>
+  <dt>Repository Root</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData">https://repos.deltares.nl/repos/OpenEarthRawData</a></dd>
+</dl>
+<dl>
+  <dt>Repository UUID</dt>
+  <dd>4427fc4e-80cb-4e17-9138-dc45509d06e2</dd>
+</dl>
+<dl>
+  <dt>Node Kind</dt>
+  <dd>directory</dd>
+</dl>
+<dl>
+  <dt>Schedule</dt>
+  <dd>normal</dd>
+</dl>
+<dl>
+  <dt>Last Changed Rev</dt>
+  <dd>908</dd>
+</dl>
+<dl>
+  <dt>Revision</dt>
+  <dd>919</dd>
+</dl>
+<h2>Remarks</h2>
+<dl>
+  <dt>Remarks</dt>
+  <dd>-</dd>
+</dl>
+<h1 id=" waves "> waves </h1>
+<h2>Description</h2>
+<dl>
+  <dt>Title</dt>
+  <dd> waves </dd>
+</dl>
+<dl>
+  <dt>Dataset</dt>
+  <dd>waves</dd>
+</dl>
+<dl>
+  <dt>Abstract</dt>
+  <dd> </dd>
+</dl>
+<dl>
+  <dt>Topic</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Keywords</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Datatype</dt>
+  <dd>-</dd>
+</dl>
+<h2>Location and time</h2>
+<dl>
+  <dt>WestBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>SouthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>EastBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>NorthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Coordinates</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Resolution unit</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Resolution</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Start time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>End time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Time spans</dt>
+  <dd>[]</dd>
+</dl>
+<dl>
+  <dt>period included</dt>
+  <dd>-</dd>
+</dl>
+<h2>Contact and authors</h2>
+<dl>
+  <dt>Contact email</dt>
+  <dd><a href="mailto:piet.haerens@imdc.be">piet.haerens@imdc.be</a></dd>
+</dl>
+<dl>
+  <dt>Owner organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Contact organization</dt>
+  <dd>IMDC</dd>
+</dl>
+<dl>
+  <dt>Country</dt>
+  <dd>be</dd>
+</dl>
+<dl>
+  <dt>Organization</dt>
+  <dd>imdc</dd>
+</dl>
+<dl>
+  <dt>Author organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Author email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<dl>
+  <dt>Last Changed Author</dt>
+  <dd>fernando.toro@imdc.be</dd>
+</dl>
+<dl>
+  <dt>Last Changed Date</dt>
+  <dd>2009-11-20 16:17:34 +0100 (Fri, 20 Nov 2009)</dd>
+</dl>
+<dl>
+  <dt>Owner email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<h2>Restrictions</h2>
+<dl>
+  <dt>Access constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Legal constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Other constraints</dt>
+  <dd></dd>
+</dl>
+<h2>History of dataset</h2>
+<dl>
+  <dt>SVN Log</dt>
+  <dd><pre>------------------------------------------------------------------------
+r908 | fernando.toro@imdc.be | 2009-11-20 16:17:34 +0100 (Fri, 20 Nov 2009) | 1 line
+
+Upload additional raw data, scripts, nc files, metadata
+------------------------------------------------------------------------
+r838 | baart_f | 2009-11-11 11:44:23 +0100 (Wed, 11 Nov 2009) | 1 line
+
+fix paths and generate build scripts
+------------------------------------------------------------------------
+r676 | piet.haerens@imdc.be | 2009-07-17 17:41:34 +0200 (Fri, 17 Jul 2009) | 1 line
+
+
+------------------------------------------------------------------------
+</pre></dd>
+</dl>
+<dl>
+  <dt>Lineage</dt>
+  <dd></dd>
+</dl>
+<h2>Status</h2>
+<dl>
+  <dt>Extract</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Transform read</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Transform netcdf</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Load</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<h2>Files</h2>
+<dl>
+  <dt>File extensions</dt>
+  <dd>.xml, .bat, .nc, .m, .txt</dd>
+</dl>
+<dl>
+  <dt>Mime types</dt>
+  <dd>text/x-msdos-batch, application/octet-stream, text/plain, application/xml</dd>
+</dl>
+<dl>
+  <dt>File types</dt>
+  <dd>ASCII English text, with CRLF line terminators, NetCDF Data Format data, ASCII text, with CRLF line terminators, DOS batch file text, XML  document text</dd>
+</dl>
+<dl>
+  <dt>Script info</dt>
+  <dd>Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/waves/scripts/readwaves.m.
+No netcdf logic found in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/waves/scripts/readwaves.m.
+Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/waves/scripts/wave2netcdf.m.
+Found netcdf logic in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/waves/scripts/wave2netcdf.m line: 1.
+Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/waves/scripts/wavesmainjob.m.
+Found netcdf logic in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/waves/scripts/wavesmainjob.m line: 19.</dd>
+</dl>
+<dl>
+  <dt>Size</dt>
+  <dd>464.3KB</dd>
+</dl>
+<h2>Links</h2>
+<dl>
+  <dt>URL in inspire file</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waves">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waves</a></dd>
+</dl>
+<dl>
+  <dt>Inspirefile</dt>
+  <dd>InspireDescription.xml</dd>
+</dl>
+<dl>
+  <dt>URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waves">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waves</a></dd>
+</dl>
+<dl>
+  <dt>Inspire URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waves/InspireDescription.xml">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waves/InspireDescription.xml</a></dd>
+</dl>
+<h2>Subversion</h2>
+<dl>
+  <dt>Path</dt>
+  <dd>/Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/waves</dd>
+</dl>
+<dl>
+  <dt>Repository Root</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData">https://repos.deltares.nl/repos/OpenEarthRawData</a></dd>
+</dl>
+<dl>
+  <dt>Repository UUID</dt>
+  <dd>4427fc4e-80cb-4e17-9138-dc45509d06e2</dd>
+</dl>
+<dl>
+  <dt>Node Kind</dt>
+  <dd>directory</dd>
+</dl>
+<dl>
+  <dt>Schedule</dt>
+  <dd>normal</dd>
+</dl>
+<dl>
+  <dt>Last Changed Rev</dt>
+  <dd>908</dd>
+</dl>
+<dl>
+  <dt>Revision</dt>
+  <dd>919</dd>
+</dl>
+<h2>Remarks</h2>
+<dl>
+  <dt>Remarks</dt>
+  <dd>-</dd>
+</dl>
+<h1 id="Unknown">Unknown</h1>
+<h2>Description</h2>
+<dl>
+  <dt>Title</dt>
+  <dd>Unknown</dd>
+</dl>
+<dl>
+  <dt>Dataset</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Abstract</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Topic</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Keywords</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Datatype</dt>
+  <dd>Water levels</dd>
+</dl>
+<h2>Location and time</h2>
+<dl>
+  <dt>WestBoundLongitude</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>SouthBoundLatitude</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>EastBoundLongitude</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>NorthBoundLatitude</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Coordinates</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Resolution unit</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Resolution</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Start time</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>End time</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Time spans</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>period included</dt>
+  <dd>1993/01/01 - 2007/12/31</dd>
+</dl>
+<h2>Contact and authors</h2>
+<dl>
+  <dt>Contact email</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Owner organization</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Contact organization</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Country</dt>
+  <dd>be</dd>
+</dl>
+<dl>
+  <dt>Organization</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Author organization</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Author email</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Last Changed Author</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Last Changed Date</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Owner email</dt>
+  <dd>-</dd>
+</dl>
+<h2>Restrictions</h2>
+<dl>
+  <dt>Access constraints</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Legal constraints</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Other constraints</dt>
+  <dd>-</dd>
+</dl>
+<h2>History of dataset</h2>
+<dl>
+  <dt>SVN Log</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Lineage</dt>
+  <dd>-</dd>
+</dl>
+<h2>Status</h2>
+<dl>
+  <dt>Extract</dt>
+  <dd><span style="color: green">Data included</span></dd>
+</dl>
+<dl>
+  <dt>Transform read</dt>
+  <dd><span style="color: green">Script found</span></dd>
+</dl>
+<dl>
+  <dt>Transform netcdf</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Load</dt>
+  <dd><span style="color: red">Not loaded</span></dd>
+</dl>
+<h2>Files</h2>
+<dl>
+  <dt>File extensions</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Mime types</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>File types</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Script info</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Size</dt>
+  <dd>-</dd>
+</dl>
+<h2>Links</h2>
+<dl>
+  <dt>URL in inspire file</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Inspirefile</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>URL</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Inspire URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waterlevels/inspire_description.xml">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/waterlevels/inspire_description.xml</a></dd>
+</dl>
+<h2>Subversion</h2>
+<dl>
+  <dt>Path</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Repository Root</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Repository UUID</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Node Kind</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Schedule</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Last Changed Rev</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Revision</dt>
+  <dd>-</dd>
+</dl>
+<h2>Remarks</h2>
+<dl>
+  <dt>Remarks</dt>
+  <dd>in .xml file, I don't understand 'storm data selected by IMDC', what were criteria?</dd>
+</dl>
+<h1 id=" hydrodynamicmeasuringcampaign "> hydrodynamicmeasuringcampaign </h1>
+<h2>Description</h2>
+<dl>
+  <dt>Title</dt>
+  <dd> hydrodynamicmeasuringcampaign </dd>
+</dl>
+<dl>
+  <dt>Dataset</dt>
+  <dd>hydrodynamicmeasurementcampaign</dd>
+</dl>
+<dl>
+  <dt>Abstract</dt>
+  <dd> </dd>
+</dl>
+<dl>
+  <dt>Topic</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Keywords</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Datatype</dt>
+  <dd>-</dd>
+</dl>
+<h2>Location and time</h2>
+<dl>
+  <dt>WestBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>SouthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>EastBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>NorthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Coordinates</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Resolution unit</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Resolution</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Start time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>End time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Time spans</dt>
+  <dd>[]</dd>
+</dl>
+<dl>
+  <dt>period included</dt>
+  <dd>-</dd>
+</dl>
+<h2>Contact and authors</h2>
+<dl>
+  <dt>Contact email</dt>
+  <dd><a href="mailto:piet.haerens@imdc.be">piet.haerens@imdc.be</a></dd>
+</dl>
+<dl>
+  <dt>Owner organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Contact organization</dt>
+  <dd>IMDC</dd>
+</dl>
+<dl>
+  <dt>Country</dt>
+  <dd>be</dd>
+</dl>
+<dl>
+  <dt>Organization</dt>
+  <dd>imdc</dd>
+</dl>
+<dl>
+  <dt>Author organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Author email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<dl>
+  <dt>Last Changed Author</dt>
+  <dd>baart_f</dd>
+</dl>
+<dl>
+  <dt>Last Changed Date</dt>
+  <dd>2009-11-21 17:45:44 +0100 (Sat, 21 Nov 2009)</dd>
+</dl>
+<dl>
+  <dt>Owner email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<h2>Restrictions</h2>
+<dl>
+  <dt>Access constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Legal constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Other constraints</dt>
+  <dd></dd>
+</dl>
+<h2>History of dataset</h2>
+<dl>
+  <dt>SVN Log</dt>
+  <dd><pre>------------------------------------------------------------------------
+r916 | baart_f | 2009-11-21 17:45:44 +0100 (Sat, 21 Nov 2009) | 1 line
+
+fix a few file seperators, RCM9 seems to be missing?
+------------------------------------------------------------------------
+r915 | fernando.toro@imdc.be | 2009-11-20 16:30:17 +0100 (Fri, 20 Nov 2009) | 1 line
+
+Update directories
+------------------------------------------------------------------------
+r914 | fernando.toro@imdc.be | 2009-11-20 16:30:00 +0100 (Fri, 20 Nov 2009) | 1 line
+
+Update directories
+------------------------------------------------------------------------
+r913 | fernando.toro@imdc.be | 2009-11-20 16:29:41 +0100 (Fri, 20 Nov 2009) | 1 line
+
+Update directories
+------------------------------------------------------------------------
+r912 | fernando.toro@imdc.be | 2009-11-20 16:22:44 +0100 (Fri, 20 Nov 2009) | 1 line
+
+Upload additional data
+------------------------------------------------------------------------
+r911 | fernando.toro@imdc.be | 2009-11-20 16:21:44 +0100 (Fri, 20 Nov 2009) | 1 line
+
+Upload additional data
+------------------------------------------------------------------------
+r910 | fernando.toro@imdc.be | 2009-11-20 16:21:13 +0100 (Fri, 20 Nov 2009) | 1 line
+
+Upload additional data
+------------------------------------------------------------------------
+r909 | fernando.toro@imdc.be | 2009-11-20 16:19:42 +0100 (Fri, 20 Nov 2009) | 1 line
+
+Upload additional data
+------------------------------------------------------------------------
+r908 | fernando.toro@imdc.be | 2009-11-20 16:17:34 +0100 (Fri, 20 Nov 2009) | 1 line
+
+Upload additional raw data, scripts, nc files, metadata
+------------------------------------------------------------------------
+r906 | fernando.toro@imdc.be | 2009-11-19 16:50:35 +0100 (Thu, 19 Nov 2009) | 1 line
+
+Update directories. Additional raw data
+------------------------------------------------------------------------
+r905 | fernando.toro@imdc.be | 2009-11-19 16:20:57 +0100 (Thu, 19 Nov 2009) | 1 line
+
+Make directories to import additional data
+------------------------------------------------------------------------
+</pre></dd>
+</dl>
+<dl>
+  <dt>Lineage</dt>
+  <dd></dd>
+</dl>
+<h2>Status</h2>
+<dl>
+  <dt>Extract</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Transform read</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Transform netcdf</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Load</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<h2>Files</h2>
+<dl>
+  <dt>File extensions</dt>
+  <dd>.bat, .m, .db, .nc, .txt, .xml, .tif</dd>
+</dl>
+<dl>
+  <dt>Mime types</dt>
+  <dd>text/x-msdos-batch, application/xml, CDF V2 Document, corrupt: Cannot read summary info, application/octet-stream, image/tiff, text/plain</dd>
+</dl>
+<dl>
+  <dt>File types</dt>
+  <dd>XML  document text, NetCDF Data Format data, ASCII English text, with CRLF line terminators, CDF V2 Document, corrupt: Cannot read summary info, DOS batch file text, TIFF image data, little-endian</dd>
+</dl>
+<dl>
+  <dt>Script info</dt>
+  <dd>Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign/scripts/ADCP2netcdf.m.
+Found netcdf logic in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign/scripts/ADCP2netcdf.m line: 1.
+Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign/scripts/IMDC_Read_FileHeader.m.
+No netcdf logic found in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign/scripts/IMDC_Read_FileHeader.m.
+Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign/scripts/IMDC_Read_LT_Data.m.
+No netcdf logic found in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign/scripts/IMDC_Read_LT_Data.m.
+Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign/scripts/measurementsmainjob.m.
+Found netcdf logic in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign/scripts/measurementsmainjob.m line: 21.
+Found script: /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign/scripts/RCM92netcdf.m.
+Found netcdf logic in /Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign/scripts/RCM92netcdf.m line: 1.</dd>
+</dl>
+<dl>
+  <dt>Size</dt>
+  <dd>14.3MB</dd>
+</dl>
+<h2>Links</h2>
+<dl>
+  <dt>URL in inspire file</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/hydrodynamicmeasuringcampaign">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/hydrodynamicmeasuringcampaign</a></dd>
+</dl>
+<dl>
+  <dt>Inspirefile</dt>
+  <dd>InspireDescription.xml</dd>
+</dl>
+<dl>
+  <dt>URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign</a></dd>
+</dl>
+<dl>
+  <dt>Inspire URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign/InspireDescription.xml">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign/InspireDescription.xml</a></dd>
+</dl>
+<h2>Subversion</h2>
+<dl>
+  <dt>Path</dt>
+  <dd>/Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/imdc/hydrodynamicmeasurementcampaign</dd>
+</dl>
+<dl>
+  <dt>Repository Root</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData">https://repos.deltares.nl/repos/OpenEarthRawData</a></dd>
+</dl>
+<dl>
+  <dt>Repository UUID</dt>
+  <dd>4427fc4e-80cb-4e17-9138-dc45509d06e2</dd>
+</dl>
+<dl>
+  <dt>Node Kind</dt>
+  <dd>directory</dd>
+</dl>
+<dl>
+  <dt>Schedule</dt>
+  <dd>normal</dd>
+</dl>
+<dl>
+  <dt>Last Changed Rev</dt>
+  <dd>916</dd>
+</dl>
+<dl>
+  <dt>Revision</dt>
+  <dd>919</dd>
+</dl>
+<h2>Remarks</h2>
+<dl>
+  <dt>Remarks</dt>
+  <dd>-</dd>
+</dl>
+
+
+<hr>
+<address>
+<a href="mailto:f.baart@tudelft.nl">Email us</a><br />
+</address>
+<!-- hhmts start --> Last modified: Tue Jul 14 17:36:58 CEST 2009 <!-- hhmts end -->
+</body>
+</html>

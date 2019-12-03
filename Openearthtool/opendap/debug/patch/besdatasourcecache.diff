@@ -1,0 +1,42 @@
+Index: src/opendap/bes/DapDispatchHandler.java
+===================================================================
+--- src/opendap/bes/DapDispatchHandler.java	(revision 20022)
++++ src/opendap/bes/DapDispatchHandler.java	(working copy)
+@@ -64,6 +64,8 @@
+     }
+ 
+     private HashMap<Pattern,Method> dispatchMethods;
++    // Cache data sources if possible
++	private HashMap<String, BESDataSource> besDataSources;
+ 
+ 
+ 
+@@ -80,8 +82,9 @@
+         _servlet = ds;
+ 
+         dispatchMethods = new HashMap<Pattern,Method>();
++        besDataSources = new HashMap<String, BESDataSource>();
++        
+ 
+-
+         registerDispatchMethod(".*.ddx",     "sendDDX");
+         registerDispatchMethod(".*.dds",     "sendDDS");
+         registerDispatchMethod(".*.das",     "sendDAS");
+@@ -269,7 +272,16 @@
+ 
+ 
+     public DataSourceInfo getDataSourceInfo(String dataSourceName) throws Exception {
+-        return new BESDataSource(dataSourceName);
++    	// Store datasources by name in a hashmap for quick retrieval. Constructing a besdatasource is an expensive operation.
++    	
++    	if (!besDataSources.containsKey(dataSourceName))
++    	{
++    		besDataSources.put(dataSourceName, new BESDataSource(dataSourceName));
++    	}
++    	// we could create a local variable
++    	
++    	return besDataSources.get(dataSourceName);
++    	
+     }
+ 
+ 

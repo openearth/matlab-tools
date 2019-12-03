@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<tools>
+  <tool>
+    <title>Anton's tool</title>
+    <admin>arjen.luijendijk@deltares.nl</admin>
+    <template>anton.html</template>
+    <zoom>
+      <lat>52.05249</lat>
+      <lon>4.58105</lon>
+      <height>750000</height>
+    </zoom>
+  </tool>
+</tools>

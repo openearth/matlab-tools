@@ -1,0 +1,4 @@
+uname = your username
+pwd   = your password
+host  = your host
+dbname= your database

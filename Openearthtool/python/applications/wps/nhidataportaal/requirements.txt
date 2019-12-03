@@ -1,0 +1,12 @@
+flask
+pywps
+netcdf4
+bokeh
+matplotlib
+gdal
+simplejson
+pyproj
+owslib
+numpy
+psycopg2
+shapely

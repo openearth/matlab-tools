@@ -1,0 +1,22 @@
+{
+   "layername" : "Reimerswaal:kaarspoldernwd_10m",
+   "geojson" : {
+      "type":"FeatureCollection",
+      "name":"AssetCollection",
+      "crs":{
+         "type":"name",
+         "properties":{
+            "name":"urn:ogc:def:crs:EPSG::28992"
+         }
+      },
+      "features":[
+         { "type": "Feature", "properties": { "id": 4 }, "geometry": { "type": "Point", "coordinates": [ 59600.321015705791069, 389989.748831924633123 ] } },
+         { "type": "Feature", "properties": { "id": 1 }, "geometry": { "type": "Point", "coordinates": [ 60235.415720684322878, 382181.598097759590019 ] } },
+         { "type": "Feature", "properties": { "id": 2 }, "geometry": { "type": "Point", "coordinates": [ 62001.16719692152401, 385849.274900360032916 ] } },
+         { "type": "Feature", "properties": { "id": 3 }, "geometry": { "type": "Point", "coordinates": [ 60402.101265374803916, 389419.954835270531476 ] } },
+         { "type": "Feature", "properties": { "id": 5 }, "geometry": { "type": "Point", "coordinates": [ 60427.436458940122975, 390606.876522000820842 ] } },
+         { "type": "Feature", "properties": { "id": 6 }, "geometry": { "type": "Point", "coordinates": [ 61285.604704720128211, 389976.341862021829002 ] } },
+         { "type": "Feature", "properties": { "id": 7 }, "geometry": { "type": "Point", "coordinates": [ 61708.640703389944974, 390311.971799785620533 ] } }
+      ]  
+   }
+}

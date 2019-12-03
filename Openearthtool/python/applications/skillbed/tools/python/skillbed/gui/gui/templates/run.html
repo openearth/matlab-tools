@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <title>Skillbed</title>
+
+        <link href="/css/default.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="/js/jquery-1.5.min.js"></script>
+        <script type="text/javascript" src="/js/jquery.event.wheel.js"></script>
+        <script type="text/javascript" src="/js/default.js"></script>
+    </head>
+<body>
+
+<div id="title">
+    <h1>Skillbed</h1>
+</div>
+
+<div id="monitor">
+    <div id="monitor_title"></div>
+    <div id="monitor_body"></div>
+</div>
+
+<div id="rollerband">
+    <div id="roller">
+
+        <div class="frame">
+            <h3>Testbed is running</h3>
+
+            <p>
+                Thank you for flying with the Skillbed. Your request is being handled under reference ID ${c.runid}.
+            </p>
+
+            % if len(c.email) > 0:
+            <p>
+                You will be notified by e-mail as soon as the skillbed has finished running. The e-mailaddress that will be used is ${c.email}.
+            </p>
+            % endif
+
+            <div id="progress"></div>
+        </div>
+
+    </div>
+</div>
+
+</form>
+
+<div id="footer">
+    <a href="/interface/index">Return</a>
+</div>
+
+</body>
+</html>
+
+<script type="text/javascript"> setProgress('${c.runid}'); </script>

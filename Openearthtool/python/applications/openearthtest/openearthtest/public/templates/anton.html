@@ -1,0 +1,15 @@
+<FORM>
+
+<h3>Wave Transformation Tool</h3>
+
+Specify period:<br />
+<table style='font-size:small'>
+<tr>
+<td><input type="text" id="date1" value="01/01/2000" size=10 onfocus="javascript:AnyTimePicker();"/></td><td><input type="text" id="time1" value="00:00:00" size=10 onfocus="javascript:AnyTimePicker();"/></td><td>Start time</td><br/>
+</tr>
+<tr>
+<td><input type="text" id="date2" value="02/01/2000" size=10 onfocus="javascript:AnyTimePicker();"/></td><td><input type="text" id="time2" value="00:00:00" size=10 onfocus="javascript:AnyTimePicker();"/></td><td>End time</td>
+<tr>
+<td><INPUT TYPE="button" style="width:100;height:25" name="Transform" value="Transform" onClick="javascript:CallMatLabTransform(date1,time1,date2,time2);"></td>
+</tr>
+</FORM>

@@ -1,0 +1,3 @@
+model;substance;location;season;observed;modelled;nuRMSD;nBIAS
+model;concentration_of_chlorophyll_in_water;Vliestroom;summer;0.00749166662960003;4.65597295761108;584.106017780886;910.003269916043
+model;concentration_of_chlorophyll_in_water;Vliestroom;winter;0.00520333337287108;1.34573073436817;408.79927147365;407.671253509954

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2009 sp1 (http://www.altova.com) by ICT (Stichting Deltares) -->
+<moduleInstanceDescriptors xmlns="http://www.wldelft.nl/fews" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wldelft.nl/fews http://fews.wldelft.nl/schemas/version1.0/moduleInstanceDescriptors.xsd" version="1.0">
+	<!--Data Import-->
+	<moduleInstanceDescriptor id="Import.KNMI.potwind.all">
+		<moduleId>TimeSeriesImportRun</moduleId>
+	</moduleInstanceDescriptor>
+	<moduleInstanceDescriptor id="Import.KNMI.potwind.selection">
+		<moduleId>TimeSeriesImportRun</moduleId>
+	</moduleInstanceDescriptor>
+	<moduleInstanceDescriptor id="Import.RWS.waterbase.all">
+		<moduleId>TimeSeriesImportRun</moduleId>
+	</moduleInstanceDescriptor>
+	<moduleInstanceDescriptor id="Import.RWS.waterbase.selection">
+		<moduleId>TimeSeriesImportRun</moduleId>
+	</moduleInstanceDescriptor>
+	<moduleInstanceDescriptor id="Import.NOAA.ndbc.dart.all">
+		<moduleId>TimeSeriesImportRun</moduleId>
+	</moduleInstanceDescriptor>
+	<moduleInstanceDescriptor id="Import.NOAA.ndbc.ocean.all">
+		<moduleId>TimeSeriesImportRun</moduleId>
+	</moduleInstanceDescriptor>
+	<moduleInstanceDescriptor id="Import.NOAA.ndbc.ocean.selection">
+		<moduleId>TimeSeriesImportRun</moduleId>
+	</moduleInstanceDescriptor>
+	<moduleInstanceDescriptor id="Import.HYMOS.ssh.all">
+		<moduleId>TimeSeriesImportRun</moduleId>
+	</moduleInstanceDescriptor>
+	<!-- System management module Instances -->
+	<moduleInstanceDescriptor id="RollingBarrel">
+		<moduleId>RollingBarrel</moduleId>
+	</moduleInstanceDescriptor>
+</moduleInstanceDescriptors>

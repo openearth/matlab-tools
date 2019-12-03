@@ -1,0 +1,37 @@
+<%! import time %>
+
+<%namespace name="tools" file="tools.tex"/>
+
+\subsection{${repos}}
+
+\begin{longtable}[l]{llllll}
+
+% for i in range(len(log)):
+    
+% if log[i]['message']:
+    
+<%
+    revision = log[i]['revision'].number
+    author = tools.latex_escape(log[i]['author'])
+    date = time.strftime('%c', time.localtime(log[i]['date']))
+    message = tools.latex_escape(log[i]['message']).replace('\n','\\newline ')
+    changed_paths = ''
+
+    for changed_path in log[i]['changed_paths']:
+        changed_paths = changed_paths+tools.latex_escape(changed_path['path']+' '+changed_path['action'])+'\\newline '
+        
+        if len(changed_paths) > 2500:
+            changed_paths = changed_paths+'...\\newline'
+            break
+%>
+    
+    \scshape Revision: & ${revision} & \scshape Author: & ${author} & \scshape Date: & ${date} \\ 
+    \scshape Message:  & \multicolumn{5}{p{14cm}}{${message}}                                  \\ 
+    \scshape Files:    & \multicolumn{5}{p{14cm}}{${changed_paths}}                            \\ 
+                                                                                               \\ 
+                                                                                               
+% endif
+    
+% endfor
+
+\end{longtable}

@@ -1,0 +1,97 @@
+#
+# SKILLBED DEFAULT CONFIGURATION
+#
+# These are the default configuration options for the Skillbed framework.
+# Options can be overwritten using a custom config file with the same syntax.
+# The custom config file us usually located at the location tools/skillbed.cfg.
+# A custom config is always necessary to provide the skillbed with the 
+# necessary information of the local machine.
+#
+
+[general]
+name = Skillbed
+binary = model.exe
+params = 
+call = {exe_path} {params}
+build = "{exe_path}" {slnfile} /Rebuild "{cf}|{pf}"
+
+[storage]
+path = d:
+scp = 
+
+[network]
+
+[servers]
+svn = https://svn.oss.deltares.nl/repos/openearthtools/trunk/python/applications/skillbed/
+hosts =
+
+[repositories]
+#
+# syntax:
+# <reposname> = <url>
+#
+# examples:
+# trunk = https://svn.oss.deltares.nl/repos/model/trunk/
+#
+
+[binaries]
+#
+# syntax:
+# <binaryname> = <repository> <slnfile> <config> <platform> <exefile>
+#   or
+# <binaryname> = <url> <platform>
+#
+# examples:
+# trunk     = trunk model.sln Release Win32 model.exe
+# tc        = https://build.deltares.nl/repository/download/bt000/.lastSuccessful/exe/model.exe Win32
+# tc_netcdf = https://build.deltares.nl/repository/download/bt000/.lastSuccessful/exe/model_netcdf.zip Win32
+# local     = file:///C:/model.exe Win32
+#
+
+[reports]
+#
+# syntax:
+# <reportname> = <texfile> <rootdir>
+#
+# examples:
+# main_custom  = main/report.tex    /trunk/custom/
+# main_default = main/report.tex    /trunk/default/
+# cartoon      = cartoon/report.tex /
+#
+main_custom = main/report.tex /trunk/custom/
+main_default = main/report.tex /trunk/default/
+cartoon = cartoon/report.tex /
+
+
+[templates]
+#
+# syntax:
+# <templatename> = <path>
+#
+# examples:
+# matlab         = tools/templates/matlab/analysis.m.tmpl
+# matlab_test    = tools/templates/matlab/analysis_item.m.tmpl
+# publish_bin    = tools/templates/publish/index_bin.html.tmpl
+# publish_report = tools/templates/publish/index_report.html.tmpl
+#
+matlab = tools/templates/matlab/analysis.m.tmpl
+matlab_test = tools/templates/matlab/analysis_item.m.tmpl
+publish_bin = tools/templates/publish/index_bin.html.tmpl
+publish_report = tools/templates/publish/index_report.html.tmpl
+
+[mail]
+smtp = smtp.deltares.nl:25
+from = Skillbed <john.doe@deltares.nl>
+subject = Skillbed
+message = mail.txt
+notification = notification.txt
+
+[recipients]
+#
+# syntax:
+# <emailaddress> = [<report_1>,<report_2>|all]
+#
+# examples:
+# john.doe@deltares.nl = all
+# mick.doe@deltares.nl = main_custom, main_default
+#

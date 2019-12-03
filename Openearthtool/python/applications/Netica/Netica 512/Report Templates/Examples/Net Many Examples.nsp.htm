@@ -1,0 +1,102 @@
+
+<!-- Template file for a net report that has lots of stuff, just to show possibilities and ideas  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN" "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg" lang="en">
+
+<head>
+    <title>Example Stuff for Net "[[Net.Name]]"</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <style type="text/css">
+
+        .table {
+        	border: 1px solid black;  background: #DDDDFF;  line-height: 11px;  margin-top: 10px;  margin-bottom: 20px;}
+
+        .tableOverall {
+        	border: 1px solid black;  background: #F0FAFA;  line-height: 15px;  margin-top: 10px;  margin-bottom: 20px;}
+
+        .tableHeader {
+            font-family : Arial, Helvetica, sans-serif;  font-size: 12px;  color: #000040;  background: #EEEEEE;  font-weight: bold;
+            border-bottom: 1px solid black;  
+            text-align: left;  padding-left: 5px;  padding-right: 5px;  padding-top: 1px;  margin-top: 0px;  margin-bottom: 0px;}
+
+        .tableData, .tableOverallData {
+        	font-family: Arial, Helvetica, sans-serif;  font-size: 12px;  color: #000040;  font-weight: normal;
+            text-align: left;  padding-left: 5px;  padding-right: 5px;  padding-top: 1px;  margin-top: 0px;  margin-bottom: 0px;}
+    </style>
+</head>
+
+<body bgcolor="#FFFFEF" link="#000040" vlink="#400040" alink="#000040">
+
+<h2>Examples of Report Items for Model "[[Net.Name]]"</h2>
+
+<table>
+<tr><td>Name:       </td> <td>[[Net.Name]]</td></tr>
+<tr><td>Title:      </td> <td>[[Net.Title]]</td></tr>
+<tr><td>File name:  </td> <td>[[Net.FileName]]</td></tr>
+<tr><td>Last modified: </td> <td>[[Net.ModifyDate]]</td></tr>
+<tr><td>Case ID:    </td> <td>[[Net.CaseID]]</td></tr>
+</table>
+
+<h3>Comment</h3>
+<pre>[[Net.Comment]]</pre>
+
+<h3>Overall Net (Text)</h3>
+<pre>[[Net.OverallTable(TextFormat)]]</pre>
+
+<h3>Overall Net (HTML)</h3>
+[[Net.OverallTable(StyleHtml=tableOverall)]]
+
+<h3>Node-sets (Text)</h3>
+<pre>[[Net.NodesetTable(TextFormat)]]</pre>
+
+<h3>Node-sets (HTML)</h3>
+[[Net.NodesetTable]]
+
+<h3>Elimination Order</h3>
+<pre>[[Net.EliminationOrderList(Separator=",  ")]]</pre>
+
+<h3>Junction Tree</h3>
+<pre>[[Net.JunctionTreeTable(TextFormat)]]</pre>
+
+<h3>Beliefs (Text)</h3>
+<pre>[[Net.BeliefsTable(TextFormat)]]</pre>
+
+<h3>Beliefs (HTML)</h3>
+[[Net.BeliefsTable]]
+
+<br>Case probability = [[Net.CaseProbability]]
+
+
+<h3>Equations</h3>
+<pre>[[Net.Equations]]</pre>
+
+<h3>Findings (Text)</h3>
+[[Net.CaseID]]
+<pre>[[Net.FindingsTable (TextFormat)]]</pre>
+
+<h3>Findings (HTML)</h3>
+[[Net.CaseID]]
+[[Net.FindingsTable]]
+[[Net.FindingsTable(VerticalFormat)]]
+
+<h3>Findings (List)</h3>
+<pre>[[Net.FindingsList(Equals=" = ",Separator=",  ")]]</pre>
+<table style="border: 1px solid black;  background: #FFE080;"  cellpadding=8>
+    <tr style="font-family:sans-serif; font-size:12px; padding-left:10px; padding-right:10px;">
+        <th>Findings:</th><td>[[Net.FindingsList (Equals= ": ", Separator="</td><td>", Empty="*")]]</td></tr></table>
+
+[[# Change Node(0) to TargetNode(0) in the below when a target nodeset is defined]]
+
+<h3>Sensitivity of target '[[Node(0).Label]]' to a finding at another node:</h3>
+
+[[Node(0).SensitivityTable]]
+
+<pre>[[Node(0).SensitivityTable(TextFormat)]]</pre>
+
+[[Node(0).SensitivityTable(Columns="Variable,VarianceReduction,VarianceReduction%,MutualInfo,MutualInfo%,BeliefVarianceReduction,BeliefVarianceReduction%")]]
+
+[[Node(0).SensitivityTable(Columns="MutualInfo%,Node", NodeLabeling=ByName)]]
+
+</body>
+</html>

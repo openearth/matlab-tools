@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TimeSeries xmlns="http://www.wldelft.nl/fews/PI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wldelft.nl/fews/PI http://fews.wldelft.nl/schemas/version1.0/pi-schemas/pi_timeseries.xsd" version="1.8">
+    <timeZone>0.0</timeZone>
+    <series>
+        <header>
+            <type>instantaneous</type>
+            <locationId>Lesnica</locationId>
+            <parameterId>Q.obs</parameterId>
+            <timeStep unit="second" multiplier="3600"/>
+            <startDate date="SDATE" time="STIME"/>
+            <endDate date="EDATE" time="ETIME"/>
+            <missVal>-9999</missVal>
+            <stationName>RIVER</stationName>
+            <lat>44.6025</lat>
+            <lon>19.2785</lon>
+            <x>19.2785</x>
+            <y>44.6025</y>
+            <z>0.0</z>
+            <units>m3/s</units>
+        </header>        
+        <event date="2014-05-12" time="01:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="02:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="03:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="04:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="05:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="06:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="07:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="08:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="09:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="10:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="11:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="12:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="13:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="14:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="15:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="16:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="17:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="18:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="19:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="20:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="21:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="22:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-12" time="23:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="00:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="01:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="02:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="03:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="04:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="05:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="06:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="07:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="08:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="09:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="10:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="11:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="12:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="13:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="14:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="15:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="16:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="17:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="18:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="19:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="20:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="21:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="22:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-13" time="23:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="00:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="01:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="02:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="03:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="04:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="05:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="06:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="07:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="08:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="09:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="10:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="11:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="12:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="13:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="14:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="15:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="16:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="17:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="18:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="19:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="20:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="21:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="22:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-14" time="23:00:00" value="-9999" flag="8"/>
+        <event date="2014-05-15" time="00:00:00" value="-9999" flag="8"/>
+    </series>
+</TimeSeries>

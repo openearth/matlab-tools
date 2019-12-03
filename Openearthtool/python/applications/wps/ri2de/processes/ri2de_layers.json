@@ -1,0 +1,97 @@
+[
+  {
+    "type": "hazard",
+    "name": "Erosion of culverts",
+    "layers": [
+		{
+			"title": "Slope",
+			"wpsFunctionId": "ri2de_calc_slope",
+			"classes": [0,5,10,90],
+			"layerName": "Global_Base_Maps:merit_gebco", 
+			"owsUrl": "https://fast.openearth.eu/geoserver/ows?",
+			"keywords": ["elevation", "dem","ahn"],
+			"cswUrls": ["https://fast.openearth.eu/geonetwork/srv/eng/csw?"]
+
+		},
+		{
+			"title": "Culverts presence",
+			"wpsFunctionId": "ri2de_calc_culverts",
+			"classes": [0,50,100,1000],
+			"layerName": "limburg:culverts_4326", 
+			"owsUrl": "https://ri2de.openearth.eu/geoserver/ows?",
+			"keywords": [],
+			"cswUrls": ["https://fast.openearth.eu/geonetwork/srv/eng/csw?"]
+		},
+		{
+			"title": "Distance to water",
+			"wpsFunctionId": "ri2de_calc_water",
+			"classes": [0,100,200,1000],
+			"layerName": "global_water_extent:global_water_jrc", 
+			"owsUrl": "https://ri2de.openearth.eu/geoserver/ows?",
+			"keywords": [],
+			"cswUrls": ["https://fast.openearth.eu/geonetwork/srv/eng/csw?"]
+		},
+		{
+			"title": "Soil type",
+			"wpsFunctionId": "ri2de_calc_soil",
+			"classes": [],
+			"layerName": ":", 
+			"owsUrl": "https://fast.openearth.eu/geoserver/ows?",
+			"keywords": [],
+			"cswUrls": ["https://fast.openearth.eu/geonetwork/srv/eng/csw?"] 
+		}
+    ]
+  },
+  {
+    "type": "hazard",
+    "name": "Instability of embankments",
+    "layers": [
+		{
+			"title": "Slope",
+			"wpsFunctionId": "ri2de_calc_slope",
+			"classes": [0,5,10,90],
+			"layerName": "Global_Base_Maps:merit_gebco", 
+			"owsUrl": "https://fast.openearth.eu/geoserver/ows?",
+			"keywords": ["elevation", "dem","ahn"],
+			"cswUrls":  ["https://fast.openearth.eu/geonetwork/srv/eng/csw?"]
+		},
+		{
+			"title": "Land use",
+			"wpsFunctionId": "ri2de_calc_landuse",
+			"classes": [],
+			"layerName": "global_landuse:GLOBCOVER_2009_wgs84", 
+			"owsUrl": "https://ri2de.openearth.eu/geoserver/ows?",
+			"keywords": [],
+			"cswUrls": ["https://fast.openearth.eu/geonetwork/srv/eng/csw?"]
+		},
+		{
+			"title": "Distance to water",
+			"wpsFunctionId": "ri2de_calc_water",
+			"classes": [0,100,200,1000],
+			"layerName": "global_water_extent:global_water_jrc", 
+			"owsUrl": "https://ri2de.openearth.eu/geoserver/ows?",
+			"keywords": [],
+			"cswUrls": ["https://fast.openearth.eu/geonetwork/srv/eng/csw?"]
+		},
+		{
+			"title": "Soil type",
+			"wpsFunctionId": "ri2de_calc_soil",
+			"classes": [],
+			"layerName": ":", 
+			"owsUrl": "https://fast.openearth.eu/geoserver/ows?",
+			"keywords": [],
+			"cswUrls": ["https://fast.openearth.eu/geonetwork/srv/eng/csw?"]
+		}		
+    ]
+  }, 
+  {
+    "type": "hazard",
+    "name": "Floods by rivers (Under construction)",
+    "layers": [{}]
+  }, 
+  {
+    "type": "hazard",
+    "name": "Floods by high tides (Under construction)",
+    "layers": [{}]
+  }
+]

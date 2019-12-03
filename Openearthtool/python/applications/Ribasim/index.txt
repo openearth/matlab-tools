@@ -1,0 +1,1 @@
+NETW2CONFIL			Contains a script to convert a prepared (!!!) Sobek network (network.ntw) to a Ribasim network (confil.ntw). Documentation can be found in NETW2CONFIL\NTW2CONFIL.docx 

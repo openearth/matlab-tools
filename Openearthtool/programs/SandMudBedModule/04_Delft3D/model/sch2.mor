@@ -1,0 +1,54 @@
+[MorphologyFileInformation]
+   FileCreatedBy    = Delft3D FLOW-GUI, Version: 3.42.00.17790         
+   FileCreationDate = Fri Nov 11 2011, 12:33:05         
+   FileVersion      = 02.00                        
+[Morphology]
+   EpsPar           = false                         Only for waves in combination with k-epsilon turbulence model         
+   IopKCW           = 1                             Flag for determining Rc and Rw         
+   RDC              = 0.01                 [m]      Current related roughness (IopKCW = 2)
+   RDW              = 0.02                 [m]      Wave related roughness (IopKCW = 2)
+   MorFac           =  1.0000000e+000      [-]      Morphological scale factor
+   MorStt           =  7.4500000e+002      [min]    Spin-up interval from TStart till start of morphological changes
+   Thresh           =  5.0000001e-002      [m]      Threshold sediment thickness for transport and erosion reduction
+   MorUpd           = false                         Update bathymetry during FLOW simulation
+   EqmBc            = true                          Equilibrium sand concentration profile at inflow boundaries
+   DensIn           = false                         Include effect of sediment concentration on fluid density
+   AksFac           =  1.0000000e+000      [-]      van Rijn's reference height = AKSFAC * KS
+   RWave            =  2.0000000e+000      [-]      Wave related roughness = RWAVE * estimated ripple height. Van Rijn Recommends range 1-3
+   AlfaBs           =  1.0000000e+000      [-]      Streamwise bed gradient factor for bed load transport
+   AlfaBn           =  5.0000000e+001      [-]      Transverse bed gradient factor for bed load transport
+   Sus              =  1.0000000e+000      [-]      Multiplication factor for suspended sediment reference concentration
+   Bed              =  1.0000000e+000      [-]      Multiplication factor for bed-load transport vector magnitude
+   SusW             =  1.0000000e+000      [-]      Wave-related suspended sed. transport factor
+   BedW             =  1.0000000e+000      [-]      Wave-related bed-load sed. transport factor
+   SedThr           =  3.0000001e-001      [m]      Minimum water depth for sediment computations
+   ThetSD           =  1.0000000e+000      [-]      Factor for erosion of adjacent dry cells
+   HMaxTH           =  1.5000000e+000      [m]      Max depth for variable THETSD. Set < SEDTHR to use global value only
+   FWFac            =  1.0000000e+000      [-]      Vertical mixing distribution according to van Rijn (overrules k-epsilon model)
+   CmpUpd           = true                 [T/F]    Update bed composition during flow run
+   Rouse            = false                [T/F]    Set equilibrium sediment concentration values to standard Rouse profiles
+   Espir            = 1.0                  [-]      Calibration factor spiral flow
+   ISlope           = 1                    [-]      Flag for bed slope effect
+   IHidExp          = 1                    [-]      Flag for hiding & exposure
+[Underlayer]
+   IUnderLyr        = 2                    [-]      Flag for underlayer concept
+   ExchLyr          = false                [T/F]    Switch for exchange layer
+   TTLForm          = 1                    [-]      Transport layer thickness formulation
+   ThTrLyr          = 0.001                [m]      Thickness of the transport layer
+   MxNULyr          = 20                   [-]      Number of underlayers (excluding final well mixed layer)
+   ThUnLyr          = 0.01                 [m]      Thickness of each underlayer
+   IniComp          = morlyr.ini                   
+   Ndiff            = 5                            
+   Diffusion        = diffcoeff.ini                
+   FluffLyr         = 2                            
+   DepEff           = 1                            
+   ParFluff0        = 5.011e-4                     
+   ParFluff1        = 1.16e-4                      
+   TCrFluff         = 0.2                          
+   BurFluff0        = 1e-5                         
+   BurFluff1        = 2e-2                         
+   DepFac           = 0.03                         
+[Output]
+   Frac             = true                         
+   MudFrac          = true                         
+   SourceSinkTerms  = true                         

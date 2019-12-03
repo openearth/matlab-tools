@@ -1,0 +1,140 @@
+
+<!-- Template file for a node report that has lots of stuff, just to show possibilities and ideas  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <title>Example Stuff for Node "[[Node.Label]]"</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <style type="text/css">
+
+        .table {
+        	border: 1px solid black;  background: #DDDDFF;  line-height: 17px;  margin-top: 10px;  margin-bottom: 20px;}
+
+        .tableHeader {
+            font-family : Arial, Helvetica, sans-serif;  font-size: 12px;  color: #000040;  background: #EEEEEE;  font-weight: bold;
+            border-bottom: 1px solid black;
+            text-align: left;  padding-left: 5px;  padding-right: 5px;  padding-top: 1px;  margin-top: 0px;  margin-bottom: 0px;}
+
+        .tableData {
+        	font-family: Arial, Helvetica, sans-serif;  font-size: 12px;  color: #000040;  font-weight: normal;
+            text-align: left;  padding-left: 5px;  padding-right: 5px;  padding-top: 1px;  margin-top: 0px;  margin-bottom: 0px;}
+    </style>
+</head>
+
+<body bgcolor="#FFFFEF" link="#000040" vlink="#400040" alink="#000040">
+
+<h2>Examples of Report Items for Node "[[Node.Label]]"</h2>
+
+[[Node.HoverComment]]<br />
+
+Name: &nbsp; [[Node.Name]]<br />
+Title: &nbsp; &nbsp; [[Node.Title]]<br />
+In Net: &nbsp; [[Net.Label]]
+
+Question:  <pre>[[Node.User(Field=HED_Question)]]</pre>
+
+<h3>Comment</h3>
+[[Node.Comment]]
+
+<h3>Relatives</h3>
+[[Node.RelativesTable(StartGeneration=-4, EndGeneration=2, StyleHtml=table)]]
+
+<h3>Relatives</h3>
+<p><pre>
+Parents*3:     [[Node.RelativesList(Generation=-3, Separator=",  ")]]
+Grandparents:  [[Node.RelativesList(Generation=-2, Separator=",  ")]]
+Parents:       [[Node.RelativesList(Generation=-1, Separator=",  ")]]
+Node:          [[Node.RelativesList(Generation=0, Separator=",  ")]]
+Children:      [[Node.RelativesList(Generation=1, Separator=",  ")]]
+Grandchildren: [[Node.RelativesList(Generation=2, Separator=",  ")]]
+Children*3:    [[Node.RelativesList(Generation=3, Separator=",  ")]]
+</pre></p>
+
+<table cellpadding=5><tr><th>Parents:</th><td>[[Node.RelativesList(Generation=-1, Separator="</td><td>")]]</td></tr></table>
+
+<table style="border: 1px solid black;  background: #FFE080;"  cellpadding=5>
+    <tr style="font-family:sans-serif; padding-left:10px; padding-right:10px;">
+        <th>Influences:</th><td>[[Node.RelativesList(Generation=-1, Separator="</td><td>")]]</td></tr></table>
+
+<h3>Table (Text)</h3>
+<p><pre>[[Node.CPTable(TextFormat)]]</pre></p>
+
+<h3>Table (HTML)</h3>
+[[Node.CPTable]]
+
+<h3>Experience Table (HTML)</h3>
+[[Node.CPTable(Experience)]]
+
+<h3>Finding</h3>
+[[Node.Finding]]
+
+<h3>Expected Value</h3>
+[[Node.ExpectedValue]] <br />
+Standard deviation = [[Node.StandardDeviation]]
+
+<h3>Beliefs</h3>
+<table cellpadding=10>
+    <tr><td>[[Node.StateLabelsList(Separator="</td><td>")]]</td></tr>
+    <tr><td>[[Node.BeliefsList(Separator="</td><td>")]]</td></tr>
+</table>
+
+<h3>Node Properties</h3>
+<p><pre>
+Type:               [[Node.Type]]
+Kind:               [[Node.Kind]]
+NumberStates:       [[Node.NumberStates]]
+For First State:
+    StateName:      [[Node.StateName(State=0)]]
+    StateTitle:     [[Node.StateTitle(State=0)]]
+    StateComment:   [[Node.StateComment(State=0)]]
+    Real:           [[Node.Real(State=0)]]
+    ThresholdLower: [[Node.ThresholdLower(State=0)]]
+    ThresholdUpper: [[Node.ThresholdUpper(State=0)]]
+For First Link:
+    InputName:      [[Node.InputName(Parent=0)]]
+IsDeterministic:    [[Node.IsDeterministic]]
+VisualPosition:     [[Node.VisualPosition]]
+VisualStyle:        [[Node.VisualStyle]]
+User:               [[Node.User(Field=NotThere)]]
+</pre></p>
+
+<h3>HED Fields</h3>
+<p><pre>
+Question:  "[[Node.User(Field=HED_Question)]]"
+MaxDisplayStates:  "[[Node.User(Field=HED_MaxDisplayStates)]]"
+SortByBelief:  "[[Node.User(Field=HED_SortByBelief)]]"
+HideZeroProbs:  "[[Node.User(Field=HED_HideZeroProbs)]]"
+HideProbQuantities:  "[[Node.User(Field=HED_HideProbQuantities)]]"
+HideAllUnlessOneProbGTThreshold:  "[[Node.User(Field=HED_HideAllUnlessOneProbGTThreshold)]]"
+ShowLikelihoodSlider:  "[[Node.User(Field=HED_ShowLikelihoodSlider)]]"
+SingleLikelihoodSlider:  "[[Node.User(Field=HED_SingleLikelihoodSlider)]]"
+RealValueDisplay:  "[[Node.User(Field=HED_RealValueDisplay)]]"
+RealValueSlider:  "[[Node.User(Field=HED_RealValueSlider)]]"
+</pre></p>
+
+<h3>Sensitivity Results</h3>
+
+<!-- Change Node(0) to TargetNode(0) in the below when a target nodeset is defined -->
+
+<p>Provides [[Node.MutualInfo(Node=0,Fraction=Percent)]]% of the information to determine [[Node(0).Label]].</p>
+
+<p>Mutual Information with [[Node(0).Label]] is [[Node.MutualInfo(Node=0)]]
+&nbsp; &nbsp;([[Node.MutualInfo(Node=0,Fraction=Percent)]]% of total entropy)</p>
+
+<!-- Mutual Information with 'Forage Capability' is [[Node.MutualInfo(Node="Forage Capability")]]  -->  <!-- The way to specify a particular node -->
+
+<p>Variance reduction due to [[Node(0).Label]] is [[Node.VarianceReduction(Node=0,IndicatesUnknown="unknown")]].</p>
+
+<!-- Below shows message generated when attempting to reference a node that doesnt exist (with name "NotThere") -->
+
+<p>Reduces variance of 'TestingNotThere' by [[Node(0).VarianceReduction(Node="TestingNotThere",IndicatesUnknown="an unknown amount")]]
+&nbsp; &nbsp;([[Node(0).VarianceReduction(Node="TestingNotThere",Fraction=Percent,IndicatesUnknown="?")]]% of total)</p>
+
+<pre>[[Node.SensitivityTable(TextFormat,MutualInfo)]]</pre>
+
+[[Node.SensitivityTable(MutualInfo)]]
+
+
+</body>
+</html>

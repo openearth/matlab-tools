@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2009 sp1 (http://www.altova.com) by ICT (Stichting Deltares) -->
+<grids xmlns="http://www.wldelft.nl/fews" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wldelft.nl/fews http://fews.wldelft.nl/schemas/version1.0/grids.xsd">
+	<regular locationId="Region 1">
+		<description>grid for Hymos data ssh</description>
+		<rows>561</rows>
+		<columns>401</columns>
+		<geoDatum>WGS 1984</geoDatum>
+		<gridCorners>
+			<upperLeft>
+				<x>-100</x>
+				<y>70</y>
+			</upperLeft>
+			<lowerRight>
+				<x>-50</x>
+				<y>0</y>
+			</lowerRight>
+		</gridCorners>
+	</regular>
+	<regular locationId="Region 2">
+		<description>grid for Hymos data ssh</description>
+		<rows>321</rows>
+		<columns>721</columns>
+		<geoDatum>WGS 1984</geoDatum>
+		<gridCorners>
+			<upperLeft>
+				<x>-50</x>
+				<y>70</y>
+			</upperLeft>
+			<lowerRight>
+				<x>40</x>
+				<y>30</y>
+			</lowerRight>
+		</gridCorners>
+	</regular>
+	<regular locationId="Region 7">
+		<description>grid for Hymos data ssh</description>
+		<rows>441</rows>
+		<columns>401</columns>
+		<geoDatum>WGS 1984</geoDatum>
+		<gridCorners>
+			<upperLeft>
+				<x>-150</x>
+				<y>65</y>
+			</upperLeft>
+			<lowerRight>
+				<x>-100</x>
+				<y>10</y>
+			</lowerRight>
+		</gridCorners>
+	</regular>
+</grids>

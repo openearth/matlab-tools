@@ -1,0 +1,35 @@
+function ${funcname}()
+
+    %% enable logging
+    diary('${funcname}.log');
+    diary on;
+    
+    %% add paths
+    addpath(genpath('${matlabpath}'));
+    
+    try
+        oetsettings;
+    catch
+        disp('FAILED TO LOAD OPENEARTHTOOLS');
+    end
+    
+    %% create and open status file
+    fid = fopen('${funcname}.status', 'w');
+    
+    %% create generic paths
+    networkpath = '${networkpath}';
+    rootpath = pwd;
+    
+    %% start analysis
+    ${analysis_calls}
+   
+    %% close files
+    cd(rootpath);
+    fclose all;
+    diary off;
+    copyfile('${funcname}.status', 'latest.status');
+    
+    %% close matlab
+    exit;
+    
+end

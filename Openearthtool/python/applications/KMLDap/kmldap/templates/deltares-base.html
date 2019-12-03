@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>${self.title()}</title>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+<link media="screen" type="text/css" rel="stylesheet" href="http://www.deltares.nl/TXD/Deltares/css/master.css" />
+<link media="screen" type="text/css" rel="stylesheet" href="http://www.deltares.nl/TXD/Deltares/css/contentpage.css" />
+<link media="print" type="text/css" rel="stylesheet" href="http://www.deltares.nl/TXD/Deltares/css/print.css" />
+<link type="image/x-icon" href="http://www.deltares.nl/TXD/Deltares/images/favicon.ico" rel="shortcut icon" />
+${self.head()}
+</head>
+<body>
+<div id="wrapper">
+<div id="header">
+<div id="menu">
+  ${self.menu()}
+</div>
+<div id="menu2">
+  ${self.menu2()}
+</div>
+<div id="logo">
+<a href="http://www.deltares.nl">
+<img alt="logo" src="http://www.deltares.nl/TXD/Deltares/images/logo_deltares.jpg" />
+</a>
+</div>
+</div>
+<div id="page_break"> </div>
+<div id="content">
+<div id="content_left">
+<div id="sub_menu">
+  ${self.submenu()}
+</div>
+</div>
+<div id="content_right">
+<div id="breadcrumbs">
+  ${self.breadcrumbs()}
+</div>
+<!-- allow body to be chained over multiple templates -->
+<div id="page_content">
+  ${next.body()}
+</div>
+</div>
+</div>
+<div id="footer"> 
+<div id="footer_text">Copyright &copy;2009, Deltares.<br />
+<a title="Disclaimer" href="http://www.deltares.nl/xmlpages/page/deltares/disclaimer">Disclaimer</a><br />
+  ${self.footer()}
+</div>
+<div id="footer_images">
+<a href="http://nck-web.org/">
+<img alt="nck logo" src="http://www.deltares.nl/TXD/Deltares/images/Nck_logo.png" name="nck" />
+</a>
+<a href="http://www.ncr-web.org/">
+<img alt="ncr logo"src="http://www.deltares.nl/TXD/Deltares/images/Ncr_logo.png" name="ncr" />
+</a>
+<a  href="http://www.igrac.net/">
+<img alt="igrac logo" src="http://www.deltares.nl/TXD/Deltares/images/logo IGRAC.png" name="igrac" />
+</a>
+</div>
+</div>
+</div>
+
+<!-- empty functions -->
+<%def name="title()">
+KMLDap
+</%def>
+<%def name="head()">
+</%def>
+<%def name="menu()">
+</%def>
+<%def name="menu2()">
+</%def>
+<%def name="submenu()">
+<br />
+</%def>
+<%def name="breadcrumbs()">
+</%def>
+<%def name="footer()">
+</%def>
+<%def name="content()">
+</%def>
+</body>
+</html>
+

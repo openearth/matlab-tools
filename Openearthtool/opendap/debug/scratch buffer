@@ -1,0 +1,1 @@
+/Users/fedorbaart/Documents/workspace/bes/build/libtool  gdb  --annotate=3 --directory=/Users/fedorbaart/Documents/workspace/bes --directory=/Users/fedorbaart/workspace/netcdf_handler --args /Users/fedorbaart/Documents/workspace/bes/build/server/beslistener -c /Users/fedorbaart/bes/etc/bes/bes.conf  

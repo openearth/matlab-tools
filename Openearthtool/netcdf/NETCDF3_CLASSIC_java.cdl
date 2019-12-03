@@ -1,0 +1,48 @@
+// Created with Matlab: 2012a 
+// with javaclasspath: 
+// *  classes 
+// *  netcdfAll-4.2.jar 
+NetCDF NETCDF3_CLASSIC.nc {
+
+  dimensions:
+    time = 3 ;
+    y = 4 ;
+    x = 5 ;
+
+  variables:
+    // Preference 'PRESERVE_FVD':  false,
+    // dimensions consistent with ncBrowse, not with native MATLAB netcdf package.
+    double time(time), shape = [3]
+      :units = "seconds since 1970-01-01 00-00-00" 
+      :standard_name = "time" 
+      :long_name = "time" 
+    double y(y), shape = [4]
+      :standard_name = "projection_y_coordinate" 
+      :units = "m" 
+      :long_name = "y" 
+    double x(x), shape = [5]
+      :standard_name = "projection_x_coordinate" 
+      :units = "m" 
+      :long_name = "x" 
+    single z(time,y,x), shape = [3 4 5]
+      :_FillValue = NaN f
+      :standard_name = "altitude" 
+      :units = "m" 
+      :long_name = "altitude" 
+      :comment = "z = 100*it + 10*iy + ix" 
+
+  //global Attributes:
+      :title = "test file for netCDF format: NETCDF3_CLASSIC" 
+      :institution = "Deltares" 
+      :source = "Deltares" 
+      :history = "$Id: NETCDF_versions_generate.py 7074 2012-07-31 09:31:57Z boer_g $" 
+      :references = "" 
+      :email = "gerben.deboer@deltares.nl" 
+      :comment = "" 
+      :version = "Python netCDF4 version 1.0" 
+      :Conventions = "CF-1.5" 
+      :terms_for_use = "These data can be used freely for research purposes provided that the following source is acknowledged: Deltares" 
+      :disclaimer = "This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." 
+
+
+}

@@ -1,0 +1,26 @@
+{
+	"crs": 4326,
+	"inputDir": "D:\\JRC_TEST\\mmf_scenarios",
+	"outputDir": "D:\\JRC_TEST\\mmf_output",
+	"modelMask": ".\\model_masks\\mmf_mask.tif",	
+	"tmpDir": "D:\\JRC_TEST\\temp",	
+	"shapefiles": {
+		"MarineSubregions" : {
+			"file" : ".\\shapefiles_division\\MarineSubregions.shp",
+			"field" : "localId",
+			"otherfields": ["name_text", "inspireid"]
+		},
+		"MedSeas" : {
+			"file" : ".\\shapefiles_division\\MedSeas.shp",
+			"field" : "iden",
+			"otherfields": ["NAME"]
+		}		
+	},
+	"outputDB": {
+		"host" : "localhost",
+		"user" : "postgres",
+		"pass" : "postgres",
+		"db" : "jrc_test",
+		"schema" : "mmf"
+	}	
+}

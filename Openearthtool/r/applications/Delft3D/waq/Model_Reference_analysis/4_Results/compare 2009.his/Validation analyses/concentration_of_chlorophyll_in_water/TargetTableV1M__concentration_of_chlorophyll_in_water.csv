@@ -1,0 +1,9 @@
+model;substance;location;season;observed;modelled;nuRMSD;nBIAS
+model;concentration_of_chlorophyll_in_water;Dantzig Gat;summer;0.0226915384141298;7.83607004239009;628.152278969429;665.211164756843
+model;concentration_of_chlorophyll_in_water;Doove Balg West;summer;0.0104616669705138;10.1748475233714;563.146335207713;875.395644359053
+model;concentration_of_chlorophyll_in_water;Marsdiep;summer;0.00800090911798179;3.13407427614385;288.411939518268;577.98695594888
+model;concentration_of_chlorophyll_in_water;Vliestroom;summer;0.00749166662960003;4.65597295761108;584.106017780886;910.003269916043
+model;concentration_of_chlorophyll_in_water;Dantzig Gat;winter;0.0143299998599105;2.55319513939321;393.041309370481;342.227817034827
+model;concentration_of_chlorophyll_in_water;Doove Balg West;winter;0.00435999998201927;0.457662374506375;705.515946639316;601.628828633863
+model;concentration_of_chlorophyll_in_water;Marsdiep;winter;0.00587666665928231;1.12006327585161;203.645689583311;136.532020906628
+model;concentration_of_chlorophyll_in_water;Vliestroom;winter;0.00520333337287108;1.34573073436817;408.79927147365;407.671253509954

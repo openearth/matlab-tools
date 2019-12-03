@@ -1,0 +1,97 @@
+# Contributor: Robert T. McGibbon <rmcgibbo@gmail.com>
+
+_realname=netcdf
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=4.6.0
+pkgrel=1
+pkgdesc="Interface for scientific data access to large binary data (mingw-w64)"
+arch=('any')
+license=('custom')
+url="https://www.unidata.ucar.edu/software/netcdf/"
+depends=("${MINGW_PACKAGE_PREFIX}-hdf5") 
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-cmake")
+source=("ftp://ftp.unidata.ucar.edu/pub/netcdf/${_realname}-${pkgver}.zip"
+        0001-mingw-cmake.patch
+		0002-dutil-correcttypo.patch
+		0003-ncconfigure-strlcat-export.patch
+		0004-ddispatch-set-temp.patch
+		0005-setdapdebug.patch
+		0006-dapcvt-conversion.patch
+		0007-cvt-conversion.patch)
+sha256sums=('3e2e564196be8a8ac8c2259ae1af8c5ebfe05437d581ba170b676ec7de3a4af8'
+            'd2737958121e390c059f83613b52fa858994e566bd0696fa0ca2e30f76b73f19'
+            '12dd5993b7aef66dbb12225e766dd3d6de7bffdf87622ac443a9bd01eda215e9'
+			'a1047a8feb86732e2f6087db5240da955045f5f653f9406103ce733c4850b536'
+			'473bf055ba1cc1bb440c176a21036164bf7169f281d2e80342ac077ba127b666'
+			'0d228560b177f24ee4cb25ca4ad1e83fab8a578bc2a9bc7a2df7c7d0c07b01e5'
+			'9782b3ab67ab546d6b9eef2b06ec4c0ff4feeb0ddb55f1221e12f1a1bb88d8c3'
+			'3ac53ef8490e9582fcfaa0866e114f15eeba891783daca4dc28d485d654d8698')
+			
+
+prepare() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+  patch -p1 -i ${srcdir}/0001-mingw-cmake.patch
+  patch -p1 -i ${srcdir}/0002-dutil-correcttypo.patch
+  patch -p1 -i ${srcdir}/0003-ncconfigure-strlcat-export.patch
+  patch -p1 -i ${srcdir}/0004-ddispatch-set-temp.patch
+  patch -p1 -i ${srcdir}/0005-setdapdebug.patch
+  patch -p1 -i ${srcdir}/0006-dapcvt-conversion.patch
+}
+
+build() {
+  [[ -d ${srcdir}/build-static-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-static-${MINGW_CHOST}
+  mkdir -p ${srcdir}/build-static-${MINGW_CHOST} && cd ${srcdir}/build-static-${MINGW_CHOST}
+
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+  ${MINGW_PREFIX}/bin/cmake -G "MSYS Makefiles" \
+    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+	-DCMAKE_BUILD_TYPE=Release \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DENABLE_DLL=OFF \
+    -DENABLE_DAP=ON \
+    -DBUILD_TESTING=OFF \
+    -DENABLE_DYNAMIC_LOADING=OFF \
+    -DENABLE_NETCDF_4=ON \
+    -DZLIB_LIBRARY:FILEPATH=${MINGW_PREFIX}/lib/libz.a \
+    -DZLIB_INCLUDE_DIR:PATH=${MINGW_PREFIX}/include \
+    -DSZIP_LIBRARY:FILEPATH=${MINGW_PREFIX}/lib/libszip.a\
+    -DSZIP_INCLUDE_DIR:PATH=${MINGW_PREFIX}/include \
+    "${srcdir}/${_realname}-${pkgver}"
+  make
+
+#  [[ -d ${srcdir}/build-shared-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-shared-${MINGW_CHOST}
+#  mkdir -p ${srcdir}/build-shared-${MINGW_CHOST} && cd ${srcdir}/build-shared-${MINGW_CHOST}
+#
+#  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+#  ${MINGW_PREFIX}/bin/cmake -G "MSYS Makefiles" \
+#	 -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+#    -DCMAKE_BUILD_TYPE=Release \
+#    -DBUILD_SHARED_LIBS=ON \
+#    -DENABLE_DAP=ON \
+#    -DBUILD_TESTING=OFF \
+#    -DENABLE_DYNAMIC_LOADING=OFF \
+#    -DENABLE_NETCDF_4=ON \
+#	-DENABLE_LOGGING=ON \
+#    -DZLIB_LIBRARY:FILEPATH=${MINGW_PREFIX}/lib/libz.a \
+#    -DZLIB_INCLUDE_DIR:PATH=${MINGW_PREFIX}/include \
+#    -DSZIP_LIBRARY:FILEPATH=${MINGW_PREFIX}/lib/libszip.a\
+#    -DSZIP_INCLUDE_DIR:PATH=${MINGW_PREFIX}/include \
+#    "${srcdir}/${_realname}-${pkgver}"
+#  make
+}
+
+package() {
+  cd ${srcdir}/build-static-${MINGW_CHOST}
+  make DESTDIR=${pkgdir} install
+
+#  cd ${srcdir}/build-shared-${MINGW_CHOST}
+#  make DESTDIR=${pkgdir} install
+
+  install -Dm644 ${srcdir}/${_realname}-${pkgver}/COPYRIGHT \
+    ${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYRIGHT
+
+  local PREFIX_DEPS=$(cygpath -am ${MINGW_PREFIX})
+  find ${pkgdir}${MINGW_PREFIX}/lib/pkgconfig -name *.pc -exec sed -i -e"s|${PREFIX_DEPS}|${MINGW_PREFIX}|g" {} \;
+}

@@ -1,0 +1,247 @@
+// ~->[DNET-1]->~
+
+// File created by Norsys using Netica 4.02 on Feb 09, 2010 at 09:28:41.
+
+bnet Car_Buyer_Neapolitan {
+autoupdate = TRUE;
+comment = "\n\
+	Car Buyer Neapolitan                          Copyright 1998-2010 Norsys Software Corp.\n\n\
+	This decision network is from Neapolitan90 (p.373), which is a simpler version of the car \n\
+	buyer example of Howard62.  Eliminating the rationale given there of how the numbers are \n\
+	arrived at, we have the following story:\n\n\
+	Joe is going to buy a used car, which could be good with probability 0.8 or a lemon with \n\
+	probability 0.2.  After accounting for repairs, Joe's profit will be $60 if the car is \n\
+	good, and $-100 if it is bad.  Before buying the car he has the option of having one test \n\
+	or two tests done on it.  The first test costs $9, and both together cost $13.  The first \n\
+	test has a 90% chance of returning positive if the car is good, and a 40% chance if it's \n\
+	a lemon.  If the first test returns positive, then the second test has a 88.89% chance of \n\
+	returning positive if the car is good, and a 33.33% chance if it's a lemon.  If the first \n\
+	test returns negative, then the second test has a 100% chance of returning positive if \n\
+	the car is good, and a 44.44% chance if it's a lemon.\n\n\
+	Joe has 2 decisions to make: whether to do the tests, and whether to buy the car.  These \n\
+	are represented by the \"Do Tests?\" and \"Buy It?\" decision nodes.  The outcome of the tests \n\
+	are given by nodes \"First Test\" and \"Second Test\".  The costs of the tests are represented \n\
+	by utility node U, and the profits after repairs (not including test costs) by utility \n\
+	node V.\n\n\
+	When Joe decides whether to do the tests, he doesn't know the value of any of these \n\
+	variables, so there are no links entering the \"Do Tests?\" node.  When he decides whether \n\
+	to buy, he will know the outcome of both tests (the outcomes may be \"not done\"), and so \n\
+	there are links from those two nodes to \"Buy It?\".  He will also know the value of \n\
+	\"Do Tests?\" since he has already made that decision, so you could put a link from that \n\
+	node to \"Buy It?\", but it is not necessary since it is a no-forgetting link and there is \n\
+	already a directed path from \"Do Tests?\" to \"Buy It?\".\n\n\n\
+	TUTORIAL:                Sequential Decision Making\n\
+	--------\n\n\
+	\"Car Buyer\" is an example decision network illustrating sequential decisions and multiple \n\
+	utility nodes.  For a more simple example, see the \"Umbrella\" example.\n\n\
+	You can examine the link structure, and check out the relation tables, to make \n\
+	sure they make sense to you.\n\n\
+	Then compile the network.  Since auto-updating is turned on, it will be solved immediately.\n\
+	Netica adds a no-forgetting link from \"Do Tests?\" to \"Buy It?\", indicating that \"Do Tests?\"\
+	\|\n\
+	may be relevant to the second decision, based only on the rest of the link structure \n\
+	(as it turns out, it isn't).  The expected utility of each decision choice for \"Do Tests?\" \n\
+	is printed in the node; not doing any of the tests has the highest expected utility of 28, \n\
+	so it is the best choice.  No expected utilities are printed in the \"Buy It?\" node, since \n\
+	the first decision has not yet been made.\n\n\
+	If you click on the \"none\" decision of \"Do Tests?\" to indicate that Joe decides not to do \n\
+	any tests, expected utilities appear in the \"Buy It?\" node.  The best choice is to buy it, \n\
+	resulting in the highest expected utility - an overall profit of $28.  Try clicking on \n\
+	\"first\" of the \"Do Tests?\" nodes, indicating that Joe decides to just get the first test \n\
+	done.  His overall expected utility is 26.2.  Then click indicating that the first test \n\
+	outcome was \"Positive\".  The best decision is to buy and the expected utility is 35.  \n\
+	If the first test comes out negative, then the best decision is to not buy, and its \n\
+	expected utility is -9 (which is the cost of the test).  You can experiment with other \n\
+	combinations of findings and decision choices.";
+whenchanged = 1265419961;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 10;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	windowposn = (20, 11, 614, 438);
+	CommentShowing = TRUE;
+	CommentWindowPosn = (20, 436, 806, 792);
+	resolution = 72;
+	drawingbounds = (1152, 752);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0xc0c0c0;};
+	NodeSet Nature {BuiltIn = 1; Color = 0xf8eed2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0xd3caa6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0xc8c8c8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0xffffff;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0xffffb4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0xffbdbd;};
+	NodeSet Decision {BuiltIn = 1; Color = 0xdee8ff;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0xf0fafa;};
+	NodeSet Title {BuiltIn = 1; Color = 0xffffff;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		landscape = FALSE;
+		magnify = 1;
+		};
+	};
+
+node C {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (good, lemon);
+	parents = ();
+	probs = 
+		// good         lemon        
+		  (0.8,         0.2);
+	title = "Condition";
+	whenchanged = 1166678706;
+	visual V1 {
+		center = (180, 108);
+		height = 2;
+		};
+	};
+
+node D {
+	kind = DECISION;
+	discrete = TRUE;
+	states = (none, first, both);
+	parents = ();
+	title = "Do Tests?";
+	whenchanged = 1166678758;
+	visual V1 {
+		center = (402, 114);
+		height = 6;
+		};
+	};
+
+node T {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (not_Done, positive, negative);
+	parents = (C, D);
+	probs = 
+		// not Done     positive     negative        // C     D     
+		(((1,           0,           0),             // good  none  
+		  (0,           0.9,         0.1),           // good  first 
+		  (0,           0.9,         0.1)),          // good  both  
+		 ((1,           0,           0),             // lemon none  
+		  (0,           0.4,         0.6),           // lemon first 
+		  (0,           0.4,         0.6)));         // lemon both  ;
+	title = "First Test";
+	whenchanged = 1166678788;
+	visual V1 {
+		center = (180, 210);
+		height = 5;
+		link 2 {
+			path = ((321, 149), (260, 175));
+			};
+		};
+	};
+
+node S {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (not_done, positive, negative);
+	parents = (T, C, D);
+	probs = 
+		//  not done     positive     negative         // T        C     D     
+		((((1,           0,           0),              // not Done good  none  
+		   (@imposs,     @imposs,     @imposs),        // not Done good  first 
+		   (@imposs,     @imposs,     @imposs)),       // not Done good  both  
+		  ((1,           0,           0),              // not Done lemon none  
+		   (@imposs,     @imposs,     @imposs),        // not Done lemon first 
+		   (@imposs,     @imposs,     @imposs))),      // not Done lemon both  
+		 (((@imposs,     @imposs,     @imposs),        // positive good  none  
+		   (1,           0,           0),              // positive good  first 
+		   (0,           0.8888889,   0.1111111)),     // positive good  both  
+		  ((@imposs,     @imposs,     @imposs),        // positive lemon none  
+		   (1,           0,           0),              // positive lemon first 
+		   (0,           0.3333333,   0.6666667))),    // positive lemon both  
+		 (((@imposs,     @imposs,     @imposs),        // negative good  none  
+		   (1,           0,           0),              // negative good  first 
+		   (0,           1,           0)),             // negative good  both  
+		  ((@imposs,     @imposs,     @imposs),        // negative lemon none  
+		   (1,           0,           0),              // negative lemon first 
+		   (0,           0.4444444,   0.5555556))));   // negative lemon both  ;
+	title = "Second Test";
+	whenchanged = 1166678775;
+	visual V1 {
+		center = (402, 210);
+		height = 8;
+		link 2 {
+			path = ((238, 136), (325, 175));
+			};
+		};
+	};
+
+node B {
+	kind = DECISION;
+	discrete = TRUE;
+	states = (buy, dont_buy);
+	parents = (S, T);
+	title = "Buy It?";
+	whenchanged = 1166678740;
+	visual V1 {
+		center = (180, 312);
+		height = 1;
+		};
+	};
+
+node V {
+	kind = UTILITY;
+	discrete = FALSE;
+	chance = DETERMIN;
+	inputs = (C, );
+	parents = (C, B);
+	functable = 
+		                  // C     B        
+		 ((60,            // good  buy      
+		   0),            // good  dont buy 
+		  (-100,          // lemon buy      
+		   0));           // lemon dont buy ;
+	whenchanged = 903515253;
+	visual V1 {
+		center = (48, 312);
+		height = 4;
+		link 1 {
+			path = ((101, 133), (48, 150), (48, 303));
+			};
+		};
+	};
+
+node U {
+	kind = UTILITY;
+	discrete = FALSE;
+	measure = RATIO;
+	chance = DETERMIN;
+	parents = (D);
+	functable = 
+		                 // D     
+		  (0,            // none  
+		   -9,           // first 
+		   -13);         // both  ;
+	whenchanged = 903514950;
+	visual V1 {
+		center = (528, 114);
+		height = 7;
+		};
+	};
+
+node TITLE1 {
+	kind = CONSTANT;
+	discrete = TRUE;
+	numstates = 1;
+	parents = ();
+	title = "Car Buyer - Neapolitan";
+	whenchanged = 903515451;
+	visual V1 {
+		center = (276, 42);
+		font = font {shape= "Arial"; size= 16;};
+		height = 3;
+		};
+	};
+};

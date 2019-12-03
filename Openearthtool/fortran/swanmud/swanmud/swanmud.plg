@@ -1,0 +1,130 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: swanmud - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "e:\Temp\RSP2AB.tmp" with contents
+[
+/check:bounds /compile_only /dbglibs /debug:full /nologo /traceback /warn:argument_checking /warn:nofileopt /module:"Debug/" /object:"Debug/" /pdbfile:"Debug/DF60.PDB" 
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\files DELFT\AuxHyperbolics.f90"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\files DELFT\Dispersion_Relations.f90"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\files DELFT\DVARDELFT.f90"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\files DELFT\dzanly\zcopy.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\files DELFT\dzanly\umach.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\files DELFT\EnDissTerms.f90"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swmod1.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swmod2.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\SWMUD.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swmod3.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanser.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanpre2.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanpre1.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanparll.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanout2.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanout1.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanmain.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swancom5.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swancom4.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swancom3.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swancom2.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swancom1.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\restorem.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\ocpmix.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\ocpids.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\ocpcre.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\backupm.for"
+"F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\addlmean.for"
+]
+Creating temporary file "e:\Temp\RSP2AC.tmp" with contents
+[
+user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib IMSL.LIB IMSLS_ERR.LIB IMSLMPISTUB.LIB /nologo /subsystem:console /incremental:no /pdb:"Debug/swanmud.pdb" /debug /machine:I386 /out:"Debug/swanmud.exe" /pdbtype:sept 
+.\Debug\addlmean.obj
+.\Debug\AuxHyperbolics.obj
+.\Debug\backupm.obj
+.\Debug\Dispersion_Relations.obj
+.\Debug\DVARDELFT.obj
+.\Debug\EnDissTerms.obj
+.\Debug\ocpcre.obj
+.\Debug\ocpids.obj
+.\Debug\ocpmix.obj
+.\Debug\restorem.obj
+.\Debug\swancom1.obj
+.\Debug\swancom2.obj
+.\Debug\swancom3.obj
+.\Debug\swancom4.obj
+.\Debug\swancom5.obj
+.\Debug\swanmain.obj
+.\Debug\swanout1.obj
+.\Debug\swanout2.obj
+.\Debug\swanparll.obj
+.\Debug\swanpre1.obj
+.\Debug\swanpre2.obj
+.\Debug\swanser.obj
+.\Debug\swmod1.obj
+.\Debug\swmod2.obj
+.\Debug\swmod3.obj
+.\Debug\SWMUD.obj
+.\Debug\umach.obj
+.\Debug\zcopy.obj
+]
+Creating command line "link.exe @e:\Temp\RSP2AC.tmp"
+<h3>Output Window</h3>
+Compiling Fortran...
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\files DELFT\AuxHyperbolics.f90
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\files DELFT\Dispersion_Relations.f90
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\files DELFT\DVARDELFT.f90
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\files DELFT\dzanly\zcopy.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\files DELFT\dzanly\umach.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\files DELFT\EnDissTerms.f90
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swmod1.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swmod2.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\SWMUD.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swmod3.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanser.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanpre2.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanpre1.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanparll.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanparll.for(2231) : Warning: In the call to SWSENDNB, actual argument #1 does not match the type and kind of the corresponding dummy argument.
+         CALL SWSENDNB ( WORK, NOVLU, SWREAL, IDOM, ITAG )
+-------------------------^
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanparll.for(2249) : Warning: In the call to SWRECVNB, actual argument #1 does not match the type and kind of the corresponding dummy argument.
+         CALL SWRECVNB ( WORK, NOVLU, SWREAL, IDOM, ITAG )
+-------------------------^
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanparll.for(2417) : Warning: In the call to SWRECVNB, actual argument #1 does not match the type and kind of the corresponding dummy argument.
+            CALL SWRECVNB ( WORK, MDC*MSC, SWREAL, IDOM, ITAG )
+----------------------------^
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanparll.for(2587) : Warning: In the call to SWSENDNB, actual argument #1 does not match the type and kind of the corresponding dummy argument.
+            CALL SWSENDNB ( WORK, MDC*MSC, SWREAL, IDOM, ITAG )
+----------------------------^
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanparll.for(2786) : Warning: In the call to SWGATHER, actual argument #1 does not match the type and kind of the corresponding dummy argument.
+         CALL SWGATHER ( FLDC, ILEN, FIELD, ILEN2, SWREAL )
+-------------------------^
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanparll.for(2786) : Warning: In the call to SWGATHER, actual argument #3 does not match the type and kind of the corresponding dummy argument.
+         CALL SWGATHER ( FLDC, ILEN, FIELD, ILEN2, SWREAL )
+-------------------------------------^
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanout2.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanout1.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swanmain.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swancom5.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swancom4.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swancom3.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swancom2.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\swancom1.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\restorem.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\ocpmix.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\ocpids.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\ocpcre.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\backupm.for
+F:\checkouts\swanmud\source\40.51A.gerben\SWANW\Progsrc\addlmean.for
+Linking...
+
+
+
+<h3>Results</h3>
+swanmud.exe - 0 error(s), 6 warning(s)
+</pre>
+</body>
+</html>

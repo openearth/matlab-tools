@@ -1,0 +1,6 @@
+patching file CMakeLists.txt
+patching file libdispatch/dutil.c
+patching file include/ncconfigure.h
+patching file libdispatch/ddispatch.c
+patching file libdap2/dapdebug.h
+patching file libdap2/dapcvt.c

@@ -1,0 +1,8 @@
+model;substance;location;observed;modelled;nuRMSD;nBIAS
+model;concentration_of_suspended_matter_in_water;Blauwe Slenk;0.0807500001974404;35.7829190095266;325.050987449618;545.83807596696
+model;concentration_of_suspended_matter_in_water;Dantzig Gat;0.0995238096054111;74.223280725025;770.376545779943;1696.11948671499
+model;concentration_of_suspended_matter_in_water;Doove Balg Oost;0.046999999632438;34.5140163103739;1333.69988428823;2848.61137324952
+model;concentration_of_suspended_matter_in_water;Doove Balg West;0.0235249999289711;27.1360357999802;1510.75756748716;2704.64202448829
+model;concentration_of_suspended_matter_in_water;Marsdiep;0.025771428343086;17.1401306788127;736.758449396121;1476.13219033218
+model;concentration_of_suspended_matter_in_water;Vliestroom;0.027733333564053;35.2103808720907;625.56484262757;1722.82900232951
+model;concentration_of_suspended_matter_in_water;Zoutkamperlaag;0.0593333330471069;116.348645210266;2230.26853088915;4309.25120240766

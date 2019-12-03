@@ -1,0 +1,227 @@
+// ~->[DNET-1]->~
+
+// File created by YendallJ at Norsys using Netica 5.00 on Mar 21, 2011 at 23:41:01.
+
+bnet Classifier {
+AutoCompile = TRUE;
+autoupdate = TRUE;
+comment = "\n\
+	Classifier                Copyright 1998-2011 Norsys Software Corp.\n\n\
+	There are 3 types of events that can occur in a certain process,\n\
+	and we label them e1, e2 and e3.  We can measure an output\n\
+	variable of the process, called Obsv, and we use that to try to\n\
+	determine which event occured.  When event e1 occurs, the value\n\
+	of Obsv has a normal distribution (Gaussian) with mean of 2\n\
+	and standard deviation of 1.  If e2 occurs the mean is 5 with\n\
+	std dev of 2, and if e3 occurs the mean is 8 with std dev of 1.\n\
+	Events e1, e2 and e3 occur with equal frequency.\n\n\
+	When an observation is made, we can never be sure which event\n\
+	occured, since each event can cause any value of Obsv.  But we\n\
+	use the value of Obsv to determine the most likely event that\n\
+	occured, and we return that as an answer (represented by node\n\
+	Classifier).  The answer is either correct or an error, as\n\
+	indicated by node Result.\n\n\
+	If you examine the equation of node Obsv, you will see it captures\n\
+	the combination of normal distributions described above.  The\n\
+	equation of node Classifier uses thresholds to divide up the\n\
+	observation space.\n\n\
+	Compile the network and try clicking on different values of the\n\
+	Class node.  When Class is e1, you can see that Obsv is a normal\n\
+	distribution centered at 2 and fairly narrow.  The Classifier node\n\
+	indicates that e1 will be predicted 83.8% of the time, e2 16.2% of \n\
+	the time and e3 very rarely.  Of course that means that the Result \n\
+	will be correct 83.8% of the time.\n\n\
+	By clicking on different values of the Obsv node, you can see what\n\
+	happens when different observations are made.  If the observation\n\
+	is between 2 and 3, then then e1 occured with probability 79%,\n\
+	e2 with probability 21%, and e3 as a slight possibility.  Since\n\
+	Classifier always predicts e1 for this observation, Result will be\n\
+	correct 79% of the time.\n\n\
+	By clicking on different values of Classifier, you can determine\n\
+	what the confidence of classification is.  For instance, if our\n\
+	system returns an answer of e1, the actual class is e1 with \n\
+	probability 84.5%, e2 with probability 15.5%, and possibly even e3.\n\n\
+	If you click on the Error value of Result, you can see that the\n\
+	greatest probability of error is when the observations are near\n\
+	the boundaries between classes (i.e. Obsv is 3 to 4, or 6 to 7).\n\
+	The class most likely to result in an error is e2.\n\n\
+	This is the classic form of a classifier problem that often occurs \n\
+	in engineering.  Sometimes instead of events, there are objects to\n\
+	classify, or something else, but the form is the same.  You can \n\
+	adjust this network to represent many of these problems by adjusting \n\
+	the prior probabilities of e1, e2 and e3 (corresponding to prior\n\
+	information of their relative frequencies), changing the number of\n\
+	events, changing the equation of the Obsv node (to represent \n\
+	different physical situations), and changing the equation of the\n\
+	Classifier node (to represent different classification rules).\n\
+	Sometimes there are multiple class variables, or multiple observation\n\
+	variables, which can simply be added as additional nodes.\n\n\
+	Belief networks are an extremely powerful tool for analyzing all\n\
+	these classifier situations, since they can answer so many different\n\
+	types of questions so quickly.\n\n\
+	Remember that if you change an equation, you have to choose\n\
+	Table->Equation to Table before re-compiling.\n\n\
+	To find the optimal cutoff points for the equation of the Classifier\n\
+	node in order to maximize some expected utility, you can use a\n\
+	decision network.  For an example, see \"Classifier Optimization\".\n\n\
+	This network was designed by Norsys Software Corp.\n\n\n\
+	";
+whenchanged = 1300765261;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 10;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	windowposn = (23, 15, 453, 419);
+	CommentShowing = TRUE;
+	CommentWindowPosn = (23, 421, 628, 707);
+	resolution = 72;
+	drawingbounds = (1080, 689);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0xc0c0c0;};
+	NodeSet Nature {BuiltIn = 1; Color = 0xf8eed2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0xd3caa6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0xc8c8c8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0xffffff;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0xffffb4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0xffbdbd;};
+	NodeSet Decision {BuiltIn = 1; Color = 0xdee8ff;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0xf0fafa;};
+	NodeSet Title {BuiltIn = 1; Color = 0xffffff;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		landscape = FALSE;
+		magnify = 1;
+		};
+	};
+
+node Class {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (e1, e2, e3);
+	parents = ();
+	probs = 
+		// e1           e2           e3           
+		  (0.3333333,   0.3333333,   0.3333333);
+	whenchanged = 904554403;
+	belief = (0.3333333, 0.3333333, 0.3333333);
+	visual V1 {
+		center = (108, 132);
+		height = 1;
+		};
+	};
+
+node Obsv {
+	kind = NATURE;
+	discrete = FALSE;
+	chance = CHANCE;
+	levels = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+	parents = (Class);
+	probs = 
+		// 0 to 1       1 to 2       2 to 3       3 to 4       4 to 5       5 to 6       6 to 7       7 to 8       8 to 9       9 to 10       // Class 
+		  (0.1393642,   0.3485442,   0.3500097,   0.1390239,   0.02165657,  0.001369851, 3.127961e-5, 2.946522e-7, 9.794461e-10,1.295433e-12, // e1    
+		   0.01676575,  0.0446456,   0.09280072,  0.1515226,   0.1940372,   0.1938935,   0.1518485,   0.09303638,  0.0446861,   0.01676363,   // e2    
+		   1.301579e-12,1.009443e-9, 2.940967e-7, 3.286138e-5, 0.001331939, 0.02191735,  0.1391489,   0.3487787,   0.3490611,   0.1397289);   // e3    ;
+	numcases = 
+		                 // Class 
+		  (9784.735,     // e1    
+		   9869.615,     // e2    
+		   9769.044);    // e3    ;
+	equation = "p (Obsv | Class) = \n\
+		Class == e1 ? NormalDist (Obsv, 2, 1) :\n\
+		Class == e2 ? NormalDist (Obsv, 5, 2) :\n\
+		Class == e3 ? NormalDist (Obsv, 8, 1) : 0";
+	whenchanged = 1300763980;
+	belief = (0.05204332, 0.1310633, 0.1476036, 0.09685979, 0.0723419, 0.07239357, 0.09700956, 0.1472718, 0.1312491, 0.05216418);
+	visual V1 {
+		center = (306, 132);
+		height = 2;
+		};
+	};
+
+node Classifier {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (e1, e2, e3);
+	parents = (Obsv);
+	functable = 
+		                    // Obsv    
+		  (e1,              // 0 to 1  
+		   e1,              // 1 to 2  
+		   e1,              // 2 to 3  
+		   e2,              // 3 to 4  
+		   e2,              // 4 to 5  
+		   e2,              // 5 to 6  
+		   e2,              // 6 to 7  
+		   e3,              // 7 to 8  
+		   e3,              // 8 to 9  
+		   e3);             // 9 to 10 ;
+	numcases = 10000;
+	equation = "Classifier (Obsv) = \nObsv < 3.0 ?  e1 :\nObsv < 7.0 ?  e2 :  e3";
+	whenchanged = 904554181;
+	belief = (0.3307101, 0.3386048, 0.330685);
+	visual V1 {
+		center = (306, 294);
+		height = 3;
+		};
+	};
+
+node Result {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (Correct, Error);
+	parents = (Class, Classifier);
+	functable = 
+		                    // Class Classifier 
+		  (Correct,         // e1    e1         
+		   Error,           // e1    e2         
+		   Error,           // e1    e3         
+		   Error,           // e2    e1         
+		   Correct,         // e2    e2         
+		   Error,           // e2    e3         
+		   Error,           // e3    e1         
+		   Error,           // e3    e2         
+		   Correct);        // e3    e3         ;
+	equation = "Result (Class, Classifier) = \nClass == Classifier ? Correct : Error";
+	whenchanged = 904554407;
+	belief = (0.7889295, 0.2110705);
+	visual V1 {
+		center = (108, 294);
+		height = 4;
+		};
+	};
+
+node TITLE2 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Copyright 1998 Norsys Software Corp.";
+	whenchanged = 904537710;
+	visual V1 {
+		center = (114, 66);
+		font = font {shape= "Times New Roman"; size= 8;};
+		height = 5;
+		};
+	};
+
+node TITLE1 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Classifier";
+	whenchanged = 904550693;
+	visual V1 {
+		center = (102, 42);
+		font = font {shape= "Times New Roman"; size= 14;};
+		height = 6;
+		};
+	};
+ElimOrder = (Result, Class, Obsv, Classifier);
+};

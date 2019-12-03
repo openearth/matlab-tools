@@ -1,0 +1,30 @@
+
+[Model connection node]
+"1.00"
+28,8
+1,"RIB_VARINF","",2,"RIBASIM","1","SOURCEEDIT","1"
+3,"RIB_CONFL","",2,"RIBASIM","3","SOURCEEDIT","3"
+4,"RIB_TERM","",2,"RIBASIM","4","SOURCEEDIT","4"
+6,"RIB_RSV","",2,"RIBASIM","6","SOURCEEDIT","6"
+8,"RIB_DIV","",2,"RIBASIM","8","SOURCEEDIT","8"
+10,"RIB_PWS","",2,"RIBASIM","10","SOURCEEDIT","10"
+11,"RIB_FIXIRR","",2,"RIBASIM","11","SOURCEEDIT","11"
+17,"RIB_BIF","",2,"RIBASIM","17","SOURCEEDIT","17"
+
+[Model connection branch]
+"1.00"
+8,3
+1,"RIB_QSW","",2,"RIBASIM","51","SOURCEEDIT","51"
+6,"RIB_QDV","",2,"RIBASIM","56","SOURCEEDIT","56"
+7,"RIB_QBF","",2,"RIBASIM","57","SOURCEEDIT","57"
+
+[Nodes with calculationpoint]
+"1.00"
+0
+
+[NTW properties]
+"1.00"
+3
+v1=4
+v2=0
+v3=985

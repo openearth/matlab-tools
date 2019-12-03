@@ -1,0 +1,9 @@
+MATLAB_PATH=y:\app\MATLAB2009b\bin\matlab.exe
+PDFLATEX_PATH=c:\Program Files\MiKTeX 2.8\miktex\bin\pdflatex.exe
+BIBTEX_PATH=c:\Program Files\MiKTeX 2.8\miktex\bin\bibtex.exe
+PYTHON_PATH=c:\Python27\python.exe
+MPIEXEC_PATH=c:\Program Files\MPICH2\bin\mpiexec.exe
+SVN_USERNAME=
+SVN_PASSWORD=
+SCP_USERNAME=
+SCP_PASSWORD=

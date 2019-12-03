@@ -1,0 +1,34 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"type": "object",
+	"properties": {
+		"count": {
+			"type": "integer"
+		},
+		"defaultPageSize": {
+			"type": "integer"
+		},
+		"maxPageSize": {
+			"type": [
+				"integer",
+				"null"
+			]
+		},
+		"next": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"previous": {
+			"type": [
+				"string",
+				"null"
+			]
+		}
+	},
+	"required": [
+		"count",
+		"defaultPageSize"
+	]
+}

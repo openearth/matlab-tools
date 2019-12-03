@@ -1,0 +1,237 @@
+// ~->[DNET-1]->~
+
+// File created by YendallJ at Norsys using Netica 5.00 on Mar 29, 2011 at 19:32:15.
+
+bnet Mendel {
+AutoCompile = TRUE;
+autoupdate = TRUE;
+comment = "\n\
+	Genetics of Mendel's Peas                   Copyright 1998-2011 Norsys Software Corp.\n\n\
+	This Bayes net is for the famous experiments of Mendel, in which he\n\
+	developed the foundations of hereditary genetics.  The experiments involved\n\
+	breeding red and white flowered pea plants.\n\n\
+	There is a gene for the color of the flower, and there are two possible\n\
+	kinds of alleles (genetic values) for it: red ones and white ones.\n\
+	Each plant has two alleles: one inherited from each parent.  If both its \n\
+	alleles are for white, then its flowers will be white, but if either or both \n\
+	its alleles are for red, then its flowers will be red, since red is the dominant \n\
+	allele.\n\n\
+	The red allele is represented as R, and the white one as r.  So a plant that is\n\
+	Rr has one red and one white allele, and therefore red flowers.  If a plant \n\
+	which is Rr is mated with a plant which is rr, then the offspring will be\n\
+	Rr or rr, since it always gets an r from one parent, and may get an R or r from\n\
+	the other.  If the parents are RR and rr, then all offspring will be Rr.\n\n\
+	Node Color_P1 represents the color of parent 1, and P1 represents its genetics.\n\
+	The CPT table of Color_P1 is derived strictly from the dominance \n\
+	information, and the CPT tables of Color_P2 and Color_C are the same.  \n\
+	The CPT table of P1 assumes R and r occur in equal proportion, and the\n\
+	CPT table of P2 is the same.  The CPT table of C indicates that\n\
+	during mating there is an equal chance for the inheritance of either allele.\n\n\
+	To use the network, first compile it.  Then you can enter observed colors\n\
+	for any of the two parents and the child, and observe how the probabilities\n\
+	for the other ones change.\n\n\
+	The really interesting thing is when you have a more complex family tree,\n\
+	which can be easily created by copying and pasting.  For example, to add\n\
+	more childrent to P1 and P2, select C and Color_C, and while holding the\n\
+	CTRL key down, drag them a little.  You can also copy C and Color_C, then\n\
+	paste them in another place.  If you hook one of the disconnected links\n\
+	up to C you have created a grandchild.  You could duplicate P2 and Color_P2\n\
+	to hook up the other disconnected link to.  Using these simple operations\n\
+	you can build up any kind of family tree you want.\n\n\
+	Belief networks are very powerful tools for genetic analysis.  They can\n\
+	model multiple genes, interacting genes, indeterminate family trees,\n\
+	mutations, phenotypes that depend on genotypes in a complex or probabilistic\n\
+	way, etc.  Contact Norsys if you need assistance.\n\n\n\
+	Belief network designed by Norsys Software Corp.";
+whenchanged = 1301441535;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 10;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	windowposn = (22, 6, 712, 468);
+	CommentShowing = TRUE;
+	CommentWindowPosn = (22, 467, 743, 662);
+	resolution = 72;
+	drawingbounds = (1080, 952);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0xc0c0c0;};
+	NodeSet Nature {BuiltIn = 1; Color = 0xf8eed2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0xd3caa6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0xc8c8c8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0xffffff;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0xffffb4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0xffbdbd;};
+	NodeSet Decision {BuiltIn = 1; Color = 0xdee8ff;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0xf0fafa;};
+	NodeSet Title {BuiltIn = 1; Color = 0xffffff;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		landscape = FALSE;
+		magnify = 1;
+		};
+	};
+
+node P1 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (RR, Rr, rr);
+	parents = ();
+	probs = 
+		// RR           Rr           rr           
+		  (0.25,        0.5,         0.25);
+	whenchanged = 900924157;
+	belief = (0.25, 0.5, 0.25);
+	visual V1 {
+		center = (144, 108);
+		height = 2;
+		};
+	};
+
+node P2 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (RR, Rr, rr);
+	parents = ();
+	probs = 
+		// RR           Rr           rr           
+		  (0.25,        0.5,         0.25);
+	numcases = 1;
+	whenchanged = 900924175;
+	belief = (0.25, 0.5, 0.25);
+	visual V1 {
+		center = (426, 108);
+		height = 1;
+		};
+	};
+
+node C {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (RR, Rr, rr);
+	parents = (P1, P2);
+	probs = 
+		// RR           Rr           rr            // P1 P2 
+		  (1,           0,           0,            // RR RR 
+		   0.5,         0.5,         0,            // RR Rr 
+		   0,           1,           0,            // RR rr 
+		   0.5,         0.5,         0,            // Rr RR 
+		   0.25,        0.5,         0.25,         // Rr Rr 
+		   0,           0.5,         0.5,          // Rr rr 
+		   0,           1,           0,            // rr RR 
+		   0,           0.5,         0.5,          // rr Rr 
+		   0,           0,           1);           // rr rr ;
+	numcases = 1;
+	whenchanged = 900924710;
+	belief = (0.25, 0.5, 0.25);
+	visual V1 {
+		center = (282, 282);
+		height = 6;
+		};
+	};
+
+node Color_P1 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (red, white);
+	parents = (P1);
+	functable = 
+		                    // P1 
+		  (red,             // RR 
+		   red,             // Rr 
+		   white);          // rr ;
+	whenchanged = 900924765;
+	belief = (0.75, 0.25);
+	visual V1 {
+		center = (96, 198);
+		height = 3;
+		};
+	};
+
+node Color_C {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (red, white);
+	parents = (C);
+	functable = 
+		                    // C  
+		  (red,             // RR 
+		   red,             // Rr 
+		   white);          // rr ;
+	whenchanged = 900924764;
+	belief = (0.75, 0.25);
+	visual V1 {
+		center = (282, 366);
+		height = 5;
+		};
+	};
+
+node Color_P2 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (red, white);
+	parents = (P2);
+	functable = 
+		                    // P2 
+		  (red,             // RR 
+		   red,             // Rr 
+		   white);          // rr ;
+	whenchanged = 900925164;
+	belief = (0.75, 0.25);
+	visual V1 {
+		center = (456, 198);
+		height = 4;
+		};
+	};
+
+node TITLE1 {
+	kind = CONSTANT;
+	discrete = TRUE;
+	states = (True, False);
+	parents = ();
+	title = "Genetics of Mendel's Peas";
+	whenchanged = 900924838;
+	visual V1 {
+		center = (288, 36);
+		font = font {shape= "Arial"; size= 14;};
+		height = 9;
+		};
+	};
+
+node NOTE2 {
+	kind = CONSTANT;
+	discrete = TRUE;
+	states = (True, False);
+	parents = ();
+	title = "R is the allele for red.\nr is the allele for white.\nP1 and P2 are mated to produce C.";
+	whenchanged = 900925012;
+	visual V1 {
+		center = (522, 312);
+		height = 7;
+		};
+	};
+
+node NOTE1 {
+	kind = CONSTANT;
+	discrete = TRUE;
+	states = (True, False);
+	parents = ();
+	title = "Copyright 1998 Norsys Software Corp.";
+	whenchanged = 900925017;
+	visual V1 {
+		center = (528, 372);
+		height = 8;
+		};
+	};
+ElimOrder = (Color_P1, Color_C, Color_P2, P1, P2, C);
+};

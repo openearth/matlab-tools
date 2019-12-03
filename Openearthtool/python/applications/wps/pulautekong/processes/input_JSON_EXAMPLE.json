@@ -1,0 +1,13 @@
+{
+  "analysis" : "timeseries",
+  "startDate" : "2008-12-01",
+ "endDate" :  "2008-12-31",
+  "selectedParams" : [ {
+      "locationId" : "Nutrients and contaminants gauge-1",
+      "parameterId" : "pH.obs"
+  },
+  {
+      "locationId" : "Nutrients and contaminants gauge-2",
+      "parameterId" : "pH.obs"
+  }]
+}

@@ -1,0 +1,1002 @@
+// ~->[DNET-1]->~
+
+// File created by Norsys using Netica 4.02 on Feb 09, 2010 at 09:26:42.
+
+bnet ALARM {
+autoupdate = TRUE;
+comment = "\n\
+	ALARM                                                                Copyright 1998-2010 Norsys \
+	Software Corp.\n\n\
+	ALARM stands for 'A Logical Alarm Reduction Mechanism'.\n\
+	A medical diagnostic alarm message system for patient monitoring.\n\n\
+	This network is described in Beinlich, Ingo, H. J. Suermondt, R. M. Chavez, and G. F. Cooper \
+	(1989) \"The ALARM \n\
+	monitoring system: A case study with two probabilistic inference techniques for Bayes nets\" in \
+	Proc. of the \n\
+	Second European Conf. on Artificial Intelligence in Medicine (London, Aug.), 38, 247-256.  Also \
+	Tech. Report \n\
+	KSL-88-84, Knowledge Systems Laboratory, Medical Computer Science, Stanford Univ., CA.\n\n\n\
+	TUTORIAL:           Probabilistic Inference & Sensitivity\n\
+	--------\n\n\
+	For simple probabilistic inference, see the \"Chest Clinic\" Bayes net.\n\n\
+	Click in the network window to make it the active window, then choose Network->Compile.  \n\
+	The display changes to show belief bars.\n\n\
+	Most nodes in this network have more than two states.  For example \"Breathing Pressure\" has: \
+	zero, low,\n\
+	normal and high.  This sort of a breakdown is typical of Bayes nets with nodes representing \
+	continuous\n\
+	variables.  Netica has facilities for more advanced discretization if desired.  If you have \
+	trouble finding\n\
+	the \"Breathing Pressure\" node, try Edit->Find and type in \"breathing\".\n\n\
+	If you want to enter a negative finding (i.e. a finding that a node isn't in some state) hold \
+	down the\n\
+	shift key while clicking on it.  For example, hold down the shift key and click on \"normal\" and \
+	\"high\" \n\
+	of the \"Breathing Pressure\" node.  The probability of those two states drops to 0, and that of\n\
+	zero and low increases.\n\n\
+	Sometimes it is useful to know how much the findings at another node can influence the beliefs of \
+	a \n\
+	particular node.  For instance, say you wanted to know which nodes could most influence our \
+	knowledge of\n\
+	\"Heart Rate\".  Click on \"Heart Rate\" (the actual title) to select it, and then choose \
+	Network->Sensitivity\n\
+	to Findings.  A detailed report will be produced, which is described in Netica's onscreen help.\n\
+	At the end of the report is a list of all the nodes, with the ones whose findings are most likely \
+	to \n\
+	produce the greatest change in the belief of Heart Rate listed first.  The first column of \
+	numbers provides \n\
+	a numerical degree.  The report takes findings currently entered into account.  The nodes are \
+	referred to \n\
+	by name, rather than title (you can observe the names of all the nodes by making the network \
+	window \n\
+	active and choosing Style->Name).\n\n\
+	For those studying how the internals of Bayes net systems work, you may be interested to see the\n\
+	Markov network, triangulated network, elimination order and junction tree produced.  \n\
+	Choose Style->Links->Markov Net,  Style->Links->Triangulated,  Report->Elimination Order  and\n\
+	Report->Junction Tree, respectively.  Be careful about saving the network after doing this, since \
+	it may\n\
+	have lost the bends in the links.\n\n\n\
+	";
+whenchanged = 1265419477;
+
+visual V1 {
+	defdispform = LABELBOX;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 10;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	windowposn = (2, -120, 1428, 483);
+	CommentShowing = TRUE;
+	CommentWindowPosn = (2, 482, 1051, 822);
+	resolution = 72;
+	magnification = 0.853012;
+	drawingbounds = (1660, 748);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0xc0c0c0;};
+	NodeSet Nature {BuiltIn = 1; Color = 0xf8eed2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0xd3caa6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0xa0a0a0;};
+	NodeSet Constant {BuiltIn = 1; Color = 0xffffff;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0xffffb4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0xffbdbd;};
+	NodeSet Decision {BuiltIn = 1; Color = 0xdee8ff;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0xf0fafa;};
+	NodeSet Title {BuiltIn = 1; Color = 0xffffff;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		landscape = FALSE;
+		magnify = 1;
+		};
+	};
+
+node Hypovolemia {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = ();
+	probs = 
+		// true         false        
+		  (0.2,         0.8);
+	title = "Hypovolemia";
+	whenchanged = 1084560291;
+	visual V1 {
+		center = (78, 96);
+		height = 11;
+		};
+	};
+
+node LVFailure {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = ();
+	probs = 
+		// true         false        
+		  (0.05,        0.95);
+	title = "Left Ventricular Failure";
+	whenchanged = 1084560312;
+	visual V1 {
+		center = (276, 96);
+		height = 1;
+		};
+	};
+
+node LVEDVolume {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Hypovolemia, LVFailure);
+	probs = 
+		// low          normal       high            // Hypovolemia LVFailure 
+		(((0.95,        0.04,        0.01),          // true        true      
+		  (0.98,        0.01,        0.01)),         // true        false     
+		 ((0.01,        0.09,        0.9),           // false       true      
+		  (0.05,        0.9,         0.05)));        // false       false     ;
+	title = "Left Ventricular End-diastolic Vol";
+	whenchanged = 1084562422;
+	visual V1 {
+		center = (150, 198);
+		height = 31;
+		};
+	};
+
+node StrokeVolume {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (LVFailure, Hypovolemia);
+	probs = 
+		// low          normal       high            // LVFailure Hypovolemia 
+		(((0.98,        0.01,        0.01),          // true      true        
+		  (0.5,         0.49,        0.01)),         // true      false       
+		 ((0.95,        0.04,        0.01),          // false     true        
+		  (0.05,        0.9,         0.05)));        // false     false       ;
+	title = "Stroke Volume";
+	whenchanged = 1084561048;
+	visual V1 {
+		center = (384, 186);
+		height = 2;
+		link 1 {
+			path = ((286, 106), (373, 177));
+			};
+		};
+	};
+
+node CVP {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (LVEDVolume);
+	probs = 
+		// low          normal       high           // LVEDVolume 
+		 ((0.95,        0.04,        0.01),         // low        
+		  (0.04,        0.95,        0.01),         // normal     
+		  (0.01,        0.29,        0.7));         // high       ;
+	title = "Central Venous Pressure";
+	whenchanged = 1084562148;
+	visual V1 {
+		center = (186, 300);
+		height = 35;
+		};
+	};
+
+node PCWP {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (LVEDVolume);
+	probs = 
+		// low          normal       high           // LVEDVolume 
+		 ((0.95,        0.04,        0.01),         // low        
+		  (0.04,        0.95,        0.01),         // normal     
+		  (0.01,        0.04,        0.95));        // high       ;
+	title = "PC Wedge Pressure";
+	whenchanged = 1084562094;
+	visual V1 {
+		center = (84, 474);
+		height = 33;
+		link 1 {
+			path = ((136, 208), (18, 282), (18, 414), (75, 465));
+			};
+		};
+	};
+
+node InsuffAnesth {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = ();
+	probs = 
+		// true         false        
+		  (0.2,         0.8);
+	title = "Insufficient Anesthesia";
+	whenchanged = 1084561201;
+	visual V1 {
+		center = (576, 168);
+		height = 3;
+		};
+	};
+
+node PulmEmbolus {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = ();
+	probs = 
+		// true         false        
+		  (0.01,        0.99);
+	title = "Pulmary Embolus";
+	whenchanged = 1084561370;
+	visual V1 {
+		center = (732, 78);
+		height = 26;
+		};
+	};
+
+node Intubation {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (normal, esophageal, one_sided);
+	parents = ();
+	probs = 
+		// normal       esophageal   one sided    
+		  (0.92,        0.03,        0.05);
+	title = "Intubation";
+	whenchanged = 1084561535;
+	visual V1 {
+		center = (954, 84);
+		height = 27;
+		};
+	};
+
+node Shunt {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (normal, high);
+	parents = (PulmEmbolus, Intubation);
+	probs = 
+		// normal       high            // PulmEmbolus Intubation 
+		(((0.1,         0.9),           // true        normal     
+		  (0.1,         0.9),           // true        esophageal 
+		  (0.01,        0.99)),         // true        one sided  
+		 ((0.95,        0.05),          // false       normal     
+		  (0.95,        0.05),          // false       esophageal 
+		  (0.05,        0.95)));        // false       one sided  ;
+	title = "Shunt";
+	whenchanged = 1084561504;
+	visual V1 {
+		center = (774, 252);
+		height = 28;
+		link 1 {
+			path = ((724, 88), (678, 138), (678, 198), (758, 243));
+			};
+		link 2 {
+			path = ((947, 94), (924, 120), (864, 168), (864, 216), (796, 243));
+			};
+		};
+	};
+
+node KinkedTube {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = ();
+	probs = 
+		// true         false        
+		  (0.04,        0.96);
+	title = "Kinked Tube";
+	whenchanged = 1084561713;
+	visual V1 {
+		center = (1134, 132);
+		height = 8;
+		};
+	};
+
+node MinVolSet {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = ();
+	probs = 
+		// low          normal       high         
+		  (0.01,        0.98,        0.01);
+	title = "MinVolSet";
+	comment = "Minute ventilation?\nMV = Respitory Rate * Tidal Volume";
+	whenchanged = 1084561924;
+	visual V1 {
+		center = (1494, 138);
+		height = 19;
+		};
+	};
+
+node VentMach {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (zero, low, normal, high);
+	parents = (MinVolSet);
+	probs = 
+		// zero         low          normal       high           // MinVolSet 
+		 ((0.01,        0.97,        0.01,        0.01),         // low       
+		  (0.01,        0.01,        0.97,        0.01),         // normal    
+		  (0.01,        0.01,        0.01,        0.97));        // high      ;
+	title = "Vent Machine";
+	whenchanged = 1084561959;
+	visual V1 {
+		center = (1494, 234);
+		height = 18;
+		};
+	};
+
+node Disconnect {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = ();
+	probs = 
+		// true         false        
+		  (0.05,        0.95);
+	title = "Disconnection";
+	whenchanged = 1084561847;
+	visual V1 {
+		center = (1314, 132);
+		height = 20;
+		};
+	};
+
+node VentTube {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (zero, low, normal, high);
+	parents = (VentMach, Disconnect);
+	probs = 
+		// zero         low          normal       high            // VentMach Disconnect 
+		(((0.97,        0.01,        0.01,        0.01),          // zero     true       
+		  (0.97,        0.01,        0.01,        0.01)),         // zero     false      
+		 ((0.97,        0.01,        0.01,        0.01),          // low      true       
+		  (0.01,        0.97,        0.01,        0.01)),         // low      false      
+		 ((0.97,        0.01,        0.01,        0.01),          // normal   true       
+		  (0.01,        0.01,        0.97,        0.01)),         // normal   false      
+		 ((0.97,        0.01,        0.01,        0.01),          // high     true       
+		  (0.01,        0.01,        0.01,        0.97)));        // high     false      ;
+	title = "Vent Tube";
+	whenchanged = 1084561870;
+	visual V1 {
+		center = (1314, 234);
+		height = 17;
+		};
+	};
+
+node VentLung {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (zero, low, normal, high);
+	parents = (KinkedTube, VentTube, Intubation);
+	probs = 
+		//  zero         low          normal       high             // KinkedTube VentTube Intubation 
+		((((0.97,        0.01,        0.01,        0.01),           // true       zero     normal     
+		   (0.97,        0.01,        0.01,        0.01),           // true       zero     esophageal 
+		   (0.97,        0.01,        0.01,        0.01)),          // true       zero     one sided  
+		  ((0.95,        0.03,        0.01,        0.01),           // true       low      normal     
+		   (0.97,        0.01,        0.01,        0.01),           // true       low      esophageal 
+		   (0.95,        0.03,        0.01,        0.01)),          // true       low      one sided  
+		  ((0.4,         0.58,        0.01,        0.01),           // true       normal   normal     
+		   (0.97,        0.01,        0.01,        0.01),           // true       normal   esophageal 
+		   (0.5,         0.48,        0.01,        0.01)),          // true       normal   one sided  
+		  ((0.3,         0.68,        0.01,        0.01),           // true       high     normal     
+		   (0.97,        0.01,        0.01,        0.01),           // true       high     esophageal 
+		   (0.3,         0.68,        0.01,        0.01))),         // true       high     one sided  
+		 (((0.97,        0.01,        0.01,        0.01),           // false      zero     normal     
+		   (0.97,        0.01,        0.01,        0.01),           // false      zero     esophageal 
+		   (0.97,        0.01,        0.01,        0.01)),          // false      zero     one sided  
+		  ((0.01,        0.97,        0.01,        0.01),           // false      low      normal     
+		   (0.97,        0.01,        0.01,        0.01),           // false      low      esophageal 
+		   (0.01,        0.97,        0.01,        0.01)),          // false      low      one sided  
+		  ((0.01,        0.01,        0.97,        0.01),           // false      normal   normal     
+		   (0.97,        0.01,        0.01,        0.01),           // false      normal   esophageal 
+		   (0.01,        0.01,        0.97,        0.01)),          // false      normal   one sided  
+		  ((0.01,        0.01,        0.01,        0.97),           // false      high     normal     
+		   (0.97,        0.01,        0.01,        0.01),           // false      high     esophageal 
+		   (0.01,        0.01,        0.01,        0.97))));        // false      high     one sided  ;
+	title = "Vent Lung";
+	whenchanged = 1084561748;
+	visual V1 {
+		center = (1134, 234);
+		height = 7;
+		};
+	};
+
+node VentAlv {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (zero, low, normal, high);
+	parents = (Intubation, VentLung);
+	probs = 
+		// zero         low          normal       high            // Intubation VentLung 
+		(((0.97,        0.01,        0.01,        0.01),          // normal     zero     
+		  (0.01,        0.97,        0.01,        0.01),          // normal     low      
+		  (0.01,        0.01,        0.97,        0.01),          // normal     normal   
+		  (0.01,        0.01,        0.01,        0.97)),         // normal     high     
+		 ((0.97,        0.01,        0.01,        0.01),          // esophageal zero     
+		  (0.01,        0.97,        0.01,        0.01),          // esophageal low      
+		  (0.01,        0.01,        0.97,        0.01),          // esophageal normal   
+		  (0.01,        0.01,        0.01,        0.97)),         // esophageal high     
+		 ((0.97,        0.01,        0.01,        0.01),          // one sided  zero     
+		  (0.03,        0.95,        0.01,        0.01),          // one sided  low      
+		  (0.01,        0.94,        0.04,        0.01),          // one sided  normal   
+		  (0.01,        0.88,        0.1,         0.01)));        // one sided  high     ;
+	title = "Vent Alv";
+	whenchanged = 1084561624;
+	visual V1 {
+		center = (954, 234);
+		height = 6;
+		};
+	};
+
+node FiO2 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal);
+	parents = ();
+	probs = 
+		// low          normal       
+		  (0.01,        0.99);
+	title = "FiO2";
+	whenchanged = 1084561797;
+	visual V1 {
+		center = (1134, 444);
+		height = 39;
+		};
+	};
+
+node PVSat {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (VentAlv, FiO2);
+	probs = 
+		// low          normal       high            // VentAlv FiO2   
+		(((0.98,        0.01,        0.01),          // zero    low    
+		  (0.98,        0.01,        0.01)),         // zero    normal 
+		 ((0.98,        0.01,        0.01),          // low     low    
+		  (0.98,        0.01,        0.01)),         // low     normal 
+		 ((0.95,        0.04,        0.01),          // normal  low    
+		  (0.01,        0.95,        0.04)),         // normal  normal 
+		 ((0.95,        0.04,        0.01),          // high    low    
+		  (0.01,        0.01,        0.98)));        // high    normal ;
+	title = "PVSat";
+	comment = "PASAT = Pulmonary artery oxygen saturation";
+	whenchanged = 1084561683;
+	visual V1 {
+		center = (912, 468);
+		height = 10;
+		link 1 {
+			path = ((945, 244), (864, 318), (864, 384), (907, 459));
+			};
+		};
+	};
+
+node SaO2 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Shunt, PVSat);
+	probs = 
+		// low          normal       high            // Shunt  PVSat  
+		(((0.98,        0.01,        0.01),          // normal low    
+		  (0.01,        0.98,        0.01),          // normal normal 
+		  (0.01,        0.01,        0.98)),         // normal high   
+		 ((0.98,        0.01,        0.01),          // high   low    
+		  (0.98,        0.01,        0.01),          // high   normal 
+		  (0.69,        0.3,         0.01)));        // high   high   ;
+	title = "SaO2";
+	whenchanged = 1084561559;
+	visual V1 {
+		center = (774, 354);
+		height = 4;
+		link 2 {
+			path = ((901, 459), (784, 364));
+			};
+		};
+	};
+
+node Anaphylaxis {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = ();
+	probs = 
+		// true         false        
+		  (0.01,        0.99);
+	title = "Anaphylaxis";
+	whenchanged = 1084560965;
+	visual V1 {
+		center = (102, 390);
+		height = 37;
+		};
+	};
+
+node TPR {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Anaphylaxis);
+	probs = 
+		// low          normal       high           // Anaphylaxis 
+		 ((0.98,        0.01,        0.01),         // true        
+		  (0.3,         0.4,         0.3));         // false       ;
+	title = "Peripheral Resistance";
+	whenchanged = 1084562282;
+	visual V1 {
+		center = (288, 390);
+		height = 34;
+		};
+	};
+
+node ArtCO2 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (VentAlv);
+	probs = 
+		// low          normal       high           // VentAlv 
+		 ((0.01,        0.01,        0.98),         // zero    
+		  (0.01,        0.01,        0.98),         // low     
+		  (0.04,        0.92,        0.04),         // normal  
+		  (0.9,         0.09,        0.01));        // high    ;
+	title = "ArtCO2";
+	whenchanged = 1084561651;
+	visual V1 {
+		center = (954, 354);
+		height = 29;
+		};
+	};
+
+node Catechol {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (normal, high);
+	parents = (InsuffAnesth, SaO2, TPR, ArtCO2);
+	probs = 
+		//   normal       high              // InsuffAnesth SaO2   TPR    ArtCO2 
+		(((((0.01,        0.99),            // true         low    low    low    
+		    (0.01,        0.99),            // true         low    low    normal 
+		    (0.01,        0.99)),           // true         low    low    high   
+		   ((0.01,        0.99),            // true         low    normal low    
+		    (0.01,        0.99),            // true         low    normal normal 
+		    (0.01,        0.99)),           // true         low    normal high   
+		   ((0.01,        0.99),            // true         low    high   low    
+		    (0.01,        0.99),            // true         low    high   normal 
+		    (0.01,        0.99))),          // true         low    high   high   
+		  (((0.01,        0.99),            // true         normal low    low    
+		    (0.01,        0.99),            // true         normal low    normal 
+		    (0.01,        0.99)),           // true         normal low    high   
+		   ((0.01,        0.99),            // true         normal normal low    
+		    (0.01,        0.99),            // true         normal normal normal 
+		    (0.01,        0.99)),           // true         normal normal high   
+		   ((0.05,        0.95),            // true         normal high   low    
+		    (0.05,        0.95),            // true         normal high   normal 
+		    (0.01,        0.99))),          // true         normal high   high   
+		  (((0.01,        0.99),            // true         high   low    low    
+		    (0.01,        0.99),            // true         high   low    normal 
+		    (0.01,        0.99)),           // true         high   low    high   
+		   ((0.05,        0.95),            // true         high   normal low    
+		    (0.05,        0.95),            // true         high   normal normal 
+		    (0.01,        0.99)),           // true         high   normal high   
+		   ((0.05,        0.95),            // true         high   high   low    
+		    (0.05,        0.95),            // true         high   high   normal 
+		    (0.01,        0.99)))),         // true         high   high   high   
+		 ((((0.05,        0.95),            // false        low    low    low    
+		    (0.05,        0.95),            // false        low    low    normal 
+		    (0.01,        0.99)),           // false        low    low    high   
+		   ((0.05,        0.95),            // false        low    normal low    
+		    (0.05,        0.95),            // false        low    normal normal 
+		    (0.01,        0.99)),           // false        low    normal high   
+		   ((0.05,        0.95),            // false        low    high   low    
+		    (0.05,        0.95),            // false        low    high   normal 
+		    (0.01,        0.99))),          // false        low    high   high   
+		  (((0.1,         0.9),             // false        normal low    low    
+		    (0.1,         0.9),             // false        normal low    normal 
+		    (0.1,         0.9)),            // false        normal low    high   
+		   ((0.95,        0.05),            // false        normal normal low    
+		    (0.95,        0.05),            // false        normal normal normal 
+		    (0.3,         0.7)),            // false        normal normal high   
+		   ((0.95,        0.05),            // false        normal high   low    
+		    (0.95,        0.05),            // false        normal high   normal 
+		    (0.3,         0.7))),           // false        normal high   high   
+		  (((0.95,        0.05),            // false        high   low    low    
+		    (0.95,        0.05),            // false        high   low    normal 
+		    (0.3,         0.7)),            // false        high   low    high   
+		   ((0.99,        0.00999999),      // false        high   normal low    
+		    (0.99,        0.00999999),      // false        high   normal normal 
+		    (0.99,        0.00999999)),     // false        high   normal high   
+		   ((0.95,        0.05),            // false        high   high   low    
+		    (0.99,        0.00999999),      // false        high   high   normal 
+		    (0.3,         0.7)))));         // false        high   high   high   ;
+	title = "Catecholamine";
+	whenchanged = 1084561217;
+	visual V1 {
+		center = (576, 252);
+		height = 16;
+		link 3 {
+			path = ((324, 381), (456, 348), (565, 262));
+			};
+		link 4 {
+			path = ((950, 345), (930, 300), (690, 300), (597, 262));
+			};
+		};
+	};
+
+node HR {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Catechol);
+	probs = 
+		// low          normal       high           // Catechol 
+		 ((0.1,         0.89,        0.01),         // normal   
+		  (0.01,        0.09,        0.9));         // high     ;
+	title = "Heart Rate";
+	whenchanged = 1084561232;
+	visual V1 {
+		center = (576, 360);
+		height = 15;
+		};
+	};
+
+node CO {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (HR, StrokeVolume);
+	probs = 
+		// low          normal       high            // HR     StrokeVolume 
+		(((0.98,        0.01,        0.01),          // low    low          
+		  (0.95,        0.04,        0.01),          // low    normal       
+		  (0.3,         0.69,        0.01)),         // low    high         
+		 ((0.95,        0.04,        0.01),          // normal low          
+		  (0.04,        0.95,        0.01),          // normal normal       
+		  (0.01,        0.3,         0.69)),         // normal high         
+		 ((0.8,         0.19,        0.01),          // high   low          
+		  (0.01,        0.04,        0.95),          // high   normal       
+		  (0.01,        0.01,        0.98)));        // high   high         ;
+	title = "Cardiac Output";
+	whenchanged = 1166677673;
+	visual V1 {
+		center = (384, 282);
+		height = 22;
+		link 1 {
+			path = ((555, 351), (406, 292));
+			};
+		};
+	};
+
+node History {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = (LVFailure);
+	probs = 
+		// true         false          // LVFailure 
+		 ((0.9,         0.1),          // true      
+		  (0.01,        0.99));        // false     ;
+	title = "History";
+	whenchanged = 1084560331;
+	visual V1 {
+		center = (462, 96);
+		height = 24;
+		};
+	};
+
+node BP {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (CO, TPR);
+	probs = 
+		// low          normal       high            // CO     TPR    
+		(((0.98,        0.01,        0.01),          // low    low    
+		  (0.98,        0.01,        0.01),          // low    normal 
+		  (0.3,         0.6,         0.1)),          // low    high   
+		 ((0.98,        0.01,        0.01),          // normal low    
+		  (0.1,         0.85,        0.05),          // normal normal 
+		  (0.05,        0.4,         0.55)),         // normal high   
+		 ((0.9,         0.09,        0.01),          // high   low    
+		  (0.05,        0.2,         0.75),          // high   normal 
+		  (0.01,        0.09,        0.9)));         // high   high   ;
+	title = "Blood Pressure";
+	whenchanged = 1084561105;
+	visual V1 {
+		center = (384, 486);
+		height = 32;
+		};
+	};
+
+node ErrCauter {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = ();
+	probs = 
+		// true         false        
+		  (0.1,         0.9);
+	title = "Error Cauter";
+	whenchanged = 1084561572;
+	visual V1 {
+		center = (726, 444);
+		height = 5;
+		};
+	};
+
+node HREKG {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (HR, ErrCauter);
+	probs = 
+		// low          normal       high            // HR     ErrCauter 
+		(((0.3333333,   0.3333333,   0.3333333),     // low    true      
+		  (0.98,        0.01,        0.01)),         // low    false     
+		 ((0.3333333,   0.3333333,   0.3333333),     // normal true      
+		  (0.01,        0.98,        0.01)),         // normal false     
+		 ((0.3333333,   0.3333333,   0.3333333),     // high   true      
+		  (0.01,        0.01,        0.98)));        // high   false     ;
+	title = "HREKG";
+	whenchanged = 1084561258;
+	visual V1 {
+		center = (576, 570);
+		height = 13;
+		};
+	};
+
+node HRSat {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (HR, ErrCauter);
+	probs = 
+		// low          normal       high            // HR     ErrCauter 
+		(((0.3333333,   0.3333333,   0.3333333),     // low    true      
+		  (0.98,        0.01,        0.01)),         // low    false     
+		 ((0.3333333,   0.3333333,   0.3333333),     // normal true      
+		  (0.01,        0.98,        0.01)),         // normal false     
+		 ((0.3333333,   0.3333333,   0.3333333),     // high   true      
+		  (0.01,        0.01,        0.98)));        // high   false     ;
+	title = "HRSat";
+	whenchanged = 1084561292;
+	visual V1 {
+		center = (765, 570);
+		height = 14;
+		link 1 {
+			path = ((579, 370), (633, 500), (749, 561));
+			};
+		};
+	};
+
+node ErrLowOutput {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = ();
+	probs = 
+		// true         false        
+		  (0.05,        0.95);
+	title = "Error Low Ouput";
+	whenchanged = 1084560981;
+	visual V1 {
+		center = (192, 570);
+		height = 36;
+		};
+	};
+
+node HRBP {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (ErrLowOutput, HR);
+	probs = 
+		// low          normal       high            // ErrLowOutput HR     
+		(((0.98,        0.01,        0.01),          // true         low    
+		  (0.4,         0.59,        0.01),          // true         normal 
+		  (0.3,         0.4,         0.3)),          // true         high   
+		 ((0.98,        0.01,        0.01),          // false        low    
+		  (0.01,        0.98,        0.01),          // false        normal 
+		  (0.01,        0.01,        0.98)));        // false        high   ;
+	title = "HRBP";
+	whenchanged = 1084561150;
+	visual V1 {
+		center = (387, 570);
+		height = 12;
+		link 2 {
+			path = ((573, 370), (526, 507), (406, 561));
+			};
+		};
+	};
+
+node ExpCO2 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (zero, low, normal, high);
+	parents = (ArtCO2, VentLung);
+	probs = 
+		// zero         low          normal       high            // ArtCO2 VentLung 
+		(((0.97,        0.01,        0.01,        0.01),          // low    zero     
+		  (0.01,        0.97,        0.01,        0.01),          // low    low      
+		  (0.01,        0.97,        0.01,        0.01),          // low    normal   
+		  (0.01,        0.97,        0.01,        0.01)),         // low    high     
+		 ((0.97,        0.01,        0.01,        0.01),          // normal zero     
+		  (0.01,        0.01,        0.97,        0.01),          // normal low      
+		  (0.01,        0.01,        0.97,        0.01),          // normal normal   
+		  (0.01,        0.01,        0.97,        0.01)),         // normal high     
+		 ((0.97,        0.01,        0.01,        0.01),          // high   zero     
+		  (0.01,        0.01,        0.01,        0.97),          // high   low      
+		  (0.01,        0.01,        0.01,        0.97),          // high   normal   
+		  (0.01,        0.01,        0.01,        0.97)));        // high   high     ;
+	title = "ExpCO2";
+	whenchanged = 1084561782;
+	visual V1 {
+		center = (1134, 354);
+		height = 30;
+		};
+	};
+
+node PAP {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (PulmEmbolus);
+	probs = 
+		// low          normal       high           // PulmEmbolus 
+		 ((0.01,        0.19,        0.8),          // true        
+		  (0.05,        0.9,         0.05));        // false       ;
+	title = "Pulmonary Pressure";
+	whenchanged = 1084561458;
+	visual V1 {
+		center = (774, 168);
+		height = 25;
+		};
+	};
+
+node Press {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (zero, low, normal, high);
+	parents = (KinkedTube, Intubation, VentTube);
+	probs = 
+		//  zero         low          normal       high             // KinkedTube Intubation VentTube 
+		((((0.97,        0.01,        0.01,        0.01),           // true       normal     zero     
+		   (0.01,        0.49,        0.3,         0.2),            // true       normal     low      
+		   (0.01,        0.01,        0.08,        0.9),            // true       normal     normal   
+		   (0.01,        0.01,        0.01,        0.97)),          // true       normal     high     
+		  ((0.97,        0.01,        0.01,        0.01),           // true       esophageal zero     
+		   (0.1,         0.84,        0.05,        0.01),           // true       esophageal low      
+		   (0.05,        0.25,        0.25,        0.45),           // true       esophageal normal   
+		   (0.01,        0.15,        0.25,        0.59)),          // true       esophageal high     
+		  ((0.97,        0.01,        0.01,        0.01),           // true       one sided  zero     
+		   (0.01,        0.29,        0.3,         0.4),            // true       one sided  low      
+		   (0.01,        0.01,        0.08,        0.9),            // true       one sided  normal   
+		   (0.01,        0.01,        0.01,        0.97))),         // true       one sided  high     
+		 (((0.97,        0.01,        0.01,        0.01),           // false      normal     zero     
+		   (0.01,        0.97,        0.01,        0.01),           // false      normal     low      
+		   (0.01,        0.01,        0.97,        0.01),           // false      normal     normal   
+		   (0.01,        0.01,        0.01,        0.97)),          // false      normal     high     
+		  ((0.97,        0.01,        0.01,        0.01),           // false      esophageal zero     
+		   (0.4,         0.58,        0.01,        0.01),           // false      esophageal low      
+		   (0.2,         0.75,        0.04,        0.01),           // false      esophageal normal   
+		   (0.2,         0.7,         0.09,        0.01)),          // false      esophageal high     
+		  ((0.97,        0.01,        0.01,        0.01),           // false      one sided  zero     
+		   (0.01,        0.9,         0.08,        0.01),           // false      one sided  low      
+		   (0.01,        0.01,        0.38,        0.6),            // false      one sided  normal   
+		   (0.01,        0.01,        0.01,        0.97))));        // false      one sided  high     ;
+	title = "Breathing Pressure";
+	whenchanged = 1084561984;
+	visual V1 {
+		center = (1500, 354);
+		height = 21;
+		link 1 {
+			path = ((1155, 123), (1260, 78), (1590, 78), (1590, 270), (1509, 345));
+			};
+		link 2 {
+			path = ((992, 79), (1146, 54), (1608, 54), (1608, 276), (1512, 345));
+			};
+		link 3 {
+			path = ((1327, 244), (1486, 345));
+			};
+		};
+	};
+
+node MinVol {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (zero, low, normal, high);
+	parents = (VentLung, Intubation);
+	probs = 
+		// zero         low          normal       high            // VentLung Intubation 
+		(((0.97,        0.01,        0.01,        0.01),          // zero     normal     
+		  (0.97,        0.01,        0.01,        0.01),          // zero     esophageal 
+		  (0.97,        0.01,        0.01,        0.01)),         // zero     one sided  
+		 ((0.01,        0.97,        0.01,        0.01),          // low      normal     
+		  (0.6,         0.38,        0.01,        0.01),          // low      esophageal 
+		  (0.01,        0.97,        0.01,        0.01)),         // low      one sided  
+		 ((0.01,        0.01,        0.97,        0.01),          // normal   normal     
+		  (0.5,         0.48,        0.01,        0.01),          // normal   esophageal 
+		  (0.01,        0.01,        0.97,        0.01)),         // normal   one sided  
+		 ((0.01,        0.01,        0.01,        0.97),          // high     normal     
+		  (0.5,         0.48,        0.01,        0.01),          // high     esophageal 
+		  (0.01,        0.01,        0.01,        0.97)));        // high     one sided  ;
+	title = "MinVol";
+	whenchanged = 1084561892;
+	visual V1 {
+		center = (1314, 354);
+		height = 9;
+		link 2 {
+			path = ((966, 94), (1080, 174), (1224, 174), (1224, 282), (1303, 345));
+			};
+		};
+	};
+
+node TITLE1 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "A Logical Alarm Reduction Mechanism [Alarm]";
+	whenchanged = 1084560178;
+	visual V1 {
+		center = (1218, 552);
+		font = font {shape= "Times New Roman"; size= 18;};
+		height = 23;
+		};
+	};
+
+node TITLE2 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Edited for style and distributed by Norsys Software Corp.";
+	whenchanged = 1084571436;
+	visual V1 {
+		center = (1152, 576);
+		font = font {shape= "Times New Roman"; size= 11;};
+		height = 38;
+		};
+	};
+ElimOrder = (History, Anaphylaxis, PAP, CVP, PCWP, LVEDVolume, Hypovolemia, LVFailure, PulmEmbolus, MinVolSet, HREKG, ErrCauter, HRSat, ErrLowOutput, HRBP, FiO2, StrokeVolume, HR, BP, CO, VentMach, Disconnect, ExpCO2, MinVol, Shunt, Press, KinkedTube, VentTube, InsuffAnesth, TPR, Catechol, SaO2, PVSat, Intubation, VentLung, VentAlv, ArtCO2);
+};

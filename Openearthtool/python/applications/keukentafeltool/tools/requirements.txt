@@ -1,0 +1,7 @@
+flask
+pywps
+
+geopandas
+pandas
+gdal
+bokeh

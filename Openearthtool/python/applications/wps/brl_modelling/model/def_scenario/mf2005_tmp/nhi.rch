@@ -1,0 +1,4 @@
+# Recharge Package file
+1 0 addrech
+1 -1
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/rch/rch_1998_2006_mmd.idf' 1.0000000E-03 (free) -1 scaling 2 1

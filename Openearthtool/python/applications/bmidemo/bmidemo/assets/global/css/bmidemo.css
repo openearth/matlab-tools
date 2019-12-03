@@ -1,0 +1,22 @@
+html, body { height: 100%; }
+body{
+    // font:16px/24px 'Cantata One', serif;
+    background-color: black;
+    font-family: 'Electrolize', sans-serif; 
+    /* font-family: 'Donegal One', serif; */
+}
+
+header {
+    font-size: 30px;
+    color: white;
+    margin: 20px;
+
+}
+canvas {
+    outline: none;
+}
+/*     width: 100%; */
+/*     height: 100%; */
+/* } */
+
+

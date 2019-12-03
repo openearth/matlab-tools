@@ -1,0 +1,289 @@
+---
+title: "Trend analysis water quality Westerschelde"
+author: "Deltares"
+date: "February 23, 2018"
+output: html_document
+runtime: shiny
+---
+
+<style type="text/css">
+
+body{ /* Normal  */
+font-size: 11px;
+}
+td {  /* Table  */
+font-size: 10px;
+}
+h1.title {
+font-size: 30px;
+color: DarkRed;
+}
+h1 { /* Header 1 */
+font-size: 24px;
+color: DarkBlue;
+}
+h2 { /* Header 2 */
+font-size: 18px;
+color: DarkBlue;
+}
+h3 { /* Header 3 */
+font-size: 14px;
+font-family: "Times New Roman", Times, serif;
+color: DarkBlue;
+}
+code.r{ /* Code block */
+font-size: 10px;
+}
+pre { /* Code block - determines code spacing between lines */
+font-size: 14px;
+}
+</style> 
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+require(tidyverse)
+require(scales)
+wq <- read_delim("data/Scheldemonitor.csv", delim = ";", col_types = "cnnnTcncc") %>%
+  dplyr::filter(dataprovider == 'RWS - Rijkswaterstaat')
+
+# wqMU <- read_delim("../WQ_monitoring-data/standarddata/mumm.csv", delim = ";")
+# wqMU$dataprovider <- "MUMM"
+# wq <- wq %>% bind_rows(wqMU) %>% filter(dataprovider == 'RWS - Rijkswaterstaat')
+
+# wq %>% 
+#   select(-value) %>%
+#   duplicated() %>% which() %>% length()
+
+
+wq <- wq %>%
+  # select(-FID) %>%
+  group_by(station, latitude, longitude, depth, aggName, unit,
+           datetime, dataprovider) %>%
+  summarize(meanValue = mean(value)) %>%
+  ungroup() %>%
+  # spread(key = aggName, value = meanValue) %>%
+  # mutate(logChlfa = log10(chlfa)) %>%
+  # gather(key = aggName, value = value, chlfa:logChlfa) %>%
+  filter(!is.na(meanValue)) 
+
+
+wq$year = as.integer(format(wq$datetime, "%Y"))
+wq$month = as.integer(format(wq$datetime, "%m"))
+wq$season = ifelse(wq$month >2 & wq$month < 10, "summer", "winter")
+
+meetpunten <- wq %>% 
+  distinct(station) %>% arrange(station) %>% 
+  unlist() %>% unname()
+
+paramsAndUnits <-  wq %>% 
+  distinct(aggName, unit)
+
+stoffen <-paramsAndUnits %>% 
+  select(aggName) %>% 
+  arrange(aggName) %>%
+  na.omit() %>% unlist() %>% unname
+
+wqs <- wq %>% select(-unit) %>%
+  spread(key = aggName, value = meanValue) %>%
+  mutate(DIN_DIP = case_when(
+    !is.na(NOX) & !is.na(NH4) & !is.na(PO4) ~ (NOX + NH4)/PO4,
+        !is.na(NO2) & !is.na(NO3) & !is.na(NH4) & !is.na(PO4) ~ (NO2 + NO3 + NH4)/PO4
+  )
+  ) %>%
+  mutate(DIN_Si = case_when(
+    !is.na(NOX) & !is.na(NH4) & !is.na(Si) ~ (NOX + NH4)/Si,
+    !is.na(NO2) & !is.na(NO3) & !is.na(NH4) & !is.na(Si) ~ (NO2 + NO3 + NH4)/Si
+  )
+) %>%
+  gather(key = aggName, value = meanValue, -station, -latitude, -longitude, -depth,
+           -datetime, -dataprovider, -year, -month, -season)
+
+wqs <- wqs %>% left_join(paramsAndUnits)
+```
+
+## Water quality in the Scheldt estuary from 2005 - 2016
+
+Water quality data were obtained from the [Scheldemonitor](www.scheldemonitor.be). For the analysis below, only Rijkswaterstaat stations in the Westerschelde part of the estuary were considered. Trends over the period 2006 - 2016 are calculated as a linear regression considering a sinus+cosinus variation over the season. 
+
+
+```{r interactiveTimePlot, echo=FALSE, fig.width=36, fig.height=3}
+inputPanel(
+  column(12,
+         wellPanel("When, what and where",
+                   numericInput("startYear", label = "Start:",
+                                2000,
+                                min = 1970, max = 2017),
+                   numericInput("endYear", label = "End:",
+                                2017,
+                                min = 1970, max = 2017),
+                   selectInput("location", label = "Location:",
+                               choices = meetpunten, selected = 'Hansweert geul', multiple = TRUE),
+                   
+                   selectInput("parameter", label = "Parameter:",
+                               choices = stoffen, selected = 'SPM')
+         )
+  ),
+  column(12,
+         wellPanel("Limits",
+                   numericInput("high", label = "High limit value", value = 40000),
+                   checkboxInput("logscale", label = "log scale?", value = F)
+         ),
+         wellPanel("Statistics per season",
+                   checkboxInput("boxplot", label = "Boxplot"),
+                   checkboxInput("perc90line", label = "90 Percentiles"),
+                   checkboxInput("perc10line", label = "10 Percentiles")
+         )
+  ),
+  
+  column(12,
+         wellPanel("Add lines",
+                   checkboxInput("trendline", label = "Trendline"),
+                   checkboxInput("pointline", label = "Pointline"),
+                   checkboxInput("loessline", label = "Loessline"),
+                   conditionalPanel(
+                     condition = "input.loessline",
+                     sliderInput("lspan", label = "Loess span", min = 0, max = 1, step = 0.1, value = 0.7)
+                   )
+         ),
+         wellPanel(
+           downloadButton("dnld", label = "Download png")
+         )
+  )
+)
+
+
+
+renderPlot({
+  
+  # select data based on input
+  subdf <- wqs %>%
+    filter(year  >= input$startYear,  year <= input$endYear) %>%
+    filter(aggName == input$parameter) %>%
+    filter(station == input$location) %>%
+    # filter(year > 2005) %>% 
+    filter(meanValue < input$high) %>%
+    as.data.frame()
+  
+  if(nrow(subdf)==0) return(NULL)
+  # 
+  # add seasons, prepare for plotting
+  subdf$season <- factor(subdf$season, levels = c('winter', 'summer'))
+  x = as.numeric(subdf[,'datetime']); y = subdf[,'meanValue']
+  minscale   <- min(subdf[,'datetime'])
+  maxscale   <- max(subdf[, 'datetime'])
+  substance  <- unique(subdf[,'aggName'])
+  unit = gsub(pattern = '_', x = unique(subdf[,'unit']), replacement = '/') #unique(subdf[,'unit'])
+  
+  # make base plot object
+  pl <- ggplot(subdf, aes(datetime, meanValue))
+  pl <- pl + geom_point(aes(color = station), size = 3, alpha = 0.4)
+  
+  
+  if(input$trendline){
+    
+    # create statistics summary values for linear regression
+    regression <- summary(glm(y ~ x + I(cos(2 * pi * x / 31556995)) + I(sin(2 * pi * x / 31556995))))
+    slope      <- regression$coefficients[2,1]  #slope of regression including season effect
+    pvalue     <- format(regression$coefficients[2,4], digits = 2)
+    intercept  <- regression$coefficients[[1]]
+    
+    # create y position for text in graph
+    yposition  <- quantile(subdf[,'meanValue'], 0.99, na.rm = T)
+    
+    # add trendline with seasonal variation
+    pl <- pl + geom_smooth(aes(), method='lm', formula = y ~ x+I(cos(2*pi*x/31622400))+I(sin(2*pi*x/31622400)), size = 0.7, alpha = 0.3, n = 1000)
+    
+    # add trendline without seasonal variation
+    pl <- pl + geom_abline(intercept = intercept, slope = slope , color = "darkblue", size = 1)
+    
+    # add text on linear trend statistics
+    pl <- pl + annotate("text", label = paste("linear trend =", format(slope*31622400, digits = 2), unit, "per year; ", "p=", pvalue), x = maxscale - 0.5 * (maxscale - minscale), y = yposition, size = 6)
+  }
+  
+  
+  if(input$loessline){
+    
+    # add loess line
+    pl <- pl + geom_smooth(aes(color = station), method='loess', span = input$lspan, size = 1, n = 1000)
+  }
+  
+  
+  if(input$perc90line){
+    
+    # calculate quantile statistics
+    subdf_year <- plyr::ddply(subdf, ~ year + season, summarize, perc90 = quantile(meanValue, probs = 0.9), na.rm = T)
+    subdf_year$year <- as.POSIXct(paste(as.character(subdf_year$year), "-07-01 00:00:00", sep = ""))
+    
+    # add quantiles as crossbars to plot
+    pl <- pl + geom_crossbar(data = subdf_year, aes(year, perc90, color = season), size = 0.4, linetype = 1, ymin =F, ymax = F) +
+      scale_colour_discrete(guide = "legend")
+  }
+
+    if(input$perc10line){
+    
+    # calculate quantile statistics
+    subdf_year <- plyr::ddply(subdf, ~ year + season, summarize, perc10 = quantile(meanValue, probs = 0.1), na.rm = T)
+    subdf_year$year <- as.POSIXct(paste(as.character(subdf_year$year), "-07-01 00:00:00", sep = ""))
+    
+    # add quantiles as crossbars to plot
+    pl <- pl + geom_crossbar(data = subdf_year, aes(year, perc10, color = season), size = 0.3, linetype = 5, ymin =F, ymax = F) +
+      scale_colour_discrete(guide = "legend")
+  }
+  
+  if(input$pointline) pl <- pl + geom_line(aes(color = station))
+  
+  
+  if(input$boxplot) {
+    
+    # add box and whiskers to plot
+    pl <- pl + geom_boxplot(aes(x = as.POSIXct(paste0(year, '-07-01 00:00:00')),
+                                y = meanValue,
+                                color = season, group = interaction(season, year, station)), 
+                            alpha = 0.6,
+                            outlier.size = 0)
+  }
+  
+  # add vertical lines for model period
+  # pl <- pl + geom_vline(xintercept = as.numeric(as.POSIXct("2014-01-01")), size = 1, linetype = 2, color = "black", alpha = 0.5)
+  # pl <- pl + geom_vline(xintercept = as.numeric(as.POSIXct("2015-01-01")), size = 1, linetype = 2, color = "black", alpha = 0.5)
+  
+  # additional styling
+  pl <- pl + theme(text = element_text(size = 20), legend.justification=c(1,1), legend.position = c(0.3,1)) +
+    scale_x_datetime(minor_breaks = date_breaks("1 year")) +
+    xlab("year") + ylab(paste(substance, unit)) 
+  
+  if(input$logscale) {
+    pl <- pl + scale_y_log10()
+  }
+  
+  # return plot to ui
+  pl
+})
+
+
+
+output$dnld = downloadHandler(
+  filename = paste(input$location, input$parameter, '.png', sep=''),
+  content = function(file) {
+    ggsave(file, plot = last_plot(), device = "png", height = 5, width = 10)
+  }
+)
+
+
+```
+
+
+
+The vertical broken lines indicate the period of the update model Scheldt. The different options for statistics are:
+
+* Trendline - linear trend, assuming a sinus/cosinus variation within a year
+* Pointline - lines that connect points in time
+* Boxplot - Boxplot per year and season
+* 90 Percentiles - 90 percentiles per year and season
+
+
+
+
+

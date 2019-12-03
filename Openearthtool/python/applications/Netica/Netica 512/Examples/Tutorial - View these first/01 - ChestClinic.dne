@@ -1,0 +1,429 @@
+// ~->[DNET-1]->~
+
+// File created by Norsys using Netica 5.08 on Nov 27, 2012 at 12:11:28.
+
+bnet ChestClinic {
+AutoCompile = TRUE;
+autoupdate = TRUE;
+comment = "\n\
+	Chest Clinic                                  Text Copyright 1998-2012 Norsys Software Corp.\n\n\
+	This Bayes net is also known as \"Asia\", and is an example which is popular \n\
+	for introducing Bayes nets.  It is from Lauritzen&Spiegelhalter88 (see below).\n\
+	It is for example purposes only, and should not be used for real decision making.\n\n\
+	It is a simplified version of a net that could be used to diagnose patients arriving\n\
+	at a clinic.  Each node in the net corresponds to some condition of the patient,\n\
+	for example, \"Visit to Asia\" indicates whether the patient recently visited Asia.\n\
+	To diagnose a patient, values are entered for nodes when they are known.  \n\
+	Netica then automatically re-calculates the probabilities for all the other nodes,\n\
+	based on the relationships between them.  The links between the nodes indicate how the\n\
+	relationships between the nodes are structured.\n\n\
+	The two top nodes are for predispositions which influence the likelihood of the diseases. \n\
+	Those diseases appear in the row below them.  At the bottom are symptoms of the diseases.\n\
+	To a large degree, the links of the network correspond to causation.  \n\
+	This is a common structure for diagnostic networks: predisposition nodes at the top, \n\
+	with links to nodes representing internal conditions and failure states, which in turn have\n\
+	links to nodes for observables.  Often there are many layers of nodes representing\n\
+	internal conditions, with links between them representing their complex inter-relationships.\n\n\
+	This net is from Lauritzen, Steffen L. and David J. Spiegelhalter (1988) \"Local \n\
+	computations with probabilities on graphical structures and their application to expert \n\
+	systems\" in Journal Royal Statistics Society B, 50(2), 157-194.\n\n\n\
+	TUTORIAL:            Basic Probabilistic Inference\n\
+	--------\n\n\
+	Keep in mind when doing tutorials that there is a great deal of assitance available\n\
+	from Netica's onscreen help, often about the exact networks of the tutorials.\n\
+	For this example, choose Help->Contents/Index, click on the Index tab, type in\n\
+	\"Chest Clinic\", and go to the example.\n\n\
+	All the information contained in a Bayes net can be observed by examining 3 things.\n\n\
+	First, there is the network structure, consisting of the nodes and their links,\n\
+	which you can see in the network diagram currently being displayed.\n\n\
+	Second, are the properties of each node, which you can see in their node dialog box,\n\
+	obtained by double-clicking on the node.\n\n\
+	Third, are the actual relationships between the nodes, which you can see by \n\
+	single-clicking on a node to select it, then choosing Table->View/Edit.  \n\
+	The relationship may be probabilistic or functional.  For example, click on \n\
+	\"Lung Cancer\", and then choose Table->View/Edit, to see its probabilistic relation \n\
+	with Smoking (the numbers are for example purposes only, and may not reflect reality).\n\
+	If you click on \"Tuberculosis or Cancer\", and choose Table->View/Edit, you can see\n\
+	its functional dependence on Tuberculosis and Lung Cancer.\n\n\
+	To compile the network for use, click on its window to make it the active window,\n\
+	and choose Network->Compile.  If that option is grayed-out, then it means that the\n\
+	net is already compiled (if there was some reason it couldn't compile, then the option\n\
+	would still be black and an error message would indicate the problem).  If the net is\n\
+	already compiled when you open it, that means that it was compiled when it was last\n\
+	saved to file.\n\n\
+	When compiled, the appropriate data structures for fast inference have been built \n\
+	internally.  The bars in each node have darkened, indicating that they and the \n\
+	numbers beside them are now valid data.  They indicate the probabilities of each \n\
+	state of the node.\n\n\
+	Suppose we want to \"diagnose\" a new patient.  When she first enters the clinic,\n\
+	without having any information about her, we believe she has lung cancer with a\n\
+	probability of 5.5%, as can be seen on the Lung Cancer node (the number may be higher\n\
+	than that for the general population, because something has led her to the chest clinic).\n\n\
+	If she has an abnormal x-ray, that information can be entered by clicking on the word\n\
+	\"abnormal\" of the \"XRay Result\" node (in a real-world Bayes net, you would probably\n\
+	be able to enter in exactly what way the x-ray was \"abnormal\").\n\n\
+	All the probability numbers and bars will change to take into account the finding.\n\
+	Now the probability that she has lung cancer has increased to 48.9%.\n\n\
+	If you further indicate that she has made a visit to asia recently, by clicking on\n\
+	\"visit\", the probability of lung cancer decreases to 37.1%, because the abnormal XRay is \n\
+	partially explained away by a greater chance of Tuberculosis (which she could \n\
+	catch in Asia).  Old fashioned medical expert systems had problems with this kind of \n\
+	reasoning, since each of the findings \"Abnormal XRay\" and \"Visit to Asia\" by themselves\n\
+	increase or leave the same the probability of lung cancer.\n\n\
+	You can try entering and changing some more findings.  To remove a finding, simply click\n\
+	on its name again.  If you want to remove all the findings (a new patient has just walked\n\
+	in), choose Network->Remove Findings (remember to click in the net window to make it\n\
+	the active window if you don't see the right menu).\n\n\n\n\
+	";
+whenchanged = 1354047088;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 14;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	ShowLinkStrengths = 1;
+	windowposn = (0, 3, 843, 510);
+	CommentShowing = TRUE;
+	CommentWindowPosn = (0, 510, 845, 777);
+	resolution = 72;
+	drawingbounds = (1104, 730);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0x00C0C0C0;};
+	NodeSet Nature {BuiltIn = 1; Color = 0x00F8EED2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0x00D3CAA6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0x00C8C8C8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0x00FFFFFF;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0x00FFFFB4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0x00FFBDBD;};
+	NodeSet Decision {BuiltIn = 1; Color = 0x00DEE8FF;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0x00F0FAFA;};
+	NodeSet ClearDocumentation {Color = 0x00FFFFFF;};
+	NodeSet Title {BuiltIn = 1; Color = 0x00FFFFFF;};
+	NodeSet Intermediate {Color = 0x00D7F4CC;};
+	NodeSet Predispositions {Color = 0x00FFFED9;};
+	NodeSet Diseases {Color = 0x00FFE0C1;};
+	NodeSet Symptoms {Color = 0x00D5EDF7;};
+	NodeSet target {Disabled = 1; Color = 0x00C8C8C8;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		magnify = 1;
+		};
+	};
+
+node Travel {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (visit, no_visit);
+	parents = ();
+	probs = 
+		// visit        no visit     
+		  (0.01,        0.99);
+	title = "World Travel";
+	comment = "Patient has recently visited Asia";
+	whenchanged = 1354046558;
+	belief = (0.01, 0.99);
+	visual V1 {
+		center = (132, 54);
+		height = 7;
+		};
+	};
+
+node Tuberculosis {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (present, absent);
+	parents = (Travel);
+	probs = 
+		// present      absent        // Travel   
+		  (0.05,        0.95,         // visit    
+		   0.01,        0.99);        // no visit ;
+	title = "Tuberculosis";
+	whenchanged = 1086993659;
+	belief = (0.0104, 0.9896);
+	visual V1 {
+		center = (132, 156);
+		height = 1;
+		};
+	};
+
+node Smoking {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (smoker, non_smoker);
+	parents = ();
+	probs = 
+		// smoker       non smoker   
+		  (0.5,         0.5);
+	title = "Smoking";
+	whenchanged = 1086993649;
+	belief = (0.5, 0.5);
+	visual V1 {
+		center = (516, 54);
+		height = 8;
+		};
+	};
+
+node Cancer {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (present, absent);
+	parents = (Smoking);
+	probs = 
+		// present      absent        // Smoking    
+		  (0.1,         0.9,          // smoker     
+		   0.01,        0.99);        // non smoker ;
+	title = "Lung Cancer";
+	whenchanged = 1086993668;
+	belief = (0.055, 0.945);
+	visual V1 {
+		center = (390, 156);
+		height = 4;
+		link 1 {
+			path = ((472, 91), (435, 120));
+			};
+		};
+	};
+
+node TbOrCa {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	parents = (Tuberculosis, Cancer);
+	functable = 
+		                    // Tuberculosis Cancer  
+		  (true,            // present      present 
+		   true,            // present      absent  
+		   true,            // absent       present 
+		   false);          // absent       absent  ;
+	title = "Tuberculosis\nor Cancer";
+	whenchanged = 1086993692;
+	belief = (0.064828, 0.935172);
+	visual V1 {
+		center = (270, 264);
+		height = 3;
+		};
+	};
+
+node XRay {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (abnormal, normal);
+	parents = (TbOrCa);
+	probs = 
+		// abnormal     normal        // TbOrCa 
+		  (0.98,        0.02,         // true   
+		   0.05,        0.95);        // false  ;
+	title = "XRay Result";
+	whenchanged = 1166675738;
+	belief = (0.11029, 0.8897099);
+	visual V1 {
+		center = (144, 366);
+		height = 2;
+		link 1 {
+			path = ((226, 301), (189, 330));
+			};
+		};
+	};
+
+node Bronchitis {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (present, absent);
+	parents = (Smoking);
+	probs = 
+		// present      absent        // Smoking    
+		  (0.6,         0.4,          // smoker     
+		   0.3,         0.7);         // non smoker ;
+	title = "Bronchitis";
+	whenchanged = 1086993675;
+	belief = (0.45, 0.55);
+	visual V1 {
+		center = (642, 156);
+		height = 6;
+		link 1 {
+			path = ((560, 91), (597, 120));
+			};
+		};
+	};
+
+node Dyspnea {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (present, absent);
+	parents = (TbOrCa, Bronchitis);
+	probs = 
+		// present      absent        // TbOrCa Bronchitis 
+		  (0.9,         0.1,          // true   present    
+		   0.7,         0.3,          // true   absent     
+		   0.8,         0.2,          // false  present    
+		   0.1,         0.9);         // false  absent     ;
+	title = "Dyspnea";
+	comment = "Shortness of breath.";
+	whenchanged = 1166675734;
+	belief = (0.4359706, 0.5640294);
+	visual V1 {
+		center = (432, 366);
+		height = 5;
+		link 1 {
+			path = ((326, 301), (374, 330));
+			};
+		};
+	};
+
+node TITLE1 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Chest Clinic";
+	whenchanged = 904468693;
+	visual V1 {
+		center = (696, 282);
+		font = font {shape= "Times New Roman"; size= 22;};
+		height = 13;
+		};
+	};
+
+node NOTE11 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Contributing Factors";
+	whenchanged = 1084339137;
+	visual V1 {
+		center = (630, 318);
+		dispform = SHAPE;
+		font = font {shape= "Times New Roman"; size= 12;};
+		height = 9;
+		};
+	};
+
+node NOTE12 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Diseases";
+	whenchanged = 1084337466;
+	visual V1 {
+		center = (630, 342);
+		dispform = SHAPE;
+		font = font {shape= "Times New Roman"; size= 12;};
+		height = 11;
+		};
+	};
+
+node NOTE13 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Symptoms";
+	whenchanged = 1084337206;
+	visual V1 {
+		center = (630, 390);
+		dispform = SHAPE;
+		font = font {shape= "Times New Roman"; size= 12;};
+		height = 14;
+		};
+	};
+
+node NOTE14 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Contributing Factors";
+	whenchanged = 1084340698;
+	visual V1 {
+		center = (717, 318);
+		dispform = LABELBOX;
+		font = font {shape= "Times New Roman"; size= 12;};
+		height = 10;
+		};
+	};
+
+node NOTE15 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Diseases";
+	whenchanged = 1084340724;
+	visual V1 {
+		center = (681, 342);
+		dispform = LABELBOX;
+		font = font {shape= "Times New Roman"; size= 12;};
+		height = 12;
+		};
+	};
+
+node NOTE16 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Symptoms";
+	whenchanged = 1084340727;
+	visual V1 {
+		center = (687, 390);
+		dispform = LABELBOX;
+		font = font {shape= "Times New Roman"; size= 12;};
+		height = 15;
+		};
+	};
+
+node TITLE2 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Based on Lauritzen & Spiegelhalter 1988.  Distributed by Norsys Software Corp.";
+	whenchanged = 1354046632;
+	visual V1 {
+		center = (258, 438);
+		font = font {shape= "Times New Roman"; size= 11;};
+		height = 18;
+		};
+	};
+
+node NOTE17 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Diseases";
+	whenchanged = 1084337466;
+	visual V1 {
+		center = (630, 366);
+		dispform = SHAPE;
+		font = font {shape= "Times New Roman"; size= 12;};
+		height = 16;
+		};
+	};
+
+node NOTE18 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Intermediate";
+	whenchanged = 1174871562;
+	visual V1 {
+		center = (692, 366);
+		dispform = LABELBOX;
+		font = font {shape= "Times New Roman"; size= 12;};
+		height = 17;
+		};
+	};
+NodeSet Predispositions {Nodes = (Travel, Smoking, NOTE11);};
+NodeSet Diseases {Nodes = (Tuberculosis, Cancer, Bronchitis, NOTE12);};
+NodeSet Symptoms {Nodes = (XRay, Dyspnea, NOTE13);};
+NodeSet ClearDocumentation {Nodes = (NOTE14, NOTE15, NOTE16, NOTE18);};
+NodeSet Intermediate {Nodes = (NOTE17, TbOrCa);};
+NodeSet target {Nodes = (Tuberculosis, Cancer, Bronchitis);};
+ElimOrder = (Travel, XRay, Tuberculosis, Smoking, Cancer, TbOrCa, Bronchitis, Dyspnea);
+};

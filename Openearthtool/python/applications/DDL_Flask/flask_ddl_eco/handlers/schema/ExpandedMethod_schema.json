@@ -1,0 +1,38 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"type": "object",
+	"properties": {
+		"code": {
+			"type": "string"
+		},
+		"definition": {
+			"$ref": "ExpandEntityBase_schema.json"
+		},
+		"literature": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"methodtype": {
+			"type": "string"
+		},
+		"methodtypename": {
+			"type": "string"
+		},
+		"name": {
+			"type": "string"
+		},
+		"organisation": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"definition",
+		"code",
+		"methodtype",
+		"methodtypename",
+		"name",
+		"organisation"
+	]
+}

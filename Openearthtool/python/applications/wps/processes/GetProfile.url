@@ -1,0 +1,2 @@
+[InternetShortcut]
+URL=http://localhost/cgi-bin/pywps.cgi?service=wps&request=Execute&Identifier=GetProfile&DataInputs=[lat0=36.399;lon0=-6.2;lat1=36.4;lon1=-6.0]&version=1.0.0

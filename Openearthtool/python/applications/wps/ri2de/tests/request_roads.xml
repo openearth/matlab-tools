@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:Execute xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0" service="WPS" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd">
+   <ows:Identifier xmlns:ows="http://www.opengis.net/ows/1.1">ri2de_calc_roads</ows:Identifier>
+   <wps:DataInputs>  
+      <wps:Input>
+         <ows:Identifier xmlns:ows="http://www.opengis.net/ows/1.1">buffer_dist</ows:Identifier>
+         <ows:Title xmlns:ows="http://www.opengis.net/ows/1.1">buffer_dist</ows:Title>
+         <wps:Data>
+            <wps:LiteralData>100</wps:LiteralData>
+         </wps:Data>
+      </wps:Input>
+       <wps:Input>
+         <ows:Identifier xmlns:ows="http://www.opengis.net/ows/1.1">geojson_area</ows:Identifier>
+         <ows:Title xmlns:ows="http://www.opengis.net/ows/1.1">geojson_area</ows:Title>
+         <wps:Data>
+            <wps:LiteralData>
+            {
+              "type": "Feature",
+              "properties": {},
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                  [
+                    8.77921847354716,
+                    41.40615550967041
+                  ],
+                  [
+                    8.488976569541137,
+                    41.89454172259951
+                  ],
+                  [
+                    8.54142992567617,
+                    42.59829709647801
+                  ],
+                  [
+                    9.146391966561566,
+                    42.80635171461941
+                  ],
+                  [
+                    9.317739596640791,
+                    43.10053860684482
+                  ],
+                  [
+                    9.65693796637629,
+                    43.06479981524828
+                  ],
+                  [
+                    9.635956623925722,
+                    41.881531510444546
+                  ],
+                  [
+                    9.272280021316817,
+                    41.264434855486115
+                  ],
+                  [
+                    8.77921847354716,
+                    41.40615550967041
+                  ]
+                  ]
+                ]
+              }
+            }
+		        </wps:LiteralData>
+         </wps:Data>
+      </wps:Input>
+   </wps:DataInputs>
+   <wps:ResponseForm>
+      <wps:RawDataOutput mimeType="application/json">
+         <ows:Identifier xmlns:ows="http://www.opengis.net/ows/1.1">output_json</ows:Identifier>
+      </wps:RawDataOutput>
+   </wps:ResponseForm>
+</wps:Execute>

@@ -1,0 +1,3 @@
+include openearthtest/config/deployment.ini_tmpl
+recursive-include openearthtest/public *
+recursive-include openearthtest/templates *

@@ -1,0 +1,87 @@
+<html>
+<head>
+  <title>COX IR camera video stream</title>
+  
+  <style type="text/css">
+    #camimage {
+      border:1px solid black;
+    }
+    
+    #camframe {
+      width:400px;
+      height:300px;
+      
+      position:absolute;
+      top:0;
+      bottom:0;
+      left:0;
+      right:0;
+      
+      margin:auto;
+      
+      text-align:center;
+    }
+    
+    #streambtn {
+      font-family:arial;
+      font-size:20px;
+      font-weight:bold;
+      text-align:center;
+      vertical-align:middle;
+      cursor:pointer;
+      background-color:silver;
+      border:1px solid black;
+      margin:10 2 10 2;
+      padding:5px;
+    }
+    
+    #framecnt {
+      font-family:arial;
+      font-size:16px;
+      text-align:center;
+      vertical-align:middle;
+      margin:10 2 10 2;
+      padding:5px;
+    }
+  </style>
+  
+  <script language="javascript">
+  
+    var frameCounter = 0;
+    var stream = False;
+    
+    function reloadImage() {
+    
+      frameCounter++;
+      document.getElementById("framecnt").innerText = frameCounter;
+      
+      var timestamp = new Date().getTime();
+      document.images["camimage"].src = "/image?random=" + timestamp;
+      
+      if (stream) {
+        setTimeout('reloadImage();', 1000)
+      }
+    }
+    
+    function toggleStream() {
+      stream = !stream;
+      
+      color = "silver";
+      
+      if (stream) {
+        reloadImage();
+        color = "red";
+      }
+      
+      document.getElementById("streambtn").style.backgroundColor = color;
+    }
+  </script>
+</head>
+<body onload="reloadImage();">
+  <div id="camframe">
+    <div id="framecnt">--</div>
+    <img src="#" id="camimage" name="camimage">
+    <div id="streambtn" onclick="toggleStream();">STREAM</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+#!/bin/sh
+    #
+    # This script starts a Delft3D-FLOW (4.00.00 or higher) computation on Linux
+    #
+    #
+    # Specify the config file to be used here
+    # 
+argfile=config.ini
+    #
+    # Set the directory containing deltares_hydro.exe and libflow2d3d.so here
+    #
+exedir=../../executable/intel/flow/bin/
+    #
+    # No adaptions needed below
+    #
+
+    # Set some (environment) parameters
+export ARCH=intel
+export D3D_HOME=~
+export LD_LIBRARY_PATH=$exedir:$LD_LIBRARY_PATH 
+. /opt/intel/Compiler/11.0/081/bin/ifortvars.sh ia32
+
+    # Run
+$exedir/deltares_hydro.exe $argfile

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2009 sp1 (http://www.altova.com) by ICT (Stichting Deltares) -->
+<gridDisplay xmlns="http://www.wldelft.nl/fews" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wldelft.nl/fews http://fews.wldelft.nl/schemas/version1.0/gridDisplay.xsd">
+	<title>FEWS-Demo</title>
+	<defaults>
+		<plotGroupId>NCOM</plotGroupId>
+		<barLegend>
+			<position>right</position>
+			<width>50</width>
+			<length>400</length>
+			<labelsInside>true</labelsInside>
+		</barLegend>
+		<geoMap>
+			<geoDatum>WGS 1984</geoDatum>
+			<projection>mercator</projection>
+			<defaultExtent id="North Sea">
+				<left>-8</left>
+				<right>14</right>
+				<top>60</top>
+				<bottom>49</bottom>
+			</defaultExtent>
+			<scaleBarVisible>true</scaleBarVisible>
+			<northArrowVisible>true</northArrowVisible>
+			<labelsVisible>true</labelsVisible>
+			<backgroundColor>light sky blue</backgroundColor>
+			<openStreetMapLayer id="Open Street Map">
+				<url>http://tile.openstreetmap.org</url>
+				<cacheDir>$REGION_HOME$/localDataStore/OSM</cacheDir>
+			</openStreetMapLayer>
+			<gridLayer/>
+		</geoMap>
+	</defaults>
+	<gridPlotGroup id="NCOM - sea surface height (NetCDF)">
+		<gridPlot id="Region 1">
+			<dataLayer>
+				<timeSeriesSet>
+					<moduleInstanceId>Import.HYMOS.ssh.all</moduleInstanceId>
+					<valueType>grid</valueType>
+					<parameterId>H.meting</parameterId>
+					<locationId>Region 1</locationId>
+					<timeSeriesType>external historical</timeSeriesType>
+					<timeStep unit="nonequidistant"/>
+					<readWriteMode>read complete forecast</readWriteMode>
+				</timeSeriesSet>
+			</dataLayer>
+			<showThumbnailsPanel>true</showThumbnailsPanel>
+			<numberOfRecentForecasts>3</numberOfRecentForecasts>
+			<gapBetweenThumbnails>3</gapBetweenThumbnails>
+			<movieFrameDurationMillis>400</movieFrameDurationMillis>
+			<contourLinesColor>antique white</contourLinesColor>
+		</gridPlot>
+		<gridPlot id="Region 2">
+			<dataLayer>
+				<timeSeriesSet>
+					<moduleInstanceId>Import.HYMOS.ssh.all</moduleInstanceId>
+					<valueType>grid</valueType>
+					<parameterId>H.meting</parameterId>
+					<locationId>Region 2</locationId>
+					<timeSeriesType>external historical</timeSeriesType>
+					<timeStep unit="nonequidistant"/>
+					<readWriteMode>read complete forecast</readWriteMode>
+				</timeSeriesSet>
+			</dataLayer>
+			<showThumbnailsPanel>true</showThumbnailsPanel>
+			<numberOfRecentForecasts>3</numberOfRecentForecasts>
+			<gapBetweenThumbnails>3</gapBetweenThumbnails>
+			<movieFrameDurationMillis>400</movieFrameDurationMillis>
+			<contourLinesColor>antique white</contourLinesColor>
+		</gridPlot>
+		<gridPlot id="Region 7">
+			<dataLayer>
+				<timeSeriesSet>
+					<moduleInstanceId>Import.HYMOS.ssh.all</moduleInstanceId>
+					<valueType>grid</valueType>
+					<parameterId>H.meting</parameterId>
+					<locationId>Region 7</locationId>
+					<timeSeriesType>external historical</timeSeriesType>
+					<timeStep unit="nonequidistant"/>
+					<readWriteMode>read complete forecast</readWriteMode>
+				</timeSeriesSet>
+			</dataLayer>
+			<showThumbnailsPanel>true</showThumbnailsPanel>
+			<numberOfRecentForecasts>3</numberOfRecentForecasts>
+			<gapBetweenThumbnails>3</gapBetweenThumbnails>
+			<movieFrameDurationMillis>400</movieFrameDurationMillis>
+			<contourLinesColor>antique white</contourLinesColor>
+		</gridPlot>
+	</gridPlotGroup>
+</gridDisplay>

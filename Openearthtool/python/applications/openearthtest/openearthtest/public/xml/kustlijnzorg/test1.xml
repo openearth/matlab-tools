@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<test1>
+  <subcase>
+    <title>Subcase 1</title>
+    <admin>arjen.luijendijk@deltares.nl</admin>
+	<datafile>hk_data.xml</datafile>
+    <modelfile>hk_models.xml</modelfile>
+    <toolfile>hk_tools.xml</toolfile>
+    <zoom>
+      <lat>52.05249</lat>
+      <lon>4.58105</lon>
+      <height>750000</height>
+    </zoom>    
+  </subcase>
+  <subcase>
+    <title>Subcase 2</title>
+    <admin>arjan.mol@deltares.nl</admin>
+    <datafile>zd_data.xml</datafile>
+    <modelfile>zd_models.xml</modelfile>
+    <toolfile>zd_tools.xml</toolfile>
+    <admin>arjan.mol@deltares.nl</admin>
+    <zoom>
+      <lat>51.550461</lat>
+      <lon>4.0029556</lon>
+      <height>200000</height>
+    </zoom>    
+  </subcase>
+  <subcase>
+    <title>Subcase 3</title>  
+    <admin>gerben.deboer@deltares.nl</admin>
+  </subcase>
+</test1>

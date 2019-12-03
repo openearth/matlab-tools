@@ -1,0 +1,11 @@
+================================================================================
+SVN $URL: https://svn-ccsm-release.cgd.ucar.edu/model_versions/cesm1_1 $
+================================================================================
+
+Tag name: cesm1_1
+Originator(s): cseg
+Date: Thu Nov 15 2012
+One-line Summary: First released version of the cesm1.1 code.
+
+This tag is the first officially released version of the cesm1.1 code.
+Release tag cesm1_1 corresponds to internal release candidate cesm1_1_0_rel05.

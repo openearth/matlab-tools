@@ -1,0 +1,241 @@
+// ~->[DNET-1]->~
+
+// File created by YendallJ at Norsys using Netica 5.00 on Mar 29, 2011 at 19:12:04.
+
+bnet Classifier_Optimization {
+AutoCompile = TRUE;
+autoupdate = TRUE;
+comment = "\n\
+	Classifier Optimization           Copyright 1998-2011 Norsys Software Corp.\n\n\
+	Before using this decision network, you should fully understand the\n\
+	\"Classifier\" belief network.\n\n\
+	In that network, an observation is made of a continuous variable\n\
+	(node Obsv), to try and determine whether event e1, e2 or e3 \n\
+	(node Class) gave rise to it.  The determination is done using a \n\
+	classification rule (node Classifier).  The predicted event is \n\
+	compared with the actual event to determine whether it is correct\n\
+	or in error (node Result).\n\n\
+	The purpose of this decision network is to find the optimal\n\
+	classification rule.  Node \"Classifier\" has been changed into a\n\
+	decision node, since that is the decision function we are trying to\n\
+	find.  Its CPT table and equation have been removed, since\n\
+	Netica will find the relation (you can verify that it has no CPT \n\
+	table by selecting it and choosing Table->View/Edit).\n\
+	Also a utility node is added to node Result, which rewards a correct \n\
+	answer with 10, as opposed to 0 for an incorrect answer.\n\n\
+	As soon as you compile the network, auto-updating is done, so it is\n\
+	solved.  The utility of each choice in the \"Classifier\" node is 3.33,\n\
+	indicating that with no observation, predicting any event is as good\n\
+	as a random guess.  Click on \"2 to 3\", indiating the observation is\n\
+	between 2 and 3.  The Classifier node shows that the best prediction\n\
+	is e1, with an expected utility of 7.9.  The next best is e2 with a\n\
+	utility of 2.09, and worst is e3 with a utility of 6.64e-6.\n\
+	Click on some other observations and view the expected utility of \n\
+	each prediction.\n\n\
+	To observe the optimal decision function, make sure no findings are\n\
+	entered (for example, by choosing Network->Remove Findings), select\n\
+	node Classifier, and choose Table->View/Edit.  The table shows\n\
+	the optimum classification rule, which Netica has found.  Threshold \n\
+	values of 3 and 7 are the optimum boundaries, and so they were used \n\
+	in constructing the belief net \"Classifier\".\n\n\
+	You can change the prior probabilities of node Class to see how the \n\
+	decision boundaries change.  Use the table dialog box to make\n\
+	them 40%, 20%, 40% instead of uniform.  Now when you recompile,\n\
+	and view the optimal classification rule, you will see that the\n\
+	threshold boundaries are 4 and 6.  Since e2 has become less likely, \n\
+	in borderline cases the system would now rather predict e1 or e3.\n\n\
+	You can use Edit->Undo to undo the change in probabilities and\n\
+	recompile.  Now say the system knows that the event was not e2.\n\
+	You can enter that as a negative finding by holding down the shift\n\
+	key and clicking on \"e2\" of node \"Class\".  If you observe the new\n\
+	optimal classification rule, you will see that it says to choose\n\
+	e1 for all observations less than 5, and e3 for all those greater.\n\n\
+	This decison net may be easily modified to solve a very broad range \n\
+	of important classifier optimization problems.  Many of these \n\
+	modifications are discussed in the documentation for the \"Classifier\" \n\
+	network.\n\n\
+	Another possible modification is to make nodes Class and Classifier\n\
+	the parents of the utility node, instead of Result.  That way\n\
+	costs or rewards for each possible situation of event and prediction\n\
+	can be entered.  The CPT table for the utility node will have\n\
+	9 cells, one for each possibility.  If negative numbers are used,\n\
+	then this is the misclassification cost matrix.\n\n\
+	If there are multiple observations they can simply be included as\n\
+	additional nodes, with links to the \"Classifier\" node.  In that case,\n\
+	an optimal multi-variate classification rule will be found.\n\n\
+	This network was designed by Norsys Software Corp.\n\n\
+	";
+whenchanged = 1301440324;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 10;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	windowposn = (25, 12, 470, 458);
+	CommentShowing = TRUE;
+	CommentWindowPosn = (25, 457, 623, 698);
+	resolution = 72;
+	drawingbounds = (1080, 689);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0xc0c0c0;};
+	NodeSet Nature {BuiltIn = 1; Color = 0xf8eed2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0xd3caa6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0xc8c8c8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0xffffff;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0xffffb4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0xffbdbd;};
+	NodeSet Decision {BuiltIn = 1; Color = 0xdee8ff;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0xf0fafa;};
+	NodeSet Title {BuiltIn = 1; Color = 0xffffff;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		landscape = FALSE;
+		magnify = 1;
+		};
+	};
+
+node Class {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (e1, e2, e3);
+	parents = ();
+	probs = 
+		// e1           e2           e3           
+		  (0.3333333,   0.3333333,   0.3333333);
+	numcases = 1;
+	whenchanged = 904644031;
+	belief = (0.3333333, 0.3333333, 0.3333333);
+	visual V1 {
+		center = (108, 132);
+		height = 1;
+		};
+	};
+
+node Obsv {
+	kind = NATURE;
+	discrete = FALSE;
+	chance = CHANCE;
+	levels = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+	parents = (Class);
+	probs = 
+		// 0 to 1       1 to 2       2 to 3       3 to 4       4 to 5       5 to 6       6 to 7       7 to 8       8 to 9       9 to 10       // Class 
+		  (0.1393642,   0.3485442,   0.3500097,   0.1390239,   0.02165657,  0.001369851, 3.127961e-5, 2.946522e-7, 9.794461e-10,1.295433e-12, // e1    
+		   0.01676575,  0.0446456,   0.09280072,  0.1515226,   0.1940372,   0.1938935,   0.1518485,   0.09303638,  0.0446861,   0.01676363,   // e2    
+		   1.301579e-12,1.009443e-9, 2.940967e-7, 3.286138e-5, 0.001331939, 0.02191735,  0.1391489,   0.3487787,   0.3490611,   0.1397289);   // e3    ;
+	numcases = 
+		                 // Class 
+		  (9784.735,     // e1    
+		   9869.615,     // e2    
+		   9769.044);    // e3    ;
+	equation = "p (Obsv | Class) = \n\
+		Class == e1 ?  NormalDist (Obsv, 2, 1) :\n\
+		Class == e2 ?  NormalDist (Obsv, 5, 2) :\n\
+		Class == e3 ?  NormalDist (Obsv, 8, 1) : 0";
+	whenchanged = 904643270;
+	belief = (0.05204331, 0.1310633, 0.1476036, 0.09685978, 0.0723419, 0.07239357, 0.09700955, 0.1472718, 0.1312491, 0.05216417);
+	visual V1 {
+		center = (288, 132);
+		height = 2;
+		};
+	};
+
+node Classifier {
+	kind = DECISION;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (e1, e2, e3);
+	parents = (Obsv);
+	functable = 
+		                    // Obsv    
+		  (e1,              // 0 to 1  
+		   e1,              // 1 to 2  
+		   e1,              // 2 to 3  
+		   e2,              // 3 to 4  
+		   e2,              // 4 to 5  
+		   e2,              // 5 to 6  
+		   e2,              // 6 to 7  
+		   e3,              // 7 to 8  
+		   e3,              // 8 to 9  
+		   e3);             // 9 to 10 ;
+	whenchanged = 904644047;
+	visual V1 {
+		center = (288, 294);
+		height = 3;
+		};
+	};
+
+node Result {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (Correct, Error);
+	parents = (Class, Classifier);
+	functable = 
+		                    // Class Classifier 
+		  (Correct,         // e1    e1         
+		   Error,           // e1    e2         
+		   Error,           // e1    e3         
+		   Error,           // e2    e1         
+		   Correct,         // e2    e2         
+		   Error,           // e2    e3         
+		   Error,           // e3    e1         
+		   Error,           // e3    e2         
+		   Correct);        // e3    e3         ;
+	equation = "Result (Class, Classifier) = \nClass == Classifier ? Correct : Error";
+	whenchanged = 904556449;
+	belief = (0.3333333, 0.6666667);
+	visual V1 {
+		center = (108, 294);
+		height = 6;
+		};
+	};
+
+node U {
+	kind = UTILITY;
+	discrete = FALSE;
+	measure = RATIO;
+	chance = DETERMIN;
+	parents = (Result);
+	functable = 
+		                 // Result  
+		  (10,           // Correct 
+		   0);           // Error   ;
+	whenchanged = 880418074;
+	visual V1 {
+		center = (108, 366);
+		height = 7;
+		};
+	};
+
+node TITLE2 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Copyright 1998 Norsys Software Corp.";
+	whenchanged = 904537710;
+	visual V1 {
+		center = (102, 60);
+		font = font {shape= "Times New Roman"; size= 8;};
+		height = 4;
+		};
+	};
+
+node TITLE1 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Classifier Optimization";
+	whenchanged = 904640759;
+	visual V1 {
+		center = (102, 36);
+		font = font {shape= "Times New Roman"; size= 14;};
+		height = 5;
+		};
+	};
+ElimOrder = (Result, Class, Classifier, Obsv);
+};

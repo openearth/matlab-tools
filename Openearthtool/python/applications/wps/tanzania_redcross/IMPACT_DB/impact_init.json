@@ -1,0 +1,49 @@
+{
+	"province": 
+		[   "Arusha", 
+			"Dar es Salaam", 
+			"Dodoma", 
+			"Geita", 
+			"Iringa", 
+			"Kagera", 
+			"Katavi", 
+			"Kigoma", 
+			"Kilimanjaro", 
+			"Lindi", 
+			"Manyara", 
+			"Mara", 
+			"Mbeya", 
+			"Morogoro", 
+			"Mtwara", 
+			"Mwanza", 
+			"Njombe", 
+			"Pwani", 
+			"Rukwa", 
+			"Ruvuma", 
+			"Shinyanga", 
+			"Simiyu", 
+			"Singida", 
+			"Tabora", 
+			"Tanga", 
+			"Zanzibar South and Central"
+		],
+	"wetness":
+		[
+			{"Dry (0-50mm)":"25"},
+			{"Wet (50-120mm)":"70"},
+			{"Extreme wet (>120 mm)":"200"}
+		],
+	"forecast":
+		[
+			{"Little rainfall (0-20mm)":"10"},
+			{"Normal rainfall (20-50mm)":"35"},
+			{"High rainfall (>50mm)":"50"}
+		],
+	"defaults":
+		{
+		    "rainfall_name" : "24hr Rainfall",
+			"wetness_name" : "10day Rainfall",
+			"rainfall_classes" : [20, 50],
+			"wetness_classes" : [80, 150]
+		}
+}

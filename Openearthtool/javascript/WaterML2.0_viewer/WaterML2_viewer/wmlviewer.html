@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<link href="third_party/nvd3/nv.d3.min.css" rel="stylesheet" type="text/css">
+
+<style>
+
+body {
+  overflow-y:scroll;
+}
+
+text {
+  font: 12px sans-serif;
+}
+
+svg {
+  display: block;
+}
+
+#chart1 svg {
+  height: 500px;
+  min-width: 100px;
+  min-height: 100px;
+}
+
+</style>
+<body>
+  <div id="chart" class='with-3d-shadow with-transitions'>
+    <svg style="height: 600px;"></svg>
+  </div>
+
+<script src="third_party/nvd3/lib/d3.v3.js"></script>
+<script src="third_party/nvd3/nv.d3.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="third_party/xml-to-json/jquery.xml2json.js"></script>
+<script src="parsewml.js"></script>
+<script src="tseries_viewer.js"></script>
+<script>
+
+var chart;
+
+var data = [{
+	key: "No data",
+	color: "blue",
+	values: [
+		{x: 1, y: 1}
+	]
+}];
+
+var wmlUrl = "data/RIBS_Bisagno_Wrf_Gavette_2011-11-05T00_00_00.wml";
+
+nv.addGraph(createTSeries('#chart svg'));
+
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.open("GET",wmlUrl);
+xmlhttp.onloadend = function(){
+  updateTSeries(parseWaterML2(xmlhttp.responseXML));
+};
+xmlhttp.send();
+
+</script>

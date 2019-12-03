@@ -1,0 +1,2 @@
+In Mapping_template.csv fill in the measured variables and the values corresponding to it according to AQUO.
+At least make sure the compulsory (J) fields are filled in or mapped to from the original data in another step in the ETL.

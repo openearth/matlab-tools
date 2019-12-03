@@ -1,0 +1,1296 @@
+-- The C compiler identification is GNU 6.3.0
+-- Check for working C compiler: C:/msys64/mingw64/bin/gcc.exe
+-- Check for working C compiler: C:/msys64/mingw64/bin/gcc.exe -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Check if the system is big endian
+-- Searching 16 bit integer
+-- Looking for sys/types.h
+-- Looking for sys/types.h - found
+-- Looking for stdint.h
+-- Looking for stdint.h - found
+-- Looking for stddef.h
+-- Looking for stddef.h - found
+-- Check size of unsigned short
+-- Check size of unsigned short - done
+-- Using unsigned short
+-- Check if the system is big endian - little endian
+-- Performing Test LIBTOOL_HAS_NO_UNDEFINED
+-- Performing Test LIBTOOL_HAS_NO_UNDEFINED - Success
+-- Performing Test CC_HAS_WCONVERSION
+-- Performing Test CC_HAS_WCONVERSION - Success
+-- Performing Test CC_HAS_SHORTEN_64_32
+-- Performing Test CC_HAS_SHORTEN_64_32 - Failed
+-- Found HDF5: C:/msys64/mingw64/lib/libhdf5.dll.a (found version "1.8.16") found components:  C HL 
+-- Found HDF5 libraries version 1.8.16
+-- Using HDF5 include dir: C:/msys64/mingw64/include
+-- Looking for H5Pget_fapl_mpiposix in hdf5
+-- Looking for H5Pget_fapl_mpiposix in hdf5 - not found
+-- Looking for H5Pget_fapl_mpio in hdf5
+-- Looking for H5Pget_fapl_mpio in hdf5 - not found
+-- Looking for H5Pset_all_coll_metadata_ops in hdf5
+-- Looking for H5Pset_all_coll_metadata_ops in hdf5 - not found
+-- Looking for H5Pset_deflate in hdf5
+-- Looking for H5Pset_deflate in hdf5 - found
+-- Looking for H5Z_SZIP in hdf5
+-- Looking for H5Z_SZIP in hdf5 - found
+-- Looking for H5free_memory in hdf5
+-- Looking for H5free_memory in hdf5 - found
+-- Looking for H5Pset_libver_bounds in hdf5
+-- Looking for H5Pset_libver_bounds in hdf5 - found
+-- Found ZLIB: C:/msys64/mingw64/lib/libz.a (found version "1.2.11") 
+-- Found CURL: C:/msys64/mingw64/lib/libcurl.dll.a (found version "7.57.0") 
+-- Performing Test HAVE_CURLOPT_USERNAME
+-- Performing Test HAVE_CURLOPT_USERNAME - Success
+-- Performing Test HAVE_CURLOPT_PASSWORD
+-- Performing Test HAVE_CURLOPT_PASSWORD - Success
+-- Performing Test HAVE_CURLOPT_KEYPASSWD
+-- Performing Test HAVE_CURLOPT_KEYPASSWD - Success
+-- Performing Test HAVE_CURLINFO_RESPONSE_CODE
+-- Performing Test HAVE_CURLINFO_RESPONSE_CODE - Success
+-- Performing Test HAVE_CURLOPT_CHUNK_BGN_FUNCTION
+-- Performing Test HAVE_CURLOPT_CHUNK_BGN_FUNCTION - Success
+-- Performing Test HAVE_CURLINFO_HTTP_CONNECTCODE
+-- Performing Test HAVE_CURLINFO_HTTP_CONNECTCODE - Success
+CMake Warning at CMakeLists.txt:1115 (MESSAGE):
+  ENABLE_FILTER_TESTING requires shared libraries.  Disabling.
+
+
+-- Performing Test __CHAR_UNSIGNED__
+-- Performing Test __CHAR_UNSIGNED__ - Failed
+-- Looking for math.h
+-- Looking for math.h - found
+-- Looking for unistd.h
+-- Looking for unistd.h - found
+-- Looking for alloca.h
+-- Looking for alloca.h - not found
+-- Looking for malloc.h
+-- Looking for malloc.h - found
+-- Looking for ctype.h
+-- Looking for ctype.h - found
+-- Looking for dirent.h
+-- Looking for dirent.h - found
+-- Looking for dlfcn.h
+-- Looking for dlfcn.h - not found
+-- Looking for errno.h
+-- Looking for errno.h - found
+-- Looking for fcntl.h
+-- Looking for fcntl.h - found
+-- Looking for getopt.h
+-- Looking for getopt.h - found
+-- Looking for stdbool.h
+-- Looking for stdbool.h - found
+-- Looking for locale.h
+-- Looking for locale.h - found
+-- Looking for stdio.h
+-- Looking for stdio.h - found
+-- Looking for stdlib.h
+-- Looking for stdlib.h - found
+-- Looking for stdarg.h
+-- Looking for stdarg.h - found
+-- Looking for strings.h
+-- Looking for strings.h - found
+-- Looking for signal.h
+-- Looking for signal.h - found
+-- Looking for sys/dir.h
+-- Looking for sys/dir.h - not found
+-- Looking for sys/ndir.h
+-- Looking for sys/ndir.h - not found
+-- Looking for sys/param.h
+-- Looking for sys/param.h - found
+-- Looking for sys/stat.h
+-- Looking for sys/stat.h - found
+-- Looking for sys/time.h
+-- Looking for sys/time.h - found
+-- Looking for sys/wait.h
+-- Looking for sys/wait.h - not found
+-- Looking for sys/mman.h
+-- Looking for sys/mman.h - found
+-- Looking for sys/resource.h
+-- Looking for sys/resource.h - not found
+-- Looking for sys/cdefs.h
+-- Looking for sys/cdefs.h - found
+-- Looking for inttypes.h
+-- Looking for inttypes.h - found
+-- Looking for pstdint.h
+-- Looking for pstdint.h - found
+-- Looking for endian.h
+-- Looking for endian.h - not found
+-- Looking for BaseTsd.h
+-- Looking for BaseTsd.h - found
+-- Looking for memory.h
+-- Looking for memory.h - found
+-- Looking for string.h
+-- Looking for string.h - found
+-- Looking for winsock2.h
+-- Looking for winsock2.h - found
+-- Looking for ftw.h
+-- Looking for ftw.h - found
+-- Looking for include files time.h, sys/time.h
+-- Looking for include files time.h, sys/time.h - found
+-- Looking for isfinite
+-- Looking for isfinite - found
+-- Looking for isnan
+-- Looking for isnan - found
+-- Looking for isinf
+-- Looking for isinf - found
+-- Looking for signbit
+-- Looking for signbit - found
+-- Looking for st_blksize
+-- Looking for st_blksize - not found
+-- Looking for alloca
+-- Looking for alloca - not found
+-- Looking for snprintf
+-- Looking for snprintf - found
+-- Looking for vprintf
+-- Looking for vprintf - found
+-- Check size of char
+-- Check size of char - done
+-- Check size of double
+-- Check size of double - done
+-- Check size of float
+-- Check size of float - done
+-- Check size of int
+-- Check size of int - done
+-- Check size of uint
+-- Check size of uint - failed
+-- Check size of long
+-- Check size of long - done
+-- Check size of long long
+-- Check size of long long - done
+-- Check size of unsigned long long
+-- Check size of unsigned long long - done
+-- Check size of off_t
+-- Check size of off_t - done
+-- Check size of off64_t
+-- Check size of off64_t - done
+-- Check size of short
+-- Check size of short - done
+-- Check size of ushort
+-- Check size of ushort - failed
+-- Check size of _Bool
+-- Check size of _Bool - done
+-- Check size of size_t
+-- Check size of size_t - done
+-- Check size of ssize_t
+-- Check size of ssize_t - done
+-- Check size of ptrdiff_t
+-- Check size of ptrdiff_t - done
+-- Check size of __int64
+-- Check size of __int64 - done
+-- Check size of int64_t
+-- Check size of int64_t - done
+-- Check size of uint64_t
+-- Check size of uint64_t - done
+-- Check size of unsigned char
+-- Check size of unsigned char - done
+-- Check size of unsigned short int
+-- Check size of unsigned short int - done
+-- Check size of unsigned int
+-- Check size of unsigned int - done
+-- Check size of long long
+-- Check size of long long - done
+-- Check size of unsigned long long
+-- Check size of unsigned long long - done
+-- Looking for fsync
+-- Looking for fsync - not found
+-- Looking for strlcat
+-- Looking for strlcat - not found
+-- Looking for strerror
+-- Looking for strerror - found
+-- Looking for strchr
+-- Looking for strchr - found
+-- Looking for strrchr
+-- Looking for strrchr - found
+-- Looking for strcat
+-- Looking for strcat - found
+-- Looking for strcpy
+-- Looking for strcpy - found
+-- Looking for strdup
+-- Looking for strdup - found
+-- Looking for strndup
+-- Looking for strndup - not found
+-- Looking for strcasecmp
+-- Looking for strcasecmp - found
+-- Looking for strtod
+-- Looking for strtod - found
+-- Looking for strtoll
+-- Looking for strtoll - found
+-- Looking for strtoull
+-- Looking for strtoull - found
+-- Looking for strstr
+-- Looking for strstr - found
+-- Looking for mktemp
+-- Looking for mktemp - found
+-- Looking for rand
+-- Looking for rand - found
+-- Looking for random
+-- Looking for random - not found
+-- Looking for gettimeofday
+-- Looking for gettimeofday - found
+-- Looking for MPI_Comm_f2c
+-- Looking for MPI_Comm_f2c - not found
+-- Looking for memmove
+-- Looking for memmove - found
+-- Looking for memcmp
+-- Looking for memcmp - found
+-- Looking for getpagesize
+-- Looking for getpagesize - found
+-- Looking for sysconf
+-- Looking for sysconf - not found
+-- Looking for getrlimit
+-- Looking for getrlimit - not found
+-- Looking for _filelengthi64
+-- Looking for _filelengthi64 - found
+-- Looking for mmap
+-- Looking for mmap - not found
+-- Looking for mremap
+-- Looking for mremap - not found
+CMake Warning at CMakeLists.txt:1400 (MESSAGE):
+  mremap not found: disabling MMAP support.
+
+
+-- Found bash: C:/msys64/usr/bin/bash.exe
+-- CMAKE_SOURCE_DIR=C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0
+-- CMAKE_BINARY_DIR=C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/build-static-x86_64-w64-mingw32
+-- CMAKE_CURRENT_SOURCE_DIR=C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/nc_test
+-- CMAKE_CURRENT_BINARY_DIR=C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/build-static-x86_64-w64-mingw32/nc_test
+
+
+Configuration Summary:
+
+-- Building Shared Libraries:     OFF
+-- Building netCDF-4:             ON
+-- Building DAP2 Support:         ON
+-- Building DAP4 Support:         ON
+-- Building Utilities:            ON
+
+Tests Enabled:              ON
+-- DAP Remote Tests:  ON
+-- Extra Tests:       OFF
+-- Coverage Tests:    OFF
+-- Parallel Tests:    OFF
+-- Large File Tests:  OFF
+-- Extreme Numbers:   ON
+
+Compiler:
+
+-- Build Type:           RELEASE
+-- CMAKE_C_COMPILER:     C:/msys64/mingw64/bin/gcc.exe
+-- CMAKE_C_FLAGS:        -march=x86-64 -mtune=generic -O2 -pipe -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
+-- CMAKE_C_FLAGS_RELEASE:   -O3 -DNDEBUG
+-- Linking against:      C:/msys64/mingw64/lib/libhdf5_hl.dll.a;C:/msys64/mingw64/lib/libhdf5.dll.a;C:/msys64/mingw64/lib/libz.a;C:/msys64/mingw64/lib/libszip.dll.a;C:/msys64/mingw64/lib/libcurl.dll.a
+
+# NetCDF C Configuration Summary
+==============================
+
+# General
+-------
+NetCDF Version:		4.6.0
+Configured On:		Tue, Mar 13, 2018 10:00:34 PM
+Host System:		x86_64-MINGW64_NT-6.1-2.7.0(0.306/5/3)
+Build Directory: 	C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/build-static-x86_64-w64-mingw32
+Install Prefix:         /mingw64
+
+# Compiling Options
+-----------------
+C Compiler:		C:/msys64/mingw64/bin/gcc.exe
+CFLAGS:			-march=x86-64 -mtune=generic -O2 -pipe -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -DNDEBUG
+CPPFLAGS:		 
+LDFLAGS:		-pipe 
+AM_CFLAGS:		
+AM_CPPFLAGS:		
+AM_LDFLAGS:		
+Shared Library:		no
+Static Library:		yes
+Extra libraries:	-lhdf5_hl -lhdf5 -lz -lszip -lcurl
+
+# Features
+--------
+NetCDF-2 API:		yes
+HDF4 Support:		no
+NetCDF-4 API:		yes
+NC-4 Parallel Support:	no
+PNetCDF Support:	no
+DAP2 Support:		yes
+DAP4 Support:		yes
+Diskless Support:	yes
+MMap Support:		no
+JNA Support:		no
+CDF5 Support:		no
+ERANGE fill Support:	no
+
+-- Configuring done
+-- Generating done
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    SZIP_INCLUDE_DIR
+
+
+-- Build files have been written to: C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/build-static-x86_64-w64-mingw32
+[35m[1mScanning dependencies of target dispatch[0m
+[35m[1mScanning dependencies of target manpage[0m
+[  0%] [34m[1mGenerating C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libsrc/ncx.c[0m
+[35m[1mScanning dependencies of target netcdf4[0m
+[35m[1mScanning dependencies of target oc2[0m
+[  0%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dparallel.c.obj[0m
+[  1%] [32mBuilding C object libsrc4/CMakeFiles/netcdf4.dir/nc4dispatch.c.obj[0m
+[  1%] [34m[1mGenerating C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libsrc/putget.c[0m
+[  1%] [32mBuilding C object oc2/CMakeFiles/oc2.dir/oc.c.obj[0m
+[  1%] Built target manpage
+[  1%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dcopy.c.obj[0m
+[  2%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dfile.c.obj[0m
+[  3%] [34m[1mGenerating C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libsrc/attr.c[0m
+[  3%] [32mBuilding C object libsrc4/CMakeFiles/netcdf4.dir/nc4attr.c.obj[0m
+[  3%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/ddim.c.obj[0m
+[35m[1mScanning dependencies of target netcdf3[0m
+[  3%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/datt.c.obj[0m
+[  3%] [32mBuilding C object libsrc4/CMakeFiles/netcdf4.dir/nc4dim.c.obj[0m
+[  3%] [32mBuilding C object oc2/CMakeFiles/oc2.dir/daplex.c.obj[0m
+[  3%] [32mBuilding C object libsrc/CMakeFiles/netcdf3.dir/v1hpg.c.obj[0m
+[  3%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dattinq.c.obj[0m
+[  3%] [32mBuilding C object oc2/CMakeFiles/oc2.dir/dapparse.c.obj[0m
+[  3%] [32mBuilding C object libsrc4/CMakeFiles/netcdf4.dir/nc4file.c.obj[0m
+[  3%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dattput.c.obj[0m
+[  3%] [32mBuilding C object libsrc/CMakeFiles/netcdf3.dir/putget.c.obj[0m
+[  4%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dattget.c.obj[0m
+[  4%] [32mBuilding C object libsrc4/CMakeFiles/netcdf4.dir/nc4grp.c.obj[0m
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/dapparse.c: In function 'octypefor':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/dapparse.c:428:13: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+     switch ((long)etype) {
+             ^
+[  5%] [32mBuilding C object libsrc4/CMakeFiles/netcdf4.dir/nc4type.c.obj[0m
+[  5%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/derror.c.obj[0m
+[  5%] [32mBuilding C object oc2/CMakeFiles/oc2.dir/dapy.c.obj[0m
+[  5%] [32mBuilding C object libsrc4/CMakeFiles/netcdf4.dir/nc4var.c.obj[0m
+[  5%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dvar.c.obj[0m
+[  5%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dvarget.c.obj[0m
+[  5%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dvarput.c.obj[0m
+[  5%] [32mBuilding C object libsrc4/CMakeFiles/netcdf4.dir/ncfunc.c.obj[0m
+[  6%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dvarinq.c.obj[0m
+[  7%] [32mBuilding C object oc2/CMakeFiles/oc2.dir/occompile.c.obj[0m
+[  7%] [32mBuilding C object libsrc/CMakeFiles/netcdf3.dir/attr.c.obj[0m
+[  7%] [32mBuilding C object libsrc4/CMakeFiles/netcdf4.dir/nc4internal.c.obj[0m
+[  7%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/ddispatch.c.obj[0m
+[  7%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/nclog.c.obj[0m
+[  8%] [32mBuilding C object libsrc/CMakeFiles/netcdf3.dir/nc3dispatch.c.obj[0m
+[  8%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dutf8.c.obj[0m
+[  8%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dstring.c.obj[0m
+[  8%] [32mBuilding C object libsrc4/CMakeFiles/netcdf4.dir/nc4hdf.c.obj[0m
+[  8%] [32mBuilding C object libsrc/CMakeFiles/netcdf3.dir/nc3internal.c.obj[0m
+[  9%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dinternal.c.obj[0m
+[  9%] [32mBuilding C object libsrc/CMakeFiles/netcdf3.dir/var.c.obj[0m
+[  9%] [32mBuilding C object oc2/CMakeFiles/oc2.dir/occurlfunctions.c.obj[0m
+[  9%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/doffsets.c.obj[0m
+[  9%] [32mBuilding C object libsrc/CMakeFiles/netcdf3.dir/dim.c.obj[0m
+[35m[1mScanning dependencies of target dap2[0m
+[ 10%] [32mBuilding C object libdap2/CMakeFiles/dap2.dir/constraints.c.obj[0m
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/occurlfunctions.c: In function 'ocset_curlflag':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/occurlfunctions.c:93:36: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+      CHECK(state, CURLOPT_TIMEOUT, (OPTARG)((long)state->auth.curlflags.timeout));
+                                    ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/occurlfunctions.c:17:61: note: in definition of macro 'CHECK'
+ #define CHECK(state,flag,value) {if(check(state,flag,(void*)value) != OC_NOERR) {goto done;}}
+                                                             ^~~~~
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/occurlfunctions.c:124:38: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+      CHECK(state, CURLOPT_PROXYPORT, (OPTARG)(long)state->auth.proxy.port);
+                                      ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/occurlfunctions.c:17:61: note: in definition of macro 'CHECK'
+ #define CHECK(state,flag,value) {if(check(state,flag,(void*)value) != OC_NOERR) {goto done;}}
+                                                             ^~~~~
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/occurlfunctions.c:140:46: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+         CHECK(state, CURLOPT_SSL_VERIFYPEER, (OPTARG)(ssl->verifypeer?1L:0L));
+                                              ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/occurlfunctions.c:17:61: note: in definition of macro 'CHECK'
+ #define CHECK(state,flag,value) {if(check(state,flag,(void*)value) != OC_NOERR) {goto done;}}
+                                                             ^~~~~
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/occurlfunctions.c:141:46: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+         CHECK(state, CURLOPT_SSL_VERIFYHOST, (OPTARG)(ssl->verifyhost?1L:0L));
+                                              ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/occurlfunctions.c:17:61: note: in definition of macro 'CHECK'
+ #define CHECK(state,flag,value) {if(check(state,flag,(void*)value) != OC_NOERR) {goto done;}}
+                                                             ^~~~~
+[ 10%] [32mBuilding C object oc2/CMakeFiles/oc2.dir/ocdata.c.obj[0m
+[ 10%] [32mBuilding C object libdap2/CMakeFiles/dap2.dir/dapcvt.c.obj[0m
+[ 10%] [32mBuilding C object oc2/CMakeFiles/oc2.dir/ocdebug.c.obj[0m
+[ 10%] [32mBuilding C object libdap2/CMakeFiles/dap2.dir/dapodom.c.obj[0m
+[ 11%] [32mBuilding C object libsrc4/CMakeFiles/netcdf4.dir/nc4info.c.obj[0m
+[ 11%] [32mBuilding C object oc2/CMakeFiles/oc2.dir/ocdump.c.obj[0m
+[ 11%] Built target netcdf4
+[ 11%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/ncuri.c.obj[0m
+[ 11%] [32mBuilding C object libsrc/CMakeFiles/netcdf3.dir/ncx.c.obj[0m
+[ 11%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/nclist.c.obj[0m
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/ocdump.c: In function 'dumpocnode1':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/ocdump.c:78:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  fprintf(stdout," &%lx",(unsigned long)node);
+                         ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/ocdump.c:96:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  fprintf(stdout," &%lx",(unsigned long)node);
+                         ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/ocdump.c:108:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  fprintf(stdout," &%lx",(unsigned long)node);
+                         ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/ocdump.c:121:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  fprintf(stdout," &%lx",(unsigned long)node);
+                         ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/ocdump.c:140:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  fprintf(stdout," &%lx",(unsigned long)node);
+                         ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/ocdump.c: In function 'ocdumpdata':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/ocdump.c:500:37: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+     snprintf(tmp,sizeof(tmp),"%lx:",(unsigned long)data);
+                                     ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/ocdump.c:520:36: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+     snprintf(tmp,sizeof(tmp),"%lx",(unsigned long)data->container);
+                                    ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/ocdump.c: In function 'ocdumpdatapath':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/oc2/ocdump.c:680:41: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+     snprintf(tmp,sizeof(tmp),"->0x%0lx",(unsigned long)pathdata);
+                                         ^
+[ 12%] [32mBuilding C object libsrc/CMakeFiles/netcdf3.dir/lookup3.c.obj[0m
+[ 12%] [32mBuilding C object libdap2/CMakeFiles/dap2.dir/daputil.c.obj[0m
+[ 13%] [32mBuilding C object oc2/CMakeFiles/oc2.dir/ocinternal.c.obj[0m
+[ 13%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/ncbytes.c.obj[0m
+[ 13%] [32mBuilding C object libsrc/CMakeFiles/netcdf3.dir/ncio.c.obj[0m
+[ 14%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/nchashmap.c.obj[0m
+[ 14%] [32mBuilding C object libsrc/CMakeFiles/netcdf3.dir/nc_hashmap.c.obj[0m
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdispatch/nchashmap.c: In function 'nchashinsert':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdispatch/nchashmap.c:74:11: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  if(hash==(nchashid)(*list)) return FALSE;
+           ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdispatch/nchashmap.c:76:20: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+     nclistpush(seq,(void*)hash);
+                    ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdispatch/nchashmap.c: In function 'nchashreplace':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdispatch/nchashmap.c:98:11: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  if(hash==(nchashid)(*list)) {list[1] = value; return TRUE;}
+           ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdispatch/nchashmap.c:100:20: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+     nclistpush(seq,(void*)hash);
+                    ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdispatch/nchashmap.c: In function 'nchashremove':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdispatch/nchashmap.c:122:11: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  if(hash==(nchashid)(*list)) {
+           ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdispatch/nchashmap.c: In function 'nchashlookup':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdispatch/nchashmap.c:157:11: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  if(hash==(nchashid)(*list)) {if(valuep) {*valuep = list[1]; return TRUE;}}
+           ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdispatch/nchashmap.c: In function 'nchashith':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdispatch/nchashmap.c:174:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+      if(hashp) *hashp = (nchashid)nclistget(seq,index*2);
+                         ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdispatch/nchashmap.c: In function 'nchashkeys':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdispatch/nchashmap.c:198:26: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+          keys[index++] = (nchashid)nclistget(seq,j);
+                          ^
+[ 14%] [32mBuilding C object libdap2/CMakeFiles/dap2.dir/ncdaperr.c.obj[0m
+[ 14%] [32mBuilding C object oc2/CMakeFiles/oc2.dir/ocnode.c.obj[0m
+[ 14%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/nctime.c.obj[0m
+[ 14%] [32mBuilding C object libsrc/CMakeFiles/netcdf3.dir/memio.c.obj[0m
+[ 14%] [32mBuilding C object libsrc/CMakeFiles/netcdf3.dir/posixio.c.obj[0m
+[ 14%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/nc.c.obj[0m
+[ 15%] [32mBuilding C object libdap2/CMakeFiles/dap2.dir/cdf.c.obj[0m
+[ 15%] [32mBuilding C object oc2/CMakeFiles/oc2.dir/ochttp.c.obj[0m
+[ 15%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/nclistmgr.c.obj[0m
+[ 15%] [32mBuilding C object libdap2/CMakeFiles/dap2.dir/cache.c.obj[0m
+[ 15%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/utf8proc.c.obj[0m
+[ 15%] [32mBuilding C object oc2/CMakeFiles/oc2.dir/ocread.c.obj[0m
+[ 15%] Built target netcdf3
+[35m[1mScanning dependencies of target dap4[0m
+[35m[1mScanning dependencies of target nctrunc[0m
+[ 16%] [32mBuilding C object ncdump/CMakeFiles/nctrunc.dir/nctrunc.c.obj[0m
+[ 16%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4crc32.c.obj[0m
+[ 16%] [32mBuilding C object libdap2/CMakeFiles/dap2.dir/dapdump.c.obj[0m
+[ 16%] [32m[1mLinking C executable nctrunc.exe[0m
+[ 16%] [32mBuilding C object oc2/CMakeFiles/oc2.dir/ocutil.c.obj[0m
+[ 16%] Built target nctrunc
+[ 17%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dwinpath.c.obj[0m
+[ 17%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dutil.c.obj[0m
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap2/dapdump.c: In function 'dumpnode':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap2/dapdump.c:431:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+     snprintf(tmp,sizeof(tmp),"ocnode=%lx\n",(unsigned long)node->ocnode);
+                                             ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap2/dapdump.c: In function 'dumpcachenode':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap2/dapdump.c:515:3: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   (unsigned long)node,
+   ^
+[ 17%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4curlfunctions.c.obj[0m
+[ 17%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/drc.c.obj[0m
+[ 17%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dauth.c.obj[0m
+[ 17%] [32mBuilding C object libdap2/CMakeFiles/dap2.dir/dapdebug.c.obj[0m
+[ 17%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dgroup.c.obj[0m
+[ 18%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dvlen.c.obj[0m
+[ 19%] [32mBuilding C object oc2/CMakeFiles/oc2.dir/occurlflags.c.obj[0m
+[ 19%] [32mBuilding C object libdap2/CMakeFiles/dap2.dir/dapattr.c.obj[0m
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap4/d4curlfunctions.c: In function 'set_curlflag':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap4/d4curlfunctions.c:86:36: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+      CHECK(state, CURLOPT_TIMEOUT, (OPTARG)((long)state->auth.curlflags.timeout));
+                                    ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap4/d4curlfunctions.c:22:61: note: in definition of macro 'CHECK'
+ #define CHECK(state,flag,value) {if(check(state,flag,(void*)value) != NC_NOERR) {goto done;}}
+                                                             ^~~~~
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap4/d4curlfunctions.c:111:38: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+      CHECK(state, CURLOPT_PROXYPORT, (OPTARG)(long)state->auth.proxy.port);
+                                      ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap4/d4curlfunctions.c:22:61: note: in definition of macro 'CHECK'
+ #define CHECK(state,flag,value) {if(check(state,flag,(void*)value) != NC_NOERR) {goto done;}}
+                                                             ^~~~~
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap4/d4curlfunctions.c:127:46: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+         CHECK(state, CURLOPT_SSL_VERIFYPEER, (OPTARG)(ssl->verifypeer?1L:0L));
+                                              ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap4/d4curlfunctions.c:22:61: note: in definition of macro 'CHECK'
+ #define CHECK(state,flag,value) {if(check(state,flag,(void*)value) != NC_NOERR) {goto done;}}
+                                                             ^~~~~
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap4/d4curlfunctions.c:128:46: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+         CHECK(state, CURLOPT_SSL_VERIFYHOST, (OPTARG)(ssl->verifyhost?1L:0L));
+                                              ^
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap4/d4curlfunctions.c:22:61: note: in definition of macro 'CHECK'
+ #define CHECK(state,flag,value) {if(check(state,flag,(void*)value) != NC_NOERR) {goto done;}}
+                                                             ^~~~~
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap4/d4curlfunctions.c: In function 'cvt':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap4/d4curlfunctions.c:232:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  return (void*)longvalue;
+         ^
+[ 19%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dcompound.c.obj[0m
+[ 19%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4curlflags.c.obj[0m
+[ 20%] [32mBuilding C object libdap2/CMakeFiles/dap2.dir/ncd2dispatch.c.obj[0m
+[ 20%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dtype.c.obj[0m
+[ 20%] [32mBuilding C object oc2/CMakeFiles/oc2.dir/xxdr.c.obj[0m
+[ 20%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/denum.c.obj[0m
+[ 20%] [32mBuilding C object libdap2/CMakeFiles/dap2.dir/getvara.c.obj[0m
+[ 20%] Built target oc2
+[ 20%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dopaque.c.obj[0m
+[ 20%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4fix.c.obj[0m
+[ 21%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/ncaux.c.obj[0m
+[ 22%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4data.c.obj[0m
+[ 22%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dfilter.c.obj[0m
+[ 22%] [32mBuilding C object libdap2/CMakeFiles/dap2.dir/dceconstraints.c.obj[0m
+[ 22%] [32mBuilding C object libdispatch/CMakeFiles/dispatch.dir/dv2i.c.obj[0m
+[ 22%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4file.c.obj[0m
+[ 22%] [32mBuilding C object libdap2/CMakeFiles/dap2.dir/dcetab.c.obj[0m
+[ 22%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4parser.c.obj[0m
+[ 22%] Built target dispatch
+[ 22%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4meta.c.obj[0m
+[ 22%] [32mBuilding C object libdap2/CMakeFiles/dap2.dir/dceparse.c.obj[0m
+[ 22%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4varx.c.obj[0m
+[ 23%] [32mBuilding C object libdap2/CMakeFiles/dap2.dir/dcelex.c.obj[0m
+[ 24%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4dump.c.obj[0m
+In file included from C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/include/ncconfigure.h:14:0,
+                 from C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/build-static-x86_64-w64-mingw32/config.h:725,
+                 from C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap4/d4includes.h:9,
+                 from C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap4/d4parser.c:6:
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap4/d4parser.c: In function 'parseULL':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/libdap4/d4parser.c:956:16: warning: '_errno' redeclared without dllimport attribute: previous dllimport ignored [-Wattributes]
+     extern int errno;
+                ^
+[ 24%] Built target dap2
+[ 24%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4swap.c.obj[0m
+[ 24%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4chunk.c.obj[0m
+[ 24%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4printer.c.obj[0m
+[ 25%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4http.c.obj[0m
+[ 25%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4read.c.obj[0m
+[ 25%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4util.c.obj[0m
+[ 25%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4odom.c.obj[0m
+[ 25%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4cvt.c.obj[0m
+[ 25%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/d4debug.c.obj[0m
+[ 26%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/ncd4dispatch.c.obj[0m
+[ 26%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/ezxml_extra.c.obj[0m
+[ 26%] [32mBuilding C object libdap4/CMakeFiles/dap4.dir/ezxml.c.obj[0m
+[ 26%] Built target dap4
+[35m[1mScanning dependencies of target netcdf[0m
+[ 26%] [32mBuilding C object liblib/CMakeFiles/netcdf.dir/nc_initialize.c.obj[0m
+[ 26%] [32m[1mLinking C static library libnetcdf.a[0m
+[ 26%] Built target netcdf
+[35m[1mScanning dependencies of target ncgen[0m
+[35m[1mScanning dependencies of target ncgen3[0m
+[35m[1mScanning dependencies of target ref_ctest64[0m
+[35m[1mScanning dependencies of target tst_comp[0m
+[35m[1mScanning dependencies of target tst_fileinfo[0m
+[ 26%] [32mBuilding C object ncdump/CMakeFiles/ref_ctest64.dir/ref_ctest64.c.obj[0m
+[ 26%] [32mBuilding C object ncgen3/CMakeFiles/ncgen3.dir/main.c.obj[0m
+[ 26%] [32mBuilding C object ncdump/CMakeFiles/tst_comp.dir/tst_comp.c.obj[0m
+[ 26%] [32mBuilding C object ncdump/CMakeFiles/tst_fileinfo.dir/tst_fileinfo.c.obj[0m
+[ 27%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/generate.c.obj[0m
+[ 27%] [32mBuilding C object ncgen3/CMakeFiles/ncgen3.dir/load.c.obj[0m
+[ 27%] [32m[1mLinking C executable tst_comp.exe[0m
+[ 27%] [32m[1mLinking C executable tst_fileinfo.exe[0m
+[ 28%] [32m[1mLinking C executable ref_ctest64.exe[0m
+[ 28%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/main.c.obj[0m
+[ 28%] [32mBuilding C object ncgen3/CMakeFiles/ncgen3.dir/escapes.c.obj[0m
+[ 28%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/cdata.c.obj[0m
+[ 29%] [32mBuilding C object ncgen3/CMakeFiles/ncgen3.dir/getfill.c.obj[0m
+[ 29%] Built target tst_fileinfo
+[ 29%] Built target tst_comp
+[ 29%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/bindata.c.obj[0m
+[ 29%] Built target ref_ctest64
+[ 29%] [32mBuilding C object ncgen3/CMakeFiles/ncgen3.dir/init.c.obj[0m
+[35m[1mScanning dependencies of target tst_dimsizes[0m
+[35m[1mScanning dependencies of target tst_comp2[0m
+[35m[1mScanning dependencies of target ref_ctest[0m
+[ 29%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/genchar.c.obj[0m
+[ 29%] [32mBuilding C object ncgen3/CMakeFiles/ncgen3.dir/genlib.c.obj[0m
+[ 29%] [32mBuilding C object ncdump/CMakeFiles/tst_dimsizes.dir/tst_dimsizes.c.obj[0m
+[ 30%] [32mBuilding C object ncdump/CMakeFiles/tst_comp2.dir/tst_comp2.c.obj[0m
+[ 30%] [32mBuilding C object ncdump/CMakeFiles/ref_ctest.dir/ref_ctest.c.obj[0m
+[ 30%] [32m[1mLinking C executable tst_dimsizes.exe[0m
+[ 30%] [32m[1mLinking C executable tst_comp2.exe[0m
+[ 31%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/cvt.c.obj[0m
+[ 31%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/data.c.obj[0m
+[ 31%] [32m[1mLinking C executable ref_ctest.exe[0m
+[ 31%] Built target tst_dimsizes
+[ 31%] Built target tst_comp2
+[ 31%] [32mBuilding C object ncgen3/CMakeFiles/ncgen3.dir/ncgentab.c.obj[0m
+[35m[1mScanning dependencies of target tst_enum_data[0m
+[ 31%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/debug.c.obj[0m
+[35m[1mScanning dependencies of target tst_fillbug[0m
+[ 32%] [32mBuilding C object ncdump/CMakeFiles/tst_enum_data.dir/tst_enum_data.c.obj[0m
+[ 32%] [32mBuilding C object ncdump/CMakeFiles/tst_fillbug.dir/tst_fillbug.c.obj[0m
+[ 32%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/escapes.c.obj[0m
+[ 32%] Built target ref_ctest
+[35m[1mScanning dependencies of target ncdump[0m
+[ 32%] [32m[1mLinking C executable tst_enum_data.exe[0m
+[ 33%] [32m[1mLinking C executable tst_fillbug.exe[0m
+[ 33%] [32mBuilding C object ncdump/CMakeFiles/ncdump.dir/ncdump.c.obj[0m
+[ 33%] [32m[1mLinking C executable ncgen3.exe[0m
+[ 33%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/genc.c.obj[0m
+[ 33%] Built target tst_enum_data
+[35m[1mScanning dependencies of target rewrite-scalar[0m
+[ 33%] Built target tst_fillbug
+[ 33%] [32mBuilding C object ncdump/CMakeFiles/ncdump.dir/vardata.c.obj[0m
+[ 33%] [32mBuilding C object ncdump/CMakeFiles/rewrite-scalar.dir/rewrite-scalar.c.obj[0m
+[35m[1mScanning dependencies of target bom[0m
+[ 33%] Built target ncgen3
+[ 33%] [32mBuilding C object ncdump/CMakeFiles/bom.dir/bom.c.obj[0m
+[ 34%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/genbin.c.obj[0m
+[ 34%] [32mBuilding C object ncdump/CMakeFiles/ncdump.dir/dumplib.c.obj[0m
+[35m[1mScanning dependencies of target tst_create_files[0m
+[ 34%] [32m[1mLinking C executable rewrite-scalar.exe[0m
+[ 34%] [32m[1mLinking C executable bom.exe[0m
+[ 34%] [32mBuilding C object ncdump/CMakeFiles/tst_create_files.dir/tst_create_files.c.obj[0m
+[ 34%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/generr.c.obj[0m
+[ 35%] [32m[1mLinking C executable tst_create_files.exe[0m
+[ 35%] Built target bom
+[ 35%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/genlib.c.obj[0m
+[ 35%] Built target rewrite-scalar
+[35m[1mScanning dependencies of target tst_compress[0m
+[ 36%] [32mBuilding C object ncdump/CMakeFiles/ncdump.dir/indent.c.obj[0m
+[35m[1mScanning dependencies of target tst_group_data[0m
+[ 36%] [32mBuilding C object ncdump/CMakeFiles/tst_compress.dir/tst_compress.c.obj[0m
+[ 36%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/getfill.c.obj[0m
+[ 36%] [32mBuilding C object ncdump/CMakeFiles/ncdump.dir/nctime0.c.obj[0m
+[ 36%] [32mBuilding C object ncdump/CMakeFiles/tst_group_data.dir/tst_group_data.c.obj[0m
+[ 36%] Built target tst_create_files
+[ 36%] [32m[1mLinking C executable tst_compress.exe[0m
+[ 36%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/odom.c.obj[0m
+[ 36%] [32mBuilding C object ncdump/CMakeFiles/ncdump.dir/utils.c.obj[0m
+[35m[1mScanning dependencies of target tst_unicode[0m
+[ 36%] [32m[1mLinking C executable tst_group_data.exe[0m
+[ 36%] [32mBuilding C object ncdump/CMakeFiles/tst_unicode.dir/tst_unicode.c.obj[0m
+[ 37%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/semantics.c.obj[0m
+[ 37%] [32mBuilding C object ncdump/CMakeFiles/ncdump.dir/nciter.c.obj[0m
+[ 37%] [32m[1mLinking C executable tst_unicode.exe[0m
+[ 37%] Built target tst_compress
+[35m[1mScanning dependencies of target tst_h_rdc0[0m
+[ 37%] [32m[1mLinking C executable ncdump.exe[0m
+[ 37%] Built target tst_group_data
+[ 37%] [32mBuilding C object ncdump/CMakeFiles/tst_h_rdc0.dir/tst_h_rdc0.c.obj[0m
+[35m[1mScanning dependencies of target tst_special_atts[0m
+[ 37%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/ncgeny.c.obj[0m
+[ 37%] Built target tst_unicode
+[ 37%] [32m[1mLinking C executable tst_h_rdc0.exe[0m
+[ 37%] [32mBuilding C object ncdump/CMakeFiles/tst_special_atts.dir/tst_special_atts.c.obj[0m
+[35m[1mScanning dependencies of target tst_string_data[0m
+In file included from C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/include/ncconfigure.h:14:0,
+                 from C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/build-static-x86_64-w64-mingw32/config.h:725,
+                 from C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/ncgen/includes.h:15,
+                 from ncgen.y:15:
+ncgen.l: In function 'parseULL':
+ncgen.l:661:16: warning: '_errno' redeclared without dllimport attribute after being referenced with dll linkage
+     extern int errno;
+                ^
+[ 37%] Built target ncdump
+[ 38%] [32mBuilding C object ncdump/CMakeFiles/tst_string_data.dir/tst_string_data.c.obj[0m
+[ 38%] [32m[1mLinking C executable tst_special_atts.exe[0m
+[35m[1mScanning dependencies of target tst_utf8[0m
+[ 38%] [32m[1mLinking C executable tst_string_data.exe[0m
+[ 38%] Built target tst_h_rdc0
+[ 38%] [32mBuilding C object ncdump/CMakeFiles/tst_utf8.dir/tst_utf8.c.obj[0m
+[35m[1mScanning dependencies of target nccopy[0m
+[ 38%] [32mBuilding C object ncdump/CMakeFiles/nccopy.dir/nccopy.c.obj[0m
+[ 39%] [32m[1mLinking C executable tst_utf8.exe[0m
+[ 39%] Built target tst_special_atts
+[ 39%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/dump.c.obj[0m
+[ 39%] Built target tst_string_data
+[35m[1mScanning dependencies of target tst_opaque_data[0m
+[35m[1mScanning dependencies of target tst_nans[0m
+[ 39%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/util.c.obj[0m
+[ 39%] [32mBuilding C object ncdump/CMakeFiles/nccopy.dir/nciter.c.obj[0m
+[ 39%] [32mBuilding C object ncdump/CMakeFiles/tst_opaque_data.dir/tst_opaque_data.c.obj[0m
+[ 39%] [32mBuilding C object ncdump/CMakeFiles/tst_nans.dir/tst_nans.c.obj[0m
+[ 39%] Built target tst_utf8
+[ 40%] [32m[1mLinking C executable tst_opaque_data.exe[0m
+[ 41%] [32mBuilding C object ncdump/CMakeFiles/nccopy.dir/chunkspec.c.obj[0m
+[35m[1mScanning dependencies of target tst_chunking[0m
+[ 41%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/bytebuffer.c.obj[0m
+[ 41%] [32m[1mLinking C executable tst_nans.exe[0m
+[ 41%] [32mBuilding C object ncdump/CMakeFiles/nccopy.dir/utils.c.obj[0m
+[ 41%] [32mBuilding C object ncdump/CMakeFiles/tst_chunking.dir/tst_chunking.c.obj[0m
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/ncgen/bytebuffer.c: In function 'bbNew':
+C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/ncgen/bytebuffer.c:39:25: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+   if(bb == NULL) return (Bytebuffer*)bbFail();
+                         ^
+[ 42%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/list.c.obj[0m
+[ 42%] [32m[1mLinking C executable tst_chunking.exe[0m
+[ 42%] [32mBuilding C object ncdump/CMakeFiles/nccopy.dir/dimmap.c.obj[0m
+[ 42%] Built target tst_opaque_data
+[35m[1mScanning dependencies of target tst_vlen_data[0m
+[ 42%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/genf77.c.obj[0m
+[ 42%] [32m[1mLinking C executable nccopy.exe[0m
+[ 42%] Built target tst_nans
+[ 42%] [32mBuilding C object ncdump/CMakeFiles/tst_vlen_data.dir/tst_vlen_data.c.obj[0m
+[35m[1mScanning dependencies of target tst_h_scalar[0m
+[ 42%] Built target tst_chunking
+[ 42%] [32mBuilding C object ncdump/CMakeFiles/tst_h_scalar.dir/tst_h_scalar.c.obj[0m
+[35m[1mScanning dependencies of target tst_rename[0m
+[ 43%] [32m[1mLinking C executable tst_vlen_data.exe[0m
+[ 43%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/f77data.c.obj[0m
+[ 43%] [32mBuilding C object nctest/CMakeFiles/tst_rename.dir/tst_rename.c.obj[0m
+[ 43%] Built target nccopy
+[ 44%] [32m[1mLinking C executable tst_h_scalar.exe[0m
+[ 44%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/genj.c.obj[0m
+[35m[1mScanning dependencies of target nctest[0m
+[ 44%] [32m[1mLinking C executable tst_rename.exe[0m
+[ 45%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/add.c.obj[0m
+[ 45%] Built target tst_vlen_data
+[ 45%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/jdata.c.obj[0m
+[35m[1mScanning dependencies of target nc_test_tst_norm[0m
+[ 45%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/atttests.c.obj[0m
+[ 45%] Built target tst_h_scalar
+[ 45%] [32mBuilding C object nc_test/CMakeFiles/nc_test_tst_norm.dir/tst_norm.c.obj[0m
+[ 46%] [32mBuilding C object ncgen/CMakeFiles/ncgen.dir/nc_iter.c.obj[0m
+[35m[1mScanning dependencies of target tst_diskless2[0m
+[ 46%] Built target tst_rename
+[35m[1mScanning dependencies of target tst_diskless3[0m
+[ 47%] [32mBuilding C object nc_test/CMakeFiles/tst_diskless2.dir/tst_diskless2.c.obj[0m
+[ 47%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/cdftests.c.obj[0m
+[ 47%] [32m[1mLinking C executable nc_test_tst_norm.exe[0m
+[ 47%] [32m[1mLinking C executable ncgen.exe[0m
+[ 47%] [32mBuilding C object nc_test/CMakeFiles/tst_diskless3.dir/tst_diskless3.c.obj[0m
+[ 47%] [32m[1mLinking C executable tst_diskless2.exe[0m
+[ 47%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/dimtests.c.obj[0m
+[ 47%] [32m[1mLinking C executable tst_diskless3.exe[0m
+[ 47%] Built target nc_test_tst_norm
+[ 47%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/driver.c.obj[0m
+[ 47%] Built target ncgen
+[35m[1mScanning dependencies of target nc_test_tst_nofill[0m
+[ 47%] Built target tst_diskless2
+[35m[1mScanning dependencies of target nc_test_tst_misc[0m
+[ 48%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/emalloc.c.obj[0m
+[ 48%] [32mBuilding C object nc_test/CMakeFiles/nc_test_tst_nofill.dir/tst_nofill.c.obj[0m
+[35m[1mScanning dependencies of target nc_test_tst_nofill3[0m
+[ 48%] [32mBuilding C object nc_test/CMakeFiles/nc_test_tst_misc.dir/tst_misc.c.obj[0m
+[ 48%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/error.c.obj[0m
+[ 48%] Built target tst_diskless3
+[ 49%] [32mBuilding C object nc_test/CMakeFiles/nc_test_tst_nofill3.dir/tst_nofill3.c.obj[0m
+[ 49%] [32m[1mLinking C executable nc_test_tst_nofill.exe[0m
+[35m[1mScanning dependencies of target tst_diskless5[0m
+[ 49%] [32m[1mLinking C executable nc_test_tst_misc.exe[0m
+[ 49%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/misctest.c.obj[0m
+[ 49%] [32mBuilding C object nc_test/CMakeFiles/tst_diskless5.dir/tst_diskless5.c.obj[0m
+[ 49%] [32m[1mLinking C executable nc_test_tst_nofill3.exe[0m
+[ 49%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/rec.c.obj[0m
+[ 49%] [32m[1mLinking C executable tst_diskless5.exe[0m
+[ 49%] Built target nc_test_tst_nofill
+[ 49%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/slabs.c.obj[0m
+[ 49%] Built target nc_test_tst_misc
+[35m[1mScanning dependencies of target nc_test_tst_small[0m
+[ 49%] Built target nc_test_tst_nofill3
+[35m[1mScanning dependencies of target nc_test_tst_nofill2[0m
+[ 50%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/val.c.obj[0m
+[ 50%] [32mBuilding C object nc_test/CMakeFiles/nc_test_tst_small.dir/tst_small.c.obj[0m
+[ 50%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/vardef.c.obj[0m
+[ 50%] [32mBuilding C object nc_test/CMakeFiles/nc_test_tst_nofill2.dir/tst_nofill2.c.obj[0m
+[ 50%] Built target tst_diskless5
+[ 50%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/varget.c.obj[0m
+[ 50%] [32m[1mLinking C executable nc_test_tst_nofill2.exe[0m
+[ 50%] [34m[1mGenerating C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/nc_test/test_write.c[0m
+[35m[1mScanning dependencies of target nc_test_t_nc[0m
+[ 50%] [32m[1mLinking C executable nc_test_tst_small.exe[0m
+[ 50%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/vargetg.c.obj[0m
+[ 51%] [32mBuilding C object nc_test/CMakeFiles/nc_test_t_nc.dir/t_nc.c.obj[0m
+[ 52%] [34m[1mGenerating C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/nc_test/test_get.c[0m
+[ 52%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/varput.c.obj[0m
+[ 52%] [34m[1mGenerating C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/nc_test/test_put.c[0m
+[ 52%] Built target nc_test_tst_nofill2
+[ 52%] [32m[1mLinking C executable nc_test_t_nc.exe[0m
+[35m[1mScanning dependencies of target tst_diskless[0m
+[ 53%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/varputg.c.obj[0m
+[ 53%] [34m[1mGenerating C:/msys64/home/herman/MINGW-packages/mingw-w64-netcdf/src/netcdf-4.6.0/nc_test/test_read.c[0m
+[ 53%] Built target nc_test_tst_small
+[ 53%] [32mBuilding C object nc_test/CMakeFiles/tst_diskless.dir/tst_diskless.c.obj[0m
+[35m[1mScanning dependencies of target nc_test[0m
+[35m[1mScanning dependencies of target nc_test_tst_meta[0m
+[ 53%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/vartests.c.obj[0m
+[ 54%] [32mBuilding C object nc_test/CMakeFiles/nc_test_tst_meta.dir/tst_meta.c.obj[0m
+[ 54%] [32mBuilding C object nc_test/CMakeFiles/nc_test.dir/nc_test.c.obj[0m
+[ 54%] Built target nc_test_t_nc
+[35m[1mScanning dependencies of target tst_diskless4[0m
+[ 54%] [32m[1mLinking C executable tst_diskless.exe[0m
+[ 54%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/vputget.c.obj[0m
+[ 54%] [32m[1mLinking C executable nc_test_tst_meta.exe[0m
+[ 54%] [32mBuilding C object nc_test/CMakeFiles/tst_diskless4.dir/tst_diskless4.c.obj[0m
+[ 54%] [32mBuilding C object nctest/CMakeFiles/nctest.dir/vputgetg.c.obj[0m
+[ 55%] [32m[1mLinking C executable tst_diskless4.exe[0m
+[ 56%] [32mBuilding C object nc_test/CMakeFiles/nc_test.dir/error.c.obj[0m
+[ 56%] Built target nc_test_tst_meta
+[ 56%] [32m[1mLinking C executable nctest.exe[0m
+[ 56%] Built target tst_diskless
+[35m[1mScanning dependencies of target nc_test_tst_elatefill[0m
+[ 56%] [32mBuilding C object nc_test/CMakeFiles/nc_test.dir/test_get.c.obj[0m
+[35m[1mScanning dependencies of target nc_test_tst_names[0m
+[ 56%] [32mBuilding C object nc_test/CMakeFiles/nc_test_tst_elatefill.dir/tst_elatefill.c.obj[0m
+[ 56%] [32mBuilding C object nc_test/CMakeFiles/nc_test_tst_names.dir/tst_names.c.obj[0m
+[ 57%] [32m[1mLinking C executable nc_test_tst_elatefill.exe[0m
+[ 57%] Built target tst_diskless4
+[ 57%] Built target nctest
+[ 58%] [32m[1mLinking C executable nc_test_tst_names.exe[0m
+[ 58%] [32mBuilding C object nc_test/CMakeFiles/nc_test.dir/test_put.c.obj[0m
+[35m[1mScanning dependencies of target nc_test_tst_inq_type[0m
+[ 58%] [32mBuilding C object nc_test/CMakeFiles/nc_test_tst_inq_type.dir/tst_inq_type.c.obj[0m
+[ 58%] Built target nc_test_tst_elatefill
+[ 58%] [32m[1mLinking C executable nc_test_tst_inq_type.exe[0m
+[ 58%] Built target nc_test_tst_names
+[35m[1mScanning dependencies of target nc_test_tst_global_fillval[0m
+[ 58%] [32mBuilding C object nc_test/CMakeFiles/nc_test_tst_global_fillval.dir/tst_global_fillval.c.obj[0m
+[35m[1mScanning dependencies of target nc_test_tst_atts[0m
+[ 58%] [32mBuilding C object nc_test/CMakeFiles/nc_test_tst_atts.dir/tst_atts.c.obj[0m
+[ 58%] [32m[1mLinking C executable nc_test_tst_global_fillval.exe[0m
+[ 58%] Built target nc_test_tst_inq_type
+[35m[1mScanning dependencies of target nc_test_tst_put_vars[0m
+[ 58%] [32mBuilding C object nc_test/CMakeFiles/nc_test_tst_put_vars.dir/tst_put_vars.c.obj[0m
+[ 58%] [32m[1mLinking C executable nc_test_tst_atts.exe[0m
+[ 58%] Built target nc_test_tst_global_fillval
+[ 59%] [32m[1mLinking C executable nc_test_tst_put_vars.exe[0m
+[35m[1mScanning dependencies of target nc_test4_tst_camrun[0m
+[ 59%] Built target nc_test_tst_atts
+[ 59%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_camrun.dir/tst_camrun.c.obj[0m
+[35m[1mScanning dependencies of target nc_test4_tst_xplatform[0m
+[ 59%] Built target nc_test_tst_put_vars
+[35m[1mScanning dependencies of target nc_test4_tst_fill_attr_vanish[0m
+[ 59%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_xplatform.dir/tst_xplatform.c.obj[0m
+[ 59%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_fill_attr_vanish.dir/tst_fill_attr_vanish.c.obj[0m
+[ 59%] [32m[1mLinking C executable nc_test4_tst_xplatform.exe[0m
+[ 60%] [32m[1mLinking C executable nc_test4_tst_fill_attr_vanish.exe[0m
+[ 60%] [32mBuilding C object nc_test/CMakeFiles/nc_test.dir/test_read.c.obj[0m
+[ 60%] Built target nc_test4_tst_xplatform
+[ 60%] [32mBuilding C object nc_test/CMakeFiles/nc_test.dir/test_write.c.obj[0m
+[ 60%] Built target nc_test4_tst_fill_attr_vanish
+[35m[1mScanning dependencies of target nc_test4_tst_hdf5_file_compat[0m
+[ 61%] [32mBuilding C object nc_test/CMakeFiles/nc_test.dir/util.c.obj[0m
+[ 61%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_hdf5_file_compat.dir/tst_hdf5_file_compat.c.obj[0m
+[35m[1mScanning dependencies of target nc_test4_tst_interops5[0m
+[35m[1mScanning dependencies of target nc_test4_tst_h5_endians[0m
+[ 62%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_interops5.dir/tst_interops5.c.obj[0m
+[ 63%] [32m[1mLinking C executable nc_test4_tst_hdf5_file_compat.exe[0m
+[ 63%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_h5_endians.dir/tst_h5_endians.c.obj[0m
+[ 63%] [32m[1mLinking C executable nc_test.exe[0m
+[ 63%] [32m[1mLinking C executable nc_test4_tst_interops5.exe[0m
+[ 63%] [32m[1mLinking C executable nc_test4_tst_h5_endians.exe[0m
+[ 63%] Built target nc_test4_tst_hdf5_file_compat
+[35m[1mScanning dependencies of target nc_test4_tst_rename[0m
+[ 63%] Built target nc_test
+[ 63%] Built target nc_test4_tst_interops5
+[ 64%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_rename.dir/tst_rename.c.obj[0m
+[ 64%] Built target nc_test4_tst_h5_endians
+[35m[1mScanning dependencies of target nc_test4_tst_h_refs[0m
+[35m[1mScanning dependencies of target nc_test4_tst_h_strbug[0m
+[35m[1mScanning dependencies of target nc_test4_tst_atts2[0m
+[ 64%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_h_refs.dir/tst_h_refs.c.obj[0m
+[ 64%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_h_strbug.dir/tst_h_strbug.c.obj[0m
+[ 65%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_atts2.dir/tst_atts2.c.obj[0m
+[ 65%] [32m[1mLinking C executable nc_test4_tst_h_refs.exe[0m
+[ 65%] [32m[1mLinking C executable nc_test4_tst_rename.exe[0m
+[ 65%] [32m[1mLinking C executable nc_test4_tst_atts2.exe[0m
+[ 65%] [32m[1mLinking C executable nc_test4_tst_h_strbug.exe[0m
+[ 65%] Built target nc_test4_tst_rename
+[ 65%] Built target nc_test4_tst_atts2
+[ 65%] Built target nc_test4_tst_h_refs
+[ 65%] Built target nc_test4_tst_h_strbug
+[35m[1mScanning dependencies of target nc_test4_tst_grps2[0m
+[35m[1mScanning dependencies of target nc_test4_tst_endian_fill[0m
+[35m[1mScanning dependencies of target nc_test4_tst_vars3[0m
+[35m[1mScanning dependencies of target nc_test4_tst_files[0m
+[ 65%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_endian_fill.dir/tst_endian_fill.c.obj[0m
+[ 65%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_grps2.dir/tst_grps2.c.obj[0m
+[ 66%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_vars3.dir/tst_vars3.c.obj[0m
+[ 66%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_files.dir/tst_files.c.obj[0m
+[ 66%] [32m[1mLinking C executable nc_test4_tst_endian_fill.exe[0m
+[ 67%] [32m[1mLinking C executable nc_test4_tst_grps2.exe[0m
+[ 67%] [32m[1mLinking C executable nc_test4_tst_vars3.exe[0m
+[ 67%] Built target nc_test4_tst_endian_fill
+[ 67%] [32m[1mLinking C executable nc_test4_tst_files.exe[0m
+[35m[1mScanning dependencies of target nc_test4_tst_atts1[0m
+[ 67%] Built target nc_test4_tst_grps2
+[ 67%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_atts1.dir/tst_atts1.c.obj[0m
+[35m[1mScanning dependencies of target nc_test4_tst_unlim_vars[0m
+[ 67%] Built target nc_test4_tst_vars3
+[ 68%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_unlim_vars.dir/tst_unlim_vars.c.obj[0m
+[35m[1mScanning dependencies of target nc_test4_tst_dims[0m
+[ 68%] Built target nc_test4_tst_files
+[ 68%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_dims.dir/tst_dims.c.obj[0m
+[ 69%] [32m[1mLinking C executable nc_test4_tst_camrun.exe[0m
+[ 69%] [32m[1mLinking C executable nc_test4_tst_unlim_vars.exe[0m
+[35m[1mScanning dependencies of target nc_test4_tst_dims3[0m
+[ 70%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_dims3.dir/tst_dims3.c.obj[0m
+[ 70%] [32m[1mLinking C executable nc_test4_tst_dims3.exe[0m
+[ 70%] Built target nc_test4_tst_camrun
+[ 70%] Built target nc_test4_tst_unlim_vars
+[35m[1mScanning dependencies of target nc_test4_tst_varms[0m
+[35m[1mScanning dependencies of target nc_test4_tst_strings2[0m
+[ 70%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_varms.dir/tst_varms.c.obj[0m
+[ 70%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_strings2.dir/tst_strings2.c.obj[0m
+[ 70%] Built target nc_test4_tst_dims3
+[ 71%] [32m[1mLinking C executable nc_test4_tst_strings2.exe[0m
+[ 71%] [32m[1mLinking C executable nc_test4_tst_dims.exe[0m
+[ 72%] [32m[1mLinking C executable nc_test4_tst_varms.exe[0m
+[35m[1mScanning dependencies of target nc_test4_tst_vars4[0m
+[ 72%] [32m[1mLinking C executable nc_test4_tst_atts1.exe[0m
+[ 72%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_vars4.dir/tst_vars4.c.obj[0m
+[ 72%] [32m[1mLinking C executable nc_test4_tst_vars4.exe[0m
+[ 72%] Built target nc_test4_tst_strings2
+[ 72%] Built target nc_test4_tst_dims
+[ 72%] Built target nc_test4_tst_varms
+[ 72%] Built target nc_test4_tst_atts1
+[35m[1mScanning dependencies of target nc_test4_tst_vars[0m
+[35m[1mScanning dependencies of target nc_test4_tst_types[0m
+[35m[1mScanning dependencies of target nc_test4_tst_vars2[0m
+[35m[1mScanning dependencies of target nc_test4_tst_fills2[0m
+[ 72%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_vars.dir/tst_vars.c.obj[0m
+[ 72%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_types.dir/tst_types.c.obj[0m
+[ 72%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_vars2.dir/tst_vars2.c.obj[0m
+[ 72%] Built target nc_test4_tst_vars4
+[ 73%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_fills2.dir/tst_fills2.c.obj[0m
+[35m[1mScanning dependencies of target nc_test4_tst_files5[0m
+[ 73%] [32m[1mLinking C executable nc_test4_tst_types.exe[0m
+[ 74%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_files5.dir/tst_files5.c.obj[0m
+[ 74%] [32m[1mLinking C executable nc_test4_tst_fills2.exe[0m
+[ 74%] [32m[1mLinking C executable nc_test4_tst_files5.exe[0m
+[ 74%] Built target nc_test4_tst_types
+[ 74%] Built target nc_test4_tst_fills2
+[35m[1mScanning dependencies of target nc_test4_tst_compounds3[0m
+[35m[1mScanning dependencies of target test_szip[0m
+[ 74%] Built target nc_test4_tst_files5
+[ 74%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_compounds3.dir/tst_compounds3.c.obj[0m
+[ 74%] [32mBuilding C object nc_test4/CMakeFiles/test_szip.dir/test_szip.c.obj[0m
+[35m[1mScanning dependencies of target nc_test4_tst_compounds2[0m
+[ 74%] [32m[1mLinking C executable nc_test4_tst_vars2.exe[0m
+[ 75%] [32m[1mLinking C executable test_szip.exe[0m
+[ 75%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_compounds2.dir/tst_compounds2.c.obj[0m
+[ 76%] [32m[1mLinking C executable nc_test4_tst_compounds3.exe[0m
+[ 76%] [32m[1mLinking C executable nc_test4_tst_vars.exe[0m
+[ 76%] [32m[1mLinking C executable nc_test4_tst_compounds2.exe[0m
+[ 76%] Built target nc_test4_tst_vars2
+[ 76%] Built target test_szip
+[35m[1mScanning dependencies of target nc_test4_tst_put_vars_two_unlim_dim[0m
+[35m[1mScanning dependencies of target nc_test4_tst_atts_string_rewrite[0m
+[ 76%] Built target nc_test4_tst_compounds3
+[ 76%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_put_vars_two_unlim_dim.dir/tst_put_vars_two_unlim_dim.c.obj[0m
+[ 76%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_atts_string_rewrite.dir/tst_atts_string_rewrite.c.obj[0m
+[35m[1mScanning dependencies of target nc_test4_tst_chunks2[0m
+[ 76%] Built target nc_test4_tst_compounds2
+[ 76%] Built target nc_test4_tst_vars
+[ 76%] [32m[1mLinking C executable nc_test4_tst_put_vars_two_unlim_dim.exe[0m
+[ 76%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_chunks2.dir/tst_chunks2.c.obj[0m
+[35m[1mScanning dependencies of target test_filter[0m
+[35m[1mScanning dependencies of target test_filter_misc[0m
+[ 76%] [32m[1mLinking C executable nc_test4_tst_atts_string_rewrite.exe[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/test_filter.dir/test_filter.c.obj[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/test_filter_misc.dir/test_filter_misc.c.obj[0m
+[ 77%] [32m[1mLinking C executable test_filter.exe[0m
+[ 77%] [32m[1mLinking C executable nc_test4_tst_chunks2.exe[0m
+[ 77%] [32m[1mLinking C executable test_filter_misc.exe[0m
+[ 77%] Built target nc_test4_tst_put_vars_two_unlim_dim
+[35m[1mScanning dependencies of target tst_v2[0m
+[ 77%] Built target nc_test4_tst_atts_string_rewrite
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/tst_v2.dir/tst_v2.c.obj[0m
+[35m[1mScanning dependencies of target nc_test4_tst_fills[0m
+[ 77%] Built target test_filter
+[ 77%] Built target nc_test4_tst_chunks2
+[ 77%] [32m[1mLinking C executable tst_v2.exe[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_fills.dir/tst_fills.c.obj[0m
+[35m[1mScanning dependencies of target tst_empty_vlen_unlim[0m
+[ 77%] Built target test_filter_misc
+[35m[1mScanning dependencies of target nc_test4_tst_dims2[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/tst_empty_vlen_unlim.dir/tst_empty_vlen_unlim.c.obj[0m
+[35m[1mScanning dependencies of target nc_test4_tst_sync[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_dims2.dir/tst_dims2.c.obj[0m
+[ 77%] [32m[1mLinking C executable tst_empty_vlen_unlim.exe[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_sync.dir/tst_sync.c.obj[0m
+[ 77%] [32m[1mLinking C executable nc_test4_tst_fills.exe[0m
+[ 77%] Built target tst_v2
+[35m[1mScanning dependencies of target nc_test4_tst_converts2[0m
+[ 77%] [32m[1mLinking C executable nc_test4_tst_sync.exe[0m
+[ 77%] [32m[1mLinking C executable nc_test4_tst_dims2.exe[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_converts2.dir/tst_converts2.c.obj[0m
+[ 77%] Built target tst_empty_vlen_unlim
+[ 77%] Built target nc_test4_tst_fills
+[35m[1mScanning dependencies of target h5testszip[0m
+[35m[1mScanning dependencies of target nc_test4_tst_strings[0m
+[ 77%] [32m[1mLinking C executable nc_test4_tst_converts2.exe[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/h5testszip.dir/h5testszip.c.obj[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_strings.dir/tst_strings.c.obj[0m
+[ 77%] Built target nc_test4_tst_sync
+[ 77%] [32m[1mLinking C executable h5testszip.exe[0m
+[ 77%] Built target nc_test4_tst_dims2
+[35m[1mScanning dependencies of target renamegroup[0m
+[35m[1mScanning dependencies of target nc_test4_tst_grps[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/renamegroup.dir/renamegroup.c.obj[0m
+[ 77%] [32m[1mLinking C executable nc_test4_tst_strings.exe[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_grps.dir/tst_grps.c.obj[0m
+[ 77%] Built target nc_test4_tst_converts2
+[ 77%] [32m[1mLinking C executable renamegroup.exe[0m
+[35m[1mScanning dependencies of target nc_test4_tst_interops[0m
+[ 77%] Built target h5testszip
+[35m[1mScanning dependencies of target nc_test4_tst_coords2[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_interops.dir/tst_interops.c.obj[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_coords2.dir/tst_coords2.c.obj[0m
+[ 77%] Built target nc_test4_tst_strings
+[ 77%] Built target renamegroup
+[ 77%] [32m[1mLinking C executable nc_test4_tst_coords2.exe[0m
+[35m[1mScanning dependencies of target nc_test4_tst_rehash[0m
+[ 77%] [32m[1mLinking C executable nc_test4_tst_interops.exe[0m
+[35m[1mScanning dependencies of target nc_test4_tst_files6[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_rehash.dir/tst_rehash.c.obj[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_files6.dir/tst_files6.c.obj[0m
+[ 77%] [32m[1mLinking C executable nc_test4_tst_rehash.exe[0m
+[ 77%] Built target nc_test4_tst_coords2
+[ 77%] [32m[1mLinking C executable nc_test4_tst_files6.exe[0m
+[ 77%] Built target nc_test4_tst_interops
+[35m[1mScanning dependencies of target nc_test4_tst_vl[0m
+[35m[1mScanning dependencies of target nc_test4_tst_opaques[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_vl.dir/tst_vl.c.obj[0m
+[ 77%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_opaques.dir/tst_opaques.c.obj[0m
+[ 77%] [32m[1mLinking C executable nc_test4_tst_grps.exe[0m
+[ 77%] Built target nc_test4_tst_rehash
+[35m[1mScanning dependencies of target nc_test4_tst_enums[0m
+[ 78%] [32m[1mLinking C executable nc_test4_tst_vl.exe[0m
+[ 78%] Built target nc_test4_tst_files6
+[ 78%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_enums.dir/tst_enums.c.obj[0m
+[35m[1mScanning dependencies of target nc_test4_tst_compounds[0m
+[ 79%] [32m[1mLinking C executable nc_test4_tst_opaques.exe[0m
+[ 80%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_compounds.dir/tst_compounds.c.obj[0m
+[ 80%] Built target nc_test4_tst_grps
+[35m[1mScanning dependencies of target nc_test4_tst_fillbug[0m
+[ 81%] [32m[1mLinking C executable nc_test4_tst_enums.exe[0m
+[ 81%] Built target nc_test4_tst_vl
+[ 81%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_fillbug.dir/tst_fillbug.c.obj[0m
+[35m[1mScanning dependencies of target nc_test4_tst_interops4[0m
+[ 81%] Built target nc_test4_tst_opaques
+[ 81%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_interops4.dir/tst_interops4.c.obj[0m
+[ 81%] [32m[1mLinking C executable nc_test4_tst_fillbug.exe[0m
+[35m[1mScanning dependencies of target nc_test4_tst_h_scalar[0m
+[ 82%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_h_scalar.dir/tst_h_scalar.c.obj[0m
+[ 82%] Built target nc_test4_tst_enums
+[ 82%] [32m[1mLinking C executable nc_test4_tst_interops4.exe[0m
+[35m[1mScanning dependencies of target nc_test4_tst_chunks[0m
+[ 82%] [32m[1mLinking C executable nc_test4_tst_compounds.exe[0m
+[ 82%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_chunks.dir/tst_chunks.c.obj[0m
+[ 82%] Built target nc_test4_tst_fillbug
+[ 82%] [32m[1mLinking C executable nc_test4_tst_h_scalar.exe[0m
+[35m[1mScanning dependencies of target nc_test4_tst_xplatform2[0m
+[ 82%] Built target nc_test4_tst_interops4
+[ 82%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_xplatform2.dir/tst_xplatform2.c.obj[0m
+[35m[1mScanning dependencies of target nc_test4_tst_converts[0m
+[ 82%] [32m[1mLinking C executable nc_test4_tst_chunks.exe[0m
+[ 82%] Built target nc_test4_tst_compounds
+[ 82%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_converts.dir/tst_converts.c.obj[0m
+[ 82%] Built target nc_test4_tst_h_scalar
+[35m[1mScanning dependencies of target nc_test4_tst_files4[0m
+[35m[1mScanning dependencies of target nc_test4_tst_interops6[0m
+[ 82%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_files4.dir/tst_files4.c.obj[0m
+[ 82%] [32m[1mLinking C executable nc_test4_tst_converts.exe[0m
+[ 82%] [32m[1mLinking C executable nc_test4_tst_xplatform2.exe[0m
+[ 82%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_interops6.dir/tst_interops6.c.obj[0m
+[ 82%] Built target nc_test4_tst_chunks
+[ 82%] [32m[1mLinking C executable nc_test4_tst_files4.exe[0m
+[35m[1mScanning dependencies of target nc_test4_tst_coords[0m
+[ 82%] [32m[1mLinking C executable nc_test4_tst_interops6.exe[0m
+[ 83%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_coords.dir/tst_coords.c.obj[0m
+[ 83%] Built target nc_test4_tst_xplatform2
+[ 83%] Built target nc_test4_tst_converts
+[35m[1mScanning dependencies of target nc_test4_tst_coords3[0m
+[35m[1mScanning dependencies of target nc_test4_tst_utf8[0m
+[ 83%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_coords3.dir/tst_coords3.c.obj[0m
+[ 83%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_utf8.dir/tst_utf8.c.obj[0m
+[ 83%] Built target nc_test4_tst_files4
+[ 83%] Built target nc_test4_tst_interops6
+[35m[1mScanning dependencies of target nc_test4_tst_atts[0m
+[ 83%] [32m[1mLinking C executable nc_test4_tst_coords.exe[0m
+[35m[1mScanning dependencies of target nc_test4_t_type[0m
+[ 83%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_tst_atts.dir/tst_atts.c.obj[0m
+[ 83%] [32m[1mLinking C executable nc_test4_tst_utf8.exe[0m
+[ 83%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_t_type.dir/t_type.c.obj[0m
+[ 84%] [32m[1mLinking C executable nc_test4_tst_coords3.exe[0m
+[ 84%] [32m[1mLinking C executable nc_test4_tst_atts.exe[0m
+[ 85%] [32m[1mLinking C executable nc_test4_t_type.exe[0m
+[ 85%] Built target nc_test4_tst_coords
+[35m[1mScanning dependencies of target nc_test4_cdm_sea_soundings[0m
+[ 85%] Built target nc_test4_tst_utf8
+[ 85%] [32mBuilding C object nc_test4/CMakeFiles/nc_test4_cdm_sea_soundings.dir/cdm_sea_soundings.c.obj[0m
+[ 85%] Built target nc_test4_tst_coords3
+[35m[1mScanning dependencies of target tst_h_enums[0m
+[ 85%] Built target nc_test4_tst_atts
+[ 85%] Built target nc_test4_t_type
+[ 85%] [32mBuilding C object h5_test/CMakeFiles/tst_h_enums.dir/tst_h_enums.c.obj[0m
+[35m[1mScanning dependencies of target tst_h_dimscales3[0m
+[ 85%] [32m[1mLinking C executable nc_test4_cdm_sea_soundings.exe[0m
+[35m[1mScanning dependencies of target tst_h_grps[0m
+[35m[1mScanning dependencies of target tst_h_files2[0m
+[ 85%] [32mBuilding C object h5_test/CMakeFiles/tst_h_dimscales3.dir/tst_h_dimscales3.c.obj[0m
+[ 85%] [32mBuilding C object h5_test/CMakeFiles/tst_h_grps.dir/tst_h_grps.c.obj[0m
+[ 85%] [32mBuilding C object h5_test/CMakeFiles/tst_h_files2.dir/tst_h_files2.c.obj[0m
+[ 85%] [32m[1mLinking C executable tst_h_enums.exe[0m
+[ 86%] [32m[1mLinking C executable tst_h_dimscales3.exe[0m
+[ 86%] [32m[1mLinking C executable tst_h_files2.exe[0m
+[ 86%] [32m[1mLinking C executable tst_h_grps.exe[0m
+[ 86%] Built target nc_test4_cdm_sea_soundings
+[35m[1mScanning dependencies of target tst_h_vars3[0m
+[ 86%] Built target tst_h_enums
+[ 86%] Built target tst_h_dimscales3
+[ 86%] [32mBuilding C object h5_test/CMakeFiles/tst_h_vars3.dir/tst_h_vars3.c.obj[0m
+[ 86%] Built target tst_h_files2
+[35m[1mScanning dependencies of target tst_h_vars2[0m
+[ 86%] Built target tst_h_grps
+[35m[1mScanning dependencies of target tst_h_atts4[0m
+[35m[1mScanning dependencies of target tst_h_vars[0m
+[35m[1mScanning dependencies of target tst_h_files[0m
+[ 86%] [32mBuilding C object h5_test/CMakeFiles/tst_h_vars2.dir/tst_h_vars2.c.obj[0m
+[ 86%] [32mBuilding C object h5_test/CMakeFiles/tst_h_atts4.dir/tst_h_atts4.c.obj[0m
+[ 86%] [32m[1mLinking C executable tst_h_vars3.exe[0m
+[ 87%] [32mBuilding C object h5_test/CMakeFiles/tst_h_files.dir/tst_h_files.c.obj[0m
+[ 87%] [32mBuilding C object h5_test/CMakeFiles/tst_h_vars.dir/tst_h_vars.c.obj[0m
+[ 87%] [32m[1mLinking C executable tst_h_atts4.exe[0m
+[ 87%] [32m[1mLinking C executable tst_h_files.exe[0m
+[ 88%] [32m[1mLinking C executable tst_h_vars2.exe[0m
+[ 88%] Built target tst_h_vars3
+[ 88%] [32m[1mLinking C executable tst_h_vars.exe[0m
+[35m[1mScanning dependencies of target tst_h_compounds[0m
+[ 88%] Built target tst_h_atts4
+[ 88%] [32mBuilding C object h5_test/CMakeFiles/tst_h_compounds.dir/tst_h_compounds.c.obj[0m
+[35m[1mScanning dependencies of target tst_h_atts3[0m
+[ 88%] Built target tst_h_files
+[ 88%] Built target tst_h_vars2
+[ 89%] [32mBuilding C object h5_test/CMakeFiles/tst_h_atts3.dir/tst_h_atts3.c.obj[0m
+[35m[1mScanning dependencies of target tst_h_dimscales2[0m
+[35m[1mScanning dependencies of target tst_h_atts[0m
+[ 89%] Built target tst_h_vars
+[ 89%] [32mBuilding C object h5_test/CMakeFiles/tst_h_atts.dir/tst_h_atts.c.obj[0m
+[ 89%] [32mBuilding C object h5_test/CMakeFiles/tst_h_dimscales2.dir/tst_h_dimscales2.c.obj[0m
+[35m[1mScanning dependencies of target tst_h_compounds2[0m
+[ 89%] [32m[1mLinking C executable tst_h_atts3.exe[0m
+[ 89%] [32mBuilding C object h5_test/CMakeFiles/tst_h_compounds2.dir/tst_h_compounds2.c.obj[0m
+[ 89%] [32m[1mLinking C executable tst_h_compounds2.exe[0m
+[ 90%] [32m[1mLinking C executable tst_h_compounds.exe[0m
+[ 90%] Built target tst_h_atts3
+[ 90%] [32m[1mLinking C executable tst_h_dimscales2.exe[0m
+[ 90%] [32m[1mLinking C executable tst_h_atts.exe[0m
+[35m[1mScanning dependencies of target tst_h_wrt_cmp[0m
+[ 91%] [32mBuilding C object h5_test/CMakeFiles/tst_h_wrt_cmp.dir/tst_h_wrt_cmp.c.obj[0m
+[ 91%] Built target tst_h_compounds
+[ 91%] Built target tst_h_compounds2
+[ 91%] Built target tst_h_dimscales2
+[ 91%] Built target tst_h_atts
+[35m[1mScanning dependencies of target tst_h_strings1[0m
+[35m[1mScanning dependencies of target tst_h_vl[0m
+[ 91%] [32m[1mLinking C executable tst_h_wrt_cmp.exe[0m
+[35m[1mScanning dependencies of target tst_h_opaques[0m
+[35m[1mScanning dependencies of target tst_h_dimscales4[0m
+[ 91%] [32mBuilding C object h5_test/CMakeFiles/tst_h_vl.dir/tst_h_vl.c.obj[0m
+[ 91%] [32mBuilding C object h5_test/CMakeFiles/tst_h_strings1.dir/tst_h_strings1.c.obj[0m
+[ 92%] [32mBuilding C object h5_test/CMakeFiles/tst_h_opaques.dir/tst_h_opaques.c.obj[0m
+[ 92%] [32mBuilding C object h5_test/CMakeFiles/tst_h_dimscales4.dir/tst_h_dimscales4.c.obj[0m
+[ 92%] [32m[1mLinking C executable tst_h_vl.exe[0m
+[ 92%] [32m[1mLinking C executable tst_h_opaques.exe[0m
+[ 92%] [32m[1mLinking C executable tst_h_strings1.exe[0m
+[ 92%] Built target tst_h_wrt_cmp
+[ 92%] [32m[1mLinking C executable tst_h_dimscales4.exe[0m
+[35m[1mScanning dependencies of target tst_h_strings[0m
+[ 92%] [32mBuilding C object h5_test/CMakeFiles/tst_h_strings.dir/tst_h_strings.c.obj[0m
+[ 92%] Built target tst_h_vl
+[ 92%] Built target tst_h_opaques
+[ 92%] Built target tst_h_strings1
+[35m[1mScanning dependencies of target tst_h_dimscales[0m
+[ 92%] Built target tst_h_dimscales4
+[35m[1mScanning dependencies of target tst_h_strings2[0m
+[35m[1mScanning dependencies of target tst_h_ints[0m
+[ 92%] [32mBuilding C object h5_test/CMakeFiles/tst_h_dimscales.dir/tst_h_dimscales.c.obj[0m
+[ 92%] [32mBuilding C object h5_test/CMakeFiles/tst_h_ints.dir/tst_h_ints.c.obj[0m
+[ 93%] [32mBuilding C object h5_test/CMakeFiles/tst_h_strings2.dir/tst_h_strings2.c.obj[0m
+[35m[1mScanning dependencies of target tst_h_files4[0m
+[ 93%] [32m[1mLinking C executable tst_h_strings.exe[0m
+[ 93%] [32mBuilding C object h5_test/CMakeFiles/tst_h_files4.dir/tst_h_files4.c.obj[0m
+[ 93%] [32m[1mLinking C executable tst_h_ints.exe[0m
+[ 93%] [32m[1mLinking C executable tst_h_strings2.exe[0m
+[ 93%] [32m[1mLinking C executable tst_h_dimscales.exe[0m
+[ 94%] [32m[1mLinking C executable tst_h_files4.exe[0m
+[ 94%] Built target tst_h_strings
+[ 94%] Built target tst_h_ints
+[35m[1mScanning dependencies of target tst_h_dimscales1[0m
+[ 94%] Built target tst_h_strings2
+[35m[1mScanning dependencies of target findtestserver[0m
+[ 95%] [32mBuilding C object h5_test/CMakeFiles/tst_h_dimscales1.dir/tst_h_dimscales1.c.obj[0m
+[35m[1mScanning dependencies of target ncdap_test_vara[0m
+[ 95%] Built target tst_h_files4
+[ 95%] [32mBuilding C object ncdap_test/CMakeFiles/findtestserver.dir/findtestserver.c.obj[0m
+[ 95%] Built target tst_h_dimscales
+[ 95%] [32mBuilding C object ncdap_test/CMakeFiles/ncdap_test_vara.dir/test_vara.c.obj[0m
+[ 95%] [32m[1mLinking C executable tst_h_dimscales1.exe[0m
+[35m[1mScanning dependencies of target ncdap_t_dap3a[0m
+[35m[1mScanning dependencies of target ncdap_test_cvt[0m
+[ 95%] [32mBuilding C object ncdap_test/CMakeFiles/ncdap_test_cvt.dir/test_cvt.c.obj[0m
+[ 95%] [32mBuilding C object ncdap_test/CMakeFiles/ncdap_t_dap3a.dir/t_dap3a.c.obj[0m
+[ 95%] [32m[1mLinking C executable ncdap_test_vara.exe[0m
+[ 96%] [32m[1mLinking C executable ncdap_t_dap3a.exe[0m
+[ 96%] [32m[1mLinking C executable ncdap_test_cvt.exe[0m
+[ 96%] Built target tst_h_dimscales1
+[35m[1mScanning dependencies of target ncdap_test_varm3[0m
+[ 96%] [32m[1mLinking C executable findtestserver.exe[0m
+[ 96%] Built target ncdap_test_vara
+[ 97%] [32mBuilding C object ncdap_test/CMakeFiles/ncdap_test_varm3.dir/test_varm3.c.obj[0m
+[35m[1mScanning dependencies of target findtestserver4[0m
+[ 97%] Built target ncdap_t_dap3a
+[ 97%] Built target ncdap_test_cvt
+[ 98%] [32mBuilding C object dap4_test/CMakeFiles/findtestserver4.dir/findtestserver4.c.obj[0m
+[35m[1mScanning dependencies of target C_tests_sfc_pres_temp_rd[0m
+[ 98%] Built target findtestserver
+[35m[1mScanning dependencies of target C_tests_sfc_pres_temp_wr[0m
+[ 99%] [32mBuilding C object examples/C/CMakeFiles/C_tests_sfc_pres_temp_rd.dir/sfc_pres_temp_rd.c.obj[0m
+[35m[1mScanning dependencies of target C_tests_simple_xy_rd[0m
+[ 99%] [32mBuilding C object examples/C/CMakeFiles/C_tests_sfc_pres_temp_wr.dir/sfc_pres_temp_wr.c.obj[0m
+[ 99%] [32mBuilding C object examples/C/CMakeFiles/C_tests_simple_xy_rd.dir/simple_xy_rd.c.obj[0m
+[ 99%] [32m[1mLinking C executable C_tests_sfc_pres_temp_rd.exe[0m
+[ 99%] [32m[1mLinking C executable ncdap_test_varm3.exe[0m
+[ 99%] [32m[1mLinking C executable C_tests_sfc_pres_temp_wr.exe[0m
+[100%] [32m[1mLinking C executable C_tests_simple_xy_rd.exe[0m
+[100%] [32m[1mLinking C executable findtestserver4.exe[0m
+[100%] Built target ncdap_test_varm3
+[100%] Built target C_tests_simple_xy_rd
+[100%] Built target C_tests_sfc_pres_temp_rd
+[100%] Built target C_tests_sfc_pres_temp_wr
+[35m[1mScanning dependencies of target C_tests_simple_xy_wr[0m
+[35m[1mScanning dependencies of target C_tests_pres_temp_4D_wr[0m
+[35m[1mScanning dependencies of target C_tests_pres_temp_4D_rd[0m
+[100%] Built target findtestserver4
+[100%] [32mBuilding C object examples/C/CMakeFiles/C_tests_simple_xy_wr.dir/simple_xy_wr.c.obj[0m
+[100%] [32mBuilding C object examples/C/CMakeFiles/C_tests_pres_temp_4D_wr.dir/pres_temp_4D_wr.c.obj[0m
+[100%] [32mBuilding C object examples/C/CMakeFiles/C_tests_pres_temp_4D_rd.dir/pres_temp_4D_rd.c.obj[0m
+[100%] [32m[1mLinking C executable C_tests_simple_xy_wr.exe[0m
+[100%] [32m[1mLinking C executable C_tests_pres_temp_4D_rd.exe[0m
+[100%] [32m[1mLinking C executable C_tests_pres_temp_4D_wr.exe[0m
+[100%] Built target C_tests_pres_temp_4D_rd
+[100%] Built target C_tests_simple_xy_wr
+[100%] Built target C_tests_pres_temp_4D_wr

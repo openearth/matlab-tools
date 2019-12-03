@@ -1,0 +1,111 @@
+# Well Package file
+1 0 noprint
+1
+gcd 00001
+53
+1 1
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_l01_nhi.ipf' 1.000000 (free) -1 scaling -1 -1
+2 2
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_l02_nhi.ipf' 1.000000 (free) -1 scaling -1 -1
+3 3
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_l03_nhi.ipf' 1.000000 (free) -1 scaling -1 -1
+4 4
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_l04_nhi.ipf' 1.000000 (free) -1 scaling -1 -1
+5 5
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_l05_nhi.ipf' 1.000000 (free) -1 scaling -1 -1
+6 6
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_l06_nhi.ipf' 1.000000 (free) -1 scaling -1 -1
+7 7
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_l07_nhi.ipf' 1.000000 (free) -1 scaling -1 -1
+2 8
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_bw_l2_cor.ipf' 1.000000 (free) -1 scaling -1 -1
+3 9
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_bw_l3_cor.ipf' 1.000000 (free) -1 scaling -1 -1
+4 10
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_bw_l4_cor.ipf' 1.000000 (free) -1 scaling -1 -1
+5 11
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_bw_l5_cor.ipf' 1.000000 (free) -1 scaling -1 -1
+6 12
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_bw_l6_cor.ipf' 1.000000 (free) -1 scaling -1 -1
+7 13
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_bw_l7_cor.ipf' 1.000000 (free) -1 scaling -1 -1
+3 14
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_evides_l2.ipf' 1.000000 (free) -1 scaling -1 -1
+4 15
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_evides_l3.ipf' 1.000000 (free) -1 scaling -1 -1
+5 16
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_evides_l5.ipf' 1.000000 (free) -1 scaling -1 -1
+6 17
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_evides_l6.ipf' 1.000000 (free) -1 scaling -1 -1
+7 18
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_evides_l7.ipf' 1.000000 (free) -1 scaling -1 -1
+2 19
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_pwn_l2.ipf' 1.000000 (free) -1 scaling -1 -1
+3 20
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_pwn_l3.ipf' 1.000000 (free) -1 scaling -1 -1
+1 21
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_vitens_l1.ipf' 1.000000 (free) -1 scaling -1 -1
+2 22
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_vitens_l2.ipf' 1.000000 (free) -1 scaling -1 -1
+3 23
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_vitens_l3.ipf' 1.000000 (free) -1 scaling -1 -1
+4 24
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_vitens_l4.ipf' 1.000000 (free) -1 scaling -1 -1
+5 25
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_vitens_l5.ipf' 1.000000 (free) -1 scaling -1 -1
+6 26
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_vitens_l6.ipf' 1.000000 (free) -1 scaling -1 -1
+7 27
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_vitens_l7.ipf' 1.000000 (free) -1 scaling -1 -1
+4 28
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_wbgr_l4.ipf' 1.000000 (free) -1 scaling -1 -1
+5 29
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_wbgr_l5.ipf' 1.000000 (free) -1 scaling -1 -1
+6 30
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_wbgr_l6.ipf' 1.000000 (free) -1 scaling -1 -1
+7 31
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_wbgr_l7.ipf' 1.000000 (free) -1 scaling -1 -1
+4 32
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_wmd_l4.ipf' 1.000000 (free) -1 scaling -1 -1
+5 33
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_wmd_l5.ipf' 1.000000 (free) -1 scaling -1 -1
+6 34
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_wmd_l6.ipf' 1.000000 (free) -1 scaling -1 -1
+7 35
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_wmd_l7.ipf' 1.000000 (free) -1 scaling -1 -1
+2 36
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_wml_l2_cor.ipf' 1.000000 (free) -1 scaling -1 -1
+3 37
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_wml_l3_cor.ipf' 1.000000 (free) -1 scaling -1 -1
+4 38
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_wml_l4_cor.ipf' 1.000000 (free) -1 scaling -1 -1
+5 39
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_wml_l5_cor.ipf' 1.000000 (free) -1 scaling -1 -1
+6 40
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_wml_l6_cor.ipf' 1.000000 (free) -1 scaling -1 -1
+7 41
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_wml_l7_cor.ipf' 1.000000 (free) -1 scaling -1 -1
+2 42
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_oasen_l2.ipf' 1.000000 (free) -1 scaling -1 -1
+3 43
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_oasen_l3.ipf' 1.000000 (free) -1 scaling -1 -1
+4 44
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_oasen_l4.ipf' 1.000000 (free) -1 scaling -1 -1
+5 45
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_oasen_l5.ipf' 1.000000 (free) -1 scaling -1 -1
+6 46
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/wel/wel_oasen_l6.ipf' 1.000000 (free) -1 scaling -1 -1
+1 47
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/ghb/Randflux_L1.ipf' 1.000000 (free) -1 scaling -1 -1
+2 48
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/ghb/Randflux_L2.ipf' 1.000000 (free) -1 scaling -1 -1
+3 49
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/ghb/Randflux_L3.ipf' 1.000000 (free) -1 scaling -1 -1
+4 50
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/ghb/Randflux_L4.ipf' 1.000000 (free) -1 scaling -1 -1
+5 51
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/ghb/Randflux_L5.ipf' 1.000000 (free) -1 scaling -1 -1
+6 52
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/ghb/Randflux_L6.ipf' 1.000000 (free) -1 scaling -1 -1
+7 53
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/ghb/Randflux_L7.ipf' 1.000000 (free) -1 scaling -1 -1

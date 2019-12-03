@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<Folder>
+		<name>Title</name>
+		<open>1</open>
+		<description>Description</description>
+		
+		% for i in range(len(time_start)):
+		<GroundOverlay>	     
+			<name>Plot title</name>
+			<description>Plot description</description>
+			<TimeSpan>
+				<begin>${time_start[i]}</begin>
+				<end>${time_end[i]}</end>
+			</TimeSpan>
+			<Icon>
+				<href>${url(controller=controller, action=action, var=var, t=i, format="png", qualified=True, colorbar=False)}</href>
+			</Icon>
+			<LatLonBox>
+				<north>${north}</north>
+				<south>${south}</south>
+				<east>${east}</east>
+				<west>${west}</west>
+				<rotation>${rotation}</rotation>
+			</LatLonBox>
+		</GroundOverlay>
+		% endfor
+	</Folder>
+</Document>
+</kml>

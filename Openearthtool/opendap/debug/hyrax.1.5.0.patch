@@ -1,0 +1,107 @@
+Index: fileout_netcdf-0.9.0/conf/netcdf.m4
+===================================================================
+--- fileout_netcdf-0.9.0/conf/netcdf.m4	(revision 20339)
++++ fileout_netcdf-0.9.0/conf/netcdf.m4	(working copy)
+@@ -85,6 +85,7 @@
+        /usr/lib/netcdf-${ac_check_nc_interface} \
+        /usr/local/netcdf/lib /opt/netcdf/lib \
+        /usr/netcdf/lib /usr/local/lib/netcdf /opt/lib/netcdf \
++       /opt/local/lib \
+        /usr/lib/netcdf ; do
+         AS_IF([test "z$ac_netcdf_libdir" = 'z'],
+           [NC_LDFLAGS=],
+@@ -133,6 +134,7 @@
+        /usr/include/netcdf-${ac_check_nc_interface} \
+        /usr/local/netcdf/include \
+        /opt/netcdf/include /usr/netcdf/include /usr/local/include/netcdf \
++       /opt/local/include \
+        /opt/include/netcdf /usr/include/netcdf ; do
+         AC_MSG_NOTICE([searching netcdf includes in $ac_netcdf_incdir])
+         AC_CHECK_NETCDF_HEADER([$ac_netcdf_incdir],[ac_netcdf_header='yes'],
+Index: hdf4_handler-3.7.10/conf/hdf4.m4
+===================================================================
+--- hdf4_handler-3.7.10/conf/hdf4.m4	(revision 20339)
++++ hdf4_handler-3.7.10/conf/hdf4.m4	(working copy)
+@@ -44,6 +44,7 @@
+        /usr/lib64/hdf4.2r1 /usr/local/hdf/lib64/ /opt/hdf/lib64 /usr/hdf/lib64 \
+        /usr/local/lib64/hdf /opt/lib64/hdf /usr/lib64/hdf \
+        /usr/local/hdf4.2r1/lib /opt/hdf4.2r1/lib \ 
++       /opt/local/lib \
+        /usr/hdf4.2r1/lib /usr/local/lib/hdf4.2r1 /opt/lib/hdf4.2r1 \
+        /usr/lib/hdf4.2r1 /usr/local/hdf/lib/ /opt/hdf/lib /usr/hdf/lib \
+        /usr/local/lib/hdf /opt/lib/hdf /usr/lib/hdf ; do
+@@ -74,6 +75,7 @@
+       for ac_hdf4_incdir in "" /usr/local/hdf4.2r1/include /opt/hdf4.2r1/include \ 
+        /usr/hdf4.2r1/include /usr/local/include/hdf4.2r1 \
+        /opt/include/hdf4.2r1 /usr/include/hdf4.2r1 /usr/local/hdf/include \
++       /opt/local/include \
+        /opt/hdf/include /usr/hdf/include /usr/local/include/hdf \
+        /opt/include/hdf /usr/include/hdf ; do
+         AS_IF([test "z$ac_hdf4_incdir" = 'z'],
+Index: hdf5_handler-1.3.0/conf/hdf5.m4
+===================================================================
+--- hdf5_handler-1.3.0/conf/hdf5.m4	(revision 20339)
++++ hdf5_handler-1.3.0/conf/hdf5.m4	(working copy)
+@@ -83,6 +83,7 @@
+        /usr/lib/hdf5 \
+        /usr/local/hdf5/lib \
+        /opt/hdf5/lib \
++       /opt/local/lib \
+        /usr/hdf5/lib \
+        /usr/local/lib/hdf5 \
+        /opt/lib/hdf5 \
+@@ -133,6 +134,7 @@
+        /usr/include/hdf5 \
+        /usr/local/hdf5/include \
+        /opt/hdf5/include \
++       /opt/local/include \
+        /usr/hdf5/include \
+        /usr/local/include/hdf5 \
+        /opt/include/hdf5 \
+Index: netcdf_handler-3.8.0/conf/netcdf.m4
+===================================================================
+--- netcdf_handler-3.8.0/conf/netcdf.m4	(revision 20339)
++++ netcdf_handler-3.8.0/conf/netcdf.m4	(working copy)
+@@ -84,6 +84,7 @@
+        /opt/lib/netcdf-${ac_check_nc_interface} \
+        /usr/lib/netcdf-${ac_check_nc_interface} \
+        /usr/local/netcdf/lib /opt/netcdf/lib \
++       /opt/local/lib \
+        /usr/netcdf/lib /usr/local/lib/netcdf /opt/lib/netcdf \
+        /usr/lib/netcdf ; do
+         AS_IF([test "z$ac_netcdf_libdir" = 'z'],
+@@ -132,6 +133,7 @@
+        /opt/include/netcdf-${ac_check_nc_interface} \
+        /usr/include/netcdf-${ac_check_nc_interface} \
+        /usr/local/netcdf/include \
++       /opt/local/include \
+        /opt/netcdf/include /usr/netcdf/include /usr/local/include/netcdf \
+        /opt/include/netcdf /usr/include/netcdf ; do
+         AC_MSG_NOTICE([searching netcdf includes in $ac_netcdf_incdir])
+Index: netcdf_handler-3.8.0/configure.ac
+===================================================================
+--- netcdf_handler-3.8.0/configure.ac	(revision 20339)
++++ netcdf_handler-3.8.0/configure.ac	(working copy)
+@@ -51,6 +51,22 @@
+    ],[3]
+ )
+ 
++dnl Checks for HDF5 to support netcdf4
++AC_CHECK_HDF5(
++  [
++      LIBS="$LIBS $H5_LIBS"
++      LDFLAGS="$LDFLAGS $H5_LDFLAGS"
++      CPPFLAGS="$CPPFLAGS $H5_CPPFLAGS -DH5_USE_16_API"
++  ],
++  [
++      echo "*** Use --with-hdf5 for the root hdf5 directory."
++      echo "*** Otherwise use --with-hdf5-include switch for includes directory"
++      echo "*** and --with-hdf5-libdir switch for libraries directory."
++      AC_MSG_ERROR([hdf5 library and hdf5 headers are required.])
++  ]
++)
++
++
+ AC_CHECK_BES([3.7.0],
+ [
+     # I think the AC_SUBST([BES_MODULE_DIR]) in bes.m4 will put that 

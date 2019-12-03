@@ -1,0 +1,127 @@
+// !$*UTF8*$!
+{
+	0013FA1714111D0E004DC957 /* Project object */ = {
+		activeBuildConfigurationName = Release;
+		activeExecutable = B5F642B0155A553C00664066 /* OpenCVClient */;
+		activeSDKPreference = iphoneos4.3;
+		activeTarget = 0013FA1F14111D0E004DC957 /* OpenCVClient */;
+		breakpoints = (
+		);
+		codeSenseManager = B5F642D0155A554F00664066 /* Code sense */;
+		executables = (
+			B5F642B0155A553C00664066 /* OpenCVClient */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					1352,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 358244029;
+			PBXWorkspaceStateSaveDate = 358244029;
+		};
+		perUserProjectItems = {
+			B57F5C4B155A5F4F007AB77A /* PBXTextBookmark */ = B57F5C4B155A5F4F007AB77A /* PBXTextBookmark */;
+			B5F64310155A5E1200664066 /* PBXTextBookmark */ = B5F64310155A5E1200664066 /* PBXTextBookmark */;
+		};
+		sourceControlManager = B5F642CF155A554F00664066 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	0013FA1F14111D0E004DC957 /* OpenCVClient */ = {
+		activeExec = 0;
+		executables = (
+			B5F642B0155A553C00664066 /* OpenCVClient */,
+		);
+	};
+	0013FA3A14111D0F004DC957 /* OpenCVClientViewController.mm */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1530, 2418}}";
+			sepNavSelRange = "{3766, 0}";
+			sepNavVisRange = "{3600, 1317}";
+		};
+	};
+	B57F5C4B155A5F4F007AB77A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 0013FA3A14111D0F004DC957 /* OpenCVClientViewController.mm */;
+		name = "OpenCVClientViewController.mm: 136";
+		rLen = 0;
+		rLoc = 3766;
+		rType = 0;
+		vrLen = 1317;
+		vrLoc = 3600;
+	};
+	B5F642B0155A553C00664066 /* OpenCVClient */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 1;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = OpenCVClient;
+		savedGlobals = {
+		};
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+		variableFormatDictionary = {
+		};
+	};
+	B5F642CF155A554F00664066 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	B5F642D0155A554F00664066 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	B5F64310155A5E1200664066 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 0013FA3A14111D0F004DC957 /* OpenCVClientViewController.mm */;
+		name = "OpenCVClientViewController.mm: 147";
+		rLen = 0;
+		rLoc = 4013;
+		rType = 0;
+		vrLen = 1424;
+		vrLoc = 3392;
+	};
+}

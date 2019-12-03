@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- Specify data sources for case Hollandse Kust (HK)      -->
+<!-- ****************************************************** -->
+<!-- Title: Short description of dataset                    -->
+<!-- Categories: hydro, meteo, geo, eco                     -->
+<!-- Type: data type: 2dmap, 3dmap, station, info           -->
+<!-- Kml: link to kml-file                                  -->
+<!-- Actions: Define possible actions for this data         -->
+
+<hk_data>
+  <data>
+    <title>Algemene hoogtekaart NL</title>
+    <category>geo</category>
+    <type>2dmap</type>
+    <kml>http://dtvirt13/test/ahn100.kmz</kml>
+    <actions>
+        <interpolatetoline>
+            <source>http://opendap.deltares.nl/thredds/dodsC/opendap/tno/ahn100m/mv250.nc</source>
+            <varname>depth</varname>
+        </interpolatetoline>
+    </actions>
+  </data>
+  <data>
+    <title>Vaklodingen_grids</title>
+    <category>geo</category>
+    <type>2dmap</type>
+    <kml>http://dtvirt5.deltares.nl/kml/rijkswaterstaat/Vaklodingen.kml</kml>
+    <actions>
+        <interpolatetoline>
+            <source>http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB138_0706.nc</source>
+            <varname>z</varname>
+        </interpolatetoline>
+        <multitile>
+            <source>http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/DienstZeeland/catalog.html</source>
+            <varname>Vaklodingen</varname>
+        </multitile>
+    </actions>
+  </data>
+  <data>
+    <title>Kustlidar_grids</title>
+    <category>geo</category>
+    <type>2dmap</type>
+    <kml>http://dtvirt5.deltares.nl/kml/rijkswaterstaat/kustlidar.kml</kml>
+    <actions></actions>
+  </data>
+  <data>
+    <title>Suppleties</title>
+    <category>hydro</category>
+    <type>info</type>
+    <kml>http://dtvirt5.deltares.nl/kml/suppleties/rws_suppletiedatabase.kml</kml>
+    <actions></actions>
+  </data>
+  <data>
+    <title>Sea surface height</title>
+    <category>hydro</category>
+    <type>station</type>
+    <kml>http://kml.deltares.nl/kml/test_arjan/hk_data/rijkswaterstaat/waterbase/sea_surface_height.kml</kml>
+    <actions></actions>  
+  </data>
+  <data>
+      <title>Mass concentration of oxygen</title>
+      <category>hydro</category>
+      <type>station</type>
+      <kml>http://kml.deltares.nl/kml/test_arjan/hk_data/rijkswaterstaat/waterbase/mass_concentration_of_oxygen_in_sea_water.kml</kml>
+      <actions></actions>  
+  </data>
+  <data>
+      <title>Sea surface temperature</title>
+      <category>hydro</category>
+      <type>station</type>
+      <kml>http://kml.deltares.nl/kml/test_arjan/hk_data/rijkswaterstaat/waterbase/sea_surface_temperature.kml</kml>
+      <actions></actions>
+ </data>
+ <data>
+      <title>Sea surface salinity</title>
+      <category>hydro</category>
+      <type>station</type>
+      <kml>http://kml.deltares.nl/kml/test_arjan/hk_data/rijkswaterstaat/waterbase/sea_surface_salinity.kml</kml>
+      <actions></actions>
+ </data>
+ <data>
+    <title>Matroos database</title>
+    <category>hydro</category>
+    <type>station</type>
+    <kml>http://matroos.deltares.nl/google_maps/get_kmz.php?setID=noos_bma</kml>
+    <actions></actions>
+  </data>
+  <data>
+    <title>KNMI wind data</title>
+    <category>meteo</category>
+    <type>station</type>
+    <kml>http://dtvirt5.deltares.nl/kml/knmi/potwind.kml</kml>
+    <actions></actions>
+  </data>
+  <data>
+    <title>TNO D50 grain size</title>
+    <category>geo</category>
+    <type>2dmap</type>
+    <kml>http://dtvirt5.deltares.nl/kml/tno/ncp/dz50_juli2007.kml</kml>
+    <actions>
+        <interpolatetoline>
+            <source>http://opendap.deltares.nl/thredds/dodsC/opendap/tno/ncp/dz50_juli2007.nc</source>
+            <varname>D50</varname>
+        </interpolatetoline>
+    </actions>
+  </data>
+  <data>
+    <title>Habitat gebieden</title>
+    <category>eco</category>
+    <type>info</type>   
+    <kml>http://dtvirt5.deltares.nl/kml/overheid/habitat%20gebieden.kmz</kml>
+    <actions></actions>
+  </data>
+  <data>
+    <title>Vogel gebieden</title>
+    <category>eco</category>
+    <type>info</type>
+    <kml>http://dtvirt5.deltares.nl/kml/overheid/vogel%20gebieden.kmz</kml>
+    <actions></actions>
+  </data>
+</hk_data>

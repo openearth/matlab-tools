@@ -1,0 +1,41 @@
+# Treat this as python statements
+# Write strings as "" !
+
+# Basic configurations, write images 1 picture with level estimation per column/image inside the kmeans output folder
+[previews]
+writeImg = False
+
+# After applying mask_white.jpg - cutting columns by margin to reduce errors. Do not put zeros and no . (floats)!
+[cropping]
+margin_left_px = 40
+margin_right_px = 40
+
+# Kmeans color quantification options - number of clusters and sub-number of mud or dark clusters. Put as int!
+[kmeans]
+nbclusters = 4
+mudclusters = 1
+
+# Thresholds to detect mud block percentage of mud in the line
+[levels]
+dark_thr_percent = 70
+
+# Filtering options
+[filtering]
+thr_blame = 2
+thr_min_perc = 20
+thr_max_perc = 80
+blk_size = 10
+
+# Default values used in postprocessing
+[post]
+expdur = 25
+sample = "Delfzijl"
+ci = 50
+cg = 60
+H_ini = 0.4
+rho_s = 2540
+rho_w = 1008
+sandfrac = 0.1
+h_final = 0.074
+pix2m = 0.005
+khm = 0.01

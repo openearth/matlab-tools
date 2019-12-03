@@ -1,0 +1,14 @@
+  &input_nml
+   file_rtm     = '/CESM/cseg/inputdata/lnd/clm2/rtmdata/rdirc.05.061026 '
+   file_ocn     = '/CESM/cseg/mapping/grids/gx1v6_090205.nc'
+   file_nn      = 'map_initial_nn.nc '
+   file_smooth  = 'map_smoother.nc '
+   file_new     = 'map_r05_to_gx1v6_e1000r300_090226.nc'
+   title        = 'runoff map: r05 -> gx1v6, smoothed '
+   eFold        = 1000000.0
+   rMax         =  300000.0
+   step1 = .true.
+   step2 = .true.
+   step3 = .true.
+
+  /

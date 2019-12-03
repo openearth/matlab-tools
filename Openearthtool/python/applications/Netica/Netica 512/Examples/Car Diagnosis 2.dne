@@ -1,0 +1,605 @@
+// ~->[DNET-1]->~
+
+// File created by YendallJ at Norsys using Netica 5.00 on Mar 19, 2011 at 00:15:31.
+
+bnet Car_Diagnosis_2 {
+AutoCompile = TRUE;
+autoupdate = TRUE;
+comment = "Represents the working relationships between parts of a car.\n\n\
+	All probabilities are supposed to be over all such cars brought into a garage for repair.\n\n\
+	Copyright 1992-2011 Norsys Software Corp.";
+author = "BoerlageB";
+whenchanged = 1300508126;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 10;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	windowposn = (26, 6, 882, 623);
+	CommentShowing = TRUE;
+	CommentWindowPosn = (45, 592, 813, 761);
+	resolution = 72;
+	drawingbounds = (832, 720);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0xc0c0c0;};
+	NodeSet Nature {BuiltIn = 1; Color = 0xf8eed2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0xd3caa6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0xc8c8c8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0xffffff;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0xffffb4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0xffbdbd;};
+	NodeSet Decision {BuiltIn = 1; Color = 0xdee8ff;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0xf0fafa;};
+	NodeSet Title {BuiltIn = 1; Color = 0xffffff;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		landscape = FALSE;
+		magnify = 1;
+		};
+	};
+
+node Alter {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, faulty);
+	parents = ();
+	probs = 
+		// okay         faulty       
+		  (0.997,       0.003);
+	title = "Alternator";
+	whenchanged = 1300507958;
+	belief = (0.997, 0.003);
+	visual V1 {
+		center = (450, 72);
+		height = 21;
+		};
+	};
+
+node Charging {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, faulty);
+	parents = (Alter);
+	probs = 
+		// okay         faulty        // Alter  
+		  (0.5,         0.5,          // okay   
+		   0,           1);           // faulty ;
+	title = "Charging system";
+	whenchanged = 1300508054;
+	belief = (0.4985, 0.5015);
+	visual V1 {
+		center = (450, 144);
+		height = 17;
+		};
+	};
+
+node BatAge {
+	kind = NATURE;
+	discrete = FALSE;
+	chance = CHANCE;
+	states = (new, old, very_old);
+	levels = (0, 2, 5, INFINITY);
+	parents = ();
+	probs = 
+		// new          old          very old     
+		  (0.4,         0.4,         0.2);
+	title = "Battery age";
+	comment = "New 0-2 yrs, Old 3-5 yrs, Very-old >5 yrs";
+	whenchanged = 1147996023;
+	belief = (0.4, 0.4, 0.2);
+	visual V1 {
+		center = (264, 102);
+		height = 2;
+		};
+	};
+
+node BatVolt {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (strong, weak, dead);
+	parents = (Charging, BatAge);
+	probs = 
+		// strong       weak         dead          // Charging BatAge   
+		  (0.95,        0.04,        0.01,         // okay     new      
+		   0.8,         0.15,        0.05,         // okay     old      
+		   0.6,         0.3,         0.1,          // okay     very old 
+		   0.008,       0.3,         0.692,        // faulty   new      
+		   0.004,       0.2,         0.796,        // faulty   old      
+		   0.002,       0.1,         0.898);       // faulty   very old ;
+	title = "Battery voltage";
+	whenchanged = 1147996023;
+	belief = (0.4113778, 0.178126, 0.4104962);
+	visual V1 {
+		center = (450, 222);
+		height = 16;
+		link 2 {
+			path = ((283, 137), (294, 156), (371, 189));
+			};
+		};
+	};
+
+node MFuse {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, blown);
+	parents = ();
+	probs = 
+		// okay         blown        
+		  (0.99,        0.01);
+	title = "Main fuse";
+	whenchanged = 1147996023;
+	belief = (0.99, 0.01);
+	visual V1 {
+		center = (96, 96);
+		height = 8;
+		};
+	};
+
+node Dist {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, faulty);
+	parents = ();
+	probs = 
+		// okay         faulty       
+		  (0.99,        0.01);
+	title = "Distributer";
+	whenchanged = 1300508054;
+	belief = (0.99, 0.01);
+	visual V1 {
+		center = (90, 222);
+		height = 1;
+		};
+	};
+
+node PlugVolt {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (strong, weak, none);
+	parents = (MFuse, Dist, BatVolt);
+	probs = 
+		// strong       weak         none          // MFuse Dist   BatVolt 
+		  (0.9,         0.05,        0.05,         // okay  okay   strong  
+		   0,           0.9,         0.1,          // okay  okay   weak    
+		   0,           0,           1,            // okay  okay   dead    
+		   0.1,         0.1,         0.8,          // okay  faulty strong  
+		   0,           0.1,         0.9,          // okay  faulty weak    
+		   0,           0,           1,            // okay  faulty dead    
+		   0,           0,           1,            // blown okay   strong  
+		   0,           0,           1,            // blown okay   weak    
+		   0,           0,           1,            // blown okay   dead    
+		   0,           0,           1,            // blown faulty strong  
+		   0,           0,           1,            // blown faulty weak    
+		   0,           0,           1);           // blown faulty dead    ;
+	title = "Voltage at plug";
+	whenchanged = 1147996023;
+	belief = (0.3632795, 0.1778663, 0.4588542);
+	visual V1 {
+		center = (264, 222);
+		height = 15;
+		};
+	};
+
+node StMotor {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, faulty);
+	parents = ();
+	probs = 
+		// okay         faulty       
+		  (0.995,       0.005);
+	title = "Starter Motor";
+	whenchanged = 1300508054;
+	belief = (0.995, 0.005);
+	visual V1 {
+		center = (114, 516);
+		height = 19;
+		};
+	};
+
+node Starter {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, faulty);
+	parents = (MFuse, StMotor, BatVolt);
+	probs = 
+		// okay         faulty        // MFuse StMotor BatVolt 
+		  (0.98,        0.02,         // okay  okay    strong  
+		   0.9,         0.1,          // okay  okay    weak    
+		   0.1,         0.9,          // okay  okay    dead    
+		   0.02,        0.98,         // okay  faulty  strong  
+		   0.01,        0.99,         // okay  faulty  weak    
+		   0.005,       0.995,        // okay  faulty  dead    
+		   0,           1,            // blown okay    strong  
+		   0,           1,            // blown okay    weak    
+		   0,           1,            // blown okay    dead    
+		   0,           1,            // blown faulty  strong  
+		   0,           1,            // blown faulty  weak    
+		   0,           1);           // blown faulty  dead    ;
+	title = "Starter system";
+	whenchanged = 1300508054;
+	belief = (0.5955355, 0.4044645);
+	visual V1 {
+		center = (318, 516);
+		height = 6;
+		link 1 {
+			path = ((66, 124), (0, 180), (0, 426), (168, 426), (273, 489));
+			};
+		link 3 {
+			path = ((400, 257), (258, 354), (258, 432), (299, 489));
+			};
+		};
+	};
+
+node Lights {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (bright, dim, off);
+	parents = (BatVolt);
+	probs = 
+		// bright       dim          off           // BatVolt 
+		  (0.94,        0.01,        0.05,         // strong  
+		   0,           0.95,        0.05,         // weak    
+		   0,           0,           1);           // dead    ;
+	title = "Headlights";
+	whenchanged = 1147996023;
+	belief = (0.3866951, 0.1733335, 0.4399714);
+	visual V1 {
+		center = (654, 156);
+		height = 18;
+		};
+	};
+
+node Plugs {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, too_wide, fouled);
+	parents = ();
+	probs = 
+		// okay         too wide     fouled       
+		  (0.7,         0.1,         0.2);
+	title = "Spark plugs";
+	whenchanged = 1147996023;
+	belief = (0.7, 0.1, 0.2);
+	visual V1 {
+		center = (192, 300);
+		height = 5;
+		};
+	};
+
+node SpkQual {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (good, bad, very_bad);
+	parents = (Plugs, PlugVolt);
+	functable = 
+		                    // Plugs    PlugVolt 
+		  (good,            // okay     strong   
+		   bad,             // okay     weak     
+		   very_bad,        // okay     none     
+		   bad,             // too wide strong   
+		   very_bad,        // too wide weak     
+		   very_bad,        // too wide none     
+		   bad,             // fouled   strong   
+		   very_bad,        // fouled   weak     
+		   very_bad);       // fouled   none     ;
+	title = "Spark quality";
+	whenchanged = 1147996023;
+	belief = (0.2542957, 0.2334903, 0.5122141);
+	visual V1 {
+		center = (372, 390);
+		height = 20;
+		};
+	};
+
+node Cranks {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = (Starter);
+	probs = 
+		// true         false         // Starter 
+		  (0.8,         0.2,          // okay    
+		   0.05,        0.95);        // faulty  ;
+	title = "Car cranks";
+	whenchanged = 1300508126;
+	belief = (0.4966516, 0.5033484);
+	visual V1 {
+		center = (498, 516);
+		height = 3;
+		};
+	};
+
+node Timing {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (good, bad, very_bad);
+	parents = (Dist);
+	probs = 
+		// good         bad          very bad      // Dist   
+		  (0.9,         0.09,        0.01,         // okay   
+		   0.2,         0.3,         0.5);         // faulty ;
+	title = "Spark timing";
+	whenchanged = 1147996023;
+	belief = (0.893, 0.0921, 0.0149);
+	visual V1 {
+		center = (90, 378);
+		height = 4;
+		};
+	};
+
+node GasTank {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (has_gas, empty);
+	parents = ();
+	probs = 
+		// has gas      empty        
+		  (0.9,         0.1);
+	title = "Gas Tank";
+	whenchanged = 1147996023;
+	belief = (0.9, 0.1);
+	visual V1 {
+		center = (708, 234);
+		height = 12;
+		};
+	};
+
+node GasFilter {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (clean, dirty);
+	parents = ();
+	probs = 
+		// clean        dirty        
+		  (0.97,        0.03);
+	title = "Gas Filter";
+	whenchanged = 1147996023;
+	belief = (0.97, 0.03);
+	visual V1 {
+		center = (708, 318);
+		height = 11;
+		};
+	};
+
+node Fuel {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (good, poor, faulty);
+	parents = (GasTank, GasFilter);
+	probs = 
+		// good         poor         faulty        // GasTank GasFilter 
+		  (0.9,         0.07,        0.03,         // has gas clean     
+		   0,           0.9,         0.1,          // has gas dirty     
+		   0,           0,           1,            // empty   clean     
+		   0,           0,           1);           // empty   dirty     ;
+	title = "Fuel system";
+	whenchanged = 1147996023;
+	belief = (0.7857, 0.08541, 0.12889);
+	visual V1 {
+		center = (708, 414);
+		height = 10;
+		link 1 {
+			path = ((750, 262), (792, 288), (792, 354), (757, 379));
+			};
+		};
+	};
+
+node AirFilter {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (clean, dirty);
+	parents = ();
+	probs = 
+		// clean        dirty        
+		  (0.9,         0.1);
+	title = "Air filter";
+	whenchanged = 1147996023;
+	belief = (0.9, 0.1);
+	visual V1 {
+		center = (546, 318);
+		height = 13;
+		};
+	};
+
+node Air {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, faulty);
+	parents = (AirFilter);
+	probs = 
+		// okay         faulty        // AirFilter 
+		  (0.9,         0.1,          // clean     
+		   0.3,         0.7);         // dirty     ;
+	title = "Air system";
+	whenchanged = 1300508054;
+	belief = (0.84, 0.16);
+	visual V1 {
+		center = (546, 390);
+		height = 14;
+		};
+	};
+
+node Starts {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = (Cranks, Fuel, SpkQual, Air, Timing);
+	probs = 
+		// true         false         // Cranks Fuel   SpkQual  Air    Timing   
+		  (0.99,        0.01,         // true   good   good     okay   good     
+		   0.98,        0.02,         // true   good   good     okay   bad      
+		   0.7,         0.3,          // true   good   good     okay   very bad 
+		   0.8,         0.2,          // true   good   good     faulty good     
+		   0.75,        0.25,         // true   good   good     faulty bad      
+		   0.6,         0.4,          // true   good   good     faulty very bad 
+		   0.7,         0.3,          // true   good   bad      okay   good     
+		   0.65,        0.35,         // true   good   bad      okay   bad      
+		   0.5,         0.5,          // true   good   bad      okay   very bad 
+		   0.6,         0.4,          // true   good   bad      faulty good     
+		   0.5,         0.5,          // true   good   bad      faulty bad      
+		   0.4,         0.6,          // true   good   bad      faulty very bad 
+		   0,           1,            // true   good   very bad okay   good     
+		   0,           1,            // true   good   very bad okay   bad      
+		   0,           1,            // true   good   very bad okay   very bad 
+		   0,           1,            // true   good   very bad faulty good     
+		   0,           1,            // true   good   very bad faulty bad      
+		   0,           1,            // true   good   very bad faulty very bad 
+		   0.31,        0.69,         // true   poor   good     okay   good     
+		   0.22,        0.78,         // true   poor   good     okay   bad      
+		   0.12,        0.88,         // true   poor   good     okay   very bad 
+		   0.2,         0.8,          // true   poor   good     faulty good     
+		   0.12,        0.88,         // true   poor   good     faulty bad      
+		   0.08,        0.92,         // true   poor   good     faulty very bad 
+		   0.18,        0.82,         // true   poor   bad      okay   good     
+		   0.11,        0.89,         // true   poor   bad      okay   bad      
+		   0.07,        0.93,         // true   poor   bad      okay   very bad 
+		   0.11,        0.89,         // true   poor   bad      faulty good     
+		   0.07,        0.93,         // true   poor   bad      faulty bad      
+		   0.01,        0.99,         // true   poor   bad      faulty very bad 
+		   0,           1,            // true   poor   very bad okay   good     
+		   0,           1,            // true   poor   very bad okay   bad      
+		   0,           1,            // true   poor   very bad okay   very bad 
+		   0,           1,            // true   poor   very bad faulty good     
+		   0,           1,            // true   poor   very bad faulty bad      
+		   0,           1,            // true   poor   very bad faulty very bad 
+		   0,           1,            // true   faulty good     okay   good     
+		   0,           1,            // true   faulty good     okay   bad      
+		   0,           1,            // true   faulty good     okay   very bad 
+		   0,           1,            // true   faulty good     faulty good     
+		   0,           1,            // true   faulty good     faulty bad      
+		   0,           1,            // true   faulty good     faulty very bad 
+		   0,           1,            // true   faulty bad      okay   good     
+		   0,           1,            // true   faulty bad      okay   bad      
+		   0,           1,            // true   faulty bad      okay   very bad 
+		   0,           1,            // true   faulty bad      faulty good     
+		   0,           1,            // true   faulty bad      faulty bad      
+		   0,           1,            // true   faulty bad      faulty very bad 
+		   0,           1,            // true   faulty very bad okay   good     
+		   0,           1,            // true   faulty very bad okay   bad      
+		   0,           1,            // true   faulty very bad okay   very bad 
+		   0,           1,            // true   faulty very bad faulty good     
+		   0,           1,            // true   faulty very bad faulty bad      
+		   0,           1,            // true   faulty very bad faulty very bad 
+		   0,           1,            // false  good   good     okay   good     
+		   0,           1,            // false  good   good     okay   bad      
+		   0,           1,            // false  good   good     okay   very bad 
+		   0,           1,            // false  good   good     faulty good     
+		   0,           1,            // false  good   good     faulty bad      
+		   0,           1,            // false  good   good     faulty very bad 
+		   0,           1,            // false  good   bad      okay   good     
+		   0,           1,            // false  good   bad      okay   bad      
+		   0,           1,            // false  good   bad      okay   very bad 
+		   0,           1,            // false  good   bad      faulty good     
+		   0,           1,            // false  good   bad      faulty bad      
+		   0,           1,            // false  good   bad      faulty very bad 
+		   0,           1,            // false  good   very bad okay   good     
+		   0,           1,            // false  good   very bad okay   bad      
+		   0,           1,            // false  good   very bad okay   very bad 
+		   0,           1,            // false  good   very bad faulty good     
+		   0,           1,            // false  good   very bad faulty bad      
+		   0,           1,            // false  good   very bad faulty very bad 
+		   0,           1,            // false  poor   good     okay   good     
+		   0,           1,            // false  poor   good     okay   bad      
+		   0,           1,            // false  poor   good     okay   very bad 
+		   0,           1,            // false  poor   good     faulty good     
+		   0,           1,            // false  poor   good     faulty bad      
+		   0,           1,            // false  poor   good     faulty very bad 
+		   0,           1,            // false  poor   bad      okay   good     
+		   0,           1,            // false  poor   bad      okay   bad      
+		   0,           1,            // false  poor   bad      okay   very bad 
+		   0,           1,            // false  poor   bad      faulty good     
+		   0,           1,            // false  poor   bad      faulty bad      
+		   0,           1,            // false  poor   bad      faulty very bad 
+		   0,           1,            // false  poor   very bad okay   good     
+		   0,           1,            // false  poor   very bad okay   bad      
+		   0,           1,            // false  poor   very bad okay   very bad 
+		   0,           1,            // false  poor   very bad faulty good     
+		   0,           1,            // false  poor   very bad faulty bad      
+		   0,           1,            // false  poor   very bad faulty very bad 
+		   0,           1,            // false  faulty good     okay   good     
+		   0,           1,            // false  faulty good     okay   bad      
+		   0,           1,            // false  faulty good     okay   very bad 
+		   0,           1,            // false  faulty good     faulty good     
+		   0,           1,            // false  faulty good     faulty bad      
+		   0,           1,            // false  faulty good     faulty very bad 
+		   0,           1,            // false  faulty bad      okay   good     
+		   0,           1,            // false  faulty bad      okay   bad      
+		   0,           1,            // false  faulty bad      okay   very bad 
+		   0,           1,            // false  faulty bad      faulty good     
+		   0,           1,            // false  faulty bad      faulty bad      
+		   0,           1,            // false  faulty bad      faulty very bad 
+		   0,           1,            // false  faulty very bad okay   good     
+		   0,           1,            // false  faulty very bad okay   bad      
+		   0,           1,            // false  faulty very bad okay   very bad 
+		   0,           1,            // false  faulty very bad faulty good     
+		   0,           1,            // false  faulty very bad faulty bad      
+		   0,           1);           // false  faulty very bad faulty very bad ;
+	title = "Car starts";
+	whenchanged = 1300508126;
+	belief = (0.2498391, 0.7501609);
+	visual V1 {
+		center = (708, 516);
+		height = 9;
+		link 3 {
+			path = ((458, 421), (637, 489));
+			};
+		link 4 {
+			path = ((580, 418), (673, 489));
+			};
+		link 5 {
+			path = ((165, 413), (258, 456), (486, 456), (633, 496));
+			};
+		};
+	};
+
+node TITLE1 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Car Diagnosis 2";
+	whenchanged = 904538867;
+	visual V1 {
+		center = (282, 24);
+		font = font {shape= "Times New Roman"; size= 16;};
+		height = 22;
+		};
+	};
+
+node TITLE2 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Copyright 1992-2011 Norsys Software Corp.";
+	whenchanged = 1300507491;
+	visual V1 {
+		center = (690, 18);
+		font = font {shape= "Times New Roman"; size= 8;};
+		height = 7;
+		};
+	};
+ElimOrder = (Alter, AirFilter, Lights, GasTank, GasFilter, Charging, BatAge, StMotor, Starter, Plugs, BatVolt, MFuse, Dist, PlugVolt, SpkQual, Cranks, Timing, Fuel, Air, Starts);
+};

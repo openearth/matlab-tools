@@ -1,0 +1,204 @@
+// ~->[DNET-1]->~
+
+// File created by Norsys using Netica 5.02 on Apr 25, 2011 at 14:38:55.
+
+bnet Learn_Latent {
+AutoCompile = TRUE;
+autoupdate = TRUE;
+comment = "\n\
+	Learning Latent Variable Example         Copyright 2002-2011 Norsys Software Corp.\n\
+	--------------------------------\n\n\
+	This Bayes net demonstrates learning a latent (or \"hidden\") variable, which \n\
+	occurs when you have an important node in the net for which *no* data appears \n\
+	in the case file.\n\n\
+	An example of that situation is when you conjecture that a number of nodes \n\
+	may have a common unobservable cause, such as a disease which is not directly\n\
+	observable, giving rise to a number of symptoms.\n\n\
+	When you build the net with Netica, you add a node for the latent variable,\n\
+	and provide it with the number of states you think it should have.\n\
+	You may have to repeat this whole process, with a different number of states\n\
+	each time, to see what best matches the data.  It is better to err on the\n\
+	side of having too few states, since too many states will be difficult for \n\
+	Netica to learn, and for you to interpret.\n\
+	Keep in mind that the node Netica learns will probably have the states in a \n\
+	different order than you expect, since Netica has no knowledge that would \n\
+	help it to decide an order for the states.\n\n\
+	As an example, consider this net, which has a parent node A with three\n\
+	children: R, S and T.  The first step is to generate a case file which\n\
+	just contains information on R, S and T, but not A.  You can do that by \n\
+	compiling the net, selecting the nodes R, S, T, and then choosing \n\
+	\"Cases->Simulate Cases\".  There is such a case file, except containing\n\
+	very many cases (100,000) in a condensed format, in the same directory \n\
+	as this net, called \"Learn Latent Data.cas\".  You can use\n\
+	\"File->Open as Text\" to examine it now.\n\n\
+	That case file represents data that could have been gathered from some\n\
+	real-world process whose internal mechanism is modeled by the net,\n\
+	but for which no observations of node A were available.\n\
+	Now suppose we are given that case file only, and through our insight\n\
+	into the world we conjecture that there is a common cause (A) for\n\
+	the observations R, S and T, and we want to determine how R, S and T\n\
+	probabilistically depend on A.\n\n\
+	You could build the new net from scratch, or just delete the CPTs of\n\
+	the \"Learn Latent\" net, but the most convenient way right now is just \n\
+	to open the net \"Learn Latent no CPTs\", which is in the same directory, \n\
+	and has the same structure as \"Learn Latent\", but without any CPTables.\n\n\
+	After opening it, choose  \"Cases->Learn->Learn Using EM\", select the\n\
+	\"Learn Latent Data.cas\" file from the dialog box, and accept the default\n\
+	degree of 1.  Netica will open the Messages window and proceed to do\n\
+	many steps of the EM algorithm to learn the new CPTs.  For each step of\n\
+	EM, it prints a line showing the iteration number, the \"log likelihood\",\n\
+	and the percentage change in log likelihood from the previous iteration.\n\
+	The \"log likelihood\" is the per case average of the negative of the \n\
+	logarithm of the probability of the case given the current bayes net \n\
+	(structure + CPTs).\n\n\
+	Normally you will only do a few steps of EM algorithm, and then stop it\n\
+	by holding down the left mouse button and the <ctrl> and <alt> keys \n\
+	for a little while.  However, this example runs to completion quite\n\
+	quickly.\n\n\
+	You can now compare the learned net with the original (which represents\n\
+	the distribution in the real world).  For instance, select node R of\n\
+	the original net and choose Table->View/Edit, then do the same for\n\
+	node R of the Learned net.  You can see that the learned\n\
+	net has learned the real-world relationships quite well considering\n\
+	that it had no observations of node A.\n\n\
+	The EM algorithm searches over bayes net CPTs in an attempt to maximize \n\
+	the probability of the data given the bayes net (i.e. minimize negative\n\
+	log likelihood).  This can also be done using a gradient descent algorithm.\n\
+	From the Netica menu, choose \"Cases->Learn->Learn Using Gradient\".\n\
+	That works similarly to the EM learning, but using a very different\n\
+	algorithm internally.\n\n\
+	At Norsys, we would appreciate any comments you have on our advanced\n\
+	learning algorithms, and reports of particular successes or failures\n\
+	you have had on your data sets (email info@norsys.com).\n\
+	";
+whenchanged = 1303767535;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 9;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	windowposn = (10, 24, 607, 303);
+	CommentShowing = TRUE;
+	CommentWindowPosn = (8, 303, 720, 672);
+	resolution = 72;
+	drawingbounds = (1080, 720);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0x00C0C0C0;};
+	NodeSet Nature {BuiltIn = 1; Color = 0x00F8EED2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0x00D3CAA6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0x00C8C8C8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0x00FFFFFF;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0x00FFFFB4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0x00FFBDBD;};
+	NodeSet Decision {BuiltIn = 1; Color = 0x00DEE8FF;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0x00F0FAFA;};
+	NodeSet Title {BuiltIn = 1; Color = 0x00FFFFFF;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		landscape = FALSE;
+		magnify = 1;
+		};
+	};
+
+node A {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = ();
+	probs = 
+		// true         false        
+		  (0.2,         0.8);
+	whenchanged = 1016917063;
+	belief = (0.2, 0.8);
+	visual V1 {
+		center = (282, 54);
+		height = 6;
+		};
+	};
+
+node R {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = (A);
+	probs = 
+		// true         false         // A     
+		  (0.96,        0.04,         // true  
+		   0.6,         0.4);         // false ;
+	whenchanged = 1018783837;
+	belief = (0.672, 0.328);
+	visual V1 {
+		center = (126, 138);
+		height = 3;
+		};
+	};
+
+node S {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = (A);
+	probs = 
+		// true         false         // A     
+		  (0.84,        0.16,         // true  
+		   0.16,        0.84);        // false ;
+	whenchanged = 1018783837;
+	belief = (0.296, 0.704);
+	visual V1 {
+		center = (282, 138);
+		height = 4;
+		};
+	};
+
+node T {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = (A);
+	probs = 
+		// true         false         // A     
+		  (0.5,         0.5,          // true  
+		   0.15,        0.85);        // false ;
+	whenchanged = 1018783837;
+	belief = (0.22, 0.78);
+	visual V1 {
+		center = (438, 138);
+		height = 5;
+		};
+	};
+
+node TITLE1 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Learning Latent \nVariable Example";
+	whenchanged = 1018314959;
+	visual V1 {
+		center = (89, 42);
+		font = font {shape= "Times New Roman"; size= 16;};
+		height = 1;
+		};
+	};
+
+node TITLE2 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Copyright 2002 Norsys Software Corp.";
+	whenchanged = 1018315024;
+	visual V1 {
+		center = (96, 72);
+		font = font {shape= "Arial"; size= 7;};
+		height = 2;
+		};
+	};
+ElimOrder = (R, S, A, T);
+};

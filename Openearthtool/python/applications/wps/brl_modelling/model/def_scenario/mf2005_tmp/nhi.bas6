@@ -1,0 +1,17 @@
+# Basic Package file
+free
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/bnd/ibound_l1.idf' 1 (free) -1 scaling 1 0
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/bnd/ibound_l2.IDF' 1 (free) -1 scaling 1 0
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/bnd/ibound_l3.idf' 1 (free) -1 scaling 1 0
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/bnd/ibound_l4.idf' 1 (free) -1 scaling 1 0
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/bnd/ibound_l5.idf' 1 (free) -1 scaling 1 0
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/bnd/ibound_l6.idf' 1 (free) -1 scaling 1 0
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/bnd/ibound_l7.idf' 1 (free) -1 scaling 1 0
+ 3.4028235E+38
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/shd/sh_01.idf' 1.000000 (free) -1 scaling 2 1
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/shd/sh_02.idf' 1.000000 (free) -1 scaling 2 1
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/shd/sh_03.idf' 1.000000 (free) -1 scaling 2 1
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/shd/sh_04.idf' 1.000000 (free) -1 scaling 2 1
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/shd/sh_05.idf' 1.000000 (free) -1 scaling 2 1
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/shd/sh_06.idf' 1.000000 (free) -1 scaling 2 1
+open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/shd/sh_07.idf' 1.000000 (free) -1 scaling 2 1

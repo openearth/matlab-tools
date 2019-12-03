@@ -1,0 +1,852 @@
+<html>
+<!-- Sitemap 1.0 -->
+<object type="text/site properties">
+  <param name="SiteType" value="toc">
+  <param name="Window Styles" value="0x800027">
+  <param name="ExWindow Styles" value="0x100">
+</object>
+<ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Getting Started">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Getting Started">
+      <param name="Local" value="NETICA\X_Getting_Started.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Netica Application">
+      <param name="Local" value="NETICA\X_Netica_Application.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="New Features">
+      <param name="Local" value="NETICA\X_New_Features.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Installation">
+      <param name="Local" value="NETICA\X_Installation.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Menu Items and Toolbar">
+      <param name="Local" value="NETICA\X_Menu_Items_and_the_Toolbar.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Quick Tour">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Quick Tour">
+        <param name="Local" value="NETICA\X_Quick_Tour.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Activities">
+        <param name="Local" value="NETICA\X_Activities_Quick_Tour.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Probabilistic Inference">
+        <param name="Local" value="NETICA\X_Probabilistic_Inference_Quick_Tour.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Net Construction">
+        <param name="Local" value="NETICA\X_Net_Construction_Quick_Tour.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Net Transformation">
+        <param name="Local" value="NETICA\X_Net_Transformation_Quick_Tour.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Learning from Data">
+        <param name="Local" value="NETICA\X_Learn_Data_Quick_Tour.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Decision Problems">
+        <param name="Local" value="NETICA\X_Decision_Problems_Quick_Tour.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Equations and Time Expansions">
+        <param name="Local" value="NETICA\X_Equations_and_Time_Expansions_Quick_Tour.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Introductory References for Bayes Nets and Decision Nets">
+      <param name="Local" value="NETICA\X_Introductory_References.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Design Philosophy">
+      <param name="Local" value="NETICA\X_Design_Philosophy.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Probabilistic Inference">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Bayes Nets and Probabilistic Inference">
+      <param name="Local" value="NETICA\X_BNs_and_Probabilistic_Inference.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Netica's Probabilistic Inference">
+      <param name="Local" value="NETICA\X_Neticas_Probabilistic_Inference.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Example Bayes Nets">
+      <param name="Local" value="NETICA\X_Example_Bayes_Net.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Compiling a Bayes Net">
+      <param name="Local" value="NETICA\X_Compiling_a_Bayes_Net.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Entering and Retracting Findings">
+      <param name="Local" value="NETICA\X_Entering_and_Retracting_Findings.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Belief Updating and AutoUpdating">
+      <param name="Local" value="NETICA\X_Belief_Updating_and_AutoUpdating.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Negative and Likelihood Findings">
+      <param name="Local" value="NETICA\X_Negative_and_Likelihood_Findings.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Consistency of Findings">
+      <param name="Local" value="NETICA\X_Consistency_of_Findings.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Most Probable Explanation">
+      <param name="Local" value="NETICA\X_Most_Probable_Explanation.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Sensitivity Analysis">
+      <param name="Local" value="NETICA\X_Sensitivity_Analysis.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Creating Bayes Nets and Decision Nets">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Creating Bayes Nets and Decision Nets">
+      <param name="Local" value="NETICA\X_Creating_Net.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Opening a Window">
+      <param name="Local" value="NETICA\X_Opening_a_Window.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Adding Nodes">
+      <param name="Local" value="NETICA\X_Adding_Nodes.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Adding Links">
+      <param name="Local" value="NETICA\X_Adding_Links.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Undoing and Redoing">
+      <param name="Local" value="NETICA\X_Undoing_and_Redoing.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Selecting Nodes and Links">
+      <param name="Local" value="NETICA\X_Selecting_Nodes_and_Links.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Moving Nodes and AutoGrid">
+      <param name="Local" value="NETICA\X_Moving_Nodes_and_AutoGrid.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Reshaping a Link">
+      <param name="Local" value="NETICA\X_Reshaping_a_Link.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Saving a Net to File">
+      <param name="Local" value="NETICA\X_Saving_a_Net_to_File.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Deleting Nodes and Links">
+      <param name="Local" value="NETICA\X_Deleting_Nodes_and_Links.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Cut, Copy, Paste and Duplicate Nodes">
+      <param name="Local" value="NETICA\X_Cut_Copy_Paste_and_Duplicate_Nodes.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Right-Clicking">
+      <param name="Local" value="NETICA\X_Rightclicking.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Placing Text on Net Diagrams">
+      <param name="Local" value="NETICA\X_Placing_Text_on_Net_Diagrams.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Documentation Window">
+      <param name="Local" value="NETICA\X_Documentation_Window.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Drawing Size and Scrolling">
+      <param name="Local" value="NETICA\X_Drawing_Size_and_Scrolling.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Zooming In and Out">
+      <param name="Local" value="NETICA\X_Zooming_In_and_Out.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Search / Find">
+      <param name="Local" value="NETICA\X_Search_Find.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Selecting Nodes/Links by Properties">
+      <param name="Local" value="NETICA\X_Selecting_by_Properties.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="One Operation, Multiple Nodes">
+      <param name="Local" value="NETICA\X_Operate_Multiple.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Node Properties">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Node Properties">
+      <param name="Local" value="NETICA\X_Node_Properties_Heading.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Node Dialog Box">
+      <param name="Local" value="NETICA\X_Node_Dialog_Box.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Buttons in the Node Dialog Box">
+      <param name="Local" value="NETICA\X_Making_Changes_Node_Dialog.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Node Name">
+      <param name="Local" value="NETICA\X_Node_Name.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Node Title">
+      <param name="Local" value="NETICA\X_Node_Title.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Node is Discrete or Continuous">
+      <param name="Local" value="NETICA\X_Node_is_Discrete_or_Continuous.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Node Kind">
+      <param name="Local" value="NETICA\X_Node_Kind.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Node States">
+      <param name="Local" value="NETICA\X_Node_States.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Node State Intervals">
+      <param name="Local" value="NETICA\X_Node_State_Interval.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Node State Value">
+      <param name="Local" value="NETICA\X_Node_State_Value.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="User-Defined Fields">
+      <param name="Local" value="NETICA\X_User_Defined_Fields.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Multi-Purpose Box">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Multi-Purpose Box">
+        <param name="Local" value="NETICA\X_Multi_Purpose_Box.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Description">
+        <param name="Local" value="NETICA\X_Node_Description.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Equation">
+        <param name="Local" value="NETICA\X_Equation_Editing.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Discretization">
+        <param name="Local" value="NETICA\X_Discretization_Multibox.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="States">
+        <param name="Local" value="NETICA\X_States_Multibox.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="State Numbers">
+        <param name="Local" value="NETICA\X_Node_State_Value_Multibox.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="State Titles">
+        <param name="Local" value="NETICA\X_State_Titles_Multibox.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Input Name">
+        <param name="Local" value="NETICA\X_Input_Name.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Link Delay">
+        <param name="Local" value="NETICA\X_Link_Delay.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Author">
+        <param name="Local" value="NETICA\X_Author.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="When Changed">
+        <param name="Local" value="NETICA\X_When_Changed.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="User Defined">
+        <param name="Local" value="NETICA\X_User_Defined.htm">
+      </object>
+      </ul>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Node Tables">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Node Tables">
+      <param name="Local" value="NETICA\X_Node_Tables_Heading.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Table Dialog Box">
+      <param name="Local" value="NETICA\X_Table_Dialog_Box.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Meaning of the Tables">
+      <param name="Local" value="NETICA\X_Meaning_of_the_Tables.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Changing Table Entries">
+      <param name="Local" value="NETICA\X_Changing_Table_Entries.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Buttons in the Table Dialog Box">
+      <param name="Local" value="NETICA\X_Buttons_in_the_Table_Dialog_Box.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Node Selector">
+      <param name="Local" value="NETICA\X_Table_Dialog_Node_Selector.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Deterministic / Chance Selector">
+      <param name="Local" value="NETICA\X_Deterministic_Chance_Selector.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Kinds of Tables">
+      <param name="Local" value="NETICA\X_Table_Kinds.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Scrolling and Navigating">
+      <param name="Local" value="NETICA\X_Scrolling_and_Resizing.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Empty Cells">
+      <param name="Local" value="NETICA\X_Table_Empty_Cells.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Cells Containing X">
+      <param name="Local" value="NETICA\X_Table_Xed_Cells.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Selecting, Copying and Pasting">
+      <param name="Local" value="NETICA\X_Selecting_Cutting_and_Pasting.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Table Menu Commands">
+      <param name="Local" value="NETICA\X_Table_Menu_Commands.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Changing Column Order">
+      <param name="Local" value="NETICA\X_Changing_Columns.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Multiple Dialogs for One Node">
+      <param name="Local" value="NETICA\X_Multiple_Dialogs_for_One_Node.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Cases and Case Files">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Cases">
+      <param name="Local" value="NETICA\X_Cases.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Working with Cases">
+      <param name="Local" value="NETICA\X_Working_with_Cases.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Saving and Reading Cases">
+      <param name="Local" value="NETICA\X_Saving_and_Reading_Cases.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Creating Case Files">
+      <param name="Local" value="NETICA\X_Creating_Case_Files.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Case File Format">
+      <param name="Local" value="NETICA\X_Case_File_Format.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Uncertain Values in Case Files">
+      <param name="Local" value="NETICA\X_Case_Files_Uncertain.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Example Case File - Chest Clinic">
+      <param name="Local" value="NETICA\X_Example_Case_File_Chest_Clinic.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Example Case File - Car Diagnosis">
+      <param name="Local" value="NETICA\X_Example_Case_File_Car_Diagnosis.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Simulating Random Cases">
+      <param name="Local" value="NETICA\X_Simulating_Random_Cases.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Process Cases">
+      <param name="Local" value="NETICA\X_Process_Cases.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Test Net Using Cases">
+      <param name="Local" value="NETICA\X_Test_Net_Using_Cases.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Learning From Cases">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Netica's Learning">
+      <param name="Local" value="NETICA\X_Neticas_Learning.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Learning from Case Data">
+      <param name="Local" value="NETICA\X_Learning_from_Cases.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Learning Algorithms">
+      <param name="Local" value="NETICA\X_Algorithms.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Single Case Learning">
+      <param name="Local" value="NETICA\X_Single_Case_Learning.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Learning From a Case File">
+      <param name="Local" value="NETICA\X_Learning_From_a_Case_File.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Learning From an Excel File">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Learning From an Excel File">
+        <param name="Local" value="NETICA\X_Learning_From_Excel.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Create Excel Spreadsheet">
+        <param name="Local" value="NETICA\X_Create_an_Excel_Sheet.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Add Nodes to Net">
+        <param name="Local" value="NETICA\X_Add_Nodes_to_Net.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Discretize or Combine States">
+        <param name="Local" value="NETICA\X_Discretize_or_Combine.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Add Link Structure">
+        <param name="Local" value="NETICA\X_Add_Link_Structure.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Learn CPTs">
+        <param name="Local" value="NETICA\X_Learn_CPTs.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Use the Resulting Bayes Net">
+        <param name="Local" value="NETICA\X_Use_Resulting_Net.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Experience">
+      <param name="Local" value="NETICA\X_Experience.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Counting-Learning Algorithm">
+      <param name="Local" value="NETICA\X_Counting_Learning_Algorithm.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Bayesian Learning">
+      <param name="Local" value="NETICA\X_Bayesian_Learning.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Fading">
+      <param name="Local" value="NETICA\X_Fading.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Decision-Making Nets">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Decision-Making Nets">
+      <param name="Local" value="NETICA\X_Decision_Problems.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Decision Nets">
+      <param name="Local" value="NETICA\X_Decision_Nets.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Umbrella Example Decision Net">
+      <param name="Local" value="NETICA\X_Umbrella_Example_Decision_Net.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Car Buyer Example Decision Net">
+      <param name="Local" value="NETICA\X_Car_Buyer_Example_Decision_Net.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Creating a Decision Net">
+      <param name="Local" value="NETICA\X_Creating_a_Decision_Net.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="No-Forgetting Links">
+      <param name="Local" value="NETICA\X_No_Forgetting_Links.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Solving a Decision Net">
+      <param name="Local" value="NETICA\X_Solving_a_Decision_Net.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Model Iteration">
+      <param name="Local" value="NETICA\X_Model_Iteration.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="What-if Decision Analysis">
+      <param name="Local" value="NETICA\X_What_if_Decision_Analysis.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Display Style and Printing">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Display Style and Printing">
+      <param name="Local" value="NETICA\X_Display_Style_and_Printing.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Node Name and Title Display">
+      <param name="Local" value="NETICA\X_Node_Name_and_Title_Display.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Font and Size">
+      <param name="Local" value="NETICA\X_Font_and_Size.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Node Color">
+      <param name="Local" value="NETICA\X_Node_Color.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Node Styles">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Node Styles">
+        <param name="Local" value="NETICA\X_Node_Styles.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Belief-Bar">
+        <param name="Local" value="NETICA\X_Belief_Bar.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Meter, Discrete Nodes">
+        <param name="Local" value="NETICA\X_Belief_Meter.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Meter, Continuous Nodes">
+        <param name="Local" value="NETICA\X_Belief_Meter_Continuous.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Link Styles">
+      <param name="Local" value="NETICA\X_Link_Styles.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Copying and Pasting Graphics">
+      <param name="Local" value="NETICA\X_Copying_and_Pasting_Graphics.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Printing">
+      <param name="Local" value="NETICA\X_Printing.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="SVG Graphics">
+      <param name="Local" value="NETICA\X_SVG.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Reports and Data Linking">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Reports and Data Linking">
+      <param name="Local" value="NETICA\X_Reports_and_Data_Linking.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Report Subjects">
+      <param name="Local" value="NETICA\X_Report_Subjects.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Report Destinations">
+      <param name="Local" value="NETICA\X_Report_Destinations.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Report Options">
+      <param name="Local" value="NETICA\X_Report_Options.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Linking with Excel">
+      <param name="Local" value="NETICA\X_Linking_with_Excel.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Linking with Netica API">
+      <param name="Local" value="NETICA\X_Linking_with_Netica_API.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Special Topics">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Node-Sets">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Node-Sets">
+        <param name="Local" value="NETICA\X_node_sets.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Creating Node-Sets">
+        <param name="Local" value="NETICA\X_Set_Node_Sets.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Adding and Removing Nodes">
+        <param name="Local" value="NETICA\X_Add_and_Remove_Nodes.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Node Coloring">
+        <param name="Local" value="NETICA\X_Node_Coloring.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Selecting Node-Sets">
+        <param name="Local" value="NETICA\X_Select_Node_Sets.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Node-Set Reporting">
+        <param name="Local" value="NETICA\X_Node_Sets_Report.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Dynamic Bayes Nets">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Dynamic Bayes Nets">
+        <param name="Local" value="NETICA\X_Dynamic_Bayes_Nets.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Create DBN">
+        <param name="Local" value="NETICA\X_Create_DBN.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Generate CPTs">
+        <param name="Local" value="NETICA\X_Generate_CPT.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Generate Time Expansion">
+        <param name="Local" value="NETICA\X_Generate_Time_Expansion.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Delete Disconnected Links">
+        <param name="Local" value="NETICA\X_Delete_Links.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Compile &amp; Use DBN">
+        <param name="Local" value="NETICA\X_Compile.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Net Fragment Libraries">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Net Fragment Libraries">
+        <param name="Local" value="NETICA\X_Net_Fragment_Libraries.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Disconnecting and Reconnecting Links">
+        <param name="Local" value="NETICA\X_Disconnecting_and_Reconnecting_Links.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Creating and Using Net Libraries">
+        <param name="Local" value="NETICA\X_Creating_and_Using_Net_Libraries.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Transforming a Net">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Transforming a Net">
+        <param name="Local" value="NETICA\X_Transforming_a_Net.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Link Reversals">
+        <param name="Local" value="NETICA\X_Link_Reversals.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Node Absorption">
+        <param name="Local" value="NETICA\X_Node_Absorption.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Probabilistic Inference by Node Absorption">
+        <param name="Local" value="NETICA\X_Probabilistic_Inference_by_Node_Absorption.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Programming Netica">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Encrypting a Net">
+        <param name="Local" value="NETICA\X_Encrypt_Net.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Obfuscating a Net">
+        <param name="Local" value="NETICA\X_Obfuscate_Net.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Command Line Options">
+        <param name="Local" value="NETICA\X_Command_Line_Options.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Non-English Bayes Nets">
+        <param name="Local" value="NETICA\X_Non_English_BN.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Customizing the Toolbar">
+      <param name="Local" value="NETICA\X_Customizing_the_Toolbar.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Grouping Node States">
+      <param name="Local" value="NETICA\X_Node_State_Groups.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="COM Interface - C# and Visual Basic Programming">
+      <param name="Local" value="NETICA\X_COM_Interface.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="C# Example Code">
+      <param name="Local" value="NETICA\X_Csharp_Example.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Visual Basic Example Code">
+      <param name="Local" value="NETICA\X_VB_Example.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Managed C++ Example Code">
+      <param name="Local" value="NETICA\X_ManagedC_Example.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Equations">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Equations">
+      <param name="Local" value="NETICA\X_Equations.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Using Equations">
+      <param name="Local" value="NETICA\X_Using_Equations.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Syntax">
+      <param name="Local" value="NETICA\X_Equation_Syntax.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Converting to a Table">
+      <param name="Local" value="NETICA\X_Convert_Equation_to_Table.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Comparison to Java / C / C++">
+      <param name="Local" value="NETICA\X_Equations_C_Java_Compare.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Conditionals">
+      <param name="Local" value="NETICA\X_Equation_Conditionals.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Link (Input) Names">
+      <param name="Local" value="NETICA\X_Link_Names_in_Equations.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="State Names as Constants">
+      <param name="Local" value="NETICA\X_Equations_State_Names.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Discrete Variables with State Values">
+      <param name="Local" value="NETICA\X_Discrete_Variable_State_Values.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Internal Form of Equations">
+      <param name="Local" value="NETICA\X_Internal_Form.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Constant Nodes as Adjustable Parameters">
+      <param name="Local" value="NETICA\X_Equations_Using_Constant_Nodes.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Examples of Equation Use">
+      <param name="Local" value="NETICA\X_Examples_of_Equation_Use.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Built-in Constants">
+      <param name="Local" value="NETICA\X_Equation_Builtin_Constants.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Built-in Functions and Distributions">
+      <param name="Local" value="NETICA\X_Equation_Builtin_Funcs.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Reference">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Shortcut Keys">
+      <param name="Local" value="NETICA\X_Shortcut_Keys.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="File Formats">
+      <param name="Local" value="NETICA\X_File_Formats.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Bibliography">
+      <param name="Local" value="NETICA\X_Bibliography.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Encyclopedia">
+      <param name="Local" value="NETICA\X_Encyclopedia.htm">
+    </object>
+    </ul>
+</ul>
+</html>

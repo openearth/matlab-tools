@@ -1,0 +1,27 @@
+Metadata-Version: 1.1
+Name: fast
+Version: 0.0.1
+Summary: FAST viewer back-end tools
+Home-page: https://svn.oss.deltares.nl/repos/openearthtools/trunk/python/applications/fast/
+Author: Deltares
+Author-email: giorgio.santinelli@deltares.nl
+License: GPLv3
+Description: FAST viewer back-end tools
+        ==========================
+        
+        This package provides a set of tools developed in the frame of the European project 
+        FAST (Project FAST EU FP7 Space) by Deltares.
+        
+        A Web-viewer has been developed for FAST. Front end applications and WPS back end 
+        applications have been created as a support to the Web-viewer. This package contains
+        the back end applications only.
+Keywords: FAST web-viewer
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Web visualization :: Interactive Tools
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: Natural Language :: English
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Topic :: Scientific/Engineering :: GIS

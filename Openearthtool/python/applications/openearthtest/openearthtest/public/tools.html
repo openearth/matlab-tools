@@ -1,0 +1,224 @@
+<html>
+
+<head>
+	<link rel="stylesheet" type="text/css" href="stylesheets/anytime.css" />
+	<script type="text/javascript" src="scripts/js/jquery.js"></script>
+	<script type="text/javascript" src="scripts/js/anytime.js"></script>
+	<link href="stylesheets/style.css" rel="stylesheet" type="text/css">
+	<script src="https://www.google.com/jsapi?key=ABQIAAAAVqCseOYylEg-Mc5u6LZD9xQChx54JYdgbPKio935j7RDK0bGdhSP7HZfiWq_54SIgjJ1e136ihOhBw"></Script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+	<script type="text/javascript" src="scripts/js/matlab.js"></Script>
+	<script type="text/javascript" src="scripts/js/loadxmldoc.js"></script>
+	<script type="text/javascript" src="scripts/js/loadHtmlToDiv.js"></script>
+	<script type="text/javascript" src="scripts/js/point.js"></script>
+	<script type="text/javascript" src="scripts/js/soapclient.js"></script>
+	<script type="text/javascript" src="scripts/js/matlabsoap.js"></script>
+	<script type="text/javascript" src="scripts/js/getQueryString.js"></script>
+	<script type="text/javaScript" src="scripts/js/CalendarPopup.js"></script>
+	<script type="text/javascript" src="scripts/js/kmlFunctions.js"></script>
+	<script type="text/javascript" src="scripts/js/wmsFunctions.js"></script>
+	<script type="text/javascript">
+		var ge = null;
+		var pm = null;
+		var kml = null;
+		var currentKmlObjects = {'':null};
+
+		google.load("earth", "1", {'other_params': 'sensor=false' });
+
+		// Initialize called on HTML body load
+		function init()
+		{
+			google.earth.createInstance("map3d", initCB, failureCB);
+		}
+
+		// Initialization for Google Earth
+		function initCB(instance)
+		{
+			ge = instance;
+			// Google Earth Plugin Window Properties
+			ge.getWindow().setVisibility(true);
+			ge.getOptions().setStatusBarVisibility(true);
+			// Google Earth Navigation Control Properties
+			var navControl = ge.getNavigationControl();
+			navControl.setVisibility(ge.VISIBILITY_SHOW);
+			// Set starting position : The Netherlands
+			var la = ge.createLookAt('');
+			la.set(52.05249, 4.58105, 750000, ge.ALTITUDE_RELATIVE_TO_GROUND, 0, 0, 99.99);
+			ge.getView().setAbstractView(la);
+			// Polygon used for drawing the shape in Google Earth
+			pm = new Point(0,0);
+
+			// Load requested tool
+			fillToolLinks(getQuerystring('program'),getQuerystring('case'),getQuerystring('subcase'));
+			loadTool(0);
+		}
+
+		// If Google Earth fails to load this function captures the Error Code
+		function failureCB(errorCode){}
+
+		// Fill tools checbox area
+		function fillToolLinks(programVal,caseVal,subcaseVal)
+		{
+			var programDoc = loadXMLDoc("xml/programs.xml");
+			caseFile = programDoc.getElementsByTagName("casefile")[programVal].childNodes[0].nodeValue;
+			programDir = caseFile.substring(0,caseFile.length-4)
+			tempDoc=loadXMLDoc("xml/"+ programDir +"/"+ caseFile);
+
+			if(parseFloat(subcaseVal)!=100)
+			{
+				subcasefile = tempDoc.getElementsByTagName("subcasefile")[caseVal].childNodes[0].nodeValue;
+				var caseDoc = loadXMLDoc("xml/" + programDir+ "/" + subcasefile);
+				caseVal = subcaseVal;
+			}
+			else
+			{
+				var caseDoc = tempDoc;
+			}
+
+			document.getElementById("case_title").innerHTML = caseDoc.getElementsByTagName("title")[caseVal].childNodes[0].nodeValue;
+			toolfile = caseDoc.getElementsByTagName("toolfile")[caseVal].childNodes[0].nodeValue;
+
+			// load case-specific xml file
+			toolDoc=loadXMLDoc("xml/"+ programDir + "/" + toolfile);
+			numOfData=toolDoc.getElementsByTagName("tool").length;
+
+			// first remove all what is in the listbox
+			while(document.getElementById("toolSelect").options.length!=0)
+			document.getElementById("toolSelect").remove(0);
+
+			// find tools from the tool xml and fill up the select lists
+			var toolSelectText = [];
+
+			for (i=0;i<numOfData;i=i+1)
+			{
+			var oOption = document.createElement("OPTION");
+			oOption.text=toolDoc.getElementsByTagName("tool")[i].getElementsByTagName("title")[0].childNodes[0].nodeValue;
+			oOption.value=i;
+			document.getElementById("toolSelect").options.add(oOption)
+			}
+			return true;
+		}
+
+		// Load selected case
+		function loadTool(value)
+		{
+			// write tool-specific html
+			var toolDoc = loadXMLDoc("xml/tools.xml");
+			datafile = toolDoc.getElementsByTagName("template")[value].childNodes[0].nodeValue;
+			loadHtmlToDiv("http://127.0.0.1:5000/templates/" + datafile,"tool_space");
+
+			// zoom to case specific coordinates
+			lon_cam = parseFloat(toolDoc.getElementsByTagName("lon")[value].childNodes[0].nodeValue);
+			lat_cam = parseFloat(toolDoc.getElementsByTagName("lat")[value].childNodes[0].nodeValue);
+			alt_cam = parseFloat(toolDoc.getElementsByTagName("height")[value].childNodes[0].nodeValue);
+
+  			var camera = ge.getView().copyAsCamera(ge.ALTITUDE_RELATIVE_TO_GROUND);
+  			camera.setLatitude(lat_cam);
+  			camera.setLongitude(lon_cam);
+  			camera.setAltitude(alt_cam);
+  			ge.getView().setAbstractView(camera);
+  		}
+
+  		function AnyTimePicker(){
+		AnyTime.picker( "date1",
+		   { format: "%d/%m/%z"} );
+		AnyTime.picker( "time1",
+		   { format: "%T"} );
+		AnyTime.picker( "date2",
+		   { format: "%d/%m/%z"} );
+		AnyTime.picker( "time2",
+		   { format: "%T"} );
+		}
+
+	</script>
+</head>
+
+<body onload='init()' id='body'>
+<h1>OpenEarth Viewer</h1>
+
+<div style='float:left; width:350px; height:700px; overflow:auto'>
+<a href="index.html"><img src="images\backbut.png" border="0"> Back to portal</a>
+  <table style='font-size:small'>
+
+<!-- CASE HEADER -->
+<tr><td colspan="3"><hr /><hr /></td></tr>
+    <tr>
+        <td colspan="3" style="font-size: 14pt; text-transform: uppercase; color: #336699; font-weight: bold">
+        <div id="case_title"></div>
+        </td>
+    </tr>
+
+<!-- HYPERLINKS -->
+    <tr class="links">
+		<td width="117">
+		<script type="text/javascript">
+		document.write("<a href= 'data.html?program=" + getQuerystring('program') +"&case=" + getQuerystring('case') +"&subcase=" + getQuerystring('subcase') +"'>Data</a>");
+		</script>
+		</td>
+		<td width="117">
+		<script type="text/javascript">
+		document.write("<a href= 'models.html?program=" + getQuerystring('program') +"&case=" + getQuerystring('case') +"&subcase=" + getQuerystring('subcase') +"'>Models</a>");
+		</script>
+		</td>
+        <td style="font-weight: bold;" width="116">Tools</td>
+   	</tr>
+
+<tr><td colspan="3"><hr /><hr /></td></tr>
+
+<!-- TOOL SELECTION -->
+	<tr>
+		<td colspan="3">
+	    <h3>Available tools</h3>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+		<form name="toolsel" action='javascript:void(0);'>
+			<select name="toolsel" id="toolSelect" class="s" onchange='loadTool(value)'>
+				<option value="0" class="vs">Select case</option>
+			</select>
+		</form>
+		Do you want to add sources? Submit your request to the case manager!
+	    <hr />
+</td>
+</tr>
+
+<!-- TOOL SPACE -->
+	<tr>
+	    <td colspan="3">
+	    <div id="tool_space"></div>
+	    <hr />
+	    </td>
+	</tr>
+
+<!-- DRAWING TOOLS -->
+	<tr>
+		<td colspan="3">
+			<h3>Drawing</h3>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<form id="polyShape" action='javascript:void(0);'>
+			<select name="point" id="pointselect" class="s">
+				<option value="1" class="vs">Point</option>
+			</select>
+			</form>
+		</td>
+		<td colspan="2">
+		Use ctrl + mouse click to draw
+		</td>
+	</tr>
+	<tr><td colspan="3"><hr /></td></tr>
+
+</table>
+</div>
+<div id='map3d_container' style='border: 1px solid silver; height: 700px; margin-left:350px;'>
+	<div id='map3d' style='height: 100%;'></div>
+</div>
+<hr/>
+    This tool is provided by: <br />
+    <a href="http://openearth.eu" target="_blank"><img src="images/oet.png" align="left" width="100" border="0"/></a>
+</body>
+
+</html>

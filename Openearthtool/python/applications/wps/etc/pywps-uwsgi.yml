@@ -1,0 +1,13 @@
+uwsgi:
+  logger: file:wps.out.log
+  socket: /tmp/uwsgi.sock
+  socket: 127.0.0.1:6010
+  master: 1
+  processes: 4
+  memory-report: 1
+  show-config: true
+  virtualenv: /var/lib/wsgi/env
+  buffer-size: 65535 # TODO: don't talk http  (nginx conf)
+  pythonpath: /var/lib/wsgi/wps
+  env: PYWPS_CFG=/var/lib/wsgi/wps/pywps.cfg
+  module: wsgiwps

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2009 sp1 (http://www.altova.com) by ICT (Stichting Deltares) -->
+<filters version="1.1" xmlns="http://www.wldelft.nl/fews" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wldelft.nl/fews http://fews.wldelft.nl/schemas/version1.0/filters.xsd">
+	<defaultFilterId>Import.RWS.waterbase.selection</defaultFilterId>
+	<!-- KNMI ###################################################################### -->
+	<filter id="Import.KNMI.potwind.all" name="KNMI - potential wind (all)">
+		<mapExtentId>North Sea</mapExtentId>
+		<timeSeriesSet>
+			<moduleInstanceId>Import.KNMI.potwind.all</moduleInstanceId>
+			<valueType>scalar</valueType>
+			<parameterId>wind speed</parameterId>
+			<locationSetId>KNMI.potwind.all</locationSetId>
+			<timeSeriesType>external historical</timeSeriesType>
+			<timeStep unit="nonequidistant"/>
+			<relativeViewPeriod unit="day" start="0" end="30"/>
+			<readWriteMode>add originals</readWriteMode>
+			<synchLevel>5</synchLevel>
+		</timeSeriesSet>
+	</filter>
+	<filter id="Import.KNMI.potwind.selection" name="KNMI - potential wind (selection)">
+		<mapExtentId>North Sea</mapExtentId>
+		<timeSeriesSet>
+			<moduleInstanceId>Import.KNMI.potwind.selection</moduleInstanceId>
+			<valueType>scalar</valueType>
+			<parameterId>wind speed</parameterId>
+			<locationSetId>KNMI.potwind.selection</locationSetId>
+			<timeSeriesType>external historical</timeSeriesType>
+			<timeStep unit="nonequidistant"/>
+			<relativeViewPeriod unit="day" start="0" end="30"/>
+			<readWriteMode>add originals</readWriteMode>
+			<synchLevel>5</synchLevel>
+		</timeSeriesSet>
+	</filter>
+	<!-- RWS ###################################################################### -->
+	<filter id="Import.RWS.waterbase.all" name="RWS - Waterbase (all)">
+		<mapExtentId>Netherlands</mapExtentId>
+		<timeSeriesSet>
+			<moduleInstanceId>Import.RWS.waterbase.all</moduleInstanceId>
+			<valueType>scalar</valueType>
+			<parameterId>H.meting</parameterId>
+			<locationSetId>RWS.waterbase.all</locationSetId>
+			<timeSeriesType>external historical</timeSeriesType>
+			<timeStep unit="nonequidistant"/>
+			<relativeViewPeriod unit="day" start="-3" end="0"/>
+			<readWriteMode>editing visible to all future task runs</readWriteMode>
+			<synchLevel>5</synchLevel>
+		</timeSeriesSet>
+	</filter>
+	<filter id="Import.RWS.waterbase.selection" name="RWS - Waterbase (selection)">
+		<mapExtentId>Netherlands</mapExtentId>
+		<timeSeriesSet>
+			<moduleInstanceId>Import.RWS.waterbase.selection</moduleInstanceId>
+			<valueType>scalar</valueType>
+			<parameterId>H.meting</parameterId>
+			<locationSetId>RWS.waterbase.selection</locationSetId>
+			<timeSeriesType>external historical</timeSeriesType>
+			<timeStep unit="nonequidistant"/>
+			<relativeViewPeriod unit="day" start="-3" end="0"/>
+			<readWriteMode>editing visible to all future task runs</readWriteMode>
+			<synchLevel>5</synchLevel>
+		</timeSeriesSet>
+	</filter>
+	<!-- NOAA ###################################################################### -->
+	<filter id="Import.NOAA.ndbc.dart.all" name="NOAA NDBC - dart (all)">
+		<mapExtentId>United States</mapExtentId>
+		<timeSeriesSet>
+			<moduleInstanceId>Import.NOAA.ndbc.dart.all</moduleInstanceId>
+			<valueType>scalar</valueType>
+			<parameterId>H.meting</parameterId>
+			<locationSetId>NOAA.ndbc.dart.all</locationSetId>
+			<timeSeriesType>external historical</timeSeriesType>
+			<timeStep unit="nonequidistant"/>
+			<relativeViewPeriod unit="day" start="-3" end="0"/>
+			<readWriteMode>editing visible to all future task runs</readWriteMode>
+			<synchLevel>5</synchLevel>
+		</timeSeriesSet>
+	</filter>
+	<filter id="Import.NOAA.ndbc.ocean.all" name="NOAA NDBC - ocean (all)">
+		<mapExtentId>United States</mapExtentId>
+		<timeSeriesSet>
+			<moduleInstanceId>Import.NOAA.ndbc.ocean.all</moduleInstanceId>
+			<valueType>scalar</valueType>
+			<parameterId>temperature</parameterId>
+			<locationSetId>NOAA.ndbc.ocean.all</locationSetId>
+			<timeSeriesType>external historical</timeSeriesType>
+			<timeStep unit="nonequidistant"/>
+			<relativeViewPeriod unit="day" start="-3" end="0"/>
+			<readWriteMode>editing visible to all future task runs</readWriteMode>
+			<synchLevel>5</synchLevel>
+		</timeSeriesSet>
+		<timeSeriesSet>
+			<moduleInstanceId>Import.NOAA.ndbc.ocean.all</moduleInstanceId>
+			<valueType>scalar</valueType>
+			<parameterId>salinity</parameterId>
+			<locationSetId>NOAA.ndbc.ocean.all</locationSetId>
+			<timeSeriesType>external historical</timeSeriesType>
+			<timeStep unit="nonequidistant"/>
+			<relativeViewPeriod unit="day" start="-3" end="0"/>
+			<readWriteMode>editing visible to all future task runs</readWriteMode>
+			<synchLevel>5</synchLevel>
+		</timeSeriesSet>
+	</filter>
+	<filter id="Import.NOAA.ndbc.ocean.selection" name="NOAA NDBC - ocean (selection)">
+		<mapExtentId>United States</mapExtentId>
+		<timeSeriesSet>
+			<moduleInstanceId>Import.NOAA.ndbc.ocean.selection</moduleInstanceId>
+			<valueType>scalar</valueType>
+			<parameterId>temperature</parameterId>
+			<locationSetId>NOAA.ndbc.ocean.selection</locationSetId>
+			<timeSeriesType>external historical</timeSeriesType>
+			<timeStep unit="nonequidistant"/>
+			<relativeViewPeriod unit="day" start="-3" end="0"/>
+			<readWriteMode>editing visible to all future task runs</readWriteMode>
+			<synchLevel>5</synchLevel>
+		</timeSeriesSet>
+		<timeSeriesSet>
+			<moduleInstanceId>Import.NOAA.ndbc.ocean.selection</moduleInstanceId>
+			<valueType>scalar</valueType>
+			<parameterId>salinity</parameterId>
+			<locationSetId>NOAA.ndbc.ocean.selection</locationSetId>
+			<timeSeriesType>external historical</timeSeriesType>
+			<timeStep unit="nonequidistant"/>
+			<relativeViewPeriod unit="day" start="-3" end="0"/>
+			<readWriteMode>editing visible to all future task runs</readWriteMode>
+			<synchLevel>5</synchLevel>
+		</timeSeriesSet>
+	</filter>
+	<!-- HYMOS ###################################################################### -->
+</filters>

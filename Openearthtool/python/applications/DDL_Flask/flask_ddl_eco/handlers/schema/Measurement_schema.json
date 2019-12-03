@@ -1,0 +1,149 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"type": "object",
+	"properties": {
+		"calculatedUnit": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"calculatedValue": {
+			"type": [
+				"number",
+				"null"
+			]
+		},
+		"changedate": {
+			"type": "string"
+		},
+		"classifiedValue": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"collectionDate": {
+			"type": "string"
+		},
+		"compartment": {
+			"type": "string"
+		},
+		"limitSymbol": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"locationgeography": {
+			"$ref": "GeoJSON_schema.json"
+		},
+		"measuredUnit": {
+			"type": "string"
+		},
+		"measuredValue": {
+			"type": [
+				"number",
+				"null"
+			]
+		},
+		"measurementAttributes": {
+			"type": [
+				"array",
+				"null"
+			],
+			"items": {
+				"type": "string"
+			}
+		},
+		"measurementDate": {
+			"type": "string"
+		},
+		"measurementObject": {
+			"type": "string"
+		},
+		"measurementPackage": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"measurementPurpose": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"measurementgeography": {
+			"$ref": "GeoJSON_schema.json"
+		},
+		"methods": {
+			"type": [
+				"array",
+				"null"
+			],
+			"items": {
+				"type": "string"
+			}
+		},
+		"note": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"organisation": {
+			"type": "string"
+		},
+		"parameter": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"parameterGroup": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"parameterType": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"projects": {
+			"type": [
+				"array",
+				"null"
+			],
+			"items": {
+				"type": "string"
+			}
+		},
+		"quantity": {
+			"type": "string"
+		},
+		"status": {
+			"type": "string"
+		},
+		"taxonType": {
+			"type": [
+				"string",
+				"null"
+			]
+		}
+	},
+	"required": [
+		"changedate",
+		"collectionDate",
+		"compartment",
+		"measuredUnit",
+		"measurementDate",
+		"measurementObject",
+		"organisation",
+		"quantity",
+		"status"
+	]
+}

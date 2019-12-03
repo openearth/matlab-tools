@@ -1,0 +1,16 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"type": "object",
+	"properties": {
+		"Context": {
+			"type": "string"
+		},
+		"ErrorType": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"Context",
+		"ErrorType"
+	]
+}

@@ -1,0 +1,35 @@
+###########################################
+# Model Reference Analysis       	  #
+# Settings Input File			  #
+# Author: M.P. Weeber			  #
+# Date: 09-01-2015			  #
+###########################################
+
+#Please mind that the delimeters between 
+#The variable name, = and input are 3 spaces
+
+#Settings
+
+#Delimeter Mapping tables
+delimiter   =   ,
+
+#Convert observation to date
+observation_as_date   =   TRUE
+
+#Convert observations to date even
+#when there a plural measurements on
+#one day. Average the values
+observation_forced_as_date   =   TRUE
+
+#Set search window for comparison
+search_window_sec   =   60
+
+#Best fit search window
+search_window_bestfit_sec   =   60
+
+#Averaged search window
+search_window_averaged_sec   =   60
+
+#Ignore tests on whether locations
+#contain data and enough data
+ignore_tests   =   TRUE

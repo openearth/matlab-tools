@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2009 sp1 (http://www.altova.com) by ICT (Stichting Deltares) -->
+<displayInstanceDescriptors xmlns="http://www.wldelft.nl/fews" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wldelft.nl/fews http://fews.wldelft.nl/schemas/version1.0/displayInstanceDescriptors.xsd" version="1.0">
+	<displayInstanceDescriptor id="WhatIfScenarioFilters">
+		<displayId>WhatIfScenario</displayId>
+	</displayInstanceDescriptor>
+	<displayInstanceDescriptor id="LookupDisplay">
+		<displayId>LookUpDisplay</displayId>
+	</displayInstanceDescriptor>
+	<displayInstanceDescriptor id="LongitudinalDisplay">
+		<displayId>LongitudinalDisplay</displayId>
+	</displayInstanceDescriptor>
+	<displayInstanceDescriptor id="GridDisplay">
+		<displayId>GridDisplay</displayId>
+	</displayInstanceDescriptor>
+	<displayInstanceDescriptor id="ChartLayer">
+		<displayId>ChartLayer</displayId>
+	</displayInstanceDescriptor>
+	<displayInstanceDescriptor id="SystemMonitorDisplay">
+		<displayId>SystemMonitorDisplay</displayId>
+	</displayInstanceDescriptor>
+	<displayInstanceDescriptor id="ThresholdSkillScoreDisplay">
+		<displayId>ThresholdSkillScoreDisplay</displayId>
+	</displayInstanceDescriptor>
+	<displayInstanceDescriptor id="TaskRunDialog">
+		<description>TaskRunDialog</description>
+		<displayId>TaskRunDialog</displayId>
+	</displayInstanceDescriptor>
+</displayInstanceDescriptors>

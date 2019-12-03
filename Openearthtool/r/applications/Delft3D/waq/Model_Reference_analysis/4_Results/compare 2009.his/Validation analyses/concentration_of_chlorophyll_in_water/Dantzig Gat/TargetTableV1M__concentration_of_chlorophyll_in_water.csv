@@ -1,0 +1,3 @@
+model;substance;location;season;observed;modelled;nuRMSD;nBIAS
+model;concentration_of_chlorophyll_in_water;Dantzig Gat;summer;0.0226915384141298;7.83607004239009;628.152278969429;665.211164756843
+model;concentration_of_chlorophyll_in_water;Dantzig Gat;winter;0.0143299998599105;2.55319513939321;393.041309370481;342.227817034827

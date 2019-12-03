@@ -1,0 +1,24 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"type": "object",
+	"properties": {
+		"code": {
+			"type": "string"
+		},
+		"measurementAttributeType": {
+			"type": "string"
+		},
+		"measurementAttributeTypeName": {
+			"type": "string"
+		},
+		"name": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"code",
+		"measurementAttributeType",
+		"measurementAttributeTypeName",
+		"name"
+	]
+}

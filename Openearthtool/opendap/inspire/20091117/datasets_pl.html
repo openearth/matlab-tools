@@ -1,0 +1,841 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title>Dataset overview</title>
+<style>
+dd{ }
+dt{ }
+tr:nth-child(even) {background: #DDD}
+tr:nth-child(odd) {background: #FFF}
+
+</style>
+</head>
+
+<body>
+<table>
+<tr>
+<th>Title</th>
+<th>Contact email</th>
+<th>Contact organization</th>
+<th>Extract</th>
+<th>Transform read</th>
+<th>Transform netcdf</th>
+<th>Load</th>
+<th>Size</th>
+<th>Legal constraints</th>
+<th>Country</th>
+<th>Remarks</th>
+<th>URL</th>
+</tr>
+<tr>
+  <td></td>
+  <td><a href="mailto:unknown">unknown</a></td>
+  <td></td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: red">False</span></td>
+  <td><span style="color: red">False</span></td>
+  <td><span style="color: red">False</span></td>
+  <td>64.5MB</td>
+  <td></td>
+  <td>pl</td>
+  <td></td>
+  <td><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry</a></td>
+</tr>
+<tr>
+  <td></td>
+  <td><a href="mailto:unknown">unknown</a></td>
+  <td></td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: red">False</span></td>
+  <td><span style="color: red">False</span></td>
+  <td><span style="color: red">False</span></td>
+  <td>64.5MB</td>
+  <td></td>
+  <td>pl</td>
+  <td></td>
+  <td><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry</a></td>
+</tr>
+<tr>
+  <td></td>
+  <td><a href="mailto:unknown">unknown</a></td>
+  <td></td>
+  <td><span style="color: green">True</span></td>
+  <td><span style="color: red">False</span></td>
+  <td><span style="color: red">False</span></td>
+  <td><span style="color: red">False</span></td>
+  <td>64.5MB</td>
+  <td></td>
+  <td>pl</td>
+  <td></td>
+  <td><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry</a></td>
+</tr>
+</table>
+
+<h2>Definitions</h2>
+<dl>
+  <dt>Extract</dt>
+  <dd>Is there data available. Automatically checks for more than 1 filetype. If more filetypes are available but it does not say True or Data Included then it was found that data might not be present in the files.</dd>
+  <dt>Transform script</dt>
+  <dd>Automatically checks if there is a script (.m or .py) available. If it says script missing while script is available it was found not to have any code in it to read the data in the raw folder.</dd>
+  <dt>Transform netcdf</dt>
+  <dd>Automatically checks if there is a netcdf logic in the .m or .py file. Can be manually checked.</dd>
+  <dt>Load</dt>
+  <dd>Is the data available through the OpenDAP server. At the moment this is checked manually.</dd>
+</dl>
+
+<h1>Expected datasets</h1>
+<p>The following data types were expected:</p>
+<ul>
+  <li style="color:blue;">Winds - wind field</li>
+  <li style="color:blue;">Waves - Nearshore</li>
+  <li style="color:blue;">Coastal flooding</li>
+  <li style="color:blue;">Dune erosion</li>
+  <li style="color:blue;">Socio-economic indexes</li>
+  <li style="color:blue;">Storms - Historical records (up to 50-150 yr)</li>
+  <li style="color:blue;">Water levels - Surges</li>
+  <li style="color:blue;">Winds - punctual</li>
+  <li style="color:blue;">Morphology - Bathymetry</li>
+  <li style="color:blue;">Overwash/overtopping events</li>
+  <li style="color:blue;">Storms - Impact records</li>
+  <li style="color:blue;">Aerial photographs</li>
+  <li style="color:blue;">Sedimentology</li>
+  <li style="color:blue;">Morphology - Topography</li>
+  <li style="color:blue;">Water levels - Tides</li>
+  <li style="color:blue;">Shoreline evolution</li>
+  <li style="color:blue;">Waves - Offshore</li>
+  <li style="color:blue;">Currents</li>
+  <li style="color:blue;">Storms - Recent records (just last decades)</li>
+</ul>
+<p>The following data types were found:</p>
+<ul>
+</ul>
+
+<p>The following data types are not found:</p>
+<ul>
+  <li style="color:red;">Winds - wind field</li>
+  <li style="color:red;">Waves - Offshore</li>
+  <li style="color:red;">Dune erosion</li>
+  <li style="color:red;">Socio-economic indexes</li>
+  <li style="color:red;">Storms - Historical records (up to 50-150 yr)</li>
+  <li style="color:red;">Water levels - Surges</li>
+  <li style="color:red;">Winds - punctual</li>
+  <li style="color:red;">Morphology - Bathymetry</li>
+  <li style="color:red;">Aerial photographs</li>
+  <li style="color:red;">Storms - Impact records</li>
+  <li style="color:red;">Coastal flooding</li>
+  <li style="color:red;">Morphology - Topography</li>
+  <li style="color:red;">Sedimentology</li>
+  <li style="color:red;">Overwash/overtopping events</li>
+  <li style="color:red;">Water levels - Tides</li>
+  <li style="color:red;">Shoreline evolution</li>
+  <li style="color:red;">Waves - Nearshore</li>
+  <li style="color:red;">Currents</li>
+  <li style="color:red;">Storms - Recent records (just last decades)</li>
+</ul>
+
+
+
+<h1 id=""></h1>
+<h2>Description</h2>
+<dl>
+  <dt>Title</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Dataset</dt>
+  <dd>bathymetry</dd>
+</dl>
+<dl>
+  <dt>Abstract</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Topic</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Keywords</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Datatype</dt>
+  <dd>-</dd>
+</dl>
+<h2>Location and time</h2>
+<dl>
+  <dt>WestBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>SouthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>EastBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>NorthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Coordinates</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Resolution unit</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Resolution</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Start time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>End time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Time spans</dt>
+  <dd>[]</dd>
+</dl>
+<dl>
+  <dt>period included</dt>
+  <dd>-</dd>
+</dl>
+<h2>Contact and authors</h2>
+<dl>
+  <dt>Contact email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<dl>
+  <dt>Owner organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Contact organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Country</dt>
+  <dd>pl</dd>
+</dl>
+<dl>
+  <dt>Organization</dt>
+  <dd>usz</dd>
+</dl>
+<dl>
+  <dt>Author organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Author email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<dl>
+  <dt>Last Changed Author</dt>
+  <dd>andre@univ.szczecin.pl</dd>
+</dl>
+<dl>
+  <dt>Last Changed Date</dt>
+  <dd>2009-09-01 11:25:41 +0200 (Tue, 01 Sep 2009)</dd>
+</dl>
+<dl>
+  <dt>Owner email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<h2>Restrictions</h2>
+<dl>
+  <dt>Access constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Legal constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Other constraints</dt>
+  <dd></dd>
+</dl>
+<h2>History of dataset</h2>
+<dl>
+  <dt>SVN Log</dt>
+  <dd><pre>------------------------------------------------------------------------
+r744 | andre@univ.szczecin.pl | 2009-09-01 11:25:41 +0200 (Tue, 01 Sep 2009) | 1 line
+
+Bathymetry dataset in ESRI shapefile format for 2004,2006 and 2008 year
+------------------------------------------------------------------------
+r575 | andre@univ.szczecin.pl | 2009-06-19 13:36:53 +0200 (Fri, 19 Jun 2009) | 1 line
+
+Created folder remotely
+------------------------------------------------------------------------
+</pre></dd>
+</dl>
+<dl>
+  <dt>Lineage</dt>
+  <dd></dd>
+</dl>
+<h2>Status</h2>
+<dl>
+  <dt>Extract</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Transform read</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<dl>
+  <dt>Transform netcdf</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<dl>
+  <dt>Load</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<h2>Files</h2>
+<dl>
+  <dt>File extensions</dt>
+  <dd>, .kml, .sbx, .sbn, .shx, .txt, .prj, .xml, .dbf, .shp</dd>
+</dl>
+<dl>
+  <dt>Mime types</dt>
+  <dd>application/xml, text/plain, application/octet-stream</dd>
+</dl>
+<dl>
+  <dt>File types</dt>
+  <dd>ESRI Shapefile version 1000 length 1168098 type Point, XML  document text, ESRI Shapefile version 1000 length 333778 type Point, ASCII text, with very long lines, with no line terminators, ESRI Shapefile version -398130944 length 404318, DBase 3 data file (83432 records), data, ESRI Shapefile version -398130944 length 5174, UTF-8 Unicode (with BOM) text, with CRLF line terminators</dd>
+</dl>
+<dl>
+  <dt>Script info</dt>
+  <dd>No process scripts found</dd>
+</dl>
+<dl>
+  <dt>Size</dt>
+  <dd>64.5MB</dd>
+</dl>
+<h2>Links</h2>
+<dl>
+  <dt>URL in inspire file</dt>
+  <dd><a href="http://unknown">http://unknown</a></dd>
+</dl>
+<dl>
+  <dt>Inspirefile</dt>
+  <dd>bathymetry_profiles_every_500m_2008year.shp.xml</dd>
+</dl>
+<dl>
+  <dt>URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry</a></dd>
+</dl>
+<dl>
+  <dt>Inspire URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry/bathymetry_profiles_every_500m_2008year.shp.xml">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry/bathymetry_profiles_every_500m_2008year.shp.xml</a></dd>
+</dl>
+<h2>Subversion</h2>
+<dl>
+  <dt>Path</dt>
+  <dd>/Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/usz/bathymetry</dd>
+</dl>
+<dl>
+  <dt>Repository Root</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData">https://repos.deltares.nl/repos/OpenEarthRawData</a></dd>
+</dl>
+<dl>
+  <dt>Repository UUID</dt>
+  <dd>4427fc4e-80cb-4e17-9138-dc45509d06e2</dd>
+</dl>
+<dl>
+  <dt>Node Kind</dt>
+  <dd>directory</dd>
+</dl>
+<dl>
+  <dt>Schedule</dt>
+  <dd>normal</dd>
+</dl>
+<dl>
+  <dt>Last Changed Rev</dt>
+  <dd>744</dd>
+</dl>
+<dl>
+  <dt>Revision</dt>
+  <dd>850</dd>
+</dl>
+<h2>Remarks</h2>
+<dl>
+  <dt>Remarks</dt>
+  <dd>-</dd>
+</dl>
+<h1 id=""></h1>
+<h2>Description</h2>
+<dl>
+  <dt>Title</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Dataset</dt>
+  <dd>bathymetry</dd>
+</dl>
+<dl>
+  <dt>Abstract</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Topic</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Keywords</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Datatype</dt>
+  <dd>-</dd>
+</dl>
+<h2>Location and time</h2>
+<dl>
+  <dt>WestBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>SouthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>EastBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>NorthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Coordinates</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Resolution unit</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Resolution</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Start time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>End time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Time spans</dt>
+  <dd>[]</dd>
+</dl>
+<dl>
+  <dt>period included</dt>
+  <dd>-</dd>
+</dl>
+<h2>Contact and authors</h2>
+<dl>
+  <dt>Contact email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<dl>
+  <dt>Owner organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Contact organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Country</dt>
+  <dd>pl</dd>
+</dl>
+<dl>
+  <dt>Organization</dt>
+  <dd>usz</dd>
+</dl>
+<dl>
+  <dt>Author organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Author email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<dl>
+  <dt>Last Changed Author</dt>
+  <dd>andre@univ.szczecin.pl</dd>
+</dl>
+<dl>
+  <dt>Last Changed Date</dt>
+  <dd>2009-09-01 11:25:41 +0200 (Tue, 01 Sep 2009)</dd>
+</dl>
+<dl>
+  <dt>Owner email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<h2>Restrictions</h2>
+<dl>
+  <dt>Access constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Legal constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Other constraints</dt>
+  <dd></dd>
+</dl>
+<h2>History of dataset</h2>
+<dl>
+  <dt>SVN Log</dt>
+  <dd><pre>------------------------------------------------------------------------
+r744 | andre@univ.szczecin.pl | 2009-09-01 11:25:41 +0200 (Tue, 01 Sep 2009) | 1 line
+
+Bathymetry dataset in ESRI shapefile format for 2004,2006 and 2008 year
+------------------------------------------------------------------------
+r575 | andre@univ.szczecin.pl | 2009-06-19 13:36:53 +0200 (Fri, 19 Jun 2009) | 1 line
+
+Created folder remotely
+------------------------------------------------------------------------
+</pre></dd>
+</dl>
+<dl>
+  <dt>Lineage</dt>
+  <dd></dd>
+</dl>
+<h2>Status</h2>
+<dl>
+  <dt>Extract</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Transform read</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<dl>
+  <dt>Transform netcdf</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<dl>
+  <dt>Load</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<h2>Files</h2>
+<dl>
+  <dt>File extensions</dt>
+  <dd>, .kml, .sbx, .sbn, .shx, .txt, .prj, .xml, .dbf, .shp</dd>
+</dl>
+<dl>
+  <dt>Mime types</dt>
+  <dd>application/xml, text/plain, application/octet-stream</dd>
+</dl>
+<dl>
+  <dt>File types</dt>
+  <dd>ESRI Shapefile version 1000 length 1168098 type Point, XML  document text, ESRI Shapefile version 1000 length 333778 type Point, ASCII text, with very long lines, with no line terminators, ESRI Shapefile version -398130944 length 404318, DBase 3 data file (83432 records), data, ESRI Shapefile version -398130944 length 5174, UTF-8 Unicode (with BOM) text, with CRLF line terminators</dd>
+</dl>
+<dl>
+  <dt>Script info</dt>
+  <dd>No process scripts found</dd>
+</dl>
+<dl>
+  <dt>Size</dt>
+  <dd>64.5MB</dd>
+</dl>
+<h2>Links</h2>
+<dl>
+  <dt>URL in inspire file</dt>
+  <dd><a href="http://unknown">http://unknown</a></dd>
+</dl>
+<dl>
+  <dt>Inspirefile</dt>
+  <dd>bathymetry_profiles_every_500m_2006year.shp.xml</dd>
+</dl>
+<dl>
+  <dt>URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry</a></dd>
+</dl>
+<dl>
+  <dt>Inspire URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry/bathymetry_profiles_every_500m_2006year.shp.xml">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry/bathymetry_profiles_every_500m_2006year.shp.xml</a></dd>
+</dl>
+<h2>Subversion</h2>
+<dl>
+  <dt>Path</dt>
+  <dd>/Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/usz/bathymetry</dd>
+</dl>
+<dl>
+  <dt>Repository Root</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData">https://repos.deltares.nl/repos/OpenEarthRawData</a></dd>
+</dl>
+<dl>
+  <dt>Repository UUID</dt>
+  <dd>4427fc4e-80cb-4e17-9138-dc45509d06e2</dd>
+</dl>
+<dl>
+  <dt>Node Kind</dt>
+  <dd>directory</dd>
+</dl>
+<dl>
+  <dt>Schedule</dt>
+  <dd>normal</dd>
+</dl>
+<dl>
+  <dt>Last Changed Rev</dt>
+  <dd>744</dd>
+</dl>
+<dl>
+  <dt>Revision</dt>
+  <dd>850</dd>
+</dl>
+<h2>Remarks</h2>
+<dl>
+  <dt>Remarks</dt>
+  <dd>-</dd>
+</dl>
+<h1 id=""></h1>
+<h2>Description</h2>
+<dl>
+  <dt>Title</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Dataset</dt>
+  <dd>bathymetry</dd>
+</dl>
+<dl>
+  <dt>Abstract</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Topic</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Keywords</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Datatype</dt>
+  <dd>-</dd>
+</dl>
+<h2>Location and time</h2>
+<dl>
+  <dt>WestBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>SouthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>EastBoundLongitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>NorthBoundLatitude</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Coordinates</dt>
+  <dd>-</dd>
+</dl>
+<dl>
+  <dt>Resolution unit</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Resolution</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Start time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>End time</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Time spans</dt>
+  <dd>[]</dd>
+</dl>
+<dl>
+  <dt>period included</dt>
+  <dd>-</dd>
+</dl>
+<h2>Contact and authors</h2>
+<dl>
+  <dt>Contact email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<dl>
+  <dt>Owner organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Contact organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Country</dt>
+  <dd>pl</dd>
+</dl>
+<dl>
+  <dt>Organization</dt>
+  <dd>usz</dd>
+</dl>
+<dl>
+  <dt>Author organization</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Author email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<dl>
+  <dt>Last Changed Author</dt>
+  <dd>andre@univ.szczecin.pl</dd>
+</dl>
+<dl>
+  <dt>Last Changed Date</dt>
+  <dd>2009-09-01 11:25:41 +0200 (Tue, 01 Sep 2009)</dd>
+</dl>
+<dl>
+  <dt>Owner email</dt>
+  <dd><a href="mailto:unknown">unknown</a></dd>
+</dl>
+<h2>Restrictions</h2>
+<dl>
+  <dt>Access constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Legal constraints</dt>
+  <dd></dd>
+</dl>
+<dl>
+  <dt>Other constraints</dt>
+  <dd></dd>
+</dl>
+<h2>History of dataset</h2>
+<dl>
+  <dt>SVN Log</dt>
+  <dd><pre>------------------------------------------------------------------------
+r744 | andre@univ.szczecin.pl | 2009-09-01 11:25:41 +0200 (Tue, 01 Sep 2009) | 1 line
+
+Bathymetry dataset in ESRI shapefile format for 2004,2006 and 2008 year
+------------------------------------------------------------------------
+r575 | andre@univ.szczecin.pl | 2009-06-19 13:36:53 +0200 (Fri, 19 Jun 2009) | 1 line
+
+Created folder remotely
+------------------------------------------------------------------------
+</pre></dd>
+</dl>
+<dl>
+  <dt>Lineage</dt>
+  <dd></dd>
+</dl>
+<h2>Status</h2>
+<dl>
+  <dt>Extract</dt>
+  <dd><span style="color: green">True</span></dd>
+</dl>
+<dl>
+  <dt>Transform read</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<dl>
+  <dt>Transform netcdf</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<dl>
+  <dt>Load</dt>
+  <dd><span style="color: red">False</span></dd>
+</dl>
+<h2>Files</h2>
+<dl>
+  <dt>File extensions</dt>
+  <dd>, .kml, .sbx, .sbn, .shx, .txt, .prj, .xml, .dbf, .shp</dd>
+</dl>
+<dl>
+  <dt>Mime types</dt>
+  <dd>application/xml, text/plain, application/octet-stream</dd>
+</dl>
+<dl>
+  <dt>File types</dt>
+  <dd>ESRI Shapefile version 1000 length 1168098 type Point, XML  document text, ESRI Shapefile version 1000 length 333778 type Point, ASCII text, with very long lines, with no line terminators, ESRI Shapefile version -398130944 length 404318, DBase 3 data file (83432 records), data, ESRI Shapefile version -398130944 length 5174, UTF-8 Unicode (with BOM) text, with CRLF line terminators</dd>
+</dl>
+<dl>
+  <dt>Script info</dt>
+  <dd>No process scripts found</dd>
+</dl>
+<dl>
+  <dt>Size</dt>
+  <dd>64.5MB</dd>
+</dl>
+<h2>Links</h2>
+<dl>
+  <dt>URL in inspire file</dt>
+  <dd><a href="http://unknown">http://unknown</a></dd>
+</dl>
+<dl>
+  <dt>Inspirefile</dt>
+  <dd>bathymetry_profiles_every_1000m_2004year.shp.xml</dd>
+</dl>
+<dl>
+  <dt>URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry</a></dd>
+</dl>
+<dl>
+  <dt>Inspire URL</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry/bathymetry_profiles_every_1000m_2004year.shp.xml">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/usz/bathymetry/bathymetry_profiles_every_1000m_2004year.shp.xml</a></dd>
+</dl>
+<h2>Subversion</h2>
+<dl>
+  <dt>Path</dt>
+  <dd>/Users/fedorbaart/Documents/checkouts/OpenEarthRawData/trunk/usz/bathymetry</dd>
+</dl>
+<dl>
+  <dt>Repository Root</dt>
+  <dd><a href="https://repos.deltares.nl/repos/OpenEarthRawData">https://repos.deltares.nl/repos/OpenEarthRawData</a></dd>
+</dl>
+<dl>
+  <dt>Repository UUID</dt>
+  <dd>4427fc4e-80cb-4e17-9138-dc45509d06e2</dd>
+</dl>
+<dl>
+  <dt>Node Kind</dt>
+  <dd>directory</dd>
+</dl>
+<dl>
+  <dt>Schedule</dt>
+  <dd>normal</dd>
+</dl>
+<dl>
+  <dt>Last Changed Rev</dt>
+  <dd>744</dd>
+</dl>
+<dl>
+  <dt>Revision</dt>
+  <dd>850</dd>
+</dl>
+<h2>Remarks</h2>
+<dl>
+  <dt>Remarks</dt>
+  <dd>-</dd>
+</dl>
+
+
+<hr>
+<address>
+<a href="mailto:f.baart@tudelft.nl">Email us</a><br />
+</address>
+<!-- hhmts start --> Last modified: Tue Jul 14 17:36:58 CEST 2009 <!-- hhmts end -->
+</body>
+</html>

@@ -1,0 +1,77 @@
+#===============================================================================
+# SVN $Id: Macros.bluefire 35698 2012-03-22 23:59:57Z kauff $
+# SVN $URL: https://svn-ccsm-models.cgd.ucar.edu/tools/mapping/trunk_tags/mapping_121113b/gen_mapping_files/runoff_to_ocn/src/Macros.bluefire $
+#===============================================================================
+# Makefile macros for "bluefire", an IBM POWER6 machine at NCAR
+#
+# Notes:  (see xlf user's guide for the details)
+#  -lmass          => IBM-tuned intrinsic lib
+#  -qsmp=noauto    => enable SMP directives, but don't add any
+#  -qsmp=omp       => enable SMP directives, strict omp
+#  -qstrict        => don't turn divides into multiplies, etc
+#  -qhot           => higher-order-transformations (eg. loop padding)
+#  -qalias=noaryoverlp => assume no array overlap wrt equivalance, etc
+#  -qmaxmem=-1     => memory available to compiler during optimization
+#  -qipa=level=2   => InterProcedure Analysis (eg. inlining) => slow compiles
+#  -p -pg          => enable profiling (use in both FFLAGS and LDFLAGS)
+#  -qreport        => for smp/omp only
+#  -bmaxdata:0x80000000 => use maximum allowed data segment size
+#  -g              => always leave it on because overhead is minimal (?)
+#  -qflttrap=...   => enable default sigtrap (core dump)
+#  -C              => runtime array bounds checking (runs slow)
+#  -qinitauto=...  => initializes automatic variables
+#===============================================================================
+
+CC         := mpcc_r
+CPP        := /lib/cpp
+#CPP        := NONE
+CPPFLAGS   := -P
+CPPDEFS    := -DAIX -DMSS -DTHREADED_PTHREADS
+#CFLAGS     := -c -O2 -DDISABLE_TIMERS
+CFLAGS     := -c -O2 
+FIXEDFLAGS := -qsuffix=f=f   -qfixed=132
+FREEFLAGS  := -qsuffix=f=f90 -qfree=f90
+FC         := xlf90_r
+FFLAGS     := -c -qrealsize=8 -qdpc=e -g -qfullpath -O2 -qstrict -qmaxmem=-1 -qarch=auto -Q -qsigtrap=xl__trcedump 
+#             -qspillsize=2500 -qtune=auto -qcache=auto
+MOD_SUFFIX := mod
+LD         := $(FC)
+AR         := ar
+INCLDIR    := -I. -I/usr/include -I/usr/local/include 
+SLIBS      := -lnetcdf
+SLIBS      := -L /usr/local/lib64/r4i4 -lnetcdf
+ULIBS      := 
+
+ifeq ($(OBJECT_MODE),64)
+   LDFLAGS    := 
+   INCLDIR    += -I/usr/lpp/ppe.poe/include/thread64
+else
+   LDFLAGS    := -bmaxdata:0x80000000 -bmaxstack:0x10000000 
+   INCLDIR    += -I/usr/lpp/ppe.poe/include/thread
+endif
+
+ifeq ($(THREAD),TRUE)
+   CFLAGS   += -qsmp=omp
+   CPPDEFS  += -D_OPENMP 
+   FFLAGS   += -qsmp=omp  # default is -qnosmp
+   LDFLAGS  += -qsmp=omp
+endif
+
+ifeq ($(DEBUG),TRUE)
+   CPPDEFS  += -DNO_SHR_VMATH
+   FFLAGS   += -C -qinitauto=7FF7FFFF -qflttrap=ov:zero:inv:en -qspillsize=4000
+else
+# -qflttrap doesn't run with lmass turned on.
+#  FFLAGS   += -qflttrap=ov:zero:inv:en:imp
+   SLIBS    += -lmass -lmassv -llapack -lblas
+endif
+
+
+#--- Machine specific settings below ---
+
+ifeq ($(OBJECT_MODE),64)
+   NETCDFDIR := /usr/local/lib64/r4i4
+else
+   NETCDFDIR := /usr/local/lib32/r4i4
+endif
+

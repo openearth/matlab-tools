@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduleDescriptors version="1.0" xmlns="http://www.wldelft.nl/fews" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wldelft.nl/fews http://fews.wldelft.nl/schemas/version1.0/moduleDescriptors.xsd">
+  <moduleDescriptor id="EAImport">
+    <description>Import module to import EATimeseriesDataExchangeFormat compliant files</description>
+    <className>nl.wldelft.fews.system.plugin.dataImport.EaImport</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="Interpolation">
+    <description>General Interpolation Component</description>
+    <className>nl.wldelft.fews.system.plugin.interpolation.InterpolationController</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="GeneralAdapter">
+    <description>General Adaptor to launch published interface compliant modules</description>
+    <className>nl.wldelft.fews.system.plugin.generaladapter.GeneralAdapter</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="Transformation">
+    <description>General Transformation Component</description>
+    <className>nl.wldelft.fews.system.plugin.transformation.TransformationController</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="Transformation2">
+    <description>General Transformation Component</description>
+    <className>nl.wldelft.fews.system.plugin.transformationmodule.TransformationModule</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="LookUp">
+    <description>General LookUp Component</description>
+    <className>nl.wldelft.fews.system.plugin.lookup.LookUpController</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="LookUpDisplay">
+    <description>General LookUp Reporting Component</description>
+    <className>nl.wldelft.fews.gui.plugin.lookupreport.LookUpReportDialog</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="ExportRun">
+    <description>Export module to export EATimeseriesDataExchangeFormat compliant files</description>
+    <className>nl.wldelft.fews.system.plugin.dataExport.EaExport</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="TimeSeriesExportRun">
+    <description>Export module to export PI files</description>
+    <className>nl.wldelft.fews.system.plugin.dataExport.TimeSeriesExport</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="Report">
+    <description>General Reporting Component</description>
+    <className>nl.wldelft.fews.system.plugin.report.ReportController</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="ErrorModel">
+    <description>Applies error correction module</description>
+    <className>nl.wldelft.fews.system.plugin.errormodel.ErrorModel</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="Correlation">
+    <description>Runs correlation module</description>
+    <className>nl.wldelft.fews.system.plugin.correlation.correlationController</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="ThresholdEvent">
+    <description>Module to check on threshold event crossings</description>
+    <className>nl.wldelft.fews.system.plugin.threshold.ThresholdEventCrossingModule</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="SwingActivity">
+    <description>A class which prompts the user through a Swing dialog whether or not the activity should succeed.</description>
+    <className>nl.wldelft.fews.system.shellserver.SwingActivity</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="PerformanceIndicator">
+    <description>Performance Indicator Component</description>
+    <className>nl.wldelft.fews.system.plugin.performanceindicator.PerformanceIndicatorController</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="ForecastArchiver">
+    <description>Forecast archiver</description>
+    <className>nl.wldelft.fews.system.plugin.archive.ForecastArchiver</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="ReportExport">
+    <description>Export Reports from Local Datastore</description>
+    <className>nl.wldelft.fews.system.plugin.report.reportExport.ReportExportController</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="RollingBarrel">
+    <description>Export Reports from Local Datastore</description>
+    <className>nl.wldelft.fews.system.plugin.rollingbarrel.RollingBarrelModule</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="ImportAmalgamate">
+    <className>nl.wldelft.fews.system.plugin.amalgamate.ImportAmalgamate</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="TimeSeriesImportRun">
+    <description>Import module to import timeseries from the various grid-formats ie GRIB format</description>
+    <className>nl.wldelft.fews.system.plugin.dataImport.TimeSeriesImport</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="GridImportRun">
+    <description>Import module to import timeseries from the various grid-formats ie GRIB format</description>
+    <className>nl.wldelft.fews.system.plugin.dataImport.TimeSeriesImport</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="HymosTransferDbImport">
+    <description>Import module to import HYMOS Transfer database compliant files</description>
+    <className>nl.wldelft.fews.system.plugin.hymostransferdb.HymosTransferDbImportRun</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="DatabaseDownloadToHymosTransferDb">
+    <description>Module to download data from external database to local HYMOS Transfer database</description>
+    <className>nl.wldelft.fews.system.plugin.hymos.ExternalDataSourceToHymosTransferDbPlugin</className>
+  </moduleDescriptor>
+  <moduleDescriptor id="MarkedRecordManager">
+    <className>nl.wldelft.fews.system.plugin.purge.MarkedRecordManager</className>
+  </moduleDescriptor>
+</moduleDescriptors>

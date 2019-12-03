@@ -1,0 +1,6 @@
+Pylons>=0.9.7
+Pydap
+matplotlib
+numpy
+scipy
+netCDF4

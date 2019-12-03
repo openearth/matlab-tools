@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>Controling Google Maps through Qt application</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8">
+    <style type="text/css">
+      html,
+      body,
+      #map_canvas {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+
+    </style>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing"></script>
+    <script type="text/javascript">
+	 var coordinates = []
+	 
+	 function saver() {
+		return coordinates
+	 }
+	
+      function initialize() {
+        var myOptions = {
+          zoom: 8,
+          center: new google.maps.LatLng(52.5, 6),  // change the initial map center
+          mapTypeId: google.maps.MapTypeId.HYBRID,  // type of the map
+        };
+
+        var map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
+
+        var drawingManager = new google.maps.drawing.DrawingManager({
+          drawingMode: google.maps.drawing.OverlayType.POLYGON,
+          drawingControl: true,
+          drawingControlOptions: {
+            position: google.maps.ControlPosition.TOP_CENTER,
+            drawingModes: [
+              google.maps.drawing.OverlayType.POLYGON
+            ]
+          },
+          polygonOptions: {
+            strokeWeight: 0,
+            fillOpacity: 0.45,
+            editable: true
+          }
+        });
+		
+		drawingManager.setMap(map);
+        drawingManager.setDrawingMode(null);
+        google.maps.event.addListener(drawingManager, 'polygoncomplete', function(e) {
+
+          var polygonBounds = e.getPath();
+          for (var i = 0; i < polygonBounds.length; i++) {
+            coordinates.push(polygonBounds.getAt(i).lat(), polygonBounds.getAt(i).lng());
+          }
+          //saver(JSON.stringify(coordinates));
+          //saveData(coordinates, 'COORDS.txt');
+
+          // Switch back to non-drawing mode after drawing a shape.
+          drawingManager.setDrawingMode(null);
+          // To hide:
+          drawingManager.setOptions({
+            drawingControl: false
+          });
+        });
+      }
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+
+  </head>
+
+  <body>
+    <div id="map_canvas"></div>
+  </body>
+
+</html>

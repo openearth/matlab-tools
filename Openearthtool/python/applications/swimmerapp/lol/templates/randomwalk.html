@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="refresh" content="10"></meta>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+<script type="text/javascript" src="/canvasoverlay.js"></script>
+<script type="text/javascript">
+function draw() {
+  // load json
+  $.getJSON("/streamtrace/move", function(json) {
+    ctx = overlay.canvas.getContext('2d');
+    console.log(ctx);
+    console.log(json);
+    ctx.fillStyle = "rgba(0, 0, 200, 0.5)";  
+    ctx.fillRect(0,0,json['x'],json['y']);
+    ctx.fill();
+  }
+  )
+// plt
+}
+
+function initialize() {
+    var latlng = new google.maps.LatLng(52.62,4.6);
+    var myOptions = {
+      zoom: 14,
+      center: latlng,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+    var swBound = new google.maps.LatLng(52.61, 4.55);
+    var neBound = new google.maps.LatLng(52.65, 4.63);
+    var bounds = new google.maps.LatLngBounds(swBound, neBound);
+    overlay = new CanvasOverlay(bounds, map);
+    overlay.onDraw = function(overlay) {
+        console.log(overlay.canvas);
+	draw();
+     };
+}
+</script>
+<script type="text/javascript">
+$(document).ready(function(){initialize();});
+
+</script>
+<title></title>
+</head>
+
+<body>
+<h1>html canvas test 2</h1>
+<!--<img id="hoofd" src="fedor.png" /> -->
+<div id="map_canvas" style="width:800px;height:400px;">
+  Map goes here
+</div>
+  
+
+<!-- <img src="http://www.ocs.fas.harvard.edu/images/Map-1033-Mass-Ave.png"  style="position:absolute;"/> -->
+<!-- <canvas width="640" height="360" poster="poster.jpg" controls autoplay style="position:absolute;opacity:0.7" onmouseover=""> -->
+<!-- <source src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.ogv" type="canvas/ogg"></source> -->
+<!-- <source src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" type="canvas/mp4"></source> -->
+<!-- </canvas> -->
+<hr />
+<address></address>
+<!-- hhmts start --> Last modified: Fri Oct 15 14:53:16 CEST 2010 <!-- hhmts end -->
+</body>
+</html>

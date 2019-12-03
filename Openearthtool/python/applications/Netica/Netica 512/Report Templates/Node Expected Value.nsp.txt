@@ -1,0 +1,2 @@
+
+[[Node.Label]]:  Expected value = [[Node.ExpectedValue]],   Standard deviation = [[Node.StandardDeviation]],   Variance = [[Node.Variance]]

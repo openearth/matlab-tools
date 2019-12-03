@@ -1,0 +1,6 @@
+[db]
+host = al-pg005.xtr.deltares.nl
+dbname = oet_data
+schema = digitaledelta
+user = oet_data
+pwd = oet_data

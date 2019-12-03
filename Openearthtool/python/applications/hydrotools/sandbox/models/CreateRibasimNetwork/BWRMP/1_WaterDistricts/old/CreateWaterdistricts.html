@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>RIBASIM: Create waterdistricts</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div class="header">
+  <div class="headertitle">
+<h1>CreateWaterdistricts </h1>  </div>
+</div>
+<div class="fragment"><pre class="fragment">
+Creates waterdistricts for a RIBASIM-network from a WFLOW ldd
+
+Author:	Daniel Tollenaar
+Email:	daniel.tollenaar@deltares.nl
+
+Requirements:
+ - Python 2.7 Anaconda or PythonXY
+ - PCRaster python
+ - ogr/gdal libraries
+</pre></div>
+
+<h2>OUTPUT</h2>
+<div class="fragment"><pre class="fragment">
+NNNN = basin_name
+
+10_MAIN_RIVER_NNNN.shp         Shape-file with main rivers_shape
+11_WATERDISTRICTS_NNNN.shp     Shape-file with water districts
+12_WD_OUTFLOW_NNNN.shp         Shape-file with outflow points of water districts
+
+wflow_gauges.map               PCRaster map with gauge-locations for WFLOW
+wflow_subcatch.map             PCRaster map with sub-catchments for WFLOW
+</pre></div>
+<h2>SYNOPSIS</h2>
+<div class="fragment"><pre class="fragment">
+CreateWaterdistricts.py [--help] 
+       [-t_srs EPSG_projection] [-order river_order] [-B basin_name]
+       [-RIV rivers_shape_in] [-LDD ldd_map_in] [-WS watershed_shape_in]
+</pre></div>
+<h2>DESCRIPTION</h2>
+<dl>
+<dt><b>-b  <em>basin name:</em></b></dt>
+<dd>(required) basin name used in output shape-files</dd>
+<dt><b>-t_srs  <em>UTM projection:</em></b></dt>
+<dd>(optional) EPSG code (e.g. EPSG:32750) of UTM projection to calculate area (only if source is not in UTM already)</dd>
+<dt><b>-order  <em>strahler-order:</em></b></dt>
+<dd>(optional) Integer value of river order used to generate ldd_rivers.map (default = 3)</dd>
+<dt><b>-riv  <em>river-layer:</em></b></dt>
+<dd>(optional) File containing rivers (default is reach.shp)</dd>
+<dt><b>-ldd  <em>Local Drainage Direction map:</em></b></dt>
+<dd>(optional) PCRaster map with local drainage direction (default is wflow_ldd.map)</dd>
+<dt><b>-ws  <em>Watershed layer:</em></b></dt>
+<dd>(optional) File containing watershed used to "clump" areas not covered in LDD. Be default only watersheds are calculated for areas included in the LDD</dd>
+<dt><b>-debug:</b></dt>
+<dd>(optional) if set <em>true</em> all generated files will be preserved</dd>
+</dl>
+<h2><a class="anchor" id="gdal_translate_example"></a>
+EXAMPLE</h2>
+<div class="fragment"><pre class="fragment">
+CreateWaterdistricts.py -t_srs EPSG:32750 -order 2 -B PEMALICOMAL -WS 02_DAS_PEMALICOMAL.shp</div>
+<hr>
+</body>
+</html>

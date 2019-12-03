@@ -1,0 +1,12 @@
+Flask
+Jinja2
+jsonschema
+lxml
+OWSLib
+pyproj
+requests
+Shapely
+Werkzeug
+SQLAlchemy
+psutil
+pywps

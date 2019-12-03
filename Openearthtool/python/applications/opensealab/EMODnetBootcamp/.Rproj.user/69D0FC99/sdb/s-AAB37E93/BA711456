@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(robis)\nlibrary(leaflet)\nlibrary(tidyverse)\nlibrary(rworldxtra)\nlibrary(sf)\nlibrary(gstat)\nlibrary(sp)\nlibrary(raster)\n\n# wind park bb 7.55, 56.99, 12.09, 58.05\n# a = st_bbox(c(7.55, 56.99, 12.09, 58.05))\n\npol = st_sfc(st_polygon(list(cbind(c(7.55,7.55,12.09,12.09,7.55),c(56.99,58.05,58.05,58.05,56.99)))))\npol_ext = st_buffer(pol, dist = 1)\nbb <- st_bbox(pol)\ndata1 <- occurrence(scientificname = c(\"\"), geometry = st_as_text(pol))\n\nsortedlist <- sort(table(data1$scientificName), decreasing = T)\ntop50species <- data.frame(species = head(sortedlist, 50))\nsave(top50species, file = \"backgrounddata.rdata\")\n\ndata11 <- occurrence(scientificname = c(\"Buccinum undatum\"), geometry = st_as_text(pol_ext))\n\n# data2 <- occurrence(scientificname = c(\"Cetartiodactyla\"), geometry = st_as_text(pol_ext))\nleafletmap(data11)\n\ndata <- data11 %>% \n  filter(scientificName == \"Buccinum undatum\") %>%\n  dplyr::select(decimalLongitude, eventDate, decimalLatitude, individualCount) %>%\n  filter(!is.na(individualCount))\ndata$eventDate <- as.POSIXct(data$eventDate, \"%Y-%m-%d %H:%M:%S\", tz = \"GMT\")\nhist(as.numeric(format(data$eventDate, \"%Y\")))\n\n# data <- data %>% filter(\n#   as.numeric(format(data$eventDate, \"%Y\")) >= 2000,\n#   as.numeric(format(data$eventDate, \"%Y\")) < 2017\n#   )\n\ncoordinates(data) <- ~decimalLongitude + decimalLatitude\ngrid <- raster(data)\nres(grid) <- 0.1\n\n\ng1 <- gstat(formula = individualCount ~ 1, \n      data = data)\n\nv<- variogram(g1)\nplot(v)\nvm <- fit.variogram(v, vgm(10,\"Sph\"))\nplot(v, model=vm)\n\ngrid2 <- as(grid, \"SpatialPixels\")\ngridded <- krige(formula = individualCount ~ 1, locations = data, model=vm, newdata=grid2)\n\n\n",
+    "created" : 1510826944948.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3749849564",
+    "id" : "BA711456",
+    "lastKnownWriteTime" : 1510837415,
+    "last_content_update" : 1510849583917,
+    "path" : "D:/REPOS-CHECK-OUTS/opensealab/EMODnetBootcamp/tests.R",
+    "project_path" : "tests.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

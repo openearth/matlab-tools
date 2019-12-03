@@ -1,0 +1,33 @@
+Model Reference Analysis
+
+Here are opted developments listed which have not yet been implemented.
+
+Input variables:
+- HIS file
+	- Read unit form HIS file
+
+- list_of_variables_linked
+	- Make it possible to toggle log transformation
+	- Make it possible to input timezone of data
+		- Make a check between timezones Simulated and Measurument
+		- Automatic conversion
+	
+
+Structuring:
+- Move multiple comparison from Model analysis towards GOF analysis
+- Move Boxplots from Model analysis towards GOF analysis
+
+Folders:
+- Change name of Validation analyses to GOF (Goodness of Fit)
+
+Plots:
+- Seperate boxplots from continues lines/measurements in the month plot:
+	- Show the measurements (blue triangles) and continuaous simulation in a seperate plot
+	- Show the boxplots of decade measurements, exact measurements and boxplots of simulation in a seperate plot (maybe next to each other).
+- Add an automated legend to the Year plot in Model analysis
+- Add an automated legend to the Month plot in Model analysis
+- Give range of the data used in decade data in Year plot in Model analysis
+- Give range of the data used in decade data in Month plot in Model analysis
+- In the Correlation Coefficient the equation should be added in GOF analysis.
+- Add the creation date in the plot on the lower left corner
+- Add other meta data in lower left corner

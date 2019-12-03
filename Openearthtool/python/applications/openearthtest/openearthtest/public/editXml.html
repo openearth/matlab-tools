@@ -1,0 +1,123 @@
+<html>
+
+<head>
+	<script type="text/javascript" src="scripts/js/loadxmldoc.js"></script>
+    <script type="text/javascript">
+		// Fill case-selection listbox with available cases
+		function fillCaseListbox(xmlFile)
+		{
+			// first remove all what is in the listbox
+			while(case_listbox.options.length!=0)
+			case_listbox.options.remove(0);
+
+			caseDoc=loadXMLDoc(xmlFile);
+			numOfData=caseDoc.getElementsByTagName("title").length;
+
+			for (i=0;i<numOfData;i=i+1)
+			{
+			var oOption = document.createElement("OPTION");
+			oOption.text=caseDoc.getElementsByTagName("title")[i].childNodes[0].nodeValue;
+			oOption.value=i;
+			oOption.class="vs";
+			case_listbox.options.add(oOption)
+			}
+			return true;
+		}
+
+		// Adding entries to xml-file
+		function xml_add(formdata)
+		{
+		xml_file      = formdata.case[formdata.case.value].text;
+		data_title    = formdata.title.value;
+		data_category = formdata.category.value;
+		data_type     = formdata.type.value;
+		data_kml      = formdata.kml.value;
+		data_source   = formdata.source.value;
+
+		// now add this to existing xml-file
+		<!-- but HOW? -->
+		}
+
+</script>
+</head>
+
+<body onload='fillCaseListbox("cases.xml")' id='body'>
+<h3>Request form for adding data to case</h3>
+<p>
+On request, data can be added to a case. Fill in the form below and submit it to post your request to the responsible case administrator.
+<table>
+  <form name="editXML" method="post" action="handleRequest.asp">
+    <tr>
+    <td colspan="2">
+    Sender information:
+    </td>
+    <tr>
+
+    <tr>
+    <td>Name:</td>
+    <td><input type="text" name="name" value="" /></td>
+    </tr>
+
+    <tr>
+    <td>Email:</td>
+    <td><input type="text" name="email" value="" /></td>
+    </tr>
+
+    <tr>
+    <td colspan="2">
+    Data information:
+    </td>
+    <tr>
+
+    <tr>
+    <td>Select case</td>
+    <td>
+
+	<select name="case" id="caseSelect" class="s">
+	  <option value="0" class="vs">Select case
+	  </option>
+	</select>
+	<script type="text/javascript">case_listbox=document.editXML.caseSelect</script>
+	</td>
+	</tr>
+
+	<tr>
+	<td>Title:</td>
+    <td><input type="text" name="title" maxlength=20 /></td>
+    </tr>
+
+    <tr>
+    <td>KML source:</td>
+    <td><input type="text" name="kml" value="http://" /></td>
+    </tr>
+
+    <tr>
+    <td>NetCDF source:</td>
+    <td><input type="text" name="source" value="http://" /></td>
+    </tr>
+
+    <tr>
+    <td>Category:</td>
+    <td><input type="text" name="category" value="" /> (i.e. bathymetry, waves, waterlevels, etc.)</td>
+    </tr>
+
+    <tr>
+    <td>Type:</td>
+    <td><input type="text" name="type" value="" /> (i.e. 2dmap, station, etc.)</td>
+    </tr>
+
+    <tr>
+    <td>Variable name:</td>
+    <td><input type="text" name="varname" value="" /> (Optinal, this is the name of the variable in the netcdf-file which is presented by the kml)</td>
+    </tr>
+
+    <tr>
+    <td><input type="submit" name="Add to XML" value="Submit" /></td>
+    <td></td>
+    </tr>
+  </form>
+</table>
+
+</body>
+
+</html>

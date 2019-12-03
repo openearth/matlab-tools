@@ -1,0 +1,440 @@
+// ~->[DNET-1]->~
+
+// File created by Norsys using Netica 3.24 on Jun 14, 2007 at 11:55:51.
+
+bnet Beta_Updating {
+AutoCompile = TRUE;
+autoupdate = TRUE;
+comment = "\n\
+	Beta Updating                          Copyright 1998 Norsys Software Corp.\n\n\
+	This example is only for those who want to have a greater understanding of\n\
+	the technicalities of Bayesian learning in a very simple situation.\n\n\
+	Suppose there is a large bag with white balls and black balls in it,\n\
+	but you don't know what the proportion is.\n\
+	You will draw a few balls from the bag (replacing them each time),\n\
+	to try to determine the proportion.\n\n\
+	This all sounds rather artificial, but it has the same form as many \n\
+	learning problems where a proportion is involved.  For example, instead\n\
+	of drawing balls you may be making telephone calls to determine the\n\
+	proportion of people who will vote for a certain political party.\n\
+	Or you may be picking medical files to see what proportion of a certain\n\
+	class of patients with a certain treatment eventually were cured.\n\
+	The purpose of replacing the balls after each draw is just to simulate\n\
+	a very large \"population\".  If there are enough balls in the bag, it \n\
+	doesn't matter if they are replaced or not.\n\n\
+	While doing the drawing, and learning the proportion, you could keep\n\
+	track of your belief for each possible proportion.  This would be a\n\
+	probability distribution over all possible proportions.  If you compile\n\
+	the example network you will see such a distribution in the leftmost node \n\
+	called  \"Proportion Black\" (there are actually three Bayes nets \n\
+	included in the example; for now we concentrate on the leftmost one, and \n\
+	ignore the two single node nets to the right).  This learner starts off\n\
+	believing all proportions are equally likely.\n\n\
+	Suppose the learner had to provide a probability that the next draw was\n\
+	going to be black.  Such a probability is provided by the node Draw_2.\n\
+	You can see that its equation is simply:\n\n\
+	\|       P (Draw_2 | PB) = (Draw_2==black) ? PB : (1 - PB)\n\n\
+	where PB is the Proportion Black node.  It just means that the probability\n\
+	of the next draw being black is the proportion of black balls, and the\n\
+	probability of the next draw being white is one minus the proportion of\n\
+	black balls.\n\n\
+	Effectively, it ends up taking the average value of Proportion Black,\n\
+	which is 50.0%, as can be seen from the bottom line of the Proportion\n\
+	Black node.\n\n\
+	You can enter findings for the other Draw_x nodes, and observe the changes\n\
+	in the probability distribution over proportions, and the probababilities \n\
+	for the other draws.  If you wish to add other Draw_x nodes, just select a\n\
+	Draw_x node, and hold down the Ctrl key while dragging to a new location.\n\n\
+	The initial distribution for the \"Proportion Black\" node, before any\n\
+	findings were entered, is a Beta(1,1) distribution, as can be seen by\n\
+	examining the node's equation.  You could change the distribution to\n\
+	anything you want, and the example would still work.  However, when the\n\
+	distribution is a beta distribution, some simplifications are possible.\n\
+	Even if it isn't a beta distribution, there are so many differently shaped\n\
+	beta distributions, that one which fits fairly closely could probably \n\
+	be found.\n\n\
+	If the prior distribution is beta, then after drawing some balls the\n\
+	distribution will still be beta, but with different parameters.\n\
+	If it was Beta(x,y) then it will be Beta(x+b,y+w), where b and w are\n\
+	the number of black and white balls drawn, respectively.  To demonstrate\n\
+	this, the \"Proportion Black\" node to the right has a Beta(5,3) \n\
+	distribution.  Enter findings of black into 4 of the Draw_x nodes, and\n\
+	findings of white into 2 of them.  Now the leftmost \"Proportion Black\"\n\
+	should have a Beta(1+4,1+2) distribution as well.  You will see that\n\
+	they agree to within sampling error.\n\n\
+	Netica's built-in learning is based on beta distributions.  It allows\n\
+	you to define a single node like the \"Draw\" node in the lower right\n\
+	which represents the probability that the next draw seen will be black.\n\
+	After entering the color of the actual next draw as a finding into the\n\
+	\"Draw\" node, you can tell Netica to learn from the experience by \n\
+	incorporating the case.\n\n\
+	For example, if you enter black as the first finding into Draw,\n\
+	choose Relation->Incorporate Case, accept the default degree of 1,\n\
+	remove the finding and compile, the new probability for black will be\n\
+	66.7%, the same as that for a new draw in the network to the left after\n\
+	a single black finding has been entered (as described above).\n\n\
+	This type of learning is most valuable when it isn't for a single\n\
+	probability, but for all the probabilities involved in the relationships \n\
+	between several nodes.  So in a more complex Bayes net, if after \n\
+	entering the findings from a case, you choose Relation->Incorporate Case, \n\
+	then the CPTs of the Bayes net will be changed so that the network \n\
+	has learned from that case.  After learning from a few cases, you can\n\
+	save the smarter network back to its file.  Then the next time you use\n\
+	it, its probabilistic inference will be more accurate for the cases\n\
+	you are receiving.\n\n\
+	";
+whenchanged = 1181847345;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 10;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	windowposn = (8, 7, 711, 522);
+	CommentShowing = TRUE;
+	CommentWindowPosn = (8, 520, 656, 745);
+	resolution = 72;
+	drawingbounds = (1260, 910);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0xc0c0c0;};
+	NodeSet Nature {BuiltIn = 1; Color = 0xf8eed2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0xd3caa6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0xc8c8c8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0xffffff;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0xffffb4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0xffbdbd;};
+	NodeSet Decision {BuiltIn = 1; Color = 0xdee8ff;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0xf0fafa;};
+	NodeSet Title {BuiltIn = 1; Color = 0xffffff;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		landscape = FALSE;
+		magnify = 1;
+		};
+	};
+
+node PB {
+	kind = NATURE;
+	discrete = FALSE;
+	chance = CHANCE;
+	levels = (0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1);
+	parents = ();
+	probs = 
+		// 0 to 0.05    0.05 to 0.1  0.1 to 0.15  0.15 to 0.2  0.2 to 0.25  0.25 to 0.3  0.3 to 0.35  0.35 to 0.4  0.4 to 0.45  0.45 to 0.5  0.5 to 0.55  0.55 to 0.6  0.6 to 0.65  0.65 to 0.7  0.7 to 0.75  0.75 to 0.8  0.8 to 0.85  0.85 to 0.9  0.9 to 0.95  0.95 to 1    
+		  (0.05,        0.05,        0.05,        0.05,        0.05,        0.05,        0.05,        0.05,        0.05,        0.05,        0.05,        0.05,        0.05,        0.05,        0.05,        0.05,        0.05,        0.05,        0.05,        0.05);
+	numcases = 9999.03;
+	title = "Proportion Black";
+	whenchanged = 1181847345;
+	belief = (0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.04999996, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05);
+	visual V1 {
+		center = (102, 222);
+		font = font {shape= "Arial"; size= 9;};
+		height = 11;
+		};
+	};
+
+node Draw_1 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (black, white);
+	parents = (PB);
+	probs = 
+		// black        white          // PB          
+		 ((0.0249693,   0.9750307),    // 0 to 0.05   
+		  (0.0748722,   0.9251278),    // 0.05 to 0.1 
+		  (0.1250011,   0.8749989),    // 0.1 to 0.15 
+		  (0.1752833,   0.8247167),    // 0.15 to 0.2 
+		  (0.2252947,   0.7747054),    // 0.2 to 0.25 
+		  (0.2746134,   0.7253866),    // 0.25 to 0.3 
+		  (0.324874,    0.675126),     // 0.3 to 0.35 
+		  (0.3750015,   0.6249985),    // 0.35 to 0.4 
+		  (0.4247636,   0.5752364),    // 0.4 to 0.45 
+		  (0.4757797,   0.5242203),    // 0.45 to 0.5 
+		  (0.5242245,   0.4757755),    // 0.5 to 0.55 
+		  (0.5752405,   0.4247595),    // 0.55 to 0.6 
+		  (0.625,       0.375),        // 0.6 to 0.65 
+		  (0.6751228,   0.3248772),    // 0.65 to 0.7 
+		  (0.7253853,   0.2746147),    // 0.7 to 0.75 
+		  (0.7747076,   0.2252924),    // 0.75 to 0.8 
+		  (0.82472,     0.17528),      // 0.8 to 0.85 
+		  (0.8749995,   0.1250005),    // 0.85 to 0.9 
+		  (0.9251305,   0.07486948),   // 0.9 to 0.95 
+		  (0.9750322,   0.02496778));  // 0.95 to 1   ;
+	equation = "P (Draw_1 | PB) = (Draw_1==black) ? PB : (1 - PB)";
+	whenchanged = 904709099;
+	belief = (0.5000008, 0.4999992);
+	visual V1 {
+		center = (306, 90);
+		height = 5;
+		link 1 {
+			path = ((189, 116), (210, 90), (229, 90));
+			};
+		};
+	};
+
+node Draw_2 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (black, white);
+	parents = (PB);
+	probs = 
+		// black        white          // PB          
+		 ((0.02496759,  0.9750324),    // 0 to 0.05   
+		  (0.07486726,  0.9251328),    // 0.05 to 0.1 
+		  (0.1250006,   0.8749994),    // 0.1 to 0.15 
+		  (0.17528,     0.82472),      // 0.15 to 0.2 
+		  (0.2252916,   0.7747084),    // 0.2 to 0.25 
+		  (0.274616,    0.7253841),    // 0.25 to 0.3 
+		  (0.3248756,   0.6751245),    // 0.3 to 0.35 
+		  (0.3749996,   0.6250004),    // 0.35 to 0.4 
+		  (0.4247631,   0.5752369),    // 0.4 to 0.45 
+		  (0.4757792,   0.5242208),    // 0.45 to 0.5 
+		  (0.5242218,   0.4757781),    // 0.5 to 0.55 
+		  (0.5752355,   0.4247645),    // 0.55 to 0.6 
+		  (0.625,       0.375),        // 0.6 to 0.65 
+		  (0.6751259,   0.3248741),    // 0.65 to 0.7 
+		  (0.7253867,   0.2746133),    // 0.7 to 0.75 
+		  (0.7747063,   0.2252937),    // 0.75 to 0.8 
+		  (0.8247143,   0.1752857),    // 0.8 to 0.85 
+		  (0.875,       0.125),        // 0.85 to 0.9 
+		  (0.9251246,   0.07487542),   // 0.9 to 0.95 
+		  (0.9750331,   0.02496687));  // 0.95 to 1   ;
+	equation = "P (Draw_2 | PB) = (Draw_2==black) ? PB : (1 - PB)";
+	whenchanged = 904699853;
+	belief = (0.4999994, 0.5000006);
+	visual V1 {
+		center = (306, 156);
+		height = 6;
+		link 1 {
+			path = ((189, 169), (210, 156), (229, 156));
+			};
+		};
+	};
+
+node Draw_3 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (black, white);
+	parents = (PB);
+	probs = 
+		// black        white          // PB          
+		 ((0.02496759,  0.9750324),    // 0 to 0.05   
+		  (0.07486726,  0.9251328),    // 0.05 to 0.1 
+		  (0.1250006,   0.8749994),    // 0.1 to 0.15 
+		  (0.17528,     0.82472),      // 0.15 to 0.2 
+		  (0.2252916,   0.7747084),    // 0.2 to 0.25 
+		  (0.274616,    0.7253841),    // 0.25 to 0.3 
+		  (0.3248756,   0.6751245),    // 0.3 to 0.35 
+		  (0.3749996,   0.6250004),    // 0.35 to 0.4 
+		  (0.4247631,   0.5752369),    // 0.4 to 0.45 
+		  (0.4757792,   0.5242208),    // 0.45 to 0.5 
+		  (0.5242218,   0.4757781),    // 0.5 to 0.55 
+		  (0.5752355,   0.4247645),    // 0.55 to 0.6 
+		  (0.625,       0.375),        // 0.6 to 0.65 
+		  (0.6751259,   0.3248741),    // 0.65 to 0.7 
+		  (0.7253867,   0.2746133),    // 0.7 to 0.75 
+		  (0.7747063,   0.2252937),    // 0.75 to 0.8 
+		  (0.8247143,   0.1752857),    // 0.8 to 0.85 
+		  (0.875,       0.125),        // 0.85 to 0.9 
+		  (0.9251246,   0.07487542),   // 0.9 to 0.95 
+		  (0.9750331,   0.02496687));  // 0.95 to 1   ;
+	equation = "P (Draw_3| PB) = (Draw_3==black) ? PB : (1 - PB)";
+	whenchanged = 904699794;
+	belief = (0.4999994, 0.5000006);
+	visual V1 {
+		center = (306, 222);
+		height = 7;
+		};
+	};
+
+node Draw_4 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (black, white);
+	parents = (PB);
+	probs = 
+		// black        white          // PB          
+		 ((0.02496759,  0.9750324),    // 0 to 0.05   
+		  (0.07486726,  0.9251328),    // 0.05 to 0.1 
+		  (0.1250006,   0.8749994),    // 0.1 to 0.15 
+		  (0.17528,     0.82472),      // 0.15 to 0.2 
+		  (0.2252916,   0.7747084),    // 0.2 to 0.25 
+		  (0.274616,    0.7253841),    // 0.25 to 0.3 
+		  (0.3248756,   0.6751245),    // 0.3 to 0.35 
+		  (0.3749996,   0.6250004),    // 0.35 to 0.4 
+		  (0.4247631,   0.5752369),    // 0.4 to 0.45 
+		  (0.4757792,   0.5242208),    // 0.45 to 0.5 
+		  (0.5242218,   0.4757781),    // 0.5 to 0.55 
+		  (0.5752355,   0.4247645),    // 0.55 to 0.6 
+		  (0.625,       0.375),        // 0.6 to 0.65 
+		  (0.6751259,   0.3248741),    // 0.65 to 0.7 
+		  (0.7253867,   0.2746133),    // 0.7 to 0.75 
+		  (0.7747063,   0.2252937),    // 0.75 to 0.8 
+		  (0.8247143,   0.1752857),    // 0.8 to 0.85 
+		  (0.875,       0.125),        // 0.85 to 0.9 
+		  (0.9251246,   0.07487542),   // 0.9 to 0.95 
+		  (0.9750331,   0.02496687));  // 0.95 to 1   ;
+	equation = "P (Draw_4 | PB) = (Draw_4==black) ? PB : (1 - PB)";
+	whenchanged = 904699794;
+	belief = (0.4999994, 0.5000006);
+	visual V1 {
+		center = (306, 288);
+		height = 8;
+		link 1 {
+			path = ((189, 275), (210, 288), (229, 288));
+			};
+		};
+	};
+
+node Draw_5 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (black, white);
+	parents = (PB);
+	probs = 
+		// black        white          // PB          
+		 ((0.02496759,  0.9750324),    // 0 to 0.05   
+		  (0.07486726,  0.9251328),    // 0.05 to 0.1 
+		  (0.1250006,   0.8749994),    // 0.1 to 0.15 
+		  (0.17528,     0.82472),      // 0.15 to 0.2 
+		  (0.2252916,   0.7747084),    // 0.2 to 0.25 
+		  (0.274616,    0.7253841),    // 0.25 to 0.3 
+		  (0.3248756,   0.6751245),    // 0.3 to 0.35 
+		  (0.3749996,   0.6250004),    // 0.35 to 0.4 
+		  (0.4247631,   0.5752369),    // 0.4 to 0.45 
+		  (0.4757792,   0.5242208),    // 0.45 to 0.5 
+		  (0.5242218,   0.4757781),    // 0.5 to 0.55 
+		  (0.5752355,   0.4247645),    // 0.55 to 0.6 
+		  (0.625,       0.375),        // 0.6 to 0.65 
+		  (0.6751259,   0.3248741),    // 0.65 to 0.7 
+		  (0.7253867,   0.2746133),    // 0.7 to 0.75 
+		  (0.7747063,   0.2252937),    // 0.75 to 0.8 
+		  (0.8247143,   0.1752857),    // 0.8 to 0.85 
+		  (0.875,       0.125),        // 0.85 to 0.9 
+		  (0.9251246,   0.07487542),   // 0.9 to 0.95 
+		  (0.9750331,   0.02496687));  // 0.95 to 1   ;
+	equation = "P (Draw_5 | PB) = (Draw_5==black) ? PB : (1 - PB)";
+	whenchanged = 904709261;
+	belief = (0.4999994, 0.5000006);
+	visual V1 {
+		center = (306, 354);
+		height = 9;
+		link 1 {
+			path = ((189, 328), (210, 354), (229, 354));
+			};
+		};
+	};
+
+node Draw_6 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (black, white);
+	parents = (PB);
+	probs = 
+		// black        white          // PB          
+		 ((0.02496759,  0.9750324),    // 0 to 0.05   
+		  (0.07486726,  0.9251328),    // 0.05 to 0.1 
+		  (0.1250006,   0.8749994),    // 0.1 to 0.15 
+		  (0.17528,     0.82472),      // 0.15 to 0.2 
+		  (0.2252916,   0.7747084),    // 0.2 to 0.25 
+		  (0.274616,    0.7253841),    // 0.25 to 0.3 
+		  (0.3248756,   0.6751245),    // 0.3 to 0.35 
+		  (0.3749996,   0.6250004),    // 0.35 to 0.4 
+		  (0.4247631,   0.5752369),    // 0.4 to 0.45 
+		  (0.4757792,   0.5242208),    // 0.45 to 0.5 
+		  (0.5242218,   0.4757781),    // 0.5 to 0.55 
+		  (0.5752355,   0.4247645),    // 0.55 to 0.6 
+		  (0.625,       0.375),        // 0.6 to 0.65 
+		  (0.6751259,   0.3248741),    // 0.65 to 0.7 
+		  (0.7253867,   0.2746133),    // 0.7 to 0.75 
+		  (0.7747063,   0.2252937),    // 0.75 to 0.8 
+		  (0.8247143,   0.1752857),    // 0.8 to 0.85 
+		  (0.875,       0.125),        // 0.85 to 0.9 
+		  (0.9251246,   0.07487542),   // 0.9 to 0.95 
+		  (0.9750331,   0.02496687));  // 0.95 to 1   ;
+	equation = "P (Draw_6 | PB) = (Draw_6==black) ? PB : (1 - PB)";
+	whenchanged = 904709270;
+	belief = (0.4999994, 0.5000006);
+	visual V1 {
+		center = (306, 420);
+		height = 10;
+		link 1 {
+			path = ((185, 384), (204, 420), (229, 420));
+			};
+		};
+	};
+
+node Draw {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (black, white);
+	parents = ();
+	probs = 
+		// black        white        
+		  (0.5,         0.5);
+	whenchanged = 904709117;
+	belief = (0.5, 0.5);
+	visual V1 {
+		center = (546, 396);
+		height = 3;
+		};
+	};
+
+node PB1 {
+	kind = NATURE;
+	discrete = FALSE;
+	chance = CHANCE;
+	levels = (0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1);
+	parents = ();
+	probs = 
+		// 0 to 0.05    0.05 to 0.1  0.1 to 0.15  0.15 to 0.2  0.2 to 0.25  0.25 to 0.3  0.3 to 0.35  0.35 to 0.4  0.4 to 0.45  0.45 to 0.5  0.5 to 0.55  0.55 to 0.6  0.6 to 0.65  0.65 to 0.7  0.7 to 0.75  0.75 to 0.8  0.8 to 0.85  0.85 to 0.9  0.9 to 0.95  0.95 to 1    
+		  (5.974557e-6, 1.706475e-4, 0.001045469, 0.00345646,  0.008209586, 0.01589578,  0.02680487,  0.04072941,  0.05666235,  0.07360316,  0.08985185,  0.1034906,   0.1123977,   0.1147983,   0.1093653,   0.0955475,   0.07426187,  0.04798806,  0.02197884,  0.003736246);
+	numcases = 9999.04;
+	equation = "P (PB1 | ) = BetaDist (PB1, 5, 3)";
+	title = "Proportion Black";
+	whenchanged = 904699713;
+	belief = (5.974557e-6, 1.706475e-4, 0.001045469, 0.00345646, 0.008209586, 0.01589578, 0.02680487, 0.04072941, 0.05666235, 0.07360316, 0.08985185, 0.1034906, 0.1123977, 0.1147983, 0.1093653, 0.0955475, 0.07426187, 0.04798806, 0.02197884, 0.003736246);
+	visual V1 {
+		center = (558, 180);
+		font = font {shape= "Arial"; size= 9;};
+		height = 2;
+		};
+	};
+
+node TITLE2 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Copyright 1998 Norsys Software Corp.";
+	whenchanged = 904537710;
+	visual V1 {
+		center = (534, 444);
+		font = font {shape= "Times New Roman"; size= 8;};
+		height = 4;
+		};
+	};
+
+node TITLE1 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = ();
+	title = "Beta Updating";
+	whenchanged = 904539186;
+	visual V1 {
+		center = (294, 30);
+		font = font {shape= "Times New Roman"; size= 14;};
+		height = 1;
+		};
+	};
+ElimOrder = (Draw, PB1, Draw_1, Draw_2, Draw_3, Draw_4, Draw_5, PB, Draw_6);
+};

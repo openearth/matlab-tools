@@ -1,0 +1,10 @@
+2014-01-23  Fedor Baart  <fedor@fedor-virtual-machine>
+
+	* u, v ** 2, average over month (abs(x)*x per month-> mean)
+	* comments in the (i) buttons
+
+
+0.0
+---
+
+-  Initial version

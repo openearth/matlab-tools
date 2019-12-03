@@ -1,0 +1,93 @@
+
+<!-- Template file for Node report suitable for HED developer  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <title>Node "[[Node.Label]]"</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <style type="text/css">
+
+        .table {
+        	border: 1px solid black;  background: #DDDDFF;  line-height: 11px;  margin-top: 10px;  margin-bottom: 20px;}
+
+        .tableHeader {
+            font-family : Arial, Helvetica, sans-serif;  font-size: 12px;  color: #000040;  background: #EEEEEE;  font-weight: bold;
+            border-bottom: 1px solid black;
+            text-align: left;  padding-left: 5px;  padding-right: 5px;  padding-top: 1px;  margin-top: 0px;  margin-bottom: 0px;}
+
+        .tableData {
+        	font-family: Arial, Helvetica, sans-serif;  font-size: 12px;  color: #000040;  font-weight: normal;
+            text-align: left;  padding-left: 5px;  padding-right: 5px;  padding-top: 1px;  margin-top: 0px;  margin-bottom: 0px;}
+
+        .tableBeliefData {
+        	font-family: Arial, Helvetica, sans-serif;  font-size: 12px;  color: #000040;  font-weight: normal;
+            text-align: left;  padding-left: 5px;  padding-right: 5px;  padding-top: 1px;  margin-top: 0px;  margin-bottom: 0px;}
+    </style>
+</head>
+
+<body bgcolor="#FFFFEF" link="#000040" vlink="#400040" alink="#000040">
+
+<h2>Node "[[Node.Label]]"</h2>
+
+Name: &nbsp; [[Node.Name]]<br />
+Title: &nbsp; &nbsp; [[Node.Title]]<br />
+In Net: &nbsp; [[Net.Label]]
+
+<h3>Comment</h3>
+[[Node.Comment]]
+
+<h3>HED Fields</h3>
+<p><pre>
+Question:  "[[Node.User(Field=HED_Question)]]"
+MaxDisplayStates:  "[[Node.User(Field=HED_MaxDisplayStates)]]"
+SortByBelief:  "[[Node.User(Field=HED_SortByBelief)]]"
+HideZeroProbs:  "[[Node.User(Field=HED_HideZeroProbs)]]"
+HideProbQuantities:  "[[Node.User(Field=HED_HideProbQuantities)]]"
+HideAllUnlessOneProbGTThreshold:  "[[Node.User(Field=HED_HideAllUnlessOneProbGTThreshold)]]"
+ShowLikelihoodSlider:  "[[Node.User(Field=HED_ShowLikelihoodSlider)]]"
+SingleLikelihoodSlider:  "[[Node.User(Field=HED_SingleLikelihoodSlider)]]"
+RealValueDisplay:  "[[Node.User(Field=HED_RealValueDisplay)]]"
+RealValueSlider:  "[[Node.User(Field=HED_RealValueSlider)]]"
+</pre></p>
+
+<h3>Finding</h3>
+[[Node.Finding]]
+
+<h3>Expected Value</h3>
+[[Node.ExpectedValue]] <br />
+Standard deviation = [[Node.StandardDeviation]]
+
+<h3>Beliefs</h3>
+<table class="table" cellpadding=0>  <tbody class="tableBeliefData"  style="padding-left:15px;  padding-right:15px;">
+    <tr><td>[[Node.StateLabelsList(Separator="</td><td>")]]</td></tr>
+    <tr><td>[[Node.BeliefsList(Separator="</td><td>")]]</td></tr>
+</tbody></table>
+
+<h3>Node Properties</h3>
+<p><pre>
+Type:               [[Node.Type]]
+Kind:               [[Node.Kind]]
+NumberStates:       [[Node.NumberStates]]
+State Labels:       [[Node.StateLabelsList(Separator=", ")]]
+For First State:
+    StateName:      [[Node.StateName(State=0)]]
+    StateTitle:     [[Node.StateTitle(State=0)]]
+    StateComment:   [[Node.StateComment(State=0)]]
+    Real:           [[Node.Real(State=0)]]
+    ThresholdLower: [[Node.ThresholdLower(State=0)]]
+    ThresholdUpper: [[Node.ThresholdUpper(State=0)]]
+For First Link:
+    InputName:      [[Node.InputName(Parent=0)]]
+IsDeterministic:    [[Node.IsDeterministic]]
+VisualPosition:     [[Node.VisualPosition]]
+VisualStyle:        [[Node.VisualStyle]]
+</pre></p>
+
+<h3>Table</h3>
+[[Node.CPTable]]
+
+
+</body>
+</html>
+

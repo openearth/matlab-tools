@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2009 sp1 (http://www.altova.com) by ICT (Stichting Deltares) -->
+<SCEConfig>
+	<costFunction class="org.openda.algorithms.SimulationKwadraticCostFunction" maxEvaluation="50000"/>
+	<outerLoop nComplex="4" maxIterations="1000" absTolerance="0.01" relTolerance="0.001"/>
+	<innerLoop numIteration="21"/>
+	<parameterRange min="[1,1,1,1,1,0.1,0,0.01,0,1]" max="[300, 150, 500, 1000, 1000, 0.75,   0.2, 0.5, 0.8, 350]"/>
+</SCEConfig>

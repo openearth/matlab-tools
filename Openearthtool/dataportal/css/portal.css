@@ -1,0 +1,132 @@
+body{
+	background-color: #068BC0;
+	font-family: "Verdana";
+	font-size:13px;
+	background: url("../img/BlankMap-World_gray_svg.png") no-repeat fixed center 180px #068bc0;
+	background-size: 107%;
+}
+
+.content {
+    margin-top:50px;    
+}
+
+.header {
+    padding: 0 15px 30px 15px;
+    margin-bottom:20px;
+    background-color:#FFFFFF;
+    width:100%;
+    min-height: 115px;
+}
+.headerText{
+	font-size: 56px;
+	margin: 0 auto;
+	text-align: center;
+}
+.glyphicon{
+	margin:0 auto;
+	color: #068BC0;
+}
+
+.deltaresBlue{
+	color: #068BC0;
+	font-weight: bold;
+}
+.deltaresGray{
+	color: #7C99A9;
+}
+
+.deltaresLogo{
+	float: right;
+	width: 200px;
+} 
+.oetLogo img{
+	float: left;
+	width: 227px;
+}
+
+.blockHeader{
+	color:white;
+}
+.blockBorder{
+	border: 1px solid #ffffff;
+	border-radius: 6px;
+	cursor:pointer;
+	margin-top:15px;
+	text-overflow: ellipsis;
+	color: #333;
+	background-color: #fff;
+	border-color: #ccc;
+}
+
+
+.blockLarge{
+	padding: 5px 10px 10px;
+	min-height: 150px;
+}
+.blockLarge h4{
+	font-size:32px;
+}
+.blockMedium{
+	padding: 5px 10px 10px;
+	min-height:105px;
+}
+.blockSmall{
+	padding: 15px 10px 10px;	
+	min-height:10px;
+}
+.blockSmall h4{
+	font-size: 15px;
+}
+.containerSmall{
+	min-height:100px;
+}
+
+
+.blockGlyphiconLarge{
+	width:80px;
+	float:left;
+}
+.blockGlyphiconLarge h2{
+	font-size: 60px;
+}
+.blockGlyphiconMedium{
+	width:70px;
+	float:left;
+}
+.blockGlyphiconLarge h2{
+	font-size: 50px;
+}
+.blockGlyphiconSmall{
+	width:30px;
+	float:left;
+}
+.blockGlyphiconSmall h2{
+	font-size: 30px;
+	
+}
+
+.inactive{
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+	filter: alpha(opacity=80);
+	opacity:0.80;
+	color: #777777;
+}
+
+#quickLinks{
+	border: 5px solid white;
+	border-radius: 6px;
+	cursor:pointer;
+	margin-top:15px;
+	text-overflow: ellipsis;
+	color: #333;
+}
+
+
+#quickLinks>h2{
+color: white;
+font-size: 32px;
+font-weight: bold;
+text-shadow: 1px 1px #000000;
+}
+
+

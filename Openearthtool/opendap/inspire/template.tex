@@ -1,0 +1,36 @@
+\documentclass[9]{report}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{color}
+\usepackage{hyperref}
+
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\title{Datasets overview}
+\author{Fedor Baart}
+\date{\today}                                           % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+
+#for $info in $inspireinfo
+\section{$info.get('Title')}
+%\subsection{}
+\begin{description}
+  \setlength{\itemsep}{4pt}
+  \setlength{\parskip}{2pt}
+  \setlength{\parsep}{2pt}
+  #for $key,$value in $sorted($info.items(), key=lambda x:x[0])
+  \item[$key] $value
+  #end for
+\end{description}
+#end for
+
+
+\end{document}  

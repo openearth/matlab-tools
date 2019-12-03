@@ -1,0 +1,4 @@
+uname = postgres
+pwd   = postgres
+host  = localhost
+dbname= geonetwork

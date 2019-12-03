@@ -1,0 +1,3 @@
+model;substance;location;season;observed;modelled;nuRMSD;nBIAS
+model;concentration_of_suspended_matter_in_water;Marsdiep;summer;0.0223500000623365;11.88290031751;291.151728950615;1324.042729505
+model;concentration_of_suspended_matter_in_water;Marsdiep;winter;0.0303333327174187;24.1497711605496;638.461591697318;1774.49579488714

@@ -1,0 +1,82 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"type": "object",
+	"properties": {
+		"attributetypes": {
+			"type": [
+				"array",
+				"null"
+			],
+			"items": {
+				"type": "string"
+			}
+		},
+		"changedate": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"code": {
+			"type": "string"
+		},
+		"definition": {
+			"$ref": "ExpandEntityBase_schema.json"
+		},
+		"description": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"exchangesystems": {
+			"type": [
+				"array",
+				"null"
+			],
+			"items": {
+				"type": "string"
+			}
+		},
+		"name": {
+			"type": "string"
+		},
+		"parameterpackage": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"parameters": {
+			"type": [
+				"array",
+				"null"
+			],
+			"items": {
+				"type": "string"
+			}
+		},
+		"parametertypes": {
+			"type": [
+				"array",
+				"null"
+			],
+			"items": {
+				"type": "string"
+			}
+		},
+		"quantitytypes": {
+			"type": [
+				"array",
+				"null"
+			],
+			"items": {
+				"type": "string"
+			}
+		}
+	},
+	"required": [
+		"code",
+		"name"
+	]
+}

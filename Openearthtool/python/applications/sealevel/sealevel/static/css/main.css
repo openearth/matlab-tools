@@ -1,0 +1,33 @@
+.logo {
+    position: relative;
+    top: -0.5em;
+}
+.logo a, .logo a:visited {
+    text-decoration: none;
+    color: #2B2B2D;
+}
+.logo img {
+    height: 2em;
+    position: relative;
+    top: 0.55em;
+    margin-right: 0.3em;
+}
+
+#plot {
+    width: 600px;
+}
+#slider-range{
+    width: 500px;
+    margin-left: 55px;
+}
+
+fieldset {
+
+}
+
+fieldset:disabled {
+}
+
+code {
+
+}

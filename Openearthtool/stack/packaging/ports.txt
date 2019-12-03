@@ -1,0 +1,24 @@
+# keep a list of ports here so no doublures exist, we start at 6001 (6000 is for X)
+# this is a non formal extension to /etc/services
+# Each line describes one service, and is of the form:
+#
+# service name is the url under which it is known through the proxy
+# alias is the name of the application or package
+
+# service-name        port/protocol  [aliases ...]         [# comment]
+
+# java
+tomcat6               8080           geoserver geonetwork  # Tomcat Web applications
+
+# python
+netcdfkickstarter     6001           netCDFKickstarter     # Application used for making netcdf files in multiple languages
+vectors               6002           vectors               # Application for vectors project
+sealevel              6003           sealevel              # Sealevel monitor, made for RWS
+pywps                 6004           PyWPS                 # Web Processing Services
+pywps-couch           6005           PyWPS-couch           # Web Processing Services with couchdb extension
+elveqo                6006           elveqo                # Website for elveqo  project
+
+# ruby
+cartodb               6100           cartodb               # mapping and visualization
+
+

@@ -1,0 +1,11 @@
+#! /bin/csh -f
+
+source /usr/global/tools/dotkit/init.csh
+use pgi-11.1
+
+
+
+
+
+
+

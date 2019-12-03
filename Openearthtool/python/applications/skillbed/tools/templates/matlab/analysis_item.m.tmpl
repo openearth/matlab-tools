@@ -1,0 +1,49 @@
+    disp('--------------------------------------------------');
+    disp('Started analysis of ${runpath}');
+    disp('--------------------------------------------------');
+    
+    close all;
+    
+    info = struct( \
+        'revision', ${revision}, \
+        'binary', '${binary}', \
+        'type', '${type}', \
+        'test', '${test}', \
+        'run', '${run}');
+    
+    dirs = struct( \
+        'output', '${outputpath}', \
+        'data', '${datapath}', \
+        'network', networkpath);
+    
+    setpref('xbeach_testbed', 'info',	info);
+    setpref('xbeach_testbed', 'dirs',   dirs);
+    	
+    cd('${runpath}');
+    
+    addpath('${'\',\''.join(analysispaths)}');
+    
+    status = 'STARTED';
+    
+    try
+        ${analysisfunc}(info, dirs);
+    	
+        status = 'FINISHED';
+    catch exception
+        status = 'FAILED';
+        
+        err = [exception.identifier ': ' exception.message];
+        disp(err);
+        
+        for i = 1:length(exception.stack)
+            err = ['    ' exception.stack(i).file ' [' num2str(exception.stack(i).line) ']: ' exception.stack(i).name];
+            disp(err);
+        end
+    end
+    
+    disp(['Exit status: ' status]);
+    
+    fprintf(fid, '%s,%s,%s,%s,%s\n', info.binary, info.type, info.test, info.run, status);
+    
+    pause(1);
+    

@@ -1,0 +1,2 @@
+[InternetShortcut]
+URL=http://localhost/cgi-bin/pywps.cgi?service=wps&request=Execute&Identifier=cdi_plot_profile&DataInputs=[EDMO_code=630;LOCAL_CDI_ID=CTDCAST_79___42;filename=CTDCAST_79___42_20110223_120541;parameter=SIGTPR01;z=PRESPS01]&version=1.0.0

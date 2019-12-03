@@ -1,0 +1,223 @@
+// ~->[DNET-1]->~
+
+// File created by Norsys using Netica 3.14 on May 18, 2006 at 16:46:14.
+
+bnet Animals {
+AutoCompile = TRUE;
+autoupdate = TRUE;
+comment = "\n\
+	Animal Characteristics          Copyright 1998 Norsys Software Corp.\n\n\
+	With this network you can enter some characteristics of a\n\
+	particular animal, and watch how the probabilities of its other\n\
+	characteristics (and what type of animal it is) change.\n\n\
+	This is just a toy example.  For a real-world application,\n\
+	it would have to be extended to include many animals (or plants,\n\
+	bacteria, etc.), probably all from the same environment, or the\n\
+	same subclass, etc.  Also, the \"Animal\" node should probably have \n\
+	an \"Other\" state.\n\n\
+	The fun part of this network is to extend it to include more\n\
+	animals and more characteristics.  You may need to define other\n\
+	groupings, such as the \"Class\" node, in order to keep things\n\
+	managable.  If you make a great network, send it to Norsys;\n\
+	we would love to include it in our library (with the proper\n\
+	credits).\n\n\n\
+	";
+whenchanged = 904538092;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 10;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	windowposn = (30, 34, 613, 459);
+	CommentShowing = TRUE;
+	CommentWindowPosn = (30, 458, 613, 703);
+	resolution = 72;
+	drawingbounds = (1104, 730);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0xc0c0c0;};
+	NodeSet Nature {BuiltIn = 1; Color = 0xf8eed2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0xd3caa6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0xc8c8c8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0xffffff;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0xffffb4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0xffbdbd;};
+	NodeSet Decision {BuiltIn = 1; Color = 0xdee8ff;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0xf0fafa;};
+	NodeSet Title {BuiltIn = 1; Color = 0xffffff;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		landscape = FALSE;
+		magnify = 1;
+		};
+	};
+
+node Animal {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Monkey, Penguin, Platypus, Robin, Turtle);
+	parents = ();
+	probs = 
+		// Monkey       Penguin      Platypus     Robin        Turtle       
+		  (0.2,         0.2,         0.2,         0.2,         0.2);
+	whenchanged = 1147995964;
+	belief = (0.2, 0.2, 0.2, 0.2, 0.2);
+	visual V1 {
+		center = (276, 114);
+		height = 3;
+		};
+	};
+
+node Class {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (Bird, Mammal, Reptile);
+	parents = (Animal);
+	functable = 
+		                    // Animal   
+		  (Mammal,          // Monkey   
+		   Bird,            // Penguin  
+		   Mammal,          // Platypus 
+		   Bird,            // Robin    
+		   Reptile);        // Turtle   ;
+	whenchanged = 879365670;
+	belief = (0.4, 0.4, 0.2);
+	visual V1 {
+		center = (276, 222);
+		height = 1;
+		};
+	};
+
+node BearsYoungAs {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (Live, Eggs);
+	parents = (Animal);
+	functable = 
+		                    // Animal   
+		  (Live,            // Monkey   
+		   Eggs,            // Penguin  
+		   Eggs,            // Platypus 
+		   Eggs,            // Robin    
+		   Eggs);           // Turtle   ;
+	whenchanged = 904537580;
+	belief = (0.2, 0.8);
+	visual V1 {
+		center = (462, 264);
+		height = 5;
+		};
+	};
+
+node Environment {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Air, Land, Water);
+	parents = (Animal);
+	probs = 
+		// Air          Land         Water          // Animal   
+		 ((0,           1,           0),            // Monkey   
+		  (0,           0.5,         0.5),          // Penguin  
+		  (0,           0,           1),            // Platypus 
+		  (0.5,         0.5,         0),            // Robin    
+		  (0,           0.5,         0.5));         // Turtle   ;
+	whenchanged = 904537580;
+	belief = (0.1, 0.5, 0.4);
+	visual V1 {
+		center = (102, 186);
+		height = 7;
+		};
+	};
+
+node HasShell {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (True, False);
+	parents = (Animal);
+	functable = 
+		                    // Animal   
+		  (False,           // Monkey   
+		   False,           // Penguin  
+		   False,           // Platypus 
+		   False,           // Robin    
+		   True);           // Turtle   ;
+	whenchanged = 904537550;
+	belief = (0.2, 0.8);
+	visual V1 {
+		center = (462, 162);
+		height = 6;
+		};
+	};
+
+node BodyCovering {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (Fur, Feathers, Scales);
+	parents = (Class);
+	functable = 
+		                    // Class   
+		  (Feathers,        // Bird    
+		   Fur,             // Mammal  
+		   Scales);         // Reptile ;
+	whenchanged = 904537580;
+	belief = (0.4, 0.4, 0.2);
+	visual V1 {
+		center = (276, 324);
+		height = 2;
+		};
+	};
+
+node WarmBlooded {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (True, False);
+	parents = (Class);
+	functable = 
+		                    // Class   
+		  (True,            // Bird    
+		   True,            // Mammal  
+		   False);          // Reptile ;
+	whenchanged = 904537580;
+	belief = (0.8, 0.2);
+	visual V1 {
+		center = (102, 282);
+		height = 4;
+		};
+	};
+
+node TITLE1 {
+	kind = ASSUME;
+	discrete = FALSE;
+	parents = ();
+	title = "Animal Characteristics";
+	whenchanged = 904536491;
+	visual V1 {
+		center = (126, 30);
+		font = font {shape= "Times New Roman"; size= 14;};
+		height = 8;
+		};
+	};
+
+node TITLE2 {
+	kind = ASSUME;
+	discrete = FALSE;
+	parents = ();
+	title = "Copyright 1998 Norsys Software Corp.";
+	whenchanged = 904537710;
+	visual V1 {
+		center = (462, 354);
+		font = font {shape= "Times New Roman"; size= 8;};
+		height = 9;
+		};
+	};
+ElimOrder = (WarmBlooded, BodyCovering, BearsYoungAs, HasShell, Class, Animal, Environment);
+};

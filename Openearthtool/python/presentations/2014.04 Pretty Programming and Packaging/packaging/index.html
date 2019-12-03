@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>Python packaging</title>
+
+    <meta name="description" content="Python packaging">
+    <meta name="author" content="Fedor Baart">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.min.css">
+    <link rel="stylesheet" href="css/theme/simple.css" id="theme">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+      if( window.location.search.match( /print-pdf/gi ) ) {
+	  var link = document.createElement( 'link' );
+	  link.rel = 'stylesheet';
+	  link.type = 'text/css';
+	  link.href = 'css/print/pdf.css';
+	  document.getElementsByTagName( 'head' )[0].appendChild( link );
+      }
+    </script>
+
+    <!--[if lt IE 9]>
+	<script src="lib/js/html5shiv.js"></script>
+	<![endif]-->
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+        <section>
+	  <h1>From local to online</h1>
+        </section>
+
+        <section>
+          <section>
+	    <h2>Notebook</h2>
+          </section>
+          <section>
+	    <h2>Public url</h2>
+          </section>
+          <section>
+            <a href="http://nbviewer.ipython.org">nbviewer.ipython.org</a>
+          </section>
+        </section>
+        <section>
+          <section>
+	    <h2>Library</h2>
+	    <h2>Command line tool</h2>
+          </section>
+          <section>
+            <ul>
+              <li>Python independent from other programs (system, arcgis, qgis). (conda, virtualenv)</li>
+              <li>Install dependencies (pip, conda) </li>
+              <li>Install your own package (pip + setuptools)</li>
+              <li>Distribute (wheel + twine)</li>
+              <li>Exe? Dll? (nuitka, cython)</li>
+            </ul>
+          </section>
+          <section>
+            <h2>Old tools</h2>
+            <ul>
+              <li>PYTHONPATH &rarr; pip</li>
+              <li>sys.path &rarr; pip</li>
+              <li>easy_install &rarr; pip</li>
+              <li>distribute &rarr; setuptools</li>
+              <li>eggs &rarr; wheel</li>
+              <li>python(x,y) &rarr; conda</li>
+              <li>PATH &rarr; activate</li>
+            </ul>
+          </section>
+          <section>
+            <h2>conda</h2>
+            <p>Python distribution, for windows people and for on the cluster.</p>
+          </section>
+          <section>
+            <h2>pip</h2>
+            <p>Install other python modules.</p>
+          </section>
+          <section>
+            <h2>virtualenv</h2>
+            <p>Create a python version that is independent from your system.</p>
+          </section>
+          <section>
+            <h2>setuptools</h2>
+            <p>Library that you use to turn a script into a package.</p>
+          </section>
+          <section>
+            <h2>wheel</h2>
+            <p>Format of your package when distributing to other python people</p>
+          </section>
+          <section>
+            <h2>twine</h2>
+            <p>Upload package to pypi</p>
+          </section>
+          <section>
+            <h2>nuitka, cython</h2>
+            <p>Create python windows executables, create so/dylib/dll.</p>
+          </section>
+        </section>
+        <section>
+          <section>
+	    <h2>GUI</h2>
+          </section>
+          <section>
+            <h2>Plugin to existing GUI</h2>
+          </section>
+          <section>
+            <ul>
+              <li>DeltaShell</li>
+              <li>Paraview</li>
+              <li>QGis</li>
+            </ul>
+          </section>
+          <section>
+            <h2>DeltaShell</h2>
+          </section>
+          <section>
+            <img src="images/delta_shell_scripting1.png" alt="" />
+          </section>
+          <section>
+            <img src="images/delta_shell_scripting2.png" alt="" />
+          </section>
+          <section>
+            <h2>QGis</h2>
+          </section>
+          <section>
+            <img src="images/qgisplugin1.png" alt="" />
+          </section>
+          <section>
+            <img src="images/qgisplugin2.png" alt="" />
+          </section>
+          <section>
+            <a href="https://github.com/rduivenvoorde/pdokservicesplugin">github.com/rduivenvoorde/pdokservicesplugin</a>
+          </section>
+          <section>
+            <h2>Paraview</h2>
+          </section>
+          <section>
+            <a href="http://www.paraview.org/Wiki/ParaView/Python_Scripting">www.paraview.org/Wiki/ParaView/Python_Scripting</a> 
+          </section>
+          <section>
+            <img src="images/sfo5_3.png" alt="" />
+          </section>
+        </section>
+        <section>
+          <section>
+	    <h2>Website</h2>
+          </section>
+          <section>
+            <ul>
+              <li>Python independent from other pythons (virtualenv)</li>
+              <li>Web framework (pyramid)</li>
+              <li>Templates (mako)</li>
+              <li>Packaging (fpm)</li>
+              <li>Deploy (vagrant)</li>
+            </ul>
+          </section>
+          
+        </section>
+        <section>
+          <section>
+	    <h2>Tutorial</h2>
+          </section>
+          <section>
+            <ol>
+              <li>Go to <a href="http://packaging.python.org">http://packaging.python.org</a></li>
+              <li>Download sample project</li>
+              <li>Adapt and make a package</li>
+            </ol>
+          </section>
+          
+        </section>
+
+      </div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.min.js"></script>
+
+    <script>
+
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+	  controls: true,
+	  progress: true,
+	  history: true,
+	  center: true,
+
+	  theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+	  transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+	  // Parallax scrolling
+	  // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+	  // parallaxBackgroundSize: '2100px 900px',
+
+	  // Optional libraries used to extend on reveal.js
+	  dependencies: [
+	      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+	      { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	      { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+	      { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+	      { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+	  ]
+      });
+
+    </script>
+
+  </body>
+</html>
