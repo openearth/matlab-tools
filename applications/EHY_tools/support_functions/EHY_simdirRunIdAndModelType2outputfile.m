@@ -26,7 +26,9 @@ switch modelType
         %% SOBEK3 new
         outputfile=[ sim_dir filesep 'dflow1d\output\observations.nc'];
         
-    case {'implic'}
+    case{'implic'}
         %% IMPLIC
         outputfile = sim_dir;
+    case{'waqua_scaloost'}
+        outputfile=[ sim_dir filesep '**stationName**_' runid];
 end

@@ -78,6 +78,13 @@ if ischar(fileInp)
         end
     end
     
+    % Implic
+    if isempty(modelType)
+        if ~isempty(strfind(fileInp,'waqua-scaloost'))
+            modelType = 'waqua_scaloost';
+        end
+    end
+    
 elseif isstruct(fileInp)
     
     % Delft3D 4

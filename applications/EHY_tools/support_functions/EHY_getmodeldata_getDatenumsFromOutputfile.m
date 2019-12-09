@@ -100,6 +100,28 @@ switch modelType
             
         end
         
+    case 'waqua_scaloost'      
+        months = {'jan' 'feb' 'mrt' 'apr' 'mei' 'jun' 'jul' 'aug' 'sep' 'okt' 'nov' 'dec'};
+        fileName = [strrep(inputFile,'**stationName**','BDSL') '.dat'];
+        fid      = fopen(fileName,'r');
+        line     = fgetl(fid);
+        line     = fgetl(fid);
+        line     = fgetl(fid);
+        i_time   = 0;
+        while ~feof(fid)
+            i_time             = i_time + 1;
+            line               = fgetl(fid);
+            i_day              = str2num(line(1:2));
+            i_month            = find(~cellfun(@isempty,strfind(months,line(4:6))));
+            i_year             = str2num(line( 8:11));
+            i_hour             = str2num(line(13:14));
+            i_min              = str2num(line(16:17));
+            datenums (i_time)  = datenum(i_year,i_month,i_day,i_hour,i_min,0);
+        end
+        
+        fclose(fid);
+        
+        
     case 'delwaq'
         dw = delwaq('open',inputFile);
         datenums = delwaq('read',dw,dw.SubsName{1},1,0);

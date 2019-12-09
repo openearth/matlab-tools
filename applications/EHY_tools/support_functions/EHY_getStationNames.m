@@ -75,8 +75,18 @@ switch modelType
         for i_stat = 1: length(filenames)
             [~,name,~] = fileparts(filenames{i_stat});
             stationNames{i_stat} = name;
-        end   
-        
+        end 
+    case 'waqua_scaloost'
+        [path,~,~] = fileparts(inputFile);
+        D         = dir2(path,'file_incl','\.dat$');
+        files     = find(~[D.isdir]);
+        filenames = {D(files).name};
+        for i_stat = 1: length(filenames)
+            [~,name,~] = fileparts(filenames{i_stat});
+            index = strfind(name,'_');
+            stationNames{i_stat} = name(1:index(1) - 1);
+        end 
+        stationNames = unique(stationNames);
     case 'delwaq'
         %% DELWAQ
         dw = delwaq('open',inputFile);

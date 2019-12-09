@@ -20,8 +20,6 @@ end
 
 %% get "z-data"
 [DataZ.val_int,DataZ.val_cen,DataZ.wl,DataZ.bed] = EHY_getMapModelData_construct_zcoordinates(inputFile,modelType,OPT);
-DataZ.wl  = DataZ.wl'; % same order of dimensions as other quantities (DataZ.val_cen, DataAll.val etc)
-no_layers = size(DataZ.val_cen,3);
 
 %% get wanted "varName"-data for all points
 DataAll = EHY_getMapModelData(inputFile,OPT);
@@ -43,6 +41,8 @@ if strcmp(modelType,'d3d')
     DataZ.wl      = reshape(DataZ.wl      ,[modelSize(1) prod(modelSize(2:3))               ]);
     DataZ.bed     = reshape(DataZ.bed     ,[modelSize(1) prod(modelSize(2:3))               ]);  
 end
+DataZ.wl  = DataZ.wl'; % same order of dimensions as other quantities (DataZ.val_cen, DataAll.val etc)
+no_layers = size(DataZ.val_cen,3);
 
 %% Calculate values at pli locations
 %  Start with Arccrossing
