@@ -1,1 +1,0 @@
-MyOcean OPeNDAP download client

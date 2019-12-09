@@ -1,1 +1,0 @@
-bokeh serve --show osm_validation

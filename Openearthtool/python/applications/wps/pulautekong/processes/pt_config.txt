@@ -1,5 +1,0 @@
-[Bokeh]
-plots_dir = D:\\Projects\\11200415_PTK\\Python\\wps\\output
-
-[PIService]
-url = http://tw-178.xtr.deltares.nl:8080\FewsWebServices/rest/fewspiservice/v1/timeseries

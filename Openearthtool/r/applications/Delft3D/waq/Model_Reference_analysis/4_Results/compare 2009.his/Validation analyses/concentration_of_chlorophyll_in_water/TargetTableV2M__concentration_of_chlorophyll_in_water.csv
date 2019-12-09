@@ -1,5 +1,0 @@
-model;substance;location;observed;modelled;nuRMSD;nBIAS
-model;concentration_of_chlorophyll_in_water;Dantzig Gat;0.0195061903934748;5.82354626981985;603.700527405677;531.270115470713
-model;concentration_of_chlorophyll_in_water;Doove Balg West;0.00842777797434893;6.93578580708304;727.186313344031;715.60005769968
-model;concentration_of_chlorophyll_in_water;Marsdiep;0.00704500001156703;2.22776932601234;283.395496668366;332.482644664998
-model;concentration_of_chlorophyll_in_water;Vliestroom;0.00634750000123555;3.00085184598962;666.662534322119;701.850390688507

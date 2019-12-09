@@ -1,2 +1,0 @@
-total_runtime = 302.1 seconds (5.0 min)
-avg_runtime = 50.3 seconds/year

@@ -1,6 +1,0 @@
-
-	Shapiro-Wilk normality test
-
-data:  test_values
-W = 0.9132, p-value = 1.123e-05
-

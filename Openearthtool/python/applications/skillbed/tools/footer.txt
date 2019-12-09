@@ -1,8 +1,0 @@
-    See also:
-        Source code:
-            https://svn.oss.deltares.nl/
-
-    More information:
-        http://oss.deltares.nl/
-
-        john.doe@deltares.nl

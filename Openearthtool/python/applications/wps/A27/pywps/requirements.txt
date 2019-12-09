@@ -1,3 +1,0 @@
-flask
-pywps
-flask_cors

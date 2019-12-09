@@ -1,9 +1,0 @@
-coord_xll 0.0000000E+00
-coord_yll 300000.0
-coord_xll_nb 0.0000000E+00
-coord_yll_nb 300000.0
-coord_xur_nb 300000.0
-coord_yur_nb 625000.0
-starttime year 2000 month 1 day 1
-resultdir '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/def_scenario'
-idate_save 0

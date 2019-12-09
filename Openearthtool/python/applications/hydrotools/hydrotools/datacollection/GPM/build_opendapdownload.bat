@@ -1,1 +1,0 @@
-pyinstaller Download_GPM_Opendap.py --additional-hooks-dir=hooks --onefile

@@ -1,8 +1,0 @@
-Ottevanger, W., Giri, S. Sloff, C.J. (2015): Sustainable Fairway Rhinedelta II: Effects of yearly bed stabilisation nourishments, Delta Program measures and training walls. Deltares Project 1209175.
-
-Yossef, M. F. M., Sloff, K. (2012). Detailed Modelling of River Morphological Response to Climate Change Scenarios, River Flow 2012 - International Conference on Fluvial Hydraulics, 845 - 853
-
-Yossef, M. F. M., Jagers, H. R. A., Van Vuren, S., and Sieben, J. (2008). Innovative techniques in modelling large-scale river morphology, River Flow 2008 - Proc. Int. Conf. Fluvial Hydraulics, Çesme, Izmir, Turkey 1065-1074
-
-Van Vuren, B.G., Hauschild, A., Ottevanger, W., Crebas, J.I., Yossef M.F.M. (2008) Voorspelinstrument duurzame vaarweg: reducing computation time, Deltares (WL | Delft Hydraulics) Report
-

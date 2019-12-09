@@ -1,1 +1,0 @@
-[1] "Lower than 4 values, Shapiro-Wilk Test is not preformed"

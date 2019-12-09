@@ -1,9 +1,0 @@
-<PAMDataset>
-  <Metadata>
-    <MDI key="PCRASTER_VALUESCALE">VS_SCALAR</MDI>
-  </Metadata>
-  <PAMRasterBand band="1">
-    <NoDataValue>-2.14748364700000E+009</NoDataValue>
-    <ColorInterp>Gray</ColorInterp>
-  </PAMRasterBand>
-</PAMDataset>

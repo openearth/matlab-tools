@@ -1,3 +1,0 @@
-[Bokeh]
-plots_dir = C:\\Apache24\\htdocs\\bokeh_plots
-apache_dir = https://nutrientenmaas.openearth.nl/bokeh_plots/

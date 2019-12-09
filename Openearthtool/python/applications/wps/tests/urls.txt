@@ -1,6 +1,0 @@
-http://wps.openearth.nl
-http://wps.openearth.eu
-http://wps.openearth.nl/wps?request=GetCapabilities&version=1.0.0&service=wps
-http://wps.openearth.nl/wps?request=DescribeProcess&version=1.0.0&service=wps&identifier=tidal_predict
-http://wps.openearth.nl/wps?request=Execute&version=1.0.0&service=wps&identifier=tidal_predict&datainputs=[location=LINESTRING(51%205,%2052%205)]
-http://wps.openearth.nl/wps?request=Execute&version=1.0.0&service=wps&identifier=tidal_predict&datainputs=[location=LINESTRING(51%205,%2052%205);startdate=2000-01-01;enddate=2000-01-02]

@@ -1,1 +1,0 @@
-curl -X POST -H "Content-Type: application/json" -d @scenario_generation_request.json http://v-wcf032.directory.intra:5000/api/calculateScenario

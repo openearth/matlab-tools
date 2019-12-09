@@ -1,2 +1,0 @@
-Checkout OpenCV source to this directory:
- svn co https://code.ros.org/svn/opencv/trunk .

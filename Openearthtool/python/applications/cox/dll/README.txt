@@ -1,1 +1,0 @@
-Move *.bin temperature map files to directory containing python.exe

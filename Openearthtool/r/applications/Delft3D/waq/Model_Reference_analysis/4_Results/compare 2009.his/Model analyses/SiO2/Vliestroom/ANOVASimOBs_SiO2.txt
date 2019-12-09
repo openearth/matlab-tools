@@ -1,3 +1,0 @@
-            Df Sum Sq Mean Sq F value Pr(>F)
-categorie    1 0.0949 0.09488   2.791  0.109
-Residuals   22 0.7479 0.03400               

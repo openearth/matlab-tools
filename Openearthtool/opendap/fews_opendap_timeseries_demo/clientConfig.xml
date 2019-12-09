@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<clientConfiguration xmlns="http://www.wldelft.nl/fews" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wldelft.nl/fews
-http://nffs.wldelft.nl/schemas/clientConfig.xsd">
-	<clientType>Stand alone</clientType>
-</clientConfiguration>

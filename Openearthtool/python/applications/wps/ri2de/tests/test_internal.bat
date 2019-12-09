@@ -1,1 +1,0 @@
-curl -X POST -H "Content-Type: application/xml" -d @request_landuse.xml http://tl-ng048.xtr.deltares.nl:5000/wps

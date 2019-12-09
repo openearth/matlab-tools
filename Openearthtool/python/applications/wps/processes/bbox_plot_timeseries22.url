@@ -1,2 +1,0 @@
-[InternetShortcut]
-URL=http://localhost/cgi-bin/pywps.cgi?service=wps&request=Execute&Identifier=bbox_plot_timeseries&DataInputs=[bbox=-10,40,10,60;parameter=ASLVZZ01;]&version=1.0.0

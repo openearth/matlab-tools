@@ -1,1 +1,0 @@
-curl -X POST -H "Content-Type: application/json" -d @assets_value_request.json http://v-wcf032.directory.intra:5000/api/selectPoints

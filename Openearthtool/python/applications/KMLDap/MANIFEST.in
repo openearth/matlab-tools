@@ -1,3 +1,0 @@
-include kmldap/config/deployment.ini_tmpl
-recursive-include kmldap/public *
-recursive-include kmldap/templates *

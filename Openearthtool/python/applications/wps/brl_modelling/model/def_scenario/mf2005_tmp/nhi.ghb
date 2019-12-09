@@ -1,8 +1,0 @@
-# General-Head Boundary Package file
-1 0 noprint
-1
-gcd 00001
-1
-2 1
-open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/ghb/GHB_COND_L02_S01.IDF' 1.000000 (free) -1 scaling 5 0
-open/close '/mnt/d/projecten/datamanagement/rws/BasisRivierbodemLigging/wps_brl_modelling/model/ghb/GHB_STAGE_L02_S01.IDF' 1.000000 (free) -1 scaling 2 0

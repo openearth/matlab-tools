@@ -1,2 +1,0 @@
-win32_vs_PGI_dll_4.0.1.zip from http://www.unidata.ucar.edu/software/netcdf/docs/faq.html#windows_netcdf4
-win32_vs_f2c_dll_4.0.1.zip from http://www.unidata.ucar.edu/software/netcdf/docs/faq.html#windows_netcdf4

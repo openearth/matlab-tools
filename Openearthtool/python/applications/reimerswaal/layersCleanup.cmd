@@ -1,1 +1,0 @@
-python layersCleanup.py > layersCleanup.log

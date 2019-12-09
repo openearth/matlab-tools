@@ -1,1 +1,0 @@
-from .netica import Netica

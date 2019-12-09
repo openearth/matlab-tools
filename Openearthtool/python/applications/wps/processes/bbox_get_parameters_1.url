@@ -1,2 +1,0 @@
-[InternetShortcut]
-URL=http://localhost/cgi-bin/pywps.cgi?service=wps&request=Execute&Identifier=bbox_get_parameters&DataInputs=[bbox=-10,-5,45,50;]&version=1.0.0

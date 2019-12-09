@@ -1,2 +1,0 @@
-[InternetShortcut]
-URL=http://localhost/cgi-bin/pywps.cgi?service=wps&request=Execute&Identifier=cdi_plot_profile&DataInputs=[EDMO_code=635;LOCAL_CDI_ID=BF080006;filename=BF080006;parameter=SEGMLENG;z=COREDIST]&version=1.0.0

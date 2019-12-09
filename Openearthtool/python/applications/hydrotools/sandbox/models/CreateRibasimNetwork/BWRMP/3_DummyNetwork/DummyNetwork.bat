@@ -1,3 +1,0 @@
-python DummyNetwork.py
-
-pause

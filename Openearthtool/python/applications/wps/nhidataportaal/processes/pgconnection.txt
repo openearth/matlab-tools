@@ -1,4 +1,0 @@
-dbname = dbname
-host   = host
-uname  = username
-pwd    = password

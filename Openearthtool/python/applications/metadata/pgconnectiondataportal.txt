@@ -1,4 +1,0 @@
-uname = 'admin'
-pwd   = '&Ez3)r5{Gc'
-host  = 'al-pg010.xtr.deltares.nl'
-dbname= 'geonetwork'

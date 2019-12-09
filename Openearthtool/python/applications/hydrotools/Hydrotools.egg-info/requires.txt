@@ -1,7 +1,0 @@
-basemap
-netCDF4
-pandas
-PyWavelets
-numpy
-matplotlib
-gdal

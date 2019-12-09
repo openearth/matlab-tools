@@ -1,1 +1,0 @@
-netCDFKickstarter README

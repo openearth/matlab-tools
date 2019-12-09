@@ -1,1 +1,0 @@
-http://geo.vliz.be:80/geoserver/Dataportal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Dataportal:eurobis&viewParams=where:aphiaidaccepted=105820&outputformat=shape-zip

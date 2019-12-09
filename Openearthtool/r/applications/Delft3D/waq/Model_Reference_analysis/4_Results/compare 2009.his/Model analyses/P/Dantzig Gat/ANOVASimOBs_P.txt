@@ -1,5 +1,0 @@
-            Df  Sum Sq Mean Sq F value   Pr(>F)    
-categorie    1 0.13735 0.13735   156.9 1.99e-15 ***
-Residuals   40 0.03501 0.00088                     
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

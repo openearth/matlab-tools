@@ -1,2 +1,0 @@
-[InternetShortcut]
-URL=http://localhost/cgi-bin/pywps.cgi?service=wps&request=Execute&Identifier=bbox_plot_map&DataInputs=[bbox=-10,40,0,50;parameter=PSSTTS01;clim0=10;clim1=20;colormap=jet;]&version=1.0.0

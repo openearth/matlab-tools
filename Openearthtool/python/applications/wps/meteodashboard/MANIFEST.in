@@ -1,4 +1,0 @@
-include *.txt
-recursive-include static
-recursive logs
-recursive workdir/

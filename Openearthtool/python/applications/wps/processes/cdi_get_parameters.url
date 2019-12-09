@@ -1,2 +1,0 @@
-[InternetShortcut]
-URL=http://localhost/cgi-bin/pywps.cgi?service=wps&request=Execute&Identifier=cdi_get_parameters&DataInputs=[EDMO_code=632;LOCAL_CDI_ID=world_N50W10N40E0;filename=world_N50W10N40E0_20060101_20070101]&version=1.0.0

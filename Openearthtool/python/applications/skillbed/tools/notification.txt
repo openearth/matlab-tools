@@ -1,8 +1,0 @@
-Dear skillbed user,
-
-Your skillbed run with run ID {runid} has finished.
-
-The results are stored in the folder {storage_path}.
-
-Sincerely,
-Your Humble Skillbed

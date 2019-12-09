@@ -1,3 +1,0 @@
-include lol/config/deployment.ini_tmpl
-recursive-include lol/public *
-recursive-include lol/templates *

@@ -1,1 +1,0 @@
-Use Pentaho to open this transformation (.ktr file) and run it to import p35.xml to a Postgres database.

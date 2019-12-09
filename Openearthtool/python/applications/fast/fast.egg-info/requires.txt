@@ -1,6 +1,0 @@
-numpy
-matplotlib
-ipython
-netCDF4
-scipy
-logging

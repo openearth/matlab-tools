@@ -1,1 +1,0 @@
-__all__ = ["impact_query","impact_init"]

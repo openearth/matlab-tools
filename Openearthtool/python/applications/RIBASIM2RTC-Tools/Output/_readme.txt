@@ -1,2 +1,0 @@
-This folder is alled "Output", because the output of the RIBASIM2RTC-Tools output is written here. 
-It also contains additional data that uses the RIBASIM2RTC-Tools output within a complete RTC-Tools model. 

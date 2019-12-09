@@ -1,650 +1,0 @@
-TOpenCVClient
-v7
-r0
-t358242523.017295
-cCheck dependencies
-cProcessInfoPlistFile /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/Info.plist OpenCVClient/OpenCVClient-Info.plist
-cProcessPCH /var/folders/bv/bv8+1xmYHBuqPGICwQEriE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/OpenCVClient-Prefix-hexesaqoaqsstgfyhxpwfvivxunk/OpenCVClient-Prefix.pch.gch OpenCVClient/OpenCVClient-Prefix.pch normal i386 objective-c com.apple.compilers.llvmgcc42
-cProcessPCH++ /var/folders/bv/bv8+1xmYHBuqPGICwQEriE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/OpenCVClient-Prefix-bboravkovbrfxtfufcsoyifzzapb/OpenCVClient-Prefix.pch.gch OpenCVClient/OpenCVClient-Prefix.pch normal i386 objective-c++ com.apple.compilers.llvmgcc42
-cCompileC build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/main.o /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/main.m normal i386 objective-c com.apple.compilers.llvmgcc42
-cCompileC build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientAppDelegate.o /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClientAppDelegate.mm normal i386 objective-c++ com.apple.compilers.llvmgcc42
-cCompileC build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClientViewController.mm normal i386 objective-c++ com.apple.compilers.llvmgcc42
-cCompileC build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/UIImage+OpenCV.mm normal i386 objective-c++ com.apple.compilers.llvmgcc42
-cLd /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/OpenCVClient normal i386
-cGenerateDSYMFile /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app.dSYM /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/OpenCVClient
-cCopyStringsFile /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/en.lproj/InfoPlist.strings OpenCVClient/en.lproj/InfoPlist.strings
-cCompileXIB /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/en.lproj/MainWindow.xib
-cCompileXIB /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/en.lproj/OpenCVClientViewController.xib
-cCpResource build/Debug-iphonesimulator/OpenCVClient.app/testimage.jpg OpenCVClient/testimage.jpg
-cTouch /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk
-c000000004D5C9B4E0000000000000110
-t1297914702
-s272
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/System/Library/Frameworks/AVFoundation.framework/AVFoundation
-c000000004D5EBEC300000000001340C0
-t1298054851
-s1261760
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics
-c000000004D54CFFA00000000002999B0
-t1297403898
-s2726320
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/System/Library/Frameworks/CoreMedia.framework/CoreMedia
-c000000004D5C9AE3000000000006A720
-t1297914595
-s436000
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/System/Library/Frameworks/CoreVideo.framework/CoreVideo
-c000000004D54D0CD0000000000019010
-t1297404109
-s102416
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/System/Library/Frameworks/Foundation.framework/Foundation
-c000000004D54CFE5000000000029DA70
-t1297403877
-s2742896
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.h
-c000000004D54CFB80000000000001466
-t1297403832
-s5222
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/System/Library/Frameworks/ImageIO.framework/ImageIO
-c000000004D54D0340000000000110310
-t1297403956
-s1114896
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIKit.h
-c000000004D5615B40000000000000AA1
-t1297487284
-s2721
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/System/Library/Frameworks/UIKit.framework/UIKit
-c000000004D5616030000000000766870
-t1297487363
-s7759984
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/usr/include/Availability.h
-c000000004D4F7A2B0000000000001B19
-t1297054251
-s6937
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/usr/include/assert.h
-c000000004D4F6E990000000000000F6E
-t1297051289
-s3950
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/usr/include/limits.h
-c000000004D4F6E9900000000000016DF
-t1297051289
-s5855
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/usr/include/math.h
-c000000004A5C14A000000000000004F1
-t1247548576
-s1265
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/usr/include/stdint.h
-c000000004D4F6E9900000000000018EF
-t1297051289
-s6383
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/usr/include/stdlib.h
-c000000004D4F6E9A00000000000030A7
-t1297051290
-s12455
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/usr/include/string.h
-c000000004D4F6E9A0000000000001A3A
-t1297051290
-s6714
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/usr/lib/libz.dylib
-c000000004D54CB4700000000000123C0
-t1297402695
-s74688
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/calib3d/calib3d.hpp
-c000000004F6147BA000000000000949B
-t1331775418
-s38043
-i<OpenCV/opencv2/core/core.hpp>
-i<OpenCV/opencv2/features2d/features2d.hpp>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/contrib/contrib.hpp
-c000000004F6147BA0000000000006177
-t1331775418
-s24951
-i<OpenCV/opencv2/core/core.hpp>
-i<OpenCV/opencv2/features2d/features2d.hpp>
-i<OpenCV/opencv2/objdetect/objdetect.hpp>
-i<OpenCV/opencv2/contrib/retina.hpp>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/contrib/retina.hpp
-c000000004F6147BA0000000000005C5E
-t1331775418
-s23646
-i<OpenCV/opencv2/core/core.hpp>
-i<valarray>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/core/core.hpp
-c000000004F6147BA000000000002AAAD
-t1331775418
-s174765
-i<OpenCV/opencv2/core/types_c.h>
-i<OpenCV/opencv2/core/version.hpp>
-i<limits.h>
-i<algorithm>
-i<cmath>
-i<cstddef>
-i<complex>
-i<map>
-i<new>
-i<string>
-i<vector>
-i<sstream>
-i<OpenCV/opencv2/core/operations.hpp>
-i<OpenCV/opencv2/core/mat.hpp>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/core/core_c.h
-c000000004F6147BA00000000000132EB
-t1331775418
-s78571
-i<OpenCV/opencv2/core/types_c.h>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/core/mat.hpp
-c000000004F6147BA00000000000138DF
-t1331775418
-s80095
-i<limits.h>
-i<string.h>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/core/operations.hpp
-c000000004F6147BA000000000001EADA
-t1331775418
-s125658
-i<string.h>
-i<limits.h>
-i<ext/atomicity.h>
-i<bits/atomicity.h>
-i<windows.h>
-i<limits>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/core/types_c.h
-c000000004F6147BA000000000000DEC8
-t1331775418
-s57032
-i<assert.h>
-i<stdlib.h>
-i<string.h>
-i<float.h>
-i<stdint.h>
-i<intrin.h>
-i<emmintrin.h>
-i<fastmath.h>
-i<math.h>
-i<ipl.h>
-i<ipl/ipl.h>
-i"tegra_round.hpp"
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/core/version.hpp
-c000000004F6147BA00000000000009EA
-t1331775418
-s2538
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/features2d/features2d.hpp
-c000000004F6147BA000000000001DD57
-t1331775418
-s122199
-i<OpenCV/opencv2/core/core.hpp>
-i<OpenCV/opencv2/flann/miniflann.hpp>
-i<limits>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/flann/config.h
-c000000004F6147BA00000000000006FD
-t1331775418
-s1789
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/flann/defines.h
-c000000004F6147BA0000000000001206
-t1331775418
-s4614
-i"config.h"
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/flann/miniflann.hpp
-c000000004F6147BA00000000000016CC
-t1331775418
-s5836
-i<OpenCV/opencv2/core/core.hpp>
-i<OpenCV/opencv2/flann/defines.h>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/highgui/highgui.hpp
-c000000004F6147BA0000000000002356
-t1331775418
-s9046
-i<OpenCV/opencv2/core/core.hpp>
-i<OpenCV/opencv2/highgui/highgui_c.h>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/highgui/highgui_c.h
-c000000004F6147BA000000000000595A
-t1331775418
-s22874
-i<OpenCV/opencv2/core/core_c.h>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/imgproc/imgproc.hpp
-c000000004F6147BA000000000000C9D5
-t1331775418
-s51669
-i<OpenCV/opencv2/core/core.hpp>
-i<OpenCV/opencv2/imgproc/types_c.h>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/imgproc/imgproc_c.h
-c000000004F6147BA0000000000009020
-t1331775418
-s36896
-i<OpenCV/opencv2/core/core_c.h>
-i<OpenCV/opencv2/imgproc/types_c.h>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/imgproc/types_c.h
-c000000004F6147BA00000000000035B5
-t1331775418
-s13749
-i<OpenCV/opencv2/core/core_c.h>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/ml/ml.hpp
-c000000004F6147BA00000000000135E9
-t1331775418
-s79337
-i<OpenCV/opencv2/core/core.hpp>
-i<limits.h>
-i<map>
-i<string>
-i<iostream>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/objdetect/objdetect.hpp
-c000000004F6147BA00000000000062D7
-t1331775418
-s25303
-i<OpenCV/opencv2/core/core.hpp>
-i<OpenCV/opencv2/features2d/features2d.hpp>
-i<deque>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/opencv.hpp
-c000000004F6147BA0000000000000AF7
-t1331775418
-s2807
-i<OpenCV/opencv2/core/core_c.h>
-i<OpenCV/opencv2/core/core.hpp>
-i<OpenCV/opencv2/flann/miniflann.hpp>
-i<OpenCV/opencv2/imgproc/imgproc_c.h>
-i<OpenCV/opencv2/imgproc/imgproc.hpp>
-i<OpenCV/opencv2/video/video.hpp>
-i<OpenCV/opencv2/features2d/features2d.hpp>
-i<OpenCV/opencv2/objdetect/objdetect.hpp>
-i<OpenCV/opencv2/calib3d/calib3d.hpp>
-i<OpenCV/opencv2/ml/ml.hpp>
-i<OpenCV/opencv2/highgui/highgui_c.h>
-i<OpenCV/opencv2/highgui/highgui.hpp>
-i<OpenCV/opencv2/contrib/contrib.hpp>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/video/background_segm.hpp
-c000000004F6147BA0000000000004DE7
-t1331775418
-s19943
-i<OpenCV/opencv2/core/core.hpp>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/video/tracking.hpp
-c000000004F6147BA00000000000042EC
-t1331775418
-s17132
-i<OpenCV/opencv2/core/core.hpp>
-i<OpenCV/opencv2/imgproc/imgproc_c.h>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/Headers/opencv2/video/video.hpp
-c000000004F6147BA0000000000000928
-t1331775418
-s2344
-i<OpenCV/opencv2/video/tracking.hpp>
-i<OpenCV/opencv2/video/background_segm.hpp>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV
-c000000004F6147BA00000000029504D0
-t1331775418
-s43320528
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClient-Prefix.pch
-c000000004F6147BA0000000000000189
-t1331775418
-s393
-i<Availability.h>
-i<OpenCV/opencv2/opencv.hpp>
-i<UIKit/UIKit.h>
-i<Foundation/Foundation.h>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClientAppDelegate.h
-c000000004F6147BA000000000000030F
-t1331775418
-s783
-i<UIKit/UIKit.h>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClientAppDelegate.mm
-c000000004F6147BA0000000000000AD9
-t1331775418
-s2777
-i"OpenCVClientAppDelegate.h"
-i"OpenCVClientViewController.h"
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClientViewController.h
-c000000004F6147BA000000000000044B
-t1331775418
-s1099
-i<UIKit/UIKit.h>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClientViewController.mm
-c000000004FAA21570000000000001407
-t1336549719
-s5127
-i"UIImage+OpenCV.h"
-i"OpenCVClientViewController.h"
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/UIImage+OpenCV.h
-c000000004F6147BA00000000000002F5
-t1331775418
-s757
-i<UIKit/UIKit.h>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/UIImage+OpenCV.mm
-c000000004F6147BA0000000000001363
-t1331775418
-s4963
-i"UIImage+OpenCV.h"
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/en.lproj/InfoPlist.strings
-c000000004F6147BA000000000000002D
-t1331775418
-s45
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/en.lproj/MainWindow.xib
-c000000004F6147BA0000000000004E55
-t1331775418
-s20053
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/en.lproj/OpenCVClientViewController.xib
-c000000004F6147BA00000000000067E4
-t1331775418
-s26596
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/main.m
-c000000004F6147BA00000000000002C4
-t1331775418
-s708
-i<UIKit/UIKit.h>
-
-N/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/testimage.jpg
-c000000004F6147BA000000000000C7EF
-t1331775418
-s51183
-
-N/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app
-t1336549723
-s238
-
-N/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app.dSYM
-t1336549723
-s102
-
-N/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/Info.plist
-t1336548806
-s797
-
-N/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/OpenCVClient
-t1336549722
-s4959212
-
-N/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/PkgInfo
-t1336548806
-s8
-
-N/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/en.lproj/InfoPlist.strings
-t1336548812
-s42
-
-N/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/en.lproj/MainWindow.nib
-t1336548812
-s1691
-
-N/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/en.lproj/OpenCVClientViewController.nib
-t1336548812
-s5374
-
-N/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/testimage.jpg
-t1336548812
-s51183
-
-N/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClient.LinkFileList
-c000000004FAA1DC6000000000000024B
-t1336548806
-s587
-
-N/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientAppDelegate.o
-t1336548810
-s101320
-
-N/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-t1336549722
-s113104
-
-N/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-t1336548811
-s68116
-
-N/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/main.o
-t1336548810
-s3104
-
-N/var/folders/bv/bv8+1xmYHBuqPGICwQEriE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/OpenCVClient-Prefix-bboravkovbrfxtfufcsoyifzzapb/OpenCVClient-Prefix.pch.gch
-t1336548810
-s65404592
-
-N/var/folders/bv/bv8+1xmYHBuqPGICwQEriE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/OpenCVClient-Prefix-hexesaqoaqsstgfyhxpwfvivxunk/OpenCVClient-Prefix.pch.gch
-t1336548807
-s12283312
-
-NOpenCVClient/OpenCVClient-Info.plist
-c000000004F6147BA00000000000004A3
-t1331775418
-s1187
-
-CCheck dependencies
-r0
-lSLF07#2@18"Check dependencies358242521#358242521#0(0"0(0#1#0"8624620544#0"0#
-
-CCompileC build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientAppDelegate.o /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClientAppDelegate.mm normal i386 objective-c++ com.apple.compilers.llvmgcc42
-s358241610.427060
-e358241610.790859
-r1
-xCompileC
-xbuild/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientAppDelegate.o
-x/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClientAppDelegate.mm
-xnormal
-xi386
-xobjective-c++
-xcom.apple.compilers.llvmgcc42
-lSLF07#2@88"Compile /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClientAppDelegate.mm358241610#358241610#0(0"0(0#0#80"/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClientAppDelegate.mm8622981376#2166"    cd /Users/altenpts/Projects/OpenCVForiPhone    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/llvm-gcc-4.2 -x objective-c++ -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wmissing-prototypes -Wreturn-type -Wunused-variable -DDEBUG -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk -fexceptions -fvisibility-inlines-hidden -mmacosx-version-min=10.6 -gdwarf-2 -fobjc-abi-version=2 -fobjc-legacy-dispatch -D__IPHONE_OS_VERSION_MIN_REQUIRED=40300 -iquote /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-generated-files.hmap -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-own-target-headers.hmap -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-all-target-headers.hmap -iquote /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-project-headers.hmap -F/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator -F/Users/altenpts/Projects/OpenCVForiPhone -I/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/include -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/DerivedSources/i386 -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/DerivedSources -include /var/folders/bv/bv8+1xmYHBuqPGICwQEriE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/OpenCVClient-Prefix-bboravkovbrfxtfufcsoyifzzapb/OpenCVClient-Prefix.pch -c /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClientAppDelegate.mm -o /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientAppDelegate.o0#
-
-CCompileC build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClientViewController.mm normal i386 objective-c++ com.apple.compilers.llvmgcc42
-s358242521.831300
-e358242522.410712
-r1
-xCompileC
-xbuild/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-x/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClientViewController.mm
-xnormal
-xi386
-xobjective-c++
-xcom.apple.compilers.llvmgcc42
-lSLF07#2@91"Compile /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClientViewController.mm358242521#358242522#0(0"0(0#0#83"/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClientViewController.mm8623287584#2172"    cd /Users/altenpts/Projects/OpenCVForiPhone    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/llvm-gcc-4.2 -x objective-c++ -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wmissing-prototypes -Wreturn-type -Wunused-variable -DDEBUG -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk -fexceptions -fvisibility-inlines-hidden -mmacosx-version-min=10.6 -gdwarf-2 -fobjc-abi-version=2 -fobjc-legacy-dispatch -D__IPHONE_OS_VERSION_MIN_REQUIRED=40300 -iquote /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-generated-files.hmap -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-own-target-headers.hmap -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-all-target-headers.hmap -iquote /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-project-headers.hmap -F/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator -F/Users/altenpts/Projects/OpenCVForiPhone -I/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/include -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/DerivedSources/i386 -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/DerivedSources -include /var/folders/bv/bv8+1xmYHBuqPGICwQEriE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/OpenCVClient-Prefix-bboravkovbrfxtfufcsoyifzzapb/OpenCVClient-Prefix.pch -c /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClientViewController.mm -o /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o0#
-
-CCompileC build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/UIImage+OpenCV.mm normal i386 objective-c++ com.apple.compilers.llvmgcc42
-s358241610.790956
-e358241611.040540
-r1
-xCompileC
-xbuild/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-x/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/UIImage+OpenCV.mm
-xnormal
-xi386
-xobjective-c++
-xcom.apple.compilers.llvmgcc42
-lSLF07#2@79"Compile /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/UIImage+OpenCV.mm358241610#358241611#0(0"0(0#0#71"/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/UIImage+OpenCV.mm8622360608#2148"    cd /Users/altenpts/Projects/OpenCVForiPhone    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/llvm-gcc-4.2 -x objective-c++ -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wmissing-prototypes -Wreturn-type -Wunused-variable -DDEBUG -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk -fexceptions -fvisibility-inlines-hidden -mmacosx-version-min=10.6 -gdwarf-2 -fobjc-abi-version=2 -fobjc-legacy-dispatch -D__IPHONE_OS_VERSION_MIN_REQUIRED=40300 -iquote /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-generated-files.hmap -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-own-target-headers.hmap -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-all-target-headers.hmap -iquote /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-project-headers.hmap -F/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator -F/Users/altenpts/Projects/OpenCVForiPhone -I/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/include -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/DerivedSources/i386 -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/DerivedSources -include /var/folders/bv/bv8+1xmYHBuqPGICwQEriE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/OpenCVClient-Prefix-bboravkovbrfxtfufcsoyifzzapb/OpenCVClient-Prefix.pch -c /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/UIImage+OpenCV.mm -o /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o0#
-
-CCompileC build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/main.o /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/main.m normal i386 objective-c com.apple.compilers.llvmgcc42
-s358241610.426000
-e358241610.540497
-r1
-xCompileC
-xbuild/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/main.o
-x/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/main.m
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvmgcc42
-lSLF07#2@68"Compile /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/main.m358241610#358241610#0(0"0(0#0#60"/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/main.m8623292896#2108"    cd /Users/altenpts/Projects/OpenCVForiPhone    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/llvm-gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wmissing-prototypes -Wreturn-type -Wunused-variable -DDEBUG -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk -fexceptions -mmacosx-version-min=10.6 -gdwarf-2 -fobjc-abi-version=2 -fobjc-legacy-dispatch -D__IPHONE_OS_VERSION_MIN_REQUIRED=40300 -iquote /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-generated-files.hmap -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-own-target-headers.hmap -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-all-target-headers.hmap -iquote /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-project-headers.hmap -F/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator -F/Users/altenpts/Projects/OpenCVForiPhone -I/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/include -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/DerivedSources/i386 -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/DerivedSources -include /var/folders/bv/bv8+1xmYHBuqPGICwQEriE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/OpenCVClient-Prefix-hexesaqoaqsstgfyhxpwfvivxunk/OpenCVClient-Prefix.pch -c /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/main.m -o /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/main.o0#
-
-CCompileXIB /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/en.lproj/MainWindow.xib
-s358241611.662308
-e358241612.281443
-r1
-xCompileXIB
-x/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/en.lproj/MainWindow.xib
-lSLF07#2@47"CompileXIB OpenCVClient/en.lproj/MainWindow.xib358241611#358241612#0(0"0(0#0#77"/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/en.lproj/MainWindow.xib8623012736#612"    cd /Users/altenpts/Projects/OpenCVForiPhone    setenv IBC_MINIMUM_COMPATIBILITY_VERSION 4.3    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/en.lproj/MainWindow.nib /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/en.lproj/MainWindow.xib --sdk /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk0#
-
-CCompileXIB /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/en.lproj/OpenCVClientViewController.xib
-s358241612.281633
-e358241612.814794
-r1
-xCompileXIB
-x/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/en.lproj/OpenCVClientViewController.xib
-lSLF07#2@63"CompileXIB OpenCVClient/en.lproj/OpenCVClientViewController.xib358241612#358241612#0(0"0(0#0#93"/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/en.lproj/OpenCVClientViewController.xib8621866144#644"    cd /Users/altenpts/Projects/OpenCVForiPhone    setenv IBC_MINIMUM_COMPATIBILITY_VERSION 4.3    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/en.lproj/OpenCVClientViewController.nib /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/en.lproj/OpenCVClientViewController.xib --sdk /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk0#
-
-CCopyStringsFile /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/en.lproj/InfoPlist.strings OpenCVClient/en.lproj/InfoPlist.strings
-s358241611.656508
-e358241612.390471
-r1
-xCopyStringsFile
-x/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/en.lproj/InfoPlist.strings
-xOpenCVClient/en.lproj/InfoPlist.strings
-lSLF07#2@44"Copy OpenCVClient/en.lproj/InfoPlist.strings358241611#358241612#0(0"0(0#0#80"/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/en.lproj/InfoPlist.strings8623378912#505"    cd /Users/altenpts/Projects/OpenCVForiPhone    setenv ICONV /usr/bin/iconv    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Library/Xcode/Plug-ins/CoreBuildTasks.xcplugin/Contents/Resources/copystrings --validate --inputencoding utf-8 --outputencoding binary OpenCVClient/en.lproj/InfoPlist.strings --outdir /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/en.lproj0#
-
-CCpResource build/Debug-iphonesimulator/OpenCVClient.app/testimage.jpg OpenCVClient/testimage.jpg
-s358241612.390557
-e358241612.406419
-r1
-xCpResource
-xbuild/Debug-iphonesimulator/OpenCVClient.app/testimage.jpg
-xOpenCVClient/testimage.jpg
-lSLF07#2@31"Copy OpenCVClient/testimage.jpg358241612#358241612#0(0"0(0#0#67"/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/testimage.jpg8621732864#495"    cd /Users/altenpts/Projects/OpenCVForiPhone    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -resolve-src-symlinks /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/testimage.jpg /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app0#
-
-CGenerateDSYMFile /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app.dSYM /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/OpenCVClient
-s358242522.959511
-e358242523.014226
-r1
-xGenerateDSYMFile
-x/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app.dSYM
-x/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/OpenCVClient
-lSLF07#2@124"GenerateDSYMFile build/Debug-iphonesimulator/OpenCVClient.app.dSYM build/Debug-iphonesimulator/OpenCVClient.app/OpenCVClient358242522#358242523#0(0"0(0#0#98"/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/OpenCVClient8623480256#404"    cd /Users/altenpts/Projects/OpenCVForiPhone    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/dsymutil /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/OpenCVClient -o /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app.dSYM0#
-
-CLd /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/OpenCVClient normal i386
-s358242522.410800
-e358242522.959402
-r1
-xLd
-x/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/OpenCVClient
-xnormal
-xi386
-old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::type() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::MSize::MSize(int*)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-old: warning: cv::Mat::MSize::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::total() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::MStep::MStep()has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-old: warning: cv::Mat::Mat()  has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-old: warning: cv::Mat::MStep::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-old: warning: cv::Mat::MStep::operator[](int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-old: warning: cv::Mat::release()    has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-old: warning: cv::Mat::~Mat() has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-old: warning: cv::Mat::operator=(cv::Mat const&)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-old: warning: cv::Mat::create(int, int, int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::Mat(int, int, int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::MSize::MSize(int*)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(optflowgf.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-old: warning: cv::Mat::MStep::MStep()has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(optflowgf.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-old: warning: cv::Mat::MStep::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(optflowgf.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-old: warning: cv::Mat::MStep::operator[](int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(optflowgf.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-old: warning: cv::Mat::create(int, int, int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(optflowgf.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::MStep::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(color.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-old: warning: cv::Mat::MStep::operator[](int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(color.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(rand.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::MSize::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(rand.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::total() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(rand.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::MStep::operator[](int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(rand.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(imgwarp.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::MStep::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(imgwarp.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o
-old: warning: cv::Mat::Mat(int, int, int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(imgwarp.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(copy.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(convert.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(stat.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(arithm.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matmul.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(filter.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(lapack.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(utils.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(dxt.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o
-lSLF07#2@103"Link /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/OpenCVClient358242522#358242522#0(11788"ld: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::type() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::MSize::MSize(int*)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.old: warning: cv::Mat::MSize::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::total() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::MStep::MStep()has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.old: warning: cv::Mat::Mat()  has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.old: warning: cv::Mat::MStep::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.old: warning: cv::Mat::MStep::operator[](int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.old: warning: cv::Mat::release()    has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.old: warning: cv::Mat::~Mat() has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.old: warning: cv::Mat::operator=(cv::Mat const&)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.old: warning: cv::Mat::create(int, int, int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::Mat(int, int, int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::MSize::MSize(int*)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(optflowgf.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.old: warning: cv::Mat::MStep::MStep()has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(optflowgf.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.old: warning: cv::Mat::MStep::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(optflowgf.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.old: warning: cv::Mat::MStep::operator[](int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(optflowgf.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.old: warning: cv::Mat::create(int, int, int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(optflowgf.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::MStep::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(color.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.old: warning: cv::Mat::MStep::operator[](int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(color.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(rand.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::MSize::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(rand.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::total() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(rand.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::MStep::operator[](int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(rand.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(imgwarp.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::MStep::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(imgwarp.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.old: warning: cv::Mat::Mat(int, int, int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(imgwarp.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(copy.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(convert.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(stat.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(arithm.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matmul.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(filter.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(lapack.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(utils.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.old: warning: cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(dxt.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o37(22@297"Cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#0#311#0(6@0"358242522#0#0#0#0#0"0(22@293"Cv::Mat::type() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#311#307#0(6@0"358242522#0#0#0#0#0"0(22@311"Cv::Mat::MSize::MSize(int*)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o358242522#618#325#0(6@0"358242522#0#0#0#0#0"0(22@309"Cv::Mat::MSize::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#943#323#0(6@0"358242522#0#0#0#0#0"0(22@294"Cv::Mat::total() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#1266#308#0(6@0"358242522#0#0#0#0#0"0(22@307"Cv::Mat::MStep::MStep()has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o358242522#1574#321#0(6@0"358242522#0#0#0#0#0"0(22@300"Cv::Mat::Mat()  has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o358242522#1895#314#0(6@0"358242522#0#0#0#0#0"0(22@321"Cv::Mat::MStep::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o358242522#2209#335#0(6@0"358242522#0#0#0#0#0"0(22@315"Cv::Mat::MStep::operator[](int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o358242522#2544#329#0(6@0"358242522#0#0#0#0#0"0(22@306"Cv::Mat::release()    has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o358242522#2873#320#0(6@0"358242522#0#0#0#0#0"0(22@300"Cv::Mat::~Mat() has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o358242522#3193#314#0(6@0"358242522#0#0#0#0#0"0(22@318"Cv::Mat::operator=(cv::Mat const&)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o358242522#3507#332#0(6@0"358242522#0#0#0#0#0"0(22@302"Cv::Mat::create(int, int, int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#3839#316#0(6@0"358242522#0#0#0#0#0"0(22@299"Cv::Mat::Mat(int, int, int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matrix.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#4155#313#0(6@0"358242522#0#0#0#0#0"0(22@314"Cv::Mat::MSize::MSize(int*)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(optflowgf.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o358242522#4468#328#0(6@0"358242522#0#0#0#0#0"0(22@310"Cv::Mat::MStep::MStep()has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(optflowgf.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o358242522#4796#324#0(6@0"358242522#0#0#0#0#0"0(22@324"Cv::Mat::MStep::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(optflowgf.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o358242522#5120#338#0(6@0"358242522#0#0#0#0#0"0(22@318"Cv::Mat::MStep::operator[](int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(optflowgf.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o358242522#5458#332#0(6@0"358242522#0#0#0#0#0"0(22@305"Cv::Mat::create(int, int, int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(optflowgf.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#5790#319#0(6@0"358242522#0#0#0#0#0"0(22@320"Cv::Mat::MStep::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(color.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o358242522#6109#334#0(6@0"358242522#0#0#0#0#0"0(22@314"Cv::Mat::MStep::operator[](int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(color.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o358242522#6443#328#0(6@0"358242522#0#0#0#0#0"0(22@295"Cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(rand.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#6771#309#0(6@0"358242522#0#0#0#0#0"0(22@307"Cv::Mat::MSize::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(rand.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#7080#321#0(6@0"358242522#0#0#0#0#0"0(22@292"Cv::Mat::total() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(rand.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#7401#306#0(6@0"358242522#0#0#0#0#0"0(22@313"Cv::Mat::MStep::operator[](int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(rand.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o358242522#7707#327#0(6@0"358242522#0#0#0#0#0"0(22@298"Cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(imgwarp.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#8034#312#0(6@0"358242522#0#0#0#0#0"0(22@322"Cv::Mat::MStep::operator[](int) consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(imgwarp.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClientViewController.o358242522#8346#336#0(6@0"358242522#0#0#0#0#0"0(22@300"Cv::Mat::Mat(int, int, int)has different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(imgwarp.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#8682#314#0(6@0"358242522#0#0#0#0#0"0(22@295"Cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(copy.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#8996#309#0(6@0"358242522#0#0#0#0#0"0(22@298"Cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(convert.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#9305#312#0(6@0"358242522#0#0#0#0#0"0(22@295"Cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(stat.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#9617#309#0(6@0"358242522#0#0#0#0#0"0(22@297"Cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(arithm.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#9926#311#0(6@0"358242522#0#0#0#0#0"0(22@297"Cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(matmul.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#10237#311#0(6@0"358242522#0#0#0#0#0"0(22@297"Cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(filter.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#10548#311#0(6@0"358242522#0#0#0#0#0"0(22@297"Cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(lapack.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#10859#311#0(6@0"358242522#0#0#0#0#0"0(22@296"Cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(utils.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#11170#310#0(6@0"358242522#0#0#0#0#0"0(22@294"Cv::Mat::elemSize() consthas different visibility (default) in /Users/altenpts/Projects/OpenCVForiPhone/OpenCV.framework/OpenCV(dxt.o) and (hidden) in /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/UIImage+OpenCV.o358242522#11480#308#0(6@0"358242522#0#0#0#0#0"0(0#0#0"8624509760#1099"    cd /Users/altenpts/Projects/OpenCVForiPhone    setenv MACOSX_DEPLOYMENT_TARGET 10.6    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/llvm-g++-4.2 -arch i386 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk -L/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator -F/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator -F/Users/altenpts/Projects/OpenCVForiPhone -filelist /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/Objects-normal/i386/OpenCVClient.LinkFileList -mmacosx-version-min=10.6 -Xlinker -objc_abi_version -Xlinker 2 -framework CoreMedia -framework CoreVideo -framework AVFoundation -framework ImageIO -framework UIKit -framework Foundation -framework CoreGraphics -framework OpenCV -lz -prebind -o /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/OpenCVClient0#
-
-CProcessInfoPlistFile /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/Info.plist OpenCVClient/OpenCVClient-Info.plist
-s358241606.251686
-e358241606.255573
-r1
-xProcessInfoPlistFile
-x/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/Info.plist
-xOpenCVClient/OpenCVClient-Info.plist
-lSLF07#2@44"Process OpenCVClient/OpenCVClient-Info.plist358241606#358241606#0(0"0(0#0#77"/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClient-Info.plist8606558112#513"    cd /Users/altenpts/Projects/OpenCVForiPhone    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    builtin-infoPlistUtility OpenCVClient/OpenCVClient-Info.plist -genpkginfo /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -o /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app/Info.plist0#
-
-CProcessPCH /var/folders/bv/bv8+1xmYHBuqPGICwQEriE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/OpenCVClient-Prefix-hexesaqoaqsstgfyhxpwfvivxunk/OpenCVClient-Prefix.pch.gch OpenCVClient/OpenCVClient-Prefix.pch normal i386 objective-c com.apple.compilers.llvmgcc42
-s358241606.255682
-e358241607.151219
-r1
-xProcessPCH
-x/var/folders/bv/bv8+1xmYHBuqPGICwQEriE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/OpenCVClient-Prefix-hexesaqoaqsstgfyhxpwfvivxunk/OpenCVClient-Prefix.pch.gch
-xOpenCVClient/OpenCVClient-Prefix.pch
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvmgcc42
-lSLF07#2@47"Precompile OpenCVClient/OpenCVClient-Prefix.pch358241606#358241607#0(0"0(0#0#77"/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClient-Prefix.pch8623919936#1993"    cd /Users/altenpts/Projects/OpenCVForiPhone    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/llvm-gcc-4.2 -x objective-c-header -arch i386 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wmissing-prototypes -Wreturn-type -Wunused-variable -DDEBUG -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk -fexceptions -mmacosx-version-min=10.6 -gdwarf-2 -fobjc-abi-version=2 -fobjc-legacy-dispatch -D__IPHONE_OS_VERSION_MIN_REQUIRED=40300 -iquote /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-generated-files.hmap -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-own-target-headers.hmap -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-all-target-headers.hmap -iquote /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-project-headers.hmap -F/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator -F/Users/altenpts/Projects/OpenCVForiPhone -I/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/include -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/DerivedSources/i386 -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/DerivedSources -c /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClient-Prefix.pch -o /var/folders/bv/bv8+1xmYHBuqPGICwQEriE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/OpenCVClient-Prefix-hexesaqoaqsstgfyhxpwfvivxunk/OpenCVClient-Prefix.pch.gch0#
-
-CProcessPCH++ /var/folders/bv/bv8+1xmYHBuqPGICwQEriE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/OpenCVClient-Prefix-bboravkovbrfxtfufcsoyifzzapb/OpenCVClient-Prefix.pch.gch OpenCVClient/OpenCVClient-Prefix.pch normal i386 objective-c++ com.apple.compilers.llvmgcc42
-s358241606.256616
-e358241610.425805
-r1
-xProcessPCH++
-x/var/folders/bv/bv8+1xmYHBuqPGICwQEriE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/OpenCVClient-Prefix-bboravkovbrfxtfufcsoyifzzapb/OpenCVClient-Prefix.pch.gch
-xOpenCVClient/OpenCVClient-Prefix.pch
-xnormal
-xi386
-xobjective-c++
-xcom.apple.compilers.llvmgcc42
-lSLF07#2@47"Precompile OpenCVClient/OpenCVClient-Prefix.pch358241606#358241610#0(0"0(0#0#77"/Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClient-Prefix.pch8623484928#2012"    cd /Users/altenpts/Projects/OpenCVForiPhone    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/llvm-gcc-4.2 -x objective-c++-header -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wmissing-prototypes -Wreturn-type -Wunused-variable -DDEBUG -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk -fexceptions -fvisibility-inlines-hidden -mmacosx-version-min=10.6 -gdwarf-2 -fobjc-abi-version=2 -fobjc-legacy-dispatch -D__IPHONE_OS_VERSION_MIN_REQUIRED=40300 -iquote /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-generated-files.hmap -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-own-target-headers.hmap -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-all-target-headers.hmap -iquote /Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/OpenCVClient-project-headers.hmap -F/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator -F/Users/altenpts/Projects/OpenCVForiPhone -I/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/include -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/DerivedSources/i386 -I/Users/altenpts/Projects/OpenCVForiPhone/build/OpenCVClient.build/Debug-iphonesimulator/OpenCVClient.build/DerivedSources -c /Users/altenpts/Projects/OpenCVForiPhone/OpenCVClient/OpenCVClient-Prefix.pch -o /var/folders/bv/bv8+1xmYHBuqPGICwQEriE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/OpenCVClient-Prefix-bboravkovbrfxtfufcsoyifzzapb/OpenCVClient-Prefix.pch.gch0#
-
-CTouch /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app
-s358242523.014534
-e358242523.017255
-r1
-xTouch
-x/Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app
-lSLF07#2@91"Touch /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app358242523#358242523#0(0"0(0#0#0"8625069024#287"    cd /Users/altenpts/Projects/OpenCVForiPhone    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /usr/bin/touch -c /Users/altenpts/Projects/OpenCVForiPhone/build/Debug-iphonesimulator/OpenCVClient.app0#
-
