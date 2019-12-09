@@ -3,6 +3,7 @@ function varargout = write( s, varargin )
 % Reads xml file into a MATLAB structure
 %
 %   Function is modified to a namespace function.
+%   Plus in 20191209 the options are added. 
 %   The original function was hosted in Matlab File Exchange: 
 %       struct2xml.m
 %
@@ -24,9 +25,11 @@ function varargout = write( s, varargin )
 %
 %   Please note that the following strings are substituted
 %   '_dash_' by '-', '_colon_' by ':' and '_dot_' by '.'
-
+%
 %   Syntax:  [ ] = xml.write( s, file )
+%            [ ] = xml.write( s, file, OPT)
 %            xml = xml.write( s )
+%            xml = xml.write( s, '', OPT)
 %
 %   Input:      s    = structure with data
 %               file = output filename of xml file
@@ -43,8 +46,11 @@ function varargout = write( s, varargin )
 % --------------------------------------------------------------------
 %   Copyright (C) and credits: See below code
 % --------------------------------------------------------------------
+    % Default options
+    defaultOPT.remove_multiple_white_spaces = true;
+    defaultOPT.onExtraField = 'silentIgnore';
     
-    if (nargin ~= 2)
+    if (nargin <2)  % (nargin ~= 2)
         if(nargout ~= 1 || nargin ~= 1)
             error(['Supported function calls:' sprintf('\n')...
                    '[ ] = struct2xml( s, file )' sprintf('\n')...
@@ -52,16 +58,25 @@ function varargout = write( s, varargin )
         end
     end
 
-    if(nargin == 2)
+    if (nargin >=2)  % (nargin == 2)
         file = varargin{1};
 
-        if (isempty(file))
-            error('Filename can not be empty');
-        end
+%         if (isempty(file))
+%             error('Filename can not be empty');
+%         end
 
-        if (isempty(strfind(file,'.xml')))
-            file = [file '.xml'];
+        if ~isempty(file)
+            if (isempty(strfind(file,'.xml')))
+                file = [file '.xml'];
+            end
         end
+    end
+    if (nargin >2)
+        OPT = varargin{2:end};
+        % overrule default settings by property pairs, given in varargin
+        OPT = setproperty(defaultOPT, OPT); % ,'onExtraField', 'silentIgnore');
+    else
+        OPT = defaultOPT;
     end
     
     if (~isstruct(s))
@@ -87,18 +102,20 @@ function varargout = write( s, varargin )
     docRootNode = docNode.getDocumentElement;
 
     %append childs
-    parseStruct(s.(xmlname),docNode,docRootNode,[inputname(1) '.' xmlname '.']);
+    parseStruct(s.(xmlname),docNode,docRootNode,[inputname(1) '.' xmlname '.'],OPT);
 
     if(nargout == 0)
         %save xml file
-        xmlwrite(file,docNode);
+        if ~isempty(file)
+            xmlwrite(file,docNode);
+        end
     else
         varargout{1} = xmlwrite(docNode);
     end  
 end
 
 % ----- Subfunction parseStruct -----
-function [] = parseStruct(s,docNode,curNode,pName)
+function [] = parseStruct(s,docNode,curNode,pName,OPT)
     
     fnames = fieldnames(s);
     for i = 1:length(fnames)
@@ -123,7 +140,7 @@ function [] = parseStruct(s,docNode,curNode,pName)
                     cur_attr_sc = strrep(cur_attr_sc,'_colon_',':');
                     cur_attr_sc = strrep(cur_attr_sc,'_dot_','.');
                     
-                    [cur_str,succes] = val2str(s.Attributes.(cur_attr));
+                    [cur_str,succes] = val2str(s.Attributes.(cur_attr),OPT);
                     if (succes)
                         curNode.setAttribute(cur_attr_sc,cur_str);
                     else
@@ -136,7 +153,7 @@ function [] = parseStruct(s,docNode,curNode,pName)
             end
         elseif (strcmp(curfield,'Text'))
             %Text data
-            [txt,succes] = val2str(s.Text);
+            [txt,succes] = val2str(s.Text,OPT);
             if (succes)
                 curNode.appendChild(docNode.createTextNode(txt));
             else
@@ -148,14 +165,14 @@ function [] = parseStruct(s,docNode,curNode,pName)
                 %single element
                 curElement = docNode.createElement(curfield_sc);
                 curNode.appendChild(curElement);
-                parseStruct(s.(curfield),docNode,curElement,[pName curfield '.'])
+                parseStruct(s.(curfield),docNode,curElement,[pName curfield '.'],OPT)
             elseif (iscell(s.(curfield)))
                 %multiple elements
                 for c = 1:length(s.(curfield))
                     curElement = docNode.createElement(curfield_sc);
                     curNode.appendChild(curElement);
                     if (isstruct(s.(curfield){c}))
-                        parseStruct(s.(curfield){c},docNode,curElement,[pName curfield '{' num2str(c) '}.'])
+                        parseStruct(s.(curfield){c},docNode,curElement,[pName curfield '{' num2str(c) '}.'],OPT)
                     else
                         disp(['Warning. The cell ' pName curfield '{' num2str(c) '} could not be processed, since it contains no structure.']);
                     end
@@ -165,7 +182,7 @@ function [] = parseStruct(s,docNode,curNode,pName)
                 %contain text. Create a new element and use this text
                 curElement = docNode.createElement(curfield_sc);
                 curNode.appendChild(curElement);
-                [txt,succes] = val2str(s.(curfield));
+                [txt,succes] = val2str(s.(curfield),OPT);
                 if (succes)
                     curElement.appendChild(docNode.createTextNode(txt));
                 else
@@ -177,7 +194,7 @@ function [] = parseStruct(s,docNode,curNode,pName)
 end
 
 %----- Subfunction val2str -----
-function [str,succes] = val2str(val)
+function [str,succes] = val2str(val,OPT)
     
     succes = true;
     str = [];
@@ -201,8 +218,8 @@ function [str,succes] = val2str(val)
         %This should be row based (line based) and not column based.
         valt = val';
         
-        remove_multiple_white_spaces = true;
-        if (remove_multiple_white_spaces)
+        %remove_multiple_white_spaces = true;
+        if (OPT.remove_multiple_white_spaces)
             %remove multiple white spaces using isspace, suggestion of T. Lohuis
             whitespace = isspace(val);
             nonspace = (whitespace + [zeros(lines,1) whitespace(:,1:end-1)])~=2;
