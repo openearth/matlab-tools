@@ -46,7 +46,10 @@ switch gridInfo.layer_model
             bl = reshape(gridInfo.Zcen,no_cells,1);
         end
         
-        wl = wl';
+%        wl = wl'; % TK: By doing this the dimension of wl gets from
+%                        (no_times to no_cells) to (no_cells,no_times)
+%                        Every function comes back with (no_times,no_cells)
+%                        Also dfm sigma layers!
         
         ZKlocal  = gridInfo.Zcen_int;
         ZKlocal2 = repmat(ZKlocal,no_cells,1);

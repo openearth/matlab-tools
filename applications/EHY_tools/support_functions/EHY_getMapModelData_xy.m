@@ -41,7 +41,6 @@ if strcmp(modelType,'d3d')
     DataZ.wl      = reshape(DataZ.wl      ,[modelSize(1) prod(modelSize(2:3))               ]);
     DataZ.bed     = reshape(DataZ.bed     ,[modelSize(1) prod(modelSize(2:3))               ]);  
 end
-DataZ.wl  = DataZ.wl'; % same order of dimensions as other quantities (DataZ.val_cen, DataAll.val etc)
 no_layers = size(DataZ.val_cen,3);
 
 %% Calculate values at pli locations
