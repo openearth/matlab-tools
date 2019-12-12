@@ -1,4 +1,4 @@
-function subgrd=sfincs_read_binary_subgrid_tables2(folder)
+function subgrd=sfincs_read_binary_subgrid_tables(folder)
 
 inpfile=[folder filesep 'sfincs.inp'];
 
@@ -89,3 +89,5 @@ for ibin=1:nbin
     v(indices)=d;
     subgrd.v_area(:,:,ibin)=v;
 end
+
+fclose(fid);
