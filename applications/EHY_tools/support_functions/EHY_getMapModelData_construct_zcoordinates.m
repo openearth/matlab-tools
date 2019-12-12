@@ -28,12 +28,27 @@ switch gridInfo.layer_model
             bl = reshape(bl,[1 prod(modelSize(2:3))]); % from [m,n] to cells (like FM)
         end
         
-        % vertical interfaces at cell center
-        int(:,:,1) = repmat(bl,length(DataWL.times),1);
-        for i_lay = 1:no_lay-1
-            int(:,:,i_lay+1) = int(:,:,1) + (sum(gridInfo.layer_perc(1:i_lay)) * (wl - bl));
+        if strcmp(modelType,'dfm')
+            % vertical interfaces at cell center
+            int(:,:,1) = repmat(bl,length(DataWL.times),1);
+            for i_lay = 1:no_lay-1
+                int(:,:,i_lay+1) = int(:,:,1) + (sum(gridInfo.layer_perc(1:i_lay)) * (wl - bl));
+            end
+            int(:,:,no_lay+1) = wl;
+        elseif strcmp(modelType,'d3d')  % sigma model numbers from surface to bed!
+            % vertical interfaces at cell center
+            bl_tmp     = repmat(bl,length(DataWL.times),1);
+            int(:,:,1) = wl;
+            for i_lay = 1:no_lay
+                int(:,:,i_lay+1) = int(:,:,1) - (sum(gridInfo.layer_perc(1:i_lay)) * (wl - bl_tmp));
+            end
+            % check
+            if length(find(abs(bl_tmp - int(:,:,no_lay + 1)) > 1e-3)) ~= 0
+                error ('Wrong reconstruction interfaces d3d sigma layers')
+            end
         end
-        int(:,:,no_lay+1) = wl;
+        
+        
         
     case 'z-model'
         no_times = size(int,1);
@@ -41,7 +56,7 @@ switch gridInfo.layer_model
         
         gridInfo = EHY_getGridInfo(inputFile,{'Z'},'mergePartitions',OPT.mergePartitions,'disp',0);
         if strcmp(modelType,'d3d')
-            bl = reshape(gridInfo.Zcen,[prod(modelSize(2:3)) 1]); % from [m,n] to cells (like FM)
+            bl = reshape(gridInfo.Zcen',[prod(modelSize(2:3)) 1]); % from [m,n] to cells (like FM)
         else
             bl = reshape(gridInfo.Zcen,no_cells,1);
         end
@@ -57,7 +72,7 @@ switch gridInfo.layer_model
         for iT = 1:no_times
             int_field = NaN(no_cells,no_lay+1);
             
-            logi = ZKlocal >= bl & ZKlocal <= wl(:,iT);
+            logi = ZKlocal >= bl & ZKlocal <= wl(iT,:)';
             int_field(logi) = ZKlocal2(logi);
           
             % water level
@@ -67,9 +82,9 @@ switch gridInfo.layer_model
             for ii = 1:length(cellIndMaxUni)
                 logi = cellIndMax == cellIndMaxUni(ii);
                 if cellIndMaxUni(ii) == no_lay+1 % top layer
-                    int_field(logi,end) = wl(logi,iT);
+                    int_field(logi,end) = wl(iT,logi);
                 else
-                    int_field(logi,cellIndMaxUni(ii)+1) = wl(logi,iT);
+                    int_field(logi,cellIndMaxUni(ii)+1) = wl(iT,logi);
                 end
             end
            

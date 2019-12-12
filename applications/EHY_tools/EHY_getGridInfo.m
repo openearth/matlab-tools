@@ -641,7 +641,7 @@ switch modelType
                         E.Xcor = G.cor.x.*G.cor.mask;
                         E.Ycor = G.cor.y.*G.cor.mask;
                     end
-                    
+                                               
                     if ismember('XYcen',wantedOutput)
                         E.Xcen = G.cen.x.*G.cen.mask;
                         E.Ycen = G.cen.y.*G.cen.mask;
