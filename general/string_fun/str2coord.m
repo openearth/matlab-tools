@@ -1,20 +1,20 @@
-function [x y] = str2coord(name, varargin)
-%STR2COORD  Converts a location string to a coordinate using Google Maps
+function [x, y] = str2coord(name, varargin)
+%STR2COORD  Converts a location string to a coordinate using Open Street Map
 %
-%   Converts a location string to a coordinate using Google Maps. By
-%   default, RD locations are returned. Another option is to return WGS84
-%   coordinates.
-%
+%   Converts a location string to a coordinate using Open Street Map. By
+%   default, RD locations are returned. To return other coordinates in
+%   another system, enter the EPSG-code.
+%   
 %   Syntax:
 %   [x y] = str2coord(name, varargin)
 %
 %   Input:
-%   name      = Name of the location
-%   varargin  = type:   Type of coordinates to return
+%   name      = Name of the location (string)
+%   varargin  = type: EPSG-code, 'RD' (default) or 'WGS84'
 %
 %   Output:
-%   x         = x-coordinate of location
-%   y         = y-coordinate of location
+%   x         = x-coordinate of location (Easting)
+%   y         = y-coordinate of location (Northing)
 %
 %   Example
 %   [x y] = str2coord('Delft')
@@ -64,52 +64,78 @@ function [x y] = str2coord(name, varargin)
 %% read options
 
 OPT = struct( ...
-    'type', 'RD' ...
+    'type', 28992 ... %RD-coordinates
 );
 
 OPT = setproperty(OPT, varargin{:});
 
-%% retrieve latlon coordinate data from google maps
+%% retrieve latlon coordinate data from Open Street Map
 
 x = []; y = [];
 
-url = ['http://maps.google.com/maps/geo?q=' name '&sensor=false&output=xml&oe=utf8&key=ABQIAAAAWIiGwZ4f3ncw4oQSuvUPrBSFwycF0SlTyEowikYlS8xDoCzQghQyGAIqzHZ5BYsm1feFl-x_mSfC9g'];
-xml = xmlread(url);
+url = ['https://nominatim.openstreetmap.org/search?q=',name,'&format=json'];
+data=webread(url);
 
-if xml.hasChildNodes
-    xml = xml.getElementsByTagName('kml');
-    xml = xml.item(0).getElementsByTagName('Response');
-    xml = xml.item(0).getElementsByTagName('Placemark');
-
-    if xml.getLength > 0
-        if xml.getLength > 1
-            address = char(xml.item(0).getElementsByTagName('address').item(0).item(0).getData);
-            warning(['Multiple name matches, using first match [' address ']']);
-        end
-        
-        xml = xml.item(0).getElementsByTagName('Point');
-
-        coords = xml.item(0).getElementsByTagName('coordinates').item(0);
-        coords = char(coords.item(0).getData);
-        coords = str2double(regexp(coords, ',' , 'split'));
-
-        x = coords(1);
-        y = coords(2);
+if isstruct(data);
+    if length(data)>1;
+        address=data(1).display_name;
+        warning(['Multiple name matches, using first match [' address ']']);
     end
+    x=str2double(data(1).lon);
+    y=str2double(data(1).lat);
+
+elseif iscell(data);
+    if length(data)>1;
+        address=data{1}.display_name;
+        warning(['Multiple name matches, using first match [' address ']']);
+    end
+    x=str2double(data{1}.lon);
+    y=str2double(data{1}.lat);
+else
+    warning(['No results found for [' name ']']);
+    return
 end
+% Google Maps API is depricated!
+% url = ['http://maps.google.com/maps/geo?q=' name '&sensor=false&output=xml&oe=utf8&key=ABQIAAAAWIiGwZ4f3ncw4oQSuvUPrBSFwycF0SlTyEowikYlS8xDoCzQghQyGAIqzHZ5BYsm1feFl-x_mSfC9g'];
+% xml = xmlread(url);
+% 
+% if xml.hasChildNodes
+%     xml = xml.getElementsByTagName('kml');
+%     xml = xml.item(0).getElementsByTagName('Response');
+%     xml = xml.item(0).getElementsByTagName('Placemark');
+% 
+%     if xml.getLength > 0
+%         if xml.getLength > 1
+%             address = char(xml.item(0).getElementsByTagName('address').item(0).item(0).getData);
+%             warning(['Multiple name matches, using first match [' address ']']);
+%         end
+%         
+%         xml = xml.item(0).getElementsByTagName('Point');
+% 
+%         coords = xml.item(0).getElementsByTagName('coordinates').item(0);
+%         coords = char(coords.item(0).getData);
+%         coords = str2double(regexp(coords, ',' , 'split'));
+% 
+%         x = coords(1);
+%         y = coords(2);
+%     end
+% end
 
 %% convert coordinates
 
 if ~isempty(x) && ~isempty(y)
-    switch OPT.type
-        case 'RD'
-            [x y] = convertCoordinates(x,y,'CS1.code',4326,'CS2.code',28992);
-        case 'WGS84'
-            % do nothing
-        otherwise
-            warning(['Coordinate type unknown, using WGS84 [' OPT.type ']']);
+    if isnumeric(OPT.type)
+        [x, y] = convertCoordinates(x,y,'CS1.code',4326,'CS2.code',OPT.type);
+    elseif ischar(OPT.type) %For backwards compatibility.
+        switch OPT.type
+            case 'RD'
+                [x, y] = convertCoordinates(x,y,'CS1.code',4326,'CS2.code',28992);
+            case 'WGS84'
+                % do nothing
+            otherwise
+                warning(['Coordinate type unknown, using WGS84 [' OPT.type ']']);
+        end
     end
-
     if nargout <= 1
         x = [x y];
     end
