@@ -12,11 +12,12 @@ function xb = xb_generate_waves(varargin)
 %   [xb instat swtable] = xb_generate_waves(varargin)
 %
 %   Input:
-%   varargin  = type:       type of waves to be generated (jonswap/vardens)
+%   varargin  = type:       type of waves to be generated ('jons_table'
+%                           (default), 'vardens' or 'jonswap').
 %               duration:   array with durations in seconds
 %               timestep:   array with timesteps in seconds
 %
-%               options for jonswap:
+%               options for jonswap or jons_table:
 %               Hm0:        significant wave height (default: 7.6)
 %               Tp:         peak wave period (default: 12)
 %               mainang     main wave direction (default: 270)
@@ -87,12 +88,12 @@ function xb = xb_generate_waves(varargin)
 xb_verbose(0,'---');
 xb_verbose(0,'Generating wave timeseries');
 
-type = 'jonswap';
-type = 'jons_table';
-
 idx = strcmpi('type', varargin(1:2:end));
 if any(idx)
     type = varargin{find(idx)+1};
+else
+    %If type is not set in varargin, use default.
+    type = 'jons_table';
 end
 
 switch type
@@ -136,10 +137,13 @@ switch type
         instat = 'jons_table';
         
         xb_verbose(1,'Type','JONSWAP');
+        
+    otherwise
+        error('type must be ''jonswap'', ''vardens'' or ''jons_table'', not ''%s''.',type)
 end
 
 OPT.type = type;
-OPT.duration = 1800;
+OPT.duration = 2000; %Set duration equal to default in xb_generate_settings.
 OPT.timestep = 1;
 OPT.swtable = false;
 

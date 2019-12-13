@@ -1,7 +1,7 @@
 function verbose = xb_verbose(level, varargin)
-%XB_VERBOSE  Writes verbose messages fro XBeach toolbox
+%XB_VERBOSE  Writes verbose messages from XBeach toolbox
 %
-%   Writes verbose messages fro XBeach toolbox. Excepts any fprintf like
+%   Writes verbose messages from XBeach toolbox. Excepts any fprintf like
 %   input.
 %
 %   Syntax:

@@ -1,4 +1,4 @@
-function [xgrid ygrid zgrid negrid alpha xori yori] = xb_grid_optimize(varargin)
+function [xgrid, ygrid, zgrid, negrid, alpha, xori, yori] = xb_grid_optimize(varargin)
 %XB_GRID_OPTIMIZE  Creates a model grid based on a given bathymetry
 %
 %   Creates a model grid in either one or two dimensions based on a given
@@ -122,7 +122,7 @@ OPT = rmfield(OPT, {'x' 'y' 'z'});
 
 % make sure coordinates are matrices
 if isvector(x_w) && isvector(y_w)
-    [x_w y_w] = meshgrid(x_w, y_w);
+    [x_w, y_w] = meshgrid(x_w, y_w);
     
     xb_verbose(1,'Create grid from vectors');
 end
@@ -136,7 +136,7 @@ end
 
 %% convert from world to xbeach coordinates
 
-[x_r y_r] = deal(x_w, y_w);
+[x_r, y_r] = deal(x_w, y_w);
 
 % determine origin
 xori = min(min(x_w));
@@ -152,7 +152,7 @@ alpha = 0;
 if OPT.rotate && ~isvector(z_w)
     if ~islogical(OPT.rotate) && ~ismember(OPT.rotate,[0 1])
         alpha = OPT.rotate;
-        [x_r y_r] = xb_grid_rotate(x_r, y_r, alpha, 'origin', [xori yori]);
+        [x_r, y_r] = xb_grid_rotate(x_r, y_r, alpha, 'origin', [xori yori]);
         
         xb_verbose(1,'Rotate grid around origin');
         xb_verbose(2,'alpha',alpha);
@@ -163,7 +163,7 @@ if OPT.rotate && ~isvector(z_w)
         xb_verbose(2,'alpha',alpha);
         
         if abs(alpha) > 5
-            [x_r y_r] = xb_grid_rotate(x_r, y_r, alpha, 'origin', [xori yori]);
+            [x_r, y_r] = xb_grid_rotate(x_r, y_r, alpha, 'origin', [xori yori]);
             
             xb_verbose(1,'Rotate grid around origin');
             xb_verbose(2,'alpha',alpha);
@@ -187,7 +187,7 @@ if isvector(z_w)
     clear x_r y_r
 else
     % determine resolution and extent
-    [cellsize xmin xmax ymin ymax] = xb_grid_resolution(x_r, y_r);
+    [cellsize, xmin, xmax, ymin, ymax] = xb_grid_resolution(x_r, y_r);
     
     xb_verbose(1,'Determine grid resolution and extent');
     xb_verbose(2,{'cellsize' 'xmin' 'xmax' 'ymin' 'ymax'},{cellsize xmin xmax ymin ymax});
@@ -199,14 +199,14 @@ else
     if ischar(OPT.crop) && strcmpi(OPT.crop, 'select')
         xb_verbose(1,'Enable user to crop grid visually');
         
-        display('Please select opposing cornerpoints of your grid by clicking.')
+        disp('Please select opposing cornerpoints of your grid by clicking.');
         
         fh = figure;
         pcolor(x_r, y_r, z_w);
         axis equal;
         shading flat; colorbar;
 
-        [xcorners_r ycorners_r] = ginput(2);
+        [xcorners_r, ycorners_r] = ginput(2);
         
         xmin = min(xcorners_r);
         xmax = max(xcorners_r);
@@ -235,13 +235,13 @@ else
             ymin = min(ycorners_r);
             ymax = max(ycorners_r);
         else
-            [xmin xmax ymin ymax] = xb_grid_crop(x_r, y_r, z_w, 'crop', OPT.crop);
+            [xmin, xmax, ymin, ymax] = xb_grid_crop(x_r, y_r, z_w, 'crop', OPT.crop);
         end
         
         xb_verbose(1,'Cropping grid as requested');
         xb_verbose(2,{'xmin' 'xmax' 'ymin' 'ymax'},{xmin xmax ymin ymax});
     elseif OPT.crop
-        [xmin xmax ymin ymax] = xb_grid_crop(x_r, y_r, z_w);
+        [xmin, xmax, ymin, ymax] = xb_grid_crop(x_r, y_r, z_w);
         
         xb_verbose(1,'Cropping grid automatically');
         xb_verbose(2,{'xmin' 'xmax' 'ymin' 'ymax'},{xmin xmax ymin ymax});
@@ -256,10 +256,10 @@ else
     xb_verbose(2,'Cells Y',length(y_d));
 
     % interpolate elevation data to dummy grid
-    [x_d y_d] = meshgrid(x_d,y_d);
+    [x_d, y_d] = meshgrid(x_d,y_d);
     
     % rotate dummy grid to world coordinates to allow for use of interp2
-    [x_d_w y_d_w] = xb_grid_rotate(x_d, y_d, -alpha, 'origin', [xori yori]);
+    [x_d_w, y_d_w] = xb_grid_rotate(x_d, y_d, -alpha, 'origin', [xori yori]);
     
     if max(max(diff(x_d_w,1,2))) == 0 && max(max(diff(y_d_w,1,1))) == 0
         x_d_w   = x_d_w';
@@ -302,13 +302,13 @@ xb_verbose(2,'NaN''s',sum(~notnan));
 clear x_d_w y_d_w
 
 %% create xbeach grid
-[x_xb z_xb] = xb_grid_xgrid(x_d_1d, z_d_cs, OPT.xgrid{:});
+[x_xb, z_xb] = xb_grid_xgrid(x_d_1d, z_d_cs, OPT.xgrid{:});
 [y_xb] = xb_grid_ygrid(y_d_1d, OPT.ygrid{:});
 
 % clear memory
 clear y_d z_d z_d_cs
 
-[xgrid ygrid] = meshgrid(x_xb, y_xb);
+[xgrid, ygrid] = meshgrid(x_xb, y_xb);
 
 xb_verbose(1,'Combine alongshore and cross-shore grid');
 
@@ -342,7 +342,7 @@ else
     % 2D grid
 
     % rotate xbeach grid to world coordinates
-    [x_xb_w y_xb_w] = xb_grid_rotate(x_xb, y_xb, -alpha, 'origin', [xori yori]);
+    [x_xb_w, y_xb_w] = xb_grid_rotate(x_xb, y_xb, -alpha, 'origin', [xori yori]);
     
     if max(max(diff(x_xb_w,1,2))) == 0 && max(max(diff(x_xb_w,1,1))) == 0
         x_xb_w  = x_xb_w';
@@ -441,7 +441,7 @@ if ~islogical(OPT.finalise) && iscell(OPT.finalise)
     xgrid_old = xgrid;
     ygrid_old = ygrid;
     
-    [xgrid, ygrid, zgrid] = xb_grid_finalise(xgrid, ygrid, zgrid, OPT.finalise{:});
+    [xgrid, ygrid, zgrid] = xb_grid_finalise(xgrid, ygrid, zgrid, OPT.finalise);
 elseif OPT.finalise
     xgrid_old = xgrid;
     ygrid_old = ygrid;
@@ -455,11 +455,11 @@ if (~islogical(OPT.finalise) && iscell(OPT.finalise)) || (islogical(OPT.finalise
         negrid = interp2(xgrid_old,ygrid_old,negrid,xgrid,ygrid);
         if any(any(isnan(negrid)))
             distance = pointdistance_pairs([xgrid(isnan(negrid)) ygrid(isnan(negrid))], [xgrid(~isnan(negrid)) ygrid(~isnan(negrid))]);
-            [dummy nn_idx] = min(distance,[],2);
+            [~, nn_idx] = min(distance,[],2);
             negrid_notnan = negrid(~isnan(negrid));
             negrid(isnan(negrid)) = negrid_notnan(nn_idx);
             
-            clear dummy xgrid_old ygrid_old negrid_notnan
+            clear xgrid_old ygrid_old negrid_notnan
         end
         
         xb_verbose(1,'Extend non-erodible layers to finalized grids');
@@ -468,7 +468,7 @@ end
 
 % convert to world coordinates if needed
 if OPT.world_coordinates
-    [xgrid ygrid] = xb_grid_rotate(xgrid, ygrid, -alpha, 'origin', [xori yori]);
+    [xgrid, ygrid] = xb_grid_rotate(xgrid, ygrid, -alpha, 'origin', [xori yori]);
     alpha = 0;
     xori = 0;
     yori = 0;

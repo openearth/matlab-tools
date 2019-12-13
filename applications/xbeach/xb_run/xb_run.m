@@ -11,10 +11,12 @@ function xb = xb_run(xb, varargin)
 %
 %   Input:
 %   xb        = XBeach input structure
-%   varargin  = binary:     XBeach binary to use
-%               nodes:      Number of nodes to use in MPI mode (1 = no mpi)
-%               netcdf:     Flag to use netCDF output (default: false)
-%               path:       Path to the XBeach model
+%   varargin  = name:    Name of XBeach run
+%               binary:  XBeach binary to use
+%               copy:    Copy binary to output model path (default: false)
+%               nodes:   Number of nodes to use in MPI mode (1 = no mpi)
+%               netcdf:  Flag to use netCDF output (default: false)
+%               path:    Path to the XBeach model
 %
 %   Output:
 %   xb        = XBeach structure array
@@ -174,13 +176,13 @@ else
         
         % start xbeach
         if ~OPT.copy
-            [r messages] = system([drive ' && cd ' OPT.path ' && start ' OPT.binary '\xbeach.exe']);
+            [r, messages] = system([drive ' && cd ' OPT.path ' && start ' OPT.binary '\xbeach.exe']);
         else
-            [r messages] = system([drive ' && cd ' OPT.path ' && start bin\xbeach.exe']);
+            [r, messages] = system([drive ' && cd ' OPT.path ' && start bin\xbeach.exe']);
         end
         
         % get current running xbeach instances
-        [r tasklist] = system('tasklist /FI "IMAGENAME eq xbeach.exe"');
+        [r, tasklist] = system('tasklist /FI "IMAGENAME eq xbeach.exe"');
         re = regexp(tasklist, 'xbeach.exe\s+(?<pid>\d+)', 'names');
         pids = cellfun(@str2num, {re.pid});
         
