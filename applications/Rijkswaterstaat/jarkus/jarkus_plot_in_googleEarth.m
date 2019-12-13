@@ -13,14 +13,19 @@ function varargout = jarkus_plot_in_googleEarth(varargin)
 %
 %   Input:
 %   varargin  =
+%               'id': vector of transect id's or logicals.
+%               'year':  vector of years, leave empty for all years.
+%               'kmlfilename': name of the KML file.
+%               'url': url or path to jarkus netcdf.
 %
 %   Output:
 %   varargout =
+%               <none>
 %
 %   Example
 %   jarkus_plot_in_googleEarth
 %
-%   See also 
+%   See also: jarkus, googleplot.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -107,7 +112,7 @@ if stride
 end
 
 % obtain the relevant data
-[lat lon z] = deal([]);
+[lat, lon, z] = deal([]);
 for i = 1:length(transectid)
     lat(i,:) = nc_varget(url, 'lat', [transectid(i)-1 0], [1 -1]);
     lon(i,:) = nc_varget(url, 'lon', [transectid(i)-1 0], [1 -1]);
