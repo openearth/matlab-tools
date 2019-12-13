@@ -18,7 +18,8 @@ function filename = xb_write_waves(xb, varargin)
 %   constant, simply provide the constant value. The value is reused in
 %   each period of time. However, it is not possible to provide for one
 %   parameter more than one value and for another too, while the number of
-%   values is not the same.
+%   values is not the same. Thus for each parameter the number of values
+%   must equal eiter 1 or n.
 %
 %   Syntax:
 %   filename = xb_write_waves(xb, varargin)
@@ -106,7 +107,7 @@ type = xs_get(xb, 'type');
 
 % check parameter dimensions
 switch type
-    case {'jonswap' 'jonswap_mtx'}
+    case {'jonswap', 'jonswap_mtx', 'jons_table'}
         vars = {'Hm0' 'Tp' 'fp' 'mainang' 'gammajsp' 's' 'fnyq' 'duration' 'timestep'};
 
         fname = OPT.jonswap_file;
@@ -121,7 +122,7 @@ switch type
         % determine length of time series
         tlength = get_time_length(xb, vars);
 
-        [freqs dirs vardens] = xs_get(xb, 'freqs', 'dirs', 'vardens');
+        [freqs, dirs, vardens] = xs_get(xb, 'freqs', 'dirs', 'vardens');
         if length(freqs) ~= size(vardens, 2) || ...
                 length(dirs) ~= size(vardens, 1)
             error('Dimensions of variance density matrix do not match');
@@ -153,30 +154,32 @@ switch type
 
         % determine length of time series
         tlength = get_time_length(xb, vars);
-    case{'jons_table'}
-
-        fid = fopen(fullfile(OPT.path, 'jonswap.txt'),'wt');
-        nconditions = length(xb.data(2).value);
-        for ii = 1:nconditions
-        fprintf(fid, '%.4f ',   [xb.data(2).value(ii)]); % Hm0
-        fprintf(fid, '%.4f ',   [xb.data(3).value(ii)]); % Tp
-        fprintf(fid, '%.4f ',   [xb.data(4).value(ii)]); % main angle
-        fprintf(fid, '%.4f ',   [xb.data(5).value]);     % gamma
-        fprintf(fid, '%.4f ',   [xb.data(6).value(ii)]); % s
-        fprintf(fid, '%.4f ',   [xb.data(8).value(ii)]); % duration
-        fprintf(fid, '%.4f\n',  [xb.data(9).value(ii)]); % dtbc
-        end
-        fclose('all');
+% This implementation does not work when one or more variables are scalar.
+% In fact jons_table was already implemented via keyword jonswap_mtx.
+%     case{'jons_table'}
+% 
+%         fid = fopen(fullfile(OPT.path, 'jonswap.txt'),'wt');
+%         nconditions = length(xb.data(2).value);
+%         for ii = 1:nconditions
+%         fprintf(fid, '%.4f ',   [xb.data(2).value(ii)]); % Hm0
+%         fprintf(fid, '%.4f ',   [xb.data(3).value(ii)]); % Tp
+%         fprintf(fid, '%.4f ',   [xb.data(4).value(ii)]); % main angle
+%         fprintf(fid, '%.4f ',   [xb.data(5).value]);     % gamma
+%         fprintf(fid, '%.4f ',   [xb.data(6).value(ii)]); % s
+%         fprintf(fid, '%.4f ',   [xb.data(8).value(ii)]); % duration
+%         fprintf(fid, '%.4f\n',  [xb.data(9).value(ii)]); % dtbc
+%         end
+%         fclose('all');
         
     otherwise
         error(['Unknown wave definition type [' type ']']);
 end
 
 % set variable alternatives
-switch type
-    case{'jons_table'}
-        filename = 'jonswap.txt';
-    otherwise
+% switch type
+%     case{'jons_table'}
+%         filename = 'jonswap.txt';
+%     otherwise
     if xs_exist(xb, 'Tp') && ~xs_exist(xb, 'fp')
         xb = xs_set(xb, 'fp', 1./xs_get(xb, 'Tp'));
     end
@@ -208,7 +211,7 @@ switch type
 
     %% set maximum duration
 
-    [duration timestep] = xs_get(xb, 'duration', 'timestep');
+    [duration, timestep] = xs_get(xb, 'duration', 'timestep');
 
     if isnan(duration); duration = OPT.maxduration; end;
     if size(duration,1) == max(size(duration)); duration = duration'; end;
@@ -237,8 +240,8 @@ switch type
     %% create file list
 
     % create file list file, if necessary
-    [duration timestep] = xs_get(xb, 'duration', 'timestep');
-    if length(duration) > 1 && ~(strcmpi(type, 'jonswap') && OPT.omit_filelist) && ~strcmpi(type, 'jonswap_mtx')
+    [duration, timestep] = xs_get(xb, 'duration', 'timestep');
+    if length(duration) > 1 && ~(strcmpi(type, 'jonswap') && OPT.omit_filelist) && ~any(strcmpi(type, {'jonswap_mtx','jons_table'}));
         filename = [OPT.filelist_file '.txt'];
         fid = fopen(fullfile(OPT.path, filename), 'w');
         fprintf(fid, 'FILELIST\n');
@@ -252,7 +255,7 @@ switch type
 
     % determine whether single matrix formatted jonswap file should be
     % created, otherwise write single or multiple wave files
-    if strcmpi(type, 'jonswap_mtx') || (length(duration) > 1 && strcmpi(type, 'jonswap') && OPT.omit_filelist)
+    if any(strcmpi(type, {'jonswap_mtx','jons_table'})) || (length(duration) > 1 && strcmpi(type, 'jonswap') && OPT.omit_filelist)
         filename = [fname '.txt'];
         write_jonswap_mtx_file(fullfile(OPT.path, filename), tlength, xb)
     else
@@ -284,7 +287,7 @@ switch type
             end
         end
     end
-end
+% end
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -329,7 +332,7 @@ fclose(fid);
 
 % write single variance density spectrum file
 function write_vardens_file(fname, idx, xb)
-[freqs dirs vardens] = xs_get(xb, 'freqs', 'dirs', 'vardens');
+[freqs, dirs, vardens] = xs_get(xb, 'freqs', 'dirs', 'vardens');
 
 fid = fopen(fname, 'w');
 fprintf(fid, '%10.4f\n', length(freqs));
