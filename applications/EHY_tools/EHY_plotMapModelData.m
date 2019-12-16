@@ -23,6 +23,7 @@ function varargout = EHY_plotMapModelData(gridInfo,zData,varargin)
 OPT.linestyle = 'none'; % other options: '-'
 OPT.edgecolor = 'k';
 OPT.facecolor = 'flat';
+OPT.linewidth = 0.5;
 
 % if pairs were given as input OPT
 if ~isempty(varargin)
@@ -126,7 +127,8 @@ switch modelType
                 'marker','none',...
                 'edgecolor',OPT.edgecolor,...
                 'linestyle',OPT.linestyle,...
-                'faceColor',OPT.facecolor);
+                'faceColor',OPT.facecolor,...
+                'LineWidth',OPT.linewidth);
         end
         
         if nargout==1
