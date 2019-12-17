@@ -18,6 +18,7 @@ else
     OPT.outputFile=[imageDir filesep 'EHY_movieMaker_OUTPUT' filesep 'movie.avi'];
     OPT.frameRate=4;
     OPT.quality=[]; % see https://nl.mathworks.com/help/matlab/ref/videowriter.html
+    OPT.profile='Motion JPEG AVI';
     OPT=setproperty(OPT,varargin);
 end
 
@@ -37,7 +38,7 @@ if ~exist(fileparts(OPT.outputFile))
     mkdir(fileparts(OPT.outputFile))
 end
 
-writerObj = VideoWriter(OPT.outputFile);
+writerObj = VideoWriter(OPT.outputFile,OPT.profile);
 writerObj.FrameRate = OPT.frameRate;
 if ~isempty(OPT.quality)
     writerObj.Quality = OPT.quality;
