@@ -1,4 +1,4 @@
-function z0=gridcellaveraging2(xb0,yb0,zb0,x0,y0,dx,opt)
+function z0=gridcellaveraging3(xb0,yb0,zb0,x0,y0,dx,opt,npoints)
 %GRIDCELLAVERAGING2  One line description goes here.
 %
 %   More detailed description goes here.
@@ -146,10 +146,12 @@ nx=ceil(size(x0,1)/dd);
 ny=ceil(size(x0,2)/dd);
 
 for ix=1:nx
-    disp(ix)
+    disp([num2str(ix), ' of ', num2str(nx)])
     for iy=1:ny
         
         % Subgrid
+        disp(['  ', num2str(iy), ' of ', num2str(ny)])
+
         ig1=(ix-1)*dd+1;
         ig2=min(ig1+dd-1,size(x0,1));
         jg1=(iy-1)*dd+1;
@@ -226,13 +228,15 @@ for ix=1:nx
                         zb3=zb2(dst<=0.5*dx(i,j));
                         
                         if ~isempty(zb3)
-                            switch lower(opt)
-                                case{'max'}
-                                    z(i,j)=max(zb3);
-                                case{'mean'}
-                                    z(i,j)=mean(zb3);
-                                case{'min'}
-                                    z(i,j)=min(zb3);
+                            if length(zb3)>npoints
+                                switch lower(opt)
+                                    case{'max'}
+                                        z(i,j)=max(zb3);
+                                    case{'mean'}
+                                        z(i,j)=mean(zb3);
+                                    case{'min'}
+                                        z(i,j)=min(zb3);
+                                end
                             end
                         end
                     end
