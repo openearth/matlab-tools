@@ -91,7 +91,11 @@ if strcmp(OPT.type,'xyz')
             p                   = p+1;
             id1                 = strfind(tLine,'=');
             id2                 = strfind(tLine,'*');
-            CRS.PROFNR(p,1)     = str2double(tLine(id1+1:id2-1));
+            if ~isempty(id2)
+                CRS.PROFNR(p,1)     = str2double(tLine(id1+1:id2-1));
+            else
+                CRS.PROFNR(p,1)     = str2double(tLine(id1+1:end));
+            end
             CRS.PROFNRmeta{p,1} = tLine(id2+1:end);
             rc                  = textscan(fgetl(fid),'%f%f',1);
             xyz                 = textscan(fid,'%f%f%f',rc{1});
