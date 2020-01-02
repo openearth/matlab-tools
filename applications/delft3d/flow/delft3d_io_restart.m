@@ -457,8 +457,10 @@ end
 
 function iostat=Local_write(fname,DAT,varargin),
 
-   iostat = 0;
-   if nargin==3
+   iostat  = 0;
+   OPT.ask = true;
+   
+   if nargin==3 && ~isempty(varargin{3})
       OS = varargin{1};
    else
       OS = computer;
@@ -468,6 +470,10 @@ function iostat=Local_write(fname,DAT,varargin),
       userfieldnames = varargin{1};
    else
       userfieldnames = false;
+   end
+   
+   if nargin >= 5
+       OPT = setproperty(OPT,varargin{3:end});
    end
 
 %% Locate
@@ -482,13 +488,17 @@ function iostat=Local_write(fname,DAT,varargin),
    else
 
       while ~islogical(writefile)
-         writefile    = input('File already exists, o<verwrite> / c/<ancel>: ','s');
-         if strcmpi(writefile(1),'o')
-            writefile = true;
-         elseif strcmpi(writefile(1),'c')
-            writefile = false;
-            iostat    = 0;
-         end
+          if OPT.ask
+              writefile    = input('File already exists, o<verwrite> / c/<ancel>: ','s');
+              if strcmpi(writefile(1),'o')
+                  writefile = true;
+              elseif strcmpi(writefile(1),'c')
+                  writefile = false;
+                  iostat    = 0;
+              end
+          else
+              writefile = true;
+          end
       end
 
    end

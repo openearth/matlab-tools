@@ -257,14 +257,14 @@ else strcmpi(cmd,'write');
     OPT = setproperty(OPT,varargin{4:end});
     
     tmp         = fileparts(fname);
-    
+        
     %% Get input data at corners or centers
     
     if ~isfield(OPT,'location')
         error('keyword ''location'' missing')
     end
     
-    if strcmp(OPT.location(1:3),'cen')
+    if ~isempty (OPT.location) && strcmp(OPT.location(1:3),'cen')
         
         if isstruct(varargin{3})
             G         = varargin{3};
