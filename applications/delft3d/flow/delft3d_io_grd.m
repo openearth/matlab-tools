@@ -94,6 +94,7 @@ end
    OPT.missingvalue      = NaN; % in struct
    OPT.epsg              = [];
    OPT.enclosure         = '';
+   OPT.ask               = true;
 
 %% Read
 
@@ -246,16 +247,22 @@ end
       OPT = setproperty(OPT,varargin{5:end});
       elseif ~isstruct(varargin{3})
       OPT = setproperty(OPT,varargin{3:end});
+      else
+          OPT = setproperty(OPT,varargin{4:end});
       end
 
       disp('!!!!! write function under construction')
-
-     [fileexist,action]=filecheck(fname);
+      
+      action = 'o';
+      if OPT.ask
+         [fileexist,action]=filecheck(fname);
+      end
+      
       if strcmpi(action,'o')
          mkdir(filepathstr(fname))
       end
 
-      if nargin==3
+      if isstruct(varargin{3})
       G         = varargin{3};
       else
       G.cor.x   = varargin{3};
