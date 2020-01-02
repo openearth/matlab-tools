@@ -15,12 +15,11 @@ if ismember(OPT0.zRef,{'wl','bed'})
     OPT.varName = OPT0.zRef;
     Data_zRef = EHY_getmodeldata(inputFile,stat_name,modelType,OPT);
     refLevel = Data_zRef.val;
-else % model reference level
-    if iscell(stat_name)
-        refLevel = repmat(0,1,size(stat_name,2));
-    else
-        refLevel = repmat(0,1,size(stat_name,1));
+    if any(size(refLevel)==1)
+        refLevel = reshape(refLevel,1,length(refLevel));
     end
+else % model reference level
+    refLevel = repmat(0,1,length(Data_zRef.requestedStations));
 end
 
 %% get "zcen_int"-data

@@ -1,5 +1,7 @@
 function [zcen_int,zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates(inputFile,modelType,OPT)
 
+% This function uses the order of dimensions: [times,cells,layers]
+
 gridInfo = EHY_getGridInfo(inputFile,{'no_layers','layer_model'},'mergePartitions',0);
 no_lay   = gridInfo.no_layers;
 OPT.varName = 'waterlevel';
@@ -14,7 +16,7 @@ if strcmp(modelType,'d3d')
 end
 
 %%
-cen = NaN([size(wl) no_lay]); % time,cells,layers
+cen = NaN([size(wl) no_lay]);
 int = NaN([size(wl) no_lay+1]);
 
 switch gridInfo.layer_model
@@ -26,6 +28,8 @@ switch gridInfo.layer_model
         bl      = DataBED.val;
         if strcmp(modelType,'d3d')
             bl = reshape(bl,[1 prod(modelSize(2:3))]); % from [m,n] to cells (like FM)
+        else
+            bl = reshape(bl,1,length(bl));
         end
         
         if strcmp(modelType,'dfm')
@@ -47,9 +51,7 @@ switch gridInfo.layer_model
                 error ('Wrong reconstruction interfaces d3d sigma layers')
             end
         end
-        
-        
-        
+
     case 'z-model'
         no_times = size(int,1);
         no_cells = size(int,2);
@@ -60,11 +62,6 @@ switch gridInfo.layer_model
         else
             bl = reshape(gridInfo.Zcen,no_cells,1);
         end
-        
-%        wl = wl'; % TK: By doing this the dimension of wl gets from
-%                        (no_times to no_cells) to (no_cells,no_times)
-%                        Every function comes back with (no_times,no_cells)
-%                        Also dfm sigma layers!
         
         ZKlocal  = gridInfo.Zcen_int;
         ZKlocal2 = repmat(ZKlocal,no_cells,1);
@@ -101,35 +98,6 @@ switch gridInfo.layer_model
             
             int(iT,:,:) = int_field;
         end
-
-%         
-%             for iT = 1:size(int,1)
-%                 for iC = 1:size(int,2)
-%                     if ~isnan(bl(iC)) && wl(iT,iC)>bl(iC)
-%                         
-%                         % ZTOP floats upward when waterlevel > ZTOP
-%                         ZKlocal(end)                = max([wl(iT,iC) gridInfo.Zcen_int(end)]);
-%                         
-%                         % determine ksur and kbot
-%                         ksur                        = find(ZKlocal >= wl(iT,iC),1);
-%                         kbot                        = find(ZKlocal >= bl(iC),1) - 1;
-%                         
-%                         int(iT,iC,:)             =  ZKlocal;
-%                         
-%                         % update zcen_int for surface position
-%                         if ksur < no_lay+1
-%                             int(iT,iC,ksur+1:end) = NaN;
-%                         end
-%                         
-%                         % update zcen_int for bottom position
-%                         int(iT,iC,kbot)          = ZKlocal(kbot);
-%                         if kbot > 1
-%                             zcen_int(iT,iC,1:kbot-1)  = NaN;
-%                         end
-%                     end
-%                 end
-%             end
-
 end
 
 %% vertical centers at cell center

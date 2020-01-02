@@ -116,8 +116,6 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile)
     ncFilesName = ncFilesName(~cellfun('isempty',ncFilesName));
     ncFiles = strcat(fileparts(inputFile),filesep,vertcat(ncFilesName{:}));
        
-    order = max([numel(dims) 2]):-1:1;
-    
     for iF = 1:length(ncFiles)
         if OPT.disp
             disp(['Reading and merging map model data from partitions: ' num2str(iF) '/' num2str(length(ncFiles))])
@@ -128,11 +126,11 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile)
             Data = DataPart;
         else
             if isfield(Data,'val')
-                Data.val = cat(order(facesInd),Data.val,DataPart.val);
+                Data.val = cat(facesInd,Data.val,DataPart.val);
             elseif isfield(Data,'vel_x')
-                Data.vel_x = cat(order(facesInd),Data.vel_x,DataPart.vel_x);
-                Data.vel_y = cat(order(facesInd),Data.vel_y,DataPart.vel_y);
-                Data.vel_mag = cat(order(facesInd),Data.vel_mag,DataPart.vel_mag);
+                Data.vel_x = cat(facesInd,Data.vel_x,DataPart.vel_x);
+                Data.vel_y = cat(facesInd,Data.vel_y,DataPart.vel_y);
+                Data.vel_mag = cat(facesInd,Data.vel_mag,DataPart.vel_mag);
             end
         end
     end
@@ -147,41 +145,56 @@ switch modelType
         %%  Delft3D-Flexible Mesh
         % initialise start+count and optimise if possible
         [dims,start,count] = EHY_getmodeldata_optimiseDims(dims);
-        order = numel(dims):-1:1;
         
         if ~isempty(strfind(OPT.varName,'ucx')) || ~isempty(strfind(OPT.varName,'ucy')) 
-            value_x   =  ncread(inputFile,strrep(OPT.varName,'ucy','ucx'),start,count);
-            value_y   =  ncread(inputFile,strrep(OPT.varName,'ucx','ucy'),start,count);
+            value_x   =  nc_varget(inputFile,strrep(OPT.varName,'ucy','ucx'),start-1,count);
+            value_y   =  nc_varget(inputFile,strrep(OPT.varName,'ucx','ucy'),start-1,count);
         else
-            value     =  ncread(inputFile,OPT.varName,start,count);
+            value     =  nc_varget(inputFile,OPT.varName,start-1,count);
+        end
+        
+        % initiate correct order if no_dims == 1
+        if numel(dims) == 1
+            if exist('value','var')
+                Data.val = NaN(dims.sizeOut,1);
+            elseif exist('value_x','var')
+                Data.vel_x = NaN(dims.sizeOut,1);
+                Data.vel_y = NaN(dims.sizeOut,1);
+            end
+        end
+        
+        % deal with deleted leading singleton dimensions
+        valueIndex = {dims.index};
+        while all(valueIndex{1}==1)
+            valueIndex(1) = [];
         end
         
         % put value(_x/_y) in output structure 'Data'
         if exist('value','var')
-            Data.val(dims(order).indexOut) = permute(value(dims.index),order);
+            Data.val(dims.indexOut) = value(valueIndex{:});
         elseif exist('value_x','var')
-            Data.vel_x(dims(order).indexOut) = permute(value_x(dims.index),order);
-            Data.vel_y(dims(order).indexOut) = permute(value_y(dims.index),order);
+            Data.vel_x(dims.indexOut) = value_x(valueIndex{:});
+            Data.vel_y(dims.indexOut) = value_y(valueIndex{:});
         end
         
         % If partitioned run, delete ghost cells
         [~, name] = fileparts(inputFile);
         varName = EHY_nameOnFile(inputFile,'FlowElemDomain');
-        if length(name)>=10 && all(ismember(name(end-7:end-4),'0123456789')) && nc_isvar(inputFile,varName)
+        if EHY_isPartitioned(inputFile,modelType) && nc_isvar(inputFile,varName)
             domainNr = str2num(name(end-7:end-4));
             FlowElemDomain = ncread(inputFile,varName);
             
             if isfield(Data,'val')
-                if order(facesInd) == 1
-                    Data.val(FlowElemDomain ~= domainNr,:,:) = [];
-                elseif order(facesInd) == 2
+                if facesInd == 1
+                    Data.val(FlowElemDomain ~= domainNr) = [];
+                elseif facesInd == 2
                     Data.val(:,FlowElemDomain ~= domainNr,:) = [];
                 end
             elseif isfield(Data,'vel_x')
-                if order(facesInd) == 1
-                    Data.vel_x(FlowElemDomain ~= domainNr,:,:) = [];
-                    Data.vel_y(FlowElemDomain ~= domainNr,:,:) = [];
-                elseif order(facesInd) == 2
+                if facesInd == 1
+                    Data.vel_x(FlowElemDomain ~= domainNr) = [];
+                    Data.vel_y(FlowElemDomain ~= domainNr) = [];
+                elseif facesInd == 2
                     Data.vel_x(:,FlowElemDomain ~= domainNr,:) = [];
                     Data.vel_y(:,FlowElemDomain ~= domainNr,:) = [];
                 end
@@ -242,7 +255,11 @@ switch modelType
             
         elseif ismember(OPT.varName,{'salinity' 'temperature'})
             cons_ind = strmatch(lower(OPT.varName),lower(constituents),'exact');
-            Data.val = vs_let(trim,'map-series',{time_ind},'R1',{n_ind,m_ind,layer_ind,cons_ind},'quiet');
+            if no_layers == 1
+                Data.val = vs_let(trim,'map-series',{time_ind},'R1',{n_ind,m_ind,cons_ind},'quiet');
+            else
+                Data.val = vs_let(trim,'map-series',{time_ind},'R1',{n_ind,m_ind,layer_ind,cons_ind},'quiet');
+            end
             
         elseif strcmp(OPT.varName,'SBUU') % bed load
             Data.val_x   = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,dims(sedfracInd).index},'quiet');
@@ -370,15 +387,14 @@ end
 
 %% add dimension information to Data
 % dimension information
-if strcmp(modelType,'dfm') || strcmp(modelType,'partitionedFmRun')
-    dimensionsComment = fliplr({dims.name});
-else
     dimensionsComment = {dims.name};
-end
 
 fn = char(intersect(fieldnames(Data),{'val','vel_x','val_x'}));
 while ~isempty(fn) && ndims(Data.(fn))<numel(dimensionsComment)
     dimensionsComment(end) = [];
+end
+while ~isempty(fn) && ndims(Data.(fn))>numel(dimensionsComment)
+    dimensionsComment{end+1,1} = '-';
 end
 
 % add to Data-struct

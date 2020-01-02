@@ -19,11 +19,13 @@ if nargout > 1
             infonc    = ncinfo(inputFile,OPT.varName);
             dimsNames = {infonc.Dimensions.Name};
             dimsSizes = infonc.Size;
-            for iD=1:length(dimsNames)
-                dims(iD).name       = dimsNames{iD};
-                dims(iD).size       = dimsSizes(iD);
-                dims(iD).index      = 1:dims(iD).size;
-                dims(iD).indexOut   = 1:dims(iD).size;
+            no_dims   = length(dimsNames);
+            for iD = 1:no_dims
+                ind = no_dims-iD+1;
+                dims(ind).name       = dimsNames{iD};
+                dims(ind).size       = dimsSizes(iD);
+                dims(ind).index      = 1:dimsSizes(iD);
+                dims(ind).indexOut   = 1:dimsSizes(iD);
             end
             
         case 'd3d'
@@ -128,6 +130,7 @@ if nargout > 2
         [Data,stationNrNoNan]           = EHY_getRequestedStations(inputFile,stat_name,modelType,'varName',OPT.varName);
         dims(dimsInd.stations).index    = reshape(stationNrNoNan,1,length(stationNrNoNan));
         dims(dimsInd.stations).indexOut = find(Data.exist_stat);
+        dims(dimsInd.stations).sizeOut  = length(Data.requestedStations);
     end
     
     %% Get time information from simulation and determine index of required times
@@ -178,9 +181,10 @@ if nargout > 2
         dims(dimsInd.sedfrac).indexOut = 1:size(sedfracName,2);
     end
     
-    % dims.indexOut
-    for iD=1:length(dims)
-        if isfield(dims,'indexOut')
+    %%
+    % dims.sizeOut
+    for iD = 1:length(dims)
+        if ~isfield(dims(iD),'sizeOut') || isempty(dims(iD).sizeOut)
             dims(iD).sizeOut = length(dims(iD).indexOut);
         end
     end

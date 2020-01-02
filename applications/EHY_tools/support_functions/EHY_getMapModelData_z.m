@@ -15,6 +15,9 @@ if ismember(OPT0.zRef,{'wl','bed'})
     OPT.varName = OPT0.zRef;
     Data_zRef = EHY_getMapModelData(inputFile,OPT);
     refLevel = Data_zRef.val;
+    if any(size(refLevel) == 1)
+        refLevel = reshape(refLevel,[1 numel(refLevel)]);
+    end
 else % model reference level
     refLevel = 0;
 end
@@ -80,7 +83,7 @@ end
 
 % wanted Z-coordinate
 for iZ = 1:length(OPT0.z)
-    wantedZ = refLevel + OPT0.z(iZ); % 1st dim = time, 2nd dim = stations
+    wantedZ = refLevel + OPT0.z(iZ); % 1st dim = time, 2nd dim = cells
     
     % get corresponding layer/apply interpolation
     switch OPT0.zMethod

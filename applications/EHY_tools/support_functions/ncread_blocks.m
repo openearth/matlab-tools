@@ -5,14 +5,13 @@ function values = ncread_blocks(inputFile,varName,start,count,dims)
 % it if therefore not the same as ncread without looping over blocks.
 
 no_dims     = length(dims);
-order       = no_dims:-1:1;
 timeInd     = strmatch('time',{dims(:).name});
 
 % allocate variable 'values' > also to get NaN's in e.g. non-existing stations
 if no_dims == 1
     values = NaN(dims.sizeOut,1);
 else
-    values = NaN(dims(order).sizeOut);
+    values = NaN(dims.sizeOut);
 end
 
 % check if output is char or double 
@@ -33,8 +32,8 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count s
     no_blocks    = ceil((nr_times_clip / nr_times) * (filesize / maxblocksize));
     bl_length    = ceil(nr_times_clip / no_blocks);
     
-    % assuming timeInd==length(dims)
-    if timeInd ~= length(dims)
+    % assuming timeInd == 1
+    if timeInd ~= 1
         if ~(strcmp(dims(end).name,'-') && timeInd == length(dims)-1)
             error(['timeInd is not last variable, ncread_blocks does not work correctly in that case' char(10) ...
                 'Please contact Julien.Groenenboom@deltares.nl'])
@@ -46,24 +45,22 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count s
     end
        
     % cycle over blocks
-    offset        = start(end) - 1;
+    offset        = start(1) - 1;
     for i_block = 1:no_blocks
         bl_start                 = 1 + (i_block-1) * bl_length;
         bl_stop                  = min(i_block * bl_length, nr_times_clip);
         bl_int                   = bl_stop-bl_start+1;
-        start(end)               = bl_start + offset;
-        count(end)               = bl_int;
+        start(1)                 = bl_start + offset;
+        count(1)                 = bl_int;
+        
+        values_tmp = nc_varget(inputFile,varName,start-1,count);
         if no_dims == 1
             % probably [time]          = [time]
-            values(bl_start:bl_stop,1) = ncread(inputFile,varName,start,count);
+            values(bl_start:bl_stop,1) = values_tmp;
         elseif no_dims == 2
-            values_tmp = ncread(inputFile,varName,start,count);
-            % probably [time,station]                 = [station,time]
-            values(bl_start:bl_stop,dims(1).indexOut) = permute(values_tmp(dims(1).index,:),order);
+            values(bl_start:bl_stop,dims(2).indexOut) = values_tmp(:,dims(2).index);
         elseif no_dims == 3
-            values_tmp = ncread(inputFile,varName,start,count);
-            % probably [time,station,layer]                            = [layer,station,time]
-            values(bl_start:bl_stop,dims(2).indexOut,dims(1).indexOut) = permute(values_tmp(dims(1).index,dims(2).index,:),order);
+            values(bl_start:bl_stop,dims(2).indexOut,dims(3).indexOut) = values_tmp(:,dims(2).index,dims(3).index);
         end
     end
     
@@ -71,12 +68,16 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count s
     % (works for 1D, 2D and 3D sized variable 'values')
     values = values(dims(timeInd).index,:,:);
     
-elseif all(ismember({'start','count'},who)) && isempty(timeInd)  % start and count specified, variable has not a time dimension
-    values_tmp = ncread(inputFile,varName,start,count);
-    values(dims(order).indexOut) = permute(values_tmp(dims.index),order);
+elseif all(ismember({'start','count'},who)) && isempty(timeInd)  
+    % start and count specified, variable has not a time dimension
+    values_tmp = nc_varget(inputFile,varName,start-1,count);
+    if strcmp(infonc.Datatype,'char'); values_tmp = values_tmp'; end
+    values(dims.indexOut) = values_tmp(dims.index);
     
 else
     % no start and count specified, regular ncread
-    values_tmp = ncread(inputFile,varName);
-    values(dims(order).indexOut) = permute(values_tmp(dims.index),order);
+    values_tmp = nc_varget(inputFile,varName);
+    if strcmp(infonc.Datatype,'char'); values_tmp = values_tmp'; end
+    values(dims.indexOut) = values_tmp(dims.index);
+    
 end

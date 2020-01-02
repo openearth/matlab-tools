@@ -186,7 +186,7 @@ switch modelType
         
         time_ind  = dims(timeInd).index;
         % loop over stations
-        for i_stat = 1:dims(stationsInd).sizeOut
+        for i_stat = 1:length(dims(stationsInd).index)
             stat_ind  = dims(stationsInd).index(i_stat);
             indexOut = dims(stationsInd).indexOut(i_stat);
             
@@ -454,20 +454,18 @@ else
     for iFns = 1:length(fns)
         Data.(fns{iFns})(~Data.exist_stat,:,:) = NaN;
     end
-    % station at 2nd dimension
-    fns = intersect(fieldnames(Data),{'val','vel_x','vel_y','vel_u','vel_v','locationX','locationY'});
-    for iFns = 1:length(fns)
-        Data.(fns{iFns})(:,~Data.exist_stat,:) = NaN;
+    if ~strcmp(modelType,'dfm')
+        % station at 2nd dimension
+        fns = intersect(fieldnames(Data),{'val','vel_x','vel_y','vel_u','vel_v','locationX','locationY'});
+        for iFns = 1:length(fns)
+            Data.(fns{iFns})(:,~Data.exist_stat,:) = NaN;
+        end
     end
 end
 
 %% add dimension information to Data
 % dimension information
-if strcmp(modelType,'dfm')
-    dimensionsComment = fliplr({dims.name});
-else
-    dimensionsComment = {dims.name};
-end
+dimensionsComment = {dims.name};
 
 fn = char(intersect(fieldnames(Data),{'val','vel_x','val_x'}));
 while ~isempty(fn) && ndims(Data.(fn))<numel(dimensionsComment)
@@ -476,9 +474,7 @@ end
 while ~isempty(fn) && ndims(Data.(fn))>numel(dimensionsComment)
     dimensionsComment{end+1,1} = '-';
 end
-if numel(dimensionsComment)==2 && strcmp(dimensionsComment{1},'-') && strcmp(dimensionsComment{2},'time') 
-    dimensionsComment = flip(dimensionsComment); % correct for added dimensions in case of 1D-time
-end
+
 % add to Data-struct
 dimensionsComment = sprintf('%s,',dimensionsComment{:});
 Data.dimensions = ['[' dimensionsComment(1:end-1) ']'];
