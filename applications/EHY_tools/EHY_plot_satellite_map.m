@@ -2,6 +2,7 @@ function varargout = EHY_plot_satellite_map(varargin)
 %% EHY_plot_satellite_map
 %
 % This functions plots a esri world image in your current figure
+% You may also be interested in EHY_plot_ldb.m
 %
 % Example1: EHY_plot_satellite_map
 % Example2: hSurf = EHY_plot_satellite_map
