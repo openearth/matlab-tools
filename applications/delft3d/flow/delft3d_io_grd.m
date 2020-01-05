@@ -280,7 +280,8 @@ end
       end
 
       if action=='o'
-      OK   = wlgrid(cmd,fname,G.cor.x,G.cor.y);
+      if ~isfield(G,'CoordinateSystem') G.CoordinateSystem = 'Cartesian'; end    
+      OK   = wlgrid(cmd,fname,G.cor.x,G.cor.y,G.CoordinateSystem);
       MN   = enclosure('extract',G.cor.x,G.cor.y);
       enclosure('write',strrep(fname,'grd','enc'),MN);
       else

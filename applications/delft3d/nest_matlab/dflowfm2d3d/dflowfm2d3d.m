@@ -10,14 +10,14 @@ layerCount               = kmax:-1:1; % from D-Hydro sigma (bottom to top), to D
 thick(1:kmax)            = 1/kmax;
 CoordinateSystem         = 'Spherical';
 itdate                   = datenum(num2str(mdu.time.RefDate),'yyyymmdd');
-generate_bcc             = false;      % save time
+generate_bcc             = true;      % save time
 
 %% Files
 %  dhydro
 [path_mdu,name_mdu,~] = fileparts(fileMDU);
 name_mdf              = strrep(name_mdu,'FM','D3D');
 if isempty(mdu.output.OutputDir) mdu.output.OutputDir = [path_mdu filesep 'DFM_OUTPUT_' name_mdu]; end
-fileNet   = [path_mdu filesep mdu.geometry.NetFile];
+fileNet   = 'p:\1204257-dcsmzuno\2013-2017\3D-DCSM-FM_4nm\A02b_s\DCSM-FM_4nm_grid_20191120_depth_20191120_cellInfo_net.nc';
 fileMap   = [mdu.output.OutputDir filesep name_mdu '_0000_map.nc'];
 fileExt   = [path_mdu filesep mdu.external_forcing.ExtForceFileNew];
 fileLoc   = 'p:\11203715-004-dcsm-fm\models\model_input\bnd_cond\pli\DCSM-FM_OB_all_20181108.pli';
@@ -40,44 +40,36 @@ restid    = [name_mdf '_fromDhydroMap'];
 fileRst   = [dirMDF filesep 'tri-rst.' restid];
 fileBc0   = [dirMDF filesep name_mdf '.bc0'];
 
-%% Define basic mdf file
-
-
 %% Grid
-%  read net file
-net = EHY_getGridInfo(fileNet,{'Z' 'XYcor'});
-Xcor = net.Xcor;
-Ycor = net.Ycor;
-Zcor = net.Zcor;
-net  = EHY_getGridInfo(fileMap,'XYcen');
+%  reconstruct a grid from the net file
+GRID                  = EHY_gridFromNet(fileNet);
+GRID.missingvalue     = NaN;
+GRID.CoordinateSystem = CoordinateSystem;
 
-%% Sort based on x_coordinates
-[Xcor,index] = sort(Xcor); Ycor = Ycor(index); Zcor = Zcor(index);
+%  Write Grid
+delft3d_io_grd('write',fileGrd,GRID,'ask',false);
 
-%% Create grid
-Xmin = min(Xcor); Xmax = max(Xcor); X1 = Xcor(1); index = find(Xcor ~= X1,1,'first'); dx = Xcor(index)-X1;
-Ymin = min(Ycor); Ymax = max(Ycor); Y1 = Ycor(1); index = find(Ycor ~= Y1,1,'first'); dy = Ycor(index)-Y1;
+%%  Depth values at corner points and mapping (for initial conditions etc)
+%   Initialise 
+Xcor = GRID.cor.x  ; Ycor = GRID.cor.y;
+Xcen = GRID.cend.x ; Ycen = GRID.cend.y;
+mmax = size(Xcor,1); nmax = size(Xcor,2);
+Zcor (1:mmax,1:nmax) = NaN; net_ind_grd(1:mmax,1:nmax) = NaN;net_ind_cen(1:mmax,1:nmax) = NaN;
+tol = 1e-6;
 
-mmax = round((Xmax - Xmin)/dx);
-nmax = round((Ymax - Ymin)/dy);
+%  Read from net file
+net  = EHY_getGridInfo(fileNet,{'XYcor' 'Z'});
+tmp  = EHY_getGridInfo(fileMap,{'XYcen'    }); % Temporarily, want to reconstruct this from the net file
+names = fieldnames(tmp); for i_name = 1: length(names) net.(names{i_name}) = tmp.(names{i_name}); end
 
-tol = dx/1000.;
+%  Detrmine mapping and Zcor values 
 for m = 1: mmax
     for n = 1: nmax
-        Xgrd (m,n) = X1 + (m - 1  )*dx;
-        Xcen (m,n) = X1 + (m - 1.5)*dx;
-        Ygrd (m,n) = Y1 + (n - 1  )*dy;
-        Ycen (m,n) = Y1 + (n - 1.5)*dy;
-        Zgrd (m,n)        = NaN;
-        index(m,n)        = NaN;
-        net_ind_grd(m,n)  = NaN;
-        net_ind_cen(m,n)  = NaN;
-        ind_grd           = find(abs(Xgrd(m,n) -     Xcor) < tol & abs(Ygrd(m,n) -     Ycor) < tol);
+        ind_grd           = find(abs(Xcor(m,n) - net.Xcor) < tol & abs(Ycor(m,n) - net.Ycor) < tol);
         ind_cen           = find(abs(Xcen(m,n) - net.Xcen) < tol & abs(Ycen(m,n) - net.Ycen) < tol);
         if ~isempty(ind_grd)
-            index      (m,n)  = 1;
             net_ind_grd(m,n)  = ind_grd;
-            Zgrd(m,n)         = -1.*Zcor(net_ind_grd(m,n));
+            Zcor(m,n)         = -1.*net.Zcor(net_ind_grd(m,n));
         end
         if ~isempty(ind_cen)
             net_ind_cen(m,n)  = ind_cen;
@@ -85,15 +77,8 @@ for m = 1: mmax
     end
 end
 
-%% Write to grd file
-GRID.cor.x            = Xgrd.*index;
-GRID.cor.y            = Ygrd.*index;
-GRID.missingvalue     = NaN;
-GRID.CoordinateSystem = CoordinateSystem;
-delft3d_io_grd('write',fileGrd,GRID,'ask',false);
-
-%% Depths
-delft3d_io_dep('write',fileDep,Zgrd','dummy',0,'location','cor');
+%  Write map file
+delft3d_io_dep('write',fileDep,Zcor','dummy',0,'location','cor');
 
 %% Boundary conditions (to Do, get information out of the ext file)
 ext       = dflowfm_io_extfile('read',fileExt);
@@ -103,19 +88,13 @@ Xpli      = cell2mat(pli.DATA(:,1));
 Ypli      = cell2mat(pli.DATA(:,2));
 name_pli  = pli.DATA(:,3);
 
-%  ToDo create boundary definition (d3d) from pli file
+%  Boundary definition
 %  not very elegant but will have to do for now, search for nearest pli
 %  point at n = 1, m = 1, and n = nmax
 %
-%  Read grid centre points including mirrored bnd points, also read depths (at corners) and determine depth at centres
-G    = delft3d_io_grd('read',fileGrd);
-G    = delft3d_io_dep('read',fileDep,G,'location','cor');
-
-Xcen = G.cend.x';
-Ycen = G.cend.y';
-dep  = G.cor.dep'; dep(:,end + 1) = dep(:,end); dep(end+1,:) = dep(end,:);
-mmax = size(Xcen,1); nmax = size(Xcen,2); 
-for m = 1: mmax; for n = 1: nmax; dep_cen(m,n) = mean(dep(max(1,m-1):m,max(1,n-1):n),'all'); end; end
+Zcor(:,end + 1) = Zcor(:,end); Zcor(end+1,:) = Zcor(end,:);
+mmax = size(Zcor,1); nmax = size(Zcor,2); 
+for m = 1: mmax; for n = 1: nmax; Zcen(m,n) = mean(Zcor(max(1,m-1):m,max(1,n-1):n),'all'); end; end
 
 %  List of mn coordinates ol all possible bnd points (including not active points)
 m_tmp             = mmax:-1:1;
@@ -264,7 +243,7 @@ if generate_bcc
         
         for i_pli = 1: no_pli
             % d3d
-            depth                = dep_cen(mn(i_pli,1),mn(i_pli,2));
+            depth                = Zcen(mn(i_pli,1),mn(i_pli,2));
             lev_d3d(1)           = thick(1)/2*depth;
             for k = 2: kmax; lev_d3d(k) = lev_d3d(k-1) + 0.5*(thick(k-1) + thick(k))*depth; end
             
@@ -325,8 +304,10 @@ for m = 1: mmax
     for n = 1: nmax
         if ~isnan(net_ind_cen(m,n))
             data.waterlevel  (m,n)            = wl_dhydro.val (1,net_ind_cen(m,n));
-            data.salinity    (m,n,layerCount) = sal_dhydro.val(1,net_ind_cen(m,n),:);
-            data.temperature (m,n,layerCount) = tem_dhydro.val(1,net_ind_cen(m,n),:);
+            for k = 1: kmax
+                data.salinity    (m,n,layerCount(k)) = sal_dhydro.val(1,net_ind_cen(m,n),k);
+                data.temperature (m,n,layerCount(k)) = tem_dhydro.val(1,net_ind_cen(m,n),k);
+            end
         end
     end
 end
