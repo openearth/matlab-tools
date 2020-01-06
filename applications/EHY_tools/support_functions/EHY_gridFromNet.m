@@ -17,7 +17,7 @@ end
 %% First active cell (m,n) = (2,2) (like in Delft3D-Flow
 m_act(1)   = 2;
 n_act(1)   = 2;
-nr_cell(1) = 1;
+nr_cell(1) = 1000;
 
 Xcor(m_act - 1, n_act -1) = Xnet(netElemNode(1,nr_cell)); Ycor(m_act - 1, n_act -1) = Ynet(netElemNode(1,nr_cell)); 
 Xcor(m_act    , n_act -1) = Xnet(netElemNode(2,nr_cell)); Ycor(m_act    , n_act -1) = Ynet(netElemNode(2,nr_cell));
@@ -87,9 +87,9 @@ if ~isempty(nr) && netElemNode(6,nr) ~= 0
     n_act  (end + 1) = n_now;
     nr_cell(end + 1) = nr;
     if m_act(end) == 1
-        m_act = m_act + 1;
-        Xcor      = Xcor(2:end + 1,:); Ycor      = Ycor(2:end + 1,:);
-        Xcor(1,:) = NaN              ; Ycor(1,:) = NaN;
+        m_act             = m_act + 1; m_now = m_now + 1       ;
+        Xcor(2:end + 1,:) = Xcor     ; Ycor(2:end + 1,:) = Ycor;
+        Xcor(1,:) = NaN              ; Ycor(1,:) = NaN         ;
     end
     Xcor(m_act(end) - 1, n_act(end) -1) = Xnet(netElemNode(1,nr_cell(end))); Ycor(m_act(end) - 1, n_act(end) -1) = Ynet(netElemNode(1,nr_cell(end)));
     Xcor(m_act(end) - 1, n_act(end)   ) = Xnet(netElemNode(4,nr_cell(end))); Ycor(m_act(end) - 1, n_act(end)   ) = Ynet(netElemNode(4,nr_cell(end)));
@@ -106,8 +106,8 @@ if ~isempty(nr) && netElemNode(7,nr) ~= 0
     nr_cell(end + 1) = nr;
     if n_act(end) == 1
         n_act = n_act + 1;
-        Xcor      = Xcor(:,2:end + 1); Ycor      = Ycor(:,2:end + 1);
-        Xcor(:,1) = NaN              ; Ycor(:,1) = NaN;
+        Xcor(:,2:end + 1) = Xcor ; Ycor(:,2:end + 1) = Ycor;
+        Xcor(:,1)         = NaN  ; Ycor(:,1)         = NaN;
     end
     Xcor(m_act(end) - 1, n_act(end) - 1) = Xnet(netElemNode(1,nr_cell(end))); Ycor(m_act(end) - 1, n_act(end) - 1) = Ynet(netElemNode(1,nr_cell(end)));
     Xcor(m_act(end)    , n_act(end) - 1) = Xnet(netElemNode(2,nr_cell(end))); Ycor(m_act(end)    , n_act(end) - 1) = Ynet(netElemNode(2,nr_cell(end)));
