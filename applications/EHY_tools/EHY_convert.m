@@ -634,7 +634,11 @@ end
     function [output,OPT]=EHY_convert_kml2pol(inputFile,outputFile,OPT)
         copyfile(inputFile,[tempdir 'kmlpath.kml'])
         output=kml2ldb(OPT.saveOutputFile,[tempdir 'kmlpath.kml']);
-        movefile([tempdir 'kmlpath.ldb'],outputFile);
+        if OPT.saveOutputFile
+            movefile([tempdir 'kmlpath.ldb'],outputFile);
+        else
+            delete([tempdir 'kmlpath.ldb'])
+        end
         fclose all;
         delete([tempdir 'kmlpath.kml'])
     end
