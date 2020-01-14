@@ -10,9 +10,12 @@ try
     rev1 = str2num(char(regexp(out1, 'Last Changed Rev: (\d+)', 'tokens', 'once')));
     [~,out2]=system(['svn info ' fileparts(which('EHY.m'))]);
     rev2 = str2num(char(regexp(out2, 'Last Changed Rev: (\d+)', 'tokens', 'once')));
+    pathOfThisScript = which(mfilename);
     if isempty(rev1) || isempty(rev2)
         disp('Automatic check (and update) failed. Please update the folder yourself. Location on your pc:')
         disp([fileparts(which('EHY.m')) filesep])
+    elseif ~any(ismember(lower(pathOfThisScript(1:2)),'cd'))
+        disp(['EHY_tools located on ' pathOfThisScript(1:3) '-drive are used and are therefore not automatically updated.'])
     elseif rev2<rev1
         disp('Your EHY_tools are not up-to-date.')
         disp('Status: Updating the EHY_tools folder in your OET.')

@@ -92,8 +92,11 @@ switch gridInfo.layer_model
             cellIndMinUni(cellIndMinUni==no_lay+1)=[];
             for ii = 1:length(cellIndMinUni)
                 logi = cellIndMin == cellIndMinUni(ii);
-                int_field(logi,cellIndMinUni(ii)-1) = ZKlocal(cellIndMinUni(ii)-1); % keepzlayeratbed==0
-                % int_field(logi,cellIndMinUni(ii)-1) = bl(logi); % keepzlayeratbed==1
+                if strcmp(modelType,'d3d') % || DFM keepzlayeratbed==1
+                    int_field(logi,cellIndMinUni(ii)-1) = bl(logi); % keepzlayeratbed==1
+                else
+                    int_field(logi,cellIndMinUni(ii)-1) = ZKlocal(cellIndMinUni(ii)-1); % DFM keepzlayeratbed==0
+                end
             end
             
             int(iT,:,:) = int_field;
@@ -101,9 +104,7 @@ switch gridInfo.layer_model
 end
 
 %% vertical centers at cell center
-for i_lay = 1:no_lay
-    cen(:,:,i_lay) = mean(int(:,:,[i_lay i_lay+1]),3);
-end
+cen = (int(:,:,1:end-1) + int(:,:,2:end)) ./ 2;
 
 %% cells (like FM) back to [m,n]
 if strcmp(modelType,'d3d')

@@ -45,6 +45,7 @@ OPT.layer           = 0;  % all
 OPT.m               = 0;  % all (horizontal structured grid [m,n])
 OPT.n               = 0;  % all (horizontal structured grid [m,n])
 OPT.k               = 0;  % all (vertical   d3d grid [m,n,k])
+OPT.mergePartitions = 1;  % merge output from several dfm spatial *.nc-files
 OPT.sedfracInd      = []; % sediment fraction index
 OPT.mergePartitions = 1;  % merge output from several dfm '_map.nc'-files
 OPT.disp            = 1;  % display status of getting map model data
@@ -100,9 +101,12 @@ end
 
 %% return sideview output along a pli file
 if ~isempty(OPT.pliFile)
-    Data = EHY_getMapModelData_xy(inputFile,OPT);
-    if nargout==1
+    [Data,gridInfo] = EHY_getMapModelData_xy(inputFile,OPT);
+    if nargout > 0
         varargout{1} = Data;
+    end
+    if nargout > 1
+        varargout{2} = gridInfo;
     end
     return
 end
@@ -116,7 +120,7 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile)
     ncFilesName = regexpi({ncFiles.name},['\S{' num2str(length(ncFiles(1).name)-11) '}+\d{4}_+\S{3}.nc'],'match');
     ncFilesName = ncFilesName(~cellfun('isempty',ncFilesName));
     ncFiles = strcat(fileparts(inputFile),filesep,vertcat(ncFilesName{:}));
-       
+   
     for iF = 1:length(ncFiles)
         if OPT.disp
             disp(['Reading and merging map model data from partitions: ' num2str(iF) '/' num2str(length(ncFiles))])

@@ -63,10 +63,10 @@ else
 end
 
 inputFile = strtrim(inputFile);
-if isempty(OPT.m);    OPT.m=0;              end
-if isempty(OPT.n);    OPT.n=0;              end
-if ~isnumeric(OPT.m); OPT.m=str2num(OPT.m); end
-if ~isnumeric(OPT.n); OPT.n=str2num(OPT.n); end
+if isempty(OPT.m);    OPT.m = 0;              end
+if isempty(OPT.n);    OPT.n = 0;              end
+if ~isnumeric(OPT.m); OPT.m = str2num(OPT.m); end
+if ~isnumeric(OPT.n); OPT.n = str2num(OPT.n); end
 
 %% determine type of model and type of inputFile
 modelType = EHY_getModelType(inputFile);
@@ -90,20 +90,20 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
     ncFilesName = regexpi({ncFiles.name},['\S{' num2str(length(ncFiles(1).name)-11) '}+\d{4}_+\S{3}.nc'],'match');
     ncFilesName = ncFilesName(~cellfun('isempty',ncFilesName));
     ncFiles = strcat(fileparts(inputFile),filesep,vertcat(ncFilesName{:}));
-%     if ~isempty(strfind(ncFiles{1},'_0000')); ncFiles = [ncFiles(2:end); ncFiles(1)]; end
      
-    for iF=1:length(ncFiles)
+    for iF = 1:length(ncFiles)
         if OPT.disp
             disp(['Reading and merging grid info data from partitions: ' num2str(iF) '/' num2str(length(ncFiles))])
         end
         ncFile = ncFiles{iF};
         gridInfoPart = EHY_getGridInfo(ncFile,varargin{1},'mergePartitions',0);
+            
         if iF == 1
             gridInfo = gridInfoPart;
             fn = fieldnames(gridInfoPart);
-        else
+        else            
             for iFN = 1:length(fn)
-                if any(strcmp(fn{iFN},{'face_nodes','face_nodes_x','face_nodes_y'}))
+                if any(strcmp(fn{iFN},{'edge_nodes','face_nodes','face_nodes_x','face_nodes_y'}))
                     % some partitions only contain triangles,squares, ..
                     nrRows = size(gridInfo.(fn{iFN}),1);
                     nrRowsPart = size(gridInfoPart.(fn{iFN}),1);
@@ -113,11 +113,11 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
                         gridInfoPart.(fn{iFN})(nrRowsPart+1:nrRows,:) = NaN;
                     end
                 end
-                
+
                 if any(strcmp(fn{iFN},{'face_nodes_x','face_nodes_y'}))
                     gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'face_nodes','edge_nodes'}))
-                    gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) max(max(gridInfo.(fn{iFN})))+gridInfoPart.(fn{iFN})];
+                    gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) addToAdministration+gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'Xcor','Xcen','Ycor','Ycen','Zcor','Zcen','area','grid'}))
                     gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}); gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'no_NetNode','no_NetElem'}))
@@ -127,6 +127,16 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
                 end
             end
         end
+        
+        if any(ismember(fn,{'face_nodes','edge_nodes'}))
+            tmp = ncinfo(ncFile,EHY_nameOnFile(ncFile,'mesh2d_node_x'));
+            if ~exist('addToAdministration','var')
+                addToAdministration = tmp.Size;
+            else
+                addToAdministration = addToAdministration + tmp.Size;
+            end
+        end
+        
     end
     gridInfo.inputFile = [inputFile(1:end-11) '*' inputFile(end-6:end)];
     return
@@ -143,56 +153,56 @@ switch modelType
             switch typeOfModelFile
                 
                 case 'mdFile'
-                    mdu=dflowfm_io_mdu('read',inputFile);
-                    fn=fieldnames(mdu.geometry);
-                    for iFN=1:length(fn)
+                    mdu = dflowfm_io_mdu('read',inputFile);
+                    fn = fieldnames(mdu.geometry);
+                    for iFN = 1:length(fn)
                         % make all variabels names also available in lower-case
-                        mdu.geometry.(lower(fn{iFN}))=mdu.geometry.(fn{iFN});
+                        mdu.geometry.(lower(fn{iFN})) = mdu.geometry.(fn{iFN});
                     end
                     if ismember('no_layers',wantedOutput)
-                        tmp=EHY_getGridInfo(inputFile,{'layer_model'},'disp',0);
+                        tmp = EHY_getGridInfo(inputFile,{'layer_model'},'disp',0);
                         if strcmp(tmp.layer_model,'z-model')
                             disp('''no_layers'' taken from .mdu-file (keyword kmx), but z-layer model so could be different/overwritten.')
                             disp('For actual number used, please check a model output file.')
                         end
-                        E.no_layers=mdu.geometry.kmx;
-                        if E.no_layers==0
-                            E.no_layers=1;
+                        E.no_layers = mdu.geometry.kmx;
+                        if E.no_layers == 0
+                            E.no_layers = 1;
                         end
                     end
                     if ismember('dimensions',wantedOutput)
-                        netFile=EHY_path([fileparts(inputFile) filesep mdu.geometry.netfile]);
-                        F=EHY_getGridInfo(netFile,'dimensions');
-                        fldnames=fieldnames(F);
-                        for iF=1:length(fldnames)
-                            E.(fldnames{iF})=F.(fldnames{iF});
+                        netFile = EHY_path([fileparts(inputFile) filesep mdu.geometry.netfile]);
+                        F = EHY_getGridInfo(netFile,'dimensions');
+                        fldnames = fieldnames(F);
+                        for iF = 1:length(fldnames)
+                            E.(fldnames{iF}) = F.(fldnames{iF});
                         end
                     end
                     if ismember('layer_model',wantedOutput)
-                        if mdu.geometry.layertype==1
-                            E.layer_model='sigma-model';
-                        elseif mdu.geometry.layertype==2
-                            E.layer_model='z-model';
+                        if mdu.geometry.layertype == 1
+                            E.layer_model = 'sigma-model';
+                        elseif mdu.geometry.layertype == 2
+                            E.layer_model = 'z-model';
                         end
                     end
                     if ismember('layer_perc',wantedOutput)
                         if isfield(mdu.geometry,'StretchCoef')
-                            E.layer_perc=mdu.geometry.stretchcoef;
+                            E.layer_perc = mdu.geometry.stretchcoef;
                         else
                             % assume uniform distribution
-                            lyrs=mdu.geometry.kmx;
-                            E.layer_perc=repmat(1/lyrs,lyrs,1);
+                            lyrs = mdu.geometry.kmx;
+                            E.layer_perc = repmat(1/lyrs,lyrs,1);
                         end
                     end
                     if ismember('Z',wantedOutput)
-                        tmp=EHY_getGridInfo(inputFile,{'layer_model','layer_perc'},'disp',0);
+                        tmp = EHY_getGridInfo(inputFile,{'layer_model','layer_perc'},'disp',0);
                         if strcmp(tmp.layer_model,'z-model')
                             if isfield(mdu.geometry,'zlaytop')
-                                dh=mdu.geometry.ZlayTop-mdu.geometry.ZlayBot;
-                                E.Zcen_int=mdu.geometry.ZlayBot+cumsum([0 tmp.layer_perc]/100*dh);
-                                E.Zcen_cen=E.Zcen_int(1:end-1)+diff(E.Zcen_int)/2;
+                                dh = mdu.geometry.ZlayTop-mdu.geometry.ZlayBot;
+                                E.Zcen_int = mdu.geometry.ZlayBot+cumsum([0 tmp.layer_perc]/100*dh);
+                                E.Zcen_cen = E.Zcen_int(1:end-1)+diff(E.Zcen_int)/2;
                             elseif isfield(mdu.geometry,'floorlevtoplay')
-                                %                                 E.Zcen_int=[mdu.geometry.floorlevtoplay:-mdu.geometry.dztop:mdu.geometry.dztopuniabovez ...
+                                %                                 E.Zcen_int = [mdu.geometry.floorlevtoplay:-mdu.geometry.dztop:mdu.geometry.dztopuniabovez ...
                                 %                                    <part with sigmagrowthfactor to maximum depth ...> ]
                                 % to be correctly implemented
                             end
@@ -207,7 +217,7 @@ switch modelType
                         if ~isempty(ncVarInd)
                             E.no_layers = infonc.Dimensions(ncVarInd).Length;
                         else
-                            E.no_layers=1;
+                            E.no_layers = 1;
                         end
                     end
                     if ismember('XYcor',wantedOutput)
@@ -237,7 +247,7 @@ switch modelType
                     if ismember('Zcen',wantedOutput) || ismember('Z',wantedOutput) % top-view information
                         if strcmp(typeOfModelFileDetail,'his_nc') % his file
                             if nc_isvar(inputFile,'bedlevel')
-                                E.Zcen=ncread(inputFile,'bedlevel')';
+                                E.Zcen = ncread(inputFile,'bedlevel')';
                             elseif nc_isvar(inputFile,'waterlevel') && nc_isvar(inputFile,'Waterdepth')
                                 wl     = ncread(inputFile,'waterlevel',[1 1],[Inf 1]);
                                 wd     = ncread(inputFile,'Waterdepth',[1 1],[Inf 1]);
@@ -260,7 +270,7 @@ switch modelType
                             E.Zcor = ncread(inputFile,varName);
                             try % depth at center not always available
                                 varName = EHY_nameOnFile(inputFile,'mesh2d_flowelem_bl');
-                                E.Zcen=ncread(inputFile,varName);
+                                E.Zcen = ncread(inputFile,varName);
                             end
                         end
                     end
@@ -306,7 +316,7 @@ switch modelType
                             end
                             if ~isfield(E,'Zcen_cen')
                                 try % try to get this info from mdFile
-                                    mdFile=EHY_getMdFile(inputFile);
+                                    mdFile = EHY_getMdFile(inputFile);
                                     tmp = EHY_getGridInfo(mdFile,'Z','disp',0);
                                     E.Zcen_int = tmp.Zcen_int;
                                     E.Zcen_cen = tmp.Zcen_cen;
@@ -314,37 +324,37 @@ switch modelType
                             end
                         elseif strcmp(typeOfModelFileDetail,'map_nc') || strcmp(typeOfModelFileDetail,'net_nc') % map/nc file
                             if nc_isvar(inputFile,'mesh2d_layer_z') % z-layer info
-                                E.Zcen_cen=ncread(inputFile,'mesh2d_layer_z')';
-                                E.Zcen_int=ncread(inputFile,'mesh2d_interface_z')';
+                                E.Zcen_cen = ncread(inputFile,'mesh2d_layer_z')';
+                                E.Zcen_int = ncread(inputFile,'mesh2d_interface_z')';
                             elseif nc_isvar(inputFile,'mesh2d_layer_sigma')
-                                perc=ncread(inputFile,'mesh2d_interface_sigma');
-                                bl=ncread(inputFile,'mesh2d_flowelem_bl');
-                                E.Zcen_int=-repmat(bl,1,length(perc)).*repmat(perc',length(bl),1);
-                                E.Zcen_cen=(E.Zcen_int (:,2:end)+E.Zcen_int(:,1:end-1))/2;
+                                perc = ncread(inputFile,'mesh2d_interface_sigma');
+                                bl = ncread(inputFile,'mesh2d_flowelem_bl');
+                                E.Zcen_int = -repmat(bl,1,length(perc)).*repmat(perc',length(bl),1);
+                                E.Zcen_cen = (E.Zcen_int (:,2:end)+E.Zcen_int(:,1:end-1))/2;
                             elseif nc_isvar(inputFile,'LayCoord_cc')
-                                E.Zcen_cen=ncread(inputFile,'LayCoord_cc');
-                                E.Zcen_int=ncread(inputFile,'LayCoord_w');
+                                E.Zcen_cen = ncread(inputFile,'LayCoord_cc');
+                                E.Zcen_int = ncread(inputFile,'LayCoord_w');
                             end
                             if isfield(E,'Zcen_int')
-                                E.thickness=diff(E.Zcen_int,[],2);
+                                E.thickness = diff(E.Zcen_int,[],2);
                             end
                         end
                     end
                     if ismember('layer_model',wantedOutput)
                         tmp = EHY_getGridInfo(inputFile,'no_layers','disp',0,'mergePartitions',0);
-                        if tmp.no_layers==1
-                            E.layer_model='-';
+                        if tmp.no_layers == 1
+                            E.layer_model = '-';
                         else
                             if nc_isvar(inputFile,'mesh2d_layer_z') % _map.nc
-                                E.layer_model='z-model';
+                                E.layer_model = 'z-model';
                             elseif nc_isvar(inputFile,'mesh2d_layer_sigma') % _map.nc
-                                E.layer_model='sigma-model';
+                                E.layer_model = 'sigma-model';
                             else
                                 % work-around1: try to get this info from mdFile
-                                mdFile=EHY_getMdFile(inputFile);
+                                mdFile = EHY_getMdFile(inputFile);
                                 if ~isempty(mdFile)
-                                    gridInfo=EHY_getGridInfo(mdFile,'layer_model');
-                                    E.layer_model=gridInfo.layer_model;
+                                    gridInfo = EHY_getGridInfo(mdFile,'layer_model');
+                                    E.layer_model = gridInfo.layer_model;
                                 end
                                 % word-around2: try to retrieve layer_model
                                 % from z coordinate information (first 2 stations, first time step)
@@ -367,7 +377,7 @@ switch modelType
                             E.layer_perc = 1.0;
                         else
                             if nc_isvar(inputFile,'mesh2d_layer_sigma')
-                                E.layer_perc=diff(ncread(inputFile,'mesh2d_interface_sigma'));
+                                E.layer_perc = diff(ncread(inputFile,'mesh2d_interface_sigma'));
                             elseif nc_isvar(inputFile,'zcoordinate_w') && strcmp(layer_model,'sigma-model')
                                 % reconstruct thickness based upon z-coordinates first station, first timestep
                                 % for sigma-models only
@@ -391,11 +401,11 @@ switch modelType
                                 end
                                 
                             else % try to get this info from mdFile
-                                mdFile=EHY_getMdFile(inputFile);
+                                mdFile = EHY_getMdFile(inputFile);
                                 if ~isempty(mdFile)
-                                    mdFile=EHY_getMdFile(inputFile);
-                                    gridInfo=EHY_getGridInfo(mdFile,'layer_perc','disp',0);
-                                    E.layer_perc=gridInfo.layer_perc;
+                                    mdFile = EHY_getMdFile(inputFile);
+                                    gridInfo = EHY_getGridInfo(mdFile,'layer_perc','disp',0);
+                                    E.layer_perc = gridInfo.layer_perc;
                                 else
                                     % Could not retrieve layer info, set to NaN
                                     E.layer_perc(1:no_layers) = NaN;
@@ -405,7 +415,7 @@ switch modelType
                     end
                     
                     if ismember('face_nodes',wantedOutput)
-                        E.face_nodes=ncread(inputFile,'mesh2d_face_nodes');
+                        E.face_nodes = ncread(inputFile,'mesh2d_face_nodes');
                     end
                     if ismember('face_nodes_xy',wantedOutput)
                         varName = EHY_nameOnFile(inputFile,'mesh2d_face_x_bnd');
@@ -420,7 +430,7 @@ switch modelType
                     if ismember('edge_nodes',wantedOutput)
                         varName = EHY_nameOnFile(inputFile,'mesh2d_edge_nodes');
                         if nc_isvar(inputFile,varName)
-                            E.edge_nodes=ncread(inputFile,varName);
+                            E.edge_nodes = ncread(inputFile,varName);
                         end
                     end
                                         
@@ -463,46 +473,46 @@ switch modelType
                     end
                     
                     % If partitioned run, delete ghost cells
-                    [~, name]=fileparts(inputFile);
+                    [~, name] = fileparts(inputFile);
                     varName = EHY_nameOnFile(inputFile,'FlowElemDomain');
                     if EHY_isPartitioned(inputFile,modelType) && nc_isvar(inputFile,varName)
                         domainNr = str2num(name(end-7:end-4));
                         FlowElemDomain = ncread(inputFile,varName);
 
                         % FlowElemGlobal(ghostCellsCenter)
-                        ghostCellsCenter=FlowElemDomain~=domainNr;
+                        ghostCellsCenter = FlowElemDomain ~= domainNr;
                         % to be implemenetd for ghostCellsCorner
-                        %                         face_nodes=ncread(inputFile,'mesh2d_face_nodes')';
-                        %                         ghostCellsCorner=unique(face_nodes(ghostCellsCenter,:));
+                        %                         face_nodes = ncread(inputFile,'mesh2d_face_nodes')';
+                        %                         ghostCellsCorner = unique(face_nodes(ghostCellsCenter,:));
                         %                         % delete ghostCellsCorner
                         %                         if ismember('XYcor',wantedOutput)
-                        %                             E.Xcor(ghostCellsCorner)=[];
-                        %                             E.Ycor(ghostCellsCorner)=[];
+                        %                             E.Xcor(ghostCellsCorner) = [];
+                        %                             E.Ycor(ghostCellsCorner) = [];
                         %                         end
                         
                         % delete ghostCellsCenter
                         if ismember('face_nodes',wantedOutput)
-                            E.face_nodes(:,ghostCellsCenter)=[];
+                            E.face_nodes(:,ghostCellsCenter) = [];
                         end
                         if ismember('face_nodes_xy',wantedOutput)
-                            E.face_nodes_x(:,ghostCellsCenter)=[];
-                            E.face_nodes_y(:,ghostCellsCenter)=[];
+                            E.face_nodes_x(:,ghostCellsCenter) = [];
+                            E.face_nodes_y(:,ghostCellsCenter) = [];
                         end
                         if ismember('XYcen',wantedOutput)
-                            E.Xcen(ghostCellsCenter)=[];
-                            E.Ycen(ghostCellsCenter)=[];
+                            E.Xcen(ghostCellsCenter) = [];
+                            E.Ycen(ghostCellsCenter) = [];
                         end
                         if isfield(E,'no_NetElem')
-                            E.no_NetElem=sum(FlowElemDomain==domainNr);
+                            E.no_NetElem = sum(FlowElemDomain == domainNr);
                         end
                         if isfield(E,'no_NetNode')
                             % warning: Number of NetNodes is prob. too large due to flowlinks in ghostcells
                         end
                         if isfield(E,'Zcen')
-                            E.Zcen(ghostCellsCenter)=[];
+                            E.Zcen(ghostCellsCenter) = [];
                         end
                         if isfield(E,'area')
-                            E.area(ghostCellsCenter)=[];
+                            E.area(ghostCellsCenter) = [];
                         end
                     end
                     
@@ -518,7 +528,7 @@ switch modelType
                             x = ncread(inputFile,'longitude');
                             y = ncread(inputFile,'latitude');
                         end
-                        if any(size(x)==1)
+                        if any(size(x) == 1)
                             xsize = numel(x); ysize = numel(y);
                             y = repmat(reshape(y,numel(y),1),1,xsize);
                             x = repmat(reshape(x,1,numel(x)),ysize,1);
@@ -540,47 +550,47 @@ switch modelType
         switch typeOfModelFile
             
             case 'mdFile'
-                mdf=delft3d_io_mdf('read',inputFile);
+                mdf = delft3d_io_mdf('read',inputFile);
                 
                 if ismember('no_layers',wantedOutput)
-                    E.no_layers=mdf.keywords.mnkmax(3);
+                    E.no_layers = mdf.keywords.mnkmax(3);
                 end
                 if ismember('dimensions',wantedOutput)
-                    E.MNKmax=mdf.keywords.mnkmax;
+                    E.MNKmax = mdf.keywords.mnkmax;
                 end
                 if ismember('layer_model',wantedOutput)
                     if isfield(mdf.keywords,'zmodel') && strcmpi(mdf.keywords.zmodel,'y')
-                        E.layer_model='z-model';
+                        E.layer_model = 'z-model';
                     else
-                        E.layer_model='sigma-model';
+                        E.layer_model = 'sigma-model';
                     end
                 end
                 if ismember('layer_perc',wantedOutput)
-                    E.layer_perc=mdf.keywords.thick;
+                    E.layer_perc = mdf.keywords.thick;
                 end
                 if ismember('Z',wantedOutput)
-                    tmp=EHY_getGridInfo(inputFile,{'layer_model','layer_perc'},'disp',0);
+                    tmp = EHY_getGridInfo(inputFile,{'layer_model','layer_perc'},'disp',0);
                     if strcmp(tmp.layer_model,'z-model')
-                        dh=mdf.keywords.ztop-mdf.keywords.zbot;
-                        E.Zcen_int=mdf.keywords.zbot+cumsum([0 tmp.layer_perc]/100*dh);
-                        E.Zcen_cen=E.Zcen_int(1:end-1)+diff(E.Zcen_int)/2;
+                        dh = mdf.keywords.ztop-mdf.keywords.zbot;
+                        E.Zcen_int = mdf.keywords.zbot+cumsum([0 tmp.layer_perc]/100*dh);
+                        E.Zcen_cen = E.Zcen_int(1:end-1)+diff(E.Zcen_int)/2;
                     end
                 end
                 
             case {'grid','network'}
                 if ismember('XY',wantedOutput)
                     if strcmp(ext,'.grd')
-                        grd=delft3d_io_grd('read',inputFile);
-                        E.mmax=grd.mmax;
-                        E.nmax=grd.nmax;
-                        E.xcor=grd.cor.x;
-                        E.ycor=grd.cor.y;
-                        E.xcen=grd.cen.x;
-                        E.ycen=grd.cen.y;
-                        E.xu=grd.u.x;
-                        E.yu=grd.u.y;
-                        E.xv=grd.v.x;
-                        E.yv=grd.v.y;
+                        grd = delft3d_io_grd('read',inputFile);
+                        E.mmax = grd.mmax;
+                        E.nmax = grd.nmax;
+                        E.xcor = grd.cor.x;
+                        E.ycor = grd.cor.y;
+                        E.xcen = grd.cen.x;
+                        E.ycen = grd.cen.y;
+                        E.xu = grd.u.x;
+                        E.yu = grd.u.y;
+                        E.xv = grd.v.x;
+                        E.yv = grd.v.y;
                     end
                 end
                 
@@ -593,13 +603,13 @@ switch modelType
                 
                 if ~isempty(strfind(name,'trih-'))
                     % TRIH
-                    trih=vs_use(inputFile,'quiet');
+                    trih = vs_use(inputFile,'quiet');
                     if ismember('no_layers',wantedOutput)
-                        E.no_layers=vs_get(trih,'his-const',{1},'KMAX','quiet');
+                        E.no_layers = vs_get(trih,'his-const',{1},'KMAX','quiet');
                     end
                     
                     if ismember('dimensions',wantedOutput)
-                        E.MNKmax=[vs_get(trih,'his-const',{1},'MMAX','quiet') ...
+                        E.MNKmax = [vs_get(trih,'his-const',{1},'MMAX','quiet') ...
                             vs_get(trih,'his-const',{1},'NMAX','quiet') ...
                             vs_get(trih,'his-const',{1},'KMAX','quiet')];
                     end
@@ -626,14 +636,14 @@ switch modelType
                     
                 elseif ~isempty(strfind(name,'trim-'))
                     % TRIM
-                    trim=vs_use(inputFile,'quiet');
+                    trim = vs_use(inputFile,'quiet');
                     
                     if ismember('no_layers',wantedOutput)
-                        E.no_layers=vs_let(trim, 'map-const' ,'KMAX','quiet');
+                        E.no_layers = vs_let(trim, 'map-const' ,'KMAX','quiet');
                     end
                     
                     if ismember('dimensions',wantedOutput)
-                        E.MNKmax=[vs_get(trim,'map-const',{1},'MMAX','quiet') ...
+                        E.MNKmax = [vs_get(trim,'map-const',{1},'MMAX','quiet') ...
                             vs_get(trim,'map-const',{1},'NMAX','quiet') ...
                             vs_get(trim,'map-const',{1},'KMAX','quiet')];
                     end
@@ -659,11 +669,11 @@ switch modelType
                     end
                     
                     if ismember('layer_model', wantedOutput)
-                        E.layer_model=lower(strtrim(squeeze(vs_let(trim, 'map-const' ,'LAYER_MODEL','quiet'))'));
+                        E.layer_model = lower(strtrim(squeeze(vs_let(trim, 'map-const' ,'LAYER_MODEL','quiet'))'));
                     end
                     
                     if ismember('Z', wantedOutput)
-                        tmp=EHY_getGridInfo(inputFile,{'layer_model'},'disp',0);
+                        tmp = EHY_getGridInfo(inputFile,{'layer_model'},'disp',0);
                         if strcmp(tmp.layer_model,'z-model')
                             E.Zcen = G.cen.dep;
                             E.Zcen_int = vs_let(trim,'map-const','ZK','quiet');
@@ -695,32 +705,32 @@ switch modelType
         switch typeOfModelFile
             
             case 'mdFile'
-                siminp=readsiminp(pathstr,[name ext]);
-                siminp.File=lower(siminp.File);
+                siminp = readsiminp(pathstr,[name ext]);
+                siminp.File = lower(siminp.File);
                 if ismember('no_layers',wantedOutput)
-                    lineInd=find(~cellfun(@isempty,strfind(siminp.File,'kmax')));
-                    line=regexp(siminp.File(lineInd),'\s+','split');
-                    lineInd2=find(~cellfun(@isempty,strfind(line{1,1},'kmax')));
-                    E.no_layers=str2num(line{1,1}{lineInd2+1});
+                    lineInd = find(~cellfun(@isempty,strfind(siminp.File,'kmax')));
+                    line = regexp(siminp.File(lineInd),'\s+','split');
+                    lineInd2 = find(~cellfun(@isempty,strfind(line{1,1},'kmax')));
+                    E.no_layers = str2num(line{1,1}{lineInd2+1});
                 end
                 if ismember('dimensions',wantedOutput)
-                    keywords={'mmax','nmax','kmax'};
-                    for iK=1:length(keywords)
-                        lineInd=find(~cellfun(@isempty,strfind(siminp.File,keywords{iK})));
-                        line=regexp(siminp.File(lineInd),'\s+','split');
-                        lineInd2=find(~cellfun(@isempty,strfind(line{1,1},keywords{iK})));
-                        E.MNKmax(1,iK)=str2num(line{1,1}{lineInd2+1});
+                    keywords = {'mmax','nmax','kmax'};
+                    for iK = 1:length(keywords)
+                        lineInd = find(~cellfun(@isempty,strfind(siminp.File,keywords{iK})));
+                        line = regexp(siminp.File(lineInd),'\s+','split');
+                        lineInd2 = find(~cellfun(@isempty,strfind(line{1,1},keywords{iK})));
+                        E.MNKmax(1,iK) = str2num(line{1,1}{lineInd2+1});
                     end
                 end
             case 'outputfile'
                 sds  = qpfopen(inputFile);
-                dimen= waqua('readsds',sds,[],'MESH_IDIMEN');
+                dimen = waqua('readsds',sds,[],'MESH_IDIMEN');
                 kmax = dimen(18);
                 if ismember('no_layers',wantedOutput)
-                    E.no_layers   = kmax;
+                    E.no_layers = kmax;
                 end
                 if ismember('dimensions',wantedOutput)
-                    E.MNKmax=[dimen(2) dimen(3) kmax];
+                    E.MNKmax = [dimen(2) dimen(3) kmax];
                 end
                 if ismember('layer_model', wantedOutput)
                     E.layer_model = 'sigma-model';
@@ -845,11 +855,11 @@ if ismember(modelType,{'d3d','delwaq'}) && ismember(typeOfModelFileDetail,{'trim
     if strcmp(modelType,'d3d') % not needed for delwaq
         vars = intersect(fieldnames(E),{'Xcor','Ycor','Xcen','Ycen','Zcen'});
         for iV = 1:length(vars)
-            if all(OPT.m==0)
-                E.(vars{iV})(end+1,:)=NaN;
+            if all(OPT.m == 0)
+                E.(vars{iV})(end+1,:) = NaN;
             end
-            if all(OPT.n==0)
-                E.(vars{iV})(:,end+1)=NaN;
+            if all(OPT.n == 0)
+                E.(vars{iV})(:,end+1) = NaN;
             end
         end
     end
@@ -868,8 +878,8 @@ end
 if ~exist('E','var') && OPT.disp
     disp('Could not find any of this data in the provided file');
 end
-E.inputFile=inputFile;
-gridInfo=E;
+E.inputFile = inputFile;
+gridInfo = E;
 
 end
 
@@ -884,7 +894,7 @@ for iN = 1:size(X,1)
     XX = [XX; X(iN,:)'; NaN]; YY = [YY; Y(iN,:)'; NaN];
 end
 nanInd = find(isnan(XX));
-nanNanInd = find(diff(nanInd)==1);
+nanNanInd = find(diff(nanInd) == 1);
 XX(nanInd(nanNanInd)) = [];
 YY(nanInd(nanNanInd)) = [];
 grid(:,1) = XX;

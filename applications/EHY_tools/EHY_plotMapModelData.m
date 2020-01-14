@@ -24,6 +24,7 @@ OPT.linestyle = 'none'; % other options: '-'
 OPT.edgecolor = 'k';
 OPT.facecolor = 'flat';
 OPT.linewidth = 0.5;
+OPT.t = []; % time index, needed for plotting data along xy-trajectory
 
 % if pairs were given as input OPT
 if ~isempty(varargin)
@@ -35,7 +36,8 @@ if ~isempty(varargin)
 end
 
 if isempty(OPT.linestyle); OPT.linestyle='none'; end
-
+if ~isnumeric(OPT.t); OPT.t = str2num(OPT.t); end
+    
 %% check input
 if ~all([exist('gridInfo','var') exist('zData','var')])
     % no input, start interactive script
@@ -70,7 +72,32 @@ if strcmp(modelType,'dfm')
 end
 
 %% check for structured grids (modelType = 'd3d')
-if strcmp(modelType,'d3d')
+if strcmp(modelType,'d3d') 
+    if ndims(gridInfo.Ycor) - ndims(gridInfo.Xcor) == 1
+        % probably data along xy-trajectory 
+        if isempty(OPT.t)
+            error('You need to provide variable ''t'' to plot data along xy-trajectory');
+        else
+            % -> [cells,layers]
+            gridInfo.Xcor = reshape(gridInfo.Xcor,length(gridInfo.Xcor),1);
+            gridInfo.Xcor = repmat(gridInfo.Xcor,1,size(gridInfo.Ycor,3));
+            gridInfo.Ycor = squeeze(gridInfo.Ycor(OPT.t,:,:));
+            
+            % add dummy values for plotting with pcolor
+            for ii = 1:size(gridInfo.Ycor,1)
+                gridInfo2.Xcor(2*ii-1,:) = gridInfo.Xcor(ii,:);
+                gridInfo2.Xcor(2*ii  ,:) = gridInfo.Xcor(ii+1,:);
+                gridInfo2.Ycor(2*ii-1,:) = gridInfo.Ycor(ii,:);
+                gridInfo2.Ycor(2*ii  ,:) = gridInfo.Ycor(ii,:);
+                zData2(2*ii-1,:) = zData(ii,:);
+                zData2(2*ii  ,:) = zData(ii,:);
+            end
+            zData2(end,:) = [];
+            gridInfo = gridInfo2;
+            zData = zData2;
+        end
+    end
+    
     if ~all(size(gridInfo.Xcor)==size(gridInfo.Ycor))
         error('size(gridInfo.Xcor) and size(gridInfo.Ycor) should be the same')
     end
@@ -80,7 +107,7 @@ if strcmp(modelType,'d3d')
         zData(end+1,:) = NaN;
         zData(:,end+1) = NaN;
     elseif all(size(gridInfo.Xcor)-size(zData) == [0 0])
-        % this is needer for info in cell corners, like griddata_netcdf
+        % this is needed for info in cell corners, like griddata_netcdf
         % for plotting with pcolor > apply center2corner and
         % add dummy row and column in zData
         gridInfo.Xcor = center2corner(gridInfo.Xcor);

@@ -48,7 +48,7 @@ end
 option=listdlg('PromptString','What kind of data do you want to load?','SelectionMode','single','ListString',...
     varAndDescr,'ListSize',[500 600]);
 if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end
-OPT.varName = variables{option};          
+OPT.varName = variables{option};
 
 [OPT.varName,varNameInput] = EHY_nameOnFile(outputfile,OPT.varName);
 if strcmp(OPT.varName,'noMatchFound')
@@ -88,13 +88,13 @@ if ~isempty(dimsInd.time)
 end
 
 if ~isempty(dimsInd.layers)
-    gridInfo = EHY_getGridInfo(outputfile,{'no_layers'},'gridFile',gridFile);
+    gridInfo = EHY_getGridInfo(outputfile,{'no_layers'},'gridFile',gridFile,'disp',0);
     if gridInfo.no_layers>1
-        optionTxt = {'All 3D-data','From 1 specific model layer','At a certain reference level'};
+        optionTxt = {'All 3D-data','From 1 specific model layer','At a certain reference level (horizontal slice)','Data along transect (vertical slice)'};
         typeOfModelFile = EHY_getTypeOfModelFile(outputfile);
         if strcmp(typeOfModelFile,'nc_griddata'); optionTxt(end)=[]; end
         option = listdlg('PromptString',{'Do you want to load:'},'SelectionMode','single','ListString',...
-            optionTxt,'ListSize',[300 50]);
+            optionTxt,'ListSize',[300 100]);
         if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return;
         elseif option == 1 % all 3D-data
             OPT.layer = 0;
@@ -111,11 +111,14 @@ if ~isempty(dimsInd.layers)
                 OPT.zRef = 'bed';
             end
             OPT.z = cell2mat(inputdlg('height (m) from ref. level (pos. up)','',1,{'0'}));
+        elseif option == 4 % Along transect (vertical slice)
+            OPT.mergePartitions = 1;
+            OPT.pliFile = makePliFileForSlice(outputfile,OPT);
         end
     end
 end
 
-if ~isempty(dimsInd.m)
+if ~isempty(dimsInd.m) && ~(exist('OPT','var') && isfield(OPT,'pliFile'))
     gridInfo = EHY_getGridInfo(outputfile,{'dimensions'},'gridFile',gridFile);
     option = inputdlg({['Want to specifiy a certain [m,n]-domain? (Default: 0 [all data])' newline newline 'm-range [1:' num2str(gridInfo.MNKmax(1)) ']'],...
         ['n-range [1:' num2str(gridInfo.MNKmax(2)) ']']},'Specify domain',1,{'0','0'});
@@ -128,8 +131,7 @@ if ~isempty(dimsInd.m)
 end
 
 % mergePartitions
-if strcmp(modelType,'dfm')
-    if EHY_isPartitioned(outputfile,modelType)
+if strcmp(modelType,'dfm') && EHY_isPartitioned(outputfile,modelType) && ~(exist('OPT','var') && isfield(OPT,'pliFile'))
         option = listdlg('PromptString','Do you want to merge the info from different partitions?','SelectionMode','single','ListString',...
             {'Yes','No'},'ListSize',[300 100]);
         if option == 1
@@ -137,7 +139,6 @@ if strcmp(modelType,'dfm')
         else
             OPT.mergePartitions = 0;
         end
-    end
 end
 
 %%
@@ -154,31 +155,43 @@ if exist('OPT','var')
 end
 
 disp([newline 'Note that next time you want to get this data, you can also use:'])
-disp(['<strong>Data = EHY_getMapModelData(''' outputfile '''' extraText ');</strong>' ])
+if isfield(OPT,'pliFile')
+    disp(['<strong>[Data,gridInfo] = EHY_getMapModelData(''' outputfile '''' extraText ');</strong>' ])
+else
+    disp(['<strong>Data = EHY_getMapModelData(''' outputfile '''' extraText ');</strong>' ])
+end
 
 disp('start retrieving the data...')
 if ~exist('OPT','var') || isempty(fieldnames(OPT))
     Data = EHY_getMapModelData(outputfile);
 else
-    Data = EHY_getMapModelData(outputfile,OPT);
+    if isfield(OPT,'pliFile')
+        [Data,gridInfo] = EHY_getMapModelData(outputfile,OPT);
+    else
+        Data = EHY_getMapModelData(outputfile,OPT);
+    end
 end
 
 % load and add grid information
 % (forward this example line to EHY_plotMapModelData if needed)
-if strcmp(modelType,'dfm')
-    if isfield(OPT,'mergePartitions') && OPT.mergePartitions==0
-        EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''face_nodes_xy''},''mergePartitions'',0);'];
-    else
-        EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''face_nodes_xy''});'];
-    end
-elseif strcmp(modelType,'d3d')
-    EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''XYcor''},''m'',OPT.m,''n'',OPT.n);'];
-elseif strcmp(modelType,'delwaq')
-    [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(gridFile);
-    if strcmp(typeOfModelFileDetail,'nc')
-        EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' gridFile ''',{''face_nodes_xy''});'];
-    elseif ismember(typeOfModelFileDetail,{'lga','cco'})
-        EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' gridFile ''',{''XYcor''},''m'',OPT.m,''n'',OPT.n);'];
+if exist('OPT','var') && isfield(OPT,'pliFile')
+    EHY_getGridInfo_line = '';
+else
+    if strcmp(modelType,'dfm')
+        if isfield(OPT,'mergePartitions') && OPT.mergePartitions==0
+            EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''face_nodes_xy''},''mergePartitions'',0);'];
+        else
+            EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''face_nodes_xy''});'];
+        end
+    elseif strcmp(modelType,'d3d')
+        EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''XYcor''},''m'',OPT.m,''n'',OPT.n);'];
+    elseif strcmp(modelType,'delwaq')
+        [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(gridFile);
+        if strcmp(typeOfModelFileDetail,'nc')
+            EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' gridFile ''',{''face_nodes_xy''});'];
+        elseif ismember(typeOfModelFileDetail,{'lga','cco'})
+            EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' gridFile ''',{''XYcor''},''m'',OPT.m,''n'',OPT.n);'];
+        end
     end
 end
 eval(EHY_getGridInfo_line);
@@ -196,12 +209,41 @@ disp('Finished retrieving the data!')
 assignin('base','Data',Data);
 open Data
 disp('Variable ''Data'' created by EHY_getMapModelData_interactive')
+if isempty(EHY_getGridInfo_line)
+    assignin('base','gridInfo',gridInfo);
+    disp('Variable ''gridInfo'' created by EHY_getMapModelData_interactive')
+end
 
 %% output
 if nargout > 0
     Data.OPT.outputfile = outputfile;
     varargout{1} = Data;
     if nargout > 1
-         varargout{2} = EHY_getGridInfo_line;
+        varargout{2} = EHY_getGridInfo_line;
     end
+end
+end
+
+function pliFile = makePliFileForSlice(outputfile,OPT)
+figure('units','normalized','outerposition',[0 0 1 1])
+title('Click traject using left-mouse-clicks. To stop, press any other button.')
+hold on
+gridInfo = EHY_getGridInfo(outputfile,'grid','mergePartitions',OPT.mergePartitions);
+plot(gridInfo.grid(:,1),gridInfo.grid(:,2))
+traject = [];
+loop = 1;
+while loop == 1
+    [x,y,button] = ginput(1);
+    if button == 1 % left-mouse-click
+        traject = [traject; x y];
+        plot(traject(:,1),traject(:,2),'-ob','linewidth',1)
+    else
+        loop = 0;
+    end
+end
+close
+disp('Save traject as ... ');
+[filename, pathname] = uiputfile('*.pli','Save traject as ... ');
+pliFile = [pathname filename];
+landboundary('write',pliFile,traject)
 end

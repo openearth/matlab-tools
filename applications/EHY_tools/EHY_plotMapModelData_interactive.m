@@ -22,8 +22,10 @@ else
 end
 
 disp([char(10) 'Note that the example MATLAB-line to get the variable ''Data'' is a few lines above ^. '])
-disp([char(10) 'Note that next time you want to plot this data, you can also use:'])
-disp(['<strong>' EHY_getGridInfo_line '</strong>'])
+if ~isempty(EHY_getGridInfo_line)
+    disp([char(10) 'Note that next time you want to plot this data, you can also use:'])
+    disp(['<strong>' EHY_getGridInfo_line '</strong>'])
+end
 
 % if velocity was selected
 if isfield(Data,'vel_mag')
@@ -32,13 +34,18 @@ else
     if isempty(plotInd)
         disp('<strong>EHY_plotMapModelData(gridInfo,Data.val);</strong>')
     else
-        disp(['<strong>EHY_plotMapModelData(gridInfo,Data.val(' num2str(plotInd(1)) repmat(',:',1,ndims(Data.val)-1) '));</strong>' ])
+        if isempty(EHY_getGridInfo_line) % data along xy-trajectory
+            disp(['<strong>t = ' num2str(plotInd(1)) ';</strong>' ])
+            disp(['<strong>EHY_plotMapModelData(gridInfo,Data.val(t' repmat(',:',1,ndims(Data.val)-1) '),''t'',t);</strong>' ])
+        else
+            disp(['<strong>EHY_plotMapModelData(gridInfo,Data.val(' num2str(plotInd(1)) repmat(',:',1,ndims(Data.val)-1) '));</strong>' ])
+        end
     end
 end
 
 disp('start plotting the top-view data...')
 figure
-for iPI=1:max([1 length(plotInd)])
+for iPI = 1:max([1 length(plotInd)])
     
     if ~isempty(plotInd)
         iT = plotInd(iPI);
@@ -48,13 +55,17 @@ for iPI=1:max([1 length(plotInd)])
         if isfield(Data,'vel_mag')
             EHY_plotMapModelData(gridInfo,Data.vel_mag(iT,:,:,:))
         else
-            EHY_plotMapModelData(gridInfo,Data.val(iT,:,:,:))
+            if isempty(EHY_getGridInfo_line) % data along xy-trajectory
+                EHY_plotMapModelData(gridInfo,Data.val(iT,:,:,:),'t',iT)
+            else
+                EHY_plotMapModelData(gridInfo,Data.val(iT,:,:,:))
+            end
         end
-        title(datestr(Data.times(plotInd(iPI)),'dd-mmm-yyyy HH:MM'))
+        title(datestr(Data.times(plotInd(iPI)),'dd-mmm-yyyy HH:MM:SS'))
     else
         EHY_plotMapModelData(gridInfo,Data.val)
     end
-    pause(2)
+    pause(1)
 end
 disp('Finished plotting the top-view data!')
 

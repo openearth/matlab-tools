@@ -136,6 +136,8 @@ fmNames{end+1,1}={'FlowElem_ycc','mesh2d_face_y'}; % y-coordinate of faces
 fmNames{end+1,1}={'FlowElem_xcc','mesh2d_edge_x'}; % x-coordinate of velocity-points
 fmNames{end+1,1}={'FlowElem_ycc','mesh2d_edge_y'}; % y-coordinate of velocity-points
 
+fmNames{end+1,1}={'NetLink','mesh2d_edge_nodes'}; % 'link between two netnodes' / 'Mapping from every edge to the two nodes that it connects'
+
 fmNames{end+1,1}={'FlowElemContour_x','mesh2d_face_x_bnd','mesh2d_agg_face_x_bnd'}; % x-coordinates of flow element contours
 fmNames{end+1,1}={'FlowElemContour_y','mesh2d_face_y_bnd','mesh2d_agg_face_y_bnd'}; % y-coordinates of flow element contours
 

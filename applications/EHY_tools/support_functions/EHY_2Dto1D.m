@@ -6,13 +6,13 @@ function Data = EHY_2Dto1D(Data)
 if strcmp(Data.modelType,'d3d')
     
     names  = fieldnames(Data);
-    nr_cor  = get_nr(names,'Xcor'); if isempty(nr_cor)  nr_cor  = NaN; end
-    nr_cen  = get_nr(names,'Xcen'); if isempty(nr_cen)  nr_cor  = NaN; end
-    nr_wl   = get_nr(names,'wl'  ); if isempty(nr_wl)   nr_wl   = NaN; end
-    nr_bed  = get_nr(names,'bed' ); if isempty(nr_bed)  nr_bed  = NaN; end
-    nr_val  = get_nr(names,'val' ); if isempty(nr_val)  nr_val  = NaN; end
-    nr_Zcen = get_nr(names,'Zcen'); if isempty(nr_Zcen) nr_Zcen = NaN; end
-    nr_Zint = get_nr(names,'Zcen'); if isempty(nr_Zint) nr_Zint = NaN; end
+    nr_cor  = get_nr(names,'Xcor'); 
+    nr_cen  = get_nr(names,'Xcen');
+    nr_wl   = get_nr(names,'wl'  );
+    nr_bed  = get_nr(names,'bed' );
+    nr_val  = get_nr(names,'val' );
+    nr_Zcen = get_nr(names,'Zcen');
+    nr_Zint = get_nr(names,'Zcen');
     
     % Masking on waterlevels and/or centers
     mask_wl  = [];
