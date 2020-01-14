@@ -45,8 +45,7 @@ OPT.layer           = 0;  % all
 OPT.m               = 0;  % all (horizontal structured grid [m,n])
 OPT.n               = 0;  % all (horizontal structured grid [m,n])
 OPT.k               = 0;  % all (vertical   d3d grid [m,n,k])
-OPT.mergePartitions = 1;  % merge output from several dfm spatial *.nc-files
-OPT.sedfracInd      = []; % sediment fraction index
+OPT.sedimentName    = ''; % name of sediment fraction
 OPT.mergePartitions = 1;  % merge output from several dfm '_map.nc'-files
 OPT.disp            = 1;  % display status of getting map model data
 OPT.gridFile        = ''; % grid (either lga or nc file) needed in combination with delwaq output file
@@ -232,6 +231,7 @@ switch modelType
         time_ind  = dims(timeInd).index;
         m_ind = dims(mInd).index;
         n_ind = dims(nInd).index;
+        sed_ind = dims(sedfracInd).index;
 
         if strcmp(OPT.varName,'S1') % water level
             Data.val = vs_let(trim,'map-series',{time_ind},OPT.varName,{n_ind,m_ind},'quiet');
@@ -267,27 +267,27 @@ switch modelType
             end
             
         elseif strcmp(OPT.varName,'SBUU') % bed load
-            Data.val_x   = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,OPT.sedfracInd},'quiet');
-            Data.val_y   = vs_let(trim,'map-sed-series',{time_ind},'SBVV'     ,{n_ind,m_ind,OPT.sedfracInd},'quiet');
+            Data.val_x   = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,sed_ind},'quiet');
+            Data.val_y   = vs_let(trim,'map-sed-series',{time_ind},'SBVV'     ,{n_ind,m_ind,sed_ind},'quiet');
             Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
             
         elseif strcmp(OPT.varName,'SSUU') % suspended load
-            Data.val_x   = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,OPT.sedfracInd},'quiet');
-            Data.val_y   = vs_let(trim,'map-sed-series',{time_ind},'SSVV'     ,{n_ind,m_ind,OPT.sedfracInd},'quiet');
+            Data.val_x   = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,sed_ind},'quiet');
+            Data.val_y   = vs_let(trim,'map-sed-series',{time_ind},'SSVV'     ,{n_ind,m_ind,sed_ind},'quiet');
             Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
             
         elseif strcmp(OPT.varName,'SBUUA') % average bed load
-            Data.val_x   = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,OPT.sedfracInd},'quiet');
-            Data.val_y   = vs_let(trim,'map-sed-series',{time_ind},'SBVVA'    ,{n_ind,m_ind,OPT.sedfracInd},'quiet');
+            Data.val_x   = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,sed_ind},'quiet');
+            Data.val_y   = vs_let(trim,'map-sed-series',{time_ind},'SBVVA'    ,{n_ind,m_ind,sed_ind},'quiet');
             Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
             
         elseif strcmp(OPT.varName,'SSUUA') % average suspended load
-            Data.val_x   = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,OPT.sedfracInd},'quiet');
-            Data.val_y   = vs_let(trim,'map-sed-series',{time_ind},'SSVVA'    ,{n_ind,m_ind,OPT.sedfracInd},'quiet');
+            Data.val_x   = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,sed_ind},'quiet');
+            Data.val_y   = vs_let(trim,'map-sed-series',{time_ind},'SSVVA'    ,{n_ind,m_ind,sed_ind},'quiet');
             Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
             
         elseif strcmp(OPT.varName,'DP_BEDLYR') % sediment thickness
-            Data.val = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,OPT.sedfracInd},'quiet');
+            Data.val = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,2},'quiet');
             
         elseif strcmp(OPT.varName,'TAUKSI') % bed shear
             Data.val_x   = vs_let(trim,'map-series',{time_ind},OPT.varName,{n_ind,m_ind},'quiet');
@@ -296,7 +296,7 @@ switch modelType
             Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
             
         elseif strcmp(OPT.varName,'RSEDEQ')
-            Data.val = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,dims(layersInd).index,OPT.sedfracInd},'quiet');
+            Data.val = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,dims(layersInd).index,sed_ind},'quiet');
         
         elseif strcmp(OPT.varName,'Zcen_int')
             error('to do')
@@ -308,7 +308,7 @@ switch modelType
         mask = mask*0+1;
 
         % mask data and swap m,n-indices (from vs_let) from [n,m] to [time,m,n(,layers)]
-        fns = intersect(fieldnames(Data),{'val','vel_x','vel_y','vel_mag','val_x','val_max','val_mag'});
+        fns = intersect(fieldnames(Data),{'val','vel_x','vel_y','vel_mag','val_x','val_y','val_max','val_mag'});
         for iFns = 1:length(fns)
             if isfield(Data,fns{iFns})
                 Data.(fns{iFns})(Data.(fns{iFns}) == -999) = NaN;
