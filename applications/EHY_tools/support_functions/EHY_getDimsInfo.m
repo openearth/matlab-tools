@@ -47,7 +47,7 @@ if nargout > 1
             % sediment fractions
             d3d = vs_use(inputFile,'quiet');
             NAMSEDind = strmatch('NAMSED',{d3d.ElmDef.Name});
-            if ~isempty(NAMSEDind) && d3d.ElmDef(NAMSEDind).Size>1
+            if ~isempty(NAMSEDind) % && d3d.ElmDef(NAMSEDind).Size>1
                 dims(end+1).name = 'sedimentFraction';
             end
             
@@ -173,12 +173,16 @@ if nargout > 2
     
     %% Get sediment fractions information
     if ~isempty(dimsInd.sedfrac)
-        sedfracName = vs_let(vs_use(inputFile,'quiet'),'map-const','NAMSED','quiet');
-        if size(sedfracName,2) > 1
-            warning('Using multiple (all) sediment fractions.');
+        sedfracName = squeeze(vs_let(vs_use(inputFile,'quiet'),'map-const','NAMSED','quiet'));
+        if size(sedfracName,1) > 1 && (isempty(OPT.sedimentName) || size(OPT.sedimentName,1) > 1 )
+%             warning('Using multiple (all) sediment fractions.');
+            dims(dimsInd.sedfrac).index    = 1:size(sedfracName,1);
+            dims(dimsInd.sedfrac).indexOut = 1:size(sedfracName,1);
+        else
+            b = blanks(20-length(OPT.sedimentName));
+            dims(dimsInd.sedfrac).index    = find(all(ismember(sedfracName,[OPT.sedimentName b]),2));
+            dims(dimsInd.sedfrac).indexOut = find(all(ismember(sedfracName,[OPT.sedimentName b]),2));
         end
-        dims(dimsInd.sedfrac).index    = 1:size(sedfracName,2);
-        dims(dimsInd.sedfrac).indexOut = 1:size(sedfracName,2);
     end
     
     %%
