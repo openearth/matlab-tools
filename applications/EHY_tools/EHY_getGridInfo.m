@@ -12,6 +12,7 @@ function gridInfo = EHY_getGridInfo(inputFile,varargin)
 %               XYcen                   E.Xcen & E.Ycen (=NetElem/faces)
 %               XYu                     E.Xu & E.Yu (=velocity points)
 %               layer_model             E.layer_model (sigma-model or z-model)
+%               face_nodes              E.face_nodes
 %               face_nodes_xy           E.face_nodes_x & E.face_nodes_y
 %               edge_nodes              E.edge_nodes
 %               edge_nodes_xy           E.edge_nodes_x & E.edge_nodes_y
@@ -20,6 +21,7 @@ function gridInfo = EHY_getGridInfo(inputFile,varargin)
 %         Z    (side-view info/profile) E.Zcen (& E.Zcor), E.Zcen_cen & E.Zcen_int(in NetElem/faces)
 %               layer_perc              E.layer_perc (bed to surface), sum=100
 %               spherical               E.spherical (0=cartesian,1=spherical)
+%               grid                    E.grid [plot grid with plot(E.grid(:,1),E.grid(:,2)) ] 
 %
 % varargin{2:3) <keyword/value> pair
 %               stations                celll array of station names identical to
@@ -42,7 +44,7 @@ function gridInfo = EHY_getGridInfo(inputFile,varargin)
 %% Initialisation
 OPT.stations        = '';
 OPT.varName         = 'wl';
-OPT.mergePartitions = 1; % merge output in case of dfm '_map.nc'-files
+OPT.mergePartitions = 1; % merge output from several dfm spatial *.nc-files
 OPT.disp            = 1; % display status and message if none of the wanted output was found
 OPT.m               = 0; % all (horizontal structured grid [m,n])
 OPT.n               = 0; % all (horizontal structured grid [m,n])
@@ -88,7 +90,8 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
     ncFilesName = regexpi({ncFiles.name},['\S{' num2str(length(ncFiles(1).name)-11) '}+\d{4}_+\S{3}.nc'],'match');
     ncFilesName = ncFilesName(~cellfun('isempty',ncFilesName));
     ncFiles = strcat(fileparts(inputFile),filesep,vertcat(ncFilesName{:}));
-    
+%     if ~isempty(strfind(ncFiles{1},'_0000')); ncFiles = [ncFiles(2:end); ncFiles(1)]; end
+     
     for iF=1:length(ncFiles)
         if OPT.disp
             disp(['Reading and merging grid info data from partitions: ' num2str(iF) '/' num2str(length(ncFiles))])
@@ -98,37 +101,34 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
         if iF == 1
             gridInfo = gridInfoPart;
             fn = fieldnames(gridInfoPart);
-            ind = strmatch('face_nodes',fn,'exact');
-            fn = [fn(ind); fn];
-            fn(ind+1) = [];
         else
-            for iFN=1:length(fn)
+            for iFN = 1:length(fn)
                 if any(strcmp(fn{iFN},{'face_nodes','face_nodes_x','face_nodes_y'}))
                     % some partitions only contain triangles,squares, ..
-                    nrRows=size(gridInfo.(fn{iFN}),1);
-                    nrRowsPart=size(gridInfoPart.(fn{iFN}),1);
-                    if nrRowsPart>nrRows
-                        gridInfo.(fn{iFN})(nrRows+1:nrRowsPart,:)=NaN;
-                    elseif nrRowsPart<nrRows
-                        gridInfoPart.(fn{iFN})(nrRowsPart+1:nrRows,:)=NaN;
+                    nrRows = size(gridInfo.(fn{iFN}),1);
+                    nrRowsPart = size(gridInfoPart.(fn{iFN}),1);
+                    if nrRowsPart > nrRows
+                        gridInfo.(fn{iFN})(nrRows+1:nrRowsPart,:) = NaN;
+                    elseif nrRowsPart < nrRows
+                        gridInfoPart.(fn{iFN})(nrRowsPart+1:nrRows,:) = NaN;
                     end
                 end
                 
                 if any(strcmp(fn{iFN},{'face_nodes_x','face_nodes_y'}))
-                    gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
+                    gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'face_nodes','edge_nodes'}))
-                    gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}) max(max(gridInfo.(fn{iFN})))+gridInfoPart.(fn{iFN})];
-                elseif any(strcmp(fn{iFN},{'Xcor','Xcen','Ycor','Ycen','Zcor','Zcen','area'}))
-                    gridInfo.(fn{iFN})=[gridInfo.(fn{iFN}); gridInfoPart.(fn{iFN})];
+                    gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) max(max(gridInfo.(fn{iFN})))+gridInfoPart.(fn{iFN})];
+                elseif any(strcmp(fn{iFN},{'Xcor','Xcen','Ycor','Ycen','Zcor','Zcen','area','grid'}))
+                    gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}); gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'no_NetNode','no_NetElem'}))
-                    gridInfo.(fn{iFN})=gridInfo.(fn{iFN})+gridInfoPart.(fn{iFN});
+                    gridInfo.(fn{iFN}) = gridInfo.(fn{iFN})+gridInfoPart.(fn{iFN});
                 else
                     % skip, info is the same in all partitions
                 end
             end
         end
     end
-    gridInfo.inputFile=[inputFile(1:end-11) '*' inputFile(end-6:end)];
+    gridInfo.inputFile = [inputFile(1:end-11) '*' inputFile(end-6:end)];
     return
 end
 
@@ -331,7 +331,7 @@ switch modelType
                         end
                     end
                     if ismember('layer_model',wantedOutput)
-                        tmp=EHY_getGridInfo(inputFile,'no_layers','disp',0,'mergePartitions',0);
+                        tmp = EHY_getGridInfo(inputFile,'no_layers','disp',0,'mergePartitions',0);
                         if tmp.no_layers==1
                             E.layer_model='-';
                         else
@@ -418,7 +418,10 @@ switch modelType
                     end
      
                     if ismember('edge_nodes',wantedOutput)
-                        E.edge_nodes=ncread(inputFile,'mesh2d_edge_nodes');
+                        varName = EHY_nameOnFile(inputFile,'mesh2d_edge_nodes');
+                        if nc_isvar(inputFile,varName)
+                            E.edge_nodes=ncread(inputFile,varName);
+                        end
                     end
                                         
                     if ismember('dimensions',wantedOutput)
@@ -455,7 +458,10 @@ switch modelType
                             E.spherical = 0;
                         end
                     end
-
+                    if ismember('grid', wantedOutput)
+                        E.grid = EHY_convert(inputFile,'ldb','saveOutputFile',0,'mergePartitions',0);
+                    end
+                    
                     % If partitioned run, delete ghost cells
                     [~, name]=fileparts(inputFile);
                     varName = EHY_nameOnFile(inputFile,'FlowElemDomain');
@@ -578,6 +584,11 @@ switch modelType
                     end
                 end
                 
+                if ismember('grid',wantedOutput)
+                    tmp = wlgrid('read',inputFile);
+                    E.grid = XYcor2grid(tmp.X,tmp.Y);
+                end
+                
             case 'outputfile'
                 
                 if ~isempty(strfind(name,'trih-'))
@@ -670,6 +681,11 @@ switch modelType
                         else
                             E.spherical = 1;
                         end
+                    end
+                    
+                    if ismember('grid',wantedOutput)
+                        tmp = EHY_getGridInfo(inputFile,'XYcor');
+                        E.grid = XYcor2grid(tmp.Xcor,tmp.Ycor);
                     end
                     
                 end
@@ -857,76 +873,20 @@ gridInfo=E;
 
 end
 
-function EHY_getGridInfo_interactive
-% get inputFile
-disp('Open a grid, model inputfile or model outputfile')
-[filename, pathname] = uigetfile('*.*','Open a grid, model inputfile or model outputfile');
-if isnumeric(filename); disp('EHY_getGridInfo_interactive stopped by user.'); return; end
-inputFile = [pathname filename];
-
-% wanted output
-outputParameters = {'no_layers','dimensions','XYcor','XYcen','layer_model','face_nodes_xy','area','Zcen','Z','layer_perc'};
-option = listdlg('PromptString',{'Choose wanted output parameters','(Use CTRL to select multiple options):'},'ListString',...
-    outputParameters,'ListSize',[300 200]);
-if isempty(option); disp('EHY_getGridInfo_interactive was stopped by user');return; end
-varargin{1} = outputParameters(option);
-
-% mergePartitions
-modelType = EHY_getModelType(inputFile);
-if EHY_isPartitioned(inputFile,modelType)
-    option = listdlg('PromptString','Do you want to merge the info from different partitions?','SelectionMode','single','ListString',...
-        {'Yes','No'},'ListSize',[300 100]);
-    if option ==  2
-        OPT.mergePartitions = 0;
-    end
+function grid = XYcor2grid(X,Y)
+XX = []; YY = [];
+% in m-direction
+for iM = 1:size(X,2)
+    XX = [XX; X(:,iM); NaN]; YY = [YY; Y(:,iM); NaN];
 end
-
-% gridFile for DELWAQ
-if strcmp(modelType,'delwaq')
-    disp('Open (if you think it is needed, otherwise cancel) the corresponding grid file (*.lga, *.cco, *.nc)')
-    [filename, pathname] = uigetfile({'*.lga;*.cco', 'Structured grid files';
-        '*.nc',  'Unstructured grid files'},'Open (if you think it is needed, otherwise cancel) the corresponding grid file (*.lga, *.cco, *.nc)');
-    if ~isnumeric(filename)
-        OPT.gridFile = [pathname filename];
-    end
+% in n-direction
+for iN = 1:size(X,1)
+    XX = [XX; X(iN,:)'; NaN]; YY = [YY; Y(iN,:)'; NaN];
 end
-
-%% display example line
-% wanted variables // varargin{1}
-vararginStr = '';
-for iV = 1:length(varargin{1})
-    vararginStr = [vararginStr '''' varargin{1}{iV} ''','];
-end
-vararginStr = ['{' vararginStr(1:end-1) '}' ];
-
-% wanted OPT // varargin{2:3, ...}
-extraText = '';
-if exist('OPT','var')
-    fn = fieldnames(OPT);
-    for iF = 1:length(fn)
-        if ischar(OPT.(fn{iF}))
-            extraText = [extraText ',''' fn{iF} ''',''' OPT.(fn{iF}) ''''];
-        elseif isnumeric(OPT.(fn{iF}))
-            extraText = [extraText ',''' fn{iF} ''',' num2str(OPT.(fn{iF}))];
-        end
-    end
-end
-vararginStr = [vararginStr extraText];
-
-% disp output
-disp([char(10) 'Note that next time you want to get this data, you can also use:'])
-disp(['<strong>gridInfo = EHY_getGridInfo(''' inputFile ''',' vararginStr ');</strong>'])
-
-disp('start retrieving the grid info...')
-
-if exist('OPT','var')
-    gridInfo = EHY_getGridInfo(inputFile,varargin{:},OPT);
-else
-    gridInfo = EHY_getGridInfo(inputFile,varargin{:});
-end
-
-disp('Finished retrieving the grid info!')
-assignin('base','gridInfo',gridInfo);
-open gridInfo
-disp('Variable ''gridInfo'' created by EHY_getGridInfo_interactive')
+nanInd = find(isnan(XX));
+nanNanInd = find(diff(nanInd)==1);
+XX(nanInd(nanNanInd)) = [];
+YY(nanInd(nanNanInd)) = [];
+grid(:,1) = XX;
+grid(:,2) = YY;
 end

@@ -13,17 +13,18 @@ function varargout=EHY_convert(varargin)
 
 % created by Julien Groenenboom, August 2017
 %%
-OPT.saveOutputFile=1; % 0=do not save, 1=save
-OPT.outputFile=[]; % if isempty > outputFile=strrep(inputFile,inputExt,outputExt);
-OPT.overwrite=0; % 0=user will be asked if it's ok to overwrite, 1=overwrite existing file
-OPT.lineColor=[1 0 0]; % default is red
-OPT.lineWidth=1;
-OPT.fromEPSG=[]; % convert from this EPSG in case of conversion to kml or same extension
-OPT.toEPSG=[]; % convert to this EPSG in case of conversion to same extension
-OPT.grdFile=[];  % corresponding .grd file for files like .crs / .dry / obs. / ...
-OPT.netFile=[];  % *_net.nc-file for conversion of .xyz (dry points) to dry-crosses-ldb
-OPT.grd=[]; % wlgrid('read',OPT.grdFile);
-OPT.iconFile='http://maps.google.com/mapfiles/kml/paddle/blu-stars.png'; % for PlaceMark
+OPT.saveOutputFile  = 1; % 0=do not save, 1=save
+OPT.outputFile      = []; % if isempty > outputFile=strrep(inputFile,inputExt,outputExt);
+OPT.overwrite       = 0; % 0=user will be asked if it's ok to overwrite, 1=overwrite existing file
+OPT.lineColor       = [1 0 0]; % default is red
+OPT.lineWidth       = 1;
+OPT.fromEPSG        = []; % convert from this EPSG in case of conversion to kml or same extension
+OPT.toEPSG          = []; % convert to this EPSG in case of conversion to same extension
+OPT.grdFile         = [];  % corresponding .grd file for files like .crs / .dry / obs. / ...
+OPT.netFile         = [];  % *_net.nc-file for conversion of .xyz (dry points) to dry-crosses-ldb
+OPT.grd             = []; % wlgrid('read',OPT.grdFile);
+OPT.iconFile        = 'http://maps.google.com/mapfiles/kml/paddle/blu-stars.png'; % for PlaceMark
+OPT.mergePartitions = 0; % merge output from several dfm spatial *.nc-files
 
 % if structure was given as input OPT
 OPTid=find(cellfun(@isstruct, varargin));
@@ -594,6 +595,36 @@ end
         end
         output=[];
     end
+% grd2ldb
+    function [output,OPT]=EHY_convert_grd2ldb(inputFile,outputFile,OPT)
+        gridInfo = EHY_getGridInfo(inputFile,{'grid'});
+        output = gridInfo.grid;
+        if OPT.saveOutputFile
+            io_polygon('write',outputFile,output);
+        end
+    end
+% grd2pol
+    function [output,OPT]=EHY_convert_grd2pol(inputFile,outputFile,OPT)
+        gridInfo = EHY_getGridInfo(inputFile,{'grid'});
+        output = gridInfo.grid;
+        if OPT.saveOutputFile
+            io_polygon('write',outputFile,output);
+        end
+    end
+% grd2shp
+    function [output,OPT]=EHY_convert_grd2shp(inputFile,outputFile,OPT)
+        gridInfo = EHY_getGridInfo(inputFile,{'grid'});
+        output = gridInfo.grid;
+        nanInd = find(isnan(output(:,1)));
+        if nanInd(1)~=1; nanInd = [0; nanInd]; end
+        if nanInd(end)~=size(output,1); nanInd(end+1) = NaN; end
+        for ii = 1:length(nanInd)-1
+            shp{ii} = output(nanInd(ii)+1:nanInd(ii+1)-1,1:2);
+        end
+        if OPT.saveOutputFile
+            shapewrite(outputFile,'polyline',shp,{})
+        end
+    end
 % kml2ldb
     function [output,OPT]=EHY_convert_kml2ldb(inputFile,outputFile,OPT)
         output=kml2ldb(OPT.saveOutputFile,inputFile);
@@ -609,11 +640,13 @@ end
     end
 % kml2shp
     function [output,OPT]=EHY_convert_kml2shp(inputFile,outputFile,OPT)
-        OPT_user=OPT;
-        OPT.saveOutputFile=0;
-        lines=EHY_convert_kml2pol(inputFile,outputFile,OPT)
-        OPT=OPT_user;
-        nanInd=find(isnan(lines(:,1)));
+        OPT_user = OPT;
+        OPT.saveOutputFile = 0;
+        lines = EHY_convert_kml2pol(inputFile,outputFile,OPT);
+        OPT = OPT_user;
+        nanInd = find(isnan(lines(:,1)));
+        if nanInd(1)~=1; nanInd = [0; nanInd]; end
+        if nanInd(end)~=size(lines,1); nanInd(end+1) = NaN; end
         for ii=1:length(nanInd)-1
             lines2{ii}=lines(nanInd(ii)+1:nanInd(ii+1)-1,1:2);
         end
@@ -686,10 +719,12 @@ end
     end
 % ldb2shp
     function [output,OPT]=EHY_convert_ldb2shp(inputFile,outputFile,OPT)
-        ldb=landboundary('read',inputFile);
-        nanInd=find(isnan(ldb(:,1)));
-        for ii=1:length(nanInd)-1
-            ldb2{ii}=ldb(nanInd(ii)+1:nanInd(ii+1)-1,1:2);
+        ldb = landboundary('read',inputFile);
+        nanInd = find(isnan(ldb(:,1)));
+        if nanInd(1)~=1; nanInd = [0; nanInd]; end
+        if nanInd(end)~=size(ldb,1); nanInd(end+1) = NaN; end
+        for ii = 1:length(nanInd)-1
+            ldb2{ii} = ldb(nanInd(ii)+1:nanInd(ii+1)-1,1:2);
         end
         if OPT.saveOutputFile
             shapewrite(outputFile,'polyline',ldb2,{})
@@ -776,32 +811,18 @@ end
         output=lines;
     end
 % nc2ldb
-    function [output,OPT]=EHY_convert_nc2ldb(inputFile,outputFile,OPT)
-        infonc=ncinfo(inputFile);
-        if any(ismember({infonc.Variables.Name},'NetNode_x'))
-            x=nc_varget(inputFile,'NetNode_x');
-            y=nc_varget(inputFile,'NetNode_y');
-            links=nc_varget(inputFile,'NetLink');
-            lines=zeros(length(links)*3,2);
-            lines(3*(1:length(links))-2,:)=[x(links(:,1)) y(links(:,1))];
-            lines(3*(1:length(links))-1,:)=[x(links(:,2)) y(links(:,2))];
-            lines(3*(1:length(links)),:)=NaN;
-        elseif any(ismember({infonc.Variables.Name},'mesh2d_node_x'))
-            x=nc_varget(inputFile,'mesh2d_node_x');
-            y=nc_varget(inputFile,'mesh2d_node_y');
-            links=nc_varget(inputFile,'mesh2d_edge_nodes');
-            lines=zeros(length(links)*3,2);
-            lines(3*(1:length(links))-2,:)=[x(links(:,1)) y(links(:,1))];
-            lines(3*(1:length(links))-1,:)=[x(links(:,2)) y(links(:,2))];
-            lines(3*(1:length(links)),:)=NaN;
-        else
-            error('This information is not in the nc file')
-        end
-        
+    function [output,OPT] = EHY_convert_nc2ldb(inputFile,outputFile,OPT)
+        gridInfo = EHY_getGridInfo(inputFile,{'XYcor','edge_nodes'},'disp',0,'mergePartitions',OPT.mergePartitions);
+        edges = gridInfo.edge_nodes;
+        x = gridInfo.Xcor; y = gridInfo.Ycor;
+        lines = zeros(length(edges)*3,2);
+        lines(3*(1:length(edges))-2,:) = [x(edges(1,:)) y(edges(1,:))];
+        lines(3*(1:length(edges))-1,:) = [x(edges(2,:)) y(edges(2,:))];
+        lines(3*(1:length(edges)),:) = NaN;
         if OPT.saveOutputFile
             io_polygon('write',outputFile,lines);
         end
-        output=lines;
+        output = lines;
     end
 % nc2shp
     function [output,OPT]=EHY_convert_nc2shp(inputFile,outputFile,OPT)
@@ -810,6 +831,8 @@ end
         lines=EHY_convert_nc2ldb(inputFile,outputFile,OPT);
         OPT=OPT_user;
         nanInd=find(isnan(lines(:,1)));
+        if nanInd(1)~=1; nanInd = [0; nanInd]; end
+        if nanInd(end)~=size(lines,1); nanInd(end+1) = NaN; end
         for ii=1:length(nanInd)-1
             lines2{ii}=lines(nanInd(ii)+1:nanInd(ii+1)-1,1:2);
         end
@@ -923,6 +946,8 @@ end
         if ~isnan(pol(end,1)); pol=[pol(:,1:2);NaN NaN]; end
         
         nanInd=find(isnan(pol(:,1)));
+        if nanInd(1)~=1; nanInd = [0; nanInd]; end
+        if nanInd(end)~=size(pol,1); nanInd(end+1) = NaN; end
         for ii=1:length(nanInd)-1
             pol2{ii}=pol(nanInd(ii)+1:nanInd(ii+1)-1,1:2);
         end
