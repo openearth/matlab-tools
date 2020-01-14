@@ -248,16 +248,23 @@ switch modelType
             Data.val = wl+dps;
             
         elseif strcmp(OPT.varName,'U1') % velocity
-            error('This should be tested for velocities in x,y- or m,n-direction and apply to velocity grid')
-            %             if no_layers ~= 1 % 3D
-%                 Data.vel_x = vs_let(trim,'map-series',{time_ind},OPT.varName,{n_ind,m_ind,dims(layersInd).index},'quiet');
-%                 Data.vel_y = vs_let(trim,'map-series',{time_ind},'V1'       ,{n_ind,m_ind,dims(layersInd).index},'quiet');
-%             else % 2Dh
-%                 Data.vel_x = vs_let(trim,'map-series',{time_ind},OPT.varName,{n_ind,m_ind},'quiet');
-%                 Data.vel_y = vs_let(trim,'map-series',{time_ind},'V1'       ,{n_ind,m_ind},'quiet');
-%             end
-%             Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
-            
+            if no_layers ~= 1 % 3D
+                %DATA = QPREAD(FILE,DOMAINNR,FIELD,'data',SUBFIELD,T,S,M,N,K)
+                data = qpread(trim,1,'horizontal velocity','griddata',time_ind,m_ind,n_ind,dims(layersInd).index);
+                %Data.vel_u = vs_let(trim,'map-series',{time_ind},OPT.varName,{n_ind,m_ind,dims(layersInd).index},'quiet');
+                %Data.vel_v = vs_let(trim,'map-series',{time_ind},'V1'       ,{n_ind,m_ind,dims(layersInd).index},'quiet');
+            else % 2Dh
+                %error('This should be tested for velocities in x,y- or m,n-direction and apply to velocity grid')
+                data = qpread(trim,1,'depth averaged velocity','griddata',time_ind,m_ind,n_ind);
+                %Data.vel_u = vs_let(trim,'map-series',{time_ind},OPT.varName,{n_ind,m_ind},'quiet');
+                %Data.vel_v = vs_let(trim,'map-series',{time_ind},'V1'       ,{n_ind,m_ind},'quiet');
+            end
+            Data.vel_x(dims.indexOut) = data.XComp;
+            Data.vel_y(dims.indexOut) = data.YComp;
+            %swap m/n because it is swapped back later on
+            Data.vel_x = permute(Data.vel_x,[1 3 2 4]);
+            Data.vel_y = permute(Data.vel_y,[1 3 2 4]);
+            Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
         elseif ismember(OPT.varName,{'salinity' 'temperature'})
             cons_ind = strmatch(lower(OPT.varName),lower(constituents),'exact');
             if no_layers == 1
