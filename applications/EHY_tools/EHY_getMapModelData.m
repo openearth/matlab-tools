@@ -135,6 +135,7 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile)
                 Data.vel_x = cat(facesInd,Data.vel_x,DataPart.vel_x);
                 Data.vel_y = cat(facesInd,Data.vel_y,DataPart.vel_y);
                 Data.vel_mag = cat(facesInd,Data.vel_mag,DataPart.vel_mag);
+                Data.vel_dir = cat(facesInd,Data.vel_dir,DataPart.vel_dir);
             end
         end
     end
@@ -207,6 +208,8 @@ switch modelType
         
         if isfield(Data,'vel_x')
             Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
+            Data.vel_dir = mod(atan2(Data.vel_x,Data.vel_y)*180/pi,360);
+            Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
         end
         
     case 'd3d'
@@ -231,8 +234,10 @@ switch modelType
         time_ind  = dims(timeInd).index;
         m_ind = dims(mInd).index;
         n_ind = dims(nInd).index;
-        sed_ind = dims(sedfracInd).index;
-
+        if exist('sedfracInd','var')
+            sed_ind = dims(sedfracInd).index;
+        end
+        
         if strcmp(OPT.varName,'S1') % water level
             Data.val = vs_let(trim,'map-series',{time_ind},OPT.varName,{n_ind,m_ind},'quiet');
             
@@ -249,15 +254,9 @@ switch modelType
             
         elseif strcmp(OPT.varName,'U1') % velocity
             if no_layers ~= 1 % 3D
-                %DATA = QPREAD(FILE,DOMAINNR,FIELD,'data',SUBFIELD,T,S,M,N,K)
                 data = qpread(trim,1,'horizontal velocity','griddata',time_ind,m_ind,n_ind,dims(layersInd).index);
-                %Data.vel_u = vs_let(trim,'map-series',{time_ind},OPT.varName,{n_ind,m_ind,dims(layersInd).index},'quiet');
-                %Data.vel_v = vs_let(trim,'map-series',{time_ind},'V1'       ,{n_ind,m_ind,dims(layersInd).index},'quiet');
             else % 2Dh
-                %error('This should be tested for velocities in x,y- or m,n-direction and apply to velocity grid')
                 data = qpread(trim,1,'depth averaged velocity','griddata',time_ind,m_ind,n_ind);
-                %Data.vel_u = vs_let(trim,'map-series',{time_ind},OPT.varName,{n_ind,m_ind},'quiet');
-                %Data.vel_v = vs_let(trim,'map-series',{time_ind},'V1'       ,{n_ind,m_ind},'quiet');
             end
             Data.vel_x(dims.indexOut) = data.XComp;
             Data.vel_y(dims.indexOut) = data.YComp;
@@ -265,6 +264,8 @@ switch modelType
             Data.vel_x = permute(Data.vel_x,[1 3 2 4]);
             Data.vel_y = permute(Data.vel_y,[1 3 2 4]);
             Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
+            Data.vel_dir = mod(atan2(Data.vel_x,Data.vel_y)*180/pi,360);
+            Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
         elseif ismember(OPT.varName,{'salinity' 'temperature'})
             cons_ind = strmatch(lower(OPT.varName),lower(constituents),'exact');
             if no_layers == 1
@@ -315,7 +316,7 @@ switch modelType
         mask = mask*0+1;
 
         % mask data and swap m,n-indices (from vs_let) from [n,m] to [time,m,n(,layers)]
-        fns = intersect(fieldnames(Data),{'val','vel_x','vel_y','vel_mag','val_x','val_y','val_max','val_mag'});
+        fns = intersect(fieldnames(Data),{'val','vel_x','vel_y','vel_mag','vel_dir','val_x','val_y','val_max','val_mag'});
         for iFns = 1:length(fns)
             if isfield(Data,fns{iFns})
                 Data.(fns{iFns})(Data.(fns{iFns}) == -999) = NaN;

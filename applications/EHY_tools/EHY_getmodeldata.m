@@ -145,6 +145,8 @@ switch modelType
             Data.vel_x   = ncread_blocks(inputFile,'x_velocity',start,count,dims);
             Data.vel_y   = ncread_blocks(inputFile,'y_velocity',start,count,dims);
             Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
+            Data.vel_dir = mod(atan2(Data.vel_x,Data.vel_y)*180/pi,360);
+            Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
         end
 
     case 'd3d'
@@ -219,6 +221,9 @@ switch modelType
                         Data.vel_v(:,indexOut,:) = cell2mat(vs_get(trih,'his-series',{time_ind},'ZCURV',{stat_ind,layer_ind},'quiet'));
                     end
                     Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
+                    Data.vel_dir = mod(atan2(Data.vel_x,Data.vel_y)*180/pi,360);
+                    Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
+                    
                 case {'Zcen_cen' 'Zcen_int'}
                     zwl      = vs_let(trih,'his-series',{time_ind},'ZWL',{stat_ind},'quiet');
                     for i_time = 1:dims(timeInd).sizeOut
@@ -324,6 +329,8 @@ switch modelType
                         Data.vel_y(:,indexOut,:) = waquaio(sds,[],'v-stat',time_ind,stat_ind,layer_ind);
                     end
                     Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
+                    Data.vel_dir = mod(atan2(Data.vel_x,Data.vel_y)*180/pi,360);
+                    Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
                 case 'salinity'
                     if no_layers==1
                         Data.val(:,indexOut) = waquaio(sds,[],'stsubst:            salinity',time_ind,stat_ind);

@@ -47,8 +47,11 @@ if nargout > 1
             % sediment fractions
             d3d = vs_use(inputFile,'quiet');
             NAMSEDind = strmatch('NAMSED',{d3d.ElmDef.Name});
-            if ~isempty(NAMSEDind) % && d3d.ElmDef(NAMSEDind).Size>1
-                dims(end+1).name = 'sedimentFraction';
+            if ~isempty(NAMSEDind)
+                sedfracName = squeeze(vs_let(vs_use(inputFile,'quiet'),'map-const','NAMSED','quiet'));
+                if size(sedfracName,2) > 1
+                    dims(end+1).name = 'sedimentFraction';
+                end
             end
             
             % layers
