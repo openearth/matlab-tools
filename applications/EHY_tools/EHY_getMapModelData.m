@@ -191,14 +191,14 @@ switch modelType
             
             if isfield(Data,'val')
                 if facesInd == 1
-                    Data.val(FlowElemDomain ~= domainNr) = [];
+                    Data.val(FlowElemDomain ~= domainNr,:,:) = [];
                 elseif facesInd == 2
                     Data.val(:,FlowElemDomain ~= domainNr,:) = [];
                 end
             elseif isfield(Data,'vel_x')
                 if facesInd == 1
-                    Data.vel_x(FlowElemDomain ~= domainNr) = [];
-                    Data.vel_y(FlowElemDomain ~= domainNr) = [];
+                    Data.vel_x(FlowElemDomain ~= domainNr,:,:) = [];
+                    Data.vel_y(FlowElemDomain ~= domainNr,:,:) = [];
                 elseif facesInd == 2
                     Data.vel_x(:,FlowElemDomain ~= domainNr,:) = [];
                     Data.vel_y(:,FlowElemDomain ~= domainNr,:) = [];

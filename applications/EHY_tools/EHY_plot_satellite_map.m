@@ -22,6 +22,7 @@ OPT.axes      = gca;
 OPT.source    = 'esri_worldimagery'; % choose from: 'bluemarble','bingmaps','esri_worldimagery','openstreetmap'
 OPT.localEPSG = []; % specify local EPSG (e.g. 28992)
 OPT.localUnit = 'm'; % 'm' or 'km'
+OPT.plot_map  = 1; % By switching to 0, EHY_plot_satellite_map can be used just to rescale the current axes
 OPT           = setproperty(OPT,varargin);
 %% get current axis
 curAxis=axis(OPT.axes);
@@ -108,27 +109,44 @@ if OPT.rescale % based on (EHY_)plot_google_map
 end
 
 %% plot Esri map
-% Make use of QuickPlot-functionality, since wms.m is in private folder,
-% make a temporary copy of the wms.m-function
-copyfile([fileparts(which('d3d_qp')) filesep 'private' filesep 'wms.m'],pwd)
-if ~isempty(OPT.localEPSG) % local to WGS coordinates
-    [curAxis(1:2), curAxis(3:4)] = convertCoordinates(curAxis(1:2), curAxis(3:4),'CS1.code',OPT.localEPSG,'CS2.code',4326);
-end
-[IMG,lon,lat] = wms('image',wms('tms',OPT.source),'',curAxis(1:2),curAxis(3:4));
-if ~isempty(OPT.localEPSG) % WGS to local coordinates
-    lon=linspace(lon(1),lon(2),length(lat));
-    [lon,lat] = convertCoordinates(lon, lat,'CS1.code',4326,'CS2.code',OPT.localEPSG);
-    if strcmpi(OPT.localUnit,'km')
-        lon=lon/1000;lat=lat/1000;
+if OPT.plot_map
+    % Make use of QuickPlot-functionality, since wms.m is in private folder,
+    % make a temporary copy of the wms.m-function
+    copyfile([fileparts(which('d3d_qp')) filesep 'private' filesep 'wms.m'],pwd)
+    if ~isempty(OPT.localEPSG) % local to WGS coordinates
+        [curAxis(1:2), curAxis(3:4)] = convertCoordinates(curAxis(1:2), curAxis(3:4),'CS1.code',OPT.localEPSG,'CS2.code',4326);
     end
-end
-delete([pwd filesep 'wms.m'])
-hSurf = surface(lon,lat,zeros(length(lat),length(lon)),'cdata',IMG,'facecolor','texturemap', ...
-    'edgecolor','none','cLimInclude','off','ZData',repmat(-10^9,length(lat),length(lon)));
-set(hSurf,'FaceAlpha', OPT.FaceAlpha, 'AlphaDataMapping', 'none');
-
-if nargout == 1
-   varargout{1} = hSurf;
+    
+    no_tries = 0;
+    success = 0;
+    while no_tries < 5 && ~success
+        try
+            [IMG,lon,lat] = wms('image',wms('tms',OPT.source),'',curAxis(1:2),curAxis(3:4));
+            success = 1;
+        catch
+            no_tries = no_tries + 1;
+            disp(['Attempt ' num2str(no_tries) ' out of 5 to load satellite image failed. Let''s try again.'])
+            pause(3)
+        end
+    end
+    
+    if ~success; error('Failed to load satellite image'); end
+    
+    if ~isempty(OPT.localEPSG) % WGS to local coordinates
+        lon=linspace(lon(1),lon(2),length(lat));
+        [lon,lat] = convertCoordinates(lon, lat,'CS1.code',4326,'CS2.code',OPT.localEPSG);
+        if strcmpi(OPT.localUnit,'km')
+            lon=lon/1000;lat=lat/1000;
+        end
+    end
+    delete([pwd filesep 'wms.m'])
+    hSurf = surface(lon,lat,zeros(length(lat),length(lon)),'cdata',IMG,'facecolor','texturemap', ...
+        'edgecolor','none','cLimInclude','off','ZData',repmat(-10^9,length(lat),length(lon)));
+    set(hSurf,'FaceAlpha', OPT.FaceAlpha, 'AlphaDataMapping', 'none');
+    
+    if nargout == 1
+        varargout{1} = hSurf;
+    end
 end
 end
 
