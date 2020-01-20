@@ -28,6 +28,9 @@ OPT.color         = 'k';       % color of the vectors
 OPT.scaling       = 1;         % scale factor: the velocity vectors are multiplied by this factor
 OPT.thinningStyle = 'uniform'; % 'uniform' or 'distance' (in model coordinates)
 OPT.thinning      = 1;         % thinning factor, if thinningStyle is 'uniform', than this should be integer
+OPT.vectorStyle   = 'quiver';  % straight 'quiver' vectors or curved 'curvec' vectors
+OPT.domain        = [];        % plot domain [Xmin,Xmax,Ymin,Ymax] for curvec grid interpolation
+OPT.filter        = [];        % file path of polygon encircling area to exclude
 
 % if pairs were given as input OPT
 if ~isempty(varargin)
@@ -39,7 +42,7 @@ if ~isempty(varargin)
 end
 
 %% check input
-if strcmp(OPT.thinningStyle,'uniform')
+if strcmp(OPT.thinningStyle,'uniform') && strcmp(OPT.vectorStyle,'quiver')
     OPT.thinning = round(OPT.thinning);
 end
 
@@ -82,44 +85,72 @@ elseif isfield(gridInfo,'Xcen') && any(size(gridInfo.Xcen)~=size(vel_x))
 end
 
 %% thinning
-switch OPT.thinningStyle
-    case 'uniform'
-        if ndims(vel_x) == 2 && min(size(vel_x)) == 1
-            vel_x = vel_x(1:OPT.thinning:end);
-            vel_y = vel_y(1:OPT.thinning:end);
-            gridInfo.Xcen = gridInfo.Xcen(1:OPT.thinning:end);
-            gridInfo.Ycen = gridInfo.Ycen(1:OPT.thinning:end);
-        elseif ndims(vel_x) == 2 && min(size(vel_x)) > 1
-            vel_x = vel_x(1:OPT.thinning:end,1:OPT.thinning:end);
-            vel_y = vel_y(1:OPT.thinning:end,1:OPT.thinning:end);
-            gridInfo.Xcen = gridInfo.Xcen(1:OPT.thinning:end,1:OPT.thinning:end);
-            gridInfo.Ycen = gridInfo.Ycen(1:OPT.thinning:end,1:OPT.thinning:end);
-        end
-        
-    case 'distance'
-        % Make use of QuickPlot-functionality, since reducepoints_r2007a_7p4.mexw64 is in private folder,
-        % make a temporary copy of reducepoints_r2007a_7p4.mexw64
-        copyfile([fileparts(which('d3d_qp')) filesep 'private' filesep 'reducepoints_r2007a_7p4.mexw64'],pwd)
-        keep_index = calldll('reducepoints_r2007a_7p4',OPT.thinning,gridInfo.Xcen,gridInfo.Ycen);
-        
-        % delete copied file
-        delete([pwd filesep 'reducepoints_r2007a_7p4.mexw64'])
-        
-        % next step works for both structured and unstructured grids
-        vel_x = vel_x(keep_index);
-        vel_y = vel_y(keep_index);
-        gridInfo.Xcen = gridInfo.Xcen(keep_index);
-        gridInfo.Ycen = gridInfo.Ycen(keep_index);
+if strcmp(OPT.vectorStyle,'quiver')
+    switch OPT.thinningStyle
+        case 'uniform'
+            if ndims(vel_x) == 2 && min(size(vel_x)) == 1
+                vel_x = vel_x(1:OPT.thinning:end);
+                vel_y = vel_y(1:OPT.thinning:end);
+                gridInfo.Xcen = gridInfo.Xcen(1:OPT.thinning:end);
+                gridInfo.Ycen = gridInfo.Ycen(1:OPT.thinning:end);
+            elseif ndims(vel_x) == 2 && min(size(vel_x)) > 1
+                vel_x = vel_x(1:OPT.thinning:end,1:OPT.thinning:end);
+                vel_y = vel_y(1:OPT.thinning:end,1:OPT.thinning:end);
+                gridInfo.Xcen = gridInfo.Xcen(1:OPT.thinning:end,1:OPT.thinning:end);
+                gridInfo.Ycen = gridInfo.Ycen(1:OPT.thinning:end,1:OPT.thinning:end);
+            end
+            
+        case 'distance'
+            % Make use of QuickPlot-functionality, since reducepoints_r2007a_7p4.mexw64 is in private folder,
+            % make a temporary copy of reducepoints_r2007a_7p4.mexw64
+            copyfile([fileparts(which('d3d_qp')) filesep 'private' filesep 'reducepoints_r2007a_7p4.mexw64'],pwd)
+            keep_index = calldll('reducepoints_r2007a_7p4',OPT.thinning,gridInfo.Xcen,gridInfo.Ycen);
+            
+            % delete copied file
+            delete([pwd filesep 'reducepoints_r2007a_7p4.mexw64'])
+            
+            % next step works for both structured and unstructured grids
+            vel_x = vel_x(keep_index);
+            vel_y = vel_y(keep_index);
+            gridInfo.Xcen = gridInfo.Xcen(keep_index);
+            gridInfo.Ycen = gridInfo.Ycen(keep_index);
+    end
 end
 
-%% quiver
-hQuiver = quiver(gridInfo.Xcen,gridInfo.Ycen,OPT.scaling*vel_x,OPT.scaling*vel_y,0);
-
-% color
-set(hQuiver,'color',OPT.color);
+%% vectors
+switch OPT.vectorStyle
+    case 'quiver'
+        hVector = quiver(gridInfo.Xcen,gridInfo.Ycen,OPT.scaling*vel_x,OPT.scaling*vel_y,0);
+        
+        % color
+        set(hVector,'color',OPT.color);
+        
+    case 'curvec'
+        if isempty(OPT.domain)
+            Xmin = min(gridInfo.Xcen); Xmax = max(gridInfo.Xcen);
+            Ymin = min(gridInfo.Ycen); Ymax = max(gridInfo.Ycen);
+        else
+            Xmin = OPT.domain(1); Xmax = OPT.domain(2);
+            Ymin = OPT.domain(3); Ymax = OPT.domain(4);
+        end
+        vecLength = (Ymax-Ymin)*OPT.scaling;
+        [X, Y]    = meshgrid(Xmin:OPT.thinning:Xmax,Ymin:OPT.thinning:Ymax);
+        pos       = reshape(cat(2,X',Y'),[],2); pos = [pos,ones(length(pos),1)];
+        Fx        = scatteredInterpolant(gridInfo.Xcen',gridInfo.Ycen',vel_x','linear');
+        Fy        = scatteredInterpolant(gridInfo.Xcen',gridInfo.Ycen',vel_y','linear');
+        ux        = Fx(X, Y); uy = Fy(X, Y);
+        if ~isempty(OPT.filter)
+            landPol   = io_polygon('read',OPT.filter);
+            landArea  = inpolygon(X,Y,landPol(:,1),landPol(:,2));
+            ux(landArea) = NaN; uy(landArea) = NaN;
+        end
+        [polx,poly] = curvec(X,Y,ux,uy,'length',vecLength,'position',pos);
+        hVector = patch(polx,poly,OPT.color);
+        set(hVector,'EdgeAlpha',0);
+end
 
 if nargout==1
-    varargout{1}=hQuiver;
+    varargout{1} = hVector;
 end
 
 end
