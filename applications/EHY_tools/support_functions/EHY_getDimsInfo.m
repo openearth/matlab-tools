@@ -48,7 +48,11 @@ if nargout > 1
             d3d = vs_use(inputFile,'quiet');
             NAMSEDind = strmatch('NAMSED',{d3d.ElmDef.Name});
             if ~isempty(NAMSEDind)
-                sedfracName = squeeze(vs_let(vs_use(inputFile,'quiet'),'map-const','NAMSED','quiet'));
+                if strcmp(typeOfModelFileDetail,'trim')
+                    sedfracName = squeeze(vs_let(vs_use(inputFile,'quiet'),'map-const','NAMSED','quiet'));
+                elseif strcmp(typeOfModelFileDetail,'trih')
+                    sedfracName = squeeze(vs_let(vs_use(inputFile,'quiet'),'his-const','NAMSED','quiet'));
+                end
                 if size(sedfracName,2) > 1
                     dims(end+1).name = 'sedimentFraction';
                 end
