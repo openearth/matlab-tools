@@ -15,7 +15,7 @@ function varargout = read1DProfdef_crs(varargin)
 %   Example
 %   fname   = 'profdefxyz_crs.pliz';
 %   type    = 'xyz'
-%   CRS     = dflowfm.read1DProfdef_crs(fname,type);
+%   CRS     = dflowfm.read1DProfdef_crs('fname',fname,'type',type);
 %
 %   See also
 
