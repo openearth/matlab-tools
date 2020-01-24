@@ -53,7 +53,7 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count s
         start(1)                 = bl_start + offset;
         count(1)                 = bl_int;
         
-        values_tmp = nc_varget(inputFile,varName,start-1,count);
+        values_tmp(dims(:).indexOut) = nc_varget(inputFile,varName,start-1,count);
         if no_dims == 1
             % probably [time]          = [time]
             values(bl_start:bl_stop,1) = values_tmp;
