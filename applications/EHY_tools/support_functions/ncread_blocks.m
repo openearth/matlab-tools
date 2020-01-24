@@ -53,7 +53,14 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count s
         start(1)                 = bl_start + offset;
         count(1)                 = bl_int;
         
-        values_tmp(dims(:).indexOut) = nc_varget(inputFile,varName,start-1,count);
+        % Make sure values_tmp has to correct dimensions (MATLAB
+        % automatically squeezes if size(values_tmp,1) would have been 1
+        for iC = 1:numel(count)
+            tmp(iC).indexOut = 1:count(iC);
+        end
+        values_tmp = [];
+        values_tmp(tmp(:).indexOut) = nc_varget(inputFile,varName,start-1,count);
+        
         if no_dims == 1
             % probably [time]          = [time]
             values(bl_start:bl_stop,1) = values_tmp;
