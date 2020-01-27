@@ -595,6 +595,11 @@ for it=1:nt
     end
     ux=dx/dt;
     uy=dy/dt;
+    
+    if ux==0 | uy ==0
+       error(['ux or uy became 0, timesteps it+1 and it-1 have exactly the same coordinate for it= ',num2str(it)]) 
+    end
+    
     tc.track(it).vtx=ux;
     tc.track(it).vty=uy;
 end
@@ -818,7 +823,8 @@ function tc=wes_compute_relative_wind_speeds(tc,spw)
 nt=length(tc.track);
 
 for it=1:nt
-    
+    disp(it)
+           
     % Compute max wind speed relative to propagation speed
     u_prop=tc.track(it).vtx;
     v_prop=tc.track(it).vty;
