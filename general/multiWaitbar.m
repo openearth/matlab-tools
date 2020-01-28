@@ -380,7 +380,7 @@ lastfilled = max( 1, round( lastval*psize(1) ) );
 % makes a small speed difference, but every little helps!
 if force || (filled<lastfilled)
     % Create the bar background
-    blank = ones( psize(2), psize(1)-filled, 'uint8' );
+    blank = ones( int32(psize(2)), int32(psize(1)-filled), 'uint8' );
     bgim = cat( 3, bgcol(1)*blank, bgcol(2)*blank, bgcol(3)*blank );
     % We use slightly bizarre indexing notation to achieve REPMAT of the
     % column at roughly 10x the speed. Blame Jon Cherrie (who showed me
