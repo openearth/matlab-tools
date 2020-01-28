@@ -11,7 +11,27 @@ Ynet = net.Ycor;
 try
     netElemNode = ncread(fileNet,'NetElemNode');
 catch
-    error('Pleas write the grid file with the option "Wirh Cell Ino"');
+    warning('Reconstructing netElmNode from Link information. Can be time consuming. Consider writing net file with Cell Information');
+    netElemNode = EHY_create_netElemNode(fileNet);
+    for i_node = 1: size(netElemNode,2)
+        %lower left corner, smallest number, first
+        [~,index] = min(netElemNode(:,i_node));
+        if index > 1
+            for i_corner = 1: 4
+                nr(i_corner) = index + i_corner - 1 ;
+                if nr(i_corner) > 4; nr(i_corner) = nr(i_corner) - 4; end
+            end
+            netElemNode(:,i_node) = netElemNode(nr,i_node);
+        end
+        
+        % orientation, ll cornre, lr corner, ur corner ul corner
+        if netElemNode(2,i_node) < netElemNode(4,i_node)
+            tmp                   = netElemNode(4,i_node);
+            netElemNode(4,i_node) = netElemNode(2,i_node);
+            netElemNode(2,i_node) = tmp;
+        end
+    end
+    
 end
 
 %% First active cell (m,n) = (2,2) (like in Delft3D-Flow
@@ -48,7 +68,7 @@ delete('tmp_tk.end');
 end
 
 function [Xcor,Ycor,netElemNode,nr_cell,m_act,n_act] = findMyNeigbours(Xcor,Ycor,Xnet,Ynet,netElemNode,nr_cell,m_act,n_act)
-
+nr_cell(1)
 m_now = m_act(1);
 n_now = n_act(1);
 
@@ -66,7 +86,7 @@ if ~isempty(nr) && netElemNode(8,nr) ~= 0
 end
 
 % Upper neighbour
-nr = find(netElemNode(1,:) == netElemNode(4,nr_cell(1)));
+nr = find(netElemNode(2,:) == netElemNode(3,nr_cell(1)));
 netElemNode(7,nr_cell(1)) = 0;
 
 if ~isempty(nr) && netElemNode(5,nr) ~= 0
@@ -79,7 +99,7 @@ if ~isempty(nr) && netElemNode(5,nr) ~= 0
 end
 
 % left neighbour
-nr = find(netElemNode(2,:) == netElemNode(1,nr_cell(1)));
+nr = find(netElemNode(3,:) == netElemNode(4,nr_cell(1)));
 netElemNode(8,nr_cell(1)) = 0;
 
 if ~isempty(nr) && netElemNode(6,nr) ~= 0
