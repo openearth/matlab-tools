@@ -300,7 +300,7 @@ function entries = iAddEntry( parent, entries, label, value, color, bgcolor )
 psize = getappdata( parent, 'DefaultProgressBarSize' );
 cdata = iMakeColors( color );
 % Create background image
-blank = ones( psize(2), psize(1), 'uint8' );
+blank =  ones( int32(psize(2)), int32(psize(1)), 'uint8' );
 barcdata = cat( 3, bgcolor(1)*blank, bgcolor(2)*blank, bgcolor(3)*blank );
 
 % Work out the size in advance
