@@ -73,7 +73,7 @@ else
     Data.dimensions = [Data.dimensions(1:dimTextInd(end)-1) ']'];
 end
 
-% correct for order of layering > layer 1 is at the bottom
+% correct for order of layering > make layer 1 the bottom layer | This is only used within this function for the next loop
 gridInfo = EHY_getGridInfo(inputFile,'layer_model');
 if strcmp(modelType,'d3d') && strcmp(gridInfo.layer_model,'sigma-model')
     for iV = 1:length(v) % loop over fieldname 'val','vel_x','vel_mag',etc.

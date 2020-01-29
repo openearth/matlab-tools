@@ -619,7 +619,7 @@ switch modelType
                     end
                     
                     if ismember('layer_perc', wantedOutput)
-                        E.layer_perc = 100*flipud(vs_let(trih,'his-const','THICK','quiet'));
+                        E.layer_perc = 100*vs_let(trih,'his-const','THICK','quiet');
                     end
                     
                     if ismember('Zcen', wantedOutput) ||  ismember('Z', wantedOutput)
@@ -629,9 +629,9 @@ switch modelType
                     
                     if ismember('Z', wantedOutput)
                         tmp        = EHY_getmodeldata(inputFile,{},modelType,'varName','Zcen');
-                        E.Zcen_cen = flip(tmp.val,3);
+                        E.Zcen_cen = tmp.val;
                         tmp        = EHY_getmodeldata(inputFile,{},modelType,'varName','Zint');
-                        E.Zcen_int = flip(tmp.val,3);
+                        E.Zcen_int = tmp.val;
                     end
                     
                 elseif ~isempty(strfind(name,'trim-'))
@@ -777,7 +777,7 @@ switch modelType
                         for k = 1: kmax
                             E.layer_perc(k) = (z(n,m,k + 1) - z(n,m,k))/(z(n,m,kmax + 1) - z(n,m,1));
                         end
-                        E.layer_perc = flipud(E.layer_perc);      % dfm convention, numbering from bed to surface
+                        E.layer_perc = E.layer_perc;
                     end
                 end
         end % typeOfModelFile
