@@ -21,7 +21,7 @@ if xy.length > 0
     % Throw away points below zlev(1), but not points within polygon
     % Do this by temporarily raising these points to zlev(1)+0.01
     xp=xy.x;
-    yp=xy;
+    yp=xy.y;
     inp=inpolygon(x,y,xp,yp);
     z(inp)=max(z(inp),zlev(1)+0.01);
 end
