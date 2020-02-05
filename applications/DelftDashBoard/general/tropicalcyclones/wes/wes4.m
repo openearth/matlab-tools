@@ -596,7 +596,7 @@ for it=1:nt
     ux=dx/dt;
     uy=dy/dt;
     
-    if ux==0 | uy ==0
+    if ux==0 && uy ==0
        error(['ux or uy became 0, timesteps it+1 and it-1 have exactly the same coordinate for it= ',num2str(it)]) 
     end
     
