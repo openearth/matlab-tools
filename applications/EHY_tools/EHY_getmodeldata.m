@@ -572,5 +572,7 @@ elseif strcmp(gridInfo.layer_model,'z-model')
 end 
     
 Data.val = int;
+Data.Zcen_cen = cen;
+Data.Zcen_int = int;
 
 end  
