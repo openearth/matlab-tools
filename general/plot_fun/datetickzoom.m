@@ -1,5 +1,5 @@
 function datetickzoom(varargin)
-%DATETICKZOOM Date formatted tick labels, automatically updated when zoomed or panned. 
+%DATETICKZOOM Date formatted tick labels, automatically updated when zoomed or panned.
 %   Arguments are completely identical to does of DATETICK. The argument
 %   DATEFORM is reset once zoomed or panned.
 %
@@ -37,7 +37,16 @@ else
     
     setappdata(axh,'datetickdata',datetickdata);
     set(zoom(axh),'ActionPostCallback',@datetickzoom)
-    set(pan(get(axh,'parent')),'ActionPostCallback',@datetickzoom)
+    fh = get(axh,'parent');
+    if strcmpi(get(fh,'type'),'figure')
+        set(pan(fh),'ActionPostCallback',@datetickzoom);
+    else
+        ah_tmp = gca;
+        axes(axh);
+        fh = gcf;
+        set(pan(fh),'ActionPostCallback',@datetickzoom);
+        axes(ah_tmp);
+    end
     datetick(varargin{:})
 end
 
@@ -60,24 +69,24 @@ else
     axh = gca;
 end
 % Look for 'keepticks'
-for i=nin:-1:max(1,nin-1),
-   if strcmpi(v{i},'keepticks'),
-      keep_ticks = 1;
-      v(i) = [];
-      nin = nin-1;
-   end
+for i=nin:-1:max(1,nin-1)
+    if strcmpi(v{i},'keepticks')
+        keep_ticks = 1;
+        v(i) = [];
+        nin = nin-1;
+    end
 end
 
-if nin==0, 
-   ax = 'x';
+if nin==0
+    ax = 'x';
 else
-   ax = v{1};
+    ax = v{1};
 end
 if nin > 1
-     % The dateform (Date Format) value should be a scalar or string constant
-     % check this out
-     dateform = v{2}; 
-     if (isnumeric(dateform) && length(dateform) ~= 1) && ~ischar(dateform)
-         error('The Date Format value should be a scalar or string');
-     end 
+    % The dateform (Date Format) value should be a scalar or string constant
+    % check this out
+    dateform = v{2};
+    if (isnumeric(dateform) && length(dateform) ~= 1) && ~ischar(dateform)
+        error('The Date Format value should be a scalar or string');
+    end
 end
