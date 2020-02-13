@@ -125,12 +125,12 @@ if OPT.plot_map
             success = 1;
         catch
             no_tries = no_tries + 1;
-            disp(['Attempt ' num2str(no_tries) ' out of 5 to load satellite image failed. Let''s try again.'])
-            pause(3)
+            disp(['Attempt ' num2str(no_tries) ' out of 5 to load satellite image failed. Let''s try again in ' num2str(no_tries*3) ' seconds.'])
+            pause(no_tries*3)
         end
     end
     
-    if ~success; error('Failed to load satellite image'); end
+    if ~success; msgbox('Failed to load satellite image'); end
     
     if ~isempty(OPT.localEPSG) % WGS to local coordinates
         lon=linspace(lon(1),lon(2),length(lat));

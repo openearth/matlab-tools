@@ -133,9 +133,6 @@ fmNames{end+1,1}={'mesh2d_node_z','NetNode_z'}; % z-coordinate of nodes
 fmNames{end+1,1}={'FlowElem_xcc','mesh2d_face_x'}; % x-coordinate of faces
 fmNames{end+1,1}={'FlowElem_ycc','mesh2d_face_y'}; % y-coordinate of faces
 
-fmNames{end+1,1}={'FlowElem_xcc','mesh2d_edge_x'}; % x-coordinate of velocity-points
-fmNames{end+1,1}={'FlowElem_ycc','mesh2d_edge_y'}; % y-coordinate of velocity-points
-
 fmNames{end+1,1}={'NetLink','mesh2d_edge_nodes'}; % 'link between two netnodes' / 'Mapping from every edge to the two nodes that it connects'
 
 fmNames{end+1,1}={'FlowElemContour_x','mesh2d_face_x_bnd','mesh2d_agg_face_x_bnd'}; % x-coordinates of flow element contours
@@ -146,7 +143,7 @@ fmNames{end+1,1}={'mesh2d_flowelem_bl','FlowElem_bl'}; % bed level
 fmNames{end+1,1}={'mesh2d_flowelem_ba','FlowElem_bac'}; % area (m2) of cell faces
 
 %%% DIMENSION names used within different versions of Delft3D-Flexible Mesh
-fmNames{end+1,1}={'mesh2d_nNodes','nmesh2d_node','nNetNode','NetElemNode'}; % number of nodes
+fmNames{end+1,1}={'mesh2d_nNodes','nmesh2d_node','nNetNode'}; % number of nodes
 fmNames{end+1,1}={'mesh2d_nFaces','nmesh2d_face','nNetElem','nFlowElem'}; % number of faces
 fmNames{end+1,1}={                'nmesh2d_edge','nNetLink'}; % number of velocity-points
 

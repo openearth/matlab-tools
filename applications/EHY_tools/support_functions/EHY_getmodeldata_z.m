@@ -19,6 +19,7 @@ if ismember(OPT0.zRef,{'wl','bed'})
         refLevel = reshape(refLevel,1,length(refLevel));
     end
 else % model reference level
+    Data_zRef = EHY_getRequestedStations(inputFile,stat_name,modelType);
     refLevel = repmat(0,1,length(Data_zRef.requestedStations));
 end
 

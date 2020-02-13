@@ -524,10 +524,11 @@ if strcmp(gridInfo.layer_model,'sigma-model')
 elseif strcmp(gridInfo.layer_model,'z-model')
     
        % fix for DFM z-layer models: non-active layers have value of top layer
-       nS = size(cen,2);  %no_stations
+       nT = size(cen,1); %no_times
+       nS = size(cen,2); %no_stations
        nZ = size(cen,3); %no_z-layers
-       for iS=1:nS % stations
-            zloc_cen_stat = squeeze(cen(:,iS,:));
+       for iS = 1:nS % stations
+            zloc_cen_stat(1:nT,1:nZ) = squeeze(cen(:,iS,:));
             surface_layer = 0;
             for iZ = 1:nZ %z-layers
                 zloc = squeeze(zloc_cen_stat(:,iZ));
