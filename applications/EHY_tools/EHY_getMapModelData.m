@@ -67,7 +67,6 @@ inputFile = strtrim(inputFile);
 if ~isempty(OPT.t0)        OPT.t0      = datenum(OPT.t0);      end
 if ~isempty(OPT.tend)      OPT.tend    = datenum(OPT.tend);    end
 if ~isempty(OPT.tint )     OPT.tint    = OPT.tint/1440;        end % from minutes to days
-if ~isnumeric(OPT.layer)   OPT.layer   = str2num(OPT.layer);   end
 if ~isnumeric(OPT.t)       OPT.m       = str2num(OPT.t);       end
 if ~isnumeric(OPT.m)       OPT.m       = str2num(OPT.m);       end
 if ~isnumeric(OPT.n)       OPT.n       = str2num(OPT.n);       end
@@ -75,6 +74,9 @@ if ~isnumeric(OPT.k)       OPT.k       = str2num(OPT.k);       end
 if ~isnumeric(OPT.z )      OPT.z       = str2num(OPT.z);       end
 if ~isempty(OPT.sgft0)     OPT.sgft0   = datenum(OPT.sgft0);   end
 if ~isnumeric(OPT.sgfkmax) OPT.sgfkmax = str2num(OPT.sgfkmax); end
+if ~isnumeric(OPT.layer) && ~isempty(str2num(OPT.layer))
+    OPT.layer   = str2num(OPT.layer);
+end
 
 if all(OPT.layer==0) && ~all(OPT.k==0) % OPT.k was provided, OPT.layer not
     OPT.layer = OPT.k; % OPT.layer is used in script
@@ -87,6 +89,18 @@ modelType = EHY_getModelType(inputFile);
 [OPT.varName,varNameInput] = EHY_nameOnFile(inputFile,OPT.varName);
 if strcmp(OPT.varName,'noMatchFound')
     error(['Requested variable (' varNameInput ') not available in model output'])
+end
+
+%% Get the available and requested dimensions
+[dims,~,Data,OPT] = EHY_getDimsInfo(inputFile,OPT,modelType);
+
+%% find top or bottom layer in z-layer model
+if ischar(OPT.layer)
+    Data = EHY_getMapModelData_zLayerTopBottom(inputFile,modelType,OPT);
+    if nargout==1
+        varargout{1} = Data;
+    end
+    return
 end
 
 %% return output at specified reference level
@@ -109,9 +123,6 @@ if ~isempty(OPT.pliFile)
     end
     return
 end
-
-%% Get the available and requested dimensions
-[dims,~,Data] = EHY_getDimsInfo(inputFile,OPT,modelType);
 
 %% check if output data is in several partitions and merge if necessary
 if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile)

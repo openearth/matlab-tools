@@ -541,7 +541,10 @@ switch modelType
                            E.no_layers = infonc.Size;
                        end
                     end
-                          
+                    if ismember('layer_model',wantedOutput)
+                        E.layer_model = 'unknown';
+                    end
+                    
             end % typeOfModelFile
             
         end % OPT.mergePartitions
