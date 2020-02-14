@@ -1,4 +1,4 @@
-function [dims,dimsInd,Data] = EHY_getDimsInfo(inputFile,OPT,modelType,stat_name)
+function [dims,dimsInd,Data,OPT] = EHY_getDimsInfo(inputFile,OPT,modelType,stat_name)
 
 %% Info
 % dims.size         size  as on modelfile
@@ -152,12 +152,12 @@ if nargout > 2
     %% Get layer information and type of vertical schematisation
     if ~isempty(dimsInd.layers)
         if exist('gridFile','var')
-            gridInfo                  = EHY_getGridInfo(inputFile,{'no_layers'},'mergePartitions',0,'gridFile',gridFile);
+            gridInfo                  = EHY_getGridInfo(inputFile,{'no_layers','layer_model'},'mergePartitions',0,'gridFile',gridFile);
         else
-            gridInfo                  = EHY_getGridInfo(inputFile,{'no_layers'},'mergePartitions',0);
+            gridInfo                  = EHY_getGridInfo(inputFile,{'no_layers','layer_model'},'mergePartitions',0);
         end
         no_layers                     = gridInfo.no_layers;
-        OPT                           = EHY_getmodeldata_layer_index(OPT,no_layers);
+        OPT                           = EHY_getmodeldata_layer_index(OPT,no_layers,gridInfo.layer_model,modelType);
         dims(dimsInd.layers).index    = OPT.layer';
         dims(dimsInd.layers).size     = no_layers;
         dims(dimsInd.layers).indexOut = 1:length(OPT.layer);

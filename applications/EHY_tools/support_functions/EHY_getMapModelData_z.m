@@ -95,7 +95,7 @@ for iZ = 1:length(OPT0.z)
             for iV = 1:length(v) % loop over fieldname 'val','vel_x','vel_mag',etc.
                 slicePerZ = NaN(size(Data.(v{1}),1),size(Data.(v{1}),2)); % size of first two dims of Data.val
                 for iL = 1:no_layers % loop over layers
-                    getFromThisModelLayer = DataZ.val(:,:,iL) <= wantedZ & DataZ.val(:,:,iL+1)>wantedZ;
+                    getFromThisModelLayer = DataZ.val(:,:,iL) <= wantedZ & DataZ.val(:,:,iL+1) >= wantedZ;
                     if any(any(getFromThisModelLayer))
                         valInThisModelLayer = DataAll.(v{iV})(:,:,iL);
                         slicePerZ(getFromThisModelLayer) = valInThisModelLayer(getFromThisModelLayer);
