@@ -545,9 +545,9 @@ nm2km=1.852;
 nt=length(tc.track);
 
 % Convert wind speeds to m/s
-switch lower(spw.wind_speed_unit)
+switch lower(tc.wind_speed_unit)
     case{'kts','kt','knots'}
-        tc.radius_velocity=spw.radius_velocity*kts2ms*spw.wind_conversion_factor; % Convert to m/s
+        tc.radius_velocity=tc.radius_velocity*kts2ms*spw.wind_conversion_factor; % Convert to m/s
         for it=1:nt
             tc.track(it).vmax=tc.track(it).vmax*kts2ms*spw.wind_conversion_factor; % Convert to m/s
         end
@@ -555,7 +555,7 @@ end
 
 % Convert radii to km
 for it=1:nt
-    switch lower(spw.radius_unit)
+    switch lower(tc.radius_unit)
         case{'nm'}
             for iq=1:length(tc.track(it).quadrant)
                 for irad=1:length(tc.track(it).quadrant(iq).radius)
