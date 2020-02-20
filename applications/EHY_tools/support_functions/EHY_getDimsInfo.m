@@ -156,10 +156,9 @@ if nargout > 2
         else
             gridInfo                  = EHY_getGridInfo(inputFile,{'no_layers','layer_model'},'mergePartitions',0);
         end
-        no_layers                     = gridInfo.no_layers;
-        OPT                           = EHY_getmodeldata_layer_index(OPT,no_layers,gridInfo.layer_model,modelType);
+        OPT                           = EHY_getmodeldata_layer_index(OPT,gridInfo,modelType);
         dims(dimsInd.layers).index    = OPT.layer';
-        dims(dimsInd.layers).size     = no_layers;
+        dims(dimsInd.layers).size     = gridInfo.no_layers;
         dims(dimsInd.layers).indexOut = 1:length(OPT.layer);
     end
     
