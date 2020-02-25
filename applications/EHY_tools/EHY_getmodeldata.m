@@ -172,9 +172,9 @@ switch modelType
             layer_model = gridInfo.layer_model;
             if strcmp(gridInfo.layer_model,'sigma-model')
                 thick    = vs_let(trih,'his-const', 'THICK','quiet');
-                dps      = vs_let(trih,'his-const', 'DPS',  'quiet');
+                DPS      = vs_let(trih,'his-const', 'DPS',  'quiet');
             elseif strcmp(gridInfo.layer_model,'z-model')
-                dps      = vs_let(trih,'his-const', 'DPS',  'quiet');
+                DPS      = vs_let(trih,'his-const', 'DPS',  'quiet');
                 zk       = vs_get(trih,'his-const', 'ZK' ,  'quiet');
             end
         end
@@ -194,19 +194,19 @@ switch modelType
             
             % get data
             switch OPT.varName
-                case 'wl'
+                case {'wl','ZWL'}
                     Data.val(:,indexOut) = cell2mat(vs_get(trih,'his-series',{time_ind},'ZWL',{stat_ind},'quiet')); % ref to wl
-                case 'dps'
-                    dps                  = vs_get(trih,'his-const',{1},'DPS',{stat_ind},'quiet'); % bed to ref
-                    Data.val(:,indexOut) = dps;
+                case {'dps','DPS'}
+                    DPS                  = vs_get(trih,'his-const',{1},'DPS',{stat_ind},'quiet'); % bed to ref
+                    Data.val(:,indexOut) = DPS;
                 case 'bedlevel' % bedlevel (z-coordinate, negative)
-                    dps                  = vs_get(trih,'his-const',{1},'DPS',{stat_ind},'quiet');
-                    Data.val(:,indexOut) = -dps;
+                    DPS                  = vs_get(trih,'his-const',{1},'DPS',{stat_ind},'quiet');
+                    Data.val(:,indexOut) = -DPS;
                 case 'wd'
                     wl                   = cell2mat(vs_get(trih,'his-series',{time_ind},'ZWL',{stat_ind},'quiet')); % ref to wl
-                    dps                  = vs_get(trih,'his-const',{1},'DPS',{stat_ind},'quiet'); % bed to ref
-                    Data.val(:,indexOut) = wl+dps;
-                case 'uv'
+                    DPS                  = vs_get(trih,'his-const',{1},'DPS',{stat_ind},'quiet'); % bed to ref
+                    Data.val(:,indexOut) = wl+DPS;
+                case {'uv','ZCURU'}
                     if no_layers == 1 % 2Dh
                         data=qpread(trih,1,'depth averaged velocity','griddata',time_ind,stat_ind);
                         Data.vel_x(:,indexOut) = data.XComp;
@@ -228,9 +228,9 @@ switch modelType
                     zwl      = vs_let(trih,'his-series',{time_ind},'ZWL',{stat_ind},'quiet');
                     for i_time = 1:dims(timeInd).sizeOut
                         if strcmpi(layer_model,'sigma-model')
-                            depth = dps(stat_ind) + zwl(i_time);
+                            depth = DPS(stat_ind) + zwl(i_time);
                             Zcen_int(i_time,1     )        = zwl(i_time);
-                            Zcen_int(i_time,no_layers + 1) = -dps(stat_ind);
+                            Zcen_int(i_time,no_layers + 1) = -DPS(stat_ind);
                             Zcen_cen(i_time,1     )        = zwl(i_time) - 0.5*thick(1)*depth;
                             for k = 2: no_layers
                                 Zcen_int(i_time,k)  = Zcen_int(i_time,k-1) - thick(k-1)*depth;
@@ -240,10 +240,10 @@ switch modelType
                             zk_int(1:no_layers + 1) = NaN;
                             
                             %restrict to active computational layers
-                            i_start = find(zk> -dps(stat_ind),1,'first') - 1;
+                            i_start = find(zk> -DPS(stat_ind),1,'first') - 1;
                             i_stop =  find(zk>  zwl(i_time),1,'first');
                             if isempty(i_stop) i_stop = no_layers + 1; end
-                            zk_int(i_start) = -dps(stat_ind);
+                            zk_int(i_start) = -DPS(stat_ind);
                             zk_int(i_stop)  =  zwl(i_time);
                             
                             zk_int(i_start+1:i_stop-1) = zk(i_start+1:i_stop-1);

@@ -67,6 +67,11 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'tau'        ) newName = 'TAUKSI'     ; end
         if strcmpi(varName,'sedconc'    ) newName = 'RSEDEQ'     ; end
         if strcmpi(varName,'dpsed'      ) newName = 'DP_BEDLYR'  ; end
+    case 'trih' % d3d
+        % Get the name of varName as specified on the history file of a simulation
+        if strcmpi(varName,'wl'         ) newName = 'ZWL'        ; end
+        if strcmpi(varName,'bedlevel'   ) newName = 'DPS'        ; end
+        if strcmpi(varName,'uv'         ) newName = 'ZCURU'      ; end
     case 'sds' % simona
         if strcmpi(varName,'x_velocity' ) newName = 'uv'         ; end
 end
@@ -143,7 +148,7 @@ fmNames{end+1,1}={'mesh2d_flowelem_bl','FlowElem_bl'}; % bed level
 fmNames{end+1,1}={'mesh2d_flowelem_ba','FlowElem_bac'}; % area (m2) of cell faces
 
 %%% DIMENSION names used within different versions of Delft3D-Flexible Mesh
-fmNames{end+1,1}={'mesh2d_nNodes','nmesh2d_node','nNetNode'}; % number of nodes
+fmNames{end+1,1}={'mesh2d_nNodes','nmesh2d_node','nNetNode','NetElemNode'}; % number of nodes
 fmNames{end+1,1}={'mesh2d_nFaces','nmesh2d_face','nNetElem','nFlowElem'}; % number of faces
 fmNames{end+1,1}={                'nmesh2d_edge','nNetLink'}; % number of velocity-points
 
