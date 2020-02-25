@@ -15,12 +15,12 @@ if ismember(OPT0.zRef,{'wl','bed'})
     OPT.varName = OPT0.zRef;
     Data_zRef = EHY_getmodeldata(inputFile,stat_name,modelType,OPT);
     refLevel = Data_zRef.val;
-    if any(size(refLevel)==1)
-        refLevel = reshape(refLevel,1,length(refLevel));
-    end
+    no_stat = length(Data_zRef.requestedStations);
+    no_times = numel(Data_zRef.val)/no_stat;
+    refLevel = reshape(refLevel,no_times,no_stat); % [time,stations]
 else % model reference level
     Data_zRef = EHY_getRequestedStations(inputFile,stat_name,modelType);
-    refLevel = repmat(0,1,length(Data_zRef.requestedStations));
+    refLevel = zeros(1,length(Data_zRef.requestedStations)); % [time,stations]
 end
 
 %% get "zcen_int"-data
@@ -97,7 +97,8 @@ for iZ = 1:length(OPT0.z)
                 for iT = 1:length(DataAll.times) % loop over time
                     for iS = 1:length(DataAll.requestedStations) % loop over stations
                         if ~isnan(wantedZ(iS))
-                            Data.(v{iV})(iT,iS,iZ) = interp1(squeeze(DataZ.val_cen(iT,iS,:)),squeeze(DataAll.(v{iV})(iT,iS,:)),wantedZ(iS));
+                            logi = ~isnan(squeeze(DataZ.val_cen(iT,iS,:))); % active layers: prevent error for Z-layers
+                            Data.(v{iV})(iT,iS,iZ) = interp1(squeeze(DataZ.val_cen(iT,iS,logi)),squeeze(DataAll.(v{iV})(iT,iS,logi)),wantedZ(iS));
                         end
                     end
                 end
@@ -108,10 +109,13 @@ for iZ = 1:length(OPT0.z)
             for iV = 1:length(v) % loop over fieldname 'val','vel_x','vel_mag',etc.
                 slicePerZ = NaN(size(Data.(v{1}),1),size(Data.(v{1}),2)); % size of first two dims of Data.val
                 for iL = 1:no_layers % loop over layers
-                    getFromThisModelLayer = DataZ.val(:,:,iL) <= wantedZ & DataZ.val(:,:,iL+1)>wantedZ;
+                    getFromThisModelLayer = DataZ.val(:,:,iL) <= wantedZ & DataZ.val(:,:,iL+1) >= wantedZ;
                     if any(any(getFromThisModelLayer))
                         valInThisModelLayer = DataAll.(v{iV})(:,:,iL);
                         slicePerZ(getFromThisModelLayer) = valInThisModelLayer(getFromThisModelLayer);
+                    end
+                    if all(all(~isnan(slicePerZ)))
+                        break
                     end
                 end
                 Data.(v{iV})(:,:,iZ) = slicePerZ;
