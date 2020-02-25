@@ -1,13 +1,12 @@
-
 function [ana res] = triana_runTidalAnalysis(runID,hdt,hdz,ana_info)
+
+% This function performs a tidal analysis using the Delft3D-Tide executable
 
 ana = [];
 res = [];
-try
-    if ana_info.fourier == 1
-    end
-catch
-    ana_info.fourier = 0;
+
+if ~isfield(ana_info,'fourier')
+    ana_info.fourier = 1;    
 end
 
 sourceText='';
@@ -23,7 +22,9 @@ minDur=14; %in days
 maxDur=366; %in days
 freqTxtFraction=.4; %fraction of maximum residual bin after fourier to plot frequency text at peaks
 
-DirCmpDTide = 'p:\1202339-rndcoastalhd\io-recirc-tools\Matlab\scripts\hulpscripts\components_DTide.mat';
+% find location of mat file containing an overview of all tidal constiuents
+% in Delft3D-TIDE
+DirCmpDTide = which('Frequency_Tidal_Components.mat');
 
 %% processing
 %Split timeseries
