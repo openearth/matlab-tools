@@ -125,9 +125,11 @@ switch lower(cmd)
                 for i_force = 1: length(OPT.ext_force)
                     names = fieldnames(OPT.ext_force(i_force));
                     for i_name = 1: length(names)
-                        fprintf(fid,'%-24s =%-12s \n', upper(names{i_name}),num2str(OPT.ext_force(i_force).(names{i_name})));
-                        % Keywords are (FY) case sensitive!
-                        % fprintf(fid,'%-24s =%-12s \n', names{i_name},num2str(OPT.ext_force(i_force).(names{i_name})));
+                        if ~isempty(OPT.ext_force(i_force).(names{i_name}))
+                            fprintf(fid,'%-24s =%-12s \n', upper(names{i_name}),num2str(OPT.ext_force(i_force).(names{i_name})));
+                            % Keywords are (FY) case sensitive!
+                            % fprintf(fid,'%-24s =%-12s \n', names{i_name},num2str(OPT.ext_force(i_force).(names{i_name})));
+                        end
                     end
                     fprintf(fid,' \n');
                 end

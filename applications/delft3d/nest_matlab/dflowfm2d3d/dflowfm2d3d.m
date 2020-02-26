@@ -17,7 +17,7 @@ generate_bcc             = true;      % save time
 [path_mdu,name_mdu,~] = fileparts(fileMDU);
 name_mdf              = strrep(name_mdu,'FM','D3D');
 if isempty(mdu.output.OutputDir) mdu.output.OutputDir = [path_mdu filesep 'DFM_OUTPUT_' name_mdu]; end
-fileNet   = 'p:\1204257-dcsmzuno\2013-2017\3D-DCSM-FM_4nm\A02b_s\DCSM-FM_4nm_grid_20191120_depth_20191120_cellInfo_net.nc';
+fileNet   = [path_mdu filesep mdu.geometry.NetFile];
 fileMap   = [mdu.output.OutputDir filesep name_mdu '_0000_map.nc'];
 fileExt   = [path_mdu filesep mdu.external_forcing.ExtForceFileNew];
 fileLoc   = 'p:\11203715-004-dcsm-fm\models\model_input\bnd_cond\pli\DCSM-FM_OB_all_20181108.pli';
@@ -28,6 +28,7 @@ fileSLA   = 'p:\1204257-dcsmzuno\2013-2017\3D-DCSM-FM_4nm\A02b_s\SH_IBC_Global_m
 
 %  d3d
 dirMDF    = 'p:\1204257-dcsmzuno\2013-2017\3D-DCSM-FM_4nm\A02b_s\mdf';
+dirMDF    = '.';
 if ~exist(dirMDF,'dir') mkdir(dirMDF); end
 fileMdf   = [dirMDF filesep name_mdf '.mdf'];
 fileGrd   = [dirMDF filesep name_mdf '.grd'];
