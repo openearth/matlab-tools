@@ -37,7 +37,7 @@ switch modelType
             end
         end
         
-    case {'d3d'}
+    case 'd3d'
         variables   = defaults(:,1);
         description = defaults(:,2);
         %         FI = qpfopen(fname);
@@ -65,7 +65,7 @@ switch modelType
         
         description = description2(locb(locb~=0));
         
-    case {'simona'}
+    case 'simona'
         variables   = defaults(1:5,1);
         description = defaults(1:5,2);
         

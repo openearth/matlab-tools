@@ -123,8 +123,8 @@ if nargout > 1
     dimsInd.time = find(ismember({dims(:).name},'time'));
     dimsInd.layers = find(ismember({dims(:).name},{'layers','laydim','nmesh2d_layer','mesh2d_nLayers','depth'})); % depth is needed for cmems
     dimsInd.faces = find(ismember({dims(:).name},{'faces','nmesh2d_face','mesh2d_nFaces','nFlowElem','nNetElem'}));
-    dimsInd.m = find(ismember({dims(:).name},'m')); % structured grid
-    dimsInd.n = find(ismember({dims(:).name},'n'));
+    dimsInd.m = find(ismember({dims(:).name},{'m','edge_m'})); % structured grid
+    dimsInd.n = find(ismember({dims(:).name},{'n','edge_n'}));
     dimsInd.sedfrac = find(ismember({dims(:).name},'sedimentFraction'));
 end
 
@@ -176,7 +176,7 @@ if nargout > 2
         dims(dimsInd.n).indexOut = 1:length(OPT.n);
         dims(dimsInd.n).size     = nsize;
     end
-    
+
     %% Get sediment fractions information
     if ~isempty(dimsInd.sedfrac)
         sedfracName = squeeze(vs_let(vs_use(inputFile,'quiet'),'map-const','NAMSED','quiet'));

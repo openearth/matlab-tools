@@ -77,7 +77,7 @@ switch typeOfModelFileDetail
 end
 
 %% for FM output (netCDF files)
-if strcmp(modelType,'dfm') && strcmp(fName(end-2:end),'.nc')
+if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
     
     %%% get ncinfo
     infonc   = ncinfo(fName);
@@ -147,7 +147,13 @@ fmNames{end+1,1}={'mesh2d_flowelem_domain','FlowElemDomain'}; % flow element dom
 fmNames{end+1,1}={'mesh2d_flowelem_bl','FlowElem_bl'}; % bed level
 fmNames{end+1,1}={'mesh2d_flowelem_ba','FlowElem_bac'}; % area (m2) of cell faces
 
-%%% DIMENSION names used within different versions of Delft3D-Flexible Mesh
+%% List of Delft3D FM and SFINCS variable names
+fmNames{end+1,1}={'station_x_coordinate','station_x'}; 
+fmNames{end+1,1}={'station_y_coordinate','station_y'};
+fmNames{end+1,1}={'x_velocity','point_u'};
+fmNames{end+1,1}={'y_velocity','point_v'};
+
+%%% DIMENSION names used within different versions of Delft3D Flexible Mesh
 fmNames{end+1,1}={'mesh2d_nNodes','nmesh2d_node','nNetNode','NetElemNode'}; % number of nodes
 fmNames{end+1,1}={'mesh2d_nFaces','nmesh2d_face','nNetElem','nFlowElem'}; % number of faces
 fmNames{end+1,1}={                'nmesh2d_edge','nNetLink'}; % number of velocity-points

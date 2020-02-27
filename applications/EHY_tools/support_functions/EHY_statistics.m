@@ -1,121 +1,102 @@
-function Statistics = EHY_statistics(computed,observed,varargin)
+function Statistics = EHY_statistics(varargin)
+%% Statistics = EHY_statistics(varargin)
+%
+% 1D: function Statistics = EHY_statistics(X_sim, Z_sim, X_obs, Z_obs)
+% uses interp1
+%
+% 2D: function Statistics = EHY_statistics(X_sim, Y_sim, Z_sim, X_obs, Y_obs, Z_obs)
+% uses scatteredInterpolant as it can handle 'scattered' XYZ-data. XY is
+% not always plain/'meshgridded'
 
-%% Initialiasation
-Statistics.bias             = NaN;
-Statistics.std              = NaN;
-Statistics.rmse             = NaN;
-Statistics.cost             = NaN;
-Statistics.tide             = NaN;
-for i_hwlw = 1: 2
-     Statistics.hwlw(i_hwlw).cmp   = NaN;
-     Statistics.hwlw(i_hwlw).obs   = NaN;
-     Statistics.hwlw(i_hwlw).diff  = NaN;
-     Statistics.hwlw(i_hwlw).series_bias        = NaN;
-     Statistics.hwlw(i_hwlw).series_rmse        = NaN;
-     Statistics.hwlw(i_hwlw).time_series_bias   = NaN;
-     Statistics.hwlw(i_hwlw).time_series_rmse   = NaN;
-     Statistics.hwlw(i_hwlw).time_cmp           = NaN;
-     Statistics.hwlw(i_hwlw).time_obs           = NaN;
-     Statistics.hwlw(i_hwlw).time_diff          = NaN;
-     
-     Statistics.hwlw(i_hwlw+2).series_bias      = NaN;
-     Statistics.hwlw(i_hwlw+2).series_rmse      = NaN;
-     Statistics.hwlw(i_hwlw+2).time_series_bias = NaN;
-     Statistics.hwlw(i_hwlw+2).time_series_rmse = NaN;
+%% Initiate and check
+Statistics.meanerror    = NaN;
+Statistics.std          = NaN;
+Statistics.rmserror     = NaN;
+Statistics.maxerror     = NaN;
+Statistics.minerror     = NaN;
+Statistics.obsrange     = NaN;
+Statistics.simrange     = NaN;
+Statistics.simrangeint  = NaN;
+Statistics.rms_obs      = NaN;
+
+if any(cellfun(@isempty,varargin))
+    return % statistics can not be determined
 end
 
-%% Check if belonging times are given and if it is tidal simulation or not
-OPT.times    = [];
-OPT.tide     = false;
-OPT.extremes = 0;
-OPT          = setproperty(OPT,varargin);
-
-%% Do statistics (from Firmijn's scripts)
-error            = computed - observed;
-nonan            = ~isnan(error);
-if ~isempty(error(nonan))
-    Statistics.bias             = mean( error(nonan) );
-    Statistics.std              = norm( error(nonan) - Statistics.bias) / sqrt(length(error(nonan)));
-    Statistics.rmse             = norm( error(nonan)                  ) / sqrt(length(error(nonan)));
-    Statistics.cost             = 0.5 * sum( error(nonan).^2 );
+%% Interpolate
+if nargin == 4 % Statistics = EHY_statistics(X_sim, Z_sim, X_obs, Z_obs)
     
-    %% Statistics for high (1) and low (2) waters
-    for i_hwlw = 1: 2
-        % Highwaters
-        sign = 1.;
-        func_maxmin = 'max';
-        if i_hwlw == 2;
-            sign = -1.;
-            func_maxmin = 'min';
-        end
-        
-        % Maximum or minimum water levels over the entire period (can be nonsense)
-        [Statistics.hwlw(i_hwlw).cmp,i_cmp]   = feval(func_maxmin,computed(nonan));
-        [Statistics.hwlw(i_hwlw).obs,i_obs]   = feval(func_maxmin,observed(nonan));
-        Statistics.hwlw(i_hwlw).diff          = feval(func_maxmin,computed(nonan)) - feval(func_maxmin,observed(nonan));
-        if ~isempty (OPT.times)
-            % Store times and time difference
-            Statistics.hwlw(i_hwlw).time_cmp  = datestr(OPT.times(i_cmp));
-            Statistics.hwlw(i_hwlw).time_obs  = datestr(OPT.times(i_obs));
-            Statistics.hwlw(i_hwlw).time_diff = (OPT.times(i_cmp) - OPT.times(i_obs))*1440.;
-            if OPT.tide
-                % Same analysis this time over SERIES of High waters
-                Statistics_tide                          = det_stat_tide(OPT.times,computed,observed,sign);
-                Statistics.hwlw(i_hwlw).series_bias      = Statistics_tide.serieshwlw_bias;
-                Statistics.hwlw(i_hwlw).series_rmse      = Statistics_tide.serieshwlw_rmse;
-                Statistics.hwlw(i_hwlw).time_series_bias = Statistics_tide.serieshwlw_time_bias;
-                Statistics.hwlw(i_hwlw).time_series_rmse = Statistics_tide.serieshwlw_time_rmse;
-                if OPT.extremes > 0
-                    Statistics_tide                            = det_stat_tide(OPT.times,computed,observed,sign,'extremes',OPT.extremes);
-                    Statistics.hwlw(i_hwlw+2).series_bias      = Statistics_tide.serieshwlw_bias;
-                    Statistics.hwlw(i_hwlw+2).series_rmse      = Statistics_tide.serieshwlw_rmse;
-                    Statistics.hwlw(i_hwlw+2).time_series_bias = Statistics_tide.serieshwlw_time_bias;
-                    Statistics.hwlw(i_hwlw+2).time_series_rmse = Statistics_tide.serieshwlw_time_rmse;
-                end
-            end
-        end
+    X_sim = varargin{1};
+    Z_sim = varargin{2};
+    X_obs = varargin{3};
+    Z_obs = varargin{4};
+    
+    nonan = ~(isnan(X_sim) | isnan(Z_sim));
+    if sum(nonan) == 0
+        return % statistics can not be determined
+    else
+        Z_int = interp1(X_sim(nonan), Z_sim(nonan), X_obs);
     end
+    
+elseif nargin == 6 % Statistics = EHY_statistics(X_sim, Y_sim, Z_sim, X_obs, Y_obs, Z_obs)
+    
+    X_sim = varargin{1};
+    Y_sim = varargin{2};
+    Z_sim = varargin{3};
+    X_obs = varargin{4};
+    Y_obs = varargin{5};
+    Z_obs = varargin{6};
+    
+    % Make sure dimensions of X_sim and Y_sim are the same as Z_sim
+    % First reshape in case of row/column vectors. Then, apply repmat if needed
+    %
+    % This is needed when e.g. X_sim = Zcen [times x layers], Y_sim = time [times,1] 
+    % and Z_sim = salinity [times x layers]
+    
+    if size(X_sim,1) == 1 && size(X_sim,2) == size(Z_sim,1)
+        X_sim = X_sim';
+    elseif size(Y_sim,1) == 1 && size(Y_sim,2) == size(Z_sim,1)
+        Y_sim = Y_sim';
+    end
+    
+    if     size(X_sim,1) ~= size(Z_sim,1) && size(X_sim,1) == 1 % X_sim, 1st dim
+        X_sim = repmat(X_sim,size(Z_sim,1),1);
+    elseif size(X_sim,2) ~= size(Z_sim,2) && size(X_sim,2) == 1 % X_sim, 2nd dim
+        X_sim = repmat(X_sim,1,size(Z_sim,2));
+    elseif size(Y_sim,1) ~= size(Z_sim,1) && size(Y_sim,1) == 1 % Y_sim, 1st dim
+        Y_sim = repmat(Y_sim,size(Z_sim,1),1);
+    elseif size(Y_sim,2) ~= size(Z_sim,2) && size(Y_sim,2) == 1 % Y_sim, 2nd dim
+        Y_sim = repmat(Y_sim,1,size(Z_sim,2));
+    end
+    
+    nonan = ~(isnan(X_sim) | isnan(Y_sim));
+    if sum(sum(nonan)) == 0
+        return % statistics can not be determined
+    end
+    XYZ = unique([X_sim(nonan) Y_sim(nonan) Z_sim(nonan)],'rows');
+    F = scatteredInterpolant(XYZ(:,1), XYZ(:,2), XYZ(:,3));
+    Z_int = F(X_obs,Y_obs);
+    
+else
+    disp('Number of input arguments in function getstatistics is incorrect')
 end
 
-function Statistics_tide = det_stat_tide(times,computed,observed,sign,varargin)
+%% Determine statistics
+difference = Z_int - Z_obs;
+err = difference(~isnan(difference)); % err = 'error'
 
-%% Sttings for statistics on extremes (or whole series if OPT.extremes = 0)
-OPT.extremes = 0;
-OPT = setproperty(OPT,varargin);
-
-%% Determine high or low water statistics of a tidal signal, sign = 1 hw, sign = -1 lw
-period = (12.*60 + 25.)/1440.; %period M2
-
-%% Get high or low waters
-[hwlw_cmp,time_hwlw_cmp]             = gethighwater   (times,sign.*computed,period);
-[hwlw_obs,time_hwlw_obs]             = gethighwater   (times,sign.*observed,period);
-
-%% Make sure the first hw or lw are corresponding
-if time_hwlw_cmp(1) - time_hwlw_obs(1) > period/2
-    hwlw_cmp(1:end-1)      = hwlw_cmp(2:end);
-    time_hwlw_cmp(1:end-1) = time_hwlw_cmp(2:end);
+if sum(size(err)>1)>1
+    error('2D error array.. please debug as I''m not sure if statistics below are OK for 2D')
 end
 
-if time_hwlw_cmp(1) - time_hwlw_obs(1) < -1.*period/2
-    hwlw_obs(1:end-1)      = hwlw_obs(2:end);
-    time_hwlw_obs(1:end-1) = time_hwlw_obs(2:end);
+if numel(err) > 1   
+    Statistics.meanerror    = mean(err);
+    Statistics.std          = std(err,1);  % Note the difference with std(error) [= std(error,0)]
+    Statistics.rmserror     = norm(err)/sqrt(length(err));
+    Statistics.maxerror     = max(err);
+    Statistics.minerror     = min(err);
+    Statistics.obsrange     = max(Z_obs) - min(Z_obs);
+    Statistics.simrange     = max(max(Z_sim)) - min(min(Z_sim));
+    Statistics.simrangeint  = max(Z_int) - min(Z_int);
+    Statistics.rms_obs      = Statistics.rmserror / Statistics.obsrange;
 end
-
-%% Restrict the series to the to extremes
-index  = 1:1:length(hwlw_cmp);
-no_val = length(hwlw_cmp);
-if OPT.extremes > 0
-    no_nan    = ~isnan(hwlw_obs);
-    [~,index] = sort(hwlw_obs(no_nan),2,'descend');
-    no_val    = min(OPT.extremes,length(index));
-end
-
-%% Statistics on values
-tmp                                  = EHY_statistics (sign.*hwlw_cmp(index(1:no_val)),sign.*hwlw_obs(index(1:no_val)));
-Statistics_tide.serieshwlw_bias      = tmp.bias;
-Statistics_tide.serieshwlw_rmse      = tmp.rmse;
-
-%% Statistics on times
-tmp                                  = EHY_statistics(time_hwlw_cmp(index(1:no_val)),time_hwlw_obs(index(1:no_val)));
-Statistics_tide.serieshwlw_time_bias = tmp.bias*1440.; % from days to minutes
-Statistics_tide.serieshwlw_time_rmse = tmp.rmse*1440.; % from days to minutes

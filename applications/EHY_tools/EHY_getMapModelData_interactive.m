@@ -32,7 +32,7 @@ end
 % varName
 [variables,varAndDescr] = EHY_variablesOnFile(outputfile,modelType);
 
-if strcmp(modelType,'dfm')
+if strcmp(modelType,'dfm') && ~EHY_isSFINCS(outputfile)
     % For now, ONLY keep variables that have cell face data
     cellFaceDataInd = [];
     for iV = 1:length(variables)
@@ -44,8 +44,8 @@ if strcmp(modelType,'dfm')
     variables   = variables(cellFaceDataInd);
     varAndDescr = varAndDescr(cellFaceDataInd);
 end
-
-option=listdlg('PromptString','What kind of data do you want to load?','SelectionMode','single','ListString',...
+if EHY_isSFINCS(outputfile); lia = ismember(variables,{'inp','crs','sfincsgrid'}); variables(lia) = []; varAndDescr(lia) = []; end
+option = listdlg('PromptString','What kind of data do you want to load?','SelectionMode','single','ListString',...
     varAndDescr,'ListSize',[500 600]);
 if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end
 OPT.varName = variables{option};
@@ -143,13 +143,20 @@ end
 
 %%
 extraText = '';
+GI_extraText = '';
 if exist('OPT','var')
-    fn = fieldnames(OPT);
-    for iF = 1:length(fn)
-        if ischar(OPT.(fn{iF}))
-            extraText = [extraText ',''' fn{iF} ''',''' OPT.(fn{iF}) ''''];
-        elseif isnumeric(OPT.(fn{iF}))
-            extraText = [extraText ',''' fn{iF} ''',' num2str(OPT.(fn{iF}))];
+    fns = fieldnames(OPT);
+    for iF = 1:length(fns)
+        fn = fns{iF};
+        val = OPT.(fn);
+        if ~isempty(num2str(val)); val = num2str(val); end
+        if ~ismember(fn,{'m','n'}) 
+            extraText = [extraText ',''' fn ''',''' val ''''];
+        else
+            if ~all(val == '0')
+            extraText = [extraText ',''' fn ''',''' val ''''];
+            GI_extraText = [GI_extraText ',''' fn ''',''' val ''''];
+            end
         end
     end
 end
@@ -177,20 +184,22 @@ end
 if exist('OPT','var') && isfield(OPT,'pliFile')
     EHY_getGridInfo_line = '';
 else
-    if strcmp(modelType,'dfm')
+    if EHY_isSFINCS(outputfile)
+        EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''XYcor''}' GI_extraText ');'];
+    elseif strcmp(modelType,'dfm')
         if isfield(OPT,'mergePartitions') && OPT.mergePartitions==0
             EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''face_nodes_xy''},''mergePartitions'',0);'];
         else
             EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''face_nodes_xy''});'];
         end
     elseif strcmp(modelType,'d3d')
-        EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''XYcor''},''m'',OPT.m,''n'',OPT.n);'];
+        EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''XYcor''}' GI_extraText ');'];
     elseif strcmp(modelType,'delwaq')
         [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(gridFile);
         if strcmp(typeOfModelFileDetail,'nc')
             EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' gridFile ''',{''face_nodes_xy''});'];
         elseif ismember(typeOfModelFileDetail,{'lga','cco'})
-            EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' gridFile ''',{''XYcor''},''m'',OPT.m,''n'',OPT.n);'];
+            EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' gridFile ''',{''XYcor''}' GI_extraText ');'];
         end
     end
 end

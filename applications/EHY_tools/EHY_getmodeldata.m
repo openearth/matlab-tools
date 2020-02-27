@@ -83,6 +83,7 @@ if ~isnumeric(OPT.z )      OPT.z       = str2num(OPT.z);       end
 %% Get model type
 if isempty(modelType);                                              modelType = EHY_getModelType(inputFile);
 elseif ismember(modelType,{'d3dfm','dflow','dflowfm','mdu','dfm'}); modelType = 'dfm';
+elseif ismember(upper(modelType),{'SFINCS'});                       modelType = 'dfm'; % read SFINCS as DFM
 elseif ismember(modelType,{'d3d','d3d4','delft3d4','mdf'});         modelType = 'd3d';
 elseif ismember(modelType,{'waqua','simona','siminp'});             modelType = 'simona';
 end
@@ -121,12 +122,13 @@ switch modelType
         % station x,y-location info
         if any(ismember({dims.name},{'stations','cross_section'}))
             if strcmp(dims(stationsInd).name,'stations')
-                stationX = ncread(inputFile,'station_x_coordinate');
-                stationY = ncread(inputFile,'station_y_coordinate');
+                stationX = ncread(inputFile,EHY_nameOnFile(inputFile,'station_x_coordinate'));
+                stationY = ncread(inputFile,EHY_nameOnFile(inputFile,'station_y_coordinate'));
             elseif strcmp(dims(stationsInd).name,'cross_section')
                 stationX = ncread(inputFile,'cross_section_x_coordinate')';
                 stationY = ncread(inputFile,'cross_section_y_coordinate')';
             end
+            stationX = double(stationX); stationY = double(stationY);
             if size(stationX,2)>1 % moving stations or cross-section
                 Data.locationX(:, Data.exist_stat) = stationX(dims(stationsInd).index,:)';
                 Data.locationY(:, Data.exist_stat) = stationY(dims(stationsInd).index,:)';
@@ -139,11 +141,11 @@ switch modelType
         [dims,start,count] = EHY_getmodeldata_optimiseDims(dims);
         
         % The handling of all the wanted indices (like times, stations and layers) is done within ncread_blocks
-        if ~strcmp(OPT.varName,{'x_velocity'})
+        if ~ismember(OPT.varName,{'x_velocity','y_velocity','point_u','point_v'})
             Data.val   =  ncread_blocks(inputFile,OPT.varName,start,count,dims);
         else
-            Data.vel_x   = ncread_blocks(inputFile,'x_velocity',start,count,dims);
-            Data.vel_y   = ncread_blocks(inputFile,'y_velocity',start,count,dims);
+            Data.vel_x   = ncread_blocks(inputFile,EHY_nameOnFile(inputFile,'x_velocity'),start,count,dims);
+            Data.vel_y   = ncread_blocks(inputFile,EHY_nameOnFile(inputFile,'y_velocity'),start,count,dims);
             Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
             Data.vel_dir = mod(atan2(Data.vel_x,Data.vel_y)*180/pi,360);
             Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';

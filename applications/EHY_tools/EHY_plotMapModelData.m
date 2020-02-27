@@ -103,11 +103,11 @@ if strcmp(modelType,'d3d')
     end
     
     if all(size(gridInfo.Xcor)-size(zData) == [1 1])
-        % this is needer for info in cell center, like delft3d 4 output
+        % this is needed for info in cell center, like delft3d 4 output
         zData(end+1,:) = NaN;
         zData(:,end+1) = NaN;
     elseif all(size(gridInfo.Xcor)-size(zData) == [0 0])
-        % this is needed for info in cell corners, like griddata_netcdf
+        % this is needed for info in cell corners, like griddata_netcdf and SFINCS
         % for plotting with pcolor > apply center2corner and
         % add dummy row and column in zData
         gridInfo.Xcor = center2corner(gridInfo.Xcor);

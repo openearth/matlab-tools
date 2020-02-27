@@ -34,7 +34,8 @@ end
 
 % varName
 [variables,varAndDescr] = EHY_variablesOnFile(outputfile,modelType);
-option=listdlg('PromptString','What kind of data do you want to load?','SelectionMode','single','ListString',...
+if EHY_isSFINCS(outputfile); lia = ismember(variables,{'inp','crs'}); variables(lia) = []; varAndDescr(lia) = []; end
+option = listdlg('PromptString','What kind of data do you want to load?','SelectionMode','single','ListString',...
     varAndDescr,'ListSize',[500 600]);
 if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return; end
 OPT.varName = variables{option};
@@ -120,6 +121,7 @@ else
     stations='''''';
 end
 
+if EHY_isSFINCS(outputfile); modelType = 'SFINCS'; end
 disp([newline 'Note that next time you want to get this data, you can also use:'])
 disp(['<strong>Data = EHY_getmodeldata(''' outputfile ''',' stations ',''' modelType '''' extraText ');</strong>' ])
 

@@ -162,7 +162,7 @@ switch modelType
         % initialise start+count and optimise if possible
         [dims,start,count] = EHY_getmodeldata_optimiseDims(dims);
 
-        if ~isempty(strfind(OPT.varName,'ucx')) || ~isempty(strfind(OPT.varName,'ucy'))
+        if ~isempty(strfind(OPT.varName,'ucx')) || ~isempty(strfind(OPT.varName,'ucy')) || ismember(OPT.varName,{'u','v'})
             value_x   =  nc_varget(inputFile,strrep(OPT.varName,'ucy','ucx'),start-1,count);
             value_y   =  nc_varget(inputFile,strrep(OPT.varName,'ucx','ucy'),start-1,count);
         else
@@ -414,13 +414,13 @@ end
 
 %% add dimension information to Data
 % dimension information
-    dimensionsComment = {dims.name};
+dimensionsComment = {dims.name};
 
 fn = char(intersect(fieldnames(Data),{'val','vel_x','val_x'}));
-while ~isempty(fn) && ndims(Data.(fn))<numel(dimensionsComment)
+while ~isempty(fn) && ndims(Data.(fn)) < numel(dimensionsComment)
     dimensionsComment(end) = [];
 end
-while ~isempty(fn) && ndims(Data.(fn))>numel(dimensionsComment)
+while ~isempty(fn) && ndims(Data.(fn)) > numel(dimensionsComment)
     dimensionsComment{end+1,1} = '-';
 end
 

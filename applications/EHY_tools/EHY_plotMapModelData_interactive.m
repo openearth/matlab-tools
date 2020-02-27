@@ -8,6 +8,9 @@ if isfield(Data,'face_nodes_x')
 elseif isfield(Data,'Xcor')
     gridInfo.Xcor = Data.Xcor;
     gridInfo.Ycor = Data.Ycor;
+elseif isfield(Data,'Xcen')
+    gridInfo.Xcen = Data.Xcen;
+    gridInfo.Ycen = Data.Ycen;
 end
 
 if isfield(Data,'times') && length(Data.times)>1
@@ -21,9 +24,9 @@ else
     plotInd = [];
 end
 
-disp([char(10) 'Note that the example MATLAB-line to get the variable ''Data'' is a few lines above ^. '])
+disp([newline 'Note that the example MATLAB-line to get the variable ''Data'' is a few lines above ^. '])
 if ~isempty(EHY_getGridInfo_line)
-    disp([char(10) 'Note that next time you want to plot this data, you can also use:'])
+    disp([newline 'Note that next time you want to plot this data, you can also use:'])
     disp(['<strong>' EHY_getGridInfo_line '</strong>'])
 end
 

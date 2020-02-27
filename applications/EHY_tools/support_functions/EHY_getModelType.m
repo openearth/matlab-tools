@@ -20,7 +20,7 @@ function modelType = EHY_getModelType(fileInp)
 if ischar(fileInp)
     
     [~, name, ext] = fileparts(lower(fileInp));
-    modelType='';
+    modelType = '';
     
     % Delft3D-FM
     if isempty(modelType)

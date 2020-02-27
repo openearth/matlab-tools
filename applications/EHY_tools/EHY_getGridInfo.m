@@ -145,6 +145,7 @@ end
 %% get grid info
 % order modelType:          dfm, d3d, simona
 % order typeOfModelFile:    mdFile,grid/network,
+if EHY_isSFINCS(inputFile); modelType = 'SFINCS'; end
 switch modelType
     case 'dfm'
         
@@ -821,8 +822,31 @@ switch modelType
                        E.no_layers = dw.MNK(3);
                     end
                 end
-                
         end % typeOfModelFile
+         
+    case 'SFINCS'
+        switch typeOfModelFile
+            case 'outputfile'
+                infonc = ncinfo(inputFile);
+                if ismember('XYcen',wantedOutput)
+                    E.Xcen = nc_varget(inputFile,'x');
+                    E.Ycen = nc_varget(inputFile,'y');
+                end
+                if ismember('XYcor',wantedOutput)
+                    E.Xcor = nc_varget(inputFile,'edge_x');
+                    E.Ycor = nc_varget(inputFile,'edge_y');
+                end
+                if ismember('dimensions',wantedOutput)
+                    ind = strmatch('m',{infonc.Dimensions.Name},'exact');
+                    if ~isempty(ind)
+                        E.MNKmax(1) = infonc.Dimensions(ind).Length;
+                    end
+                    ind = strmatch('n',{infonc.Dimensions.Name},'exact');
+                    if ~isempty(ind)
+                        E.MNKmax(2) = infonc.Dimensions(ind).Length;
+                    end
+                end
+        end
 end % modelType
 
 %% If selection of stations is specified, reduce output to specified stations only
@@ -843,28 +867,45 @@ if ismember(modelType,{'d3d','delwaq'}) && ismember(typeOfModelFileDetail,{'trim
     if ~ismember(OPT.n(1),[0 1]); OPT.n = [OPT.n(1)-1 OPT.n]; end
     vars = intersect(fieldnames(E),{'Xcor','Ycor','Xcen','Ycen'});
     for iV = 1:length(vars)
+        var = vars{iV};
         if all(OPT.n==0) && all(OPT.m==0)
             % do nothing
         elseif all(OPT.n==0)
-            E.(vars{iV}) = E.(vars{iV})(OPT.m,:);
+            E.(var) = E.(var)(OPT.m,:);
         elseif all(OPT.m==0)
-            E.(vars{iV}) = E.(vars{iV})(:,OPT.n);
+            E.(var) = E.(var)(:,OPT.n);
         else
-            E.(vars{iV}) = E.(vars{iV})(OPT.m,OPT.n);
+            E.(var) = E.(var)(OPT.m,OPT.n);
         end
     end
     
-    % deal with ghost-cells end of grid 
-    if strcmp(modelType,'d3d') % not needed for delwaq
+    % deal with ghost-cells end of grid
+    if strcmp(modelType,'d3d') % not needed for delwaq or SFINCS
         vars = intersect(fieldnames(E),{'Xcor','Ycor','Xcen','Ycen','Zcen'});
         for iV = 1:length(vars)
+            var = vars{iV};
             if all(OPT.m == 0)
-                E.(vars{iV})(end+1,:) = NaN;
+                E.(var)(end+1,:) = NaN;
             end
             if all(OPT.n == 0)
-                E.(vars{iV})(:,end+1) = NaN;
+                E.(var)(:,end+1) = NaN;
             end
         end
+    end
+end
+% SFINCS
+if EHY_isSFINCS(inputFile)
+    if isfield(E,'Xcen') && ~all(OPT.m==0)
+        E.Xcen = E.Xcen(OPT.m,:); E.Ycen = E.Ycen(OPT.m,:);
+    end
+    if isfield(E,'Xcen') && ~all(OPT.n==0)
+        E.Xcen = E.Xcen(:,OPT.n); E.Ycen = E.Ycen(:,OPT.n);
+    end
+    if isfield(E,'Xcor') && ~all(OPT.m==0)
+        E.Xcor = E.Xcor([OPT.m OPT.m(end)+1],:); E.Ycor = E.Ycor([OPT.m OPT.m(end)+1],:);
+    end
+    if isfield(E,'Xcor') && ~all(OPT.n==0)
+        E.Xcor = E.Xcor(:,[OPT.n OPT.n(end)+1]); E.Ycor = E.Ycor(:,[OPT.n OPT.n(end)+1]);
     end
 end
 

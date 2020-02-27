@@ -3,7 +3,7 @@ function [datenums,varargout] = EHY_getmodeldata_getDatenumsFromOutputfile(input
 modelType = EHY_getModelType(inputFile);
  
 switch modelType
-    case 'dfm'
+    case {'dfm','SFINCS'}
         infonc       = ncinfo(inputFile,'time');       
         nr_times     = infonc.Size;
         if nr_times<3
