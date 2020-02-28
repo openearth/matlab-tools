@@ -15,38 +15,42 @@
       % Conductivity [mS/cm]
       %
       % Formulae supported are
-      % Formula  1: calculation     salinity --->      density; equation according to millero/delft hydraulics       (NaCl)
-      % Formula  2: calculation     salinity --->      density; equation according to millero/delft hydraulics       (NaCl)
-      % Formula  3: calculation     salinity --->      density; equation according to UNESCO (millero-poisson) 1981  (Seawater)
-      % Formula  4: calculation     salinity --->      density; eckart (1958): salt formula in Delft3D-Flow          (Seawater)
-      % Formula  5: calculation     salinity --->      density; engineering approximation
-      % Formula  6: calculation   chlorinity --->      density; equation according to millero/delft hydraulics       (NaCl)
-      % Formula  7: calculation   chlorinity --->      density; equation according to franks/lo surdo                (NaCl)
-      % Formula  8: calculation   chlorinity --->      density; equation according to UNESCO                         (seawater)
-      % Formula  9: calculation conductivity --->     salinity; equation according to Labrique/Kohlrausch            (NaCl)
-      % Formula 10: calculation conductivity --->     salinity; equation NaCl 94                                     (NaCl)
-      % Formula 11: calculation conductivity --->     salinity; fit head (1983) based on chiu data (1968)            (NaCl)
-      % Formula 12: calculation conductivity --->     salinity; hewitt (1960)                                        (NaCl)
-      % Formula 13: calculation conductivity --->     salinity; UNESCO                                               (Seawater)
-      % Formula 14: calculation     salinity ---> conductivity; Labrique/Kohlrausch                                  (NaCl)
-      % Formula 15: calculation     salinity ---> conductivity; NaCl94                                               (NaCl)
-      % Formula 16: calculation     salinity ---> conductivity; hewitt (1960)                                        (NaCl)
-      % Formula 17: calculation     salinity ---> conductivity; UNESCO                                               (seawater)
-      % Formula 18: calculation conductivity --->   chlorinity; Labrique/Kohlrausch                                  (NaCl)
-      % Formula 19: calculation conductivity --->   chlorinity; NaCl94                                               (NaCl)
-      % Formula 20: calculation conductivity --->   chlorinity; UNESCO                                               (Seawater)
-      % Formula 21: calculation chlorinity   ---> conductivity; Labrique/Kohlrausch                                  (NaCl)
-      % Formula 22: calculation chlorinity   ---> conductivity; NaCl94                                               (NaCl)
-      % Formula 23: calculation chlorinity   ---> conductivity; UNESCO                                               (Seawater)
-      % Formula 24: calculation conductivity --->      density; Labr/Kohlr/Mill/Delft                                (Nacl)
-      % Formula 25: calculation conductivity --->      density; UNESCO                                               (Seawater)
-      % Formula 26: calculation     salinity --->   chlorinity;                                                      (NaCl)
-      % Formula 27: calculation     salinity --->   chlorinity;                                                      (Seawater)
-      % Formula 28: calculation   chlorinity --->     salinity;                                                      (NaCl)
-      % Formula 29: calculation   chlorinity --->     salinity;                                                      (Seawater)
-      % Formula 30: calculation conductivity ---> Cl-concent. ; RWS (NDB)                                            (Seawater)
-      % Formula 31: NOAA                                                                                             (Seawater)
-      % Formula 32: calculation conductivity ---> Cl-concent. ; EVIDES (Brielse Meer)                                (Seawater)
+      % Formula  1: calculation     salinity       --->      density; equation according to millero/delft hydraulics       (NaCl)
+      % Formula  2: calculation     salinity       --->      density; equation according to millero/delft hydraulics       (NaCl)
+      % Formula  3: calculation     salinity       --->      density; equation according to UNESCO (millero-poisson) 1981  (Seawater)
+      % Formula  4: calculation     salinity       --->      density; eckart (1958): salt formula in Delft3D-Flow          (Seawater)
+      % Formula  5: calculation     salinity       --->      density; engineering approximation
+      % Formula  6: calculation   chlorinity       --->      density; equation according to millero/delft hydraulics       (NaCl)
+      % Formula  7: calculation   chlorinity       --->      density; equation according to franks/lo surdo                (NaCl)
+      % Formula  8: calculation   chlorinity       --->      density; equation according to UNESCO                         (seawater)
+      % Formula  9: calculation conductivity       --->     salinity; equation according to Labrique/Kohlrausch            (NaCl)
+      % Formula 10: calculation conductivity       --->     salinity; equation NaCl 94                                     (NaCl)
+      % Formula 11: calculation conductivity       --->     salinity; fit head (1983) based on chiu data (1968)            (NaCl)
+      % Formula 12: calculation conductivity       --->     salinity; hewitt (1960)                                        (NaCl)
+      % Formula 13: calculation conductivity       --->     salinity; UNESCO                                               (Seawater)
+      % Formula 14: calculation     salinity       ---> conductivity; Labrique/Kohlrausch                                  (NaCl)
+      % Formula 15: calculation     salinity       ---> conductivity; NaCl94                                               (NaCl)
+      % Formula 16: calculation     salinity       ---> conductivity; hewitt (1960)                                        (NaCl)
+      % Formula 17: calculation     salinity       ---> conductivity; UNESCO                                               (seawater)
+      % Formula 18: calculation conductivity       --->   chlorinity; Labrique/Kohlrausch                                  (NaCl)
+      % Formula 19: calculation conductivity       --->   chlorinity; NaCl94                                               (NaCl)
+      % Formula 20: calculation conductivity       --->   chlorinity; UNESCO                                               (Seawater)
+      % Formula 21: calculation chlorinity         ---> conductivity; Labrique/Kohlrausch                                  (NaCl)
+      % Formula 22: calculation chlorinity         ---> conductivity; NaCl94                                               (NaCl)
+      % Formula 23: calculation chlorinity         ---> conductivity; UNESCO                                               (Seawater)
+      % Formula 24: calculation conductivity       --->      density; Labr/Kohlr/Mill/Delft                                (Nacl)
+      % Formula 25: calculation conductivity       --->      density; UNESCO                                               (Seawater)
+      % Formula 26: calculation     salinity       --->   chlorinity;                                                      (NaCl)
+      % Formula 27: calculation     salinity       --->   chlorinity;                                                      (Seawater)
+      % Formula 28: calculation   chlorinity       --->     salinity;                                                      (NaCl)
+      % Formula 29: calculation   chlorinity       --->     salinity;                                                      (Seawater)
+      % Formula 30: calculation conductivity       ---> Cl-concent. ; RWS (NDB)                                            (Seawater)
+      % Formula 31: NOAA                                                                                                   (Seawater)
+      % Formula 32: calculation conductivity       ---> Cl-concent. ; EVIDES (Brielse Meer)
+      % Formula 33: calculation salinity, CO2, CH4 ---> Density     ; Schmid (Lake Kivu)
+      %             From: "How hazardous is the gas accumulation in Lake Kivu?
+      %                    Arguments for a risk assessment in light of the Nyiragongo Volcano"
+      %                    Acta Vulcanologica Vol 14 (1-2),2002 15 (1-2), 2003: 115 - 122
       %
       % Example: to convert salinity to density according to UNESCO Formulations your function call should be something like:
       % [dens] = convert(salinity,3,temperature);
@@ -246,6 +250,12 @@
          % out:   Cl- conc  ; in: Conductivity and Temperature
          %
          argout = conversion_32 (argin,varargin{1});
+      case   (33)
+         %
+         % Formula 33: calculation salinity, temperature, CO2 CH4 --> density                                            (Lake Kivu)
+         % out:   density     in: Salinity, Temperature, CO2, CH4
+         %
+         argout = conversion_33 (argin,varargin{1},varargin{2}, varargin{3});
       end
 
       function [dens] = conversion_01 (sal,temp)
@@ -323,34 +333,34 @@
       % OR
       % TEMPERATURE RANGE: 15 - 30 dgr C AND SALINITY RANGE: 43  - 50
 
-      rhoref= 999.842594         + 6.793952E-2*temp   - 9.095290E-3*temp^2 + ...
-              1.001685E-4*temp^3 - 1.120083E-6*temp^4 + 6.536332E-9*temp^5 ;
+      rhoref= 999.842594          + 6.793952E-2*temp    - 9.095290E-3*temp.^2 + ...
+              1.001685E-4*temp.^3 - 1.120083E-6*temp.^4 + 6.536332E-9*temp.^5 ;
 
       if sal < 43
          %
          % Unesco 1981
          %
-         A     = 8.24493E-1       - 4.0899E-3 * temp + 7.6438E-5*temp^2 - ...
-                 8.2467E-7*temp^3 + 5.3875E-9*temp^4 ;
-         B     = -5.72466E-3      + 1.0227E-4*temp   - 1.6546E-6*temp^2 ;
+         A     = 8.24493E-1        - 4.0899E-3 * temp  + 7.6438E-5*temp.^2 - ...
+                 8.2467E-7*temp.^3 + 5.3875E-9*temp.^4 ;
+         B     = -5.72466E-3       + 1.0227E-4*temp    - 1.6546E-6*temp.^2 ;
          C     = 4.8314E-4;
 
-         dens  = rhoref + A*sal + B*sal^1.5 + C*sal^2;
+         dens  = rhoref + A*sal + B*sal.^1.5 + C*sal.^2;
       else
          %
          % Unesco 1991
          %
-         dens  = sal *                                      ...
-                 ( 0.824427                                 ...
-                 - 0.52753E-2   * temp                      ...
-                 - 0.51175E-3   * sal                       ...
-                 + 0.4026E-4    * temp^2                    ...
-                 + 0.1151146E-3 * temp   * sal              ...
-                 - 0.1479E-4    * sal^2                     ...
-                 + 0.67901E-6   * temp^3                    ...
-                 - 0.15886E-5   * temp^2 * sal              ...
-                 - 0.52228E-6   * temp   * sal^2            ...
-                 + 0.2075E-6    * sal^3 );
+         dens  = sal .*                                      ...
+                 ( 0.824427                                  ...
+                 - 0.52753E-2   * temp                       ...
+                 - 0.51175E-3   * sal                        ...
+                 + 0.4026E-4    * temp.^2                    ...
+                 + 0.1151146E-3 * temp   .* sal              ...
+                 - 0.1479E-4    * sal.^2                     ...
+                 + 0.67901E-6   * temp.^3                    ...
+                 - 0.15886E-5   * temp.^2.* sal              ...
+                 - 0.52228E-6   * temp   .* sal.^2           ...
+                 + 0.2075E-6    * sal.^3 );
 
          dens  = rhoref + dens;
 
@@ -758,3 +768,22 @@
       %
 
       cl_ion = cl_ion/1000;
+
+      function [dens] = conversion_33 (sal,temp,co2,ch4)
+          
+      % Lake Kivu; Schmid 2002
+      beta_sal =  0.750e-3;
+      beta_co2 =  0.284e-6;
+      beta_ch4 = -1.250e-6;
+      
+      % Multiplication factor from delft3d-flow, dens.f90
+      fact(1:max(length(sal),length(temp)),1) = 1.0;
+      if ~isempty(sal) fact = 1.0  + beta_sal        *sal; end
+      if ~isempty(co2) fact = fact + beta_co2*44.0099*co2; end
+      if ~isempty(ch4) fact = fact + beta_ch4*16.04  *ch4; end % TODO: Check origin of 44.0099 and 16.04
+      
+      % Density (based upon unesco with a salinity equal to zero)
+      dens = saco_convert(0.0,3,temp).*fact;
+      
+      
+
