@@ -9,8 +9,10 @@ TF = false;
 
 if strcmp(ext,'.nc')
     infonc = ncinfo(fname);
-    ind = strmatch('title',{infonc.Attributes.Name},'exact');
-    if ~isempty(ind) && ~isempty(findstr('sfincs',lower(infonc.Attributes(ind).Value)))
-        TF = true;
+    if ~isempty(infonc.Attributes)
+        ind = strmatch('title',{infonc.Attributes.Name},'exact');
+        if ~isempty(ind) && ~isempty(findstr('sfincs',lower(infonc.Attributes(ind).Value)))
+            TF = true;
+        end
     end
 end

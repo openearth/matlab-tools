@@ -32,18 +32,17 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count s
     no_blocks    = ceil((nr_times_clip / nr_times) * (filesize / maxblocksize));
     bl_length    = ceil(nr_times_clip / no_blocks);
     
-    % assuming timeInd == 1
-    if timeInd ~= 1
-        if ~(strcmp(dims(end).name,'-') && timeInd == length(dims)-1)
+    if strcmp(dims(end).name,'-') && timeInd == no_dims-1
+        % correction for 1D-data (was added by EHY_getmodeldata_optimiseDims for easier handling)
+        no_dims = no_dims - 1;
+    else
+        % assuming timeInd == 1
+        if timeInd ~= 1
             error(['timeInd is not last variable, ncread_blocks does not work correctly in that case' char(10) ...
                 'Please contact Julien.Groenenboom@deltares.nl'])
-        else
-            % correction for 1D-data (was added by EHY_getmodeldata_optimiseDims for easier handling)
-            no_dims = no_dims - 1; 
-            values = values';
         end
     end
-       
+
     % cycle over blocks
     offset        = start(1) - 1;
     for i_block = 1:no_blocks
