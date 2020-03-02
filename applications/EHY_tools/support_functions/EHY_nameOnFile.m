@@ -124,6 +124,19 @@ if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
             newName = 'noMatchFound';
         end
     end
+    
+    %%% Deal with *_water_quality_*-variables in Delft3D FM
+    if ~nc_isvar(fName,newName)
+        varInd = find(~cellfun(@isempty,strfind(varNames,'water_quality_')));
+        for iV = 1:length(varInd)
+           AttrInd = strmatch('long_name',{infonc.Variables(varInd(iV)).Attributes.Name},'exact');
+           long_name = infonc.Variables(varInd(iV)).Attributes(AttrInd).Value;
+           if strcmp(varName,long_name)
+               newName = varNames{varInd(iV)};
+               disp(['variable ''' varNameInput ''' renamed to ''' newName '''']);
+           end
+        end
+    end
 end
 end
 
