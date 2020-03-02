@@ -626,18 +626,21 @@ end
         end
     end
 % kml2ldb
-    function [output,OPT]=EHY_convert_kml2ldb(inputFile,outputFile,OPT)
-        output=kml2ldb(OPT.saveOutputFile,inputFile);
+    function [output,OPT]=EHY_convert_kml2ldb(inputFile,outputFile,OPT)      
+        copyfile(inputFile,[tempdir 'kmlpath.kml'])
+        output = kml2ldb(0,[tempdir 'kmlpath.kml']);
+        if OPT.saveOutputFile
+            landboundary('write',outputFile,output,'dosplit');
+        end
         fclose all;
+        delete([tempdir 'kmlpath.kml'])
     end
 % kml2pol
     function [output,OPT]=EHY_convert_kml2pol(inputFile,outputFile,OPT)
         copyfile(inputFile,[tempdir 'kmlpath.kml'])
-        output=kml2ldb(OPT.saveOutputFile,[tempdir 'kmlpath.kml']);
+        output = kml2ldb(0,[tempdir 'kmlpath.kml']);
         if OPT.saveOutputFile
-            movefile([tempdir 'kmlpath.ldb'],outputFile);
-        else
-            delete([tempdir 'kmlpath.ldb'])
+            landboundary('write',outputFile,output,'dosplit');
         end
         fclose all;
         delete([tempdir 'kmlpath.kml'])

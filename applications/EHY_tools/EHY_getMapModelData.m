@@ -64,20 +64,16 @@ OPT              = setproperty(OPT,varargin);
 
 %% modify input
 inputFile = strtrim(inputFile);
-if ~isempty(OPT.t0)        OPT.t0      = datenum(OPT.t0);      end
-if ~isempty(OPT.tend)      OPT.tend    = datenum(OPT.tend);    end
-if ~isempty(OPT.tint )     OPT.tint    = OPT.tint/1440;        end % from minutes to days
-if ~isnumeric(OPT.t)       OPT.m       = str2num(OPT.t);       end
-if ~isnumeric(OPT.m)       OPT.m       = str2num(OPT.m);       end
-if ~isnumeric(OPT.n)       OPT.n       = str2num(OPT.n);       end
-if ~isnumeric(OPT.k)       OPT.k       = str2num(OPT.k);       end
-if ~isnumeric(OPT.z )      OPT.z       = str2num(OPT.z);       end
-if ~isempty(OPT.sgft0)     OPT.sgft0   = datenum(OPT.sgft0);   end
-if ~isnumeric(OPT.sgfkmax) OPT.sgfkmax = str2num(OPT.sgfkmax); end
+for fn = ["t0","tend","sgft0"]
+    if ~isempty(OPT.(fn)); OPT.(fn) = datenum(OPT.(fn)); end
+end
+if ~isempty(OPT.tint );    OPT.tint = OPT.tint/1440;     end % from minutes to days
+for fn = ["t","m","n","k","z","sgfkmax","mergePartitions"]
+if ~isnumeric(OPT.(fn));   OPT.(fn) = str2num(OPT.(fn)); end
+end
 if ~isnumeric(OPT.layer) && ~isempty(str2num(OPT.layer))
     OPT.layer   = str2num(OPT.layer);
 end
-
 if all(OPT.layer==0) && ~all(OPT.k==0) % OPT.k was provided, OPT.layer not
     OPT.layer = OPT.k; % OPT.layer is used in script
 end

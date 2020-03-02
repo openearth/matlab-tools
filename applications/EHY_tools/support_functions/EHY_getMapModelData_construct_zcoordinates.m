@@ -75,7 +75,7 @@ switch gridInfo.layer_model
             % water level
             [~,cellIndMax] = max(int_field,[],2);
             cellIndMaxUni = unique(cellIndMax);
-            cellIndMaxUni(cellIndMaxUni==1)=[];
+            cellIndMaxUni(cellIndMaxUni == 1) = [];
             for ii = 1:length(cellIndMaxUni)
                 logi = cellIndMax == cellIndMaxUni(ii);
                 if cellIndMaxUni(ii) == no_lay+1 % top layer
@@ -85,17 +85,27 @@ switch gridInfo.layer_model
                 end
             end
            
+            % Keepzlayeringatbed
+            keepzlayeringatbed = 1; % Delft3D 4 
+%             if strcmp(modelType,'dfm')
+%                 try
+%                     mdu = dflowfm_io_mdu('read',EHY_getMdFile(inputFile));
+%                     fns = fieldnames(mdu.numerics);
+%                     ind = strmatch('keepzlayeringatbed',lower(fns),'exact');
+%                     keepzlayeringatbed = mdu.numerics.(fns{ind});
+%                 end
+%             end
+            
             % bed level
             [~,cellIndMin] = min(int_field,[],2);
             cellIndMinUni = unique(cellIndMin);
-            cellIndMinUni(cellIndMinUni==1)=[];
-            cellIndMinUni(cellIndMinUni==no_lay+1)=[];
+            cellIndMinUni(cellIndMinUni == 1) = [];
             for ii = 1:length(cellIndMinUni)
                 logi = cellIndMin == cellIndMinUni(ii);
-                if strcmp(modelType,'d3d') % || DFM keepzlayeratbed==1
-                    int_field(logi,cellIndMinUni(ii)-1) = bl(logi); % keepzlayeratbed==1
+                if keepzlayeringatbed
+                    int_field(logi,cellIndMinUni(ii)-1) = ZKlocal(cellIndMinUni(ii)-1);
                 else
-                    int_field(logi,cellIndMinUni(ii)-1) = ZKlocal(cellIndMinUni(ii)-1); % DFM keepzlayeratbed==0
+                    int_field(logi,cellIndMinUni(ii)-1) = bl(logi);
                 end
             end
             
