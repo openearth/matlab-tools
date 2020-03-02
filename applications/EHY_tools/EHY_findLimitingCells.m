@@ -51,7 +51,7 @@ end
 
 mapFile = strtrim(mapFile);
 
-% another file that *_map.nc was provided
+% another file than *_map.nc was provided
 if ~strcmp(mapFile(end-6:end),'_map.nc')
     outputDir = EHY_getOutputDirFM(mapFile);
     mapFile=[outputDir 'dummy.dummy'];  
@@ -68,13 +68,25 @@ if OPT.writeMaxVel
         disp('Could not write max. velocities as no *_map.nc file was provided.')
         OPT.writeMaxVel = 0;
     else
-        Data = EHY_getMapModelData(mapFile,'varName','uv','mergePartitions',1);
-        if ndims(Data.vel_x)==2
-            mag=sqrt(Data.vel_x.^2+Data.vel_y.^2);
-        else
-            mag=max(sqrt(Data.vel_x.^2+Data.vel_y.^2),[],3); % maximum over depth
+        try % needs MATLAB statistics toolbox
+            Data = EHY_getMapModelData(mapFile,'varName','uv','mergePartitions',1);
+            if ndims(Data.vel_x)==2
+                mag=sqrt(Data.vel_x.^2+Data.vel_y.^2);
+            else
+                mag=max(sqrt(Data.vel_x.^2+Data.vel_y.^2),[],3); % maximum over depth
+            end
+            MAXVEL=prctile(mag,OPT.percentile)';
+        catch % skips first 2 days to omit spinup velocities
+            time0=EHY_getmodeldata_getDatenumsFromOutputfile(mapFile);
+            t_spinup = 2;
+            Data = EHY_getMapModelData(mapFile,'varName','uv','t0',time0(1)+t_spinup,'tend',time0(end),'mergePartitions',1);
+            if ndims(Data.vel_x)==2
+                mag=sqrt(Data.vel_x.^2+Data.vel_y.^2);
+            else
+                mag=max(sqrt(Data.vel_x.^2+Data.vel_y.^2),[],3); % maximum over depth
+            end
+            MAXVEL = max(mag,[],1);
         end
-        MAXVEL=prctile(mag,OPT.percentile)';
     end
 end
 
