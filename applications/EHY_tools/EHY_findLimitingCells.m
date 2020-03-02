@@ -75,17 +75,10 @@ if OPT.writeMaxVel
             else
                 mag=max(sqrt(Data.vel_x.^2+Data.vel_y.^2),[],3); % maximum over depth
             end
-            MAXVEL=prctile(mag,OPT.percentile)';
+            MAXVEL=prctile(mag,OPT.percentile)'; % might crash at this line (so 'Data' and 'mag' are already loaded)
         catch % skips first 2 days to omit spinup velocities
-            time0=EHY_getmodeldata_getDatenumsFromOutputfile(mapFile);
-            t_spinup = 2;
-            Data = EHY_getMapModelData(mapFile,'varName','uv','t0',time0(1)+t_spinup,'tend',time0(end),'mergePartitions',1);
-            if ndims(Data.vel_x)==2
-                mag=sqrt(Data.vel_x.^2+Data.vel_y.^2);
-            else
-                mag=max(sqrt(Data.vel_x.^2+Data.vel_y.^2),[],3); % maximum over depth
-            end
-            MAXVEL = max(mag,[],1);
+            logi = Data.times > Data.times(1)+2;
+            MAXVEL = max(mag(logi,:),[],1)';
         end
     end
 end

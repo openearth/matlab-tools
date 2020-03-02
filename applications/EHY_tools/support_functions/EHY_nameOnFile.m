@@ -114,8 +114,8 @@ if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
                 error('Multiple variable/dimension-names, but different Lengths')
             end
         end
-        indVarNames = find(~cellfun(@isempty,strfind(varNames,newName)));
-        indDimNames = find(~cellfun(@isempty,strfind(dimNames,newName)));
+        indVarNames = find(~cellfun(@isempty,strfind(lower(varNames),lower(newName))));
+        indDimNames = find(~cellfun(@isempty,strfind(lower(dimNames),lower(newName))));
         if ~isempty(indVarNames)
             newName = infonc.Variables(indVarNames).Name;
         elseif ~isempty(indDimNames)
