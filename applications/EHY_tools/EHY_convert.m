@@ -638,9 +638,13 @@ end
 % kml2pol
     function [output,OPT]=EHY_convert_kml2pol(inputFile,outputFile,OPT)
         copyfile(inputFile,[tempdir 'kmlpath.kml'])
-        output = kml2ldb(0,[tempdir 'kmlpath.kml']);
+        [output, names] = kml2ldb(0,[tempdir 'kmlpath.kml']);
         if OPT.saveOutputFile
-            landboundary('write',outputFile,output,'dosplit');
+            if ~isempty(names{1,1})
+                landboundary('write',outputFile,output,'names',names,'dosplit');
+            else
+                landboundary('write',outputFile,output,'dosplit');
+            end
         end
         fclose all;
         delete([tempdir 'kmlpath.kml'])

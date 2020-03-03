@@ -1,4 +1,4 @@
-function ldb=kml2ldb(saveOutput,inFile)
+function [ldb,names]=kml2ldb(saveOutput,inFile)
 %KML2LDB Converts kml-file to ldb-file
 %
 % Reads x and y coordinates from a kml-file and saves them to a
@@ -67,7 +67,25 @@ kmlFile=fread(fid,'char');
 coorsStart=findstr('<coordinates>',char(kmlFile)')+13;
 coorsStop=findstr('</coordinates>',char(kmlFile)')-1;
 
+%get polygon names
+nameStart=findstr('<name>',char(kmlFile)')+6;
+nameStop=findstr('</name>',char(kmlFile)')-1;
+
+
 ldb=[nan nan];
+
+%If a kml file has only polygons, the tag <name> appears twice before the
+%first polygon name. Thus: numel(nameStart)=numel(coorsStart)+2; 
+%I (V. Chavarrias) have only checked this type of file and I prevent a
+%possible error by not saving the names in case numel is inconsisten. 
+
+np=numel(coorsStart); %number of polygons
+names=cell(1,np); %cell to store the name of the polygons
+save_names=false; %use names
+if numel(nameStart)==np+2
+    save_names=true;
+end
+
 for ii=1:length(coorsStart)
     tLdb=str2num(char(kmlFile(coorsStart(ii):coorsStop(ii)))');
     if mod(size(tLdb,2),3)==0 && mod(size(tLdb,2),2)~=0 % J. Groenenboom - take 2 different kml formats into account
@@ -81,8 +99,17 @@ for ii=1:length(coorsStart)
             ldb=[ldb;tLdb(1:2:end)' tLdb(2:2:end)'; nan nan]; % kml consist of [lon,lat]-coordinates
         end
     end
+    %names
+    if save_names
+%         names=[names(:)',{char(kmlFile(nameStart(ii+2):nameStop(ii+2))')}];
+        names{ii}=char(kmlFile(nameStart(ii+2):nameStop(ii+2))');
+    end
 end
 
 if saveOutput==1
-    landboundary('write',[fPat filesep fName '.ldb'],ldb);
+    if save_names
+        landboundary('write',[fPat filesep fName '.ldb'],ldb,'names',names,'dosplit');
+    else
+        landboundary('write',[fPat filesep fName '.ldb'],ldb,'dosplit');
+    end
 end
