@@ -131,7 +131,7 @@ if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
         for iV = 1:length(varInd)
            AttrInd = strmatch('long_name',{infonc.Variables(varInd(iV)).Attributes.Name},'exact');
            long_name = infonc.Variables(varInd(iV)).Attributes(AttrInd).Value;
-           if strcmp(varName,long_name)
+           if strcmpi(varName,long_name)
                newName = varNames{varInd(iV)};
                disp(['variable ''' varNameInput ''' renamed to ''' newName '''']);
            end
