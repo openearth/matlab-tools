@@ -1,11 +1,7 @@
 function Data = EHY_getMapModelData_zLayerTopBottom(inputFile,modelType,OPT)
 
-% Commented code includes old functionality, where initial values are
-% plotted for inactive layers.
-
 OPT0 = rmfield(OPT,{'z','zRef','zMethod','layer'});
 DataAll  = EHY_getMapModelData(inputFile,OPT0);
-Data     = DataAll;
 
 %% determine search direction
 if strcmp(EHY_getTypeOfModelFile(inputFile),'nc_griddata')
@@ -15,6 +11,13 @@ if strcmp(EHY_getTypeOfModelFile(inputFile),'nc_griddata')
     elseif strcmp(OPT.layer,'bottom')
         direction = 'last';
     end
+elseif ~isempty(strfind(inputFile,'_fou.nc'))
+    if strcmp(OPT.layer,'top')
+        direction = 'last';
+    elseif strcmp(OPT.layer,'bottom')
+        direction = 'first';
+    end
+    DataAll.val = permute(DataAll.val,[3 1 2]); % add time dimensions (size=1)
 else
     disp(['Model input type is ' modelType ', EHY_tools will use EHY_getMapModelData_z to find active cells only'])
     if strcmp(OPT.layer,'top')
@@ -34,28 +37,34 @@ else
 end
 
 %% permute and reshape DataAll.val to [timesInd x facesInd x layerInd]
-% if strcmp(EHY_getTypeOfModelFile(inputFile),'nc_griddata') ||strcmp(modelType,'d3d')
-%     if strcmp(EHY_getTypeOfModelFile(inputFile),'nc_griddata')
-DataAll.val = permute(DataAll.val,[1 3 4 2]);
-%     end
-modelSize   = size(DataAll.val);
-DataAll.val = reshape(DataAll.val,[modelSize(1) prod(modelSize(2:3)) modelSize(4)]);
-% end
+if strcmp(EHY_getTypeOfModelFile(inputFile),'nc_griddata') ||strcmp(modelType,'d3d')
+    if strcmp(EHY_getTypeOfModelFile(inputFile),'nc_griddata')
+        DataAll.val = permute(DataAll.val,[1 3 4 2]);
+    end
+    modelSize   = size(DataAll.val);
+    DataAll.val = reshape(DataAll.val,[modelSize(1) prod(modelSize(2:3)) modelSize(4)]);
+end
 
 %% find the corresponding values per timestep and per face
-Data.val = NaN(size(squeeze(DataAll.val(:,:,1))));
+if isfield(DataAll,'times')
+    Data.times = DataAll.times;
+end
+Data.val   = [];
+Data.OPT   = DataAll.OPT;
 for iT = 1:size(DataAll.val,1)
     for iF = 1:size(DataAll.val,2)
         id_layer = find(~isnan(DataAll.val(iT,iF,:)),1,direction);
         if ~isempty(id_layer)
-            Data.val(iT,iF,:) = DataAll.val(iT,iF,id_layer);
+            Data.val(iT,iF) = DataAll.val(iT,iF,id_layer);
+        else
+            Data.val(iT,iF) = NaN;
         end
     end
 end
 
 %% reshape data back to its original format (without the layer dimension)
-% if strcmp(modelType,'d3d') || strcmp(EHY_getTypeOfModelFile(inputFile),'nc_griddata')
-Data.val = reshape(Data.val,modelSize(1:3));
-% end
+if strcmp(modelType,'d3d') || strcmp(EHY_getTypeOfModelFile(inputFile),'nc_griddata')
+    Data.val = reshape(Data.val,modelSize(1:3));
+end
 
 end
