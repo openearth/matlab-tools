@@ -16,9 +16,11 @@ function varargout = nc2struct(ncfile,varargin)
 % * structfun: apply function handle to each field, e.g. @(x) transpose(x)
 %              to turn rows into column vectors and vv, or @(x) maked1d(x)
 %
-% - dimensions are swapped to accomodate C convention, so struct2nc does not behave as ncrreate.
+% - dimensions are swapped to accomodate C convention, so struct2nc does not behave as nccreate.
 % - nc2struct writes char & cellstr  as char, nc2struct reads them as nx1 cellstr, so 
-%   nc2struct and nc2struct are not fully inverses of one another.
+%   nc2struct and struct2nc are not fully inverses of one another.
+% - fieldnames starting with 'time' are automatically converted to matlab
+%   datenum in another field starting with 'datenum', based on nc conventions.
 %
 % Example:
 %
@@ -137,27 +139,37 @@ end
          %end
          D.(fldname) = ncread(fileinfo.Filename,fldname_nc);
          if OPT.time2datenum
-            if strcmp(fldname_nc,'time')
-               try
-                  D.datenum = ncread_cf_time(fileinfo.Filename,fldname);
-                   if OPT.disp
+            if strncmpi(fldname_nc,'time',4)
+                if length(fldname_nc)<=4;
+                    fldname='datenum';
+                else
+                    fldname=['datenum',fldname_nc(5:end)];
+                end
+                try
+                    D.(fldname) = ncread_cf_time(fileinfo.Filename,fldname_nc);
+                    if OPT.disp
                         units = ncreadatt(fileinfo.Filename,'time','units');
                         disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
-                   end
+                    end
                end
             else
-             if ~isempty(fileinfo.Variables(idat).Attributes);
-             j = strmatch('standard_name',{fileinfo.Variables(idat).Attributes.Name}, 'exact');
-              if ~isempty(j)
-               %Try to covert non-standard time field, but it must at least be numeric!
-               if strcmpi(fileinfo.Variables(idat).Attributes(j).Value,'time') && ~strcmpi(fileinfo.Variables(idat).Datatype,'char');
-                   D.datenum = ncread_cf_time(fileinfo.Filename,fldname);
-                     if OPT.disp
-                        disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
-                     end
-               end
-              end
-             end
+                if ~isempty(fileinfo.Variables(idat).Attributes);
+                j = strmatch('standard_name',{fileinfo.Variables(idat).Attributes.Name}, 'exact');
+                    if ~isempty(j)
+                    %Try to covert non-standard time field, but it must at least be numeric!
+                        if strcmpi(fileinfo.Variables(idat).Attributes(j).Value,'time') && ~strcmpi(fileinfo.Variables(idat).Datatype,'char');
+                            if length(fldname_nc)<=4;
+                                fldname='datenum';
+                            else
+                                fldname=['datenum',fldname_nc(5:end)];
+                            end
+                            D.(fldname) = ncread_cf_time(fileinfo.Filename,fldname_nc);
+                            if OPT.disp
+                               disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
+                            end
+                        end
+                    end
+                end
             end
          end
          if length(pm)>1
