@@ -103,7 +103,7 @@ if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
     if exist('aggregated','var') % DELWAQ-aggregated file
         newName = strrep(newName,'mesh2d','mesh2d_agg');
     end
-    
+        
     %%% Change Variable or Dimension name to deal with old/new variable names like tem1 (older) vs. mesh2d_tem1 (newer)
     if ~nc_isvar(fName,newName) && ~nc_isdim(fName,newName)
         if size(newName,1)>1
@@ -114,13 +114,22 @@ if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
                 error('Multiple variable/dimension-names, but different Lengths')
             end
         end
+        
         indVarNames = find(~cellfun(@isempty,strfind(lower(varNames),lower(newName))));
+        for ii = 1:length(indVarNames)
+            varNamesNoPrefix = strrep(varNames,'mesh2d_','');
+            if strcmpi(newName,varNamesNoPrefix{indVarNames(ii)})
+                newName = infonc.Variables(indVarNames(ii)).Name; matchFound = 1;
+            end
+        end
         indDimNames = find(~cellfun(@isempty,strfind(lower(dimNames),lower(newName))));
-        if ~isempty(indVarNames)
-            newName = infonc.Variables(indVarNames).Name;
-        elseif ~isempty(indDimNames)
-            newName = infonc.Dimensions(indDimNames).Name;
-        else
+        for ii = 1:length(indDimNames)
+            dimNamesNoPrefix = strrep(dimNames,'nmesh2d_','');
+            if strcmpi(newName,dimNamesNoPrefix{indDimNames(ii)})
+                newName = infonc.Dimensions(indDimNames(ii)).Name; matchFound = 1;
+            end
+        end
+        if ~exist('matchFound','var')
             newName = 'noMatchFound';
         end
     end
@@ -129,14 +138,15 @@ if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
     if ~nc_isvar(fName,newName)
         varInd = find(~cellfun(@isempty,strfind(varNames,'water_quality_')));
         for iV = 1:length(varInd)
-           AttrInd = strmatch('long_name',{infonc.Variables(varInd(iV)).Attributes.Name},'exact');
-           long_name = infonc.Variables(varInd(iV)).Attributes(AttrInd).Value;
-           if strcmpi(varName,long_name)
-               newName = varNames{varInd(iV)};
-               disp(['variable ''' varNameInput ''' renamed to ''' newName '''']);
-           end
+            AttrInd = strmatch('long_name',{infonc.Variables(varInd(iV)).Attributes.Name},'exact');
+            long_name = infonc.Variables(varInd(iV)).Attributes(AttrInd).Value;
+            if strcmpi(varName,long_name)
+                newName = varNames{varInd(iV)};
+                disp(['variable ''' varNameInput ''' renamed to ''' newName '''']);
+            end
         end
     end
+    
 end
 end
 
@@ -161,7 +171,7 @@ fmNames{end+1,1}={'mesh2d_flowelem_bl','FlowElem_bl'}; % bed level
 fmNames{end+1,1}={'mesh2d_flowelem_ba','FlowElem_bac'}; % area (m2) of cell faces
 
 %% List of Delft3D FM and SFINCS variable names
-fmNames{end+1,1}={'station_x_coordinate','station_x'}; 
+fmNames{end+1,1}={'station_x_coordinate','station_x'};
 fmNames{end+1,1}={'station_y_coordinate','station_y'};
 fmNames{end+1,1}={'x_velocity','point_u'};
 fmNames{end+1,1}={'y_velocity','point_v'};
