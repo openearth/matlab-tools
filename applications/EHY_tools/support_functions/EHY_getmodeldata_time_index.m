@@ -3,6 +3,7 @@ function [Data,time_index,select,varargout] = EHY_getmodeldata_time_index(Data,O
 varargout{1} = {};
 select       = [];
 if ~isempty(OPT.t) && ~all(OPT.t==0)
+    if ischar(OPT.t) && strcmp(lower(OPT.t),'end') OPT.t = length(Data.times); end
     select        = false(length(Data.times),1);
     select(OPT.t) = true;
     time_index    = OPT.t;

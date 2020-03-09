@@ -263,13 +263,14 @@ switch modelType
                     end
                     
                 case {'salinity' 'temperature'}
-                    cons_ind                = strmatch(lower(OPT.varName),lower(constituents),'exact');
-                    tmp                     = vs_get(trih,'his-series',{time_ind},'GRO',{stat_ind,layer_ind,cons_ind},'quiet');
-                    if iscell(tmp); tmp = cell2mat(tmp); end
-                    Data.val(:, indexOut,:) = tmp;
+                    cons_ind               = strmatch(lower(OPT.varName),lower(constituents),'exact');
+                    tmp                    = vs_get(trih,'his-series',{time_ind},'GRO',{stat_ind,layer_ind,cons_ind},'quiet');
+                    if iscell(tmp);    tmp = cell2mat(tmp); end
+                    Data.val(:,indexOut,:) = tmp;
                 case 'zrho' %density
-                    zrho                   = cell2mat(vs_get(trih,'his-series',{time_ind},'ZRHO',{stat_ind,layer_ind},'quiet'));
-                    Data.val(:,indexOut,:) = zrho;
+                    tmp                    = vs_get(trih,'his-series',{time_ind},'ZRHO',{stat_ind,layer_ind},'quiet');
+                    if iscell(tmp);    tmp = cell2mat(tmp); end
+                    Data.val(:,indexOut,:) = tmp;
                 case 'zvicww' %vertical eddy viscosity
                     zvicww                 = cell2mat(vs_get(trih,'his-series',{time_ind},'ZVICWW',{stat_ind,layer_ind},'quiet'));
                     Data.val(:,indexOut,:) = zvicww;

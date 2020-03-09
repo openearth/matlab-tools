@@ -56,7 +56,8 @@ switch modelType
     case 'simona'
         sds=qpfopen(inputFile);
         datenums_wl   = qpread(sds,1,'water level (station)','times');
-        datenums_vel  = qpread(sds,1,'velocity (station)','times');
+        datenums_vel  = []; 
+        try datenums_vel  = qpread(sds,1,'velocity (station)','times'); end
         if length(datenums_wl)<length(datenums_vel)
             datenums  = datenums_vel;
         else

@@ -72,6 +72,7 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'wl'         ) newName = 'ZWL'        ; end
         if strcmpi(varName,'bedlevel'   ) newName = 'DPS'        ; end
         if strcmpi(varName,'uv'         ) newName = 'ZCURU'      ; end
+        if strcmpi(varName,'density'    ) newName = 'zrho'       ; end
     case 'sds' % simona
         if strcmpi(varName,'x_velocity' ) newName = 'uv'         ; end
 end
