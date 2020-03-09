@@ -283,7 +283,7 @@ switch modelType
     case 'simona'
         %% SIMONA (WAQUA/TRIWAQ)
         % open data file
-        sds=qpfopen(inputFile);
+        sds = qpfopen(inputFile);
         
         if exist('layersInd','var')
             no_layers = dims(layersInd).size;
@@ -303,7 +303,7 @@ switch modelType
         
         time_ind  = dims(timeInd).index;
         % loop over stations
-        for i_stat = 1:dims(stationsInd).sizeOut
+        for i_stat = 1:length(dims(stationsInd).index)
             stat_ind = dims(stationsInd).index(i_stat);
             indexOut = dims(stationsInd).indexOut(i_stat);
 
@@ -346,7 +346,7 @@ switch modelType
         %% SOBEK3
         time_ind  = dims(time_ind).index;
         % loop over stations
-        for i_stat = 1:dims(stationsInd).sizeOut
+        for i_stat = 1:length(dims(stationsInd).index)
             stat_ind  = dims(stationsInd).index(i_stat);
             indexOut = dims(stationsInd).indexOut(i_stat);
             % open data file
@@ -362,7 +362,7 @@ switch modelType
         %% SOBEK3 new
         time_ind  = dims(time_ind).index;
         % loop over stations
-        for i_stat = 1:dims(stationsInd).sizeOut
+        for i_stat = 1:length(dims(stationsInd).index)
             stat_ind  = dims(stationsInd).index(i_stat);
             indexOut = dims(stationsInd).indexOut(i_stat);
             % open data file
@@ -404,7 +404,7 @@ switch modelType
         end
         
         % loop over stations
-        for i_stat = 1:dims(stationsInd).sizeOut
+        for i_stat = 1:1:length(dims(stationsInd).index)
             stat_ind  = dims(stationsInd).index(i_stat);
             indexOut = dims(stationsInd).indexOut(i_stat);
             switch OPT.varName
@@ -434,7 +434,7 @@ switch modelType
         tmp.times = Data.times;
         
         % loop over stations
-        for i_stat = 1:dims(stationsInd).sizeOut
+        for i_stat = 1:1:length(dims(stationsInd).index)
             stat_ind  = dims(stationsInd).index(i_stat);
             indexOut = dims(stationsInd).indexOut(i_stat);
             switch OPT.varName
