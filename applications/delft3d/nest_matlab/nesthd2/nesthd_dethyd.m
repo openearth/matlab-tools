@@ -31,7 +31,7 @@
       if add_inf.display==1
         h = waitbar(0,'Generating Hydrodynamic boundary conditions','Color',[0.831 0.816 0.784]);
       end
-
+      
       nopnt  = length(bnd.DATA);
       notims = nfs_inf.notims;
       t0     = nfs_inf.times(1);
@@ -97,6 +97,7 @@
 
           %% Get the needed data
           if ismember(type,{'z' 'r' 'x' 'n'})
+              ipnt
               data          = EHY_getmodeldata(fileInp,mnnes,modelType,'varName','wl','t0',t0,'tend',tend);
               wl            = data.val;
               wl(isnan(wl)) = 0.;

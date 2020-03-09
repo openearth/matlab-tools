@@ -22,7 +22,7 @@ function varargout = nesthd_nest_ui(varargin)
 
 % Edit the above text to modify the response to help nesthd_nest_ui
 
-% Last Modified by GUIDE v2.5 19-Feb-2019 10:49:33
+% Last Modified by GUIDE v2.5 29-Feb-2020 17:50:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -63,6 +63,9 @@ set_nesthd1(handles,'off');
 set_nesthd2(handles,'off');
 
 set (handles.nest_ui,'Visible','on');
+
+handles.add_inf.t_start = NaN;
+handles.add_inf.t_stop  = NaN;
 
 % Update handles structure
 guidata(hObject, handles);
@@ -626,6 +629,8 @@ if fin ~= 0
    handles.files_hd2{3} = [pin fin];
    set (handles.name_hd2_trih,'String',fin,'FontSize',14,'Enable','on','HorizontalAlignment','left');
    handles.nfs_inf = nesthd_geninf([pin fin]);
+   handles.add_inf.t_start = handles.nfs_inf.times(1  );
+   handles.add_inf.t_stop  = handles.nfs_inf.times(end);
 end
 
 if ~isempty(handles.files_hd2{3}) && ~isempty(handles.files_hd2{1})
@@ -708,6 +713,42 @@ handles.add_inf.timeZone = str2num(get(hObject,'String'));
 update_additional(handles);
 
 % Update handles structure
+guidata(hObject, handles);
+
+function t_start_value_Callback(hObject, eventdata, handles)
+% hObject    handle to t_start_value (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of t_start_value as text
+%        str2double(get(hObject,'String')) returns contents of t_start_value as a double
+org_time = handles.add_inf.t_start;
+try
+    handles.add_inf.t_start = datenum(get(hObject,'String'),'yyyymmdd  HHMMSS');
+catch
+    handles.add_inf.t_start = org_time;
+end
+
+update_additional(handles);
+
+guidata(hObject, handles);
+
+function t_stop_value_Callback(hObject, eventdata, handles)
+% hObject    handle to t_stop_value (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of t_stop_value as text
+%        str2double(get(hObject,'String')) returns contents of t_stop_value as a double
+org_time = handles.add_inf.t_stop;
+try
+    handles.add_inf.t_stop = datenum(get(hObject,'String'),'yyyymmdd  HHMMSS');
+catch
+    handles.add_inf.t_stop = org_time;
+end
+
+update_additional(handles);
+
 guidata(hObject, handles);
 
 function a0_value_Callback(hObject, eventdata, handles)
@@ -972,6 +1013,11 @@ function add_inf_off(handles)
 set (handles.timeZone       ,'Visible','off');
 set (handles.timeZone_value ,'Visible','off');
 
+set (handles.t_start        ,'Visible','off');
+set (handles.t_start_value  ,'Visible','off');
+set (handles.t_stop         ,'Visible','off');
+set (handles.t_stop_value   ,'Visible','off');
+
 set (handles.a0             ,'Visible','off');
 set (handles.a0_value       ,'Visible','off');
 
@@ -1001,7 +1047,15 @@ function update_additional(handles)
     if handles.wlev || handles.vel || handles.conc
         set (handles.timeZone      ,'Visible','on','Enable','on');
         set (handles.timeZone_value,'Visible','on','Enable','on','String',num2str(handles.add_inf.timeZone),'HorizontalAlignment','right');
-    end
+        if ~isnan(handles.add_inf.t_start)
+            set (handles.t_start       ,'Visible','on','Enable','on');
+            set (handles.t_start_value ,'Visible','on','Enable','on','String',datestr(handles.add_inf.t_start,'yyyymmdd  HHMMSS'),'HorizontalAlignment','right');
+        end
+        if ~isnan(handles.add_inf.t_stop)
+            set (handles.t_stop        ,'Visible','on','Enable','on');
+            set (handles.t_stop_value  ,'Visible','on','Enable','on','String',datestr(handles.add_inf.t_stop,'yyyymmdd  HHMMSS'),'HorizontalAlignment','right');
+        end
+   end
 
     if handles.wlev
        set (handles.a0,'Visible','on','Enable','on');
@@ -1071,26 +1125,4 @@ function update_additional(handles)
            set (handles.bc_no         ,'Enable','on' ,'Visible','on','Value',1);
         end
     end
-
-
-
-
-% --- Executes on button press in dav_bc_conc_yes.
-function dav_bc_conc_yes_Callback(hObject, eventdata, handles)
-% hObject    handle to dav_bc_conc_yes (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of dav_bc_conc_yes
-
-
-% --- Executes on button press in dav_bc_conc_no.
-function dav_bc_conc_no_Callback(hObject, eventdata, handles)
-% hObject    handle to dav_bc_conc_no (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of dav_bc_conc_no
-
-
 

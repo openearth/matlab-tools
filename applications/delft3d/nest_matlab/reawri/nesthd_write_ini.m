@@ -51,8 +51,11 @@ Info=inifile('set',Info,Chapter,'Hydrodynamic Boundary conditions',handles.files
 Info=inifile('set',Info,Chapter,'Transport Boundary Conditions   ',handles.files_hd2{5});
 
 Chapter = 'Additional';
-if isfield(handles,'add_inf');
+if isfield(handles,'add_inf')
     Info    = inifile('set',Info,Chapter,'Timezone                        ',handles.add_inf.timeZone);
+    Info    = inifile('set',Info,Chapter,'TStart                          ',datestr(handles.add_inf.t_start,'yyyymmdd  HHMMSS'));
+    Info    = inifile('set',Info,Chapter,'TStop                           ',datestr(handles.add_inf.t_stop ,'yyyymmdd  HHMMSS'));
+    
     if handles.wlev
         Info=inifile('set',Info,Chapter,'A0                              ',handles.add_inf.a0);
     end

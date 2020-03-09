@@ -72,6 +72,15 @@ function [handles] = read_ini(handles,varargin)
                try
                    handles.add_inf.timeZone = inifile('get',Info,Chapter,'Timezone                       ');
                end
+               
+               try
+                   handles.add_inf.t_start = datenum(inifile('getstring',Info,Chapter,'TStart'),'yyyymmdd  HHMMSS');
+                   handles.add_inf.t_stop  = datenum(inifile('getstring',Info,Chapter,'TStop' ),'yyyymmdd  HHMMSS');
+               catch
+                   handles.add_inf.t_start = NaN;
+                   handles.add_inf.t_stop  = NaN;
+               end
+                   
 
                if handles.wlev
                   handles.add_inf.a0=inifile('get',Info,Chapter,'A0                             ');

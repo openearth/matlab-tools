@@ -32,6 +32,14 @@ gen_inf      = nesthd_geninf(files{3});
 gen_inf.to   = EHY_getModelType(files{4});
 gen_inf.from = EHY_getModelType(files{3});
 
+%% Reduce time frame for generation of boundaary conditions
+if ~isnan(add_inf.t_start)
+    index          = find(gen_inf.times >= add_inf.t_start & gen_inf.times <= add_inf.t_stop);
+    gen_inf.times  = gen_inf.times(index);
+    gen_inf.notims = length(gen_inf.times);
+end
+if exist('OPT','var') && ~isempty(OPT.no_times) gen_inf.notims = min(gen_inf.notims,OPT.no_times); end
+
 %  For dfm add A0 through the keyworoff-set in stead of directly 
 %  including it into the boundary (request Jelmer) 
 if strcmp(gen_inf.to,'dfm') && isfield(add_inf,'a0')
@@ -41,7 +49,7 @@ if strcmp(gen_inf.to,'dfm') && isfield(add_inf,'a0')
     end
 end
 
-if exist('OPT','var') && ~isempty(OPT.no_times) gen_inf.notims = min(gen_inf.notims,OPT.no_times); end
+%% General settings
 nobnd       = length(bnd.DATA);
 kmax        = gen_inf.kmax;
 lstci       = gen_inf.lstci;
