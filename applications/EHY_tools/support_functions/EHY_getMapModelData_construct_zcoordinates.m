@@ -86,7 +86,7 @@ switch gridInfo.layer_model
             end
            
             % Keepzlayeringatbed
-            keepzlayeringatbed = 1; % Delft3D 4 
+            keepzlayeringatbed = 0; % Delft3D 4 
 %             if strcmp(modelType,'dfm')
 %                 try
 %                     mdu = dflowfm_io_mdu('read',EHY_getMdFile(inputFile));
