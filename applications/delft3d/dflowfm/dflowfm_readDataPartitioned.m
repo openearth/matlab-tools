@@ -113,7 +113,7 @@ if checkGhostCells && length(mapFiles)>1
             for tt = 1:size(data,2)
                 dataReal(takeFirst) = data(IDFirst(IDghostCells(takeFirst)),tt);
                 dataReal(takeLast) = data(IDLast(IDghostCells(takeLast)),tt);
-                data(IDFirst(IDghostCells(takeFirst)),tt) = dataReal';
+                data(IDFirst(IDghostCells),tt) = dataReal';
             end
             
         end
