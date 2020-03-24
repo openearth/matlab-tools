@@ -277,7 +277,9 @@ switch modelType
                 otherwise
                     warning('Non-standard varName requested, treated as constituent name')
                     cons_ind                = get_nr(lower(constituents),OPT.varName);
-                    Data.val(:, indexOut,:) = cell2mat   (vs_get(trih,'his-series',{time_ind},'GRO',{stat_ind,layer_ind,cons_ind},'quiet'));
+                    tmp                     = vs_get(trih,'his-series',{time_ind},'GRO',{stat_ind,layer_ind,cons_ind},'quiet');
+                    if iscell(tmp);    tmp  = cell2mat(tmp); end
+                    Data.val(:, indexOut,:) = tmp;
             end
         end
         
