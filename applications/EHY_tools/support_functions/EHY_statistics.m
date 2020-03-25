@@ -7,6 +7,9 @@ function Statistics = EHY_statistics(varargin)
 % 2D: function Statistics = EHY_statistics(X_sim, Y_sim, Z_sim, X_obs, Y_obs, Z_obs)
 % uses scatteredInterpolant as it can handle 'scattered' XYZ-data. XY is
 % not always plain/'meshgridded'
+%
+% Interpolation method: linear
+% Extrapolation method: None  (i.e. returns a NaN)
 
 %% Initiate and check
 Statistics.meanerror    = NaN;
@@ -32,7 +35,7 @@ if nargin == 4 % Statistics = EHY_statistics(X_sim, Z_sim, X_obs, Z_obs)
     Z_obs = varargin{4};
     
     nonan = ~(isnan(X_sim) | isnan(Z_sim));
-    if sum(nonan) == 0
+    if sum(nonan) < 2
         return % statistics can not be determined
     else
         Z_int = interp1(X_sim(nonan), Z_sim(nonan), X_obs);
@@ -59,7 +62,7 @@ elseif nargin == 6 % Statistics = EHY_statistics(X_sim, Y_sim, Z_sim, X_obs, Y_o
         Y_sim = Y_sim';
     end
     
-    if     size(X_sim,1) ~= size(Z_sim,1) && size(X_sim,1) == 1 % X_sim, 1st dim
+    if size(X_sim,1) ~= size(Z_sim,1) && size(X_sim,1) == 1 % X_sim, 1st dim
         X_sim = repmat(X_sim,size(Z_sim,1),1);
     elseif size(X_sim,2) ~= size(Z_sim,2) && size(X_sim,2) == 1 % X_sim, 2nd dim
         X_sim = repmat(X_sim,1,size(Z_sim,2));
@@ -70,11 +73,11 @@ elseif nargin == 6 % Statistics = EHY_statistics(X_sim, Y_sim, Z_sim, X_obs, Y_o
     end
     
     nonan = ~(isnan(X_sim) | isnan(Y_sim));
-    if sum(sum(nonan)) == 0
+    if sum(sum(nonan)) < 2
         return % statistics can not be determined
     end
     XYZ = unique([X_sim(nonan) Y_sim(nonan) Z_sim(nonan)],'rows');
-    F = scatteredInterpolant(XYZ(:,1), XYZ(:,2), XYZ(:,3));
+    F = scatteredInterpolant(XYZ(:,1), XYZ(:,2), XYZ(:,3),'linear','none');
     Z_int = F(X_obs,Y_obs);
     
 else

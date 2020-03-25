@@ -32,7 +32,7 @@ end
 
 % network
 if isempty(typeOfModelFile)
-    if ~isempty(strfind([name ext],'_net.nc')) || ~isempty(strfind([name ext],'_waqgeom.nc'))
+    if ~isempty(strfind([name ext],'_net.nc')) || ~isempty(strfind([name ext],'_waqgeom.nc')) || ~isempty(strfind([name ext],'_netgeom.nc'))
         typeOfModelFile = 'network';
     end
 end

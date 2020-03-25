@@ -530,6 +530,9 @@ elseif strcmp(gridInfo.layer_model,'z-model')
     
        % fix for DFM z-layer models: non-active layers have value of top layer
        nT = size(cen,1); %no_times
+       if nT<1
+           error('Hard to determine changing surface layer over time, when only one timestep is requested')
+       end
        nS = size(cen,2); %no_stations
        nZ = size(cen,3); %no_z-layers
        for iS = 1:nS % stations

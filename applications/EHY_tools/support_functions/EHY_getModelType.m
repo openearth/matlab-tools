@@ -33,7 +33,7 @@ if ischar(fileInp)
     if isempty(modelType)
         if ismember(ext,{'.nc'})
             if ~isempty(strfind(fileInp,'_his.nc')) || ~isempty(strfind(fileInp,'_map.nc')) || ~isempty(strfind(fileInp,'_net.nc')) || ...
-                    ~isempty(strfind(fileInp,'_fou.nc')) || ~isempty(strfind(fileInp,'_waqgeom.nc'))
+                    ~isempty(strfind(fileInp,'_fou.nc')) || ~isempty(strfind(fileInp,'_waqgeom.nc')) || ~isempty(strfind(fileInp,'_netgeom.nc'))
                 modelType = 'dfm';
             elseif ~isempty(strfind(name,'observations'))
                 modelType = 'sobek3_new';

@@ -66,7 +66,7 @@ while loop>0
             [~,order] = sort([mdFiles.datenum]);
             mdFile=fullfile([filename filesep mdFiles(order(end)).name]); % use most recent
             if length(order)>1
-                disp(['More than 1 mdf/mdu/siminp-file was found, now using ''' mdFiles(order(1)).name ''''])
+                disp(['More than 1 mdf/mdu/siminp-file was found, now using (most recent file) ''' mdFiles(order(end)).name ''''])
             end
         end
     end

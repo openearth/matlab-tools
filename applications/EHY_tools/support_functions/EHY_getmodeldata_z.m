@@ -10,19 +10,6 @@ OPT0 = OPT;
 OPT = rmfield(OPT,{'z','zRef','zMethod','layer'});
 varName0 = OPT.varName;
 
-%% determine reference level
-if ismember(OPT0.zRef,{'wl','bed'})
-    OPT.varName = OPT0.zRef;
-    Data_zRef = EHY_getmodeldata(inputFile,stat_name,modelType,OPT);
-    refLevel = Data_zRef.val;
-    no_stat = length(Data_zRef.requestedStations);
-    no_times = numel(Data_zRef.val)/no_stat;
-    refLevel = reshape(refLevel,no_times,no_stat); % [time,stations]
-else % model reference level
-    Data_zRef = EHY_getRequestedStations(inputFile,stat_name,modelType);
-    refLevel = zeros(1,length(Data_zRef.requestedStations)); % [time,stations]
-end
-
 %% get "zcen_int"-data
 % can be done faster for z-layers once tetris-issue for FM is solved
 OPT.varName = 'Zcen_int'; % change wanted variabele to Zcen_int
@@ -33,6 +20,29 @@ DataZ = EHY_getmodeldata(inputFile,stat_name,modelType,OPT);
 % get data
 OPT.varName = varName0; % change wanted variabele back to original value
 DataAll = EHY_getmodeldata(inputFile,stat_name,modelType,OPT);
+
+%% determine reference level
+no_times = length(DataAll.times);
+no_stat = length(DataAll.requestedStations);
+
+if ismember(OPT0.zRef,{'wl','bed'})
+    OPT.varName = OPT0.zRef;
+    Data_zRef = EHY_getmodeldata(inputFile,stat_name,modelType,OPT);
+    refLevel = Data_zRef.val;
+    if ~isfield(Data_zRef,'times')
+        refLevel = reshape(refLevel,1,no_stat);
+    end
+else % model reference level
+    refLevel = 0;
+end
+
+% repmat refLevel to [time,stations]
+if size(refLevel,1) == 1 && size(refLevel,1) < no_times
+    refLevel = repmat(refLevel,no_times,1);
+end
+if size(refLevel,2) == 1 && size(refLevel,2) < no_stat
+    refLevel = repmat(refLevel,1,no_stat);
+end
 
 %% check
 dimTextInd = strfind(DataAll.dimensions,',');
@@ -87,18 +97,44 @@ for iZ = 1:length(OPT0.z)
                     DataZ.val_cen(:,:,iL) = mean(DataZ.val(:,:,iL:iL+1),3);
                 end
                 
-                DataZ.val_cen = cat(3,DataZ.val(:,:,1),DataZ.val_cen,DataZ.val(:,:,end)); % add surface and bed layer
+                 % add surface and bed layer interfaces
+                if strcmp(gridInfo.layer_model,'sigma-model')
+                    DataZ.val_cen = cat(3,DataZ.val(:,:,1),DataZ.val_cen,DataZ.val(:,:,end));
+                elseif strcmp(gridInfo.layer_model,'z-model')
+                    bedlevel = squeeze(NaN*DataZ.val_cen(:,:,1)); % [times,stations]
+                    for iL = 1:size(DataZ.Zcen_int,3)
+                        valuesInThisLayer = squeeze(DataZ.Zcen_int(:,:,iL));
+                        logi = ~isnan(valuesInThisLayer) & isnan(bedlevel);
+                        bedlevel(logi) = valuesInThisLayer(logi);
+                        if all(all(~isnan(bedlevel))); break; end
+                    end
+                    waterlevel = squeeze(NaN*DataZ.val_cen(:,:,1)); % [times,stations]
+                    for iL = size(DataZ.Zcen_int,3):-1:1
+                        valuesInThisLayer = squeeze(DataZ.Zcen_int(:,:,iL));
+                        logi = ~isnan(valuesInThisLayer) & isnan(waterlevel);
+                        waterlevel(logi) = valuesInThisLayer(logi);
+                        if all(all(~isnan(waterlevel))); break; end
+                    end
+                    DataZ.val_cen = cat(3,bedlevel,DataZ.val_cen,waterlevel);
+                end
             end
             
             for iV = 1:length(v) % loop over fieldname 'val','vel_x','vel_mag',etc.
                 if iZ == 1
-                    DataAll.(v{iV})   = cat(3,DataAll.(v{iV})(:,:,1),DataAll.(v{iV}),DataAll.(v{iV})(:,:,end)); % add surface and bed layer
+                    % add surface and bed layer model values 
+                    % (At the moment, this also works for Z-layer models as model values are copied into inactive cells)
+                    DataAll.(v{iV})   = cat(3,DataAll.(v{iV})(:,:,1),DataAll.(v{iV}),DataAll.(v{iV})(:,:,end));
                 end
-                for iT = 1:length(DataAll.times) % loop over time
-                    for iS = 1:length(DataAll.requestedStations) % loop over stations
+                
+                for iT = 1:no_times % loop over time
+                    for iS = 1:no_stat % loop over stations
                         if ~isnan(wantedZ(iS))
                             logi = ~isnan(squeeze(DataZ.val_cen(iT,iS,:))); % active layers: prevent error for Z-layers
-                            Data.(v{iV})(iT,iS,iZ) = interp1(squeeze(DataZ.val_cen(iT,iS,logi)),squeeze(DataAll.(v{iV})(iT,iS,logi)),wantedZ(iS));
+                            try
+                                Data.(v{iV})(iT,iS,iZ) = interp1(squeeze(DataZ.val_cen(iT,iS,logi)),squeeze(DataAll.(v{iV})(iT,iS,logi)),wantedZ(iT,iS));
+                            catch
+                                Data.(v{iV})(iT,iS,iZ) = NaN;
+                            end
                         end
                     end
                 end
