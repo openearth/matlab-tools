@@ -19,7 +19,7 @@ function varargout = EHY_getMapModelData(inputFile,varargin)
 % t0        : Start time of dataset (e.g. '01-Jan-2018' or 737061 (Matlab date) )
 % tend      : End time of dataset (e.g. '01-Feb-2018' or 737092 (Matlab date) )
 % layer     : Model layer, e.g. '0' (all layers), [2] or [4:8]
-% tint      : interval time (t0:tint:tend) in minutes
+% tint      : interval time (t0:tint:tend) in days
 %
 % Output:
 % Data.times              : (matlab) times belonging with the series
@@ -39,7 +39,7 @@ end
 OPT.varName         = 'wl';
 OPT.t0              = '';
 OPT.tend            = '';
-OPT.tint            = ''; % in minutes
+OPT.tint            = ''; % in days
 OPT.t               = []; % time index. If OPT.t is specified, OPT.t0, OPT.tend and OPT.tint are not used to find time index
 OPT.layer           = 0;  % all
 OPT.m               = 0;  % all (horizontal structured grid [m,n])
@@ -67,8 +67,7 @@ inputFile = strtrim(inputFile);
 for fn = ["t0","tend","sgft0"]
     if ~isempty(OPT.(fn)); OPT.(fn) = datenum(OPT.(fn)); end
 end
-if ~isempty(OPT.tint );    OPT.tint = OPT.tint/1440;     end % from minutes to days
-for fn = ["t","m","n","k","z","sgfkmax","mergePartitions"]
+for fn = ["t","tint",,"m","n","k","z","sgfkmax","mergePartitions"]
 if ~isnumeric(OPT.(fn));   OPT.(fn) = str2num(OPT.(fn)); end
 end
 if ~isnumeric(OPT.layer) && ~isempty(str2num(OPT.layer))
