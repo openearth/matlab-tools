@@ -91,8 +91,6 @@ if ~isempty(dimsInd.layers)
     gridInfo = EHY_getGridInfo(outputfile,{'no_layers'},'gridFile',gridFile,'disp',0);
     if gridInfo.no_layers>1
         optionTxt = {'All 3D-data','From 1 specific model layer','At a certain reference level (horizontal slice)','Data along transect (vertical slice)'};
-        typeOfModelFile = EHY_getTypeOfModelFile(outputfile);
-        if strcmp(typeOfModelFile,'nc_griddata'); optionTxt(end)=[]; end
         option = listdlg('PromptString',{'Do you want to load:'},'SelectionMode','single','ListString',...
             optionTxt,'ListSize',[300 100]);
         if isempty(option); disp('EHY_getmodeldata_interactive was stopped by user');return;
@@ -184,8 +182,11 @@ end
 if exist('OPT','var') && isfield(OPT,'pliFile')
     EHY_getGridInfo_line = '';
 else
+    typeOfModelFile = EHY_getTypeOfModelFile(outputfile);
     if EHY_isSFINCS(outputfile)
         EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''XYcor''}' GI_extraText ');'];
+    elseif strcmp(typeOfModelFile,'nc_griddata')
+        EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''XYcen''}' GI_extraText ');'];
     elseif strcmp(modelType,'dfm')
         if isfield(OPT,'mergePartitions') && OPT.mergePartitions==0
             EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''face_nodes_xy''},''mergePartitions'',0);'];
@@ -212,6 +213,9 @@ if isfield(gridInfo,'face_nodes_x')
 elseif isfield(gridInfo,'Xcor')
     Data.Xcor = gridInfo.Xcor;
     Data.Ycor = gridInfo.Ycor;
+elseif isfield(gridInfo,'Xcen')
+    Data.Xcen = gridInfo.Xcen;
+    Data.Ycen = gridInfo.Ycen;
 end
 
 disp('Finished retrieving the data!')

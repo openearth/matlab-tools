@@ -37,7 +37,7 @@ end
 
 if isempty(OPT.linestyle); OPT.linestyle='none'; end
 if ~isnumeric(OPT.t); OPT.t = str2num(OPT.t); end
-    
+
 %% check input
 if ~all([exist('gridInfo','var') exist('zData','var')])
     % no input, start interactive script
@@ -49,7 +49,7 @@ end
 if isstruct(gridInfo)
     if isfield(gridInfo,'face_nodes_x') && isfield(gridInfo,'face_nodes_y')
         modelType= 'dfm';
-    elseif isfield(gridInfo,'Xcor') && isfield(gridInfo,'Ycor')
+    elseif (isfield(gridInfo,'Xcor') && isfield(gridInfo,'Ycor')) || (isfield(gridInfo,'Xcen') && isfield(gridInfo,'Ycen'))
         modelType= 'd3d';
     else
         error('Something wrong with first input argument')
@@ -72,9 +72,18 @@ if strcmp(modelType,'dfm')
 end
 
 %% check for structured grids (modelType = 'd3d')
-if strcmp(modelType,'d3d') 
+if strcmp(modelType,'d3d')
+    
+    if ~all(isfield(gridInfo,{'Xcor','Ycor'})) && all(isfield(gridInfo,{'Xcen','Ycen'}))
+        if ~all(size(gridInfo.Xcen)==size(gridInfo.Ycen))
+            error('size(gridInfo.Xcen) and size(gridInfo.Ycen) should be the same')
+        end
+        gridInfo.Xcor = center2corner(gridInfo.Xcen);
+        gridInfo.Ycor = center2corner(gridInfo.Ycen);
+    end
+    
     if ndims(gridInfo.Ycor) - ndims(gridInfo.Xcor) == 1
-        % probably data along xy-trajectory 
+        % probably data along xy-trajectory
         if isempty(OPT.t)
             error('You need to provide variable ''t'' to plot data along xy-trajectory');
         else
@@ -103,21 +112,15 @@ if strcmp(modelType,'d3d')
     end
     
     if all(size(gridInfo.Xcor)-size(zData) == [1 1])
-        % this is needed for info in cell center, like delft3d 4 output
+        % this is needed for info in cell center, like Delft3d 4 output
         zData(end+1,:) = NaN;
         zData(:,end+1) = NaN;
     elseif all(size(gridInfo.Xcor)-size(zData) == [0 0])
-        % this is needed for info in cell corners, like griddata_netcdf and SFINCS
-        % for plotting with pcolor > apply center2corner and
-        % add dummy row and column in zData
-        gridInfo.Xcor = center2corner(gridInfo.Xcor);
-        gridInfo.Ycor = center2corner(gridInfo.Ycor);
-        zData(end+1,:) = NaN;
-        zData(:,end+1) = NaN;
+        error('Are these xy-corners that you provided? Seems like xy-centers .. ')
     else
-         error('size(gridInfo.Xcor/Ycor) should be equal or one size bigger than size(zData)')
+        error('size(gridInfo.Xcor/Ycor) should be one size bigger than size(zData)')
     end
-
+    
 end
 
 %% plot figure

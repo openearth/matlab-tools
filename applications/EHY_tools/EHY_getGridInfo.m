@@ -518,7 +518,7 @@ switch modelType
                     end
                     
                 case 'nc_griddata'
-                    if any(ismember({'face_nodes_xy','XYcor'},wantedOutput))
+                    if ismember('XYcen',wantedOutput)
                         if nc_isvar(inputFile,'x')
                             x = ncread(inputFile,'x')';
                             y = ncread(inputFile,'y')';
@@ -531,10 +531,19 @@ switch modelType
                         end
                         if any(size(x) == 1)
                             xsize = numel(x); ysize = numel(y);
-                            y = repmat(reshape(y,numel(y),1),1,xsize);
                             x = repmat(reshape(x,1,numel(x)),ysize,1);
+                            y = repmat(reshape(y,numel(y),1),1,xsize);
                         end
-                        E.Xcor = double(x); E.Ycor = double(y);
+                        E.Xcen = double(x); E.Ycen = double(y);
+                    end
+                    if ismember('XYcor',wantedOutput)
+                        tmp = EHY_getGridInfo(inputFile,'XYcen');
+                        E.Xcor = center2corner(tmp.Xcen);
+                        E.Ycor = center2corner(tmp.Ycen);
+                    end
+                    if ismember('grid',wantedOutput)
+                        tmp = EHY_getGridInfo(inputFile,{'XYcor'},'disp',0);
+                        E.grid = XYcor2grid(tmp.Xcor,tmp.Ycor);
                     end
                     if ismember('no_layers',wantedOutput)
                        if nc_isvar(inputFile,'depth')

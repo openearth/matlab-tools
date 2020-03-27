@@ -3,7 +3,7 @@ function [Data,time_index,select,varargout] = EHY_getmodeldata_time_index(Data,O
 varargout{1} = {};
 select       = [];
 if ~isempty(OPT.t) && ~all(OPT.t==0)
-    if ischar(OPT.t) && strcmp(lower(OPT.t),'end') OPT.t = length(Data.times); end
+    if ischar(OPT.t) && strcmpi(OPT.t,'end'); OPT.t = length(Data.times); end
     select        = false(length(Data.times),1);
     select(OPT.t) = true;
     time_index    = OPT.t;
@@ -16,12 +16,12 @@ elseif ~isempty(OPT.t0) && ~isempty(OPT.tend)
     if ~isempty(time_index)
         Data.times=Data.times(time_index);
     else
-        error(['These time steps are not available in the outputfile' char(10),...
-            'requested data period: ' datestr(OPT.t0) ' - ' datestr(OPT.tend) char(10),...
+        error(['These time steps are not available in the outputfile' newline,...
+            'requested data period: ' datestr(OPT.t0) ' - ' datestr(OPT.tend) newline,...
             'available model data:  ' datestr(Data.times(1)) ' - ' datestr(Data.times(end))])
     end
-    if isfield(OPT,'tint') & ~isempty(OPT.tint)
-        times_requested = [OPT.t0:OPT.tint:OPT.tend];
+    if isfield(OPT,'tint') && ~isempty(OPT.tint)
+        times_requested = OPT.t0:OPT.tint:OPT.tend;
         no_times        = length(times_requested);
         index_requested = [];
         

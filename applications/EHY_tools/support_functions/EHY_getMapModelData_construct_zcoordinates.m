@@ -2,6 +2,13 @@ function [zcen_int,zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates(
 
 % This function uses the order of dimensions: [times,cells,layers]
 
+%% CMEMS?
+if EHY_isCMEMS(inputFile)
+    [zcen_int,zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates_CMEMS(inputFile,OPT);
+    return
+end
+
+%%
 gridInfo = EHY_getGridInfo(inputFile,{'no_layers','layer_model'},'mergePartitions',0);
 no_lay   = gridInfo.no_layers;
 OPT.varName = 'waterlevel';
@@ -127,4 +134,31 @@ end
 zcen_cen = cen;
 zcen_int = int;
 
+end
+
+function [zcen_int,zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates_CMEMS(inputFile,OPT)
+%         % water level
+%         [pathstr, name, ext] = fileparts(inputFile);
+%         [~,name] = strtok(name,'_');
+%         wlFile = [pathstr filesep 'zos' name ext];
+%         if ~exist(wlFile,'file')
+%             error(['Could not find corresponding waterlevel-file: ' newline wlFile])
+%         end
+%         Data_WL = EHY_getMapModelData(wlFile,OPT,'varName','zos');
+%         wl       = DataWL.val;
+        infonc = ncinfo(inputFile);
+        ind = strmatch('latitude',{infonc.Dimensions.Name},'exact');
+        lat_len = infonc.Dimensions(ind).Length;
+        ind = strmatch('longitude',{infonc.Dimensions.Name},'exact');
+        lon_len = infonc.Dimensions(ind).Length;
+        ind = strmatch('time',{infonc.Dimensions.Name},'exact');
+        time_len = infonc.Dimensions(ind).Length;
+        
+        depth = double(ncread(inputFile,'depth'));
+        depth_cen = permute(depth,[2 3 4 1]);
+        zcen_cen = -1*repmat(depth_cen,time_len,lon_len,lat_len);
+        depth_int = permute(center2corner1(depth)',[2 3 4 1]);
+        zcen_int = -1*repmat(depth_int,time_len,lon_len,lat_len);
+        wl = squeeze(zcen_int(:,:,:,1));
+        bl = squeeze(zcen_int(:,:,:,end));
 end

@@ -222,6 +222,11 @@ switch modelType
             Data.vel_dir = mod(atan2(Data.vel_x,Data.vel_y)*180/pi,360);
             Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
         end
+        
+        if EHY_isCMEMS(inputFile) % [time,depth,lat,lon] to [time,lat,lon,depth]
+            Data.val = permute(Data.val,[1 3 4 2]);
+            Data.val = flipud(Data.val);
+        end
 
     case 'd3d'
         %% Delft3D 4
@@ -415,7 +420,7 @@ end
 %% add dimension information to Data
 % dimension information
 dimensionsComment = {dims.name};
-
+if EHY_isCMEMS(inputFile); dimensionsComment = dimensionsComment([1 3 4 2]); end
 fn = char(intersect(fieldnames(Data),{'val','vel_x','val_x'}));
 while ~isempty(fn) && ndims(Data.(fn)) < numel(dimensionsComment)
     dimensionsComment(end) = [];

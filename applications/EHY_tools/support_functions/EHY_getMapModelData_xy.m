@@ -19,7 +19,6 @@ names = fieldnames(tmp); for i_name = 1: length(names) Data.(names{i_name}) = tm
 %% get wanted "varName"-data for all points
 tmp   = EHY_getMapModelData(inputFile,OPT);
 names = fieldnames(tmp); for i_name = 1: length(names) Data.(names{i_name}) = tmp.(names{i_name}); end
-
 dmy = size(Data.Zcen);
 no_layers = dmy(end);
 
@@ -27,9 +26,9 @@ no_layers = dmy(end);
 disp('Start determining properties along trajectory')
 
 warning off
-if strcmp(Data.modelType,'dfm')
+if strcmp(Data.modelType,'dfm') && isfield(Data,'face_nodes')
     arb = arbcross(Data.face_nodes',Data.Xcor,Data.Ycor,thalweg.x,thalweg.y);
-elseif strcmp(Data.modelType,'d3d')
+elseif strcmp(Data.modelType,'d3d') || isfield(Data,'Xcor')
     arb = arbcross(Data.Xcor,Data.Ycor,thalweg.x,thalweg.y);
 end
 warning on
@@ -46,10 +45,10 @@ Data_xy.Scen = (Data_xy.Scor(1:end-1) + Data_xy.Scor(2:end)) ./ 2;
 %%  Determine vertical levels at Scen locations and corresponding values
 no_times      = length(Data.times);
 
-if strcmp(Data.modelType,'dfm')
+if strcmp(Data.modelType,'dfm') && isfield(Data,'face_nodes')
     val = arbcross(arb,{'FACE' permute(Data.val,[2 3 1])});
     Zint = arbcross(arb,{'FACE' permute(Data.Zint,[2 3 1])});
-elseif strcmp(Data.modelType,'d3d')
+elseif strcmp(Data.modelType,'d3d') || isfield(Data,'Xcor')
     val = arbcross(arb,{'FACE' permute(Data.val,[2 3 4 1])});
     Zint = arbcross(arb,{'FACE' permute(Data.Zint,[2 3 4 1])}); 
 end
