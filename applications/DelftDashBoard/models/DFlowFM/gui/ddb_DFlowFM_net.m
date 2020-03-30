@@ -61,9 +61,6 @@ handles=getHandles;
 
 fname=handles.model.dflowfm.domain(ad).netfile;
 
-%andles.model.dflowfm.domain(ad).netstruc=loadnetstruc(fname);
-%handles.model.dflowfm.domain(ad).netstruc=loadnetstruc2(fname);
-
 try
     netstruc=dflowfm.readNet_new(fname);
 catch    
@@ -79,8 +76,10 @@ catch
     netstruc.node=rmfield(netstruc.node,'y');
     netstruc.node=rmfield(netstruc.node,'z');
     
-    netstruc.face.mesh2d_face_nodes=netstruc.face.NetElemNode';
-    netstruc.face=rmfield(netstruc.face,'NetElemNode');
+    try
+        netstruc.face.mesh2d_face_nodes=netstruc.face.NetElemNode';
+        netstruc.face=rmfield(netstruc.face,'NetElemNode');
+    end
     
 end
 
