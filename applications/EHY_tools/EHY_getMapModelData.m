@@ -324,6 +324,22 @@ switch modelType
 
         elseif strcmp(OPT.varName,'Zcen_int')
             error('to do')
+            
+        elseif strcmp(OPT.varName,'') % nothing, retrieve only gridinfo?
+            print('emty var requested, return empty')
+
+        else %use varName as D3D variable. if not available, it gives popup
+            data_group = vs_find(vs_use(inputFile,'quiet') ,OPT.varName);
+            if length(data_group) == 0
+                error('no data group containing variable "%s"',OPT.varName)
+            elseif length(data_group) > 1
+                error('more than 1 data group containing variable "%s"',OPT.varName)
+            else
+                fprintf('retrieving variable "%s" from data group "%s"\n',OPT.varName, data_group{1})
+                %this fails for 3D variables (incl layers). Heatflux
+                %variables do not have layers, but model does
+                Data.val = vs_let(trim,data_group{1},{time_ind},OPT.varName,{n_ind,m_ind},'quiet');
+            end
         end
 
         % get active/inactive mask
