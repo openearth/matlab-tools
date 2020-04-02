@@ -58,6 +58,7 @@ switch typeOfModelFileDetail
     case 'trim' % d3d
         % Get the name of varName as specified on the map file of a simulation
         if strcmpi(varName,'wl'         ) newName = 'S1'         ; end
+        if strcmpi(varName,'bedlevel'   ) newName = 'DPS0'       ; end
         if strcmpi(varName,'uv'         ) newName = 'U1'         ; end
         if strcmpi(varName,'dps'        ) newName = 'DPS0'       ; end
         if strcmpi(varName,'avbedload'  ) newName = 'SBUUA'      ; end
@@ -149,6 +150,14 @@ if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
     end
     
 end
+
+% check case sensitive: ZwL to ZWL
+variables = EHY_variablesOnFile(fName,modelType);
+logi = strcmpi(newName,variables);
+if sum(logi) == 1
+    newName = char(variables(logi));
+end
+
 end
 
 function fmNames = getFmNames

@@ -64,6 +64,7 @@ OPT.tend         = '';
 OPT.tint         = ''; % in minutes
 OPT.t            = []; % time index. If OPT.t is specified, OPT.t0, OPT.tend and OPT.tint are not used to find time index
 OPT.layer        = 0; % all
+OPT.sedimentName = ''; % name of sediment fraction
 
 % return output at specified reference level
 OPT.z            = ''; % z = positive up. Wanted vertical level = OPT.zRef + OPT.z
@@ -113,7 +114,7 @@ if ~isempty(OPT.z)
 end
 
 %% Get the available and requested dimensions
-[dims,dimsInd,Data] = EHY_getDimsInfo(inputFile,OPT,modelType,stat_name);
+[dims,dimsInd,Data,OPT] = EHY_getDimsInfo(inputFile,OPT,modelType,stat_name);
 
 %% Get the computational data
 switch modelType
@@ -150,16 +151,11 @@ switch modelType
             Data.vel_dir = mod(atan2(Data.vel_x,Data.vel_y)*180/pi,360);
             Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
         end
-
+        
     case 'd3d'
         %% Delft3D 4
         % open inputfile
         trih = vs_use(inputFile,'quiet');
-        
-        % constituents
-        constituents = squeeze(vs_get(trih,'his-const','NAMCON','quiet'));
-        if size(constituents,1)>size(constituents,2); constituents = constituents'; end
-        constituents = cellstr(constituents);
         
         % station info
         locationMN = vs_get(trih,'his-const',{1},'MNSTAT','quiet')';
@@ -168,39 +164,21 @@ switch modelType
         Data.location(Data.exist_stat,:)   = locationXY(dims(stationsInd).index,:);
         
         % vertical grid info
-        if strcmpi(OPT.varName,'Zcen_cen') || strcmpi(OPT.varName,'Zcen_int')
-            gridInfo = EHY_getGridInfo(inputFile,'layer_model');
-            
-            layer_model = gridInfo.layer_model;
-            if strcmp(gridInfo.layer_model,'sigma-model')
-                thick    = vs_let(trih,'his-const', 'THICK','quiet');
-                DPS      = vs_let(trih,'his-const', 'DPS',  'quiet');
-            elseif strcmp(gridInfo.layer_model,'z-model')
-                DPS      = vs_let(trih,'his-const', 'DPS',  'quiet');
-                zk       = vs_get(trih,'his-const', 'ZK' ,  'quiet');
-            end
-        end
-        if exist('layersInd','var')
-            no_layers = dims(layersInd).size;
-            layer_ind  = dims(layersInd).index;
-        else
-            no_layers = 1;
-            layer_ind = 1;
-        end
+        gridInfo = EHY_getGridInfo(inputFile,{'layer_model','no_layers'});
+        no_layers = gridInfo.no_layers;
+        layer_model = gridInfo.layer_model;
         
-        time_ind  = dims(timeInd).index;
         % loop over stations
-        for i_stat = 1:length(dims(stationsInd).index)
-            stat_ind  = dims(stationsInd).index(i_stat);
+        dims0 = dims;
+        for i_stat = 1:length(dims0(stationsInd).index)
+            dims = dims0;
+            
+            % First, special cases
+            time_ind = dims(timeInd).index;
+            stat_ind = dims(stationsInd).index(i_stat);
             indexOut = dims(stationsInd).indexOut(i_stat);
             
-            % get data
             switch OPT.varName
-                case {'wl','ZWL'}
-                    Data.val(:,indexOut) = cell2mat(vs_get(trih,'his-series',{time_ind},'ZWL',{stat_ind},'quiet')); % ref to wl
-                case {'dps','DPS'}
-                    DPS                  = vs_get(trih,'his-const',{1},'DPS',{stat_ind},'quiet'); % bed to ref
-                    Data.val(:,indexOut) = DPS;
                 case 'bedlevel' % bedlevel (z-coordinate, negative)
                     DPS                  = vs_get(trih,'his-const',{1},'DPS',{stat_ind},'quiet');
                     Data.val(:,indexOut) = -DPS;
@@ -210,13 +188,14 @@ switch modelType
                     Data.val(:,indexOut) = wl+DPS;
                 case {'uv','ZCURU'}
                     if no_layers == 1 % 2Dh
-                        data=qpread(trih,1,'depth averaged velocity','griddata',time_ind,stat_ind);
+                        data = qpread(trih,1,'depth averaged velocity','griddata',time_ind,stat_ind);
                         Data.vel_x(:,indexOut) = data.XComp;
                         Data.vel_y(:,indexOut) = data.YComp;
                         Data.vel_u(:,indexOut) = cell2mat(vs_get(trih,'his-series',{time_ind},'ZCURU',{stat_ind,1},'quiet'));
                         Data.vel_v(:,indexOut) = cell2mat(vs_get(trih,'his-series',{time_ind},'ZCURV',{stat_ind,1},'quiet'));
                     else % 3D
-                        data=qpread(trih,1,'horizontal velocity','griddata',time_ind,stat_ind,0);
+                        layer_ind  = dims(layersInd).index;
+                        data = qpread(trih,1,'horizontal velocity','griddata',time_ind,stat_ind,0);
                         Data.vel_x(:,indexOut,:) = squeeze(data.XComp(:,1,dims(layersInd).index));
                         Data.vel_y(:,indexOut,:) = squeeze(data.YComp(:,1,dims(layersInd).index));
                         Data.vel_u(:,indexOut,:) = cell2mat(vs_get(trih,'his-series',{time_ind},'ZCURU',{stat_ind,layer_ind},'quiet'));
@@ -227,6 +206,13 @@ switch modelType
                     Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
                     
                 case {'Zcen_cen' 'Zcen_int'}
+                    if strcmp(gridInfo.layer_model,'sigma-model')
+                        thick    = vs_let(trih,'his-const', 'THICK','quiet');
+                        DPS      = vs_let(trih,'his-const', 'DPS',  'quiet');
+                    elseif strcmp(gridInfo.layer_model,'z-model')
+                        DPS      = vs_let(trih,'his-const', 'DPS',  'quiet');
+                        zk       = vs_get(trih,'his-const', 'ZK' ,  'quiet');
+                    end
                     zwl      = vs_let(trih,'his-series',{time_ind},'ZWL',{stat_ind},'quiet');
                     for i_time = 1:dims(timeInd).sizeOut
                         if strcmpi(layer_model,'sigma-model')
@@ -262,26 +248,32 @@ switch modelType
                         Data.val(:,indexOut,:) = Zcen_int;
                     end
                     
-                case {'salinity' 'temperature'}
-                    cons_ind               = strmatch(lower(OPT.varName),lower(constituents),'exact');
-                    tmp                    = vs_get(trih,'his-series',{time_ind},'GRO',{stat_ind,layer_ind,cons_ind},'quiet');
-                    if iscell(tmp);    tmp = cell2mat(tmp); end
-                    Data.val(:,indexOut,:) = tmp;
-                case 'zrho' %density
-                    tmp                    = vs_get(trih,'his-series',{time_ind},'ZRHO',{stat_ind,layer_ind},'quiet');
-                    if iscell(tmp);    tmp = cell2mat(tmp); end
-                    Data.val(:,indexOut,:) = tmp;
-                case 'zvicww' %vertical eddy viscosity
-                    zvicww                 = cell2mat(vs_get(trih,'his-series',{time_ind},'ZVICWW',{stat_ind,layer_ind},'quiet'));
-                    Data.val(:,indexOut,:) = zvicww;
-                otherwise
-                    warning('Non-standard varName requested, treated as constituent name')
-                    cons_ind                = get_nr(lower(constituents),OPT.varName);
-                    tmp                     = vs_get(trih,'his-series',{time_ind},'GRO',{stat_ind,layer_ind,cons_ind},'quiet');
-                    if iscell(tmp);    tmp  = cell2mat(tmp); end
-                    Data.val(:, indexOut,:) = tmp;
+                otherwise % Apply generic approach
+                    dims(stationsInd).index = dims0(stationsInd).index(i_stat);
+                    dims(stationsInd).indexOut = dims0(stationsInd).indexOut(i_stat);
+                    
+                    grp = char(vs_find(vs_use(inputFile,'quiet'), OPT.varName));
+                    if ~isempty(strfind(grp,'-const'))
+                        dims(timeInd).index = 1; % const
+                    end
+                    time_ind  = {dims(1).index};
+                    other_ind = {dims(2:end).index};
+                    
+                    % get data
+                    data = vs_let(trih,grp,time_ind,OPT.varName,other_ind,'quiet');
+                    
+                    % put it in Data.val in correct format
+                    if ~isempty(strfind(grp,'-const'))
+                        dims(timeInd) = []; % remove constant time index
+                    end
+                    if iscell(data)
+                        data = cell2mat(data);
+                    end
+                    Data.val(dims(:).indexOut) = data;
+                    
             end
         end
+        
         
     case 'simona'
         %% SIMONA (WAQUA/TRIWAQ)
@@ -294,7 +286,7 @@ switch modelType
         else
             no_layers = 1;
         end
-          
+        
         % location info: [m,n] and [x,y]
         if strcmp(OPT.varName,'uv')
             mn                        = waquaio(sds,[],'uv-mn');
@@ -309,7 +301,7 @@ switch modelType
         for i_stat = 1:length(dims(stationsInd).index)
             stat_ind = dims(stationsInd).index(i_stat);
             indexOut = dims(stationsInd).indexOut(i_stat);
-
+            
             Data.locationMN(indexOut,:) = mn(stat_ind,:);
             Data.locationXY(indexOut,:) = [x(stat_ind) y(stat_ind)];
             
@@ -478,12 +470,11 @@ end
 %% add dimension information to Data
 % dimension information
 dimensionsComment = {dims.name};
-
 fn = char(intersect(fieldnames(Data),{'val','vel_x','val_x'}));
-while ~isempty(fn) && ndims(Data.(fn))<numel(dimensionsComment)
+while ~isempty(fn) && ndims(Data.(fn)) < numel(dimensionsComment)
     dimensionsComment(end) = [];
 end
-while ~isempty(fn) && ndims(Data.(fn))>numel(dimensionsComment)
+while ~isempty(fn) && ndims(Data.(fn)) > numel(dimensionsComment)
     dimensionsComment{end+1,1} = '-';
 end
 
@@ -528,60 +519,60 @@ if strcmp(gridInfo.layer_model,'sigma-model')
     
 elseif strcmp(gridInfo.layer_model,'z-model')
     
-       % fix for DFM z-layer models: non-active layers have value of top layer
-       nT = size(cen,1); %no_times
-       if nT<1
-           error('Hard to determine changing surface layer over time, when only one timestep is requested')
-       end
-       nS = size(cen,2); %no_stations
-       nZ = size(cen,3); %no_z-layers
-       for iS = 1:nS % stations
-            zloc_cen_stat(1:nT,1:nZ) = squeeze(cen(:,iS,:));
-            surface_layer = 0;
-            for iZ = 1:nZ %z-layers
-                zloc = squeeze(zloc_cen_stat(:,iZ));
-                dzloc = diff(zloc);
-                if sum(dzloc)==0 && surface_layer == 0
-                    logi(:,iS,iZ) = false(size(zloc));
-                elseif ~(sum(dzloc) == 0) && (surface_layer == 0)
-                    logi(:,iS,iZ) = false(size(zloc));
-                    surface_layer = 1;
-                    dzloc_last_active_layer = dzloc;
-                elseif ~(sum(dzloc - dzloc_last_active_layer) == 0)
-                    %the water surface changes z-layer over time
-                    logi(:,iS,iZ) = [false; (dzloc == dzloc_last_active_layer)];
-                    dzloc_last_active_layer = dzloc;
-                elseif sum(dzloc - dzloc_last_active_layer) == 0
-                    % the water surface does not reach the next z-layer, 
-                    %therefore for this and all the next layers: set to NaN
-                    for iZleft = iZ:nZ
-                        logi(:,iS,iZleft) = true(size(zloc));                       
-                    end
-                    break %stop looping over rest of layers
+    % fix for DFM z-layer models: non-active layers have value of top layer
+    nT = size(cen,1); %no_times
+    if nT<1
+        error('Hard to determine changing surface layer over time, when only one timestep is requested')
+    end
+    nS = size(cen,2); %no_stations
+    nZ = size(cen,3); %no_z-layers
+    for iS = 1:nS % stations
+        zloc_cen_stat(1:nT,1:nZ) = squeeze(cen(:,iS,:));
+        surface_layer = 0;
+        for iZ = 1:nZ %z-layers
+            zloc = squeeze(zloc_cen_stat(:,iZ));
+            dzloc = diff(zloc);
+            if sum(dzloc)==0 && surface_layer == 0
+                logi(:,iS,iZ) = false(size(zloc));
+            elseif ~(sum(dzloc) == 0) && (surface_layer == 0)
+                logi(:,iS,iZ) = false(size(zloc));
+                surface_layer = 1;
+                dzloc_last_active_layer = dzloc;
+            elseif ~(sum(dzloc - dzloc_last_active_layer) == 0)
+                %the water surface changes z-layer over time
+                logi(:,iS,iZ) = [false; (dzloc == dzloc_last_active_layer)];
+                dzloc_last_active_layer = dzloc;
+            elseif sum(dzloc - dzloc_last_active_layer) == 0
+                % the water surface does not reach the next z-layer,
+                %therefore for this and all the next layers: set to NaN
+                for iZleft = iZ:nZ
+                    logi(:,iS,iZleft) = true(size(zloc));
                 end
+                break %stop looping over rest of layers
             end
         end
-       % set top layers to NaNs
-       cen(logi) = NaN;
+    end
+    % set top layers to NaNs
+    cen(logi) = NaN;
     
-       % reconstruct interfaces based on water level and centers
-       for iT = 1:size(cen,1) % time
-           for iS = 1:size(cen,2) % stations
-               topActiveLayerNr = min([find(isnan(squeeze(cen(iT,iS,:))),1)-1 no_lay]);
-               int(iT,iS,(topActiveLayerNr+1):(no_lay+1)) = NaN; % above active layer = NaN
-               int(iT,iS,(topActiveLayerNr+1)) = wl(iT,iS); % active layer interface = water level
-               for i_lay=topActiveLayerNr:-1:1 % layers below, reconstruct
-                   int(iT,iS,i_lay) = int(iT,iS,i_lay + 1) -2*(int(iT,iS,i_lay + 1) - cen(iT,iS,i_lay));
-               end
-               % In a z-layer model, the lowest interface can be deeper than the
-               % bed level (keepzlayeringatbed =1 )
-           end
-       end
+    % reconstruct interfaces based on water level and centers
+    for iT = 1:size(cen,1) % time
+        for iS = 1:size(cen,2) % stations
+            topActiveLayerNr = min([find(isnan(squeeze(cen(iT,iS,:))),1)-1 no_lay]);
+            int(iT,iS,(topActiveLayerNr+1):(no_lay+1)) = NaN; % above active layer = NaN
+            int(iT,iS,(topActiveLayerNr+1)) = wl(iT,iS); % active layer interface = water level
+            for i_lay=topActiveLayerNr:-1:1 % layers below, reconstruct
+                int(iT,iS,i_lay) = int(iT,iS,i_lay + 1) -2*(int(iT,iS,i_lay + 1) - cen(iT,iS,i_lay));
+            end
+            % In a z-layer model, the lowest interface can be deeper than the
+            % bed level (keepzlayeringatbed =1 )
+        end
+    end
     
-end 
-    
+end
+
 Data.val = int;
 Data.Zcen_cen = cen;
 Data.Zcen_int = int;
 
-end  
+end

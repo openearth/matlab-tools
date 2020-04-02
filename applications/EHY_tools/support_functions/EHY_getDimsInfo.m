@@ -10,111 +10,148 @@ if isfield(OPT,'gridFile')
     gridFile = OPT.gridFile;
 end
 
-%% dims
-if nargout > 1
-    %% Get info about available dimensions on file (and their sizes)
-    [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(inputFile);
-    switch modelType
-        case 'dfm'
-            infonc    = ncinfo(inputFile,OPT.varName);
-            dimsNames = {infonc.Dimensions.Name};
-            dimsSizes = infonc.Size;
-            no_dims   = length(dimsNames);
-            for iD = 1:no_dims
-                ind = no_dims-iD+1;
-                dims(ind).name       = dimsNames{iD};
-                dims(ind).size       = dimsSizes(iD);
-                dims(ind).index      = 1:dimsSizes(iD);
-                dims(ind).indexOut   = 1:dimsSizes(iD);
-            end
-            
-        case 'd3d'
-            % time // always ask for time
-            dims(1).name = 'time';
-            
-            if strcmp(typeOfModelFileDetail,'trih')
-                % stations
-                stationNames = EHY_getStationNames(inputFile,modelType,'varName',OPT.varName);
-                if ~isempty(stationNames)
-                    dims(end+1).name = 'stations';
+%% determine "dims" - Get info about available dimensions on file (and their sizes)
+[~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(inputFile);
+switch modelType
+    case 'dfm'
+        infonc    = ncinfo(inputFile,OPT.varName);
+        dimsNames = {infonc.Dimensions.Name};
+        dimsSizes = infonc.Size;
+        no_dims   = length(dimsNames);
+        for iD = 1:no_dims
+            ind = no_dims-iD+1;
+            dims(ind).name       = dimsNames{iD};
+            dims(ind).size       = dimsSizes(iD);
+            dims(ind).index      = 1:dimsSizes(iD);
+            dims(ind).indexOut   = 1:dimsSizes(iD);
+        end
+        
+    case 'd3d'
+        d3d = vs_use(inputFile,'quiet');
+        data_group = char(vs_find(d3d,OPT.varName));
+        if isempty(data_group)
+            NAMCON = EHY_getConstituentNames(inputFile);
+            const_ind = strmatch(lower(OPT.varName),lower(NAMCON),'exact');
+            if ~isempty(const_ind)
+                requestedVarIsConstit = 1;
+                if strcmp(typeOfModelFileDetail,'trih')
+                    OPT.varName = 'GRO';
+                    data_group = char(vs_find(d3d,OPT.varName));
+                elseif strcmp(typeOfModelFileDetail,'trim')
+                    OPT.varName = 'R1';
+                    data_group = char(vs_find(d3d,OPT.varName));
                 end
-            elseif strcmp(typeOfModelFileDetail,'trim')
-                % faces/grid cells
-                dims(end+1).name = 'm';
+            else
+                data_group(1:3) = d3d.CelDef(1).Name(1:3);
+            end
+        end
+        grp = [data_group(1:3) '-const']; % his- or map-const
+        
+        % try to determine dimensions based on size
+        ind = strmatch(OPT.varName,{d3d.ElmDef.Name},'exact');
+        if isempty(ind) % Hopefully, variable has same dimension as velocity
+            ind = find(ismember({d3d.ElmDef.Name},{'ZCURU','U1'}));
+        end
+        Size = d3d.ElmDef(ind).Size;
+        
+        % time (always add time)
+        dims(1).name = 'time';
+        
+        if strcmp(typeOfModelFileDetail,'trih')
+            % stations
+            NOSTAT = vs_get(d3d,grp,{1},'NOSTAT','quiet');
+            if length(Size)>=1 && Size(1) == NOSTAT
+                dims(end+1).name = 'stations';
+            end
+        elseif strcmp(typeOfModelFileDetail,'trim')
+            % faces/grid cells
+            MMAX = vs_get(d3d,grp,{1},'MMAX','quiet');
+            NMAX = vs_get(d3d,grp,{1},'NMAX','quiet');
+            if length(Size)>=2 && Size(1) == NMAX && Size(2) == MMAX
                 dims(end+1).name = 'n';
+                dims(end+1).name = 'm';
             end
-            
-            % sediment fractions
-            d3d = vs_use(inputFile,'quiet');
-            NAMSEDind = strmatch('NAMSED',{d3d.ElmDef.Name});
-            if ~isempty(NAMSEDind)
-                if strcmp(typeOfModelFileDetail,'trim')
-                    sedfracName = squeeze(vs_let(vs_use(inputFile,'quiet'),'map-const','NAMSED','quiet'));
-                elseif strcmp(typeOfModelFileDetail,'trih')
-                    sedfracName = squeeze(vs_let(vs_use(inputFile,'quiet'),'his-const','NAMSED','quiet'));
-                end
-                if size(sedfracName,2) > 1
-                    dims(end+1).name = 'sedimentFraction';
-                end
+        end
+        
+        % layers (in 2Dh, layer is sometimes needed (e.g. 'ZCURU')
+        KMAX = vs_get(d3d,grp,{1},'KMAX','quiet');
+        if strcmp(typeOfModelFileDetail,'trih') && length(Size)>=2 && Size(2) == KMAX
+            dims(end+1).name = 'layers';
+        elseif strcmp(typeOfModelFileDetail,'trim') && length(Size)>=3 && Size(3) == KMAX
+            dims(end+1).name = 'layers';
+        end
+        
+        % constituent/concentration (incl. Salinity and Temperature)
+        if exist('requestedVarIsConstit','var')
+            if length(Size)>=3 && Size(end) == length(NAMCON)
+                dims(end+1).name = 'constit';
             end
-            
-            % layers
-            gridInfo = EHY_getGridInfo(inputFile,{'no_layers'});
-            if gridInfo.no_layers > 1 && ~ismember(EHY_nameOnFile(inputFile,OPT.varName),{'wl','wd','dps','S1'})
-                dims(end+1).name = 'layers';
+        end
+        
+        % sediment fractions
+        if ismember('NAMSED',{d3d.ElmDef.Name})
+            NAMSED = squeeze(vs_let(vs_use(inputFile,'quiet'),grp,'NAMSED','quiet'));
+            if size(NAMSED,2) > 1 && Size(end) == size(NAMSED,1)
+                dims(end+1).name = 'sedimentFraction';
             end
-            
-        case 'delwaq'
-            % time
-            dims(1).name = 'time';
-            
-            if strcmp(typeOfModelFileDetail,'his')
-                % stations
-                stationNames = EHY_getStationNames(inputFile,modelType,'varName',OPT.varName);
-                if ~isempty(stationNames)
-                    dims(end+1).name = 'stations';
-                end
-            elseif strcmp(typeOfModelFileDetail,'map')
-                [~, typeOfModelFileDetailGrid] = EHY_getTypeOfModelFile(gridFile);
-                if ismember(typeOfModelFileDetailGrid, {'lga', 'cco'})     % faces/grid cells
-                    dims(end+1).name = 'm';
-                    dims(end+1).name = 'n';
-                elseif strcmp(typeOfModelFileDetailGrid, 'nc')
-                    dims(end+1).name = 'faces';
-                    gridInfo = EHY_getGridInfo(gridFile, {'dimensions'});
-                    dims(end).size = gridInfo.no_NetElem;
-                end
-                
-                % layers
-                gridInfo = EHY_getGridInfo(inputFile,{'no_layers'}, 'gridFile', gridFile);
-                if isfield(gridInfo,'no_layers') && gridInfo.no_layers > 1
-                    dims(end+1).name = 'layers';
-                end
-                
-            end
-            
-            if strcmpi(typeOfModelFileDetail,'sgf')
-                dims = [];
-                dims.name = '';
-            end
-            
-        otherwise % SOBEK / SIMONA
-            % time // always ask for time
-            dims(1).name = 'time';
-            
-            % layers
-            gridInfo = EHY_getGridInfo(inputFile,{'no_layers'});
-            if isfield(gridInfo,'no_layers') && gridInfo.no_layers > 1 && ~ismember(OPT.varName,{'wl','wd','dps'})
-                dims(end+1).name = 'layers';
-            end
-            
+        end
+        
+        % check if all dimensions (besides time) are found
+        no_dims = length({dims.name}) - sum(strcmp('time',{dims.name}));
+        if no_dims ~= length(Size)
+            error('debug needed')
+        end
+        
+    case 'delwaq'
+        % time
+        dims(1).name = 'time';
+        
+        if strcmp(typeOfModelFileDetail,'his')
             % stations
             stationNames = EHY_getStationNames(inputFile,modelType,'varName',OPT.varName);
             if ~isempty(stationNames)
                 dims(end+1).name = 'stations';
             end
+        elseif strcmp(typeOfModelFileDetail,'map')
+            [~, typeOfModelFileDetailGrid] = EHY_getTypeOfModelFile(gridFile);
+            if ismember(typeOfModelFileDetailGrid, {'lga', 'cco'})     % faces/grid cells
+                dims(end+1).name = 'm';
+                dims(end+1).name = 'n';
+            elseif strcmp(typeOfModelFileDetailGrid, 'nc')
+                dims(end+1).name = 'faces';
+                gridInfo = EHY_getGridInfo(gridFile, {'dimensions'});
+                dims(end).size = gridInfo.no_NetElem;
+            end
             
-    end
+            % layers
+            gridInfo = EHY_getGridInfo(inputFile,{'no_layers'}, 'gridFile', gridFile);
+            if isfield(gridInfo,'no_layers') && gridInfo.no_layers > 1
+                dims(end+1).name = 'layers';
+            end
+            
+        end
+        
+        if strcmpi(typeOfModelFileDetail,'sgf')
+            dims = [];
+            dims.name = '';
+        end
+        
+    otherwise % SOBEK / SIMONA
+        % time // always ask for time
+        dims(1).name = 'time';
+        
+        % layers
+        gridInfo = EHY_getGridInfo(inputFile,{'no_layers'});
+        if isfield(gridInfo,'no_layers') && gridInfo.no_layers > 1 && ~ismember(OPT.varName,{'wl','wd','dps'})
+            dims(end+1).name = 'layers';
+        end
+        
+        % stations
+        stationNames = EHY_getStationNames(inputFile,modelType,'varName',OPT.varName);
+        if ~isempty(stationNames)
+            dims(end+1).name = 'stations';
+        end
+        
 end
 
 %% dimsInd
@@ -125,6 +162,7 @@ if nargout > 1
     dimsInd.faces = find(ismember({dims(:).name},{'faces','nmesh2d_face','mesh2d_nFaces','nFlowElem','nNetElem'}));
     dimsInd.m = find(ismember({dims(:).name},{'m','edge_m'})); % structured grid
     dimsInd.n = find(ismember({dims(:).name},{'n','edge_n'}));
+    dimsInd.constit = find(ismember({dims(:).name},'constit'));
     dimsInd.sedfrac = find(ismember({dims(:).name},'sedimentFraction'));
 end
 
@@ -176,27 +214,33 @@ if nargout > 2
         dims(dimsInd.n).indexOut = 1:length(OPT.n);
         dims(dimsInd.n).size     = nsize;
     end
-
+    
+    %% Get constituent information
+    if ~isempty(dimsInd.constit)
+        dims(dimsInd.constit).index = const_ind;
+        dims(dimsInd.constit).indexOut = 1;
+    end
+    
     %% Get sediment fractions information
     if ~isempty(dimsInd.sedfrac)
-        sedfracName = squeeze(vs_let(vs_use(inputFile,'quiet'),'map-const','NAMSED','quiet'));
-        if size(sedfracName,1) > 1 && (isempty(OPT.sedimentName) || size(OPT.sedimentName,1) > 1 )
-%             warning('Using multiple (all) sediment fractions.');
-            dims(dimsInd.sedfrac).index    = 1:size(sedfracName,1);
-            dims(dimsInd.sedfrac).indexOut = 1:size(sedfracName,1);
+        NAMSED = strtrim(cellstr(NAMSED));
+        if ~isempty(OPT.sedimentName)
+            [lia,locb] = ismember(OPT.sedimentName,NAMSED);
+            sed_ind = locb(lia);
         else
-            b = blanks(20-length(OPT.sedimentName));
-            dims(dimsInd.sedfrac).index    = find(all(ismember(sedfracName,[OPT.sedimentName b]),2));
-            dims(dimsInd.sedfrac).indexOut = find(all(ismember(sedfracName,[OPT.sedimentName b]),2));
+            sed_ind = 1:length(NAMSED);
         end
+        dims(dimsInd.sedfrac).index    = sed_ind;
+        dims(dimsInd.sedfrac).indexOut = 1:length(sed_ind);
     end
     
     %%
-    % dims.sizeOut
     for iD = 1:length(dims)
+        % dims.sizeOut
         if ~isfield(dims(iD),'sizeOut') || isempty(dims(iD).sizeOut)
             dims(iD).sizeOut = length(dims(iD).indexOut);
         end
+        dims(iD).index = reshape(dims(iD).index,1,[]);
     end
     
     % assign dimsInd in caller

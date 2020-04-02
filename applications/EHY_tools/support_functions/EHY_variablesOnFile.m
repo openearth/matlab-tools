@@ -38,17 +38,10 @@ switch modelType
         end
         
     case 'd3d'
-        variables   = defaults(:,1);
-        description = defaults(:,2);
-        %         FI = qpfopen(fname);
-        %         [~,DataProps] = qp_getdata(FI);
-        %         variables = {DataProps.Val1}';
-        %         description = {DataProps.Name}';
-        %
-        %         % delete empty fields
-        %         deleteLogi = cellfun(@isempty,variables);
-        %         variables(deleteLogi) = [];
-        %         description(deleteLogi) = [];
+        d3d = vs_use(fname,'quiet');
+        
+        variables = [defaults(1:end-2,1); {d3d.ElmDef.Name}'];
+        description = [defaults(1:end-2,2); {d3d.ElmDef.Description}'];
         
     case 'delwaq'
         dw = delwaq('open',fname);
@@ -58,12 +51,13 @@ switch modelType
         FI = qpfopen(fname);
         [~,DataProps] = qp_getdata(FI);
         variables2 = {DataProps.ShortName}';
-        [~,locb] = ismember(variables,variables2);
+        [lia,locb] = ismember(variables2,variables);
         dmy1 = cellstr(repmat(' [',numel(DataProps),1));
         dmy2 = cellstr(repmat( ']',numel(DataProps),1));
         description2 = strcat({DataProps.Name}', dmy1, {DataProps.Units}', dmy2);
         
-        description = description2(locb(locb~=0));
+        description(1:length(variables),1) = {''};
+        description(locb(locb~=0)) = description2(lia);
         
     case 'simona'
         variables   = defaults(1:5,1);
