@@ -257,6 +257,9 @@ end
 if ~isfield(spw,'tdummy')
     spw.tdummy=[];
 end
+if ~isfield(spw,'cut_off_rain')
+    spw.cut_off_rain = 0; % mm/hr
+end
 if ~isempty(outputfile)
     
     % Coordinate system
@@ -304,6 +307,12 @@ if ~isempty(outputfile)
                     pr_choosen              = pr';
                 end
 
+                % Do cut-off of low precipitation rates (e.g. <10 mm/hr) in whole profile
+                if spw.cut_off_rain > 0 % mm/hr            
+                    ids = pr_choosen < spw.cut_off_rain;
+                    pr_choosen(ids) = 0; % also possible do reduce with a certain factor like: pr_choosen(ids)/5;
+                end
+                
                 % Symmetrical or asymmetrical pr?
                 if asymmetrical == 0
                     tc.track(it).precipitation  = repmat(pr_choosen,spw.nr_directional_bins,1);
