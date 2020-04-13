@@ -12,9 +12,11 @@ function Statistics = EHY_statistics(varargin)
 % Extrapolation method: None  (i.e. returns a NaN)
 
 %% Initiate and check
-Statistics.meanerror    = NaN;
+Statistics.bias         = NaN;
+Statistics.meanerror    = NaN; % = bias
 Statistics.std          = NaN;
-Statistics.rmserror     = NaN;
+Statistics.RMSE         = NaN;
+Statistics.rmserror     = NaN; % = RMSE
 Statistics.maxerror     = NaN;
 Statistics.minerror     = NaN;
 Statistics.obsrange     = NaN;
@@ -93,9 +95,11 @@ if sum(size(err)>1)>1
 end
 
 if numel(err) > 1   
+    Statistics.bias         = mean(err);
     Statistics.meanerror    = mean(err);
     Statistics.std          = std(err,1);  % Note the difference with std(error) [= std(error,0)]
-    Statistics.rmserror     = norm(err)/sqrt(length(err));
+    Statistics.RMSE         = norm(err)/sqrt(length(err));
+    Statistics.rmserror     = Statistics.RMSE;
     Statistics.maxerror     = max(err);
     Statistics.minerror     = min(err);
     Statistics.obsrange     = max(Z_obs) - min(Z_obs);
