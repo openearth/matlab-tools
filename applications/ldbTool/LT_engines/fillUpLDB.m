@@ -81,12 +81,12 @@ if ~isstruct(ldb)
     id=find(isnan(ldb(:,1)));
     
     % in moten hakken
-    hW=waitbar(0,'Disassemble ldb into segments....');
+%     hW=waitbar(0,'Disassemble ldb into segments....');
     for ii=1:length(id)-1
         ldbCell{ii}=ldb(id(ii)+1:id(ii+1)-1,:);
         waitbar(ii/(length(id)-1),hW);
     end
-    close(hW);
+%     close(hW);
     
 else
 
