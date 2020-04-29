@@ -1,4 +1,4 @@
-function varargout=delft3d_io_bnd(cmd,varargin),
+function varargout = delft3d_io_bnd(cmd,varargin),
 %DELFT3D_IO_BND   read/write open boundaries (*.bnd) <<beta version!>>
 %
 %  D = delft3d_io_bnd('read' ,filename);
@@ -88,7 +88,7 @@ switch lower(cmd),
     case 'read',
         S=Local_read(varargin{:});
         if nargout==1
-            varargout = {S};
+           varargout = {S};
         elseif nargout >1
             error('too much output paramters: 0 or 1')
         end
