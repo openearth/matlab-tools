@@ -4,7 +4,7 @@ function out = readCorjet(fileInp)
 
 %% Initialise
 out.Raw     = {};
-out.Ambient = [];
+out.Ambiant = [];
 out.Data    = [];
 
 %% Open outputfile, read line iand but in raw as textstrings
