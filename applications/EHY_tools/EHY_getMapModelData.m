@@ -224,9 +224,11 @@ switch modelType
         end
         
         if EHY_isCMEMS(inputFile) % [time,depth,lat,lon] to [time,lat,lon,depth]
-            Data.val = permute(Data.val,[1 3 4 2]);
-            Data.val = flipud(Data.val);
-            dims = dims([1 3 4 2]); % to get correct [dimension-info]
+            if ndims(Data.val)==4
+                Data.val = permute(Data.val,[1 3 4 2]);
+                Data.val = flipud(Data.val);
+                dims = dims([1 3 4 2]); % to get correct [dimension-info]
+            end
         end
         
     case 'd3d'
