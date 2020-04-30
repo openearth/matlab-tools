@@ -38,9 +38,9 @@ end
 
 %% permute and reshape DataAll.val to [timesInd x facesInd x layerInd]
 if strcmp(EHY_getTypeOfModelFile(inputFile),'nc_griddata') ||strcmp(modelType,'d3d')
-    if strcmp(EHY_getTypeOfModelFile(inputFile),'nc_griddata')
-        DataAll.val = permute(DataAll.val,[1 3 4 2]);
-    end
+%     if strcmp(EHY_getTypeOfModelFile(inputFile),'nc_griddata')
+%         DataAll.val = permute(DataAll.val,[1 3 4 2]);
+%     end
     modelSize   = size(DataAll.val);
     DataAll.val = reshape(DataAll.val,[modelSize(1) prod(modelSize(2:3)) modelSize(4)]);
 end
