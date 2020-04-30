@@ -1,50 +1,50 @@
 function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 % SETPROPERTY  generic routine to set values in PropertyName-PropertyValue pairs
 %
-% Routine to set properties based on PropertyName-PropertyValue 
-% pairs (aka <keyword,value> pairs). Can be used in any function 
+% Routine to set properties based on PropertyName-PropertyValue
+% pairs (aka <keyword,value> pairs). Can be used in any function
 % where PropertyName-PropertyValue pairs are used.
-%   
+%
 %
 % [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 %
 % input:
-% OPT       = structure in which fieldnames are the keywords and  
-%             the values are the defaults 
+% OPT       = structure in which fieldnames are the keywords and
+%             the values are the defaults
 % inputCell = must be a cell array containing single struct, or a set of
 %             'PropertyName', PropertyValue,... pairs. It is best practice to
-%             pass the varargin of the calling function as the 2nd argument.  
+%             pass the varargin of the calling function as the 2nd argument.
 %             Property names must be strings, if they contain a dot (.) this is
 %             interpreted a struct field separator, and the property name
 %             is used to assign as a subfield property.
-%             If inputCell is single struct, it will overwrite substructfields 
-%             in OPT. For recursive overwriting of subsubfields and beyond, use 
+%             If inputCell is single struct, it will overwrite substructfields
+%             in OPT. For recursive overwriting of subsubfields and beyond, use
 %             mergestructs with the recursive flag.
-% varargin  = series of 'PropertyName', PropertyValue,... pairs to set 
+% varargin  = series of 'PropertyName', PropertyValue,... pairs to set
 %             methods for setproperty itself.
-%           
+%
 % output:
-% OPT     = structure, similar to the input argument OPT, 
+% OPT     = structure, similar to the input argument OPT,
 %           with possibly changed values in the fields. You can inspect
 %           an OPT struct this interactively with ui_structure_editor.
-% Set     = structure, similar to OPT, values are true 
+% Set     = structure, similar to OPT, values are true
 %           where OPT has been set (and possibly changed)
-% Default = structure, similar to OPT, values are true where 
+% Default = structure, similar to OPT, values are true where
 %           the values ofOPT are equal to the original OPT
 %
 % Example calls:
-% 
+%
 % [OPT Set Default] = setproperty(OPT, vararginOfCallingFunction)
 % [OPT Set Default] = setproperty(OPT, {'PropertyName', PropertyValue,...})
 % [OPT Set Default] = setproperty(OPT, {OPT2})
 %
-% Any number of leading  structs with 
+% Any number of leading  structs with
 % any number of trailing <keyword,value> pairs:
 % [OPT Set Default] = setproperty(OPT1, OPT2, ..., OPTn)
 % [OPT Set Default] = setproperty(OPT1, OPT2, ..., OPTn,'PropertyName', PropertyValue,...)
 %
-%     Different methods for dealing with class changes of variables, or 
-%     extra fields (properties that are not in the input structure) can 
+%     Different methods for dealing with class changes of variables, or
+%     extra fields (properties that are not in the input structure) can
 %     be defined as property-value pairs. Valid properties are
 %     onExtraField and onClassChange:
 %
@@ -53,9 +53,9 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 %                warn            throw warning
 %                error           throw error
 % onExtraField:  silentIgnore    silently ignore the field
-%                warnIgnore      ignore the field and throw warning      
+%                warnIgnore      ignore the field and throw warning
 %                silentAppend    silently append the field to OPT
-%                warnAppend      append the field to OPT and throw warning 
+%                warnAppend      append the field to OPT and throw warning
 %                error           throw error (default)
 %
 % Example calls:
@@ -64,7 +64,7 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 % [OPT Set Default] = setproperty(OPT, {'PropertyName', PropertyValue},'onExtraField','silentIgnore')
 %
 %
-% Example: 
+% Example:
 %
 % +------------------------------------------->
 % function y = dosomething(x,'debug',1)
@@ -74,7 +74,7 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 % if OPT.debug; plot(x,y);pause; end
 % +------------------------------------------->
 %
-% legacy syntax is also supported, but using legacy syntax prohibits the 
+% legacy syntax is also supported, but using legacy syntax prohibits the
 % setting of onClassChange and onExtraField methods:
 %
 % [OPT Set Default] = setproperty(OPT, varargin{:})
@@ -82,9 +82,9 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 %  OPT              = setproperty(OPT, OPT2)
 %
 % input:
-% OPT      = structure in which fieldnames are the keywords and the values are the defaults 
+% OPT      = structure in which fieldnames are the keywords and the values are the defaults
 % varargin = series of PropertyName-PropertyValue pairs to set
-% OPT2     = is a structure with the same fields as OPT. 
+% OPT2     = is a structure with the same fields as OPT.
 %
 %            Internally setproperty translates OPT2 into a set of
 %            PropertyName-PropertyValue pairs (see example below) as in:
@@ -99,7 +99,7 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 % Change log:
 %    2011-09-30: full code rewrite to include:
 %                 - setpropertyInDeeperStruct functionality
-%                 - user defined handling of extra fields 
+%                 - user defined handling of extra fields
 %                 - class change warning/error message
 %
 
@@ -133,9 +133,9 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -166,8 +166,8 @@ end
 %% check and parse inputCell (usually the varargin struct in the calling function)
 % determine mode from class of the second argument
 switch(class(inputCell))
-    case 'struct'   
-        % recursively let setproperty peel all leading structs 
+    case 'struct'
+        % recursively let setproperty peel all leading structs
         % with optional trailing keyword,value> pairs
         inputCell = setproperty(inputCell,varargin{:});
         inputCell = struct2arg(inputCell);
@@ -226,7 +226,14 @@ end
 
 
 %% check and parse varargin
-if verLessThan('matlab', '7.13')
+%  TK: slifgtly modified for use in octave
+try
+    version = verLessThan('matlab', '7.13');
+catch
+    version = false;
+end
+
+if version
     error(nargchk(0, 4, length(varargin), 'struct'))
 else
     narginchk(nargin-length(varargin), 4+nargin-length(varargin))
@@ -299,7 +306,7 @@ end
 
 % identify fldsToSet for simple field names (without subfields)
 
-% fldsToSet     = ismember(flds2,flds1); 
+% fldsToSet     = ismember(flds2,flds1);
 % As ismember is rather slow, this is replaced by more optimized code
 
 fldsToSet = false(size(flds2));
@@ -395,7 +402,7 @@ if nargout > 1 % process Set
                                 repmat({false},size(fieldnames(getfield(OPT,fldsCell{ii}{1:nn}))))]';
                             Set = setfield(Set,fldsCell{ii}{1:nn},[]); %#ok<*SFLD>
                             Set = setfield(Set,fldsCell{ii}{1:nn},struct(substruct{:}));
-                        end  
+                        end
                     end
                     Set = setfield(Set,fldsCell{ii}{:},true);
             end
@@ -432,7 +439,7 @@ if nargout > 2 % process Default
                                 repmat({true},size(fieldnames(getfield(OPT,fldsCell{ii}{1:nn}))))]';
                             Default = setfield(Default,fldsCell{ii}{1:nn},[]); %#ok<*SFLD>
                             Default = setfield(Default,fldsCell{ii}{1:nn},struct(substruct{:}));
-                        end  
+                        end
                     end
                     Default = setfield(Default,fldsCell{ii}{:},...
                         isequalwithequalnans(getfield(OPToriginal,fldsCell{ii}{:}),getfield(OPT,fldsCell{ii}{:})));
@@ -479,6 +486,6 @@ if ~strcmp(class1,class2)
 end
 
 function out = odd(in)
-%ODD   test whether number if odd 
+%ODD   test whether number if odd
 out = mod(in,2)==1;
 %% EOF
