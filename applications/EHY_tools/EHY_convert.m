@@ -556,7 +556,7 @@ end
                 wlgrid('write',tempFileGrd,grd);
             end
             grid2kml(tempFileGrd,OPT.lineColor*255);
-            copyfile(tempFileKml,outputFile);
+            copyfile(tempFileKml,outputFile,'f');
             delete(tempFileGrd)
             delete(strrep(tempFileGrd,'.grd','.enc'))
             delete(tempFileKml)

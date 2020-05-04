@@ -112,7 +112,12 @@ end
 if OPT.plot_map
     % Make use of QuickPlot-functionality, since wms.m is in private folder,
     % make a temporary copy of the wms.m-function
-    copyfile([fileparts(which('d3d_qp')) filesep 'private' filesep 'wms.m'],pwd,'f')
+    try
+        copyfile([fileparts(which('d3d_qp')) filesep 'private' filesep 'wms.m'],pwd,'f')
+    catch % try again after a sec
+        pause(1); copyfile([fileparts(which('d3d_qp')) filesep 'private' filesep 'wms.m'],pwd,'f')
+    end
+    
     if ~isempty(OPT.localEPSG) % local to WGS coordinates
         [curAxis(1:2), curAxis(3:4)] = convertCoordinates(curAxis(1:2), curAxis(3:4),'CS1.code',OPT.localEPSG,'CS2.code',4326);
     end

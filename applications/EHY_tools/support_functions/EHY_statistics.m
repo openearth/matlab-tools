@@ -83,7 +83,8 @@ elseif nargin == 6 % Statistics = EHY_statistics(X_sim, Y_sim, Z_sim, X_obs, Y_o
     Z_int = F(X_obs,Y_obs);
     
 else
-    disp('Number of input arguments in function getstatistics is incorrect')
+    disp('Number of input arguments in function EHY_statistics is incorrect')
+    return % statistics can not be determined
 end
 
 %% Determine statistics

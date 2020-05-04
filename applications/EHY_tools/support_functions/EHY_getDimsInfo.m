@@ -45,7 +45,7 @@ switch modelType
                 data_group(1:3) = d3d.CelDef(1).Name(1:3);
             end
         end
-        grp = [data_group(1:3) '-const']; % his- or map-const
+        grp = [data_group(1,1:3) '-const']; % his- or map-const
         
         % try to determine dimensions based on size
         ind = strmatch(OPT.varName,{d3d.ElmDef.Name},'exact');

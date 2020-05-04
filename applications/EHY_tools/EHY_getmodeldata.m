@@ -242,17 +242,22 @@ switch modelType
                         end
                     end
                     
+                    % return requested variable as 'Data.val'
+                    % and return other output as well 
                     if strcmpi(OPT.varName    ,'Zcen_cen')
                         Data.val(:,indexOut,:) = Zcen_cen;
                     elseif strcmpi(OPT.varName,'Zcen_int')
                         Data.val(:,indexOut,:) = Zcen_int;
                     end
+                    Data.Zcen_cen(:,indexOut,:) = Zcen_cen;
+                    Data.Zcen_int(:,indexOut,:) = Zcen_int;
                     
                 otherwise % Apply generic approach
                     dims(stationsInd).index = dims0(stationsInd).index(i_stat);
                     dims(stationsInd).indexOut = dims0(stationsInd).indexOut(i_stat);
                     
                     grp = char(vs_find(vs_use(inputFile,'quiet'), OPT.varName));
+                    if size(grp,1)>1; grp = grp(1,:); end
                     if ~isempty(strfind(grp,'-const'))
                         dims(timeInd).index = 1; % const
                     end
