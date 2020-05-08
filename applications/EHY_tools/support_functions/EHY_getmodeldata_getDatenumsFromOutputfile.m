@@ -4,20 +4,45 @@ modelType = EHY_getModelType(inputFile);
  
 switch modelType
     case {'dfm','SFINCS'}
-        infonc       = ncinfo(inputFile,'time');       
-        nr_times     = infonc.Size;
-        if nr_times<3
-            seconds      = ncread(inputFile, 'time');
-        else % - to enhance speed, reconstruct time array from start time, numel and interval
-            seconds_int  = ncread(inputFile, 'time', 1, 3);
-            interval     = seconds_int(3)-seconds_int(2);
-            if ~strcmp(infonc.Datatype,'double')
-                seconds_int = double(seconds_int); 
-                interval    = double(interval); 
+        
+        % MapOutputTimeVector = 1, read times instead of reconstructing them
+        try
+            mdFile = EHY_getMdFile(inputFile);
+            if ~isempty(mdFile) && strcmpi(mdFile(end-3:end),'.mdu')
+                warning off; mdu = dflowfm_io_mdu('read',mdFile); warning on
+                fns = fieldnames(mdu.output);
+                ind = strmatch('mapoutputtimevector',lower(fns),'exact');
+                if ~isempty(ind)
+                    if mdu.output.(fns{ind}) == 1 % MapOutputTimeVector = 1?
+                        seconds = ncread(inputFile, 'time');
+                    end
+                end
             end
-            seconds      = [seconds_int(1) seconds_int(2) + interval*[0:nr_times-2] ]';
-            seconds(end) = ncread(inputFile, 'time', nr_times, 1); % overwrite, end time could be different when interval is specified
         end
+        
+        if ~exist('seconds','var')
+            infonc       = ncinfo(inputFile,'time');
+            nr_times     = infonc.Size;
+            if nr_times<4
+                seconds      = ncread(inputFile, 'time');
+            else % - to enhance speed, reconstruct time array from start time, numel and interval
+                seconds_int  = ncread(inputFile, 'time', 1, 4);
+                intervals    = diff(seconds_int(2:4));
+                if diff(intervals) < eps
+                    interval = intervals(1);
+                    if ~strcmp(infonc.Datatype,'double')
+                        seconds_int = double(seconds_int);
+                        interval    = double(interval);
+                    end
+                    seconds      = [seconds_int(1) seconds_int(2) + interval*[0:nr_times-2] ]';
+                    seconds(end) = ncread(inputFile, 'time', nr_times, 1); % overwrite, end time could be different when interval is specified
+                else
+                    warning('The map/his time interval is probably not a multiple of DtUser. Time will not be reconstructed, but will be read from file.')
+                    seconds      = ncread(inputFile, 'time');
+                end
+            end
+        end
+        
         days          = seconds / (24*60*60);
         
         AttrInd       = strmatch('units',{infonc.Attributes.Name},'exact');
@@ -119,9 +144,7 @@ switch modelType
             i_min              = str2num(line(16:17));
             datenums (i_time)  = datenum(i_year,i_month,i_day,i_hour,i_min,0);
         end
-        
         fclose(fid);
-        
         
     case 'delwaq'
         dw = delwaq('open',inputFile);
