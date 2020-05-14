@@ -55,10 +55,14 @@ end
 m = varargin{2};
 n = varargin{3};
 
-OPT.turb = 0;
-OPT.w = 0;
-OPT.visc = 0;
-OPT.constituents = 0;
+% OPT.turb = 0;
+% OPT.w = 0;
+% OPT.visc = 0;
+% OPT.constituents = 0;
+OPT.height = 1;
+OPT.period = 1;
+OPT.direction = 1;
+OPT.wind = 0;
 
 if nargin > 3
     OPT = setproperty(OPT,varargin{4:end});
@@ -74,20 +78,48 @@ H.x        = G.cor.x  (n,m);
 H.y        = G.cor.y  (n,m);
 H.datenum  = vs_time(S,0,1);
 
+if OPT.wind
+    disp('loading wind data from wavm...')
+    H.WIND = qpread(S,'wind velocity','data',0,H.m,H.n);
+    H.WIND.Mag = hypot(H.WIND.XComp,H.WIND.YComp);
+end
+
+% figure;
+% ldb = landboundary('read','d:\Documents\03. Projecten Nederland\03.01. Morfologisch instrumentarium Vlaamse kust\B. Measurements and calculations\06_Flanders_FM\01_setup_bathymetry\Calais_Zeeland.ldb');
+% plot(ldb(:,1),ldb(:,2));
+% hold on;
+% grid_plot(G.cor.x,G.cor.y)
+% hold on;
+% plot(H.x,H.y,'o')
+% % plot(wind.X,wind.Y,'rx')
+% 
+% figure;
+% plot(wind.Time,wind.Mag)
+% 
 %% Parameters
-H.HSIGN = vs_let(S,'map-series','HSIGN',{[ m ],[ n ]});
-H.DIR = vs_let(S,'map-series','DIR',{[ m ],[ n ]});
-H.DEPTH = vs_let(S,'map-series','DEPTH',{[ m ],[ n ]});
-H.DSPR = vs_let(S,'map-series','DSPR',{[ m ],[ n ]});       % directional spread of the waves
-H.DIR = vs_let(S,'map-series','DIR',{[ m ],[ n ]});         % mean wave direction
-H.PDIR = vs_let(S,'map-series','PDIR',{[ m ],[ n ]});       % peak wave direction
-H.PERIOD = vs_let(S,'map-series','PERIOD',{[ m ],[ n ]});   % mean wave period
-H.RTP = vs_let(S,'map-series','RTP',{[ m ],[ n ]});         % relative peak wave period
-H.TP = vs_let(S,'map-series','TP',{[ m ],[ n ]});           % peak wave period
-H.TPS = vs_let(S,'map-series','TPS',{[ m ],[ n ]});         % smoothed peak wave period
-H.TM02 = vs_let(S,'map-series','TM02',{[ m ],[ n ]});       % mean absolute zero-crossing period
-H.TMM10 = vs_let(S,'map-series','TMM10',{[ m ],[ n ]});     % mean absolute wave period
-H.QB = vs_let(S,'map-series','QB',{[ m ],[ n ]});           % the fraction of breaking waves
+if OPT.height
+    disp('reading wave height data from wavm...')
+    H.HSIGN = vs_let(S,'map-series','HSIGN',{[ m ],[ n ]});
+    H.DEPTH = vs_let(S,'map-series','DEPTH',{[ m ],[ n ]});
+end
+if OPT.direction
+    disp('reading wave direction data from wavm...')    
+    H.DIR = vs_let(S,'map-series','DIR',{[ m ],[ n ]});
+    H.DSPR = vs_let(S,'map-series','DSPR',{[ m ],[ n ]});       % directional spread of the waves
+    H.DIR = vs_let(S,'map-series','DIR',{[ m ],[ n ]});         % mean wave direction
+    H.PDIR = vs_let(S,'map-series','PDIR',{[ m ],[ n ]});       % peak wave direction
+    H.QB = vs_let(S,'map-series','QB',{[ m ],[ n ]});           % the fraction of breaking waves
+end
+if OPT.period
+    disp('reading wave direction data from wavm...')    
+    H.PERIOD = vs_let(S,'map-series','PERIOD',{[ m ],[ n ]});   % mean wave period
+    H.RTP = vs_let(S,'map-series','RTP',{[ m ],[ n ]});         % relative peak wave period
+    H.TP = vs_let(S,'map-series','TP',{[ m ],[ n ]});           % peak wave period
+    H.TPS = vs_let(S,'map-series','TPS',{[ m ],[ n ]});         % smoothed peak wave period
+    H.TM02 = vs_let(S,'map-series','TM02',{[ m ],[ n ]});       % mean absolute zero-crossing period
+    H.TMM10 = vs_let(S,'map-series','TMM10',{[ m ],[ n ]});     % mean absolute wave period
+end
+disp('reading location data from wavm...')
 H.XP = vs_let(S,'map-series','XP',{[ m ],[ n ]});           % x coordinate output grid
 H.YP = vs_let(S,'map-series','YP',{[ m ],[ n ]});           % y coordinate output grid
 
