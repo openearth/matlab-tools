@@ -1,4 +1,4 @@
-function write_meteo_file_netcdf(fname, s, gridunit, refdate, varargin)
+function write_meteo_file_netcdf(fname, s, cs, refdate, varargin)
 %WRITED3DMETEO  One line description goes here.
 %
 %   More detailed description goes here.
@@ -78,8 +78,23 @@ for ii=1:length(varargin)
     end
 end
 
-ncfile=[fname '.nc'];
+% spherical or projected?
+switch lower(cs.type(1:3))
+    case{'geo'}
+        xunits='degrees_east';
+        yunits='degrees_north';
+        xstd='longitude';
+        ystd='latitude';
+        epsg=4326;
+    otherwise
+        xunits='m';
+        yunits='m';
+        xstd='projection_x_coordinate';
+        ystd='projection_y_coordinate';      
+        epsg=cs.epsg;
+end
 
+ncfile=[fname '.nc'];
 tstr=['seconds since ' datestr(refdate,'yyyy-mm-dd HH:MM:SS')];
 
 
@@ -108,7 +123,7 @@ parameter(n).precision='single';
 parameter(n).grads_name=parameter(n).name;
 
 n=n+1;
-parameter(n).name='air_pressure';
+parameter(n).name='air_pressure_fixed_height';
 parameter(n).long_name='air_pressure_fixed_height';
 parameter(n).standard_name='air_pressure_at_sea_level';
 parameter(n).standard_name='air_pressure';
@@ -117,7 +132,7 @@ parameter(n).precision='single';
 parameter(n).grads_name=parameter(n).name;
 
 % Prepare nc file (create dimensions, define variables)
-prepare_netcdf_file(ncfile,nx,ny,nt,parameter,4326,tstr);
+prepare_netcdf_file(ncfile,nx,ny,nt,parameter,epsg,tstr,xunits,yunits,xstd,ystd);
 
 t=86400*(s.parameter(1).time-refdate);
 
@@ -138,7 +153,7 @@ for ipar=1:npar
 end
 
 %%
-function prepare_netcdf_file(ncfile,nx,ny,nt,parameter,epsg,tstr)
+function prepare_netcdf_file(ncfile,nx,ny,nt,parameter,epsg,tstr,xunits,yunits,xstd,ystd);
 
 
 npar=length(parameter);
@@ -177,19 +192,19 @@ netcdf.putAtt(ncid,varid_t,'axis','T');
 netcdf.putAtt(ncid,varid_t,'calendar','standard');
 netcdf.putAtt(ncid,varid_t,'_FillValue',missval);
 
-%    netcdf.putAtt(ncid,varid_x,'standard_name','projection_x_coordinate');
-%    netcdf.putAtt(ncid,varid_x,'long_name','x-coordinate (UTM zone 4N)');
-netcdf.putAtt(ncid,varid_x,'standard_name','longitude');
-netcdf.putAtt(ncid,varid_x,'long_name','longitude');
-netcdf.putAtt(ncid,varid_x,'units','degrees_east');
+netcdf.putAtt(ncid,varid_x,'standard_name',xstd);
+netcdf.putAtt(ncid,varid_x,'long_name',xstd);
+%netcdf.putAtt(ncid,varid_x,'standard_name','longitude');
+%netcdf.putAtt(ncid,varid_x,'long_name','longitude');
+netcdf.putAtt(ncid,varid_x,'units',xunits);
 netcdf.putAtt(ncid,varid_x,'axis','X');
 netcdf.putAtt(ncid,varid_x,'_FillValue',missval);
 
-%     netcdf.putAtt(ncid,varid_y,'standard_name','projection_y_coordinate');
-%     netcdf.putAtt(ncid,varid_y,'long_name','y-coordinate (UTM zone 4N)');
-netcdf.putAtt(ncid,varid_y,'standard_name','latitude');
-netcdf.putAtt(ncid,varid_y,'long_name','latitude');
-netcdf.putAtt(ncid,varid_y,'units','degrees_north');
+netcdf.putAtt(ncid,varid_y,'standard_name',ystd);
+netcdf.putAtt(ncid,varid_y,'long_name',ystd);
+%netcdf.putAtt(ncid,varid_y,'standard_name','latitude');
+%netcdf.putAtt(ncid,varid_y,'long_name','latitude');
+netcdf.putAtt(ncid,varid_y,'units',yunits);
 netcdf.putAtt(ncid,varid_y,'axis','Y');
 netcdf.putAtt(ncid,varid_y,'_FillValue',missval);
 
