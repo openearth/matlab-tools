@@ -123,18 +123,24 @@ switch modelType
         % station x,y-location info
         if any(ismember({dims.name},{'stations','cross_section'}))
             if strcmp(dims(stationsInd).name,'stations')
-                stationX = ncread(inputFile,EHY_nameOnFile(inputFile,'station_x_coordinate'));
-                stationY = ncread(inputFile,EHY_nameOnFile(inputFile,'station_y_coordinate'));
+                if nc_isvar(inputFile,EHY_nameOnFile(inputFile,'station_x_coordinate'))
+                    stationX = ncread(inputFile,EHY_nameOnFile(inputFile,'station_x_coordinate'));
+                    stationY = ncread(inputFile,EHY_nameOnFile(inputFile,'station_y_coordinate'));
+                end
             elseif strcmp(dims(stationsInd).name,'cross_section')
-                stationX = ncread(inputFile,'cross_section_x_coordinate')';
-                stationY = ncread(inputFile,'cross_section_y_coordinate')';
+                if nc_isvar(inputFile,EHY_nameOnFile(inputFile,'cross_section_x_coordinate'))
+                    stationX = ncread(inputFile,'cross_section_x_coordinate')';
+                    stationY = ncread(inputFile,'cross_section_y_coordinate')';
+                end
             end
-            stationX = double(stationX); stationY = double(stationY);
-            if size(stationX,2)>1 % moving stations or cross-section
-                Data.locationX(:, Data.exist_stat) = stationX(dims(stationsInd).index,:)';
-                Data.locationY(:, Data.exist_stat) = stationY(dims(stationsInd).index,:)';
-            else
-                Data.location( Data.exist_stat,1:2) = [stationX(dims(stationsInd).index,:) stationY(dims(stationsInd).index,:)];
+            if exist('stationX','var')
+                stationX = double(stationX); stationY = double(stationY);
+                if size(stationX,2)>1 % moving stations or cross-section
+                    Data.locationX(:, Data.exist_stat) = stationX(dims(stationsInd).index,:)';
+                    Data.locationY(:, Data.exist_stat) = stationY(dims(stationsInd).index,:)';
+                else
+                    Data.location( Data.exist_stat,1:2) = [stationX(dims(stationsInd).index,:) stationY(dims(stationsInd).index,:)];
+                end
             end
         end
         
