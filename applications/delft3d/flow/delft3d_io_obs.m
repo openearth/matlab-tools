@@ -124,7 +124,22 @@ S.filename = varargin{1};
 
      iostat  = 1;
    catch
-      iostat  = -1;
+     try
+         fid = fopen(S.filename,'r');
+         i_stat = 1
+         while ~feof(fid)
+             tline = fgetl(fid);
+             S.namst(i_stat,1:20) = tline(1:20);
+             tmp = sscanf(tline(21:end),'%i%i');
+             S.m(i_stat) = tmp(1);
+             S.n(i_stat) = tmp(2);
+             i_stat = i_stat + 1;
+          end
+          fclose(fid);
+          iostat = 1;
+    catch
+        iostat  = -1;
+     end
    end
 
 if nargout==1
