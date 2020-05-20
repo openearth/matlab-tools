@@ -121,7 +121,8 @@ switch modelType
     case {'dfm','nc'}
         %%  Delft3D-Flexible Mesh
         % station x,y-location info
-        if any(ismember({dims.name},{'stations','cross_section'})) && isempty(strfind(OPT.varName,'coordinate'))
+        if any(ismember({dims.name},{'stations','cross_section'})) && ...
+           all(cellfun(@isempty,strfind({'coordinate','station_x','station_y'},OPT.varName)))
             if strcmp(dims(stationsInd).name,'stations')
                 xVarName = EHY_nameOnFile(inputFile,'station_x_coordinate');
             elseif strcmp(dims(stationsInd).name,'cross_section')
