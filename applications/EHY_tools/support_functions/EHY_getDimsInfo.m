@@ -13,7 +13,7 @@ end
 %% determine "dims" - Get info about available dimensions on file (and their sizes)
 [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(inputFile);
 switch modelType
-    case 'dfm'
+    case {'dfm','nc'}
         infonc    = ncinfo(inputFile,OPT.varName);
         dimsNames = {infonc.Dimensions.Name};
         dimsSizes = infonc.Size;

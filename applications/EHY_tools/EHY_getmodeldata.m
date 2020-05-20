@@ -118,28 +118,26 @@ end
 
 %% Get the computational data
 switch modelType
-    case 'dfm'
+    case {'dfm','nc'}
         %%  Delft3D-Flexible Mesh
         % station x,y-location info
-        if any(ismember({dims.name},{'stations','cross_section'}))
+        if any(ismember({dims.name},{'stations','cross_section'})) && isempty(strfind(OPT.varName,'coordinate'))
             if strcmp(dims(stationsInd).name,'stations')
-                if nc_isvar(inputFile,EHY_nameOnFile(inputFile,'station_x_coordinate'))
-                    stationX = ncread(inputFile,EHY_nameOnFile(inputFile,'station_x_coordinate'));
-                    stationY = ncread(inputFile,EHY_nameOnFile(inputFile,'station_y_coordinate'));
-                end
+                xVarName = EHY_nameOnFile(inputFile,'station_x_coordinate');
             elseif strcmp(dims(stationsInd).name,'cross_section')
-                if nc_isvar(inputFile,EHY_nameOnFile(inputFile,'cross_section_x_coordinate'))
-                    stationX = ncread(inputFile,'cross_section_x_coordinate')';
-                    stationY = ncread(inputFile,'cross_section_y_coordinate')';
-                end
+                xVarName = EHY_nameOnFile(inputFile,'cross_section_x_coordinate');
             end
-            if exist('stationX','var')
-                stationX = double(stationX); stationY = double(stationY);
-                if size(stationX,2)>1 % moving stations or cross-section
-                    Data.locationX(:, Data.exist_stat) = stationX(dims(stationsInd).index,:)';
-                    Data.locationY(:, Data.exist_stat) = stationY(dims(stationsInd).index,:)';
+            yVarName = strrep(xVarName,'x','y');
+
+            if nc_isvar(inputFile,xVarName)
+                X = EHY_getmodeldata(inputFile,Data.requestedStations(Data.exist_stat),'dfm',OPT,'varName',xVarName);
+                Y = EHY_getmodeldata(inputFile,Data.requestedStations(Data.exist_stat),'dfm',OPT,'varName',yVarName);
+                
+                if sum(size(X.val)>1) > 2 % moving stations or cross-section
+                    Data.locationX = X.val;
+                    Data.locationY = Y.val;
                 else
-                    Data.location( Data.exist_stat,1:2) = [stationX(dims(stationsInd).index,:) stationY(dims(stationsInd).index,:)];
+                    Data.location = [reshape(X.val,[],1) reshape(Y.val,[],1)];
                 end
             end
         end
@@ -484,9 +482,6 @@ dimensionsComment = {dims.name};
 fn = char(intersect(fieldnames(Data),{'val','vel_x','val_x'}));
 while ~isempty(fn) && ndims(Data.(fn)) < numel(dimensionsComment)
     dimensionsComment(end) = [];
-end
-while ~isempty(fn) && ndims(Data.(fn)) > numel(dimensionsComment)
-    dimensionsComment{end+1,1} = '-';
 end
 
 % add to Data-struct

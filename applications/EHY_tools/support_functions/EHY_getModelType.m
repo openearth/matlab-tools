@@ -1,15 +1,16 @@
-function modelType = EHY_getModelType(fileInp)
-%% modelType = EHY_getModelType(fileInp)
+function modelType = EHY_getModelType(fname)
+%% modelType = EHY_getModelType(fname)
 %
 % This function returns the modelType based on a filename
 % modelType can be:
-% dfm       Delft3D-Flexible Mesh
+% nc        netCDF file (but not recognized as Delft3D FM, SOBEK, etc.)
+% dfm       Delft3D Flexible Mesh
 % d3d       Delft3D 4
 % simona    SIMONA (WAQUA/TRIWAQ)
 %
-% Example1: 	modelType=EHY_getModelType('D:\model.mdu')
-% Example2: 	modelType=EHY_getModelType('D:\model.obs')
-% Example3: 	modelType=EHY_getModelType('D:\trih-r01.dat')
+% Example1: 	modelType = EHY_getModelType('D:\model.mdu')
+% Example2: 	modelType = EHY_getModelType('D:\model.obs')
+% Example3: 	modelType = EHY_getModelType('D:\trih-r01.dat')
 %
 % Hint: to get the type of model file, use EHY_getTypeOfModelFile
 %
@@ -17,29 +18,32 @@ function modelType = EHY_getModelType(fileInp)
 % Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
 
 %%
-if ischar(fileInp)
+if ischar(fname)
     
-    [~, name, ext] = fileparts(lower(fileInp));
     modelType = '';
+    [~, name, ext] = fileparts(lower(fname));
     
-    % Delft3D-FM
-    if isempty(modelType)
+    % netCDF
+    if strcmpi(ext,'.nc')
+        modelType = 'nc';
+    end
+    
+    % Delft3D FM
+    if isempty(modelType) || strcmp(modelType,'nc')
         if ismember(ext,{'.mdu','.ext','.bc','.pli','.xyn','.tim'})
             modelType = 'dfm';
         end
     end
     
-    % Delft3D-FM or Sobek3 netcdf outputfile
-    if isempty(modelType)
-        if ismember(ext,{'.nc'})
-            if ~isempty(strfind(fileInp,'_his.nc')) || ~isempty(strfind(fileInp,'_map.nc')) || ~isempty(strfind(fileInp,'_net.nc')) || ...
-                    ~isempty(strfind(fileInp,'_fou.nc')) || ~isempty(strfind(fileInp,'_waqgeom.nc')) || ~isempty(strfind(fileInp,'_netgeom.nc'))
-                modelType = 'dfm';
-            elseif ~isempty(strfind(name,'observations'))
-                modelType = 'sobek3_new';
-            elseif ~isempty(strfind(name,'water level (op)-'))
-                modelType = 'sobek3';
-            end
+    % Delft3D FM or SOBEK3 netCDF outputfile
+    if isempty(modelType) || strcmpi(ext,'.nc')
+        if ~isempty(strfind(fname,'_his.nc')) || ~isempty(strfind(fname,'_map.nc')) || ~isempty(strfind(fname,'_net.nc')) || ...
+                ~isempty(strfind(fname,'_fou.nc')) || ~isempty(strfind(fname,'_waqgeom.nc')) || ~isempty(strfind(fname,'_netgeom.nc'))
+            modelType = 'dfm';
+        elseif ~isempty(strfind(name,'observations'))
+            modelType = 'sobek3_new';
+        elseif ~isempty(strfind(name,'water level (op)-'))
+            modelType = 'sobek3';
         end
     end
     
@@ -64,32 +68,32 @@ if ischar(fileInp)
         modelType = 'delwaq';
     end
     
-    % CMEMS // HiRLAM (i.e. [lat,lon]- or[x,y]-data) -->> treat as dfm
-    if isempty(modelType) && strcmp(ext,'.nc')
-        if nc_isvar(fileInp,'longitude') ||  nc_isvar(fileInp,'x') ||  nc_isvar(fileInp,'X')
-            modelType = 'dfm';
-        end
-    end
+%     % CMEMS // HiRLAM (i.e. [lat,lon]- or[x,y]-data) -->> treat as dfm
+%     if strcmpi(ext,'.nc')
+%         if nc_isvar(fname,'longitude') ||  nc_isvar(fname,'x') ||  nc_isvar(fname,'X')
+%             modelType = 'dfm';
+%         end
+%     end
     
      % Implic
     if isempty(modelType)
-        if isdir(fileInp)
+        if isfolder(fname)
             modelType = 'implic';
         end
     end
     
     % Implic
     if isempty(modelType)
-        if ~isempty(strfind(fileInp,'waqua-scaloost'))
+        if ~isempty(strfind(fname,'waqua-scaloost'))
             modelType = 'waqua_scaloost';
         end
     end
     
-elseif isstruct(fileInp)
+elseif isstruct(fname)
     
     % Delft3D 4
-    if isfield(fileInp,'FileType')
-        if strcmpi(fileInp.FileType,'NEFIS')
+    if isfield(fname,'FileType')
+        if strcmpi(fname.FileType,'NEFIS')
             modelType = 'd3d';
         end
     end

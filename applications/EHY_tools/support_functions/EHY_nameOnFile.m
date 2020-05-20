@@ -20,8 +20,14 @@ function [newName,varNameInput] = EHY_nameOnFile(fName,varName)
 modelType                  = EHY_getModelType(fName);
 [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(fName);
 
-%% Change variable name (for usage in EHY_getmodeldata) for Delft3D 4, IMPLIC and SOBEK3
+%% return if regular netCDF file
 varNameInput = varName;
+if strcmp(modelType,'nc')
+    newName = varName;
+    return
+end
+
+%% Change variable name (for usage in EHY_getmodeldata) for Delft3D 4, IMPLIC and SOBEK3
 varName = strrep(varName, ' ', '');
 
 if strcmpi(varName,'vel'                  ) varName = 'uv'         ; end

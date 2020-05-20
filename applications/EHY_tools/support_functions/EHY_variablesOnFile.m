@@ -23,7 +23,7 @@ defaults = {'waterlevel','';
 
 %%
 switch modelType
-    case 'dfm'
+    case {'dfm','nc'}
         infonc    = ncinfo(fname);
         variables = {infonc.Variables.Name}';
         description(1:numel(variables),1) = {''};

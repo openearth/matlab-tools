@@ -157,7 +157,7 @@ end
 
 %% Get the computational data
 switch modelType
-    case 'dfm'
+    case {'dfm','nc'}
         %%  Delft3D-Flexible Mesh
         % initialise start+count and optimise if possible
         [dims,start,count] = EHY_getmodeldata_optimiseDims(dims);
@@ -395,9 +395,6 @@ dimensionsComment = {dims.name};
 fn = char(intersect(fieldnames(Data),{'val','vel_x','val_x'}));
 while ~isempty(fn) && ndims(Data.(fn)) < numel(dimensionsComment)
     dimensionsComment(end) = [];
-end
-while ~isempty(fn) && ndims(Data.(fn)) > numel(dimensionsComment)
-    dimensionsComment{end+1,1} = '-';
 end
 
 % add to Data-struct

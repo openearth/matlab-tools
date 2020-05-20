@@ -9,7 +9,7 @@ timeInd     = strmatch('time',{dims(:).name});
 
 % allocate variable 'values' > also to get NaN's in e.g. non-existing stations
 if no_dims == 1
-    values = NaN(dims.sizeOut,1);
+    values = NaN(1,dims.sizeOut);
 else
     values = NaN(dims.sizeOut);
 end
@@ -22,6 +22,11 @@ end
     
 if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count specified, variable has time dimension
     
+    if timeInd ~= 1
+            error(['timeInd is not last variable, ncread_blocks does not work correctly in that case' char(10) ...
+                'Please contact Julien.Groenenboom@deltares.nl'])
+    end
+
     nr_times      = dims(timeInd).size;
     nr_times_clip = count(timeInd);
     
@@ -31,17 +36,6 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count s
     maxblocksize = 0.5; %Gb
     no_blocks    = ceil((nr_times_clip / nr_times) * (filesize / maxblocksize));
     bl_length    = ceil(nr_times_clip / no_blocks);
-    
-    if strcmp(dims(end).name,'-') && timeInd == no_dims-1
-        % correction for 1D-data (was added by EHY_getmodeldata_optimiseDims for easier handling)
-        no_dims = no_dims - 1;
-    else
-        % assuming timeInd == 1
-        if timeInd ~= 1
-            error(['timeInd is not last variable, ncread_blocks does not work correctly in that case' char(10) ...
-                'Please contact Julien.Groenenboom@deltares.nl'])
-        end
-    end
 
     % cycle over blocks
     offset        = start(1) - 1;
@@ -62,7 +56,7 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count s
         
         if no_dims == 1
             % probably [time]          = [time]
-            values(bl_start:bl_stop,1) = values_tmp;
+            values(bl_start:bl_stop) = values_tmp;
         elseif no_dims == 2
             values(bl_start:bl_stop,dims(2).indexOut) = values_tmp(:,dims(2).index);
         elseif no_dims == 3
@@ -71,19 +65,24 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count s
     end
     
     % correct for wanted time-indices in case of time-interval 
-    % (works for 1D, 2D and 3D sized variable 'values')
-    values = values(dims(timeInd).index,:,:);
-    
-elseif all(ismember({'start','count'},who)) && isempty(timeInd)  
-    % start and count specified, variable has not a time dimension
-    values_tmp = nc_varget(inputFile,varName,start-1,count);
-    if strcmp(infonc.Datatype,'char'); values_tmp = values_tmp'; end
-    values(dims.indexOut) = values_tmp(dims.index);
+    if no_dims == 1
+        values = values(dims(timeInd).index);
+    else
+        values = values(dims(timeInd).index,:,:);
+    end
     
 else
-    % no start and count specified, regular ncread
-    values_tmp = nc_varget(inputFile,varName);
-    if strcmp(infonc.Datatype,'char'); values_tmp = values_tmp'; end
-    values(dims.indexOut) = values_tmp(dims.index);
+    % Make sure values_tmp has to correct dimensions (MATLAB
+    % automatically squeezes if size(values_tmp,1) would have been 1
+    for iC = 1:numel(count); tmp(iC).indexOut = 1:count(iC); end
     
+    if all(ismember({'start','count'},who)) && isempty(timeInd)
+        % start and count specified, variable has not a time dimension
+        values_tmp(tmp(:).indexOut) = nc_varget(inputFile,varName,start-1,count);
+        values(dims.indexOut) = values_tmp(dims.index);
+    else
+        % no start and count specified, regular ncread
+        values_tmp(tmp(:).indexOut) = nc_varget(inputFile,varName);
+        values(dims.indexOut) = values_tmp(dims.index);
+    end
 end

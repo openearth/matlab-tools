@@ -23,11 +23,3 @@ for iD = 1:length(dims)
     start(iD) = minIndex;
     count(iD) = difIndex +1; % +1 to include start and end of wanted indices
 end
-
-if numel(dims)==1
-    dims(end+1).name = '-';
-    dims(end).nameOnFile = '-';
-    dims(end).index = 1;
-    dims(end).indexOut = 1;
-    dims(end).sizeOut = 1;
-end

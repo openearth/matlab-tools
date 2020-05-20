@@ -1,13 +1,13 @@
 function [datenums,varargout] = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile)
 
 modelType = EHY_getModelType(inputFile);
- 
+
 switch modelType
-    case {'dfm','SFINCS'}
+    case {'dfm','SFINCS','nc'}
         
         % MapOutputTimeVector = 1, read times instead of reconstructing them
         try
-            mdFile = EHY_getMdFile(inputFile);
+            mdFile = EHY_getMdFile(inputFile,'disp',0);
             if ~isempty(mdFile) && strcmpi(mdFile(end-3:end),'.mdu')
                 warning off; mdu = dflowfm_io_mdu('read',mdFile); warning on
                 fns = fieldnames(mdu.output);

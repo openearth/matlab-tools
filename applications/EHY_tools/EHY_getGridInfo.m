@@ -147,7 +147,7 @@ end
 % order typeOfModelFile:    mdFile,grid/network,
 if EHY_isSFINCS(inputFile); modelType = 'SFINCS'; end
 switch modelType
-    case 'dfm'
+    case {'dfm','nc'}
         
         if  ~strcmp(typeOfModelFileDetail,'map_nc') || ~OPT.mergePartitions
             
