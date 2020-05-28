@@ -51,6 +51,8 @@ if ~isnumeric(OPT.thinning); OPT.thinning = str2num(OPT.thinning); end
 
 vel_x = squeeze(vel_x);
 vel_y = squeeze(vel_y);
+if size(vel_x,2) == 1; vel_x = vel_x'; end
+if size(vel_y,2) == 1; vel_y = vel_y'; end
 
 if ~all([exist('gridInfo','var') exist('vel_x','var') exist('vel_y','var')])
     error('input arguments gridInfo, vel_x and vel_y are required')

@@ -25,13 +25,13 @@ OPT.localUnit = 'm'; % 'm' or 'km'
 OPT.plot_map  = 1; % By switching to 0, EHY_plot_satellite_map can be used just to rescale the current axes
 OPT           = setproperty(OPT,varargin);
 %% get current axis
-curAxis=axis(OPT.axes);
+curAxis = axis(OPT.axes);
 if any(abs(curAxis)>180) && isempty(OPT.localEPSG)
     error('You''re probably not using spherical coordinates. Check the OPT.localEPSG option in this function')
 end
 
 if strcmpi(OPT.localUnit,'km')
-    curAxis=curAxis*10^3;
+    curAxis = curAxis*10^3;
 end
 
 %% rescale
