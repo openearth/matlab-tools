@@ -77,7 +77,7 @@ if ischar(fname)
     
      % Implic
     if isempty(modelType)
-        if isfolder(fname)
+        if isdir(fname)
             modelType = 'implic';
         end
     end
