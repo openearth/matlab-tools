@@ -174,6 +174,7 @@ OPT.onAxes      = false; % Axes to plot on; false plots on gca
 OPT.iflip       = 0; 
 OPT.inorm       = 0;
 OPT.parent      = 0;
+OPT.fontsize    = 8;
 OPT.IncHiLow    = 1; % include values higher and lower than the limits of OPT.Ag.
 OPT.directionLabels = true; % labels North South etc..
 OPT.centersectors   = true; % Center sectors around 0 .. 360 or not
@@ -412,7 +413,7 @@ for i=1:ncircles
 
   labs(i)=text((OPT.ci(i)+OPT.ri)*cos(Ang(OPT.quad)),(OPT.ci(i)+OPT.ri)*sin(Ang(OPT.quad)),[num2str(OPT.ci(i)),'%'],...
       'VerticalAlignment',Valign{OPT.quad},'HorizontalAlignment',Halign{OPT.quad},...
-      'BackgroundColor',OPT.percBg,'FontSize',8);
+      'BackgroundColor',OPT.percBg,'FontSize',OPT.fontsize);
 end
 handles=[handles labs];
 
@@ -483,7 +484,7 @@ end
 %% N S E W labels:
 if OPT.directionLabels
     bg='none';
-    args={'BackgroundColor',bg,'FontSize',8};
+    args={'BackgroundColor',bg,'FontSize',OPT.fontsize};
     h(1)=text(-g-OPT.ri, 0,[directional_interpretation 'WEST' ],'VerticalAlignment','top',   'HorizontalAlignment','left', args{:});
     h(2)=text( g+OPT.ri, 0,[directional_interpretation 'EAST' ],'VerticalAlignment','top',   'HorizontalAlignment','right',args{:});
     h(3)=text( 0,-g-OPT.ri,[directional_interpretation 'SOUTH'],'VerticalAlignment','bottom','HorizontalAlignment','left', args{:});
@@ -508,11 +509,11 @@ if OPT.legType==1 % continuous.
     end
     y1=y0+h;
     handles(end+1)=fill([x0 x1 x1 x0],[y0 y0 y1 y1],cor{j});
-    handles(end+1)=text(x1+L/4,y0,lab,'VerticalAlignment','middle','fontsize',8);
+    handles(end+1)=text(x1+L/4,y0,lab,'VerticalAlignment','middle','fontsize',OPT.fontsize);
     y0=y1;
   end
   if ~ (hasH && OPT.IncHiLow)
-    handles(end+1)=text(x1+L/4,y0,num2str(OPT.Ag(end)),'VerticalAlignment','middle','fontsize',8);
+    handles(end+1)=text(x1+L/4,y0,num2str(OPT.Ag(end)),'VerticalAlignment','middle','fontsize',OPT.fontsize);
   end
 elseif OPT.legType==2 % separated boxes.
   for j=1:length(OPT.Ag)-1
@@ -525,7 +526,7 @@ elseif OPT.legType==2 % separated boxes.
     end
     y1=y0+h;
     handles(end+1)=fill([x0 x1 x1 x0],[y0+dy y0+dy y1 y1],cor{j});
-    handles(end+1)=text(x1+L/4,(y0+dy+y1)/2,lab,'VerticalAlignment','middle','fontsize',8);
+    handles(end+1)=text(x1+L/4,(y0+dy+y1)/2,lab,'VerticalAlignment','middle','fontsize',OPT.fontsize);
     y0=y1;
   end
 
@@ -541,7 +542,7 @@ set(gcf,'Color',OPT.bgcolor);
 if ismember(OPT.legType,[1 2])
     x=x0;
     y=y1+dy;
-    handles(end+1)=text(x,y,OPT.legStr,'HorizontalAlignment','left','VerticalAlignment','bottom');
+    handles(end+1)=text(x,y,OPT.legStr,'HorizontalAlignment','left','VerticalAlignment','bottom','fontsize',OPT.fontsize);
 end
 
 if OPT.onAxes(1)
