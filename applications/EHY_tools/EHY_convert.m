@@ -1147,6 +1147,15 @@ end
         end
         output = [lon lat];
     end
+% xyz2shp
+    function [output,OPT]=EHY_convert_xyz2shp(inputFile,outputFile,OPT)
+        xyz = importdata(inputFile);
+        XY = xyz(:,1:2);
+        if OPT.saveOutputFile
+            shapewrite(outputFile,'point',XY);
+        end
+        output = XY;
+    end
 % xyz2xdrykml
     function [output,OPT]=EHY_convert_xyz2xdrykml(inputFile,outputFile,OPT)
         OPT_user.saveOutputFile=OPT.saveOutputFile;

@@ -32,8 +32,14 @@ if ismember(OPT0.zRef,{'wl','bed'})
     if ~isfield(Data_zRef,'times')
         refLevel = reshape(refLevel,1,no_stat);
     end
-else % model reference level
+elseif isempty(OPT0.zRef) || strcmp(OPT0.zRef, '-') % model reference level
     refLevel = 0;
+elseif strcmpi(OPT0.zRef,'middleOfWaterColumn')
+    Data_WL = EHY_getmodeldata(inputFile,stat_name,modelType,OPT,'varName','wl');
+    Data_BL = EHY_getmodeldata(inputFile,stat_name,modelType,OPT,'varName','bedlevel');
+    refLevel = (Data_WL.val+Data_BL.val)/2;
+else
+    error(['Unknown vertical reference level: zRef = ''' OPT0.zRef ''''])
 end
 
 % repmat refLevel to [time,stations]

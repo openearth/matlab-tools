@@ -68,7 +68,8 @@ OPT.sedimentName = ''; % name of sediment fraction
 
 % return output at specified reference level
 OPT.z            = ''; % z = positive up. Wanted vertical level = OPT.zRef + OPT.z
-OPT.zRef         = ''; % choose: '' = model reference level, 'wl' = water level or 'bed' = from bottom level
+OPT.zRef         = ''; % choose: '' = model reference level, 'wl' = water level or 'bed' = from bottom level or
+                       % 'middleOfWaterColumn' = middle of water column
 OPT.zMethod      = ''; % interpolation method: '' = corresponding layer or 'linear' = 'interpolation between two layers'
 
 OPT              = setproperty(OPT,varargin);
