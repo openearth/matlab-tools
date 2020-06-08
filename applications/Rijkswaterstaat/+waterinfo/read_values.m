@@ -20,6 +20,14 @@ function varargout = read_values(fname);
 %         Bemonsteringshoogte
 %         Referentievlak
 %
+% ! TIMEZONE !
+% Do note that accordig to helpdeskwater:
+% the timezone for the waterdata altijd is always 
+% the Dutch legal time at the moment of downloading
+% (e.g.  MEZT ( UTC + 2 ) when downloading between march and 
+% october) whereas the historic data download in the website part 
+% ( via "Download meer data" ) are always MET ( UTC + 1 ).
+%
 % https://waterinfo.rws.nl/
 
 OPT.delimiter    = ';';
