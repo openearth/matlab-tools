@@ -1,6 +1,10 @@
 function [values, dates] = read_waterinfo(filename)
-% read_waterinfo: function to read in waterinfo csv files
+% read_waterinfo function to read in waterinfo csv files
+%
+% [values, dates] = read_waterinfo(filename)
+%
 % URL: https://waterinfo.rws.nl/
+
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 Deltares
@@ -47,7 +51,7 @@ delimiter = {',',';'};
 startRow = 2;
 formatSpec = '%*q%*q%*q%*q%*q%*q%*q%*q%*q%*q%*q%*q%q%q%q%[^\n\r]';
 fileID = fopen(filename,'r');
-dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, 'MultipleDelimsAsOne', true, 'HeaderLines' ,startRow-1, 'ReturnOnError', false);
+dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, 'MultipleDelimsAsOne', true, 'HeaderLines' ,startRow-1, 'ReturnOnError', false)
 fclose(fileID);
 
 %% 2) Convert the contents of columns containing numeric strings to numbers.
