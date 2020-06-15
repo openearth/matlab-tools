@@ -31,10 +31,22 @@
       <element>toolbox.tsunami.delft3dwave.xml</element>
     </tab>
     <tab>
-      <tabstring>Tsunami</tabstring>
-      <callback>ddb_dummyTabCallback</callback>
+      <tabstring>Okada</tabstring>
+      <callback>ddb_TsunamiToolbox</callback>
       <formodel>dflowfm</formodel>
-      <element>toolbox.tsunami.dflowfm.xml</element>
+      <element>toolbox.tsunami.okada.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Subfaults</tabstring>
+      <callback>ddb_TsunamiToolbox</callback>
+      <formodel>dflowfm</formodel>
+      <element>toolbox.tsunami.subfaults.xml</element>
+    </tab>
+    <tab>
+      <tabstring>File</tabstring>
+      <callback>ddb_TsunamiToolbox</callback>
+      <formodel>dflowfm</formodel>
+      <element>toolbox.tsunami.file.xml</element>
     </tab>
     <tab>
       <tabstring>Tsunami</tabstring>

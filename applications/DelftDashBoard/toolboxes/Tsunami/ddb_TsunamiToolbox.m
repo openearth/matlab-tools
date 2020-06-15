@@ -91,7 +91,16 @@ else
         case{'drawfaultline'}
             drawFaultLine;
         case{'computewaterlevel'}
-            computeWaterLevel(varargin{2});
+            handles=getHandles;     
+            switch lower(handles.activeModel.name)
+                case{'delft3dflow'}
+                        computeWaterLevel_delft3dflow(varargin{2});                        
+                case{'dflowfm'}
+                        computeWaterLevel_dflowfm(varargin{2});                                
+                otherwise
+                    ddb_giveWarning('text',['Sorry, the tsunami toolbox does not support: ' handles.activeModel.name   ' ...']);
+                    return
+            end
         case{'loaddata'}
             loadTableData;
         case{'savedata'}
@@ -427,17 +436,10 @@ for i=1:length(handles.toolbox.tsunami.segmentLon)
     handles.toolbox.tsunami.segmentSlip(i)=handles.toolbox.tsunami.slip;
 end
 
-%%
-function computeWaterLevel(opt)
+%% Delft3D-FLOW
+function computeWaterLevel_delft3dflow(opt)
 
 handles=getHandles;
-
-switch lower(handles.activeModel.name)
-    case{'delft3dflow'}
-    otherwise
-        ddb_giveWarning('text',['Sorry, the tsunami toolbox does not support ' handles.model.delft3dflow.longName ' ...']);
-        return
-end
 
 % First check to see if a grid was loaded
 if isempty(handles.model.delft3dflow.domain(ad).gridX)
@@ -637,6 +639,211 @@ if ~isempty(pathname)
             end
         end
 
+        setHandles(handles);
+        
+    catch
+        close(wb);
+        ddb_giveWarning('txt','Some went wrong while generating tsunami wave.');
+    end
+end
+
+%% Delft3D-FM
+function computeWaterLevel_dflowfm(opt)
+
+handles=getHandles;
+
+% First check to see if a grid was loaded
+if isempty(handles.model.dflowfm.domain.grid) 
+    ddb_giveWarning('text','Please first create or load model grid!');
+    return
+end
+
+depfiles=[];
+
+for id=1:handles.model.dflowfm.nrDomains 
+    [filename, pathname, filterindex] = uiputfile('*.ini', ['Select initial conditions file for domain ' upper(handles.model.dflowfm.domain(id).runid)],'');
+    filenames{id}=filename;
+    if handles.toolbox.tsunami.adjustBathymetry  %TL: not inplemented yet
+%         [filename, pathname, filterindex] = uiputfile('*.xyz', ['Select new depth file for domain ' upper(handles.model.delft3dflow.domain(id).runid)],'');
+%         depfiles{id}=filename;
+%     else
+%         depfiles{id}='';      
+    end
+end
+        
+if ~isempty(pathname)
+    
+    wb = waitbox('Generating initial tsunami wave ...');
+    
+    try
+                
+        switch opt
+            case{'fromparameters'}
+                xs=handles.toolbox.tsunami.segmentX;
+                ys=handles.toolbox.tsunami.segmentY;
+                wdts=handles.toolbox.tsunami.segmentWidth;
+                depths=handles.toolbox.tsunami.segmentDepth;
+                dips=handles.toolbox.tsunami.segmentDip;
+                sliprakes=handles.toolbox.tsunami.segmentSlipRake;
+                slips=handles.toolbox.tsunami.segmentSlip;
+                
+                % Compute tsunami wave (in projected coordinate system!)
+                [xx,yy,zz]=ddb_computeTsunamiWave2(xs,ys,depths,dips,wdts,sliprakes,slips);
+                
+                if handles.toolbox.tsunami.saveESRIGridFile
+                    % Write tsunami asc file (in geographic coordinates)
+                    xmn=min(min(xx));
+                    xmx=max(max(xx));
+                    ymn=min(min(yy));
+                    ymx=max(max(yy));
+                    oldSys.name=handles.toolbox.tsunami.utmZone;
+                    oldSys.type='projected';
+                    newSys.name='WGS 84';
+                    newSys.type='geographic';
+                    [xmn,ymn]=ddb_coordConvert(xmn,ymn,oldSys,newSys);
+                    [xmx,ymx]=ddb_coordConvert(xmx,ymx,oldSys,newSys);
+                    [xgeo,ygeo]=meshgrid(xmn:0.02:xmx,ymn:0.02:ymx);
+                    [xutm,yutm]=ddb_coordConvert(xgeo,ygeo,newSys,oldSys);
+                    zgeo=interp2(xx,yy,zz,xutm,yutm);
+                    ascfile=[filenames{1}(1:end-4) '.asc'];
+                    arcgridwrite(ascfile,xgeo,ygeo,zgeo);
+                end
+
+                % Plot figure (first convert to geographic coordinate system)
+                if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+                    oldSys.name=handles.toolbox.tsunami.utmZone;
+                    oldSys.type='projected';
+                    newSys.name='WGS 84';
+                    newSys.type='geographic';
+                    [xx1,yy1]=ddb_coordConvert(xx,yy,oldSys,newSys);
+                else
+                    oldSys=handles.screenParameters.coordinateSystem;
+                    newSys.name='WGS 84';
+                    newSys.type='geographic';
+                    [xx1,yy1]=ddb_coordConvert(xx,yy,oldSys,newSys);
+                end
+                
+            otherwise
+                % Load tsunami wave (in geographic coordinate system!)
+                [xx yy zz info] = arc_asc_read(handles.toolbox.tsunami.gridFile);
+                xx1=xx;
+                yy1=yy;
+
+        end
+        
+        ddb_plotInitialTsunami(handles,xx1,yy1,zz);
+        
+        % Interpolate initial tsunami wave onto model grid(s)
+        for id=1:handles.model.dflowfm.nrDomains                       
+
+            handles.model.dflowfm.domain(id).waterlevinifile=filenames{id};
+                        
+            % Make waterlevinifile file as xyz-file with original resolution tsunami calculation:
+            delft3d_io_xyz('write', handles.model.dflowfm.domain(id).waterlevinifile,xx1,yy1,zz);  
+            
+            %handles.model.dflowfm.domain.netstruc.node.mesh2d_node_z  
+            
+%             interpolateTsunamiToGrid('xgrid',xz,'ygrid',yz,'gridcs',oldSys,'tsunamics',newSys, ...
+%                 'xtsunami',xx,'ytsunami',yy,'ztsunami',zz,'inifile',filenames{id}, ...
+%                 'adjustbathymetry',adjustBathymetry,'depth',dp,'newdepfile',depfiles{id});
+            
+            handles.model.delft3dflow.domain(id).iniFile=filenames{id};
+            handles.model.delft3dflow.domain(id).initialConditions='ini';
+            
+            if handles.toolbox.tsunami.adjustBathymetry %TL: not inplemented yet
+%                 handles.model.delft3dflow.domain(id).depFile=depfiles{id};
+%                 mmax=handles.model.delft3dflow.domain(id).MMax;
+%                 nmax=handles.model.delft3dflow.domain(id).NMax;
+%                 dp=ddb_wldep('read',handles.model.delft3dflow.domain(id).depFile,[mmax nmax]);
+%                 dp(dp==-999)=NaN;
+%                 handles.model.delft3dflow.domain(id).depth=-dp(1:end-1,1:end-1);
+%                 handles.model.delft3dflow.domain(id).depthZ=getDepthZ(handles.model.delft3dflow.domain(id).depth,handles.model.delft3dflow.domain(id).dpsOpt);
+%                 handles=ddb_Delft3DFLOW_plotBathy(handles,'plot','domain',id);                
+            end
+                        
+        end
+        
+        close(wb);
+        
+        % Reset all boundary conditions to Riemann in order to avoid
+        % reflections at the boundaries.
+        
+        % First check whether other boundary types are there
+        bndr=1;
+        for id=1:handles.model.dflowfm.nrDomains
+            for nb=1:handles.model.dflowfm.domain(id).nrboundaries   
+                switch lower(handles.model.dflowfm.domain(id).boundaries(nb).type)
+                    case{'riemannbnd'}
+                    otherwise
+                        bndr=0; % if any non-Riemann boundary is present
+                end
+            end
+        end
+        if ~bndr
+            wb = waitbox('All boundaries are not yet automatically reset to Riemann boundaries, must be done by user ...');
+            %TL: not inplemented yet
+            %{ 
+            ButtonName = questdlg('Reset all boundaries to Riemann in order to avoid boundary reflections?','','No', 'Yes', 'Yes');
+            switch ButtonName,
+                case 'Yes' 
+                    for id=1:handles.model.dflowfm.nrDomains
+                        ichanged=0;
+                        for nb=1:handles.model.dflowfm.domain(id).nrboundaries
+                            switch lower(handles.model.dflowfm.domain(id).boundaries(nb).type)
+                                case{'riemannbnd'}
+                                otherwise                                    
+                                    handles.model.dflowfm.domain(id).boundaries(nb).type='riemannbnd';
+                                    handles.model.dflowfm.domain(id).openBoundaries(nb).forcing='T';
+                                    t0=handles.model.dflowfm.domain(id).startTime;
+                                    t1=handles.model.dflowfm.domain(id).stopTime;
+                                    handles.model.dflowfm.domain(id).openBoundaries(nb).timeSeriesT=[t0 t1];
+                                    handles.model.dflowfm.domain(id).openBoundaries(nb).timeSeriesA=[0.0 0.0];
+                                    handles.model.dflowfm.domain(id).openBoundaries(nb).timeSeriesB=[0.0 0.0];
+                                    handles.model.dflowfm.domain(id).bctChanged=1;
+                                    ichanged=1;
+                            end
+                        end
+
+                        if ichanged
+
+                            [filename, pathname, filterindex] = uiputfile('*.bnd', ['Select Boundary Definitions File - domain ' handles.model.delft3dflow.domain(id).runid],'');
+                            if filename~=0
+                                curdir=[lower(cd) '\'];
+                                if ~strcmpi(curdir,pathname)
+                                    filename=[pathname filename];
+                                end
+                                handles.model.delft3dflow.domain(id).bndFile=filename;
+                                ddb_saveBndFile(handles.model.delft3dflow.domain(id).openBoundaries,handles.model.delft3dflow.domain(id).bndFile);
+                            end
+
+                            [filename, pathname, filterindex] = uiputfile('*.bct', ['Select Time Series Conditions File - domain ' handles.model.delft3dflow.domain(id).runid],'');
+                            if filename~=0
+                                curdir=[lower(cd) '\'];
+                                if ~strcmpi(curdir,pathname)
+                                    filename=[pathname filename];
+                                end
+                                handles.model.delft3dflow.domain(id).bctFile=filename;
+                                ddb_saveBctFile(handles,id);
+                                handles.model.delft3dflow.domain(id).bctChanged=0;
+                            end
+                        
+                        end
+
+                    end                    
+            end
+            %}
+        end
+        
+        % Adjust smoothing time %TL: not inplemented yet (needed?)
+        %{
+        if handles.model.delft3dflow.domain(id).smoothingTime>0
+            ButtonName = questdlg('Reset smoothing time to 0.0?','','No', 'Yes', 'Yes');
+            switch ButtonName,
+                case 'Yes'
+                    handles.model.delft3dflow.domain(id).smoothingTime=0;
+            end
+        end
+        %} 
         setHandles(handles);
         
     catch
