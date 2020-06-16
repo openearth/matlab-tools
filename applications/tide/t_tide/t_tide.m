@@ -22,6 +22,15 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin)
 %                        is a non-canonical t_tide extension by OpenEarthTools.
 %
 %                        T_TIDE(XIN,'int',diff(time).*24,'start',time(1),...)
+%
+%   Note that the least-squares fit can go terribly wrong in some cases with
+%   missing data or non-equidistant time vectors. An option is to reinterpolate
+%   the datasets using the most common dt (e.g. hourly, or 10-minute). And 
+%   use these filled values as input to t_tide:
+%
+%       dt = mode(unique(diff(t)));
+%       tf = t(1):dt:t(end);
+%       vh = interp1(tf,h,t);
 %          
 %   The next two are required if nodal corrections are to be computed,
 %   otherwise not necessary. If they are not included then the reported
@@ -374,6 +383,7 @@ if prod(length(dt)) >1
 
    t  = t - tmean;     % Time vector for entire time series,
                        % centered at series midpoint. 
+                       
 
    % check whether full time series is equidistant at machine precision
    % so we can perform the bootstrap error analysis after all
