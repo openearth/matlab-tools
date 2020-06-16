@@ -1,5 +1,5 @@
 function [OUT] = read_csv(fname)
-%read_csv  Function to read .csv files downloaded from waterinfo
+%read_csv  Function to read .csv files MANUALLY downloaded from waterinfo
 %
 %   Script can deal with multiple variables in csv file, these are added as
 %   GROOTHEID_OMSCHRJVING_1, GROOTHEID_OMSCHRJVING_2, GROOTHEID_OMSCHRJVING_n

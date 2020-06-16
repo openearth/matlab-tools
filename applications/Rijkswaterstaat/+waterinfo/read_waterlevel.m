@@ -21,8 +21,9 @@ function [Station,Time,Val,EPSG,x,y] = read_waterlevel(fname)
 %   Example
 %   [Station,Time,Val,EPSG,x,y] = waterinfo.read_waterlevel('d:\waterinfo.csv\')
 %
-%   See also
+% https://waterinfo.rws.nl/, waterinfo.read_values, DATA IN UTC+1, NO DST.
 
+warning('DATA IN UTC+1, NO DST.')
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2017 Deltares
@@ -79,6 +80,7 @@ function [Station,Time,Val,EPSG,x,y] = read_waterlevel(fname)
 delimiter = ';';
 startRow = 2;
 formatSpec = '%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %{dd-MM-yyyy}D %{HH:mm:ss}D %s %q %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %*[^\n\r]';
+ikeep = 1; % file contains multiple paramters, keep only nr ikeep
 fileID = fopen(fname,'r');
 dataArray = textscan(fileID,formatSpec,...
     'Delimiter',delimiter,...
@@ -86,6 +88,33 @@ dataArray = textscan(fileID,formatSpec,...
     'DateLocale','nl_NL',...
     'ReturnOnError',false);
 fclose(fileID);
+
+%% 1b get 1 parameter only
+
+parameters = unique(dataArray{6});
+
+if ikeep > length(parameters)
+    error('ikeep > length(parameters)')
+end
+for i=1:length(parameters)
+    if i==ikeep
+        warning(['only keep parameter: ', parameters{1}])
+    else
+        warning(['ignored parameter: ', parameters{i}])
+    end
+end
+
+mask = strmatch(parameters{1},char(dataArray{6}));
+%%
+dataArray0 = dataArray;
+
+for i=1:length(dataArray)
+    if iscell(dataArray{i})
+    dataArray{i} = {dataArray{i}{mask}};
+    else
+    dataArray{i} = dataArray{i}(mask);
+    end
+end
 
 %% 2) Convert to datenum and values
 Time            = datenum([year(dataArray{20}),month(dataArray{20}),day(dataArray{20}),hour(dataArray{21}),minute(dataArray{21}),second(dataArray{21})]);

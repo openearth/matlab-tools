@@ -28,7 +28,9 @@ function varargout = read_values(fname);
 % october) whereas the historic data download in the website part 
 % ( via "Download meer data" ) are always MET ( UTC + 1 ).
 %
-% https://waterinfo.rws.nl/
+% https://waterinfo.rws.nl/, waterinfo.read_waterlevel, DATA IN CET TIMEZONE, INCL DST.
+
+warning('DATA IN CET TIMEZONE, INCL DST.')
 
 OPT.delimiter    = ';';
 OPT.startRow     = 2;
