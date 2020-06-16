@@ -34,11 +34,9 @@ if ~isempty(OPT.filePol)
     [pol]     = readldb  (OPT.filePol);
 else
     % entire model domain
-    xmin = min(x) -1; xmax = max(x) + 1; ymin = min(y) - 1; ymax = max(y) + 1;
-    pol.x(1) = xmin; pol.y(1) = ymin;
-    pol.x(2) = xmax; pol.y(2) = ymin;
-    pol.x(3) = xmax; pol.y(3) = ymax;
-    pol.x(4) = xmin; pol.y(4) = ymax;
+    index = boundary(x,y,1);
+    pol.x = x(index);
+    pol.y = y(index);
 end
    
 inside    = inpolygon(centre(:,1),centre(:,2),pol.x,pol.y);
