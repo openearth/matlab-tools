@@ -1,58 +1,56 @@
-function [datenums,varargout] = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile)
+function [datenums,varargout] = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile,displ)
 
 modelType = EHY_getModelType(inputFile);
+
+if ~exist('displ','var')
+    if EHY_isSFINCS(inputFile)
+        displ = 0;
+    else
+        displ = 1;
+    end
+end
 
 switch modelType
     case {'dfm','SFINCS','nc'}
         
-        % MapOutputTimeVector = 1, read times instead of reconstructing them
-        try
-            mdFile = EHY_getMdFile(inputFile,'disp',0);
-            if ~isempty(mdFile) && strcmpi(mdFile(end-3:end),'.mdu')
-                warning off; mdu = dflowfm_io_mdu('read',mdFile); warning on
-                fns = fieldnames(mdu.output);
-                ind = strmatch('mapoutputtimevector',lower(fns),'exact');
-                if ~isempty(ind)
-                    if mdu.output.(fns{ind}) == 1 % MapOutputTimeVector = 1?
-                        seconds = ncread(inputFile, 'time');
-                    end
-                end
+        % First, reconstruct the time series
+        infonc = ncinfo(inputFile,'time');
+        no_times = infonc.Size;
+        
+        if no_times < 4 
+            time = ncread(inputFile, 'time'); 
+        else % - to enhance speed, reconstruct time array from start time, numel and interval
+            time_begin = ncread(inputFile, 'time', 1, 3);
+            time_end = ncread(inputFile, 'time', no_times-2, 3);
+            
+            interval = diff(time_begin(2:3));
+            if ~strcmp(infonc.Datatype,'double')
+                time_begin = double(time_begin);
+                time_end   = double(time_end);
+                interval   = double(interval);
+            end
+            time = [time_begin(1) time_begin(2) + interval*[0:no_times-2] ]';
+            time(end) = time_end(end); % overwrite, end time could be different when interval is specified
+            
+            % For netCDF-files with random interval and Delft3D FM output with
+            % e.g. MapOutputTimeVector = 1 or output times not being a multiple
+            % of DtUser, it is not possible to reconstruct the timeseries.
+            %
+            % Check if reconstructed timeseries matches with original data,
+            % otherwise just read from file
+            if abs(time(end-2)-time_end(1)) > eps && displ
+                disp('Time could not be reconstructed, so it''s read from file')
+                time = ncread(inputFile, 'time'); 
             end
         end
         
-        if ~exist('seconds','var')
-            infonc       = ncinfo(inputFile,'time');
-            nr_times     = infonc.Size;
-            if nr_times<4
-                seconds      = ncread(inputFile, 'time');
-            else % - to enhance speed, reconstruct time array from start time, numel and interval
-                seconds_int  = ncread(inputFile, 'time', 1, 4);
-                intervals    = diff(seconds_int(2:4));
-                if diff(intervals) < eps
-                    interval = intervals(1);
-                    if ~strcmp(infonc.Datatype,'double')
-                        seconds_int = double(seconds_int);
-                        interval    = double(interval);
-                    end
-                    seconds      = [seconds_int(1) seconds_int(2) + interval*[0:nr_times-2] ]';
-                    seconds(end) = ncread(inputFile, 'time', nr_times, 1); % overwrite, end time could be different when interval is specified
-                else
-                    warning('The map/his time interval is probably not a multiple of DtUser. Time will not be reconstructed, but will be read from file.')
-                    seconds      = ncread(inputFile, 'time');
-                end
-            end
-        end
-        
-        days          = seconds / (24*60*60);
-        
+        % read time unit and reference date (itdate) from netCDF
         AttrInd       = strmatch('units',{infonc.Attributes.Name},'exact');
         [tUnit,since] = strtok(infonc.Attributes(AttrInd).Value,' ');
-        if ~strcmp(tUnit,'seconds') % apparently, time was NOT in seconds (e.g. CMEMS-data) - correct for this
-           days = days * timeFactor(tUnit,'s');
-        end
-        itdate       = datenum(strtrim(strrep(since,'since','')),'yyyy-mm-dd HH:MM:SS');
-        datenums     = itdate + days;
-        varargout{1} = itdate;
+        days          = time * timeFactor(tUnit,'days'); % from tUnit to days
+        itdate        = EHY_datenum(strtrim(strrep(since,'since','')));
+        datenums      = itdate + days;
+        varargout{1}  = itdate; % in MATLABs datenum
         
     case 'd3d'
         if ~isempty(strfind(inputFile,'mdf'))

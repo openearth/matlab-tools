@@ -125,7 +125,7 @@ end
 [dims,dimsInd,Data,OPT] = EHY_getDimsInfo(inputFile,OPT,modelType);
 
 %% check if output data is in several partitions and merge if necessary
-if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile)
+if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile) && exist('facesInd','var')
     
     % correction for bug in DFM: *0001_0001_fou.nc / *_0012_0012_map.nc / *_0007_0007_numlimdt.xyz
     if length(inputFile) > 10 && ~isempty(str2num(inputFile(end-15:end-12))) && ...
@@ -204,7 +204,7 @@ switch modelType
         % If partitioned run, delete ghost cells
         [~, name] = fileparts(inputFile);
         varName = EHY_nameOnFile(inputFile,'FlowElemDomain');
-        if EHY_isPartitioned(inputFile,modelType) && nc_isvar(inputFile,varName)
+        if EHY_isPartitioned(inputFile,modelType) && nc_isvar(inputFile,varName) && exist('facesInd','var')
             domainNr = str2num(name(end-7:end-4));
             FlowElemDomain = ncread(inputFile,varName);
             
