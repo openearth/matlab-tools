@@ -1,16 +1,37 @@
 function [Data_xy,gridInfo] = EHY_getMapModelData_xy(inputFile,varargin)
 %  Function: Create data needed for plotting of cross section information
-%
+
 %% Initialise:
 OPT       = varargin{1};
 Data.modelType = EHY_getModelType(inputFile);
 
 %% Read the pli file
-thalweg = readldb(OPT.pliFile);
-OPT = rmfield(OPT,'pliFile');
+if ~isempty(OPT.pliFile)
+    pli = readldb(OPT.pliFile);
+    pli = [pli.x pli.y];
+    OPT = rmfield(OPT,'pliFile');
+elseif ~isempty(OPT.pli)
+    pli = OPT.pli;
+    OPT = rmfield(OPT,'pli');
+else
+    error('You need to specify either "pliFile" or "pli"')
+end
+
+if size(pli,1) == 2 && size(pli,2) > 2
+    pli = pli';
+end
+    
+%% Determine which partitions to load data from
+partitionNrs = EHY_findPartitionNumbers(inputFile,'pli',pli);
+
+% continue with relevant partition numbers
+OPT.mergePartitionNrs = partitionNrs;
+if numel(partitionNrs) > 1
+    OPT.mergePartitions   = 1;
+end
 
 %% Horizontal (x,y) coordinates
-tmp   = EHY_getGridInfo(inputFile,{'XYcor', 'XYcen','edge_nodes','face_nodes','layer_model'},'mergePartitions',OPT.mergePartitions);
+tmp   = EHY_getGridInfo(inputFile,{'XYcor', 'XYcen','edge_nodes','face_nodes','layer_model'},'mergePartitionNrs',OPT.mergePartitionNrs);
 names = fieldnames(tmp); for i_name = 1: length(names) Data.(names{i_name}) = tmp.(names{i_name}); end
 
 %% get "z-data"
@@ -24,7 +45,7 @@ else
     no_layers = 1;
 end
 
-%% get wanted "varName"-data for all points
+%% get wanted "varName"-data for all relevant partitions
 tmp   = EHY_getMapModelData(inputFile,OPT);
 names = fieldnames(tmp); for i_name = 1: length(names) Data.(names{i_name}) = tmp.(names{i_name}); end
 
@@ -33,9 +54,9 @@ disp('Start determining properties along trajectory')
 
 warning off
 if strcmp(Data.modelType,'dfm') && isfield(Data,'face_nodes')
-    arb = arbcross(Data.face_nodes',Data.Xcor,Data.Ycor,thalweg.x,thalweg.y);
+    arb = arbcross(Data.face_nodes',Data.Xcor,Data.Ycor,pli(:,1),pli(:,2));
 elseif strcmp(Data.modelType,'d3d') || isfield(Data,'Xcor')
-    arb = arbcross(Data.Xcor,Data.Ycor,thalweg.x,thalweg.y);
+    arb = arbcross(Data.Xcor,Data.Ycor,pli(:,1),pli(:,2));
 end
 warning on
 

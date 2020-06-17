@@ -63,7 +63,8 @@ switch gridInfo.layer_model
         no_times = size(int,1);
         no_cells = size(int,2);
         
-        gridInfo = EHY_getGridInfo(inputFile,{'Z'},'mergePartitions',OPT.mergePartitions,'disp',0);
+        gridInfo = EHY_getGridInfo(inputFile,{'Z'},'mergePartitions',OPT.mergePartitions, ...
+            'mergePartitionNrs',OPT.mergePartitionNrs,'disp',0);
         if strcmp(modelType,'d3d')
             bl = reshape(gridInfo.Zcen',[prod(modelSize(2:3)) 1]); % from [m,n] to cells (like FM)
         else

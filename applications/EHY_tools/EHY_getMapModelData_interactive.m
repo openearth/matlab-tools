@@ -109,9 +109,8 @@ if ~isempty(dimsInd.layers)
                 OPT.zRef = 'bed';
             end
             OPT.z = cell2mat(inputdlg('height (m) from ref. level (pos. up)','',1,{'0'}));
-        elseif option == 4 % Along transect (vertical slice)
-            OPT.mergePartitions = 1;
-            OPT.pliFile = makePliFileForSlice(outputfile,OPT);
+        elseif option == 4 % Along trajectory (vertical slice)
+            verticalSlice = 1; % will do this after mergePartitions is known
         end
     end
 end
@@ -129,7 +128,7 @@ if ~isempty(dimsInd.m) && ~(exist('OPT','var') && isfield(OPT,'pliFile'))
 end
 
 % mergePartitions
-if strcmp(modelType,'dfm') && EHY_isPartitioned(outputfile,modelType) && ~(exist('OPT','var') && isfield(OPT,'pliFile'))
+if strcmp(modelType,'dfm') && EHY_isPartitioned(outputfile,modelType)
         option = listdlg('PromptString','Do you want to merge the info from different partitions?','SelectionMode','single','ListString',...
             {'Yes','No'},'ListSize',[300 100]);
         if option == 1
@@ -139,13 +138,20 @@ if strcmp(modelType,'dfm') && EHY_isPartitioned(outputfile,modelType) && ~(exist
         end
 end
 
-%%
+if exist('verticalSlice','var')
+     OPT.pliFile = makePliFileForSlice(outputfile,OPT);
+end
+
+%% return example MATLAB-line
 extraText = '';
 GI_extraText = '';
 if exist('OPT','var')
     fns = fieldnames(OPT);
     for iF = 1:length(fns)
         fn = fns{iF};
+        if strcmpi(fn,'mergePartitions') && OPT.(fn) == 1
+            continue
+        end
         val = OPT.(fn);
         if ~isempty(num2str(val)); val = num2str(val); end
         if ~ismember(fn,{'m','n'}) 
@@ -162,6 +168,9 @@ end
 disp([newline 'Note that next time you want to get this data, you can also use:'])
 if isfield(OPT,'pliFile')
     disp(['<strong>[Data,gridInfo] = EHY_getMapModelData(''' outputfile '''' extraText ');</strong>' ])
+    disp('   or:   (note that you''ll have to the the pli-trajectory yourself)')
+    extraText2 = [extraText(1:strfind(extraText,'pliFile')-2) '''pli'',[pli_x pli_y]'];
+    disp(['<strong>[Data,gridInfo] = EHY_getMapModelData(''' outputfile '''' extraText2 ');</strong>' ])
 else
     disp(['<strong>Data = EHY_getMapModelData(''' outputfile '''' extraText ');</strong>' ])
 end
@@ -243,13 +252,13 @@ title('Click traject using left-mouse-clicks. To stop, press any other button.')
 hold on
 gridInfo = EHY_getGridInfo(outputfile,'grid','mergePartitions',OPT.mergePartitions);
 plot(gridInfo.grid(:,1),gridInfo.grid(:,2))
-traject = [];
+pli = [];
 loop = 1;
 while loop == 1
     [x,y,button] = ginput(1);
     if button == 1 % left-mouse-click
-        traject = [traject; x y];
-        plot(traject(:,1),traject(:,2),'-ob','linewidth',1)
+        pli = [pli; x y];
+        plot(pli(:,1),pli(:,2),'-ob','linewidth',1)
     else
         loop = 0;
     end
@@ -258,5 +267,5 @@ close
 disp('Save traject as ... ');
 [filename, pathname] = uiputfile('*.pli','Save traject as ... ');
 pliFile = [pathname filename];
-landboundary('write',pliFile,traject)
+landboundary('write',pliFile,pli)
 end

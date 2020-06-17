@@ -1,5 +1,10 @@
 function EHY_plotMapModelData_interactive
 %% EHY_plotMapModelData_interactive
+%
+% Interactive retrieval and plotting of model data using EHY_plotMapModelData
+% Example: EHY_plotMapModelData_interactive
+%
+%%
 % get data
 [Data,EHY_getGridInfo_line] = EHY_getMapModelData_interactive;
 if isfield(Data,'face_nodes_x')

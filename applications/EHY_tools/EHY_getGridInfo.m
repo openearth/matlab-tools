@@ -42,14 +42,15 @@ function gridInfo = EHY_getGridInfo(inputFile,varargin)
 % created by Julien Groenenboom, October 2018
 
 %% Initialisation
-OPT.stations        = '';
-OPT.varName         = 'wl';
-OPT.mergePartitions = 1; % merge output from several dfm spatial *.nc-files
-OPT.disp            = 1; % display status and message if none of the wanted output was found
-OPT.m               = 0; % all (horizontal structured grid [m,n])
-OPT.n               = 0; % all (horizontal structured grid [m,n])
-OPT.gridFile        = ''; % grid (either lga or nc file) needed in combination with delwaq output file
-OPT                 = setproperty(OPT,varargin{2:end});
+OPT.stations          = '';
+OPT.varName           = 'wl';
+OPT.mergePartitions   = 1; % merge output from several dfm spatial *.nc-files
+OPT.mergePartitionNrs = []; % partition nrs that will be merged, e.g. [0, 4, 5]
+OPT.disp              = 1; % display status and message if none of the wanted output was found
+OPT.m                 = 0; % all (horizontal structured grid [m,n])
+OPT.n                 = 0; % all (horizontal structured grid [m,n])
+OPT.gridFile          = ''; % grid (either lga or nc file) needed in combination with delwaq output file
+OPT                   = setproperty(OPT,varargin{2:end});
 
 %% process input from user
 if nargin==0 || isempty(inputFile)
@@ -87,17 +88,8 @@ end
 %% check if output data is in several partitions and merge if necessary
 if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
     
-    % correction for bug in DFM: *0001_0001_fou.nc / *_0012_0012_map.nc / *_0007_0007_numlimdt.xyz
-    if length(inputFile) > 10 && ~isempty(str2num(inputFile(end-15:end-12))) && ...
-            strcmp(inputFile(end-15:end-12), inputFile(end-10:end-7))
-        ncFiles = dir([inputFile(1:end-16) '*' inputFile(end-6:end)]);
-        ncFilesName = regexpi({ncFiles.name},['\S{' num2str(length(ncFiles(1).name)-16) '}+\d{4}_+\d{4}_+\S{3}.nc'],'match');
-    else
-        ncFiles = dir([inputFile(1:end-11) '*' inputFile(end-6:end)]);
-        ncFilesName = regexpi({ncFiles.name},['\S{' num2str(length(ncFiles(1).name)-11) '}+\d{4}_+\S{3}.nc'],'match');
-    end
-    ncFilesName = ncFilesName(~cellfun('isempty',ncFilesName));
-    ncFiles = strcat(fileparts(inputFile),filesep,vertcat(ncFilesName{:}));
+    % get cell array with ncFiles based on inputFile (and requested partition numbers)
+    ncFiles = EHY_getListOfPartitionedNcFiles(inputFile,OPT.mergePartitionNrs);
      
     for iF = 1:length(ncFiles)
         if OPT.disp
