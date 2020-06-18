@@ -215,7 +215,7 @@ classdef LineSearch < handle
         end
                 
         %Call LimitState to either evaluate or approximate a certain point
-        function varargout = EvaluatePoint(this, limitState, un, beta, randomVariables)
+        function EvaluatePoint(this, limitState, un, beta, randomVariables)
             if this.ApproximateUsingARS
                 % If response surface should be used, call approximate
                 zvalue              = limitState.Approximate(un, beta, 'disable', this.DisablePoints);
