@@ -48,6 +48,7 @@ function conn = jdb_connectdb(db, varargin)
     'user',             '', ...
     'pass',             '', ...
     'schema',           '', ...
+    'SSLmode',          '', ...
     'database_toolbox', 1, ...
     'quiet'           , 0);
 
@@ -89,6 +90,10 @@ end
       props = java.util.Properties;
       props.setProperty('user'    , OPT.user);
       props.setProperty('password', OPT.pass);
+      
+      if ~isempty(OPT.SSLmode)
+          props.setProperty('sslmode', OPT.SSLmode);          
+      end
       
       conn   = driver.connect(url, props);
       if isempty(conn)

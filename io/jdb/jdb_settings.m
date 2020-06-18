@@ -30,33 +30,47 @@ switch lower(OPT.dbtype)
         
         if any(strfindi(version('-java'),'Java 1.6')) || ...
                 any(strfindi(version('-java'),'Java 1.7'))
-            java2add = 'postgresql-9.3-1102.jdbc41.jar';
+            java2add = which('postgresql-9.3-1102.jdbc41.jar');
+        elseif  any(strfindi(version('-java'),'Java 1.8'))
+            java2add = which('postgresql-42.2.14.jar');
         else
-            java2add = 'postgresql-9.3-1102.jdbc3.jar';
+            java2add = which('postgresql-9.3-1102.jdbc3.jar');            
         end
         
-        indices     = strfindi(alljavaclasspath,path2os([fileparts(mfilename('fullpath')),filesep,java2add]));
+        [~,jdbfile,jdbext] = fileparts(java2add);
+        indices            = strfindi(alljavaclasspath,path2os(java2add));
+%         indices     = strfindi(alljavaclasspath,path2os([fileparts(mfilename('fullpath')),filesep,java2add]));
         
         if isempty(cell2mat(indices))           
             if OPT.check
-                disp(['checked status PostgreSQL: JDBC NOT present: ',java2add]);
+                disp(['checked status PostgreSQL: JDBC NOT present: ',jdbfile, jdbext]);
                 OK = -1;
             else
-                javaaddpath (path2os([fileparts(mfilename('fullpath')),filesep,java2add]))
-                if ~(OPT.quiet)
-                    disp(['PostgreSQL: JDBC driver added: ',java2add]);
+%                 javaaddpath (path2os([fileparts(mfilename('fullpath')),filesep,java2add]))
+                % Add jar file to classpath (ensure it is present in your current dir)
+                cwd = pwd;
+                try
+                    cd (fileparts(java2add))
+                    javaclasspath([jdbfile,jdbext]);
+                    if ~(OPT.quiet)
+                        disp(['PostgreSQL: JDBC driver added: ',java2add]);
+                    end
+                    OK = 1;
+                catch ME
+                    disp(ME.message)
+                    OK = -1;
                 end
-                OK = 1;
+                cd(cwd)  
             end                        
         else            
             if OPT.check
                 if ~(OPT.quiet)
-                    disp(['checked status PostgreSQL: JDBC present: ',java2add]);
+                    disp(['checked status PostgreSQL: JDBC present: ',jdbfile]);
                 end
                 OK = 1;
             else
                 if ~(OPT.quiet)
-                    disp(['PostgreSQL: JDBC driver not added, already there: ',java2add]);
+                    disp(['PostgreSQL: JDBC driver not added, already there: ',jdbfile]);
                 end
                 OK = 1;
             end           
