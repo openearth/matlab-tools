@@ -418,7 +418,7 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
                     ii = [ii 2];
                 end
 
-                [bn, zn, nn, ce]    = feval(...                         % start exact line search to find zero crossing along sampled direction given the
+                [bn, zn, ~, nn, ce]    = feval(...                         % start exact line search to find zero crossing along sampled direction given the
                     OPT.z20Function,            ...                          selected beta and z values and return the evaluated beta and z values, the number
                     un(idx,:),                  ...                          of evaluations and a flag indicating convergence
                     b(ii),                      ...
