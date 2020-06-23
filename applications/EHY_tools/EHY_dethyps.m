@@ -18,16 +18,6 @@ WGS84         = [SemiMajorAxis Eccentricity]; % ToDo: retrieve those values from
 %% Create triangulation network, determine incentres, depth at centers and areas of the triangle 
 TR          = delaunayTriangulation(x,y);
 centre      = incenter (TR);
-no_points   = size     (TR,1);
-for i_pnt = 1: no_points
-    if ~OPT.spherical
-        area (i_pnt) = polyarea(x(TR.ConnectivityList(i_pnt,:)),y(TR.ConnectivityList(i_pnt,:)));
-    else
-        area (i_pnt) = geodarea(x(TR.ConnectivityList(i_pnt,:)),y(TR.ConnectivityList(i_pnt,:)),WGS84);
-        area(i_pnt)  = sign(area(i_pnt))*area(i_pnt);
-    end
-    level(i_pnt) = mean(z(TR.ConnectivityList(i_pnt,:)));
-end
 
 %% load the polygon and determine which points inside
 if ~isempty(OPT.filePol)
@@ -38,16 +28,29 @@ else
     pol.x = x(index);
     pol.y = y(index);
 end
-   
+
 inside    = inpolygon(centre(:,1),centre(:,2),pol.x,pol.y);
-area      = area  (inside);
-level     = level (inside);
-no_points = length(area);
+CL        = TR.ConnectivityList(inside,:);
+centre    = centre(inside,:);
+x_tri     = TR.Points(:,1);
+y_tri     = TR.Points(:,2);
+
+%% Determine areas and Volumes
+no_points = size(CL,1);
+for i_pnt = 1: no_points
+    if ~OPT.spherical
+        area (i_pnt) = polyarea(x_tri(CL(i_pnt,:)),y_tri(CL(i_pnt,:)));
+    else
+        area (i_pnt) = geodarea(x_tri(CL(i_pnt,:)),y_tri(CL(i_pnt,:)),WGS84);
+        area(i_pnt)  = sign(area(i_pnt))*area(i_pnt);
+    end
+    level(i_pnt) = mean(z(CL(i_pnt,:)));
+end
 
 %% Maximum and minimum depth inside polygon
 if isempty (OPT.interface)
-    min_level = min(level);
-    max_level = max(level);
+    min_level = min(level)-0.001;
+    max_level = max(level)+0.001;
     OPT.interface = min_level:(max_level - min_level)/100.:max_level;
 end
 varargout{1}  = OPT.interface;
