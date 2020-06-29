@@ -45,7 +45,7 @@ OPT.layer             = 0;  % all
 OPT.m                 = 0;  % all (horizontal structured grid [m,n])
 OPT.n                 = 0;  % all (horizontal structured grid [m,n])
 OPT.k                 = 0;  % all (vertical   d3d grid [m,n,k])
-OPT.sedimentName      = ''; % name of sediment fraction
+OPT.sedimentName      = {}; % char or cell array with the name of sediment fraction(s)
 OPT.mergePartitions   = 1;  % merge output from several dfm spatial *.nc-files
 OPT.mergePartitionNrs = []; % partition nrs that will be merged, e.g. [0, 4, 5]
 OPT.disp              = 1;  % display status of getting map model data
@@ -302,14 +302,12 @@ switch modelType
         mask(mask==0) = NaN;
         mask = mask*0+1;
         
-        % mask data and swap m,n-indices (from vs_let) from [n,m] to [time,m,n(,layers)]
+        % mask data and swap m,n-indices (from vs_let) from [n,m] to [time,m,n(,layers,sedimentFraction)]
         fns = intersect(fieldnames(Data),{'val','vel_x','vel_y','vel_mag','vel_dir','val_x','val_y','val_max','val_mag'});
         for iFns = 1:length(fns)
-            if isfield(Data,fns{iFns})
-                Data.(fns{iFns})(Data.(fns{iFns}) == -999) = NaN;
-                Data.(fns{iFns}) = Data.(fns{iFns}).*mask;
-                Data.(fns{iFns}) = permute(Data.(fns{iFns}),[1 3 2 4]);
-            end
+            Data.(fns{iFns})(Data.(fns{iFns}) == -999) = NaN;
+            Data.(fns{iFns}) = Data.(fns{iFns}).*mask;
+            Data.(fns{iFns}) = permute(Data.(fns{iFns}),[1 3 2 4 5]);
         end
         dmy = dims(2); dims(2) = dims(3); dims(3) = dmy; % swap [n,m] to [m,n]
         dmy = mInd; mInd = nInd; nInd = dmy;
@@ -317,11 +315,11 @@ switch modelType
         % delete ghost cells // aim: get same result as 'loaddata' from d3d_qp
         for iFns = 1:length(fns)
             % delete
-            if m_ind(1)==1; Data.(fns{iFns}) = Data.(fns{iFns})(:,2:end,:,:); end
-            if n_ind(1)==1; Data.(fns{iFns}) = Data.(fns{iFns})(:,:,2:end,:); end
+            if m_ind(1)==1; Data.(fns{iFns}) = Data.(fns{iFns})(:,2:end,:,:,:); end
+            if n_ind(1)==1; Data.(fns{iFns}) = Data.(fns{iFns})(:,:,2:end,:,:); end
             % set to NaN
-            if m_ind(end)==dims(mInd).size; Data.(fns{iFns})(:,end,:,:) = NaN; end
-            if n_ind(end)==dims(nInd).size; Data.(fns{iFns})(:,:,end,:) = NaN; end
+            if m_ind(end)==dims(mInd).size; Data.(fns{iFns})(:,end,:,:,:) = NaN; end
+            if n_ind(end)==dims(nInd).size; Data.(fns{iFns})(:,:,end,:,:) = NaN; end
         end
         
     case 'delwaq'

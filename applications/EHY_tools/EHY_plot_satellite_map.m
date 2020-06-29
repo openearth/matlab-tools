@@ -134,17 +134,21 @@ if OPT.plot_map
             pause(no_tries*3)
         end
     end
+    delete([pwd filesep 'wms.m'])
     
-    if ~success; msgbox('Failed to load satellite image'); end
+    if ~success
+        disp('<strong>Failed to load satellite image</strong>');
+        return
+    end
     
     if ~isempty(OPT.localEPSG) % WGS to local coordinates
-        lon=linspace(lon(1),lon(2),length(lat));
+        lon = linspace(lon(1),lon(2),length(lat));
         [lon,lat] = convertCoordinates(lon, lat,'CS1.code',4326,'CS2.code',OPT.localEPSG);
         if strcmpi(OPT.localUnit,'km')
             lon=lon/1000;lat=lat/1000;
         end
     end
-    delete([pwd filesep 'wms.m'])
+    
     hSurf = surface(lon,lat,zeros(length(lat),length(lon)),'cdata',IMG,'facecolor','texturemap', ...
         'edgecolor','none','cLimInclude','off','ZData',repmat(-10^9,length(lat),length(lon)));
     set(hSurf,'FaceAlpha', OPT.FaceAlpha, 'AlphaDataMapping', 'none');

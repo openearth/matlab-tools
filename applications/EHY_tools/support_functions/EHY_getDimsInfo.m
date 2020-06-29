@@ -228,6 +228,7 @@ if nargout > 2
             [lia,locb] = ismember(OPT.sedimentName,NAMSED);
             sed_ind = locb(lia);
         else
+            OPT.sedimentName = NAMSED;
             sed_ind = 1:length(NAMSED);
         end
         dims(dimsInd.sedfrac).index    = sed_ind;

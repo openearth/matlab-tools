@@ -877,6 +877,7 @@ end
                 fprintf(fid,'P %d = (M = %5d, N = %5d, NAME = ''%s'')\n',4000+iMN,obs.m(iMN),obs.n(iMN),obs.namst(iMN,:));
             end
             fclose(fid);
+            disp('You may want to change/check the observation point numbers yourself (e.g. P 4001 = .. )')
         end
         output=obs;
     end
@@ -1111,11 +1112,36 @@ end
         end
         OPT=EHY_convert_gridCheck(OPT,inputFile);
         [m,n]=EHY_xy2mn(xyn.x,xyn.y,OPT.grdFile);
-        obs.m=m; obs.n=n; obs.namst=xyn.name;
         if OPT.saveOutputFile
+            obs.m=m; obs.n=n; obs.namst=xyn.name;
             delft3d_io_obs('write',outputFile,obs);
         end
         output=[reshape(m,[],1) reshape(n,[],1)];
+    end
+% xyn2locaties
+    function [output,OPT]=EHY_convert_xyn2locaties(inputFile,outputFile,OPT)
+        try
+            xyn=delft3d_io_xyn('read',inputFile);
+        catch
+            fid=fopen(inputFile,'r');
+            D=textscan(fid,'%f%f%s','delimiter','\n');
+            fclose(fid);
+            xyn.x=D{1,1};
+            xyn.y=D{1,2};
+            xyn.name=D{1,3};
+        end
+        OPT=EHY_convert_gridCheck(OPT,inputFile);
+        [obs.m,obs.n]=EHY_xy2mn(xyn.x,xyn.y,OPT.grdFile);
+        obs.namst = xyn.name;
+        if OPT.saveOutputFile
+            fid=fopen(outputFile,'w');
+            for iMN=1:length(obs.m)
+                fprintf(fid,'P %d = (M = %5d, N = %5d, NAME = ''%s'')\n',4000+iMN,obs.m(iMN),obs.n(iMN),obs.namst{iMN});
+            end
+            fclose(fid);
+            disp('You may want to change/check the observation point numbers yourself (e.g. P 4001 = .. )')
+        end
+        output=obs;
     end
 % xyz2dry
     function [output,OPT]=EHY_convert_xyz2dry(inputFile,outputFile,OPT)
