@@ -182,7 +182,7 @@ switch modelType
         
         % deal with deleted leading singleton dimensions
         valueIndex = {dims.index};
-        while all(valueIndex{1}==1)
+        while all(valueIndex{1}==1) && ndims(value) < length(valueIndex)
             valueIndex(1) = [];
         end
         
