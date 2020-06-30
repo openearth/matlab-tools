@@ -180,10 +180,13 @@ switch modelType
             end
         end
         
-        % deal with deleted leading singleton dimensions
+        % deal with deleted leading/trailing singleton dimensions
         valueIndex = {dims.index};
-        while all(valueIndex{1}==1) && ndims(value) < length(valueIndex)
+        while all(valueIndex{1}==1)
             valueIndex(1) = [];
+        end
+        while all(valueIndex{end}==1)
+            valueIndex(end) = [];
         end
         
         % put value(_x/_y) in output structure 'Data'
