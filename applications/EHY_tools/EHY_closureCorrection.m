@@ -29,9 +29,11 @@ function varargout = EHY_closureCorrection(fileObs,fileMdu,fileCorr,varargin)
 oetsettings ('quiet');
 
 %% Time intervals
-OPT.timeSkip  = []  ; % Time interval for skipping of measurements (filled in by linear interpolation)
-OPT.dt_bc     = 10.0; % Interval in minutes 
-OPT.days_ave  = 7;    % number of days for the moving average
+OPT.timeSkip    = []  ; % Time interval for skipping of measurements (filled in by linear interpolation)
+OPT.dt_bc       = 10.0; % Interval in minutes 
+OPT.days_ave    = 7;    % number of days for the moving average
+OPT.salinity    = [];
+OPT.temperature = [];
 
 OPT = setproperty(OPT,varargin);
 
@@ -70,7 +72,7 @@ index            = find(data.Zcor == -999);
 data.Zcor(index) = mdu.geometry.Bedlevuni; 
 
 %% Hypsometric curve
-[area, volume, interface] = EHY_dethyps(data.Xcor,data.Ycor,data.Zcor,'spherical',data.spherical);
+[area, volume, interface] = EHY_dethyps(data.Xcor,data.Ycor,data.Zcor,'spherical',data.spherical,'noLevels',1000);
 
 %%  From mdu > ext > pli > discharge_series 
 ext_file = mdu.external_forcing.ExtForceFile;
@@ -91,7 +93,7 @@ for i_file = 1:length(pli_files)
             
     %% read tim file
     raw=importdata(tim_file);
-    data=raw;
+    data=raw.data;
     data     (:,1     ) = data(:,1)/1440.0 + ref_date;% time from min. from ref_date to MATLAB-times
     data_intp(:,i_file) = interp1( data(:,1) , data(:,2) , t_bc);
     
@@ -103,22 +105,40 @@ for istat = 1: length(stations)
 end
 
 %  average over all stations, fill NaN values by linear interpolation
-DVpeil   = nanmean(wl_intp,2);
-nonan    = ~isnan(DVpeil);
-DVpeil   = interp1(t_bc(nonan), DVpeil(nonan), t_bc); % lineaire interp om kleine gaten te vullen
-area_now = interp1(interface,area,DVpeil);
-Qpeil  = area_now.*[diff(DVpeil)/mean(diff(t_bc))/3600/24 0]; %m3/s
+DVpeil      = nanmean(wl_intp,2);
+nonan       = ~isnan(DVpeil);
+DVpeil      = interp1(t_bc(nonan), DVpeil(nonan), t_bc); % lineaire interp om kleine gaten te vullen
+area_now    = interp1(interface,area  ,DVpeil);
+volume_now  = interp1(interface,volume,DVpeil);
+for i_time = 1: length(t_bc) - 1 
+    Qpeil(i_time)  = 0.5*(area_now  (i_time + 1) + area_now  (i_time))*(DVpeil(i_time+1) - DVpeil(i_time))/(OPT.dt_bc*60.);
+end
+Qpeil (end + 1) = 0.;
 
 %% Closure correction (use the moving average over days_ave)
 closeCorr = movmean(Qpeil - sum(data_intp,2)',OPT.days_ave*(1440./OPT.dt_bc)); 
 
 %% Write closure correction tim file
-t_bc   = (t_bc - ref_date ) * 1440.0 ;
-fid    = fopen(fileCorr,'w'); 
-format = '%10.0f %10.6f\n'; 
+t_bc            = (t_bc - ref_date ) * 1440.0 ;
+tim.Comments{1} = '* COLUMN=2';
+tim.Comments{2} = ['* COLUMN1=Time (minutes since ' datestr(ref_date,'yyyy-mm-dd') ')'];
+tim.Comments{3} = '* COLUMN2=Discharge (m3/s), positive in';
+tim.Values      = num2cell([t_bc(:),closeCorr(:)]);
 
-for i_tm = 1:length(t_bc)
-    fprintf(fid,format, t_bc(i_tm) , closeCorr(i_tm));
+if ~isempty(OPT.salinity) 
+    tim.Comments{1}       = '* COLUMN=3';
+    tim.Comments{4}       = '* COLUMN3=Salinity (psu)';
+    tim.Values(:,end + 1) = num2cell(OPT.salinity);
+    if ~isempty(OPT.temperature)
+        tim.Comments{1}       = '* COLUMN=4';
+        tim.Comments{5}       = '* COLUMN4=Temperature (oC)';
+        tim.Values(:,end + 1) = num2cell(OPT.temperature);
+    end
 end
-disp(['created file: ', fileCorr])
+if isempty(OPT.salinity) && ~isempty(OPT.temperature)
+    tim.Comments{1}       = '* COLUMN=3';
+    tim.Comments{4}       = '* COLUMN3=Temperature (oC)';
+    tim.Values(:,end + 1) = num2cell(OPT.temperature);
+end
 
+dflowfm_io_series('write',fileCorr,tim)

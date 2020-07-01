@@ -9,6 +9,7 @@ function [area_pol, volume_pol, varargout] = EHY_dethyps(x,y,z,varargin)
 OPT.interface = [];
 OPT.spherical = false;
 OPT.filePol   = '';
+OPT.noLevels  = 100;
 OPT           = setproperty(OPT,varargin);
 
 SemiMajorAxis = 6378137;
@@ -51,7 +52,7 @@ end
 if isempty (OPT.interface)
     min_level = min(level)-0.001;
     max_level = max(level)+0.001;
-    OPT.interface = min_level:(max_level - min_level)/100.:max_level;
+    OPT.interface = min_level:(max_level - min_level)/OPT.noLevels:max_level;
 end
 varargout{1}  = OPT.interface;
 no_interfaces = length(OPT.interface);
