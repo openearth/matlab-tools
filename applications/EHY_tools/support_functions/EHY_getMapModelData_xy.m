@@ -64,9 +64,13 @@ Data_xy.Xcor = arb.x;
 Data_xy.Ycor = arb.y;
 
 %%
-Data_xy.Scor = distance(Data_xy.Xcor,Data_xy.Ycor)';
-Data_xy.Xcen = (Data_xy.Xcor(1:end-1) + Data_xy.Xcor(2:end)) ./ 2;
-Data_xy.Ycen = (Data_xy.Ycor(1:end-1) + Data_xy.Ycor(2:end)) ./ 2;
+idNaN = isnan(Data_xy.Xcor);
+Data_xy.Scor = [0;cumsum(sqrt(diff(Data_xy.Xcor(~idNaN)).^2+diff(Data_xy.Ycor(~idNaN)).^2))];
+Data_xy.Scor = Data_xy.Scor([1 1:end end]);
+Data_xy.Xcen = (Data_xy.Xcor(logical([~idNaN(1:end-1);0])) + Data_xy.Xcor(logical([0;~idNaN(2:end)]))) ./ 2;
+Data_xy.Xcen = [Data_xy.Xcen(1);NaN;Data_xy.Xcen(2:end-1);NaN;Data_xy.Xcen(end)];
+Data_xy.Ycen = (Data_xy.Ycor(logical([~idNaN(1:end-1);0])) + Data_xy.Ycor(logical([0;~idNaN(2:end)]))) ./ 2;
+Data_xy.Ycen = [Data_xy.Ycen(1);NaN;Data_xy.Ycen(2:end-1);NaN;Data_xy.Ycen(end)];
 Data_xy.Scen = (Data_xy.Scor(1:end-1) + Data_xy.Scor(2:end)) ./ 2;
 
 %%  Determine vertical levels at Scen locations and corresponding values
