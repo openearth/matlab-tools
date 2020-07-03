@@ -138,6 +138,8 @@ else
     end
 end
 
+cmd = strrep(cmd, '\', '/');
+
 [retcode messages] = system(cmd);
 
 % remove passwords from possible error messages
