@@ -22,13 +22,13 @@ if size(pli,1) == 2 && size(pli,2) > 2
 end
     
 %% Determine which partitions to load data from
-partitionNrs = EHY_findPartitionNumbers(inputFile,'pli',pli);
-
+if OPT.mergePartitions == 1
+    partitionNrs = EHY_findPartitionNumbers(inputFile,'pli',pli);
+else
+    partitionNrs = str2num(inputFile(end-10:end-7));
+end
 % continue with relevant partition numbers
 OPT.mergePartitionNrs = partitionNrs;
-if numel(partitionNrs) > 1
-    OPT.mergePartitions   = 1;
-end
 
 %% Horizontal (x,y) coordinates
 tmp   = EHY_getGridInfo(inputFile,{'XYcor', 'XYcen','edge_nodes','face_nodes','layer_model'},'mergePartitionNrs',OPT.mergePartitionNrs);
@@ -63,21 +63,27 @@ warning on
 Data_xy.Xcor = arb.x;
 Data_xy.Ycor = arb.y;
 
-%%
-idNaN = isnan(Data_xy.Xcor);
-Data_xy.Scor = [0;cumsum(sqrt(diff(Data_xy.Xcor(~idNaN)).^2+diff(Data_xy.Ycor(~idNaN)).^2))];
-Data_xy.Scor = Data_xy.Scor([1 1:end end]);
-Data_xy.Xcen = (Data_xy.Xcor(logical([~idNaN(1:end-1);0])) + Data_xy.Xcor(logical([0;~idNaN(2:end)]))) ./ 2;
-Data_xy.Xcen = [Data_xy.Xcen(1);NaN;Data_xy.Xcen(2:end-1);NaN;Data_xy.Xcen(end)];
-Data_xy.Ycen = (Data_xy.Ycor(logical([~idNaN(1:end-1);0])) + Data_xy.Ycor(logical([0;~idNaN(2:end)]))) ./ 2;
-Data_xy.Ycen = [Data_xy.Ycen(1);NaN;Data_xy.Ycen(2:end-1);NaN;Data_xy.Ycen(end)];
+%% Determine X,Y and distance (S) at crossings (*cor) and middle of crossings (*cen)
+% *cor
+nonan = ~isnan(Data_xy.Xcor);
+Data_xy.Scor(nonan,:) = [0; cumsum(sqrt(diff(Data_xy.Xcor(nonan)).^2+diff(Data_xy.Ycor(nonan)).^2))];
+% *cen
+Data_xy.Xcen = (Data_xy.Xcor(1:end-1) + Data_xy.Xcor(2:end)) ./ 2;
+Data_xy.Ycen = (Data_xy.Ycor(1:end-1) + Data_xy.Ycor(2:end)) ./ 2;
 Data_xy.Scen = (Data_xy.Scor(1:end-1) + Data_xy.Scor(2:end)) ./ 2;
 
 %%  Determine vertical levels at Scen locations and corresponding values
 no_times      = length(Data.times);
 
 if strcmp(Data.modelType,'dfm') && isfield(Data,'face_nodes')
-    val = arbcross(arb,{'FACE' permute(Data.val,[2 3 1])});
+    if isfield(Data,'val')
+        val = arbcross(arb,{'FACE' permute(Data.val,[2 3 1])});
+    elseif isfield(Data,'vel_x')
+        vel_x = arbcross(arb,{'FACE' permute(Data.vel_x,[2 3 1])});
+        vel_y = arbcross(arb,{'FACE' permute(Data.vel_y,[2 3 1])});
+        vel_dir = arbcross(arb,{'FACE' permute(Data.vel_dir,[2 3 1])});
+        vel_mag = arbcross(arb,{'FACE' permute(Data.vel_mag,[2 3 1])});
+    end
     if no_layers > 1
         Zint = arbcross(arb,{'FACE' permute(Data.Zint,[2 3 1])});
     end
@@ -88,16 +94,24 @@ elseif strcmp(Data.modelType,'d3d') || isfield(Data,'Xcor')
     end
 end
 
-no_XYcorTrajectory = size(val,1);
-Data_xy.val  = zeros(no_times, no_XYcorTrajectory, no_layers);
+no_XYcenTrajectory = length(arb.dxt);
+Data_xy.val  = zeros(no_times, no_XYcenTrajectory, no_layers);
 if no_layers > 1
-    Data_xy.Zint = zeros(no_times, no_XYcorTrajectory, no_layers+1);
+    Data_xy.Zint = zeros(no_times, no_XYcenTrajectory, no_layers+1);
 end
 for iT = 1:no_times
-    for iC = 1:no_XYcorTrajectory
+    for iC = 1:no_XYcenTrajectory
         startBlock = (iT-1)*no_layers+1;
         endBlock = startBlock + no_layers - 1;
-        Data_xy.val(iT,iC,:) = val(iC,startBlock:endBlock);
+        
+        if isfield(Data,'val')
+            Data_xy.val(iT,iC,:) = val(iC,startBlock:endBlock);
+        elseif isfield(Data,'vel_x')
+            Data_xy.vel_x(iT,iC,:) = vel_x(iC,startBlock:endBlock);
+            Data_xy.vel_y(iT,iC,:) = vel_y(iC,startBlock:endBlock);
+            Data_xy.vel_mag(iT,iC,:) = vel_mag(iC,startBlock:endBlock);
+            Data_xy.vel_dir(iT,iC,:) = vel_dir(iC,startBlock:endBlock);
+        end
         
         if strcmp(Data.modelType,'d3d') && strcmp(Data.layer_model,'sigma-model')
             startBlock = (iT-1)*(no_layers+1)+1;
@@ -112,10 +126,7 @@ for iT = 1:no_times
 end
 if no_layers > 1
     Data_xy.Zcen = (Data_xy.Zint(:,:,1:end-1) + Data_xy.Zint(:,:,2:end)) ./ 2;
-    Data_xy.wl = Data_xy.Zint(:,:,end);
-    Data_xy.bed = squeeze(Data_xy.Zint(1,:,1));
 end
-
 Data_xy.times = Data.times;
 
 disp('Finished determining properties along trajectory')
