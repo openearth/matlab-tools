@@ -490,6 +490,11 @@ end
 dimensionsComment = sprintf('%s,',dimensionsComment{:});
 Data.dimensions = ['[' dimensionsComment(1:end-1) ']'];
 
+%% Chlorinity  requested than convert salinity to chlorinity
+if strcmp(varNameInput,'chl')
+    Data.val = 1000.*saco_convert(Data.val,27); % 1000: from g/kg to mg/l
+end
+
 %% Fill output struct
 Data.OPT               = OPT;
 Data.OPT.inputFile     = inputFile;

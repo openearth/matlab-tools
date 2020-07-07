@@ -32,6 +32,7 @@ varName = strrep(varName, ' ', '');
 
 if strcmpi(varName,'vel'                  ) varName = 'uv'         ; end
 if strcmpi(varName,'sal'                  ) varName = 'salinity'   ; end
+if strcmpi(varName,'chl'                  ) varName = 'salinity'   ; end
 if strcmpi(varName,'tem'                  ) varName = 'temperature'; end
 if strcmpi(varName,'waterlevel'           ) varName = 'wl'         ; end
 if strcmpi(varName,'waterdepth'           ) varName = 'wd'         ; end
