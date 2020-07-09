@@ -17,6 +17,7 @@ function gridInfo = EHY_getGridInfo(inputFile,varargin)
 %               edge_nodes              E.edge_nodes
 %               edge_nodes_xy           E.edge_nodes_x & E.edge_nodes_y
 %               area                    E.area
+%               boundary                E.boundary (model domain surrounding polygon)
 %         Zcen (top-view info/depth)    E.Zcen (& E.Zcor)
 %         Z    (side-view info/profile) E.Zcen (& E.Zcor), E.Zcen_cen & E.Zcen_int(in NetElem/faces)
 %               layer_perc              E.layer_perc (bed to surface), sum=100
@@ -472,7 +473,40 @@ switch modelType
                     if ismember('grid', wantedOutput)
                         E.grid = EHY_convert(inputFile,'ldb','saveOutputFile',0,'mergePartitions',0);
                     end
-                    
+                    if ismember('boundary', wantedOutput)
+                        tmp = EHY_getGridInfo(inputFile,{'XYcor','edge_nodes'});
+                        K = boundary(tmp.Xcor,tmp.Ycor,1);
+                        iK = 0;
+                        while iK < length(K)-1
+                            iK = iK + 1;
+                            [~,n] = find(tmp.edge_nodes == K(iK));
+                            if ~ismember(K(iK+1),tmp.edge_nodes(:,n))
+                                % grid is more concave than 'boundary.m' thinks it is
+                                neighbours1 = tmp.edge_nodes(:,n);
+                                [~,n] = find(tmp.edge_nodes == K(iK+1));
+                                neighbours2 = tmp.edge_nodes(:,n);
+                                missedNode = intersect(neighbours1,neighbours2);
+                                if length(missedNode) == 1
+                                    K = [K(1:iK); missedNode; K(iK+1:end)];
+                                else
+                                    neighbours1 = neighbours1(neighbours1~=K(iK));
+                                    neighbours2 = neighbours2(neighbours2~=K(iK+1));
+                                    [~,n1] = find(ismember(tmp.edge_nodes,neighbours1));
+                                    [~,n2] = find(ismember(tmp.edge_nodes,neighbours2));
+                                    [~,IA] = intersect(n1,n2);
+                                    missedNode = intersect(tmp.edge_nodes(:,n1(IA)),neighbours1);
+                                    if length(missedNode) == 1
+                                        K = [K(1:iK); missedNode; K(iK+1:end)];
+                                    else
+                                        warning(['Boundary might be less concave than needed to correctly prescribe model domain near location: ' ...
+                                            '[X,Y] = [' sprintf('%.3f',tmp.Xcor(K(iK))) ', ' sprintf('%.3f',tmp.Ycor(K(iK))) ']'])
+                                    end
+                                end
+                            end
+                        end
+                        E.boundary = [tmp.Xcor(K) tmp.Ycor(K)];
+                    end
+
                     % If partitioned run, delete ghost cells
                     [~, name] = fileparts(inputFile);
                     varName = EHY_nameOnFile(inputFile,'FlowElemDomain');
