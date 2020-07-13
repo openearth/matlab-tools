@@ -23,7 +23,7 @@ end
     
 %% Determine which partitions to load data from
 if OPT.mergePartitions == 1
-    partitionNrs = EHY_findPartitionNumbers(inputFile,'pli',pli);
+    partitionNrs = EHY_findPartitionNumbers(inputFile,'pli',pli,'disp',OPT.disp);
 else
     partitionNrs = str2num(inputFile(end-10:end-7));
 end
@@ -31,7 +31,7 @@ end
 OPT.mergePartitionNrs = partitionNrs;
 
 %% Horizontal (x,y) coordinates
-tmp   = EHY_getGridInfo(inputFile,{'XYcor', 'XYcen','edge_nodes','face_nodes','layer_model'},'mergePartitionNrs',OPT.mergePartitionNrs);
+tmp   = EHY_getGridInfo(inputFile,{'XYcor', 'XYcen','edge_nodes','face_nodes','layer_model'},'mergePartitionNrs',OPT.mergePartitionNrs,'disp',OPT.disp);
 names = fieldnames(tmp); for i_name = 1: length(names) Data.(names{i_name}) = tmp.(names{i_name}); end
 
 %% get "z-data"
@@ -50,7 +50,9 @@ tmp   = EHY_getMapModelData(inputFile,OPT);
 names = fieldnames(tmp); for i_name = 1: length(names) Data.(names{i_name}) = tmp.(names{i_name}); end
 
 %% Calculate values at pli locations
-disp('Start determining properties along trajectory')
+if OPT.disp
+    disp('Start determining properties along trajectory')
+end
 
 warning off
 if strcmp(Data.modelType,'dfm') && isfield(Data,'face_nodes')
@@ -73,7 +75,14 @@ Data_xy.Ycen = (Data_xy.Ycor(1:end-1) + Data_xy.Ycor(2:end)) ./ 2;
 Data_xy.Scen = (Data_xy.Scor(1:end-1) + Data_xy.Scor(2:end)) ./ 2;
 
 %%  Determine vertical levels at Scen locations and corresponding values
-no_times      = length(Data.times);
+try
+    no_times = length(Data.times);
+catch
+    warning('No times found, assuming output has time dimension 1')
+    no_times   = 1;
+    Data.times = [];
+    Data.val   = permute(Data.val,[3 1 2]);
+end
 
 if strcmp(Data.modelType,'dfm') && isfield(Data,'face_nodes')
     if isfield(Data,'val')
@@ -129,7 +138,9 @@ if no_layers > 1
 end
 Data_xy.times = Data.times;
 
-disp('Finished determining properties along trajectory')
+if OPT.disp
+    disp('Finished determining properties along trajectory')
+end
 
 %% make gridInfo for plotting using EHY_plotMapModelData
 if nargout > 1
