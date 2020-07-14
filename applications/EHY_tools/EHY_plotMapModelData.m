@@ -25,6 +25,8 @@ OPT.edgecolor = 'k';
 OPT.facecolor = 'flat';
 OPT.linewidth = 0.5;
 OPT.t = []; % time index, needed for plotting data along xy-trajectory
+OPT.contour = []; % array with levels or number of lines (only for structured data)
+OPT.contourtext = 'off';
 
 % if pairs were given as input OPT
 if ~isempty(varargin)
@@ -168,8 +170,18 @@ switch modelType
     case 'd3d'
         hPcolor = pcolor(gridInfo.Xcor,gridInfo.Ycor,zData);
         set(hPcolor,'linestyle',OPT.linestyle,'edgecolor',OPT.edgecolor,'facecolor',OPT.facecolor);
+        if ~isempty(OPT.contour)
+            [cCon,hCon] = contour(gridInfo.Xcor,gridInfo.Ycor,zData,OPT.contour,'LineStyle','-',...
+                'LineColor',OPT.edgecolor,'LineWidth',OPT.linewidth,'ShowText',OPT.contourtext);
+        else
+            cCon = []; hCon = [];
+        end
         
         if nargout==1
             varargout{1}=hPcolor;
+        elseif nargout==3
+            varargout{1}=hPcolor;
+            varargout{2}=cCon;
+            varargout{3}=hCon;
         end
 end
