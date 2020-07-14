@@ -75,10 +75,9 @@ Data_xy.Ycen = (Data_xy.Ycor(1:end-1) + Data_xy.Ycor(2:end)) ./ 2;
 Data_xy.Scen = (Data_xy.Scor(1:end-1) + Data_xy.Scor(2:end)) ./ 2;
 
 %%  Determine vertical levels at Scen locations and corresponding values
-try
+if isfield(Data,'times')
     no_times = length(Data.times);
-catch
-    warning('No times found, assuming output has time dimension 1')
+else
     no_times   = 1;
     Data.times = [];
     Data.val   = permute(Data.val,[3 1 2]);
