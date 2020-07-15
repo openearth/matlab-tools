@@ -26,7 +26,7 @@ function varargout = EHY_closureCorrection(fileObs,fileMdu,fileCorr,varargin)
 %  dt_bc    - interval to write the closure correction (default 10 minutes)
 %  days_ave - time period for the moving average operation used in the
 %             closure correction (default 7 days)
-oetsettings ('quiet');
+% oetsettings('quiet');
 
 %% Time intervals
 OPT.timeSkip    = []  ; % Time interval for skipping of measurements (filled in by linear interpolation)
@@ -49,36 +49,42 @@ for istat = 1:length(stations)
 end
 
 %% Read mdu
-mdu = dflowfm_io_mdu('read',fileMdu);
+mdu                = dflowfm_io_mdu('read',fileMdu);
+% make all fields available in lower case for easier handling of e.g. mdu.geometry.bedlevuni
+fns1 = fieldnames(mdu);
+for i = 1:length(fns1)
+    fn1 = fns1{i};
+    fns2 = fieldnames(mdu.(fn1));
+    for j = 1:length(fns2)
+        fn2 = fns2{j};
+        mdu.(lower(fn1)).(lower(fn2)) = mdu.(fn1).(fn2);
+    end
+end
 
 %% Time info from MDU
-RefDate = num2str(mdu.time.RefDate);
-ref_date=datenum(RefDate,'yyyymmdd');
-DtUser = mdu.time.DtUser;
-DtUser = DtUser * timeFactor('s','d');% in dagen vanaf ref_date
-Tunit  = mdu.time.Tunit;
-TStart = mdu.time.TStart; % in Tunit vanaf ref_date
-TStart = TStart * timeFactor(Tunit,'d');% in dagen vanaf ref_date
-TStart = TStart + ref_date; % in MATLAB-dagen
-TStop  = mdu.time.TStop * timeFactor(Tunit,'d') + ref_date; % TStop in 1 regel
+[ref_date,Tunit,TStart,TStop] = EHY_getTimeInfoFromMdFile(fileMdu,'dfm');
+TStart                        = ref_date + TStart*timeFactor(Tunit,'D');
+TStop                         = ref_date + TStop*timeFactor(Tunit,'D');
+t_bc                          = TStart:OPT.dt_bc/1440.:TStop;
 
-model_times = TStart:DtUser:TStop;
-t_bc        = TStart:OPT.dt_bc/1440.:TStop;
+if t_bc(end)~=TStop
+    t_bc(end+1) = TStop;
+end
 
 %% Geometry data
-data             = EHY_getGridInfo(EHY_getFullWinPath(mdu.geometry.NetFile,fileparts(fileMdu)),{'XYcor' 'Z' 'spherical'});
-%  Remove depth points with default value
-index            = find(data.Zcor == -999);
-data.Zcor(index) = mdu.geometry.Bedlevuni; 
+gridInfo = EHY_getGridInfo(EHY_getFullWinPath(mdu.geometry.netfile,fileparts(fileMdu)),{'XYcor' 'Z' 'spherical'});
+%  Replace missing depth points with default value
+index = find(gridInfo.Zcor == -999);
+gridInfo.Zcor(index) = mdu.geometry.bedlevuni; 
 
 %% Hypsometric curve
-[area, volume, interface] = EHY_dethyps(data.Xcor,data.Ycor,data.Zcor,'spherical',data.spherical,'noLevels',1000);
+[area, volume, interface] = EHY_dethyps(gridInfo.Xcor,gridInfo.Ycor,gridInfo.Zcor,'spherical',gridInfo.spherical,'noLevels',1000);
 
 %%  From mdu > ext > pli > discharge_series 
-ext_file = mdu.external_forcing.ExtForceFile;
+ext_file = mdu.external_forcing.extforcefile;
 ext_file = EHY_getFullWinPath(ext_file,fileparts(fileMdu));
 ext = dflowfm_io_extfile('read',ext_file);
-extInd = strmatch('discharge_',{ext.quantity});
+extInd = [strmatch('discharge_',{ext.quantity}); strmatch('lateraldischarge',{ext.quantity})];
 pli_files = {ext.filename};
 pli_files = pli_files(extInd);
 pli_files = EHY_getFullWinPath(pli_files,fileparts(fileMdu));
@@ -86,17 +92,22 @@ pli_files = EHY_getFullWinPath(pli_files,fileparts(fileMdu));
 %  time series from discharge tim files (interpolate to t_bc)
 for i_file = 1:length(pli_files)
     pli_file = pli_files{1,i_file};
-    tim_file = strrep(pli_file,'.pli','.tim'); % replace '.pli' by '.tim'
-    
-    [~, name] = fileparts(tim_file);
+    [pathstr, name, ex] = fileparts(pli_file);
+    if strncmp(ex,'.pli',4) % .pli- or .pliz-file
+        tim_file = [pathstr filesep name '.tim'];
+    elseif strcmp(ex,'.pol') % .pol (lateraldischarge)
+        tim_file = [pathstr filesep name '.tim'];
+        if ~exist(tim_file,'file') % .pol is still/used to be linked to *_0001.tim
+            tim_file = [pathstr filesep name '_0001.tim'];
+        end
+    end
     pli_names{1,i_file} = name;
             
     %% read tim file
-    raw=importdata(tim_file);
-    data=raw.data;
-    data     (:,1     ) = data(:,1)/1440.0 + ref_date;% time from min. from ref_date to MATLAB-times
+    raw = importdata(tim_file);
+    data = raw.data;
+    data     (:,1     ) = data(:,1)/1440.0 + ref_date; % time from min. from ref_date to MATLAB-times
     data_intp(:,i_file) = interp1( data(:,1) , data(:,2) , t_bc);
-    
 end
 
 %% Discharges associated with water level variations
@@ -122,7 +133,7 @@ closeCorr = movmean(Qpeil - sum(data_intp,2)',OPT.days_ave*(1440./OPT.dt_bc));
 t_bc            = (t_bc - ref_date ) * 1440.0 ;
 tim.Comments{1} = '* COLUMN=2';
 tim.Comments{2} = ['* COLUMN1=Time (minutes since ' datestr(ref_date,'yyyy-mm-dd') ')'];
-tim.Comments{3} = '* COLUMN2=Discharge (m3/s), positive in';
+tim.Comments{3} =  '* COLUMN2=Discharge (m3/s), positive in';
 tim.Values      = num2cell([t_bc(:),closeCorr(:)]);
 
 if ~isempty(OPT.salinity) 
@@ -142,3 +153,16 @@ if isempty(OPT.salinity) && ~isempty(OPT.temperature)
 end
 
 dflowfm_io_series('write',fileCorr,tim)
+
+%% varargout
+if nargout > 0
+    out(:,1) = reshape(t_bc,[],1); % time in MATLABs datenum
+    out(:,2) = reshape(closeCorr,[],1);
+    if ~isempty(OPT.salinity)
+        out(:,end+1) = OPT.salinity;
+    end
+    if ~isempty(OPT.temperature)
+        out(:,end+1) = OPT.temperature;
+    end
+    varargout{1} = out;
+end

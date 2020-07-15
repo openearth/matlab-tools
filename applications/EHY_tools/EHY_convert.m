@@ -1143,6 +1143,25 @@ end
         end
         output=obs;
     end
+% xyn2xyz
+    function [output,OPT]=EHY_convert_xyn2xyz(inputFile,outputFile,OPT)
+        try
+            xyn = delft3d_io_xyn('read',inputFile);
+        catch
+            fid = fopen(inputFile,'r');
+            D = textscan(fid,'%f%f%s','delimiter','\n');
+            fclose(fid);
+            xyn.x = D{1,1};
+            xyn.y = D{1,2};
+            xyn.name = D{1,3};
+        end
+        xyz = [reshape(xyn.x,[],1) reshape(xyn.y,[],1)];
+        xyz(:,3) = 0;
+        if OPT.saveOutputFile
+            dlmwrite(outputFile,xyz,'delimiter',' ','precision','%20.7f')
+        end
+        output = xyz;
+    end
 % xyz2dry
     function [output,OPT]=EHY_convert_xyz2dry(inputFile,outputFile,OPT)
         xyz=importdata(inputFile);
