@@ -13,6 +13,7 @@
 % - Specify roughness
 % - Specify infiltration (note unit change 2020 onwards)
 % - Add observation points
+% - Inifile
 %%%%%
 
 %% Create SFINCS struct
@@ -557,3 +558,15 @@ points_obs.y = [];
 points_obs.length = length(points_obs.x); 
 
 sfincs_write_boundary_points(inp.obsfile,points_obs);
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%
+%% Add an initial water level file
+%%%%%
+%.ini
+% zinix0y0 zinix1y0
+% zinix0y1 zinix1y1
+%%%%%
+fid3 = fullfile(fname, 'sfincs.ini');
+zini=zeros(nmax,mmax);
+zini(:,1:24+1)=0.6;       
+save(fid3,'-ascii','zini');

@@ -1,4 +1,4 @@
-function [xg_save,yg_save,zg_save,msk] = sfincs_make_subgrid_file_external(dr,bathy,grid,varargin)
+function [xg_save,yg_save,zg_save,msk,indices] = sfincs_make_subgrid_file_external_test_improvement(dr,bathy,grid,varargin)
 % Makes SFINCS subgrid file external of DDB using already merged topobathy struct (can still be from DDB)
 %
 % E.g.:
@@ -11,6 +11,8 @@ function [xg_save,yg_save,zg_save,msk] = sfincs_make_subgrid_file_external(dr,ba
                                      % grid cannot be rotated yet!   
                                      % no coordinate conversion included so bathy and grid should both be in same projected coordinate system
 % sfincs_make_subgrid_file_external(dr,bathy,grid)
+% sfincs_make_subgrid_file_external(dr,bathy,grid,'derefine_sbg_x',20,'derefine_sbg_y',20,'derefine_factor_grid',2,'zlev',[-2 150]
+%,'includepolygon',xy,'excludepolygon)',xy_ex)
 
 % varargin:  % supply as keyword - argument pairs
 % nbin=20;                           % Number of bins in subgrid table (default = 20)
@@ -21,11 +23,10 @@ function [xg_save,yg_save,zg_save,msk] = sfincs_make_subgrid_file_external(dr,ba
 % zlev = [-2 50];                    % minimum and maximum bed level used to determine msk-file (default = [-2 50])
 % includepolygon = xy;               % struct with include polygon to determine msk-file, e.g.: xy.length=1, xy.x = [0] xy.y = [10];% see sfincs_make_mask.m
 % excludepolygon = xy_ex;            % struct with exclude polygon to determine msk-file, e.g.: xy.length=1, xy.x = [0] xy.y = [10];% see sfincs_make_mask.m 
-% subgrid = 1;                       % turn on (1) or off (0) generation of
-% subgrid tables (default = 1). Can be done if in same function also non-subgrid versions of sfincs are e.g. wanted, with possible coarsening/refinement
+% subgrid = 1;                       % turn on (1) or off (0) generation of subgrid tables (default = 1). Can be done if in same function also non-subgrid versions of sfincs are e.g. wanted, with possible coarsening/refinement
 
-% script gives back the matrices of x,y,z of the flux grid and the msk
-% this can be used for visualisation or making the sfincs.inp file
+% Output:
+% script gives back the matrices of x,y,z of the flux grid and the msk, this can be used for visualisation or making the sfincs.inp file
 
 %%
 nbin = 20;
@@ -79,7 +80,7 @@ xg = grid.x;
 yg = grid.y;
 
 % Refining for grid for SFINCS, interpolation of current grid -> info will be used as subgrid features
-if fine == 1
+if refine_factor_grid > 0
     disp('start refining flux grid')
     
     nmax= size(xg,1);
@@ -100,7 +101,7 @@ if fine == 1
 end
 
 % Coarsening for grid for SFINCS -> info will be used as subgrid features    
-if coarse == 1
+if derefine_factor_grid > 0
     disp('start coarsening flux grid')
 
     xg      = xg([1:derefine_factor_grid:end],[1:derefine_factor_grid:end]);
@@ -111,10 +112,47 @@ if coarse == 1
 end  
 
 %% Compute first scatteredInterpolant without extrapolation
-if exist('F','var') == 0     %(only compute if variable isnt opened yet already to save time)
-    
+% if exist('F','var') == 0     %(only compute if variable isnt opened yet already to save time)
+if ~exist([dr,'\xgygzg.mat']) %load saved file
     disp('Compute F the first time')
-    F   = scatteredInterpolant(bathy.x(:), bathy.y(:), bathy.z(:),'linear','none');                                         
+    iiend = ceil(size(bathy.x,1)/500);
+    jjend = ceil(size(bathy.x,2)/500);
+    
+    zg = NaN(size(xg));
+    count = 0;
+    for ii = 1:iiend %do now per 500 cells
+        for jj = 1:jjend
+            count = count +1;
+            disp(count)
+            % cell indices
+            if ii == iiend
+                ic2 = size(bathy.x,1);
+            else
+                ic2=(ii  )*500;
+            end      
+            if jj == jjend
+                jc2 = size(bathy.x,2);
+            else
+                jc2=(jj  )*500;
+            end        
+
+            ic1=(ii-1)*500+1;
+            jc1=(jj-1)*500+1;
+
+            xxx = bathy.x(ic1:ic2,jc1:jc2);
+            yyy = bathy.y(ic1:ic2,jc1:jc2);
+            zzz = bathy.z(ic1:ic2,jc1:jc2);
+            clear F
+            F   = scatteredInterpolant(xxx(:),yyy(:),zzz(:),'linear','none');   
+
+            zgtmp = F(xg,yg);
+            
+            zg(isnan(zg)) = zgtmp(isnan(zg)); %only add not filled cells
+            
+%             figure; pcolor(xg,yg,zg); shading flat;
+        end
+    end
+    clear ic1 jc1 ic2 jc2
     disp('Compute F the first time > done')
 
     %TL: good idea to limit the size of the matrix
@@ -123,15 +161,27 @@ if exist('F','var') == 0     %(only compute if variable isnt opened yet already 
     %these are 5 areas, the subgrid creation should be
     %done parallelised of these 5 areas at the same
     %time e.g.
+    s.xg = xg;
+    s.yg = yg;
+    s.zg = zg;
+
+    save([dr,'xgygzg.mat'],'s')
+    clear s    
+else
+    load([dr,'\xgygzg.mat'])
+    xg = s.xg;
+    yg = s.yg;
+    zg = s.zg;    
 end
 
 %% Topobathy to be used for determining mask and to put in dep-file
-zg = F(xg,yg);
+
 % zg = gridcellaveraging2(bathy.x, bathy.y, bathy.z,xg, yg, round(res), 'mean'); %TL: better when coarsening?
+clear F % later make F per subblock
 
 %% Read sfincs inputs
 mmax=size(xg,2);
-nmax=size(yg,2);
+nmax=size(yg,1);  %1!
 dx = xg(1,2) - xg(1,1);
 dy = yg(2,1) - yg(1,1);
 x0=xg(1,1);
@@ -142,6 +192,8 @@ di=dy;       % cell size
 dj=dx;       % cell size
 dif=dy/derefine_sbg_y; % size of subgrid pixel
 djf=dx/derefine_sbg_x; % size of subgrid pixel
+refi = derefine_sbg_y; % refinement factor
+refj = derefine_sbg_x; % refinement factor
 imax=nmax;
 jmax=mmax;
 
@@ -167,7 +219,12 @@ nrmax=min(round(2000*dif/di),round(2000*djf/dj)); % maximum number of cells in a
 
 nib=floor(nrmax/(di/dif)); % nr of cells in a block
 njb=floor(nrmax/(dj/djf)); % nr of cells in a block
-
+if nib==0
+    nib = 1; % always need 1 cell in a block
+end
+if njb==0
+    njb = 1;
+end
 ni=ceil(imax/nib); % nr of blocks
 nj=ceil(jmax/njb); % nr of blocks
 
@@ -210,19 +267,38 @@ for ii=1:ni
         xx1=xx1+dj; % add extra row cuz we need data in u points
         yy1=yy1+di; % add extra row cuz we need data in v points
         xx=xx0:djf:xx1;
-        yy=yy0:djf:yy1;
+        yy=yy0:dif:yy1;
         xx=xx+0.5*djf;
         yy=yy+0.5*dif;
         [xx,yy]=meshgrid(xx,yy);
         xg = x0 + cosrot*xx + sinrot*yy;
         yg = y0 - sinrot*xx + cosrot*yy;
+        
+        xx=xx0:djf:xx1;
+        yy=yy0:dif:yy1;
+        xx=xx+0.5*djf;
+        yy=yy+0.5*dif;        
+        xx = [xx0 - 2*djf, xx, xx1 + 2*djf ];
+        yy = [yy0 - 2*dif, yy, yy1 + 2*dif ];
+        [xx,yy]=meshgrid(xx,yy); % for determination local F, enlarge box a bit
+        xgtmp = x0 + cosrot*xx + sinrot*yy;
+        ygtmp = y0 - sinrot*xx + cosrot*yy;
         clear xx yy
         
         % Convert subgrid to WGS 84 (should it not be converted to the coordinate system of the bathymetry dataset? Yes, but let's assume for now that the data are in WGS 84!)
 %         [xg,yg]=convertCoordinates(xg,yg,'persistent','CS1.name',model.cs.name,'CS1.type',model.cs.type,'CS2.name','WGS 84','CS2.type','geographic');
         
         % Now get the bathy data for this block
+        clear idwanted
+        idwanted = inpolygon(bathy.x,bathy.y,[xgtmp(1,1),xgtmp(1,end),xgtmp(end,end),xgtmp(end,1),xgtmp(1,1)],[ygtmp(1,1),ygtmp(1,end),ygtmp(end,end),ygtmp(end,1),ygtmp(1,1)]);
         
+        xtmp = bathy.x(idwanted);
+        ytmp = bathy.y(idwanted);
+        ztmp = bathy.z(idwanted);
+
+        clear F
+        F   = scatteredInterpolant(xtmp,ytmp,ztmp,'linear','none');                                         
+
         % Determine bounding box
         xmin=min(min(xg));
         xmax=max(max(xg));
@@ -240,16 +316,10 @@ for ii=1:ni
         if maxmax(isnan(zg)) == 1 % if NaNs then extrapolate with method nearest
             disp('Second interpolation method needed to avoid NaNs (is slower)')
 
-           if exist('F2','var') == 0     %(only compute if variable isnt opened yet already to save time)                       
-                disp('Compute F2 the first time')
-                F2 = scatteredInterpolant(bathy.x(:), bathy.y(:), bathy.z(:), 'linear', 'nearest');                                      
-                disp('Compute F2 the first time > done')
+            F2 = scatteredInterpolant(xtmp,ytmp,ztmp, 'linear', 'nearest');                                      
 
-                clear bathy  % TL: not needed anymore right?!?
-
-           end                   
-
-            zg = F2(xg,yg);   
+            zg = F2(xg,yg);
+            clear F2
         end
 
         clear xg yg zg1 xx yy zz
@@ -340,6 +410,7 @@ subgrd.v_width=subgrd.v_width(1:nmax,1:mmax,:);
 
 sfincs_write_binary_subgrid_tables(subgrd,msk,nbin,subgridfile);
 fclose('all');
+end
 
 %% Also write index, depth and msk-files in binary
 % Index file
@@ -364,4 +435,4 @@ fid=fopen(mskfile,'w');
 fwrite(fid,mskv,'integer*1');
 fclose(fid);    
 
-end
+
