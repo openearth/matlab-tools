@@ -96,319 +96,312 @@ end
 %% find top or bottom layer in z-layer model
 if ischar(OPT.layer)
     Data = EHY_getMapModelData_zLayerTopBottom(inputFile,modelType,OPT);
-    if nargout==1
-        varargout{1} = Data;
-    end
-    return
 end
 
 %% return output at specified reference level
-if ~isempty(OPT.z)
+if ~exist('Data','var') && ~isempty(OPT.z)  
     Data = EHY_getMapModelData_z(inputFile,modelType,OPT);
-    if nargout==1
-        varargout{1} = Data;
-    end
-    return
 end
 
 %% return sideview output along a pli file
-if ~isempty(OPT.pliFile)
+if ~exist('Data','var') && ~isempty(OPT.pliFile)  
     [Data,gridInfo] = EHY_getMapModelData_xy(inputFile,OPT);
-    if nargout > 0
-        varargout{1} = Data;
-    end
-    if nargout > 1
-        varargout{2} = gridInfo;
-    end
-    return
 end
 
-%% Get the available and requested dimensions
-[dims,dimsInd,Data,OPT] = EHY_getDimsInfo(inputFile,OPT,modelType);
-
-%% check if output data is in several partitions and merge if necessary
-if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile) && exist('facesInd','var')
+%% regular data extraction (only when 'Data' does not exist)
+if ~exist('Data','var')
     
-    % get cell array with ncFiles based on inputFile (and requested partition numbers)
-    ncFiles = EHY_getListOfPartitionedNcFiles(inputFile,OPT.mergePartitionNrs);
+    %% Get the available and requested dimensions
+    [dims,dimsInd,Data,OPT] = EHY_getDimsInfo(inputFile,OPT,modelType);
     
-    for iF = 1:length(ncFiles)
-        if OPT.disp
-            disp(['Reading and merging map model data from partitions: ' num2str(iF) '/' num2str(length(ncFiles))])
-        end
-        ncFile = ncFiles{iF};
-        DataPart = EHY_getMapModelData(ncFile,OPT,'mergePartitions',0);
-        if iF==1
-            Data = DataPart;
-        else
-            if isfield(Data,'val')
-                Data.val = cat(facesInd,Data.val,DataPart.val);
-            elseif isfield(Data,'vel_x')
-                Data.vel_x = cat(facesInd,Data.vel_x,DataPart.vel_x);
-                Data.vel_y = cat(facesInd,Data.vel_y,DataPart.vel_y);
-                Data.vel_mag = cat(facesInd,Data.vel_mag,DataPart.vel_mag);
-                Data.vel_dir = cat(facesInd,Data.vel_dir,DataPart.vel_dir);
+    %% check if output data is in several partitions and merge if necessary
+    if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile) && exist('facesInd','var')
+        
+        % get cell array with ncFiles based on inputFile (and requested partition numbers)
+        ncFiles = EHY_getListOfPartitionedNcFiles(inputFile,OPT.mergePartitionNrs);
+        
+        for iF = 1:length(ncFiles)
+            if OPT.disp
+                disp(['Reading and merging map model data from partitions: ' num2str(iF) '/' num2str(length(ncFiles))])
+            end
+            ncFile = ncFiles{iF};
+            DataPart = EHY_getMapModelData(ncFile,OPT,'mergePartitions',0);
+            if iF==1
+                Data = DataPart;
+            else
+                if isfield(Data,'val')
+                    Data.val = cat(facesInd,Data.val,DataPart.val);
+                elseif isfield(Data,'vel_x')
+                    Data.vel_x = cat(facesInd,Data.vel_x,DataPart.vel_x);
+                    Data.vel_y = cat(facesInd,Data.vel_y,DataPart.vel_y);
+                    Data.vel_mag = cat(facesInd,Data.vel_mag,DataPart.vel_mag);
+                    Data.vel_dir = cat(facesInd,Data.vel_dir,DataPart.vel_dir);
+                end
             end
         end
+        Data.OPT.mergePartitions = 1;
+        modelType = 'partitionedFmRun';
+        dims = EHY_getmodeldata_optimiseDims(dims);
     end
-    Data.OPT.mergePartitions = 1;
-    modelType = 'partitionedFmRun';
-    dims = EHY_getmodeldata_optimiseDims(dims);
-end
-
-%% Get the computational data
-switch modelType
-    case {'dfm','nc'}
-        %%  Delft3D-Flexible Mesh
-        % initialise start+count and optimise if possible
-        [dims,start,count] = EHY_getmodeldata_optimiseDims(dims);
-        
-        if ~isempty(strfind(OPT.varName,'ucx')) || ~isempty(strfind(OPT.varName,'ucy')) || ismember(OPT.varName,{'u','v'})
-            value_x   =  nc_varget(inputFile,strrep(OPT.varName,'ucy','ucx'),start-1,count);
-            value_y   =  nc_varget(inputFile,strrep(OPT.varName,'ucx','ucy'),start-1,count);
-        else
-            value     =  nc_varget(inputFile,OPT.varName,start-1,count);
-        end
-        
-        % initiate correct order if no_dims == 1
-        if numel(dims) == 1
-            if exist('value','var')
-                Data.val = NaN(dims.sizeOut,1);
-            elseif exist('value_x','var')
-                Data.vel_x = NaN(dims.sizeOut,1);
-                Data.vel_y = NaN(dims.sizeOut,1);
-            end
-        end
-        
-        % deal with deleted leading/trailing singleton dimensions
-        valueIndex = {dims.index};
-        while all(valueIndex{1}==1)
-            valueIndex(1) = [];
-        end
-        while all(valueIndex{end}==1)
-            valueIndex(end) = [];
-        end
-        
-        % put value(_x/_y) in output structure 'Data'
-        if exist('value','var')
-            Data.val(dims.indexOut) = value(valueIndex{:});
-        elseif exist('value_x','var')
-            Data.vel_x(dims.indexOut) = value_x(valueIndex{:});
-            Data.vel_y(dims.indexOut) = value_y(valueIndex{:});
-        end
-        
-        % If partitioned run, delete ghost cells
-        [~, name] = fileparts(inputFile);
-        varName = EHY_nameOnFile(inputFile,'FlowElemDomain');
-        if EHY_isPartitioned(inputFile,modelType) && nc_isvar(inputFile,varName) && exist('facesInd','var')
-            domainNr = str2num(name(end-7:end-4));
-            FlowElemDomain = ncread(inputFile,varName);
+    
+    %% Get the computational data
+    switch modelType
+        case {'dfm','nc'}
+            %%  Delft3D-Flexible Mesh
+            % initialise start+count and optimise if possible
+            [dims,start,count] = EHY_getmodeldata_optimiseDims(dims);
             
-            if isfield(Data,'val')
-                if facesInd == 1
-                    Data.val(FlowElemDomain ~= domainNr,:,:) = [];
-                elseif facesInd == 2
-                    Data.val(:,FlowElemDomain ~= domainNr,:) = [];
-                end
-            elseif isfield(Data,'vel_x')
-                if facesInd == 1
-                    Data.vel_x(FlowElemDomain ~= domainNr,:,:) = [];
-                    Data.vel_y(FlowElemDomain ~= domainNr,:,:) = [];
-                elseif facesInd == 2
-                    Data.vel_x(:,FlowElemDomain ~= domainNr,:) = [];
-                    Data.vel_y(:,FlowElemDomain ~= domainNr,:) = [];
+            if ~isempty(strfind(OPT.varName,'ucx')) || ~isempty(strfind(OPT.varName,'ucy')) || ismember(OPT.varName,{'u','v'})
+                value_x   =  nc_varget(inputFile,strrep(OPT.varName,'ucy','ucx'),start-1,count);
+                value_y   =  nc_varget(inputFile,strrep(OPT.varName,'ucx','ucy'),start-1,count);
+            else
+                value     =  nc_varget(inputFile,OPT.varName,start-1,count);
+            end
+            
+            % initiate correct order if no_dims == 1
+            if numel(dims) == 1
+                if exist('value','var')
+                    Data.val = NaN(dims.sizeOut,1);
+                elseif exist('value_x','var')
+                    Data.vel_x = NaN(dims.sizeOut,1);
+                    Data.vel_y = NaN(dims.sizeOut,1);
                 end
             end
-        end
-        
-        if isfield(Data,'vel_x')
-            Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
-            Data.vel_dir = mod(atan2(Data.vel_x,Data.vel_y)*180/pi,360);
-            Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
-        end
-        
-        if EHY_isCMEMS(inputFile) % [time,depth,lat,lon] to [time,lat,lon,depth]
-            if ndims(Data.val)==4
-                Data.val = permute(Data.val,[1 3 4 2]);
-                Data.val = flipud(Data.val);
-                dims = dims([1 3 4 2]); % to get correct [dimension-info]
+            
+            % deal with deleted leading/trailing singleton dimensions
+            valueIndex = {dims.index};
+            while all(valueIndex{1}==1)
+                valueIndex(1) = [];
             end
-        end
-        
-    case 'd3d'
-        %% Delft3D 4
-        trim = vs_use(inputFile,'quiet');
-        % needed for special cases
-        time_ind = dims(timeInd).index;    
-        m_ind = dims(mInd).index;
-        n_ind = dims(nInd).index;
-        
-        switch OPT.varName
-            case 'wd' % water depth, bed to wl
-                wl  = vs_let(trim,'map-series',{time_ind},'S1'  ,{n_ind,m_ind},'quiet');
-                dps = vs_let(trim,'map-const' ,{1}       ,'DPS0',{n_ind,m_ind},'quiet');
-                Data.val = wl+dps;
+            while all(valueIndex{end}==1)
+                valueIndex(end) = [];
+            end
+            
+            % put value(_x/_y) in output structure 'Data'
+            if exist('value','var')
+                Data.val(dims.indexOut) = value(valueIndex{:});
+            elseif exist('value_x','var')
+                Data.vel_x(dims.indexOut) = value_x(valueIndex{:});
+                Data.vel_y(dims.indexOut) = value_y(valueIndex{:});
+            end
+            
+            % If partitioned run, delete ghost cells
+            [~, name] = fileparts(inputFile);
+            varName = EHY_nameOnFile(inputFile,'FlowElemDomain');
+            if EHY_isPartitioned(inputFile,modelType) && nc_isvar(inputFile,varName) && exist('facesInd','var')
+                domainNr = str2num(name(end-7:end-4));
+                FlowElemDomain = ncread(inputFile,varName);
                 
-            case 'U1' % velocity
-                if dims(layersInd).size ~= 1 % 3D
-                    data = qpread(trim,1,'horizontal velocity','griddata',time_ind,m_ind,n_ind,dims(layersInd).index);
-                else % 2Dh
-                    data = qpread(trim,1,'depth averaged velocity','griddata',time_ind,m_ind,n_ind);
+                if isfield(Data,'val')
+                    if facesInd == 1
+                        Data.val(FlowElemDomain ~= domainNr,:,:) = [];
+                    elseif facesInd == 2
+                        Data.val(:,FlowElemDomain ~= domainNr,:) = [];
+                    end
+                elseif isfield(Data,'vel_x')
+                    if facesInd == 1
+                        Data.vel_x(FlowElemDomain ~= domainNr,:,:) = [];
+                        Data.vel_y(FlowElemDomain ~= domainNr,:,:) = [];
+                    elseif facesInd == 2
+                        Data.vel_x(:,FlowElemDomain ~= domainNr,:) = [];
+                        Data.vel_y(:,FlowElemDomain ~= domainNr,:) = [];
+                    end
                 end
-                %swap m/n because it is swapped back later on
-                if length(data.Time) == 1
-                    data.XComp = permute(data.XComp,[2 1 3]); data.YComp = permute(data.YComp,[2 1 3]);
-                else
-                    data.XComp = permute(data.XComp,[1 3 2 4]); data.YComp = permute(data.YComp,[1 3 2 4]);
-                end
-                Data.vel_x(dims.indexOut) = data.XComp; Data.vel_y(dims.indexOut) = data.YComp;
+            end
+            
+            if isfield(Data,'vel_x')
                 Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
                 Data.vel_dir = mod(atan2(Data.vel_x,Data.vel_y)*180/pi,360);
                 Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
-                                
-            case 'DP_BEDLYR' % sediment thickness
-                Data.val = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,2},'quiet');
-                
-            case {'TAUKSI','TAUETA','TAUMAX'} % bed shear
-                Data.val_x   = vs_let(trim,'map-series',{time_ind},OPT.varName,{n_ind,m_ind},'quiet');
-                Data.val_y   = vs_let(trim,'map-series',{time_ind},'TAUETA'   ,{n_ind,m_ind},'quiet');
-                Data.val_max = vs_let(trim,'map-series',{time_ind},'TAUMAX'   ,{n_ind,m_ind},'quiet');
-                Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
-                
-            otherwise % Apply generic approach
-                grp = char(vs_find(vs_use(inputFile,'quiet'), OPT.varName));
-                if ~isempty(strfind(grp,'-const'))
-                    dims(timeInd).index = 1; % const
-                end
-                time_ind  = {dims(1).index};
-                other_ind = {dims(2:end).index};
-                
-                if ~ismember(OPT.varName,{'SBUU','SSUU','SBUUA','SSUUA'})
-                    Data.val = vs_let(trim,grp,time_ind,OPT.varName,other_ind,'quiet');
-                else
-                    Data.val_x   = vs_let(trim,grp,time_ind,OPT.varName,other_ind,'quiet');
-                    Data.val_y   = vs_let(trim,grp,time_ind,strrep(OPT.varName,'U','V'),other_ind,'quiet');
-                    Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
-                end
-                
-                if strcmp(OPT.varName,'DPS0') % bedlevel (pos. up) loaded as DPS0 (pos. down)
-                    Data.val = -1*Data.val; % positive up
-                end
-        end
-        
-        if ~any(ismember({'val','vel_x','val_x'},fieldnames(Data)))
-            error('Couldn''t find any "%s"-data in %s',OPT.varName,inputFile)
-        end
-        
-        % get active/inactive mask
-        mask = vs_let(trim,'map-const',{1},'KCS',{n_ind,m_ind},'quiet');
-        mask(mask==0) = NaN;
-        mask = mask*0+1;
-        
-        % mask data and swap m,n-indices (from vs_let) from [n,m] to [time,m,n(,layers,sedimentFraction)]
-        fns = intersect(fieldnames(Data),{'val','vel_x','vel_y','vel_mag','vel_dir','val_x','val_y','val_max','val_mag'});
-        for iFns = 1:length(fns)
-            Data.(fns{iFns})(Data.(fns{iFns}) == -999) = NaN;
-            Data.(fns{iFns}) = Data.(fns{iFns}).*mask;
-            Data.(fns{iFns}) = permute(Data.(fns{iFns}),[1 3 2 4 5]);
-        end
-        dmy = dims(2); dims(2) = dims(3); dims(3) = dmy; % swap [n,m] to [m,n]
-        dmy = mInd; mInd = nInd; nInd = dmy;
-        
-        % delete ghost cells // aim: get same result as 'loaddata' from d3d_qp
-        for iFns = 1:length(fns)
-            % delete
-            if m_ind(1)==1; Data.(fns{iFns}) = Data.(fns{iFns})(:,2:end,:,:,:); end
-            if n_ind(1)==1; Data.(fns{iFns}) = Data.(fns{iFns})(:,:,2:end,:,:); end
-            % set to NaN
-            if m_ind(end)==dims(mInd).size; Data.(fns{iFns})(:,end,:,:,:) = NaN; end
-            if n_ind(end)==dims(nInd).size; Data.(fns{iFns})(:,:,end,:,:) = NaN; end
-        end
-        
-    case 'delwaq'
-        [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(inputFile);
-        if strcmpi(typeOfModelFileDetail,'map')
-            dw       = delwaq('open',inputFile);
-            subs_ind   = strmatch(OPT.varName,dw.SubsName);
-            [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(OPT.gridFile);
-            if ismember(typeOfModelFileDetail,{'lga','cco'})
-                dwGrid      = delwaq('open',OPT.gridFile);
-                Data.val = NaN([dims.sizeOut]); % allocate
-                
-                m_ind = dims(mInd).index;
-                n_ind = dims(nInd).index;
-                
-                for iT = 1:length(dims(timeInd).index)
-                    time_ind  = dims(timeInd).index(iT);
-                    [~,data]  = delwaq('read',dw,subs_ind,0,time_ind);
-                    data      = waq2flow3d(data,dwGrid.Index);
-                    Data.val(dims(timeInd).indexOut(iT),:,:,:) = data(m_ind,n_ind,dims(layersInd).index);
-                end
-                
-                % delete ghost cells
-                if n_ind(1)==1; Data.val = Data.val(:,2:end,:,:); end
-                if m_ind(1)==1; Data.val = Data.val(:,:,2:end,:); end
-                
-            elseif strcmp(typeOfModelFileDetail, 'nc')
-                no_segm_perlayer = dims(facesInd).size;
-                
-                if exist('layersInd','var') && ~isempty(layersInd)
-                    layer_ind = dims(layersInd).index;
-                else
-                    layer_ind = 1;
-                end
-                
-                segm_ind = ((layer_ind - 1) * no_segm_perlayer + 1):(layer_ind * no_segm_perlayer);
-                [~, data] = delwaq('read', dw, subs_ind, segm_ind, dims(timeInd).index);
-                Data.val = permute(data,[3 2 1]);
             end
             
-        elseif strcmpi(typeOfModelFileDetail,'sgf')
+            if EHY_isCMEMS(inputFile) % [time,depth,lat,lon] to [time,lat,lon,depth]
+                if ndims(Data.val)==4
+                    Data.val = permute(Data.val,[1 3 4 2]);
+                    Data.val = flipud(Data.val);
+                    dims = dims([1 3 4 2]); % to get correct [dimension-info]
+                end
+            end
             
-            gridInfo = EHY_getGridInfo(OPT.gridFile,'dimensions');
-            no_segm_perlayer = gridInfo.no_NetElem;
+        case 'd3d'
+            %% Delft3D 4
+            trim = vs_use(inputFile,'quiet');
+            % needed for special cases
+            time_ind = dims(timeInd).index;
+            m_ind = dims(mInd).index;
+            n_ind = dims(nInd).index;
             
-            layer_ind = OPT.layer;
-            segm_ind = ((layer_ind - 1) * no_segm_perlayer + 1):(layer_ind * no_segm_perlayer);
-            total_no_seg = OPT.sgfkmax * gridInfo.no_NetElem;
+            switch OPT.varName
+                case 'wd' % water depth, bed to wl
+                    wl  = vs_let(trim,'map-series',{time_ind},'S1'  ,{n_ind,m_ind},'quiet');
+                    dps = vs_let(trim,'map-const' ,{1}       ,'DPS0',{n_ind,m_ind},'quiet');
+                    Data.val = wl+dps;
+                    
+                case 'U1' % velocity
+                    if dims(layersInd).size ~= 1 % 3D
+                        data = qpread(trim,1,'horizontal velocity','griddata',time_ind,m_ind,n_ind,dims(layersInd).index);
+                    else % 2Dh
+                        data = qpread(trim,1,'depth averaged velocity','griddata',time_ind,m_ind,n_ind);
+                    end
+                    %swap m/n because it is swapped back later on
+                    if length(data.Time) == 1
+                        data.XComp = permute(data.XComp,[2 1 3]); data.YComp = permute(data.YComp,[2 1 3]);
+                    else
+                        data.XComp = permute(data.XComp,[1 3 2 4]); data.YComp = permute(data.YComp,[1 3 2 4]);
+                    end
+                    Data.vel_x(dims.indexOut) = data.XComp; Data.vel_y(dims.indexOut) = data.YComp;
+                    Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
+                    Data.vel_dir = mod(atan2(Data.vel_x,Data.vel_y)*180/pi,360);
+                    Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
+                    
+                case 'DP_BEDLYR' % sediment thickness
+                    Data.val = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,2},'quiet');
+                    
+                case {'TAUKSI','TAUETA','TAUMAX'} % bed shear
+                    Data.val_x   = vs_let(trim,'map-series',{time_ind},OPT.varName,{n_ind,m_ind},'quiet');
+                    Data.val_y   = vs_let(trim,'map-series',{time_ind},'TAUETA'   ,{n_ind,m_ind},'quiet');
+                    Data.val_max = vs_let(trim,'map-series',{time_ind},'TAUMAX'   ,{n_ind,m_ind},'quiet');
+                    Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
+                    
+                otherwise % Apply generic approach
+                    grp = char(vs_find(vs_use(inputFile,'quiet'), OPT.varName));
+                    if ~isempty(strfind(grp,'-const'))
+                        dims(timeInd).index = 1; % const
+                    end
+                    time_ind  = {dims(1).index};
+                    other_ind = {dims(2:end).index};
+                    
+                    if ~ismember(OPT.varName,{'SBUU','SSUU','SBUUA','SSUUA'})
+                        Data.val = vs_let(trim,grp,time_ind,OPT.varName,other_ind,'quiet');
+                    else
+                        Data.val_x   = vs_let(trim,grp,time_ind,OPT.varName,other_ind,'quiet');
+                        Data.val_y   = vs_let(trim,grp,time_ind,strrep(OPT.varName,'U','V'),other_ind,'quiet');
+                        Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
+                    end
+                    
+                    if strcmp(OPT.varName,'DPS0') % bedlevel (pos. up) loaded as DPS0 (pos. down)
+                        Data.val = -1*Data.val; % positive up
+                    end
+            end
             
-            data = delwaq_sgf('read',inputFile, total_no_seg, OPT.sgft0);
+            if ~any(ismember({'val','vel_x','val_x'},fieldnames(Data)))
+                error('Couldn''t find any "%s"-data in %s',OPT.varName,inputFile)
+            end
             
-            Data.times = data.Date';
-            [Data,time_ind] = EHY_getmodeldata_time_index(Data,OPT);
+            % get active/inactive mask
+            mask = vs_let(trim,'map-const',{1},'KCS',{n_ind,m_ind},'quiet');
+            mask(mask==0) = NaN;
+            mask = mask*0+1;
             
-            Data.val = data.data(time_ind,segm_ind);
+            % mask data and swap m,n-indices (from vs_let) from [n,m] to [time,m,n(,layers,sedimentFraction)]
+            fns = intersect(fieldnames(Data),{'val','vel_x','vel_y','vel_mag','vel_dir','val_x','val_y','val_max','val_mag'});
+            for iFns = 1:length(fns)
+                Data.(fns{iFns})(Data.(fns{iFns}) == -999) = NaN;
+                Data.(fns{iFns}) = Data.(fns{iFns}).*mask;
+                Data.(fns{iFns}) = permute(Data.(fns{iFns}),[1 3 2 4 5]);
+            end
+            dmy = dims(2); dims(2) = dims(3); dims(3) = dmy; % swap [n,m] to [m,n]
+            dmy = mInd; mInd = nInd; nInd = dmy;
             
-            dims(1).name = 'time';
-            dims(2).name = 'segments';
+            % delete ghost cells // aim: get same result as 'loaddata' from d3d_qp
+            for iFns = 1:length(fns)
+                % delete
+                if m_ind(1)==1; Data.(fns{iFns}) = Data.(fns{iFns})(:,2:end,:,:,:); end
+                if n_ind(1)==1; Data.(fns{iFns}) = Data.(fns{iFns})(:,:,2:end,:,:); end
+                % set to NaN
+                if m_ind(end)==dims(mInd).size; Data.(fns{iFns})(:,end,:,:,:) = NaN; end
+                if n_ind(end)==dims(nInd).size; Data.(fns{iFns})(:,:,end,:,:) = NaN; end
+            end
             
-        end
-        Data.val(Data.val == -999) = NaN;
-        
-    case 'simona'
-        %% SIMONA (WAQUA/TRIWAQ)
-        % to be implemented
-        
+        case 'delwaq'
+            [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(inputFile);
+            if strcmpi(typeOfModelFileDetail,'map')
+                dw       = delwaq('open',inputFile);
+                subs_ind   = strmatch(OPT.varName,dw.SubsName);
+                [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(OPT.gridFile);
+                if ismember(typeOfModelFileDetail,{'lga','cco'})
+                    dwGrid      = delwaq('open',OPT.gridFile);
+                    Data.val = NaN([dims.sizeOut]); % allocate
+                    
+                    m_ind = dims(mInd).index;
+                    n_ind = dims(nInd).index;
+                    
+                    for iT = 1:length(dims(timeInd).index)
+                        time_ind  = dims(timeInd).index(iT);
+                        [~,data]  = delwaq('read',dw,subs_ind,0,time_ind);
+                        data      = waq2flow3d(data,dwGrid.Index);
+                        Data.val(dims(timeInd).indexOut(iT),:,:,:) = data(m_ind,n_ind,dims(layersInd).index);
+                    end
+                    
+                    % delete ghost cells
+                    if n_ind(1)==1; Data.val = Data.val(:,2:end,:,:); end
+                    if m_ind(1)==1; Data.val = Data.val(:,:,2:end,:); end
+                    
+                elseif strcmp(typeOfModelFileDetail, 'nc')
+                    no_segm_perlayer = dims(facesInd).size;
+                    
+                    if exist('layersInd','var') && ~isempty(layersInd)
+                        layer_ind = dims(layersInd).index;
+                    else
+                        layer_ind = 1;
+                    end
+                    
+                    segm_ind = ((layer_ind - 1) * no_segm_perlayer + 1):(layer_ind * no_segm_perlayer);
+                    [~, data] = delwaq('read', dw, subs_ind, segm_ind, dims(timeInd).index);
+                    Data.val = permute(data,[3 2 1]);
+                end
+                
+            elseif strcmpi(typeOfModelFileDetail,'sgf')
+                
+                gridInfo = EHY_getGridInfo(OPT.gridFile,'dimensions');
+                no_segm_perlayer = gridInfo.no_NetElem;
+                
+                layer_ind = OPT.layer;
+                segm_ind = ((layer_ind - 1) * no_segm_perlayer + 1):(layer_ind * no_segm_perlayer);
+                total_no_seg = OPT.sgfkmax * gridInfo.no_NetElem;
+                
+                data = delwaq_sgf('read',inputFile, total_no_seg, OPT.sgft0);
+                
+                Data.times = data.Date';
+                [Data,time_ind] = EHY_getmodeldata_time_index(Data,OPT);
+                
+                Data.val = data.data(time_ind,segm_ind);
+                
+                dims(1).name = 'time';
+                dims(2).name = 'segments';
+                
+            end
+            Data.val(Data.val == -999) = NaN;
+            
+        case 'simona'
+            %% SIMONA (WAQUA/TRIWAQ)
+            % to be implemented
+            
+    end
+    
+    %% add dimension information to Data
+    % dimension information
+    dimensionsComment = {dims.name};
+    fn = char(intersect(fieldnames(Data),{'val','vel_x','val_x'}));
+    while ~isempty(fn) && ndims(Data.(fn)) < numel(dimensionsComment)
+        dimensionsComment(end) = [];
+    end
+    
+    % add to Data-struct
+    dimensionsComment = sprintf('%s,',dimensionsComment{:});
+    Data.dimensions = ['[' dimensionsComment(1:end-1) ']'];
 end
-
-%% add dimension information to Data
-% dimension information
-dimensionsComment = {dims.name};
-fn = char(intersect(fieldnames(Data),{'val','vel_x','val_x'}));
-while ~isempty(fn) && ndims(Data.(fn)) < numel(dimensionsComment)
-    dimensionsComment(end) = [];
-end
-
-% add to Data-struct
-dimensionsComment = sprintf('%s,',dimensionsComment{:});
-Data.dimensions = ['[' dimensionsComment(1:end-1) ']'];
 
 %% Fill output struct
 Data.OPT               = OPT;
 Data.OPT.inputFile     = inputFile;
 
-if nargout==1
-    varargout{1} = Data;
+if strcmp(varNameInput,'chl')
+    Data.val = 1000.*saco_convert(Data.val,27); % 1000: from g/kg to mg/l
 end
+
+%% Assign output to varargout
+varargout{1} = Data;
+if nargout == 2 varargout{2} = gridInfo; end
 
 end
