@@ -15,6 +15,9 @@ if nargin >= 2
 else
     add_inf = nesthd_additional( );
 end
+if isfield(add_inf,'do_hydro')==0
+    add_inf.do_hydro=true;
+end
 
 if nargin >= 3
     OPT = varargin{3};
@@ -55,24 +58,27 @@ kmax        = gen_inf.kmax;
 lstci       = gen_inf.lstci;
 notims      = gen_inf.notims;
 
-%% Generate hydrodynamic boundary conditions
-[bndval,error]      = nesthd_dethyd(fid_adm,bnd,gen_inf,add_inf,files{3});
-if error return; end
+%% HYDRODYNAMIC BC
+if add_inf.do_hydro
+    %% Generate hydrodynamic boundary conditions
+    [bndval,error]      = nesthd_dethyd(fid_adm,bnd,gen_inf,add_inf,files{3});
+    if error return; end
 
-%% Vertical interpolation, temporary, not correct place, should be done inside dethyd
-if isfield(add_inf,'interpolate_z')
-    bndtype         = {bnd.DATA(:).bndtype};
-    det_inf         = nesthd_get_general  (add_inf.interpolate_z);
-    bndval          = nesthd_interpolate_z(bndtype,bndval,gen_inf.rel_pos(1,:), det_inf.rel_pos);
+    %% Vertical interpolation, temporary, not correct place, should be done inside dethyd
+    if isfield(add_inf,'interpolate_z')
+        bndtype         = {bnd.DATA(:).bndtype};
+        det_inf         = nesthd_get_general  (add_inf.interpolate_z);
+        bndval          = nesthd_interpolate_z(bndtype,bndval,gen_inf.rel_pos(1,:), det_inf.rel_pos);
+    end
+
+    %% Generate depth averaged bc from 3D simulation
+    [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
+
+    %% Write the hydrodynamic boundary conditions to file
+    nesthd_wrihyd (files{4},bnd,gen_inf,bndval, add_inf);
+
+    clear bndval
 end
-
-%% Generate depth averaged bc from 3D simulation
-[bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
-
-%% Write the hydrodynamic boundary conditions to file
-nesthd_wrihyd (files{4},bnd,gen_inf,bndval, add_inf);
-
-clear bndval
 
 %% Generate transport bc if avaialble on history file
 if lstci > 0
