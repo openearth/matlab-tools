@@ -63,6 +63,7 @@ OPT.height = 1;
 OPT.period = 1;
 OPT.direction = 1;
 OPT.wind = 0;
+OPT.qb = 0;
 
 if nargin > 3
     OPT = setproperty(OPT,varargin{4:end});
@@ -79,7 +80,7 @@ H.y        = G.cor.y  (n,m);
 H.datenum  = vs_time(S,0,1);
 
 if OPT.wind
-    disp('loading wind data from wavm...')
+    disp('reading wind data from wavm...')
     H.WIND = qpread(S,'wind velocity','data',0,H.m,H.n);
     H.WIND.Mag = hypot(H.WIND.XComp,H.WIND.YComp);
 end
@@ -92,10 +93,10 @@ end
 % hold on;
 % plot(H.x,H.y,'o')
 % % plot(wind.X,wind.Y,'rx')
-% 
+%
 % figure;
 % plot(wind.Time,wind.Mag)
-% 
+%
 %% Parameters
 if OPT.height
     disp('reading wave height data from wavm...')
@@ -103,15 +104,18 @@ if OPT.height
     H.DEPTH = vs_let(S,'map-series','DEPTH',{[ m ],[ n ]});
 end
 if OPT.direction
-    disp('reading wave direction data from wavm...')    
+    disp('reading wave direction data from wavm...')
     H.DIR = vs_let(S,'map-series','DIR',{[ m ],[ n ]});
     H.DSPR = vs_let(S,'map-series','DSPR',{[ m ],[ n ]});       % directional spread of the waves
     H.DIR = vs_let(S,'map-series','DIR',{[ m ],[ n ]});         % mean wave direction
     H.PDIR = vs_let(S,'map-series','PDIR',{[ m ],[ n ]});       % peak wave direction
+end
+if OPT.qb
+    disp('reading fraction of breaking waves data from wavm...')    
     H.QB = vs_let(S,'map-series','QB',{[ m ],[ n ]});           % the fraction of breaking waves
 end
 if OPT.period
-    disp('reading wave direction data from wavm...')    
+    disp('reading wave period data from wavm...')
     H.PERIOD = vs_let(S,'map-series','PERIOD',{[ m ],[ n ]});   % mean wave period
     H.RTP = vs_let(S,'map-series','RTP',{[ m ],[ n ]});         % relative peak wave period
     H.TP = vs_let(S,'map-series','TP',{[ m ],[ n ]});           % peak wave period
