@@ -87,27 +87,33 @@ ext = dflowfm_io_extfile('read',ext_file);
 extInd = [strmatch('discharge_',{ext.quantity}); strmatch('lateraldischarge',{ext.quantity})];
 pli_files = {ext.filename};
 pli_files = pli_files(extInd);
-pli_files = EHY_getFullWinPath(pli_files,fileparts(fileMdu));
+pli_files = EHY_getFullWinPath(pli_files,fileparts(ext_file));
 
 %  time series from discharge tim files (interpolate to t_bc)
 for i_file = 1:length(pli_files)
     pli_file = pli_files{1,i_file};
     [pathstr, name, ex] = fileparts(pli_file);
     if strncmp(ex,'.pli',4) % .pli- or .pliz-file
-        tim_file = [pathstr filesep name '.tim'];
+        tim_file{i_file} = [pathstr filesep name '.tim'];
     elseif strcmp(ex,'.pol') % .pol (lateraldischarge)
-        tim_file = [pathstr filesep name '.tim'];
-        if ~exist(tim_file,'file') % .pol is still/used to be linked to *_0001.tim
-            tim_file = [pathstr filesep name '_0001.tim'];
+        tim_file{i_file} = [pathstr filesep name '.tim'];
+        if ~exist(tim_file{i_file},'file') % .pol is still/used to be linked to *_0001.tim
+            tim_file{i_file} = [pathstr filesep name '_0001.tim'];
         end
     end
     pli_names{1,i_file} = name;
-            
-    %% read tim file
-    raw = importdata(tim_file);
-    data = raw.data;
-    data     (:,1     ) = data(:,1)/1440.0 + ref_date; % time from min. from ref_date to MATLAB-times
-    data_intp(:,i_file) = interp1( data(:,1) , data(:,2) , t_bc);
+end
+
+%% read tim files (when the file name/directory does not contail "correc' 
+nr_file = 0;
+for i_file = 1: length(pli_files)
+    if ~contains(lower(pli_files{i_file}),'correc')
+        nr_file = nr_file + 1;
+        raw = importdata(tim_file{i_file});
+        data = raw.data;
+        data     (:,1     ) = data(:,1)/1440.0 + ref_date; % time from min. from ref_date to MATLAB-times
+        data_intp(:,nr_file) = interp1( data(:,1) , data(:,2) , t_bc);
+    end
 end
 
 %% Discharges associated with water level variations
