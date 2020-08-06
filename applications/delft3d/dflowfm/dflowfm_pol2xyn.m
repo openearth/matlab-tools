@@ -31,7 +31,7 @@ function dflowfm_pol2xyn(DirPol,obsNameStart)
 %% reading
 obs = landboundary('read',DirPol);
 
-%% wirting xyn file
+%% writing xyn file
 fid  =  fopen([DirPol(1:end-3),'xyn'],'w+');
 for oo = 1:size(obs,1)
    fprintf(fid,'%s \n',[num2str(obs(oo,1)),'  ',num2str(obs(oo,2)),' ''',obsNameStart,'_',num2str(oo,'%03i'),''' ']);

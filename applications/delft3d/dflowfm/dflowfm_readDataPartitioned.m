@@ -1,4 +1,4 @@
-function data = dflowfm_readDataPartitioned(mapFiles,varName,IDdims,grd)
+function data = dflowfm_readDataPartitioned(mapFiles,varName,IDdims,grd,checkGhostCells)
 
 % dflowfm_readDataPartitioned reads data from both sequential as
 % partitioned Delft3D-FM model output files. When the output is partitioned,
@@ -25,54 +25,59 @@ function data = dflowfm_readDataPartitioned(mapFiles,varName,IDdims,grd)
 %    grd = grd = dflowfm_readNetPartitioned(mapFiles);
 %    data = dflowfm_readDataPartitioned(mapFiles,'mesh2d_sa1',{1,0,1},grd);
 
-
 if nargin < 4
     checkGhostCells = 0;
-else
+elseif ~exist('checkGhostCells','var')
     checkGhostCells = 1;
 end
 
 IDdimsReal = IDdims;
 
 for mm = 1:length(mapFiles)
-    varInfo = nc_getvarinfo([mapFiles(mm).folder,filesep,mapFiles(mm).name],varName);
-    
-    % set requested indices for each dimension
-    startID = [];
-    lengthID = [];
-    for dd = 1:size(varInfo.Size,2)
-        if length(IDdims) >= dd
-            if IDdims{dd} == 0
+    if nc_isvar([mapFiles(mm).folder,filesep,mapFiles(mm).name],varName)
+        disp(['Reading: ',mapFiles(mm).name,': ',varName])
+        
+        varInfo = nc_getvarinfo([mapFiles(mm).folder,filesep,mapFiles(mm).name],varName);
+        
+        % set requested indices for each dimension
+        startID = [];
+        lengthID = [];
+        for dd = 1:size(varInfo.Size,2)
+            if length(IDdims) >= dd
+                if IDdims{dd} == 0
+                    IDdimsReal{dd} = 1:varInfo.Size(dd);
+                end
+            else
                 IDdimsReal{dd} = 1:varInfo.Size(dd);
             end
+            startID = [startID IDdimsReal{dd}(1)-1];
+            lengthID = [lengthID length(IDdimsReal{dd})];
+        end
+        
+        dimensionsSequence = [1:length(varInfo.Dimension)];
+        if find(~cellfun('isempty',regexp(varInfo.Dimension,'time')))
+            IDtime = find(~cellfun('isempty',regexp(varInfo.Dimension,'time')));
+            if lengthID(IDtime) > 1
+                dimensionsSequence(1:2) = [2 1];
+            end
+        end
+        
+        dataPartition = nc_varget([mapFiles(mm).folder,filesep,mapFiles(mm).name],varName,startID,lengthID);
+        if min(diff(dimensionsSequence)) < 0
+            dataPartition = permute(dataPartition,dimensionsSequence);
+        end
+        
+        if mm == 1
+            data = dataPartition;
         else
-            IDdimsReal{dd} = 1:varInfo.Size(dd);
+            try
+                data = [data;dataPartition];
+            catch
+                error('data cannot be concatenated. Probably caused by different nc_varget function. This function is based on the nc_varget from OEtools.')
+            end
         end
-        startID = [startID IDdimsReal{dd}(1)-1];
-        lengthID = [lengthID length(IDdimsReal{dd})];
-    end
-    
-    dimensionsSequence = [1:length(varInfo.Dimension)];
-    if find(~cellfun('isempty',regexp(varInfo.Dimension,'time')))
-        IDtime = find(~cellfun('isempty',regexp(varInfo.Dimension,'time')));
-        if lengthID(IDtime) > 1
-            dimensionsSequence(1:2) = [2 1];
-        end
-    end
-    
-    dataPartition = nc_varget([mapFiles(mm).folder,filesep,mapFiles(mm).name],varName,startID,lengthID);
-    if min(diff(dimensionsSequence)) < 0
-        dataPartition = permute(dataPartition,dimensionsSequence);
-    end
-    
-    if mm == 1
-        data = dataPartition;
     else
-        try
-            data = [data;dataPartition];
-        catch
-            error('data cannot be concatenated. Probably caused by different nc_varget function. This function is based on the nc_varget from OEtools.')
-        end
+        disp(['Reading: ',mapFiles(mm).name,': ',varName,' was not found'])
     end
 end
 
