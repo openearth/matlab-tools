@@ -110,7 +110,7 @@ dataArray0 = dataArray;
 
 for i=1:length(dataArray)
     if iscell(dataArray{i})
-    dataArray{i} = {dataArray{i}{mask}};
+    dataArray{i} = {dataArray{i}{mask}}';
     else
     dataArray{i} = dataArray{i}(mask);
     end
