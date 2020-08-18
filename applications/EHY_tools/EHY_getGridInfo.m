@@ -937,7 +937,7 @@ if ismember(modelType,{'d3d','delwaq'}) && ismember(typeOfModelFileDetail,{'trim
     end
 end
 % SFINCS
-if EHY_isSFINCS(inputFile)
+if EHY_isSFINCS(inputFile) && exist('E','var')
     if isfield(E,'Xcen') && ~all(OPT.m==0)
         E.Xcen = E.Xcen(OPT.m,:); E.Ycen = E.Ycen(OPT.m,:);
     end

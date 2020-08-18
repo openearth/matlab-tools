@@ -402,6 +402,6 @@ end
 
 %% Assign output to varargout
 varargout{1} = Data;
-if nargout == 2 varargout{2} = gridInfo; end
-
+if nargout == 2 
+    varargout{2} = gridInfo;
 end
