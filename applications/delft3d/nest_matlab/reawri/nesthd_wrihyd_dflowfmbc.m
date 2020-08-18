@@ -83,8 +83,14 @@ for i_pnt = 1: no_pnt
                     format                                = repmat('%6.3f ',1,no_layers);
                     ext_force(l_act).Keyword.Name {end+1} = 'Vertical position specification';
                     ext_force(l_act).Keyword.Value{end+1} = sprintf(format,pos);
-                else
-                    error('Fixed or mixed layers not supported yet')
+                else %JV
+                    disp('Warning: Fixed or mixed layers (z and z-sigma) not properly checked yet')
+                    ext_force(l_act).Keyword.Name {end+1} = 'Vertical position type         ';
+                    ext_force(l_act).Keyword.Value{end+1} = 'zdatum';
+                    format                                = repmat('%6.3f ',1,no_layers);
+                    ext_force(l_act).Keyword.Name {end+1} = 'Vertical position specification';
+                    pos_z = bndval(1).zvals(i_pnt,:); %take z layers on first timestep, all are equal
+                    ext_force(l_act).Keyword.Value{end+1} = sprintf(format,pos_z);
                 end
             end
             

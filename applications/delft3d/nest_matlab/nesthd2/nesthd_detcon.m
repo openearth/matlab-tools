@@ -119,6 +119,22 @@ for l = 1:lstci
                     end
                 end
             end
+            
+            %% JV: for 3D dfm z-layer models, the z should also be coupled. The constituent value is overwritten and no weighing applied because z values are not correctly written to his file (should be tetrissed)
+            if strcmpi(nfs_inf.layer_model,'z-model') && strcmpi(nfs_inf.from,'dfm') %JV
+                [weight_max,weight_maxid] = max(weight);
+                warning('z-layer model nesting currently only supports nearest neighbour, so make sure your support points are close to cell centers.\nThe used weight should be close to 1.00, it is %.2f',weight_max)
+                data_selpoint    = conc(:,weight_maxid,:);
+                data_zcoord      = EHY_getmodeldata(fileInp,mnnes(weight_maxid),modelType,'varName','Zcen_int','t0',t0,'tend',t0);%+1 if nans should be created
+                data_zcoord_val  = squeeze(data_zcoord.Zcen_cen(1,:,:));
+                data_zcoord_nonan= ~isnan(data_zcoord_val);
+                for itim = 1: notims
+                    %temp_zvals(i_pnt,:,l) = nansum(squeeze(data_zcoord_val(itim,:,:)).*weight',1);%STILL CORRECT THIS STILL FOR TETRIS THING, should be close to squeezed values
+                    %bndval(itim).value(i_pnt,:,iL) = nansum(squeeze(conc(itim,:,:)).*weight',1); %STILL CORRECT THIS STILL FOR TETRIS THING
+                    bndval(itim).value(i_pnt,:,l) = conc(itim,weight_maxid,:);
+                end
+                bndval(1).zvals(i_pnt,:) = data_zcoord_val(data_zcoord_nonan); %write z values on first timestep only
+            end
         end
     end
 end
