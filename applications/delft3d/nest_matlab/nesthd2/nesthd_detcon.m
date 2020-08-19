@@ -123,7 +123,7 @@ for l = 1:lstci
             %% JV: for 3D dfm z-layer models, the z should also be coupled. The constituent value is overwritten and no weighing applied because z values are not correctly written to his file (should be tetrissed)
             if strcmpi(nfs_inf.layer_model,'z-model') && strcmpi(nfs_inf.from,'dfm') %JV
                 [weight_max,weight_maxid] = max(weight);
-                warning('z-layer model nesting currently only supports nearest neighbour, so make sure your support points are close to cell centers.\nThe used weight should be close to 1.00, it is %.2f',weight_max)
+                warning('z-layer model nesting currently only supports nearest neighbour, so make sure your support points are close to cell centers.\nThe used weight should be close to 1.000, it is %.3f',weight_max)
                 data_selpoint    = conc(:,weight_maxid,:);
                 data_zcoord      = EHY_getmodeldata(fileInp,mnnes(weight_maxid),modelType,'varName','Zcen_int','t0',t0,'tend',t0);%+1 if nans should be created
                 data_zcoord_val  = squeeze(data_zcoord.Zcen_cen(1,:,:));
