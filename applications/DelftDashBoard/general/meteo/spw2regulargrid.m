@@ -1,4 +1,4 @@
-function [t,ug,vg,pg,varargout]=spw2regulargrid(spwfile,xg,yg,dt,varargin)
+function [t,ug,vg,pg,frac,prcpg]=spw2regulargrid(spwfile,xg,yg,dt,varargin)
 % Interpolates data from spiderweb file onto rectangular grid
 % 
 % e.g.
@@ -151,8 +151,9 @@ for it=1:nt
     end
 end
 
-varargout{1}=frac;
-if precipitation == 1
-    varargout{2}=prcpg;
-end
+% varargout{1}=frac;
+% if precipitation == 1
+%     varargout{2}=prcpg;
+% end
+
 

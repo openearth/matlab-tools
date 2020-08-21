@@ -1,4 +1,4 @@
-function [xg_save,yg_save,zg_save,msk,indices] = sfincs_make_subgrid_file_external_test_improvement(dr,bathy,grid,varargin)
+function [xg_save,yg_save,zg_save,msk,indices,subgrd] = sfincs_make_subgrid_file_external(dr,bathy,grid,varargin)
 % Makes SFINCS subgrid file external of DDB using already merged topobathy struct (can still be from DDB)
 %
 % E.g.:
@@ -8,7 +8,8 @@ function [xg_save,yg_save,zg_save,msk,indices] = sfincs_make_subgrid_file_extern
                                      % best practice: avoid NaNs and for speedup make x/y extend bigger than wanted flux grid (extrapolation is expensive), but only as little as possible 
                                      % the script can deal with these things but efficiency is reduced
 % grid:                              % struct of wanted flux grid containing 'x' and 'y', can be refined or coarsened still  
-                                     % grid cannot be rotated yet!   
+                                     % option to add '.msk' as well if current msk needs to be re-used, should be same size as wanted grid (after refining/coarsening)
+                                     % grid cannot be rotated yet when derefine_factor_grid or refine_factor_grid are > 0!   
                                      % no coordinate conversion included so bathy and grid should both be in same projected coordinate system
 % sfincs_make_subgrid_file_external(dr,bathy,grid)
 % sfincs_make_subgrid_file_external(dr,bathy,grid,'derefine_sbg_x',20,'derefine_sbg_y',20,'derefine_factor_grid',2,'zlev',[-2 150]
@@ -127,17 +128,19 @@ if ~exist([dr,'\xgygzg.mat']) %load saved file
             % cell indices
             if ii == iiend
                 ic2 = size(bathy.x,1);
+                ic1 = ic2- 1;
             else
+                ic1=(ii-1)*500+1;                
                 ic2=(ii  )*500;
             end      
             if jj == jjend
                 jc2 = size(bathy.x,2);
+                jc1 = jc2-1;
             else
+                jc1=(jj-1)*500+1;                
                 jc2=(jj  )*500;
             end        
 
-            ic1=(ii-1)*500+1;
-            jc1=(jj-1)*500+1;
 
             xxx = bathy.x(ic1:ic2,jc1:jc2);
             yyy = bathy.y(ic1:ic2,jc1:jc2);
@@ -209,9 +212,14 @@ disp(['Used grid size of flux grid is dx= ',num2str(dx),' and dy= ',num2str(dy)]
 disp(['Used grid size of subgrid pixels is dx= ',num2str(dif),' and dy= ',num2str(djf)])
 
 %% Create a mask
-
-msk = sfincs_make_mask(xg,yg,zg,zlev,'includepolygon', xy, 'excludepolygon', xy_ex); % nothing happens if xy.length= 0 (or xy_ex)        
-    
+if isempty(grid.msk)
+    msk = sfincs_make_mask(xg,yg,zg,zlev,'includepolygon', xy, 'excludepolygon', xy_ex); % nothing happens if xy.length= 0 (or xy_ex)        
+else
+    msk = grid.msk;
+    if size(msk,1) ~= size(zg_save,1) || size(msk,2) ~= size(zg_save,2)
+       error('Supplied msk matrix does not have the same size as wanted grid! > Check grid.msk input ')
+    end
+end
 %% Make subgrid file
 if subgrid == 1
 

@@ -1,8 +1,8 @@
 function msk=sfincs_make_mask(x,y,z,zlev,varargin)
 % Leijnse april 18: included option to exclude points via polygon input
 
-xy=[];
-xy_ex=[];
+xy.length = 0;
+xy_ex.length = 0;
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})
