@@ -81,6 +81,10 @@ switch modelType
             dims(end+1).name = 'layers';
         end
         
+        if strcmp(typeOfModelFileDetail,'trih') && length(Size)>=2 && Size(2) == KMAX+1
+            dims(end+1).name = 'interfaces';
+        end
+        
         % constituent/concentration (incl. Salinity and Temperature)
         if exist('requestedVarIsConstit','var')
             if length(Size)>=3 && Size(end) == length(NAMCON)
@@ -159,6 +163,7 @@ if nargout > 1
     dimsInd.stations = find(ismember({dims(:).name},{'stations','cross_section','general_structures'}));
     dimsInd.time = find(ismember({dims(:).name},'time'));
     dimsInd.layers = find(ismember({dims(:).name},{'layers','laydim','nmesh2d_layer','mesh2d_nLayers','depth'})); % depth is needed for cmems
+    dimsInd.interfaces = find(ismember({dims(:).name},'interfaces')); % depth is needed for cmems
     dimsInd.faces = find(ismember({dims(:).name},{'faces','nmesh2d_face','mesh2d_nFaces','nFlowElem','nNetElem'}));
     dimsInd.m = find(ismember({dims(:).name},{'m','edge_m'})); % structured grid
     dimsInd.n = find(ismember({dims(:).name},{'n','edge_n'}));
@@ -188,11 +193,20 @@ if nargout > 2
     end
     
     %% Get layer information and type of vertical schematisation
+    if isempty(dimsInd.layers) && ~isempty(dimsInd.interfaces) % properties at vertical interfaces
+        dimsInd.layers = dimsInd.interfaces;
+        dimsInd = rmfield(dimsInd,'interfaces');
+        dims(dimsInd.layers).name = 'layers';
+        interfaceProperty = 1;
+    end
     if ~isempty(dimsInd.layers)
         if exist('gridFile','var')
             gridInfo                  = EHY_getGridInfo(inputFile,{'no_layers','layer_model'},'mergePartitions',0,'gridFile',gridFile);
         else
             gridInfo                  = EHY_getGridInfo(inputFile,{'no_layers','layer_model'},'mergePartitions',0);
+        end
+        if exist('interfaceProperty','var')
+            gridInfo.no_layers = gridInfo.no_layers + 1;
         end
         OPT                           = EHY_getmodeldata_layer_index(OPT,gridInfo,modelType);
         dims(dimsInd.layers).index    = OPT.layer';
