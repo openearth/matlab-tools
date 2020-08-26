@@ -1,0 +1,13 @@
+clear
+% Step 1 Area selection:
+%   Step 2 Interpolation:
+    inputJson = '{"xVar":{},"selectYdata":{},"step1InterpType":{},"select-z-data":{},"interpTypeOpt":{},"step2-values":{},"layers":{},"minval":{},"maxval":{},"data":{"xVar":"SedConc","yVar":"VelX","interpType":"area","zVar":"SedConc","step2InterpType":"interpolation","extraValues":"4 8 1 5 6","referenceSystem":"standard","coefficients":[{"dy":0.5,"dx":0.5,"yEnd":3,"yStart":0,"xEnd":3,"xStart":0,"name":"point 1"},{"dy":0.5,"dx":0.5,"yEnd":3,"yStart":0,"xEnd":3,"xStart":0,"name":"point 2"},{"dy":0.5,"dx":0.5,"yEnd":3,"yStart":0,"xEnd":3,"xStart":0,"name":"point 4"},{"dy":0.5,"dx":0.5,"yEnd":3,"yStart":0,"xEnd":3,"xStart":0,"name":"point 4"},{}]},"source":{"subsetName":"namee","source":"D:\\MyWorkData\\matfiles\\longTermAdcp.mat","selectedFiles":"D:\\MyWorkData\\matfiles\\longTermAdcp.mat"},"dataType":"interpolation"}';
+    
+%   Step 2 Selection:
+%     inputJson = '{"xVar":{},"selectYdata":{},"step1InterpType":{},"select-z-data":{},"interpTypeOpt":{},"step2-values":{},"layers":{},"minval":{},"maxval":{},"data":{"xVar":"SedConc","yVar":"VelX","interpType":"area","zVar":"SedConc","step2InterpType":"selection","extraValues":"4 8 1 5 6","referenceSystem":"standard","coefficients":[{"dy":2,"dx":1,"yEnd":70,"yStart":50,"xEnd":10,"xStart":1,"name":"point 1"},{"dy":2,"dx":1,"yEnd":72,"yStart":52,"xEnd":11,"xStart":2,"name":"point 2"},{"dy":2,"dx":1,"yEnd":74,"yStart":54,"xEnd":12,"xStart":3,"name":"point 3"},{"dy":2,"dx":1,"yEnd":76,"yStart":56,"xEnd":13,"xStart":4,"name":"point 4"},{}],"layer":"5"},"source":{"subsetName":"namee","source":"D:\\MyWorkData\\matfiles\\longTermAdcp.mat","selectedFiles":"D:\\MyWorkData\\matfiles\\longTermAdcp.mat"},"dataType":"interpolation"}';
+    
+%   Step 3 Depth average:
+%     inputJson = '{"xVar":{},"selectYdata":{},"step1InterpType":{},"select-z-data":{},"interpTypeOpt":{},"step2-values":{},"layers":{},"minval":{},"maxval":{},"data":{"xVar":"SedConc","yVar":"VelX","interpType":"area","zVar":"SedConc","step2InterpType":"depthAverage","extraValues":"4 8 1 5 6","referenceSystem":"standard","coefficients":[{"dy":2,"dx":1,"yEnd":70,"yStart":50,"xEnd":10,"xStart":1,"name":"point 1"},{"dy":2,"dx":1,"yEnd":72,"yStart":52,"xEnd":11,"xStart":2,"name":"point 2"},{"dy":2,"dx":1,"yEnd":74,"yStart":54,"xEnd":12,"xStart":3,"name":"point 3"},{"dy":2,"dx":1,"yEnd":76,"yStart":56,"xEnd":13,"xStart":4,"name":"point 4"},{}],"layer":"5","minValue":"10","maxValue":"20"},"source":{"subsetName":"namee","source":"D:\\MyWorkData\\matfiles\\longTermAdcp.mat","selectedFiles":"D:\\MyWorkData\\matfiles\\longTermAdcp.mat"},"dataType":"interpolation"}';
+    
+    
+    executeGenerateSubset(inputJson, 0);
