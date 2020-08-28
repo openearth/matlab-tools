@@ -81,7 +81,7 @@ switch modelType
             dims(end+1).name = 'layers';
         end
         
-        if strcmp(typeOfModelFileDetail,'trih') && length(Size)>=2 && Size(2) == KMAX+1
+        if strcmp(typeOfModelFileDetail,'trih') && length(Size)>=2 && KMAX > 1 && Size(2) == KMAX+1
             dims(end+1).name = 'interfaces';
         end
         
@@ -94,10 +94,15 @@ switch modelType
         
         % sediment fractions
         if ismember('NAMSED',{d3d.ElmDef.Name})
-            NAMSED = squeeze(vs_let(vs_use(inputFile,'quiet'),grp,'NAMSED','quiet'));
+            NAMSED = squeeze(vs_let(d3d,grp,'NAMSED','quiet'));
             if size(NAMSED,2) > 1 && Size(end) == size(NAMSED,1)
                 dims(end+1).name = 'sedimentFraction';
             end
+        end
+        
+        % turbulence 
+        if strcmpi(OPT.varName,'ZTUR')
+            dims(end+1).name = 'turbulence';
         end
         
         % check if all dimensions (besides time) are found
@@ -169,6 +174,7 @@ if nargout > 1
     dimsInd.n = find(ismember({dims(:).name},{'n','edge_n'}));
     dimsInd.constit = find(ismember({dims(:).name},'constit'));
     dimsInd.sedfrac = find(ismember({dims(:).name},'sedimentFraction'));
+    dimsInd.turbulence = find(ismember({dims(:).name},'turbulence'));
 end
 
 %% Data
@@ -247,6 +253,12 @@ if nargout > 2
         end
         dims(dimsInd.sedfrac).index    = sed_ind;
         dims(dimsInd.sedfrac).indexOut = 1:length(sed_ind);
+    end
+    
+    %% Turbulence (Delft3D 4's ZTUR) - Turbulence energy & energy dissipation
+    if ~isempty(dimsInd.turbulence)
+        dims(dimsInd.turbulence).index    = 1:2;
+        dims(dimsInd.turbulence).indexOut = 1:2;
     end
     
     %%
