@@ -14,8 +14,8 @@ OPT.Renderer         = 'zbuffer';
 
 fig_props = fieldnames(OPT);
 
-OPT.width   = 15.3; % in OPT.units (cm)
-OPT.height  = 22/4; % in OPT.units (cm)
+OPT.width   = 14.5; % in OPT.units (cm)
+OPT.height  = 5.25; % in OPT.units (cm)
 
 % axes settings
 OPT.no_sub   = 1;   % number of subplots
