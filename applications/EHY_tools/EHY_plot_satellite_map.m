@@ -112,16 +112,18 @@ end
 if OPT.plot_map
     % Make use of QuickPlot-functionality, since wms.m is in private folder,
     % make a temporary copy of the wms.m-function
+    if ~exist([tempdir 'EHY_wms'],'dir'); mkdir([tempdir 'EHY_wms']); end
     try
-        copyfile([fileparts(which('d3d_qp')) filesep 'private' filesep 'wms.m'],pwd,'f')
+        copyfile([fileparts(which('d3d_qp')) filesep 'private' filesep 'wms.m'],[tempdir 'EHY_wms'],'f')
     catch % try again after a sec
-        pause(1); copyfile([fileparts(which('d3d_qp')) filesep 'private' filesep 'wms.m'],pwd,'f')
+        pause(1); copyfile([fileparts(which('d3d_qp')) filesep 'private' filesep 'wms.m'],[tempdir 'EHY_wms'],'f')
     end
     
     if ~isempty(OPT.localEPSG) % local to WGS coordinates
         [curAxis(1:2), curAxis(3:4)] = convertCoordinates(curAxis(1:2), curAxis(3:4),'CS1.code',OPT.localEPSG,'CS2.code',4326);
     end
     
+    addpath([tempdir 'EHY_wms']);
     no_tries = 0;
     success = 0;
     while no_tries < 5 && ~success
@@ -134,7 +136,7 @@ if OPT.plot_map
             pause(no_tries*3)
         end
     end
-    delete([pwd filesep 'wms.m'])
+    if exist([tempdir 'EHY_wms'],'dir'); delete([tempdir 'EHY_wms' filesep 'wms.m']); end
     
     if ~success
         disp('<strong>Failed to load satellite image</strong>');
