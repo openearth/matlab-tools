@@ -5,16 +5,20 @@ select       = [];
 if ~isempty(OPT.t) && ~all(OPT.t==0)
     if ischar(OPT.t) && strcmpi(OPT.t,'end'); OPT.t = length(Data.times); end
     select        = false(length(Data.times),1);
+    if max(OPT.t) > length(Data.times)
+        warning(['Following timesteps not available (yet) - these will be skipped: ' newline num2str(OPT.t(OPT.t > length(Data.times)))])
+        OPT.t(OPT.t > length(Data.times)) = [];
+    end
     select(OPT.t) = true;
     time_index    = OPT.t;
     Data.times    = Data.times(time_index);
     varargout{1}  = 1:length(time_index);
-elseif ~isempty(OPT.t0) && ~isempty(OPT.tend) 
+elseif ~isempty(OPT.t0) && ~isempty(OPT.tend)
     select=(Data.times>=OPT.t0) & (Data.times<=OPT.tend);
-    time_index=find(select);
+    time_index = find(select);
     varargout{1} = 1:length(time_index);
     if ~isempty(time_index)
-        Data.times=Data.times(time_index);
+        Data.times = Data.times(time_index);
     else
         error(['These time steps are not available in the outputfile' newline,...
             'requested data period: ' datestr(OPT.t0) ' - ' datestr(OPT.tend) newline,...
@@ -25,9 +29,9 @@ elseif ~isempty(OPT.t0) && ~isempty(OPT.tend)
         no_times        = length(times_requested);
         index_requested = [];
         
-        for i_time = 1: no_times
+        for i_time = 1:no_times
             [~,nr_time] = min(abs(Data.times - times_requested(i_time))); % Find nearest value
-            index_requested  = [index_requested nr_time];
+            index_requested = [index_requested nr_time];
         end
         index_requested = unique(index_requested);
         varargout{1} = index_requested;
