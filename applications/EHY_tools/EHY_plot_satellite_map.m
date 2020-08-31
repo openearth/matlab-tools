@@ -136,7 +136,7 @@ if OPT.plot_map
             pause(no_tries*3)
         end
     end
-    if exist([tempdir 'EHY_wms'],'dir'); delete([tempdir 'EHY_wms' filesep 'wms.m']); end
+    if exist([tempdir 'EHY_wms'],'dir'); rmpath([tempdir 'EHY_wms']); rmdir([tempdir 'EHY_wms'],'s'); end
     
     if ~success
         disp('<strong>Failed to load satellite image</strong>');
