@@ -1,6 +1,7 @@
 function [zg1,varargout]=radial2regular(xg1,yg1,xp,yp,dx,dphi,val,varargin)
 
 mergefrac=[];
+projection = 'spherical';
 
 convention='cartesian';
 for ii=1:length(varargin)
@@ -10,6 +11,8 @@ for ii=1:length(varargin)
                 convention='nautical';
             case{'mergefrac'}
                 mergefrac=varargin{ii+1};
+            case{'projection'}
+                projection=varargin{ii+1};
         end
     end
 end                
@@ -18,10 +21,13 @@ ndir=size(val,2);
 nrad=size(val,1);
 radius=nrad*dx;
 
-% Compute deg2m scaling factors
-cfacx=cos(pi*yp/180)/111111;
-cfacy=1/111111;
-
+if strcmp(projection,'spherical') % Compute deg2m scaling factors
+    cfacx=cos(pi*yp/180)/111111;
+    cfacy=1/111111;
+elseif strcmp(projection,'projected')
+    cfacx=1;
+    cfacy=1;    
+end
 % Compute distances (in metres) and angles for each point in local grid
 dst=sqrt(((xg1-xp)/cfacx).^2+((yg1-yp)/cfacy).^2);
 ang=atan2((yg1-yp)/cfacy,(xg1-xp)/cfacx);

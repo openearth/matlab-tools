@@ -6,6 +6,7 @@ function [t,ug,vg,pg,frac,prcpg]=spw2regulargrid(spwfile,xg,yg,dt,varargin)
 % interpolation='linear'; % determines locations of intermediate track points, can be either linear or spline
 % dt=60;                  % time step in minutes, if left empty, only wind and pressure fields of the original track will be created 
 % mergefrac=0.5;          % merge fraction 
+% projection='projected'  % if spiderweb coordinated are specified in projected coordinates specify as 'projected' in meters, default is spherical (lat-lon)
 % [xg,yg]=meshgrid(-70:0.1:-50,20:0.1:30);
 % [t,ug,vg,pg,frac]=spw2regular('ike.spw',xg,yg,dt,'interpolation',interpolation,'backgroundpressure',backgroundpressure,'mergefrac',mergefrac);
 %
@@ -13,6 +14,7 @@ mergefrac=[];
 interpmethod='spline';
 backgroundpressure=101500;
 precipitation = 0; % by default don't read in rainfall
+projection = 'spherical';
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})
@@ -24,7 +26,9 @@ for ii=1:length(varargin)
             case{'backgroundpressure'}
                 backgroundpressure=varargin{ii+1};
             case{'precipitation'}
-                precipitation=varargin{ii+1};                
+                precipitation=varargin{ii+1};     
+            case{'projection'}
+                projection=varargin{ii+1};                
         end
     end
 end                
@@ -137,17 +141,17 @@ for it=1:nt
     
     % Interpolate
     if isempty(mergefrac)
-        ug(it,:,:)=radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,u,'nautical');
-        vg(it,:,:)=radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,v,'nautical');
+        ug(it,:,:)=radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,u,'nautical','projection',projection);
+        vg(it,:,:)=radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,v,'nautical','projection',projection);
     else
-        [ug(it,:,:),frac0]=radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,u,'nautical','mergefrac',mergefrac);
-        [vg(it,:,:),frac0]=radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,v,'nautical','mergefrac',mergefrac);
+        [ug(it,:,:),frac0]=radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,u,'nautical','mergefrac',mergefrac,'projection',projection);
+        [vg(it,:,:),frac0]=radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,v,'nautical','mergefrac',mergefrac,'projection',projection);
         frac(it,:,:)=frac0;
     end
-    pg(it,:,:)=backgroundpressure-radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,pdrp,'nautical');
+    pg(it,:,:)=backgroundpressure-radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,pdrp,'nautical','projection',projection);
     
     if precipitation == 1
-        prcpg(it,:,:)=radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,prcp,'nautical');
+        prcpg(it,:,:)=radial2regular(xg,yg,xeye(it),yeye(it),dx,dphi,prcp,'nautical','projection',projection);
     end
 end
 
@@ -155,5 +159,4 @@ end
 % if precipitation == 1
 %     varargout{2}=prcpg;
 % end
-
 
