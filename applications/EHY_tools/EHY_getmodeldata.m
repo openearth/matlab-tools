@@ -61,7 +61,7 @@ end
 OPT.varName      = 'wl';
 OPT.t0           = '';
 OPT.tend         = '';
-OPT.tint         = ''; % in minutes
+OPT.tint         = ''; % in days
 OPT.t            = []; % time index. If OPT.t is specified, OPT.t0, OPT.tend and OPT.tint are not used to find time index
 OPT.layer        = 0; % all
 OPT.sedimentName = ''; % name of sediment fraction
@@ -78,7 +78,6 @@ OPT              = setproperty(OPT,varargin);
 inputFile = strtrim(inputFile);
 if ~isempty(OPT.t0)        OPT.t0      = datenum(OPT.t0);      end
 if ~isempty(OPT.tend)      OPT.tend    = datenum(OPT.tend);    end
-if ~isempty(OPT.tint )     OPT.tint    = OPT.tint/1440;        end % from minutes to days
 if ~isnumeric(OPT.layer)   OPT.layer   = str2num(OPT.layer);   end
 if ~isnumeric(OPT.z )      OPT.z       = str2num(OPT.z);       end
 

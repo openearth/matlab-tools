@@ -193,7 +193,6 @@ if nargout > 2
     if ~isempty(dimsInd.time)
         Data.times                          = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
         [Data,time_index,~,index_requested] = EHY_getmodeldata_time_index(Data,OPT);
-        Data.times                          = Data.times(index_requested); % if time-interval was used, this step is needed
         dims(dimsInd.time).index            = time_index(index_requested);
         dims(dimsInd.time).indexOut         = 1:length(dims(dimsInd.time).index);
     end

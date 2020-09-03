@@ -1,7 +1,7 @@
 function values = ncread_blocks(inputFile,varName,start,count,dims)
 
 %% Identical to ncread however te speed up data is read in blocks (loop over variable 'time')
-% Note that the handling of wanted indices is also done within this script, 
+% Note that the handling of wanted indices is also done within this script,
 % it if therefore not the same as ncread without looping over blocks.
 
 no_dims     = length(dims);
@@ -14,63 +14,70 @@ else
     values = NaN(dims.sizeOut);
 end
 
-% check if output is char or double 
+% check if output is char or double
 infonc = ncinfo(inputFile,varName);
 if strcmp(infonc.Datatype,'char')
-   values = char(values);
+    values = char(values);
 end
-    
+
 if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count specified, variable has time dimension
     
     if timeInd ~= 1
-            error(['timeInd is not last variable, ncread_blocks does not work correctly in that case' char(10) ...
-                'Please contact Julien.Groenenboom@deltares.nl'])
+        error(['timeInd is not last variable, ncread_blocks does not work correctly in that case' char(10) ...
+            'Please contact Julien.Groenenboom@deltares.nl'])
     end
-
+    
+    % stride / time-interval used ?
+    stride       = ones(size(start));
+    uniqTimeDiff = unique(diff(dims(timeInd).index));
+    if numel(uniqTimeDiff) == 1
+        stride(1) = uniqTimeDiff;
+    end
+    
     nr_times      = dims(timeInd).size;
     nr_times_clip = count(timeInd);
     
     % devide in blocks
     filesize     = dir(inputFile);
     filesize     = filesize.bytes /(1024^3); %converted to Gb
-    maxblocksize = 0.5; %Gb
+    maxblocksize = 0.5*stride(1); %Gb
     no_blocks    = ceil((nr_times_clip / nr_times) * (filesize / maxblocksize));
     bl_length    = ceil(nr_times_clip / no_blocks);
-
+    
     % cycle over blocks
-    offset        = start(1) - 1;
+    offset       = start(1) - 1;
     for i_block = 1:no_blocks
-        bl_start                 = 1 + (i_block-1) * bl_length;
-        bl_stop                  = min(i_block * bl_length, nr_times_clip);
-        bl_int                   = bl_stop-bl_start+1;
-        start(1)                 = bl_start + offset;
-        count(1)                 = bl_int;
+        bl_start = 1 + (i_block-1) * bl_length;
+        bl_stop  = min(i_block * bl_length, nr_times_clip);
         
-        % Make sure values_tmp has to correct dimensions (MATLAB
-        % automatically squeezes if size(values_tmp,1) would have been 1
+        % less indices requested small when stride(1) > 1
+        bl_ind = bl_start:bl_stop;
+        [lia,locb] = ismember(bl_ind,dims(timeInd).index);
+        bl_ind = bl_ind(lia);
+        locb(locb==0) = [];
+        timeIndexOut = locb;
+        
+        start(1) = bl_ind(1) + offset;
+        count(1) = numel(bl_ind);
+        
+        % Make sure values_tmp has the correct dimensions as
+        % MATLAB automatically squeezes if size(values_tmp,1) would have been 1
         for iC = 1:numel(count)
             tmp(iC).indexOut = 1:count(iC);
         end
         values_tmp = [];
-        values_tmp(tmp(:).indexOut) = nc_varget(inputFile,varName,start-1,count);
+        values_tmp(tmp(:).indexOut) = nc_varget(inputFile,varName,start-1,count,stride);
         
         if no_dims == 1
-            % probably [time]          = [time]
-            values(bl_start:bl_stop) = values_tmp;
+            % probably [time]        = [time]
+            values(timeIndexOut) = values_tmp;
         elseif no_dims == 2
-            values(bl_start:bl_stop,dims(2).indexOut) = values_tmp(:,dims(2).index);
+            values(timeIndexOut,dims(2).indexOut) = values_tmp(:,dims(2).index);
         elseif no_dims == 3
-            values(bl_start:bl_stop,dims(2).indexOut,dims(3).indexOut) = values_tmp(:,dims(2).index,dims(3).index);
+            values(timeIndexOut,dims(2).indexOut,dims(3).indexOut) = values_tmp(:,dims(2).index,dims(3).index);
         end
     end
-    
-    % correct for wanted time-indices in case of time-interval 
-    if no_dims == 1
-        values = values(dims(timeInd).index);
-    else
-        values = values(dims(timeInd).index,:,:);
-    end
-    
+       
 else
     % Make sure values_tmp has to correct dimensions (MATLAB
     % automatically squeezes if size(values_tmp,1) would have been 1

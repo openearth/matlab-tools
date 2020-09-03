@@ -21,7 +21,6 @@ if ~ischar(date)
     error('This functions expects "date" to be a cell or char array')
 end
 
-addTime = 0;
 if length(date) == 8
     format = 'yyyymmdd';
 elseif length(date) == 10
@@ -42,15 +41,13 @@ elseif length(date) == 20 && all(ismember(date([5 8]),'-')) && all(ismember(date
     format = 'yyyy-mm-dd HH:MM';
 elseif length(date) == 26 && all(ismember(date([5 8]),'-')) && all(ismember(date([14 17 24]),':')) ...
         && ismember(date(21),'+-')
-    addTime = str2double(date(22:23))/24 + str2double(date(25:26))/60/24; % e.g. '+01:00'
-    if strcmp(date(21),'-'); addTime = -1*addTime; end
     date = date(1:19);
-    format = 'yyyy-mm-dd HH:MM:SS';
+    format = 'yyyy-mm-dd HH:MM:SS'; % '1970-01-01 00:00:00 +01:00'
 end
 
 %% Determine daten
 if exist('format','var') && ~isempty(format)
-    daten = datenum(date,format) + addTime;
+    daten = datenum(date,format);
 else
     error(['Could not convert ' date ' to MATLABs datenum format'])
 end
