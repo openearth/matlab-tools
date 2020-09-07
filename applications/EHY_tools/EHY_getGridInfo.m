@@ -461,6 +461,11 @@ switch modelType
                         if ~exist('E','var') || ~isfield(E,'area') % could not load area from file
                             tmp = EHY_getGridInfo(inputFile,{'face_nodes_xy'},'disp',0);
                             E.area = polyarea(tmp.face_nodes_x,tmp.face_nodes_y);
+                            if isnan(mean(E.area))
+                                for iC = 1:size(tmp.face_nodes_x,2)
+                                    E.area(iC) = polyarea(tmp.face_nodes_x(~isnan(tmp.face_nodes_x(:,iC)),iC),tmp.face_nodes_y(~isnan(tmp.face_nodes_y(:,iC)),iC));
+                                end
+                            end
                         end
                     end
                     if ismember('spherical', wantedOutput)
