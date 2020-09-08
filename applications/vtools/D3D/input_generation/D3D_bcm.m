@@ -1,0 +1,35 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
+%
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
+%
+%bcm file creation
+
+%INPUT:
+%   -
+%
+%OUTPUT:
+%   -
+
+function D3D_bcm(simdef)
+%% RENAME
+
+D3D_structure=simdef.D3D.structure;
+IBedCond=simdef.mor.IBedCond;
+
+%% FILE
+
+if any(IBedCond==[3,5])
+    if D3D_structure==1
+        D3D_bcm_s(simdef);
+    else
+        D3D_bcm_u(simdef);
+    end
+end
