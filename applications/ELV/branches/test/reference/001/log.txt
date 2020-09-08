@@ -1,0 +1,121 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                    ELV                                    %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+20-Apr-2017 15:40:50 Start of simulation
+computer: TUD0043086
+user: victorchavarri
+matlab version: 9.1.0.441655 (R2016b)
+----------------------- 
+---ELV files version--- 
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+----------------------- 
+20-Apr-2017 15:40:50 Start of input reading
+20-Apr-2017 15:40:50 Start of input checking
+20-Apr-2017 15:40:50 Start of initial and boundary condition construction
+20-Apr-2017 15:40:50 Start of initial condition construction
+Normal flow initial condition found. Maximum relative error = 6.4333e-07; sum of objective function = 6.4333e-12 
+h0=4.2033 m; u0=0.4758 m/s; slopeb0=5.49074e-05; Fak0=[ 1.000 ] qbk0=[ 1.000e-05 ]
+20-Apr-2017 15:40:51 Start of boundary conditions construction
+20-Apr-2017 15:40:51 Start of t0 conditions saving
+!!WARNING!!: max. initial CFL = 0.00 at node 1 
+!!WARNING!!: max. initial Fr  = 0.07 at node 1 
+Number of saved timesteps = 2; 4.17% computed, 0d 00h 00m  3s to finish 
+Number of saved timesteps = 3; 8.33% computed, 0d 00h 00m  4s to finish 
+Number of saved timesteps = 4; 12.50% computed, 0d 00h 00m  2s to finish 
+Number of saved timesteps = 5; 16.67% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 6; 20.83% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 7; 25.00% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 8; 29.17% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 9; 33.33% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 10; 37.50% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 11; 41.67% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 12; 45.83% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 13; 50.00% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 14; 54.17% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 15; 58.33% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 16; 62.50% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 17; 66.67% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 18; 70.83% computed, 0d 00h 00m  0s to finish 
+Number of saved timesteps = 19; 75.00% computed, 0d 00h 00m  0s to finish 
+Number of saved timesteps = 20; 79.17% computed, 0d 00h 00m  0s to finish 
+Number of saved timesteps = 21; 83.33% computed, 0d 00h 00m  0s to finish 
+Number of saved timesteps = 22; 87.50% computed, 0d 00h 00m  0s to finish 
+Number of saved timesteps = 23; 91.67% computed, 0d 00h 00m  0s to finish 
+Number of saved timesteps = 24; 95.83% computed, 0d 00h 00m  0s to finish 
+Number of saved timesteps = 25; 100.00% computed, 0d 00h 00m  0s to finish 
+20-Apr-2017 15:40:53 End of ELV
+20-Apr-2017 15:40:53 End of the postprocessing
