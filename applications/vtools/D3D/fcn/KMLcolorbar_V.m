@@ -64,11 +64,11 @@ function varargout = KMLcolorbar_V(varargin)
 % Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
-% $Id: KMLcolorbar_V.m 1041 2020-02-17 16:49:16Z chavarri $
-% $Date: 2020-02-17 17:49:16 +0100 (Mon, 17 Feb 2020) $
-% $Author: chavarri $
-% $Revision: 1041 $
-% $HeadURL: https://repos.deltares.nl/repos/RIVmodels/rivtools/trunk/matlab/scripts/vtools/D3D/fcn/KMLcolorbar_V.m $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 % TO DO: split png name (absolute) and png href (relative)

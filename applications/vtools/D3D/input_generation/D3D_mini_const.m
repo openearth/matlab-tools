@@ -49,7 +49,7 @@ stf=stu+(MxNULyr-1)*nlb+MxNULyr+2+nf+1; %start line of final layer
 data{1  ,1}='[BedCompositionFileInformation]';
 data{2  ,1}='FileVersion     = 01.00';
 data{3  ,1}='FileCreatedBy   = chavobsky';
-data{4  ,1}=        'SubVersionInfo  = $Id: D3D_mini_const.m 1041 2020-02-17 16:49:16Z chavarri $';
+data{4  ,1}=        'SubVersionInfo  = $Id$';
 data{5  ,1}=        'FileCreationDate= today :D';
 
 %active layer

@@ -71,11 +71,11 @@ function varargout = KMLsurf_V(lat,lon,z,varargin)
 %   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% $Id: KMLsurf_V.m 1213 2020-06-11 14:28:18Z chavarri $
-% $Date: 2020-06-11 16:28:18 +0200 (Thu, 11 Jun 2020) $
-% $Author: chavarri $
-% $Revision: 1213 $
-% $HeadURL: https://repos.deltares.nl/repos/RIVmodels/rivtools/trunk/matlab/scripts/vtools/D3D/fcn/KMLsurf_V.m $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %% process <keyword,value>

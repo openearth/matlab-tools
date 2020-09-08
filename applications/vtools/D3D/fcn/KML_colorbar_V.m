@@ -49,10 +49,10 @@ function varargout = KML_colorbar_V(OPT)
 % your own tools.
 
 % $Id: K$
-% $Date: 2020-02-17 17:49:16 +0100 (Mon, 17 Feb 2020) $
-% $Author: chavarri $
-% $Revision: 1041 $
-% $HeadURL: https://repos.deltares.nl/repos/RIVmodels/rivtools/trunk/matlab/scripts/vtools/D3D/fcn/KML_colorbar_V.m $
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
    OPT.template  = ~isempty(OPT.CBtemplateHor) | ~isempty(OPT.CBtemplateVer);
