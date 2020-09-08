@@ -1,0 +1,49 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                       ELV                         %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%This awesome model has been created by Liselot and Victor.
+%Please use it with a lot of care and love. If you have any
+%problem send us an email:
+%v.chavarriasborras@tudelft.nl
+%
+%$Revision: 16573 $
+%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
+%$Author: chavarri $
+%$Id: backwater_rect.m 16573 2020-09-08 14:03:40Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/backwater_rect.m $
+%
+%backwater does this and that
+%
+%[U,H]=backwater(ib,Cf,Hdown,Q,input)
+%
+%INPUT:
+%   -ib = slope vector
+%   -Cf = dimensionless representative friction
+%   -Q = upstream discharge (constant), or a discharge vector;
+%
+%OUTPUT:
+%   -U = 
+%   -H = 
+%
+%HISTORY:
+
+function [U,H] = backwater_rect(ib,Cf,Hdown,Q,input)
+
+K=input.mdv.nx;
+if numel(Q)==1
+    Q = Q*ones(K,1);
+end
+if numel(ib)==1
+    ib = ib*ones(K,1);
+end
+
+% Computes the entire profile
+H = NaN*zeros(K,1);
+H(end) = Hdown;
+
+for j=K-1:-1:1    
+    H(j) = backwater_step_rect(H(j+1),ib(j+1),Cf(j+1),Q(j+1),input.grd.B(j+1),input.grd.dBdx(j+1),input);
+end
+U = Q./(input.grd.B'.*H); 
+end

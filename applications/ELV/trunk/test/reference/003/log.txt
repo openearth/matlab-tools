@@ -1,0 +1,241 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                    ELV                                    %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+20-Apr-2017 15:41:52 Start of simulation
+computer: TUD0043086
+user: victorchavarri
+matlab version: 9.1.0.441655 (R2016b)
+----------------------- 
+---ELV files version--- 
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+%$Id: log.txt 16573 2020-09-08 14:03:40Z chavarri $
+----------------------- 
+20-Apr-2017 15:41:52 Start of input reading
+20-Apr-2017 15:41:52 Start of input checking
+20-Apr-2017 15:41:52 Start of initial and boundary condition construction
+20-Apr-2017 15:41:52 Start of initial condition construction
+Normal flow initial condition found. Maximum relative error = 8.6254e-10; sum of objective function = 3.3567e-14 
+h0=0.3000 m; u0=0.6667 m/s; slopeb0=1.51017e-03; Fak0=[ 0.300 ] qbk0=[ 2.343e-05 1.815e-05 ]
+20-Apr-2017 15:41:52 Start of boundary conditions construction
+20-Apr-2017 15:41:52 Start of t0 conditions saving
+!!WARNING!!: max. initial CFL = 0.05 at node 100 
+!!WARNING!!: max. initial Fr  = 0.39 at node 100 
+Number of saved timesteps = 2; 0.69% computed, 0d 00h 00m 30s to finish 
+Number of saved timesteps = 3; 1.39% computed, 0d 00h 00m 39s to finish 
+Number of saved timesteps = 4; 2.08% computed, 0d 00h 00m 31s to finish 
+Number of saved timesteps = 5; 2.78% computed, 0d 00h 00m 30s to finish 
+Number of saved timesteps = 6; 3.47% computed, 0d 00h 00m 29s to finish 
+Number of saved timesteps = 7; 4.17% computed, 0d 00h 00m 29s to finish 
+Number of saved timesteps = 8; 4.86% computed, 0d 00h 00m 29s to finish 
+Number of saved timesteps = 9; 5.56% computed, 0d 00h 00m 29s to finish 
+Number of saved timesteps = 10; 6.25% computed, 0d 00h 00m 29s to finish 
+Number of saved timesteps = 11; 6.94% computed, 0d 00h 00m 29s to finish 
+Number of saved timesteps = 12; 7.64% computed, 0d 00h 00m 30s to finish 
+Number of saved timesteps = 13; 8.33% computed, 0d 00h 00m 30s to finish 
+Number of saved timesteps = 14; 9.03% computed, 0d 00h 00m 30s to finish 
+Number of saved timesteps = 15; 9.72% computed, 0d 00h 00m 30s to finish 
+Number of saved timesteps = 16; 10.42% computed, 0d 00h 00m 29s to finish 
+Number of saved timesteps = 17; 11.11% computed, 0d 00h 00m 30s to finish 
+Number of saved timesteps = 18; 11.81% computed, 0d 00h 00m 30s to finish 
+Number of saved timesteps = 19; 12.50% computed, 0d 00h 00m 31s to finish 
+Number of saved timesteps = 20; 13.19% computed, 0d 00h 00m 30s to finish 
+Number of saved timesteps = 21; 13.89% computed, 0d 00h 00m 29s to finish 
+Number of saved timesteps = 22; 14.58% computed, 0d 00h 00m 29s to finish 
+Number of saved timesteps = 23; 15.28% computed, 0d 00h 00m 30s to finish 
+Number of saved timesteps = 24; 15.97% computed, 0d 00h 00m 31s to finish 
+Number of saved timesteps = 25; 16.67% computed, 0d 00h 00m 31s to finish 
+Number of saved timesteps = 26; 17.36% computed, 0d 00h 00m 31s to finish 
+Number of saved timesteps = 27; 18.06% computed, 0d 00h 00m 31s to finish 
+Number of saved timesteps = 28; 18.75% computed, 0d 00h 00m 32s to finish 
+Number of saved timesteps = 29; 19.44% computed, 0d 00h 00m 33s to finish 
+Number of saved timesteps = 30; 20.14% computed, 0d 00h 00m 26s to finish 
+Number of saved timesteps = 31; 20.83% computed, 0d 00h 00m 24s to finish 
+Number of saved timesteps = 32; 21.53% computed, 0d 00h 00m 24s to finish 
+Number of saved timesteps = 33; 22.22% computed, 0d 00h 00m 23s to finish 
+Number of saved timesteps = 34; 22.92% computed, 0d 00h 00m 24s to finish 
+Number of saved timesteps = 35; 23.61% computed, 0d 00h 00m 23s to finish 
+Number of saved timesteps = 36; 24.31% computed, 0d 00h 00m 23s to finish 
+Number of saved timesteps = 37; 25.00% computed, 0d 00h 00m 23s to finish 
+Number of saved timesteps = 38; 25.69% computed, 0d 00h 00m 23s to finish 
+Number of saved timesteps = 39; 26.39% computed, 0d 00h 00m 22s to finish 
+Number of saved timesteps = 40; 27.08% computed, 0d 00h 00m 22s to finish 
+Number of saved timesteps = 41; 27.78% computed, 0d 00h 00m 22s to finish 
+Number of saved timesteps = 42; 28.47% computed, 0d 00h 00m 22s to finish 
+Number of saved timesteps = 43; 29.17% computed, 0d 00h 00m 21s to finish 
+Number of saved timesteps = 44; 29.86% computed, 0d 00h 00m 21s to finish 
+Number of saved timesteps = 45; 30.56% computed, 0d 00h 00m 21s to finish 
+Number of saved timesteps = 46; 31.25% computed, 0d 00h 00m 21s to finish 
+Number of saved timesteps = 47; 31.94% computed, 0d 00h 00m 21s to finish 
+Number of saved timesteps = 48; 32.64% computed, 0d 00h 00m 21s to finish 
+Number of saved timesteps = 49; 33.33% computed, 0d 00h 00m 21s to finish 
+Number of saved timesteps = 50; 34.03% computed, 0d 00h 00m 20s to finish 
+Number of saved timesteps = 51; 34.72% computed, 0d 00h 00m 20s to finish 
+Number of saved timesteps = 52; 35.42% computed, 0d 00h 00m 20s to finish 
+Number of saved timesteps = 53; 36.11% computed, 0d 00h 00m 20s to finish 
+Number of saved timesteps = 54; 36.81% computed, 0d 00h 00m 19s to finish 
+Number of saved timesteps = 55; 37.50% computed, 0d 00h 00m 19s to finish 
+Number of saved timesteps = 56; 38.19% computed, 0d 00h 00m 19s to finish 
+Number of saved timesteps = 57; 38.89% computed, 0d 00h 00m 19s to finish 
+Number of saved timesteps = 58; 39.58% computed, 0d 00h 00m 19s to finish 
+Number of saved timesteps = 59; 40.28% computed, 0d 00h 00m 18s to finish 
+Number of saved timesteps = 60; 40.97% computed, 0d 00h 00m 18s to finish 
+Number of saved timesteps = 61; 41.67% computed, 0d 00h 00m 18s to finish 
+Number of saved timesteps = 62; 42.36% computed, 0d 00h 00m 18s to finish 
+Number of saved timesteps = 63; 43.06% computed, 0d 00h 00m 18s to finish 
+Number of saved timesteps = 64; 43.75% computed, 0d 00h 00m 18s to finish 
+Number of saved timesteps = 65; 44.44% computed, 0d 00h 00m 17s to finish 
+Number of saved timesteps = 66; 45.14% computed, 0d 00h 00m 17s to finish 
+Number of saved timesteps = 67; 45.83% computed, 0d 00h 00m 17s to finish 
+Number of saved timesteps = 68; 46.53% computed, 0d 00h 00m 17s to finish 
+Number of saved timesteps = 69; 47.22% computed, 0d 00h 00m 16s to finish 
+Number of saved timesteps = 70; 47.92% computed, 0d 00h 00m 16s to finish 
+Number of saved timesteps = 71; 48.61% computed, 0d 00h 00m 16s to finish 
+Number of saved timesteps = 72; 49.31% computed, 0d 00h 00m 16s to finish 
+Number of saved timesteps = 73; 50.00% computed, 0d 00h 00m 16s to finish 
+Number of saved timesteps = 74; 50.69% computed, 0d 00h 00m 15s to finish 
+Number of saved timesteps = 75; 51.39% computed, 0d 00h 00m 15s to finish 
+Number of saved timesteps = 76; 52.08% computed, 0d 00h 00m 14s to finish 
+Number of saved timesteps = 77; 52.78% computed, 0d 00h 00m 15s to finish 
+Number of saved timesteps = 78; 53.47% computed, 0d 00h 00m 14s to finish 
+Number of saved timesteps = 79; 54.17% computed, 0d 00h 00m 14s to finish 
+Number of saved timesteps = 80; 54.86% computed, 0d 00h 00m 14s to finish 
+Number of saved timesteps = 81; 55.56% computed, 0d 00h 00m 13s to finish 
+Number of saved timesteps = 82; 56.25% computed, 0d 00h 00m 13s to finish 
+Number of saved timesteps = 83; 56.94% computed, 0d 00h 00m 13s to finish 
+Number of saved timesteps = 84; 57.64% computed, 0d 00h 00m 13s to finish 
+Number of saved timesteps = 85; 58.33% computed, 0d 00h 00m 13s to finish 
+Number of saved timesteps = 86; 59.03% computed, 0d 00h 00m 13s to finish 
+Number of saved timesteps = 87; 59.72% computed, 0d 00h 00m 12s to finish 
+Number of saved timesteps = 88; 60.42% computed, 0d 00h 00m 12s to finish 
+Number of saved timesteps = 89; 61.11% computed, 0d 00h 00m 12s to finish 
+Number of saved timesteps = 90; 61.81% computed, 0d 00h 00m 12s to finish 
+Number of saved timesteps = 91; 62.50% computed, 0d 00h 00m 11s to finish 
+Number of saved timesteps = 92; 63.19% computed, 0d 00h 00m 11s to finish 
+Number of saved timesteps = 93; 63.89% computed, 0d 00h 00m 11s to finish 
+Number of saved timesteps = 94; 64.58% computed, 0d 00h 00m 11s to finish 
+Number of saved timesteps = 95; 65.28% computed, 0d 00h 00m 11s to finish 
+Number of saved timesteps = 96; 65.97% computed, 0d 00h 00m 11s to finish 
+Number of saved timesteps = 97; 66.67% computed, 0d 00h 00m 10s to finish 
+Number of saved timesteps = 98; 67.36% computed, 0d 00h 00m 10s to finish 
+Number of saved timesteps = 99; 68.06% computed, 0d 00h 00m 10s to finish 
+Number of saved timesteps = 100; 68.75% computed, 0d 00h 00m 10s to finish 
+Number of saved timesteps = 101; 69.44% computed, 0d 00h 00m 10s to finish 
+Number of saved timesteps = 102; 70.14% computed, 0d 00h 00m  9s to finish 
+Number of saved timesteps = 103; 70.83% computed, 0d 00h 00m  9s to finish 
+Number of saved timesteps = 104; 71.53% computed, 0d 00h 00m  9s to finish 
+Number of saved timesteps = 105; 72.22% computed, 0d 00h 00m  9s to finish 
+Number of saved timesteps = 106; 72.92% computed, 0d 00h 00m  8s to finish 
+Number of saved timesteps = 107; 73.61% computed, 0d 00h 00m  8s to finish 
+Number of saved timesteps = 108; 74.31% computed, 0d 00h 00m  8s to finish 
+Number of saved timesteps = 109; 75.00% computed, 0d 00h 00m  8s to finish 
+Number of saved timesteps = 110; 75.69% computed, 0d 00h 00m  7s to finish 
+Number of saved timesteps = 111; 76.39% computed, 0d 00h 00m  7s to finish 
+Number of saved timesteps = 112; 77.08% computed, 0d 00h 00m  7s to finish 
+Number of saved timesteps = 113; 77.78% computed, 0d 00h 00m  7s to finish 
+Number of saved timesteps = 114; 78.47% computed, 0d 00h 00m  7s to finish 
+Number of saved timesteps = 115; 79.17% computed, 0d 00h 00m  6s to finish 
+Number of saved timesteps = 116; 79.86% computed, 0d 00h 00m  6s to finish 
+Number of saved timesteps = 117; 80.56% computed, 0d 00h 00m  6s to finish 
+Number of saved timesteps = 118; 81.25% computed, 0d 00h 00m  6s to finish 
+Number of saved timesteps = 119; 81.94% computed, 0d 00h 00m  6s to finish 
+Number of saved timesteps = 120; 82.64% computed, 0d 00h 00m  5s to finish 
+Number of saved timesteps = 121; 83.33% computed, 0d 00h 00m  5s to finish 
+Number of saved timesteps = 122; 84.03% computed, 0d 00h 00m  5s to finish 
+Number of saved timesteps = 123; 84.72% computed, 0d 00h 00m  5s to finish 
+Number of saved timesteps = 124; 85.42% computed, 0d 00h 00m  5s to finish 
+Number of saved timesteps = 125; 86.11% computed, 0d 00h 00m  4s to finish 
+Number of saved timesteps = 126; 86.81% computed, 0d 00h 00m  4s to finish 
+Number of saved timesteps = 127; 87.50% computed, 0d 00h 00m  4s to finish 
+Number of saved timesteps = 128; 88.19% computed, 0d 00h 00m  4s to finish 
+Number of saved timesteps = 129; 88.89% computed, 0d 00h 00m  3s to finish 
+Number of saved timesteps = 130; 89.58% computed, 0d 00h 00m  3s to finish 
+Number of saved timesteps = 131; 90.28% computed, 0d 00h 00m  3s to finish 
+Number of saved timesteps = 132; 90.97% computed, 0d 00h 00m  3s to finish 
+Number of saved timesteps = 133; 91.67% computed, 0d 00h 00m  3s to finish 
+Number of saved timesteps = 134; 92.36% computed, 0d 00h 00m  2s to finish 
+Number of saved timesteps = 135; 93.06% computed, 0d 00h 00m  2s to finish 
+Number of saved timesteps = 136; 93.75% computed, 0d 00h 00m  2s to finish 
+Number of saved timesteps = 137; 94.44% computed, 0d 00h 00m  2s to finish 
+Number of saved timesteps = 138; 95.14% computed, 0d 00h 00m  2s to finish 
+Number of saved timesteps = 139; 95.83% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 140; 96.53% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 141; 97.22% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 142; 97.92% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 143; 98.61% computed, 0d 00h 00m  0s to finish 
+Number of saved timesteps = 144; 99.31% computed, 0d 00h 00m  0s to finish 
+Number of saved timesteps = 145; 100.00% computed, 0d 00h 00m  0s to finish 
+20-Apr-2017 15:42:24 End of ELV
+20-Apr-2017 15:42:24 End of the postprocessing
