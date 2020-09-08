@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 231 $
-%$Date: 2020-04-06 16:00:58 +0200 (Mon, 06 Apr 2020) $
-%$Author: chavarri $
-%$Id: solve_nfbc.m 231 2020-04-06 14:00:58Z chavarri $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/trunk/main/solve_nfbc.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 function obj = solve_nfbc(X,input,Qw,AL)
 %solve_sedigraph computes the slope and surface fraction 

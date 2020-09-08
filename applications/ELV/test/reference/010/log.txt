@@ -7,95 +7,95 @@ user: victorchavarri
 matlab version: 9.2.0.556344 (R2017a)
 ----------------------- 
 ---ELV files version--- 
-%$Id: ELV.m 132 2017-07-10 08:19:44Z V $
-%$Id: ELV_version.m 132 2017-07-10 08:19:44Z V $
-%$Id: active_layer_mass_update.m 132 2017-07-10 08:19:44Z V $
-%$Id: active_layer_mass_update_pmm.m 132 2017-07-10 08:19:44Z V $
-%$Id: active_layer_thickness_update.m 132 2017-07-10 08:19:44Z V $
-%$Id: active_reconstruction_mean.m 132 2017-07-10 08:19:44Z V $
-%$Id: add_nourishment.m 132 2017-07-10 08:19:44Z V $
-%$Id: add_sedflags.m 132 2017-07-10 08:19:44Z V $
-%$Id: analytical_cubic_root.m 135 2017-07-20 07:45:50Z V $
-%$Id: aux_ini_normalflow.m 132 2017-07-10 08:19:44Z V $
-%$Id: aux_swc.m 132 2017-07-10 08:19:44Z V $
-%$Id: backwater.m 132 2017-07-10 08:19:44Z V $
-%$Id: backwater_rect.m 132 2017-07-10 08:19:44Z V $
-%$Id: backwater_step.m 132 2017-07-10 08:19:44Z V $
-%$Id: backwater_step_rect.m 132 2017-07-10 08:19:44Z V $
-%$Id: bed_level_update.m 132 2017-07-10 08:19:44Z V $
-%$Id: bed_level_update_pmm.m 132 2017-07-10 08:19:44Z V $
-%$Id: beta_pmm.m 132 2017-07-10 08:19:44Z V $
-%$Id: boundary_conditions_construction.m 132 2017-07-10 08:19:44Z V $
-%$Id: check_input.m 132 2017-07-10 08:19:44Z V $
-%$Id: check_simulation.m 132 2017-07-10 08:19:44Z V $
-%$Id: compare_results.m 132 2017-07-10 08:19:44Z V $
-%$Id: condition_construction.m 132 2017-07-10 08:19:44Z V $
-%$Id: derivatives.m 132 2017-07-10 08:19:44Z V $
-%$Id: display_tloop.m 132 2017-07-10 08:19:44Z V $
-%$Id: dv_bouss_coef.m 132 2017-07-10 08:19:44Z V $
-%$Id: dv_cross_aux.m 132 2017-07-10 08:19:44Z V $
-%$Id: dv_cross_section.m 132 2017-07-10 08:19:44Z V $
-%$Id: elevation_reconstruction_mean.m 135 2017-07-20 07:45:50Z V $
-%$Id: eli_1.m 132 2017-07-10 08:19:44Z V $
-%$Id: elliptic_nodes.m 132 2017-07-10 08:19:44Z V $
-%$Id: errorprint.m 132 2017-07-10 08:19:44Z V $
-%$Id: flow_update.m 132 2017-07-10 08:19:44Z V $
-%$Id: folders_creation.m 132 2017-07-10 08:19:44Z V $
-%$Id: friction.m 132 2017-07-10 08:19:44Z V $
-%$Id: friction_correction.m 132 2017-07-10 08:19:44Z V $
-%$Id: get_analytical_solution.m 132 2017-07-10 08:19:44Z V $
-%$Id: get_bouss_coef.m 132 2017-07-10 08:19:44Z V $
-%$Id: get_cross_section.m 132 2017-07-10 08:19:44Z V $
-%$Id: get_equislope.m 132 2017-07-10 08:19:44Z V $
-%$Id: get_equivals.m 132 2017-07-10 08:19:44Z V $
-%$Id: get_equivals2_pdf.m 132 2017-07-10 08:19:44Z V $
-%$Id: get_equivals_V.m 132 2017-07-10 08:19:44Z V $
-%$Id: get_equivals_pdf.m 132 2017-07-10 08:19:44Z V $
-%$Id: get_flow_velocities.m 132 2017-07-10 08:19:44Z V $
-%$Id: get_rep_fric.m 132 2017-07-10 08:19:44Z V $
-%$Id: get_sedigraph.m 132 2017-07-10 08:19:44Z V $
-%$Id: grain_size_distribution_update.m 132 2017-07-10 08:19:44Z V $
-%$Id: ini_Cf.m 132 2017-07-10 08:19:44Z V $
-%$Id: ini_Cfb.m 132 2017-07-10 08:19:44Z V $
-%$Id: ini_La.m 132 2017-07-10 08:19:44Z V $
-%$Id: ini_msk.m 132 2017-07-10 08:19:44Z V $
-%$Id: ini_normalflow.m 132 2017-07-10 08:19:44Z V $
-%$Id: ini_normalflow_L.m 132 2017-07-10 08:19:44Z V $
-%$Id: ini_spacem.m 132 2017-07-10 08:19:44Z V $
-%$Id: initial_condition_construction.m 132 2017-07-10 08:19:44Z V $
-%$Id: join_results.m 132 2017-07-10 08:19:44Z V $
-%$Id: join_results_iferror.m 132 2017-07-10 08:19:44Z V $
-%$Id: log_file_creation.m 132 2017-07-10 08:19:44Z V $
-%$Id: march_step_dBdx.m 132 2017-07-10 08:19:44Z V $
-%$Id: march_step_dBdx_mixed.m 132 2017-07-10 08:19:44Z V $
-%$Id: march_step_mixed.m 132 2017-07-10 08:19:44Z V $
-%$Id: march_step_uni.m 132 2017-07-10 08:19:44Z V $
-%$Id: output_creation.m 132 2017-07-10 08:19:44Z V $
-%$Id: phi_func.m 132 2017-07-10 08:19:44Z V $
-%$Id: preconditioning_mass_matrix.m 135 2017-07-20 07:45:50Z V $
-%$Id: preissmann.m 132 2017-07-10 08:19:44Z V $
-%$Id: preissmann_diag.m 132 2017-07-10 08:19:44Z V $
-%$Id: print_tloop.m 132 2017-07-10 08:19:44Z V $
-%$Id: run_ELV.m 132 2017-07-10 08:19:44Z V $
-%$Id: run_spacemarching.m 132 2017-07-10 08:19:44Z V $
-%$Id: sediment_transport.m 132 2017-07-10 08:19:44Z V $
-%$Id: sediment_transport_R2016b.m 132 2017-07-10 08:19:44Z V $
-%$Id: side_wall_correction.m 132 2017-07-10 08:19:44Z V $
-%$Id: slope2elevation.m 132 2017-07-10 08:19:44Z V $
-%$Id: solve_Hdown.m 132 2017-07-10 08:19:44Z V $
-%$Id: solve_equibed.m 132 2017-07-10 08:19:44Z V $
-%$Id: solve_equibed2.m 132 2017-07-10 08:19:44Z V $
-%$Id: solve_mixed.m 132 2017-07-10 08:19:44Z V $
-%$Id: solve_mixed_dBdx.m 132 2017-07-10 08:19:44Z V $
-%$Id: solve_nfbc.m 132 2017-07-10 08:19:44Z V $
-%$Id: solve_nfbc2_pdf.m 132 2017-07-10 08:19:44Z V $
-%$Id: solve_nfbc_pdf.m 132 2017-07-10 08:19:44Z V $
-%$Id: solve_qdom.m 132 2017-07-10 08:19:44Z V $
-%$Id: solve_qdom_pdf.m 132 2017-07-10 08:19:44Z V $
-%$Id: substrate_update.m 132 2017-07-10 08:19:44Z V $
-%$Id: substrate_update_R2016b.m 132 2017-07-10 08:19:44Z V $
-%$Id: warningprint.m 132 2017-07-10 08:19:44Z V $
-%$Id: write_results.m 132 2017-07-10 08:19:44Z V $
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
 ----------------------- 
 27-Jul-2017 09:03:43 Start of input reading
 27-Jul-2017 09:03:43 Start of input checking

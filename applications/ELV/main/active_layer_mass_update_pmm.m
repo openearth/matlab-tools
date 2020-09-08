@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 157 $
-%$Date: 2017-07-27 17:53:42 +0200 (Thu, 27 Jul 2017) $
-%$Author: V $
-%$Id: active_layer_mass_update_pmm.m 157 2017-07-27 15:53:42Z V $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/trunk/main/active_layer_mass_update_pmm.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %active_layer_mass_update_pmm is the same as active_layer_mass_update with the preconditioning mass matrix approach
 %

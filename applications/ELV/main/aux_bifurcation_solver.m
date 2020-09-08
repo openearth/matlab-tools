@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 157 $
-%$Date: 2017-07-27 17:53:42 +0200 (Thu, 27 Jul 2017) $
-%$Author: V $
-%$Id: aux_bifurcation_solver.m 157 2017-07-27 15:53:42Z V $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/trunk/main/aux_bifurcation_solver.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %check_input is a function that checks that the input is enough and makes sense
 %

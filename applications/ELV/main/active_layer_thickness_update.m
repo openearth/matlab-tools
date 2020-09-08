@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 231 $
-%$Date: 2020-04-06 16:00:58 +0200 (Mon, 06 Apr 2020) $
-%$Author: chavarri $
-%$Id: active_layer_thickness_update.m 231 2020-04-06 14:00:58Z chavarri $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/trunk/main/active_layer_thickness_update.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %active_layer_thickness_update is a function that updates the active layer thickness
 %

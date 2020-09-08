@@ -7,85 +7,85 @@ user: victorchavarri
 matlab version: 9.2.0.556344 (R2017a)
 ----------------------- 
 ---ELV files version--- 
-%$Id: ELV.m 89 2017-05-15 09:07:20Z V $
-%$Id: ELV_version.m 79 2017-04-20 11:07:54Z V $
-%$Id: active_layer_mass_update.m 93 2017-05-17 06:09:57Z V $
-%$Id: active_layer_mass_update_pmm.m 97 2017-06-16 07:25:58Z V $
-%$Id: active_layer_thickness_update.m 97 2017-06-16 07:25:58Z V $
-%$Id: add_nourishment.m 97 2017-06-16 07:25:58Z V $
-%$Id: add_sedflags.m 97 2017-06-16 07:25:58Z V $
-%$Id: analytical_cubic_root.m 97 2017-06-16 07:25:58Z V $
-%$Id: aux_ini_normalflow.m 97 2017-06-16 07:25:58Z V $
-%$Id: aux_swc.m 97 2017-06-16 07:25:58Z V $
-%$Id: flow_update.m 14 2017-02-06 15:28:08Z V $
-%$Id: flow_update.m 14 2017-02-06 15:28:08Z V $
-%$Id: flow_update.m 14 2017-02-06 15:28:08Z V $
-%$Id: bed_level_update.m 93 2017-05-17 06:09:57Z V $
-%$Id: bed_level_update_pmm.m 79 2017-04-20 11:07:54Z V $
-%$Id: beta_pmm.m 79 2017-04-20 11:07:54Z V $
-%$Id: boundary_conditions_construction.m 95 2017-06-06 08:20:17Z V $
-%$Id: check_input.m 100 2017-06-21 16:58:50Z V $
-%$Id: check_simulation.m 98 2017-06-16 11:12:14Z V $
-%$Id: compare_results.m 81 2017-04-20 13:51:02Z V $
-%$Id: condition_construction.m 79 2017-04-20 11:07:54Z V $
-%$Id: derivatives.m 79 2017-04-20 11:07:54Z V $
-%$Id: display_tloop.m 81 2017-04-20 13:51:02Z V $
-%$Id: run_ELV.m 49 2017-04-04 07:33:12Z V $
-%$Id: run_ELV.m 49 2017-04-04 07:33:12Z V $
-%$Id: run_ELV.m 49 2017-04-04 07:33:12Z V $
-%$Id: eli_1.m 79 2017-04-20 11:07:54Z V $
-%$Id: elliptic_nodes.m 79 2017-04-20 11:07:54Z V $
-%$Id: errorprint.m 89 2017-05-15 09:07:20Z V $
-%$Id: flow_update.m 79 2017-04-20 11:07:54Z V $
-%$Id: folders_creation.m 79 2017-04-20 11:07:54Z V $
-%$Id: friction.m 79 2017-04-20 11:07:54Z V $
-%$Id: friction_correction.m 89 2017-05-15 09:07:20Z V $
-%$Id: get_analytical_solution.m 79 2017-04-20 11:07:54Z V $
-%$Id: run_ELV.m 49 2017-04-04 07:33:12Z V $
-%$Id: run_ELV.m 49 2017-04-04 07:33:12Z V $
-%$Id: get_equislope.m 79 2017-04-20 11:07:54Z V $
-%$Id: get_equivals.m 79 2017-04-20 11:07:54Z V $
-%$Id: get_equivals2_pdf.m 79 2017-04-20 11:07:54Z V $
-%$Id: get_equivals_V.m 95 2017-06-06 08:20:17Z V $
-%$Id: get_equivals_pdf.m 79 2017-04-20 11:07:54Z V $
-%$Id: run_ELV.m 49 2017-04-04 07:33:12Z V $
-%$Id: run_ELV.m 49 2017-04-04 07:33:12Z V $
-%$Id: get_sedigraph.m 79 2017-04-20 11:07:54Z V $
-%$Id: grain_size_distribution_update.m 81 2017-04-20 13:51:02Z V $
-%$Id: ini_Cf.m 79 2017-04-20 11:07:54Z V $
-%$Id: ini_Cfb.m 89 2017-05-15 09:07:20Z V $
-%$Id: ini_La.m 79 2017-04-20 11:07:54Z V $
-%$Id: ini_msk.m 79 2017-04-20 11:07:54Z V $
-%$Id: ini_normalflow.m 79 2017-04-20 11:07:54Z V $
-%$Id: ini_normalflow_L.m 89 2017-05-15 09:07:20Z V $
-%$Id: ini_spacem.m 79 2017-04-20 11:07:54Z V $
-%$Id: initial_condition_construction.m 95 2017-06-06 08:20:17Z V $
-%$Id: join_results.m 94 2017-05-31 12:35:25Z V $
-%$Id: join_results_iferror.m 94 2017-05-31 12:35:25Z V $
-%$Id: log_file_creation.m 79 2017-04-20 11:07:54Z V $
-%$Id: output_creation.m 94 2017-05-31 12:35:25Z V $
-%$Id: phi_func.m 79 2017-04-20 11:07:54Z V $
-%$Id: preconditioning_mass_matrix.m 95 2017-06-06 08:20:17Z V $
-%$Id: preissmann.m 79 2017-04-20 11:07:54Z V $
-%$Id: print_tloop.m 81 2017-04-20 13:51:02Z V $
-%$Id: run_ELV.m 94 2017-05-31 12:35:25Z V $
-%$Id: run_spacemarching.m 79 2017-04-20 11:07:54Z V $
-%$Id: sediment_transport.m 100 2017-06-21 16:58:50Z V $
-%$Id: sediment_transport_R2016b.m 100 2017-06-21 16:58:50Z V $
-%$Id: side_wall_correction.m 79 2017-04-20 11:07:54Z V $
-%$Id: slope2elevation.m 14 2017-02-06 15:28:08Z V $
-%$Id: solve_Hdown.m 7 2017-02-06 13:42:31Z V $
-%$Id: solve_equibed.m 57 2017-04-04 09:14:08Z V $
-%$Id: solve_mixed.m 7 2017-02-06 13:42:31Z V $
-%$Id: solve_nfbc.m 89 2017-05-15 09:07:20Z V $
-%$Id: solve_nfbc2_pdf.m 79 2017-04-20 11:07:54Z V $
-%$Id: solve_nfbc_pdf.m 79 2017-04-20 11:07:54Z V $
-%$Id: solve_qdom.m 79 2017-04-20 11:07:54Z V $
-%$Id: solve_qdom_pdf.m 79 2017-04-20 11:07:54Z V $
-%$Id: substrate_update.m 102 2017-06-23 05:11:45Z V $
-%$Id: substrate_update_R2016b.m 101 2017-06-23 05:09:36Z V $
-%$Id: warningprint.m 79 2017-04-20 11:07:54Z V $
-%$Id: write_results.m 81 2017-04-20 13:51:02Z V $
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
+%$Id$
 ----------------------- 
 29-Jun-2017 08:13:18 Start of input reading
 29-Jun-2017 08:13:18 Start of input checking

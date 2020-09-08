@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 217 $
-%$Date: 2018-11-23 15:24:08 +0100 (Fri, 23 Nov 2018) $
-%$Author: v.chavarriasborras@tudelft.nl $
-%$Id: check_mor.m 217 2018-11-23 14:24:08Z v.chavarriasborras@tudelft.nl $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/check_mor.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %check_input is a function that checks that the input is enough and makes sense
 %

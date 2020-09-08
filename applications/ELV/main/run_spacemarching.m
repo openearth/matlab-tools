@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 137 $
-%$Date: 2017-07-20 09:50:06 +0200 (Thu, 20 Jul 2017) $
-%$Author: V $
-%$Id: run_spacemarching.m 137 2017-07-20 07:50:06Z V $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/trunk/main/run_spacemarching.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %run_ELV is a function that creates the folders for the output, calls the main function and then the postprocessing functions
 %

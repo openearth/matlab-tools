@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 168 $
-%$Date: 2017-08-02 12:08:36 +0200 (Wed, 02 Aug 2017) $
-%$Author: V $
-%$Id: get_equivals.m 168 2017-08-02 10:08:36Z V $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/trunk/main/get_equivals.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %get_equivals computes the normal load distribution given a hydrograph and the annual load
 %

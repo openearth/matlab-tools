@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 231 $
-%$Date: 2020-04-06 16:00:58 +0200 (Mon, 06 Apr 2020) $
-%$Author: chavarri $
-%$Id: mean_grain_size.m 231 2020-04-06 14:00:58Z chavarri $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/trunk/main/mean_grain_size.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %mean_grain_size computes the mean grain size
 %

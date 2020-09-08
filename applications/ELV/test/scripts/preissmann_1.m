@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 153 $
-%$Date: 2017-07-27 17:06:32 +0200 (Thu, 27 Jul 2017) $
-%$Author: V $
-%$Id: preissmann_1.m 153 2017-07-27 15:06:32Z V $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/trunk/test/scripts/preissmann_1.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %preissmann is the Preismmann scheme for unsteady flow update Implict scheme
 %

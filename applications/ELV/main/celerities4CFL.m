@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 231 $
-%$Date: 2020-04-06 16:00:58 +0200 (Mon, 06 Apr 2020) $
-%$Author: chavarri $
-%$Id: celerities4CFL.m 231 2020-04-06 14:00:58Z chavarri $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/trunk/main/celerities4CFL.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %celerities computes the maximum celerity as a function of the type of simulation
 %

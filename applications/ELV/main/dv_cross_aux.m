@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 137 $
-%$Date: 2017-07-20 09:50:06 +0200 (Thu, 20 Jul 2017) $
-%$Author: V $
-%$Id: dv_cross_aux.m 137 2017-07-20 07:50:06Z V $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/trunk/main/dv_cross_aux.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %dv_cross_aux does this and that
 %

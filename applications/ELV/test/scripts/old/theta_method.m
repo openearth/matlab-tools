@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 174 $
-%$Date: 2017-10-05 13:29:10 +0200 (Thu, 05 Oct 2017) $
-%$Author: V $
-%$Id: theta_method.m 174 2017-10-05 11:29:10Z V $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/trunk/test/scripts/old/theta_method.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %active_layer_mass_update updates the mass (volume) of sediment at the active layer.
 %

@@ -21,7 +21,7 @@ function y = nanmean(x,dim)
 %    affiliation: Neuroimage Nord, University of Hamburg, Germany
 %    email:       glaescher@uke.uni-hamburg.de
 %    
-%    $Revision: 1.1 $ $Date: 2004/07/15 22:42:13 $
+%    $Revision$ $Date$
 
 if isempty(x)
 	y = NaN;
@@ -51,4 +51,4 @@ y(i) = i + NaN;
 
 
 
-% $Id: nanmean.m,v 1.1 2004/07/15 22:42:13 glaescher Exp glaescher $
+% $Id$

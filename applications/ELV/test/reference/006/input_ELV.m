@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 7 $
-%$Date: 2017-02-06 14:42:31 +0100 (ma, 06 feb 2017) $
-%$Author: V $
-%$Id: input_sealevel.m 7 2017-02-06 13:42:31Z V $
-%$HeadURL: https://131.180.60.193/svn/ELV/branches/L0081/source/tutorial/input/input_sealevel.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %function input_widening1
        

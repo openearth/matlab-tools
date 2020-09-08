@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 170 $
-%$Date: 2017-08-02 13:59:57 +0200 (Wed, 02 Aug 2017) $
-%$Author: V $
-%$Id: input_ELV.m 170 2017-08-02 11:59:57Z V $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/trunk/test/reference/013/input_ELV.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %function input_widening1
        

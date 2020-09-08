@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 153 $
-%$Date: 2017-07-27 17:06:32 +0200 (Thu, 27 Jul 2017) $
-%$Author: V $
-%$Id: fig_x_cnt_pmm.m 153 2017-07-27 15:06:32Z V $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/trunk/postprocessing/fig_x_cnt_pmm.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %function_name does this and that
 

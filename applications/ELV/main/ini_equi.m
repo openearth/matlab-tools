@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 128 $
-%$Date: 2017-07-04 17:58:47 +0200 (di, 04 jul 2017) $
-%$Author: L $
-%$Id: ini_spacem.m 128 2017-07-04 15:58:47Z L $
-%$HeadURL: https://131.180.60.193/svn/ELV/branches/L0123/main/ini_spacem.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %ini_spacem approximates the alternating steady equilibrium profile using the space marching algorithm
 %
