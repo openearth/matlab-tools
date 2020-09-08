@@ -224,6 +224,9 @@ switch modelType
                     end
                     if ismember('XYcor',wantedOutput)
                         varName = EHY_nameOnFile(inputFile,'mesh2d_node_x');
+                        if strcmp(varName,'noMatchFound')
+                            varName = 'network1d_geom_x';
+                        end
                         E.Xcor = ncread(inputFile,varName);
                         E.Ycor = ncread(inputFile,strrep(varName,'x','y'));
                     end
@@ -431,6 +434,9 @@ switch modelType
      
                     if ismember('edge_nodes',wantedOutput)
                         varName = EHY_nameOnFile(inputFile,'mesh2d_edge_nodes');
+                        if strcmp(varName,'noMatchFound')
+                            varName='mesh1d_edge_nodes';
+                        end
                         if nc_isvar(inputFile,varName)
                             E.edge_nodes = ncread(inputFile,varName);
                         end

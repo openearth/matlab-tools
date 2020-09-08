@@ -816,7 +816,7 @@ end
             [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(lines,tempFile,OPT.lineColor,OPT.lineWidth)
-            copyfile(tempFile,outputFile);
+            copyfile(tempFile,outputFile,'f');
             delete(tempFile)
         end
         output=lines;

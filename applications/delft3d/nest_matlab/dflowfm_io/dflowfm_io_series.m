@@ -24,7 +24,7 @@ switch lower(cmd)
       while ~feof(fid)
           tline = strtrim(fgetl(fid));
           if ~isempty(tline)
-              if strcmp(tline(1),'*')
+              if strcmp(tline(1),'*') || strcmp(tline(1),'#')
 
                   %% Read comment lines
                   i_comm = i_comm + 1;
