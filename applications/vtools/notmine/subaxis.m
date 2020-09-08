@@ -43,7 +43,7 @@ if isempty(Args)&(~UserDataArgsOK)
         'MarginLeft',.1,'MarginRight',.1,'MarginTop',.1,'MarginBottom',.1, ...
         'rows',[],'cols',[]); 
 end
-Args=parseArgs(varargin,Args,{'Holdaxis'},{'Spacing' {'sh','sv'}; 'Padding' {'pl','pr','pt','pb'}; 'Margin' {'ml','mr','mt','mb'}});
+Args=parseArgs_subaxis(varargin,Args,{'Holdaxis'},{'Spacing' {'sh','sv'}; 'Padding' {'pl','pr','pt','pb'}; 'Margin' {'ml','mr','mt','mb'}});
 
 if (length(Args.NumericArguments)>1)
     Args.rows=Args.NumericArguments{1};

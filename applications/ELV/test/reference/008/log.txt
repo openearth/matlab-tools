@@ -1,0 +1,124 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                    ELV                                    %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+30-Jun-2017 15:04:17 Start of simulation
+computer: TUD0043086
+user: victorchavarri
+matlab version: 9.2.0.556344 (R2017a)
+----------------------- 
+---ELV files version--- 
+%$Id: ELV.m 108 2017-06-27 14:46:40Z V $
+%$Id: ELV_version.m 79 2017-04-20 11:07:54Z V $
+%$Id: active_layer_mass_update.m 108 2017-06-27 14:46:40Z V $
+%$Id: active_layer_mass_update_pmm.m 106 2017-06-27 12:45:13Z V $
+%$Id: active_layer_thickness_update.m 106 2017-06-27 12:45:13Z V $
+%$Id: ini_spacem.m 79 2017-04-20 11:07:54Z V $
+%$Id: add_nourishment.m 106 2017-06-27 12:45:13Z V $
+%$Id: add_sedflags.m 107 2017-06-27 12:56:45Z V $
+%$Id: analytical_cubic_root.m 106 2017-06-27 12:45:13Z V $
+%$Id: aux_ini_normalflow.m 106 2017-06-27 12:45:13Z V $
+%$Id: aux_swc.m 106 2017-06-27 12:45:13Z V $
+%$Id: flow_update.m 14 2017-02-06 15:28:08Z V $
+%$Id: flow_update.m 14 2017-02-06 15:28:08Z V $
+%$Id: flow_update.m 14 2017-02-06 15:28:08Z V $
+%$Id: flow_update.m 14 2017-02-06 15:28:08Z V $
+%$Id: bed_level_update.m 108 2017-06-27 14:46:40Z V $
+%$Id: bed_level_update_pmm.m 79 2017-04-20 11:07:54Z V $
+%$Id: beta_pmm.m 79 2017-04-20 11:07:54Z V $
+%$Id: boundary_conditions_construction.m 107 2017-06-27 12:56:45Z V $
+%$Id: check_input.m 108 2017-06-27 14:46:40Z V $
+%$Id: check_simulation.m 107 2017-06-27 12:56:45Z V $
+%$Id: compare_results.m 81 2017-04-20 13:51:02Z V $
+%$Id: condition_construction.m 107 2017-06-27 12:56:45Z V $
+%$Id: derivatives.m 79 2017-04-20 11:07:54Z V $
+%$Id: display_tloop.m 81 2017-04-20 13:51:02Z V $
+%$Id: run_ELV.m 49 2017-04-04 07:33:12Z V $
+%$Id: run_ELV.m 49 2017-04-04 07:33:12Z V $
+%$Id: run_ELV.m 49 2017-04-04 07:33:12Z V $
+%for j=1:numel(qb_downt);
+%$Id: eli_1.m 79 2017-04-20 11:07:54Z V $
+%$Id: elliptic_nodes.m 79 2017-04-20 11:07:54Z V $
+%$Id: errorprint.m 106 2017-06-27 12:45:13Z V $
+%$Id: flow_update.m 120 2017-06-29 08:13:24Z V $
+%$Id: folders_creation.m 79 2017-04-20 11:07:54Z V $
+%$Id: friction.m 79 2017-04-20 11:07:54Z V $
+%$Id: friction_correction.m 106 2017-06-27 12:45:13Z V $
+%$Id: get_analytical_solution.m 79 2017-04-20 11:07:54Z V $
+%$Id: run_ELV.m 49 2017-04-04 07:33:12Z V $
+%$Id: run_ELV.m 49 2017-04-04 07:33:12Z V $
+%$Id: get_equislope.m 79 2017-04-20 11:07:54Z V $
+%$Id: get_equivals.m 107 2017-06-27 12:56:45Z V $
+%$Id: get_equivals2_pdf.m 79 2017-04-20 11:07:54Z V $
+%$Id: get_equivals_V.m 106 2017-06-27 12:45:13Z V $
+%$Id: get_equivals_pdf.m 79 2017-04-20 11:07:54Z V $
+%$Id: run_ELV.m 49 2017-04-04 07:33:12Z V $
+%$Id: run_ELV.m 49 2017-04-04 07:33:12Z V $
+%$Id: get_sedigraph.m 79 2017-04-20 11:07:54Z V $
+%$Id: grain_size_distribution_update.m 81 2017-04-20 13:51:02Z V $
+%$Id: ini_Cf.m 79 2017-04-20 11:07:54Z V $
+%$Id: ini_Cfb.m 106 2017-06-27 12:45:13Z V $
+%$Id: ini_La.m 79 2017-04-20 11:07:54Z V $
+%$Id: ini_msk.m 79 2017-04-20 11:07:54Z V $
+%$Id: ini_normalflow.m 79 2017-04-20 11:07:54Z V $
+%$Id: ini_normalflow_L.m 106 2017-06-27 12:45:13Z V $
+%$Id: ini_spacem.m 107 2017-06-27 12:56:45Z V $
+%$Id: initial_condition_construction.m 107 2017-06-27 12:56:45Z V $
+%$Id: join_results.m 106 2017-06-27 12:45:13Z V $
+%$Id: join_results_iferror.m 106 2017-06-27 12:45:13Z V $
+%$Id: log_file_creation.m 79 2017-04-20 11:07:54Z V $
+%$Id: function_layout.m 79 2017-04-20 11:07:54Z V $
+%$Id: function_layout.m 79 2017-04-20 11:07:54Z V $
+%$Id: function_layout.m 79 2017-04-20 11:07:54Z V $
+%$Id: function_layout.m 79 2017-04-20 11:07:54Z V $
+%$Id: output_creation.m 106 2017-06-27 12:45:13Z V $
+%$Id: phi_func.m 79 2017-04-20 11:07:54Z V $
+%$Id: preconditioning_mass_matrix.m 106 2017-06-27 12:45:13Z V $
+%$Id: preissmann.m 79 2017-04-20 11:07:54Z V $
+%$Id: preissmann.m 79 2017-04-20 11:07:54Z V $
+%$Id: print_tloop.m 81 2017-04-20 13:51:02Z V $
+%$Id: run_ELV.m 120 2017-06-29 08:13:24Z V $
+%$Id: run_spacemarching.m 79 2017-04-20 11:07:54Z V $
+%$Id: sediment_transport.m 106 2017-06-27 12:45:13Z V $
+%$Id: sediment_transport_R2016b.m 106 2017-06-27 12:45:13Z V $
+%$Id: side_wall_correction.m 79 2017-04-20 11:07:54Z V $
+%$Id: slope2elevation.m 14 2017-02-06 15:28:08Z V $
+%$Id: solve_Hdown.m 7 2017-02-06 13:42:31Z V $
+%$Id: solve_equibed.m 107 2017-06-27 12:56:45Z V $
+%$Id: solve_equibed.m 57 2017-04-04 09:14:08Z V $
+%$Id: solve_mixed.m 107 2017-06-27 12:56:45Z V $
+%$Id: solve_mixed.m 7 2017-02-06 13:42:31Z V $
+%$Id: solve_nfbc.m 106 2017-06-27 12:45:13Z V $
+%$Id: solve_nfbc2_pdf.m 79 2017-04-20 11:07:54Z V $
+%$Id: solve_nfbc_pdf.m 79 2017-04-20 11:07:54Z V $
+%$Id: solve_qdom.m 107 2017-06-27 12:56:45Z V $
+%$Id: solve_qdom_pdf.m 79 2017-04-20 11:07:54Z V $
+%$Id: substrate_update.m 106 2017-06-27 12:45:13Z V $
+%$Id: substrate_update_R2016b.m 106 2017-06-27 12:45:13Z V $
+%$Id: warningprint.m 107 2017-06-27 12:56:45Z V $
+%$Id: write_results.m 81 2017-04-20 13:51:02Z V $
+----------------------- 
+30-Jun-2017 15:04:17 Start of input reading
+30-Jun-2017 15:04:17 Start of input checking
+!!WARNING!!: For quasi-steady or unsteady flow type you must specify inital u and h 
+30-Jun-2017 15:04:17 Start of initial and boundary condition construction
+30-Jun-2017 15:04:17 Start of initial condition construction
+Normal flow initial condition found. Maximum relative error = 1.2083e-07; sum of objective function = 1.2038e-12 
+h0=0.3357 m; u0=0.5957 m/s; slopeb0=1.07757e-03; Fak0=[ 0.111 ] qbk0=[ 5.000e-06 5.000e-06 ]
+30-Jun-2017 15:04:17 Start of boundary conditions construction
+30-Jun-2017 15:04:17 Start of t0 conditions saving
+Number of saved timesteps = 2; 8.33% computed, 0d 00h 04m 26s to finish 
+Number of saved timesteps = 3; 16.67% computed, 0d 00h 03m 59s to finish 
+Number of saved timesteps = 4; 25.00% computed, 0d 00h 03m 35s to finish 
+Number of saved timesteps = 5; 33.33% computed, 0d 00h 03m 10s to finish 
+Number of saved timesteps = 6; 41.67% computed, 0d 00h 02m 47s to finish 
+Number of saved timesteps = 7; 50.00% computed, 0d 00h 02m 23s to finish 
+Number of saved timesteps = 8; 58.33% computed, 0d 00h 01m 59s to finish 
+Number of saved timesteps = 9; 66.67% computed, 0d 00h 01m 35s to finish 
+Number of saved timesteps = 10; 75.00% computed, 0d 00h 01m 12s to finish 
+Number of saved timesteps = 11; 83.33% computed, 0d 00h 00m 48s to finish 
+Number of saved timesteps = 12; 91.67% computed, 0d 00h 00m 24s to finish 
+Number of saved timesteps = 13; 100.00% computed, 0d 00h 00m  0s to finish 
+30-Jun-2017 15:09:04 Start of putting all result files together
+30-Jun-2017 15:09:04 End of putting all result files together
+30-Jun-2017 15:09:04 End of ELV
+30-Jun-2017 15:09:04 End of the postprocessing

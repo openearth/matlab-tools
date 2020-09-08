@@ -1,0 +1,143 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                    ELV                                    %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+26-Jul-2017 18:12:32 Start of simulation
+computer: TUD0043086
+user: victorchavarri
+matlab version: 9.2.0.556344 (R2017a)
+----------------------- 
+---ELV files version--- 
+%$Id: ELV.m 132 2017-07-10 08:19:44Z V $
+%$Id: ELV_version.m 132 2017-07-10 08:19:44Z V $
+%$Id: active_layer_mass_update.m 132 2017-07-10 08:19:44Z V $
+%$Id: active_layer_mass_update_pmm.m 132 2017-07-10 08:19:44Z V $
+%$Id: active_layer_thickness_update.m 132 2017-07-10 08:19:44Z V $
+%$Id: active_reconstruction_mean.m 132 2017-07-10 08:19:44Z V $
+%$Id: add_nourishment.m 132 2017-07-10 08:19:44Z V $
+%$Id: add_sedflags.m 132 2017-07-10 08:19:44Z V $
+%$Id: analytical_cubic_root.m 135 2017-07-20 07:45:50Z V $
+%$Id: aux_ini_normalflow.m 132 2017-07-10 08:19:44Z V $
+%$Id: aux_swc.m 132 2017-07-10 08:19:44Z V $
+%$Id: backwater.m 132 2017-07-10 08:19:44Z V $
+%$Id: backwater_rect.m 132 2017-07-10 08:19:44Z V $
+%$Id: backwater_step.m 132 2017-07-10 08:19:44Z V $
+%$Id: backwater_step_rect.m 132 2017-07-10 08:19:44Z V $
+%$Id: bed_level_update.m 132 2017-07-10 08:19:44Z V $
+%$Id: bed_level_update_pmm.m 132 2017-07-10 08:19:44Z V $
+%$Id: beta_pmm.m 132 2017-07-10 08:19:44Z V $
+%$Id: boundary_conditions_construction.m 132 2017-07-10 08:19:44Z V $
+%$Id: check_input.m 132 2017-07-10 08:19:44Z V $
+%$Id: check_simulation.m 132 2017-07-10 08:19:44Z V $
+%$Id: compare_results.m 132 2017-07-10 08:19:44Z V $
+%$Id: condition_construction.m 132 2017-07-10 08:19:44Z V $
+%$Id: derivatives.m 132 2017-07-10 08:19:44Z V $
+%$Id: display_tloop.m 132 2017-07-10 08:19:44Z V $
+%$Id: dv_bouss_coef.m 132 2017-07-10 08:19:44Z V $
+%$Id: dv_cross_aux.m 132 2017-07-10 08:19:44Z V $
+%$Id: dv_cross_section.m 132 2017-07-10 08:19:44Z V $
+%$Id: elevation_reconstruction_mean.m 135 2017-07-20 07:45:50Z V $
+%$Id: eli_1.m 132 2017-07-10 08:19:44Z V $
+%$Id: elliptic_nodes.m 132 2017-07-10 08:19:44Z V $
+%$Id: errorprint.m 132 2017-07-10 08:19:44Z V $
+%$Id: flow_update.m 132 2017-07-10 08:19:44Z V $
+%$Id: folders_creation.m 132 2017-07-10 08:19:44Z V $
+%$Id: friction.m 132 2017-07-10 08:19:44Z V $
+%$Id: friction_correction.m 132 2017-07-10 08:19:44Z V $
+%$Id: get_analytical_solution.m 132 2017-07-10 08:19:44Z V $
+%$Id: get_bouss_coef.m 132 2017-07-10 08:19:44Z V $
+%$Id: get_cross_section.m 132 2017-07-10 08:19:44Z V $
+%$Id: get_equislope.m 132 2017-07-10 08:19:44Z V $
+%$Id: get_equivals.m 132 2017-07-10 08:19:44Z V $
+%$Id: get_equivals2_pdf.m 132 2017-07-10 08:19:44Z V $
+%$Id: get_equivals_V.m 132 2017-07-10 08:19:44Z V $
+%$Id: get_equivals_pdf.m 132 2017-07-10 08:19:44Z V $
+%$Id: get_flow_velocities.m 132 2017-07-10 08:19:44Z V $
+%$Id: get_rep_fric.m 132 2017-07-10 08:19:44Z V $
+%$Id: get_sedigraph.m 132 2017-07-10 08:19:44Z V $
+%$Id: grain_size_distribution_update.m 132 2017-07-10 08:19:44Z V $
+%$Id: ini_Cf.m 132 2017-07-10 08:19:44Z V $
+%$Id: ini_Cfb.m 132 2017-07-10 08:19:44Z V $
+%$Id: ini_La.m 132 2017-07-10 08:19:44Z V $
+%$Id: ini_msk.m 132 2017-07-10 08:19:44Z V $
+%$Id: ini_normalflow.m 132 2017-07-10 08:19:44Z V $
+%$Id: ini_normalflow_L.m 132 2017-07-10 08:19:44Z V $
+%$Id: ini_spacem.m 132 2017-07-10 08:19:44Z V $
+%$Id: initial_condition_construction.m 132 2017-07-10 08:19:44Z V $
+%$Id: join_results.m 132 2017-07-10 08:19:44Z V $
+%$Id: join_results_iferror.m 132 2017-07-10 08:19:44Z V $
+%$Id: log_file_creation.m 132 2017-07-10 08:19:44Z V $
+%$Id: march_step_dBdx.m 132 2017-07-10 08:19:44Z V $
+%$Id: march_step_dBdx_mixed.m 132 2017-07-10 08:19:44Z V $
+%$Id: march_step_mixed.m 132 2017-07-10 08:19:44Z V $
+%$Id: march_step_uni.m 132 2017-07-10 08:19:44Z V $
+%$Id: output_creation.m 132 2017-07-10 08:19:44Z V $
+%$Id: phi_func.m 132 2017-07-10 08:19:44Z V $
+%$Id: preconditioning_mass_matrix.m 135 2017-07-20 07:45:50Z V $
+%$Id: preissmann.m 132 2017-07-10 08:19:44Z V $
+%$Id: preissmann_diag.m 132 2017-07-10 08:19:44Z V $
+%$Id: print_tloop.m 132 2017-07-10 08:19:44Z V $
+%$Id: run_ELV.m 132 2017-07-10 08:19:44Z V $
+%$Id: run_spacemarching.m 132 2017-07-10 08:19:44Z V $
+%$Id: sediment_transport.m 132 2017-07-10 08:19:44Z V $
+%$Id: sediment_transport_R2016b.m 132 2017-07-10 08:19:44Z V $
+%$Id: side_wall_correction.m 132 2017-07-10 08:19:44Z V $
+%$Id: slope2elevation.m 132 2017-07-10 08:19:44Z V $
+%$Id: solve_Hdown.m 132 2017-07-10 08:19:44Z V $
+%$Id: solve_equibed.m 132 2017-07-10 08:19:44Z V $
+%$Id: solve_equibed2.m 132 2017-07-10 08:19:44Z V $
+%$Id: solve_mixed.m 132 2017-07-10 08:19:44Z V $
+%$Id: solve_mixed_dBdx.m 132 2017-07-10 08:19:44Z V $
+%$Id: solve_nfbc.m 132 2017-07-10 08:19:44Z V $
+%$Id: solve_nfbc2_pdf.m 132 2017-07-10 08:19:44Z V $
+%$Id: solve_nfbc_pdf.m 132 2017-07-10 08:19:44Z V $
+%$Id: solve_qdom.m 132 2017-07-10 08:19:44Z V $
+%$Id: solve_qdom_pdf.m 132 2017-07-10 08:19:44Z V $
+%$Id: substrate_update.m 132 2017-07-10 08:19:44Z V $
+%$Id: substrate_update_R2016b.m 132 2017-07-10 08:19:44Z V $
+%$Id: warningprint.m 132 2017-07-10 08:19:44Z V $
+%$Id: write_results.m 132 2017-07-10 08:19:44Z V $
+----------------------- 
+26-Jul-2017 18:12:33 Start of input reading
+26-Jul-2017 18:12:33 Start of input checking
+26-Jul-2017 18:12:33 Start of initial and boundary condition construction
+26-Jul-2017 18:12:33 Start of initial condition construction
+Normal flow initial condition found. Maximum relative error = 8.4094e-10; sum of objective function = 6.6112e-15 
+h0=0.1858 m; u0=0.8073 m/s; slopeb0=3.71826e-03; Fak0=[ 0.000 ] qbk0=[ 0.000e+00 7.862e-06 ]
+26-Jul-2017 18:12:33 Start of boundary conditions construction
+26-Jul-2017 18:12:33 Start of t0 conditions saving
+!!WARNING!!: max. initial CFL = 0.00 at node 63 
+!!WARNING!!: max. initial Fr  = 0.60 at node 63 
+Number of saved timesteps = 2; 3.33% computed, 0d 00h 00m 11s to finish 
+Number of saved timesteps = 3; 6.67% computed, 0d 00h 00m  5s to finish 
+Number of saved timesteps = 4; 10.00% computed, 0d 00h 00m  5s to finish 
+Number of saved timesteps = 5; 13.33% computed, 0d 00h 00m  5s to finish 
+Number of saved timesteps = 6; 16.67% computed, 0d 00h 00m  5s to finish 
+Number of saved timesteps = 7; 20.00% computed, 0d 00h 00m  5s to finish 
+Number of saved timesteps = 8; 23.33% computed, 0d 00h 00m  4s to finish 
+Number of saved timesteps = 9; 26.67% computed, 0d 00h 00m  4s to finish 
+Number of saved timesteps = 10; 30.00% computed, 0d 00h 00m  4s to finish 
+Number of saved timesteps = 11; 33.33% computed, 0d 00h 00m  4s to finish 
+Number of saved timesteps = 12; 36.67% computed, 0d 00h 00m  4s to finish 
+Number of saved timesteps = 13; 40.00% computed, 0d 00h 00m  3s to finish 
+Number of saved timesteps = 14; 43.33% computed, 0d 00h 00m  3s to finish 
+Number of saved timesteps = 15; 46.67% computed, 0d 00h 00m  3s to finish 
+Number of saved timesteps = 16; 50.00% computed, 0d 00h 00m  3s to finish 
+Number of saved timesteps = 17; 53.33% computed, 0d 00h 00m  3s to finish 
+Number of saved timesteps = 18; 56.67% computed, 0d 00h 00m  2s to finish 
+Number of saved timesteps = 19; 60.00% computed, 0d 00h 00m  2s to finish 
+Number of saved timesteps = 20; 63.33% computed, 0d 00h 00m  2s to finish 
+Number of saved timesteps = 21; 66.67% computed, 0d 00h 00m  2s to finish 
+Number of saved timesteps = 22; 70.00% computed, 0d 00h 00m  2s to finish 
+Number of saved timesteps = 23; 73.33% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 24; 76.67% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 25; 80.00% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 26; 83.33% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 27; 86.67% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 28; 90.00% computed, 0d 00h 00m  1s to finish 
+Number of saved timesteps = 29; 93.33% computed, 0d 00h 00m  0s to finish 
+Number of saved timesteps = 30; 96.67% computed, 0d 00h 00m  0s to finish 
+Number of saved timesteps = 31; 100.00% computed, 0d 00h 00m  0s to finish 
+26-Jul-2017 18:12:39 Start of putting all result files together
+26-Jul-2017 18:12:39 End of putting all result files together
+26-Jul-2017 18:12:39 End of ELV
+26-Jul-2017 18:12:39 End of the postprocessing
