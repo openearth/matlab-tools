@@ -1,5 +1,5 @@
-function Statistics = EHY_statistics(varargin)
-%% Statistics = EHY_statistics(varargin)
+function [Statistics,Z_int] = EHY_statistics(varargin)
+%% [Statistics,Z_int] = EHY_statistics(varargin)
 %
 % 1D: function Statistics = EHY_statistics(X_sim, Z_sim, X_obs, Z_obs)
 % uses interp1
@@ -23,6 +23,10 @@ Statistics.obsrange     = NaN;
 Statistics.simrange     = NaN;
 Statistics.simrangeint  = NaN;
 Statistics.rms_obs      = NaN;
+Statistics.corrcoef     = NaN; % correlation coefficient
+Statistics.n            = NaN; % number of points
+
+Z_int = [];
 
 if any(cellfun(@isempty,varargin))
     return % statistics can not be determined
@@ -88,8 +92,8 @@ else
 end
 
 %% Determine statistics
-difference = Z_int - Z_obs;
-err = difference(~isnan(difference)); % err = 'error'
+nonan = ~isnan(Z_int) & ~isnan(Z_obs);
+err   = Z_int(nonan) - Z_obs(nonan); % err = 'error'
 
 if sum(size(err)>1)>1
     error('2D error array.. please debug as I''m not sure if statistics below are OK for 2D')
@@ -107,4 +111,7 @@ if numel(err) > 1
     Statistics.simrange     = max(max(Z_sim)) - min(min(Z_sim));
     Statistics.simrangeint  = max(Z_int) - min(Z_int);
     Statistics.rms_obs      = Statistics.rmserror / Statistics.obsrange;
+    r                       = corrcoef(Z_int,Z_obs);
+    Statistics.corrcoef     = r(1,2);
+    Statistics.n            = length(err);
 end

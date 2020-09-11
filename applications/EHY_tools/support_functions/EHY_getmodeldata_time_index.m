@@ -18,9 +18,9 @@ elseif ~isempty(OPT.t0) && ~isempty(OPT.tend)
     tend_ind = find(Data.times <= OPT.tend,1,'last');
     
     if isfield(OPT,'tint') && ~isempty(OPT.tint)
-        modelTimes_int = Data.times(3) - Data.times(2); % in minutes
+        modelTimes_int = Data.times(3) - Data.times(2); % in days
         stride = OPT.tint/modelTimes_int;
-        if mod(stride,1) > 10^-6
+        if mod(stride,1) > 10^-5
             error('OPT.tint (in days) needs to be a multiple of the model output timestep')
         else
             stride = round(stride);
