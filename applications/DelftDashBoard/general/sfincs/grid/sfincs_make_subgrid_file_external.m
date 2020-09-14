@@ -42,6 +42,7 @@ xy.length = 0;
 xy_ex.length = 0;
 
 subgrid = 1;
+subgrd = struct;
 
 subgridfile = 'sfincs.sbg';
 indexfile = 'sfincs.ind';
@@ -120,40 +121,49 @@ if ~exist([dr,'\xgygzg.mat']) %load saved file
     jjend = ceil(size(bathy.x,2)/500);
     
     zg = NaN(size(xg));
-    count = 0;
-    for ii = 1:iiend %do now per 500 cells
-        for jj = 1:jjend
-            count = count +1;
-            disp(count)
-            % cell indices
-            if ii == iiend
-                ic2 = size(bathy.x,1);
-                ic1 = ic2- 1;
-            else
-                ic1=(ii-1)*500+1;                
-                ic2=(ii  )*500;
-            end      
-            if jj == jjend
-                jc2 = size(bathy.x,2);
-                jc1 = jc2-1;
-            else
-                jc1=(jj-1)*500+1;                
-                jc2=(jj  )*500;
-            end        
+    if jjend > 1
+        count = 0;
+        for ii = 1:iiend %do now per 500 cells
+            for jj = 1:jjend
+                count = count +1;
+                disp(count)
+                % cell indices
+                if ii == iiend
+                    ic2 = size(bathy.x,1);
+                    ic1 = ic2- 1;
+                else
+                    ic1=(ii-1)*500+1;                
+                    ic2=(ii  )*500;
+                end      
+                if jj == jjend
+                    jc2 = size(bathy.x,2);
+                    jc1 = jc2-1;
+                else
+                    jc1=(jj-1)*500+1;                
+                    jc2=(jj  )*500;
+                end        
 
 
-            xxx = bathy.x(ic1:ic2,jc1:jc2);
-            yyy = bathy.y(ic1:ic2,jc1:jc2);
-            zzz = bathy.z(ic1:ic2,jc1:jc2);
-            clear F
-            F   = scatteredInterpolant(xxx(:),yyy(:),zzz(:),'linear','none');   
+                xxx = bathy.x(ic1:ic2,jc1:jc2);
+                yyy = bathy.y(ic1:ic2,jc1:jc2);
+                zzz = bathy.z(ic1:ic2,jc1:jc2);
+                clear F
+                F   = scatteredInterpolant(xxx(:),yyy(:),zzz(:),'linear','none');   
 
-            zgtmp = F(xg,yg);
-            
-            zg(isnan(zg)) = zgtmp(isnan(zg)); %only add not filled cells
-            
-%             figure; pcolor(xg,yg,zg); shading flat;
+                zgtmp = F(xg,yg);
+
+                zg(isnan(zg)) = zgtmp(isnan(zg)); %only add not filled cells
+
+    %             figure; pcolor(xg,yg,zg); shading flat;
+            end
         end
+    else %interpolate all in a row
+        
+        clear F
+        F   = scatteredInterpolant(bathy.x(:),bathy.y(:),bathy.z(:),'linear','nearest');  %or no extrapolation better? 
+
+        zg = F(xg,yg);
+        
     end
     clear ic1 jc1 ic2 jc2
     disp('Compute F the first time > done')
@@ -186,6 +196,7 @@ clear F % later make F per subblock
 mmax=size(xg,2);
 nmax=size(yg,1);  %1!
 dx = xg(1,2) - xg(1,1);
+disp(['dx=',num2str(dx)])
 dy = yg(2,1) - yg(1,1);
 x0=xg(1,1);
 y0=yg(1,1);
