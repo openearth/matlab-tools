@@ -96,7 +96,7 @@ if strcmp(OPT.varName,'noMatchFound')
 end
 
 %% temp fix for incorrect z-coordinates in dfm
-if strcmp(modelType,'dfm') && strcmp(OPT.varName,'zcoordinate_w')
+if strcmp(modelType,'dfm') && strcmp(OPT.varName,'zcoordinate_w') && ~EHY_isCMEMS(inputFile)
     Data = EHY_getmodeldata_zcen_int(inputFile,stat_name,modelType,OPT);
     if nargout==1
         varargout{1} = Data;
