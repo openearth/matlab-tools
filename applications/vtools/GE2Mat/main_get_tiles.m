@@ -27,11 +27,11 @@ load("c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\GE2M
 % ylima=  [4.40     4.60]*1e5;
 % coordinate_input=28992; %Amersfoort
 
-xlima=  [05+43/60+35/3600, 06+02/60+03/3600];
-ylima=  [51+49/60+44/3600, 51+53/60+29/3600];
+xlima=  [03+30/60+22/3600, 04+29/60+54/3600];
+ylima=  [51+52/60+01/3600, 52+21/60+16/3600];
 coordinate_input=4326; %google earth
 
-tzl = 14; %zoom
+tzl = 11; %zoom
 
 save_tiles=1;
 % coordinate_output=4326;

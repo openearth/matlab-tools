@@ -17,10 +17,10 @@ clc
 
 %% INPUT
 
-in_read.branch={'Waal1','Waal2','Waal3','Waal4','Waal5','Waal6'}; %branch
+in_read.branch={'Channel_1D_1'}; %branch
 in_read.kt=10; %output time index
-simdef.D3D.dire_sim='p:\11203223-tki-rivers\02_rijntakken_2020\04_runs\16_morpho_j19\straight-morpho-2011-2019\dflowfm\';
-simdef.flg.which_v=1; 
+simdef.D3D.dire_sim='C:\Users\chavarri\temporal\200911_t\dflowfm\';
+simdef.flg.which_v=2; 
 %   1=etab
 %   2=h
 %   3=dm Fak
