@@ -6,6 +6,7 @@ function [rmax,dr35] = wind_radii_nederhoff(vmax,lat,region, probability)
 % v1.2  Nederhoff   Jun-17
 % v1.3  Nederhoff   Aug-18
 % v1.4  Nederhoff   Mar-19
+% v1.5  Nederhoff   Sep-20
 
 %% Input
 % vmax in m/s, 10 meter height and 1-minute averaged
@@ -59,8 +60,7 @@ coefficients_b = [132.4119062	14.56403797	-0.002597033	20.38080365
     44.82417433	23.37171288	0.030469057	22.42820361];
 
 % 3. Get the best guess for a and b given wind speed and latitude
-a_value = ones(length(vmax))*coefficients_a(region+1);
-id      = ~isnan(a_value); a_value(id) = 0.306982517503133;
+a_value = ones(1,length(vmax))*coefficients_a(region+1);
 b_value = coefficients_b(region+1, 1) *  exp(-vmax/coefficients_b(region+1, 2)).* (1 + coefficients_b(region+1, 3)*abs(lat)) + coefficients_b(region+1, 4);
 
 % 4. Compute 1000 delta R35 values
