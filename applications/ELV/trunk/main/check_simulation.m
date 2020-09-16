@@ -134,7 +134,11 @@ if input.mdv.chk.flow==1
         psi=5*sum(qbk,1)./(u.*h); %dqb_dq approximation as EH (analytical)
         celerities.lb=psi./(1-Fr.^2);
     end
-        
+       
+    if isempty(celerities.ls)==1
+        celerities.ls=sum(qbk,1)./La./u; %approximation
+    end
+    
     c=celerities4CFL(u,h,celerities,pmm,vpk,input,fid_log,kt);
 
     %diffusion
