@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 249 $
-%$Date: 2020-07-09 10:42:49 +0200 (Thu, 09 Jul 2020) $
-%$Author: chavarri $
-%$Id: ELV.m 249 2020-07-09 08:42:49Z chavarri $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/ELV.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %ELV is the main function of the model
 %

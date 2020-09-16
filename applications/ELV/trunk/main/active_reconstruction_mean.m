@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 168 $
-%$Date: 2017-08-02 12:08:36 +0200 (Wed, 02 Aug 2017) $
-%$Author: V $
-%$Id: active_reconstruction_mean.m 168 2017-08-02 10:08:36Z V $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/active_reconstruction_mean.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %active_reconstruction_mean ...
 %

@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 246 $
-%$Date: 2020-07-08 10:57:48 +0200 (Wed, 08 Jul 2020) $
-%$Author: chavarri $
-%$Id: flow_unsteady_explicit.m 246 2020-07-08 08:57:48Z chavarri $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/flow_unsteady_explicit.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %flow_update updates the flow depth and the mean flow velocity.
 %

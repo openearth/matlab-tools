@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 137 $
-%$Date: 2017-07-20 09:50:06 +0200 (Thu, 20 Jul 2017) $
-%$Author: V $
-%$Id: errorprint.m 137 2017-07-20 07:50:06Z V $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/errorprint.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %errorprint is a function that prints in the log file the error catched
 %

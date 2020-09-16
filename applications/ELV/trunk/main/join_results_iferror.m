@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 221 $
-%$Date: 2018-11-26 06:30:49 +0100 (Mon, 26 Nov 2018) $
-%$Author: v.chavarriasborras@tudelft.nl $
-%$Id: join_results_iferror.m 221 2018-11-26 05:30:49Z v.chavarriasborras@tudelft.nl $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/join_results_iferror.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %joint_results_iferror jpint the temporary results in the output file in case there has been an error.
 %

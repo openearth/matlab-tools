@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 216 $
-%$Date: 2018-11-07 17:57:40 +0100 (Wed, 07 Nov 2018) $
-%$Author: v.chavarriasborras@tudelft.nl $
-%$Id: active_layer_mass_update.m 216 2018-11-07 16:57:40Z v.chavarriasborras@tudelft.nl $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/active_layer_mass_update.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %active_layer_mass_update updates the mass (volume) of sediment at the active layer.
 %

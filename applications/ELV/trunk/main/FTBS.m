@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 246 $
-%$Date: 2020-07-08 10:57:48 +0200 (Wed, 08 Jul 2020) $
-%$Author: chavarri $
-%$Id: FTBS.m 246 2020-07-08 08:57:48Z chavarri $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/FTBS.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %forward in time backward in space numerical scheme to solve dc/dt+v*dc/dx=S1+S2*c
 %

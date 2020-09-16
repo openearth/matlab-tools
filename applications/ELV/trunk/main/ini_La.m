@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 207 $
-%$Date: 2018-05-25 15:01:41 +0200 (Fri, 25 May 2018) $
-%$Author: v.chavarriasborras@tudelft.nl $
-%$Id: ini_La.m 207 2018-05-25 13:01:41Z v.chavarriasborras@tudelft.nl $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/ini_La.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %ini_La this function creates the initial active layer thickness vector
 %

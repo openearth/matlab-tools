@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 137 $
-%$Date: 2017-07-20 09:50:06 +0200 (Thu, 20 Jul 2017) $
-%$Author: V $
-%$Id: analytical_cubic_root.m 137 2017-07-20 07:50:06Z V $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/analytical_cubic_root.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %analytical_cubic_root returns the three roots of a cubic polynomial, provided they are real. The polynomial is ax^3+bx^2+cx+d=0.
 %

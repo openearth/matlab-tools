@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 203 $
-%$Date: 2018-05-16 08:20:37 +0200 (Wed, 16 May 2018) $
-%$Author: v.chavarriasborras@tudelft.nl $
-%$Id: get_rep_fric.m 203 2018-05-16 06:20:37Z v.chavarriasborras@tudelft.nl $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/get_rep_fric.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %get_rep_fric does this and that
 %

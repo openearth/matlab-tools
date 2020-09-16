@@ -12,19 +12,21 @@
 
 input.mdv.flowtype=1; %flow assumption: 0=NO update 1=steady; 2=quasi-steady; 3=unsteady (explicit); 4=unsteady (implicit); [-]; [1x1 double]; e.g. [1]
 input.mdv.steady_solver=1; %steady solver: 1=energy-Euler; 2=energy-RK4; 3=depth-Euler; 4=depth-RK4; [1x1 double]; default=1
-% input.mdv.fluxtype=1; %flux type (only if flowtype=3): 0=upwind; 1=Lax-Wendroff; 2=Beam-Warming; 3=Fromm; 4=minmod; 5=van Leer; 6=superbee; 7=MC; [-]; [1x1 double]; e.g. [1]
-% input.mdv.ade_solver=1; %solver for advection diffusion equation (for particle activity): [1x1 double]; e.g. [2]
+input.mdv.fluxtype=1; %flux type (only if flowtype=3): 0=upwind; 1=Lax-Wendroff; 2=Beam-Warming; 3=Fromm; 4=minmod; 5=van Leer; 6=superbee; 7=MC; [-]; [1x1 double]; e.g. [1]
+input.mdv.ade_solver=1; %solver for advection diffusion equation (for particle activity): [1x1 double]; e.g. [2]
     %1=theta-method in time, CS for advection, CS for diffusion;
     %2=theta-method in time, BS for advection, CS for diffusion;
-% input.mdv.theta=0.5; %theta in theta-method for particle activity equation; 0=FTCS; 0.5=Crank-Nicolson; 1=BTCS
+input.mdv.theta=0.5; %theta in theta-method for particle activity equation; 0=FTCS; 0.5=Crank-Nicolson; 1=BTCS
+% DEPRECATED input.mdv.frictiontype=1; %friction type: 1=constant; 2=related to grain size; 3=related to flow depth; 4=related to active layer [1x1 double]; e.g. [1]
 input.mdv.Tstop=3600*10; %simulation time [s]; [1x1 double]; e.g. [3600]
 input.mdv.dt_type=1; %type of time step method [-]: 1=fixed time step; 2=fixed CFL number; [1x1 double]; e.g. [1]  
 input.mdv.dt=0.05; %time step [s]; [1x1 double]; e.g. [2] When using input.mdv.dt_type=2 this is the first time step.
-% input.mdv.cfl=0.9; %CFL number to compute time step [-]; [1x1 double]; e.g. [0.9] 
-% input.mdv.bc_interp_type=1; %type of interpolation of the boundary conditions: 1=interpolate at the beginning and create bc structure; 2=interpolate at each time step [-]; [1x1 double]; e.g. [1] 
+input.mdv.cfl=0.9; %CFL number to compute time step [-]; [1x1 double]; e.g. [0.9] 
+input.mdv.bc_interp_type=1; %type of interpolation of the boundary conditions: 1=interpolate at the beginning and create bc structure; 2=interpolate at each time step [-]; [1x1 double]; e.g. [1] 
 input.mdv.Flmap_dt=600; %printing map-file interval time [s]; [1x1 double]; e.g. [60]  
 % input.mdv.disp_t_nt=100; %number of time steps to average the time needed to finish the simulatin [-]; [1x1 double]; e.g. [100]  
-% input.mdv.disp_time=1; %time in between displays in screen [s]; [1x1 double]; e.g. [1]  
+input.mdv.disp_time=1; %time in between displays in screen [s]; [1x1 double]; e.g. [1]  
+% DEPRECATED input.mdv.Cf=0.01; %friction coefficient [-]; [1x1 double]; e.g. [0.008]
 input.mdv.rhow=1000; %water density [kg/m^3]; [1x1 double]; e.g. [1000]
 input.mdv.g=9.81; %gravity constant [m/s^2]; [1x1 double]; e.g. [9.81]
 input.mdv.nu=1e-6; %kinematic viscosity of water [m^2/s]; [1x1 double]; e.g. [1e-6]
@@ -39,16 +41,17 @@ input.mdv.chk.F_lim=0.01; %maximum error in volume fractions [-]; [1x1 double]; 
 input.mdv.chk.nan=1; %check for NaN in variables 0=NO; 1=YES;
 input.mdv.chk.ell=0; %display check for ellipticity 0=NO; 1=YES;
 input.mdv.chk.pmm=0; %display check for pmm 0=NO; 1=YES;
+input.mdv.chk.disp_Mak_update=0; %display filter of Mak update 0=NO; 1=YES;
 input.mdv.dd=1e-8; %diferential
 
 input.mdv.savemethod=2; %1=directly in one file; 2=first in individual files
 % input.mdv.t0=0; %starting time of the simulation [s]; [1x1 double]; e.g. [3600] !there was a change in the definition of this variable. It was time step and now it is absolute time.
 
-% input.mdv.email.send=0; %0=NO; 1=YES
-% input.mdv.email.sender_mailAddress='v.chavarriasborras@tudelft.nl'; %use only TUD email
-% input.mdv.email.recipient_mailAddress='chavarrias.v@gmail.com';
-% input.mdv.email.userName='victorchavarri';
-% input.mdv.email.password_coded=[5682;5651;6481;5854;5879;6359;5527;5800;5556;5643;6238;6046;6191;5956;5224;5645;5717;6007;5683;6225;6411;6114;6494;5796;6563;5683;5255;5217;5367;6060];
+input.mdv.email.send=0; %0=NO; 1=YES
+input.mdv.email.sender_mailAddress='v.chavarriasborras@tudelft.nl'; %use only TUD email
+input.mdv.email.recipient_mailAddress='chavarrias.v@gmail.com';
+input.mdv.email.userName='victorchavarri';
+input.mdv.email.password_coded=[5682;5651;6481;5854;5879;6359;5527;5800;5556;5643;6238;6046;6191;5956;5224;5645;5717;6007;5683;6225;6411;6114;6494;5796;6563;5683;5255;5217;5367;6060];
 
 % input.mdv.path_folder_main='c:\Users\victorchavarri\temporal\ELV\A\001\'; %full path to the main folder run [string]; default is the same as the input.mat
 % input.mdv.path_folder_results='c:\Users\victorchavarri\temporal\ELV\A\001\'; %full path to the folder where you want to store the output.mat and other files that you may create; default is the same as the input.mat
@@ -86,8 +89,8 @@ input.grd.B=1; %width [m]; [1x1 double] | [1xnx double]; e.g. [10]
 
 input.mor.bedupdate=1; %update bed elevation 0=NO; 1=YES [-]; e.g. 1
 input.mor.gsdupdate=1; %update grain size distribution 0=NO; 1=Hirano ;2=eli 1 (max. La); 3=eli 1 (min. La); 4=pmm (a<1,b~=1); 5=pmm (a>1,b~=1); 6=(a<1,b=1); 7=(a>1,b=1); 8=impose a (by means of pmm_alpha_eps); 9=a_m (M_eta=1/b, M_Fak=1/(a*b)); [-]; e.g. 1 
-% input.mor.pmm_alpha_eps=0.01; %fraction added to alpha to avoid equal eigenvalues; [1x1 double]; e.g. [0.05]
-input.mor.particle_activity=0; %use particle activity model 0=NO; 1=YES [-]; [1x1 double]; e.g. [0]
+input.mor.pmm_alpha_eps=0.01; %fraction added to alpha to avoid equal eigenvalues; [1x1 double]; e.g. [0.05]
+input.mor.particle_activity=1; %use particle activity model 0=NO; 1=YES [-]; [1x1 double]; e.g. [0]
 input.mor.ellcheck=0; %ellipticity check 0=NO; 1=YES (full model); 2=YES (approximate model) [-]; e.g. 1
 input.mor.interfacetype=1; %fractions at the interface 1=Hirano; 2=Hoey and Ferguson [-]; [1x1 double];
 input.mor.fIk_alpha=1; %Hoey and Ferguson parameter (0=100% active layer, 1=100% bed load) [-]; [1x1 double];
@@ -99,8 +102,9 @@ input.mor.ThUnLyr=0.02; %thickness of each underlayer [m]; [1x1 double]; e.g. [0
 input.mor.total_ThUnLyr=0.20; %thickness of the entire bed [m]; [1x1 double]; e.g. [2]
 input.mor.lsk1_fc=1; %factor multiplying the thickness of the first substrate layer [-]; [1x1 double]; e.g. [0.5]
 % input.mor.ThUnLyrEnd=10; %thickness of the last underlayer [m]; [1x1 double]; e.g. [10]
-% input.mor.MorStt=60; %spin-up time [s]; [1x1 double]; e.g. [60]
 input.mor.MorFac=1; %morphological accelerator factor [-]; [1x1 double]; e.g. [10]
+input.mor.Tstart=600; %start time of morphology update [s]; [1x1 double]; e.g. [600]
+input.mor.Struiksma=0; %apply Struiksma reduction of sediment transport and reduction of the active layer thickness [-]; e.g. 0
 
 %% 
 %% SEDIMENT CHARACTERISTICS
@@ -120,7 +124,7 @@ input.tra.param=[5.7,1.5,0.047]; %sediment transport parameters (depending on th
 input.tra.E_param=[0.0199,1.5]; %entrainment function paramenters 1=[0.0199,1.5]; 3=[0.0591] (to keep Dk_st with the values by FLvB)
 input.tra.vp_param=[11.5,0.7]; %particle velocity function parameters
 input.tra.hid=0; %hiding function= %0=NO function; 1=Egiazaroff; 2=Power-Law; 3=Ashida-Mishihue;
-input.tra.hiding_b=0; %power function of the Power Law function 
+input.tra.hiding_b=0; %power function of the Power Law function [-] [1x1 double]; e.g. [-0.8]
 input.tra.Dm=1; %1=geometric 2^sum(Fak*log2(dk); 2=arithmetic sum(Fak*dk);
 input.tra.kappa=[0.1;0.1]; %diffusivity [m^2/s]; [(nf)x(1) double]; e.g. [0.1;0.1] If exponential rest times: kappa=O(1)*vp*lambda=O(1)*vp*16*dk, where vp is the particle velocity and lambda is the step length. The first equality is shown in Furbish12_3 and the second one in FernandezLuque76.
 input.tra.mu=0; %ripple factor flag: 0=NO; 1=constant;

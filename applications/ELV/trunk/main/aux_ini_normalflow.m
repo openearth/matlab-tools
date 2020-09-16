@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 174 $
-%$Date: 2017-10-05 13:29:10 +0200 (Thu, 05 Oct 2017) $
-%$Author: V $
-%$Id: aux_ini_normalflow.m 174 2017-10-05 11:29:10Z V $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/aux_ini_normalflow.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %aux_ini_normalflow is an auxiliary function that returns the difference between the boundary condition values of q and qbk and the computed ones
 %

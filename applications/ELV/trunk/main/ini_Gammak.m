@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 246 $
-%$Date: 2020-07-08 10:57:48 +0200 (Wed, 08 Jul 2020) $
-%$Author: chavarri $
-%$Id: ini_Gammak.m 246 2020-07-08 08:57:48Z chavarri $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/ini_Gammak.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %ini_Gammak creates the initial Gammak values for equilibrium
 %

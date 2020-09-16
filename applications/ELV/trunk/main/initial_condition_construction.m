@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 209 $
-%$Date: 2018-07-04 10:26:56 +0200 (Wed, 04 Jul 2018) $
-%$Author: v.chavarriasborras@tudelft.nl $
-%$Id: initial_condition_construction.m 209 2018-07-04 08:26:56Z v.chavarriasborras@tudelft.nl $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/initial_condition_construction.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %initial_condition_construction does this and that
 %

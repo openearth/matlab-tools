@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 218 $
-%$Date: 2018-11-24 10:20:04 +0100 (Sat, 24 Nov 2018) $
-%$Author: v.chavarriasborras@tudelft.nl $
-%$Id: join_results.m 218 2018-11-24 09:20:04Z v.chavarriasborras@tudelft.nl $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/join_results.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %join_results does this and that
 %

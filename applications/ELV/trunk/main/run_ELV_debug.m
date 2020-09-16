@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 246 $
-%$Date: 2020-07-08 10:57:48 +0200 (Wed, 08 Jul 2020) $
-%$Author: chavarri $
-%$Id: run_ELV_debug.m 246 2020-07-08 08:57:48Z chavarri $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/run_ELV_debug.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %run_ELV_debug is the same as run_ELV without the try-catch loop for errors
 %

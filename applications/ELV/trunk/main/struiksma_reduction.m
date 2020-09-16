@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 246 $
-%$Date: 2020-07-08 10:57:48 +0200 (Wed, 08 Jul 2020) $
-%$Author: chavarri $
-%$Id: struiksma_reduction.m 246 2020-07-08 08:57:48Z chavarri $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/struiksma_reduction.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %limit sediment transport according to Struiksma (1999)
 %

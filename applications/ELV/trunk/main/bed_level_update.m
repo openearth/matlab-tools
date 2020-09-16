@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 255 $
-%$Date: 2020-07-15 07:01:03 +0200 (Wed, 15 Jul 2020) $
-%$Author: chavarri $
-%$Id: bed_level_update.m 255 2020-07-15 05:01:03Z chavarri $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/bed_level_update.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %bed_level_update updates the bed elevation
 %

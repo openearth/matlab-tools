@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 253 $
-%$Date: 2020-07-14 15:13:34 +0200 (Tue, 14 Jul 2020) $
-%$Author: chavarri $
-%$Id: debug_figure.m 253 2020-07-14 13:13:34Z chavarri $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/debug_figure.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %created a figure for debugging
 %

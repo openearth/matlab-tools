@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 257 $
-%$Date: 2020-07-15 07:06:09 +0200 (Wed, 15 Jul 2020) $
-%$Author: chavarri $
-%$Id: grain_size_distribution_update.m 257 2020-07-15 05:06:09Z chavarri $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/grain_size_distribution_update.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %grain_size_distribution_update updates the mass at the active layer and the substrate and the substrate thickness
 %

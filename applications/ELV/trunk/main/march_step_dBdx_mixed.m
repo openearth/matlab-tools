@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 174 $
-%$Date: 2017-10-05 13:29:10 +0200 (Thu, 05 Oct 2017) $
-%$Author: V $
-%$Id: march_step_dBdx_mixed.m 174 2017-10-05 11:29:10Z V $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/march_step_dBdx_mixed.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %function_name does this and that
 %

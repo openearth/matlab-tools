@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 209 $
-%$Date: 2018-07-04 10:26:56 +0200 (Wed, 04 Jul 2018) $
-%$Author: v.chavarriasborras@tudelft.nl $
-%$Id: get_equivals_V.m 209 2018-07-04 08:26:56Z v.chavarriasborras@tudelft.nl $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/get_equivals_V.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %get_equivals_V is a slight modification of get_equivals to not display output
 %

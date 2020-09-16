@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 244 $
-%$Date: 2020-04-22 06:01:42 +0200 (Wed, 22 Apr 2020) $
-%$Author: chavarri $
-%$Id: add_sedflags.m 244 2020-04-22 04:01:42Z chavarri $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/add_sedflags.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %add_sedflags parse the sediment input and adds the sediment transport relation flags to the input structure 
 %

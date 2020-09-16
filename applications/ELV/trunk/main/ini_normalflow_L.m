@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 198 $
-%$Date: 2018-02-05 15:29:03 +0100 (Mon, 05 Feb 2018) $
-%$Author: v.chavarriasborras@tudelft.nl $
-%$Id: ini_normalflow_L.m 198 2018-02-05 14:29:03Z v.chavarriasborras@tudelft.nl $
-%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/ini_normalflow_L.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %ini_normalflow_L is a function that finds the normal flow conditions at the first time step. 
 %
