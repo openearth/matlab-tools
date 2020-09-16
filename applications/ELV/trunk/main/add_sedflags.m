@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
+%$Revision: 244 $
+%$Date: 2020-04-22 06:01:42 +0200 (Wed, 22 Apr 2020) $
 %$Author: chavarri $
-%$Id: add_sedflags.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/add_sedflags.m $
+%$Id: add_sedflags.m 244 2020-04-22 04:01:42Z chavarri $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/add_sedflags.m $
 %
 %add_sedflags parse the sediment input and adds the sediment transport relation flags to the input structure 
 %
@@ -177,6 +177,14 @@ if size(input.tra.kappa,1)~=input.mdv.nf || size(input.tra.kappa,2)>1
     error('kappa dimensions are not correct')
 end
 
+if input.tra.hid==2
+   if isnan(input.tra.hiding_b)
+       error('you must specify the hiding parameter if using the Power Law')
+   end
+   if input.tra.hiding_b>0
+      error('the hiding parameter of the Power Law is defined as (dk/Dm)^(hiding_b). Thus, it should be negative')
+   end
+end
 
     %in case the function is used outside ELV
 % if isfield(input,'grd')==0 || isfield(input.grd,'dx')==0

@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
-%$Author: chavarri $
-%$Id: errorprint.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/errorprint.m $
+%$Revision: 137 $
+%$Date: 2017-07-20 09:50:06 +0200 (Thu, 20 Jul 2017) $
+%$Author: V $
+%$Id: errorprint.m 137 2017-07-20 07:50:06Z V $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/errorprint.m $
 %
 %errorprint is a function that prints in the log file the error catched
 %

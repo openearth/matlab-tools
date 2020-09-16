@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
-%$Author: chavarri $
-%$Id: fig_x_cnt.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/postprocessing/fig_x_cnt.m $
+%$Revision: 153 $
+%$Date: 2017-07-27 17:06:32 +0200 (Thu, 27 Jul 2017) $
+%$Author: V $
+%$Id: fig_x_cnt.m 153 2017-07-27 15:06:32Z V $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/postprocessing/fig_x_cnt.m $
 %
 %function_name does this and that
 

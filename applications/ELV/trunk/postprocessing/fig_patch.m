@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
+%$Revision: 238 $
+%$Date: 2020-04-15 21:54:37 +0200 (Wed, 15 Apr 2020) $
 %$Author: chavarri $
-%$Id: fig_patch.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/postprocessing/fig_patch.m $
+%$Id: fig_patch.m 238 2020-04-15 19:54:37Z chavarri $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/postprocessing/fig_patch.m $
 %
 %function_name does this and that
 
@@ -181,6 +181,9 @@ if any(ismember(who(output_m),'ell_idx'))
     y_ell_idx=aux_yelev(output_m.ell_idx(:,:,:,kt)==1);
 end
 
+%% active layer elevaton
+etab_La=output_m.etab(:,:,:,kt)-output_m.La(:,:,:,kt);
+
 %% PLOTS
 
 kr=1; kc=1;    
@@ -189,6 +192,7 @@ han.p(kr,kc,1)=patch('Faces',f,'Vertices',v,'FaceVertexCData',col,'parent',han.s
 if any(ismember(who(output_m),'ell_idx'))
     han.s(kr,kc)=scatter(x_ell_idx,y_ell_idx,10,'m','filled');
 end
+han.pla(kr,kc,1)=stairs(in.XCOR(1:end-1),etab_La,'-g');
 
 %colormap
 kr=1; kc=1;
@@ -248,6 +252,9 @@ end
     %% faces, vertices, color
 [f,v,col]=rework4patch(in);
 
+%% active layer elevaton
+etab_La=output_m.etab(:,:,:,kt)-output_m.La(:,:,:,kt);
+
 %% UPDATE FIGURE DATA
 
 kr=1; kc=1;
@@ -263,6 +270,8 @@ if any(ismember(who(output_m),'ell_idx'))
     han.s(kr,kc).XData=x_ell_idx;
     han.s(kr,kc).YData=y_ell_idx;
 end
+
+han.pla(kr,kc,1).YData=etab_La;
 
 %% TITLE
 % han.sfig(kr,kc).Title.String=sprintf('%s=%3.2f',titlestr{kr,kc},time_results(kt)*unitt);

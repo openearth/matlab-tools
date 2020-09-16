@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
-%$Author: chavarri $
-%$Id: print_tloop.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/print_tloop.m $
+%$Revision: 216 $
+%$Date: 2018-11-07 17:57:40 +0100 (Wed, 07 Nov 2018) $
+%$Author: v.chavarriasborras@tudelft.nl $
+%$Id: print_tloop.m 216 2018-11-07 16:57:40Z v.chavarriasborras@tudelft.nl $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/print_tloop.m $
 %
 %print_tloop is a function that print in the log file the time to finish
 %

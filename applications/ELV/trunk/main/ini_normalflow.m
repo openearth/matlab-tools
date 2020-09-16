@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
-%$Author: chavarri $
-%$Id: ini_normalflow.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/ini_normalflow.m $
+%$Revision: 192 $
+%$Date: 2017-12-04 08:10:34 +0100 (Mon, 04 Dec 2017) $
+%$Author: v.chavarriasborras@tudelft.nl $
+%$Id: ini_normalflow.m 192 2017-12-04 07:10:34Z v.chavarriasborras@tudelft.nl $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/ini_normalflow.m $
 %
 %ini_normalflow is a function that finds the normal flow conditions at the first time step. 
 %

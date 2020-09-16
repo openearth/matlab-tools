@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
-%$Author: chavarri $
-%$Id: friction.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/friction.m $
+%$Revision: 203 $
+%$Date: 2018-05-16 08:20:37 +0200 (Wed, 16 May 2018) $
+%$Author: v.chavarriasborras@tudelft.nl $
+%$Id: friction.m 203 2018-05-16 06:20:37Z v.chavarriasborras@tudelft.nl $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/friction.m $
 %
 %friction is a function that computed the dimensionless friction coefficient
 %

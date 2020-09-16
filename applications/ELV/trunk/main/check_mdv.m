@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
+%$Revision: 256 $
+%$Date: 2020-07-15 07:04:08 +0200 (Wed, 15 Jul 2020) $
 %$Author: chavarri $
-%$Id: check_mdv.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/check_mdv.m $
+%$Id: check_mdv.m 256 2020-07-15 05:04:08Z chavarri $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/check_mdv.m $
 %
 %check_input is a function that checks that the input is enough and makes sense
 %
@@ -177,8 +177,8 @@ if isfield(input.mdv,'chk')==0
     input.mdv.chk.nan=1; %check for NaN in variables 0=NO; 1=YES;
     input.mdv.chk.ell=0; %display check for ellipticity 0=NO; 1=YES;
     input.mdv.chk.pmm=0; %display check for pmm 0=NO; 1=YES;
+    input.mdv.chk.disp_Mak_update=0; %display filter of Mak update 0=NO; 1=YES;
 end
-
 
 if isfield(input.mdv.chk,'mass')==0 
     input.mdv.chk.mass=1; %mass check [-]; [1x1 double]; e.g. [1]
@@ -223,6 +223,10 @@ end
 
 if isfield(input.mdv.chk,'Pe_lim')==0 
     input.mdv.chk.Pe_lim=2; %Peclet limit [-]; [1x1 double]; e.g. [2]
+end 
+
+if isfield(input.mdv.chk,'disp_Mak_update')==0 
+    input.mdv.chk.disp_Mak_update=0; %display filter of Mak update 0=NO; 1=YES;
 end 
 
 %% CONSTANTS

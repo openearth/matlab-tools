@@ -11,14 +11,14 @@ restoredefaultpath
 
 %% INPUT 
 
-runid_serie='P';
-runid_number='005';
-input_filename='input_ELV_P005';
+runid_serie='trial';
+runid_number='000';
+input_filename='input_ELV';
 paths_runs='C:\Users\chavarri\temporal\ELV\';
-erase_previous=1; %it is dangerous, use with care and attention
+erase_previous=0; %it is dangerous, use with care and attention
 do_profile=0; %0=NO; 1=YES
 do_postprocessing=0; %0=NO; 1=YES
-debug_mode=1; %0=NO; 1=YES
+debug_mode=0; %0=NO; 1=YES
 
 %% Please run!
 

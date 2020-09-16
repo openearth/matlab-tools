@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
-%$Author: chavarri $
-%$Id: ini_Cfb.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/ini_Cfb.m $
+%$Revision: 209 $
+%$Date: 2018-07-04 10:26:56 +0200 (Wed, 04 Jul 2018) $
+%$Author: v.chavarriasborras@tudelft.nl $
+%$Id: ini_Cfb.m 209 2018-07-04 08:26:56Z v.chavarriasborras@tudelft.nl $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/ini_Cfb.m $
 %
 %ini_Cfb is a function that creates the initial bed friction coefficient vector
 %

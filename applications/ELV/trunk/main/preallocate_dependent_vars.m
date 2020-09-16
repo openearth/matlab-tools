@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
+%$Revision: 246 $
+%$Date: 2020-07-08 10:57:48 +0200 (Wed, 08 Jul 2020) $
 %$Author: chavarri $
-%$Id: preallocate_dependent_vars.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/preallocate_dependent_vars.m $
+%$Id: preallocate_dependent_vars.m 246 2020-07-08 08:57:48Z chavarri $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/preallocate_dependent_vars.m $
 %
 %check_input is a function that checks that the input is enough and makes sense
 %
@@ -27,7 +27,7 @@
 %170720
 %   -V & Pepijn. Created for the first time.
 
-function [u_bra,h_bra,etab_bra,Mak_bra,La_bra,msk_bra,Ls_bra,Cf_bra,Cf_b_bra,qbk_bra,thetak_bra,pmm_bra,ell_idx_bra,Gammak_bra,Ek_bra,Dk_bra,celerities,bc,time_loop]=preallocate_dependent_vars(input,fid_log)
+function [u_bra,h_bra,etab_bra,Mak_bra,La_bra,msk_bra,Ls_bra,Cf_bra,Cf_b_bra,qbk_bra,thetak_bra,pmm_bra,ell_idx_bra,Gammak_bra,Ek_bra,Dk_bra,psi_bra,celerities,bc,time_loop]=preallocate_dependent_vars(input,fid_log)
 
 %%
 %% RENAME
@@ -60,6 +60,7 @@ ell_idx_bra=cell(nb,1);
 Gammak_bra=cell(nb,1);
 Ek_bra=cell(nb,1);
 Dk_bra=cell(nb,1);
+psi_bra=cell(nb,1);
 
 %structures
 bc(nb,1)=struct('q0',[],'Q0',[],'repQT',[],'etaw0',[],'rephT',[],'qbk0',[],'Qbk0',[],'repQbkT',[],'repGammakT_u',[],'repGammakT_d',[],'Gammak0',[],'GammakL',[],'g_u',[],'g_d',[],'repLaT',[],'La',[]); %if you change this line, copy paste the changes in boundary_condition_construction.m
@@ -87,6 +88,7 @@ for kb=1:nb
     Gammak_bra{kb,1} =NaN(nf ,nx,1  );
     Ek_bra{kb,1}     =NaN(nf ,nx,1  );
     Dk_bra{kb,1}     =NaN(nf ,nx,1  );
+    psi_bra{kb,1}    =NaN(1  ,nx    );
 
     celerities(kb,1).ls   =NaN(nef,nx    );
     celerities(kb,1).lb   =NaN(1  ,nx    );

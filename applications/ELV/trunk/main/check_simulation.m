@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
+%$Revision: 253 $
+%$Date: 2020-07-14 15:13:34 +0200 (Tue, 14 Jul 2020) $
 %$Author: chavarri $
-%$Id: check_simulation.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/check_simulation.m $
+%$Id: check_simulation.m 253 2020-07-14 13:13:34Z chavarri $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/check_simulation.m $
 %
 %check_simulation does this and that
 %
@@ -40,8 +40,11 @@
 %160803
 %	-L. Merged
 %170126 -L. added case 13 (no new version)
+%
+%200709
+%   -V. Added debug figure
 
-function check_simulation(u,h,Mak,Mak_old,msk,msk_old,La,La_old,Ls,Ls_old,qbk,bc,ell_idx,celerities,pmm,vpk,input,fid_log,kt,time_l)
+function check_simulation(u,h,Mak,Mak_old,msk,msk_old,La,La_old,Ls,Ls_old,etab,etab_old,qbk,bc,ell_idx,celerities,pmm,vpk,input,fid_log,kt,time_l)
          
 %%
 %% RENAME
@@ -74,6 +77,12 @@ if nf > 1
     F_lim=input.mdv.chk.F_lim;
 end
 
+%% DEBUG FIGURE
+% dtstop=1;
+% if ~(rem(kt,dtstop))
+% hanfig=debug_figure(u,h,Mak,Mak_old,msk,msk_old,La,La_old,Ls,Ls_old,etab,etab_old,qbk,bc,ell_idx,celerities,pmm,vpk,input,fid_log,kt,time_l);
+% close(hanfig)
+% end
 
 %% compute upstream bed load
 if input.mor.particle_activity==0
@@ -107,6 +116,11 @@ else
 end
 
 %%
+%%
+%%
+
+
+%%
 %% CFL
 %%
 
@@ -134,7 +148,7 @@ if input.mdv.chk.flow==1
     cfl_max=c_max*dt/dx;
      
     
-    if kt==1 %initial max Fr and CFL numbers 
+    if kt==1 || time_l-input.mor.Tstart<3*input.mdv.dt %initial max Fr and CFL numbers 
         warningprint(fid_log,sprintf('max. initial CFL = %4.2f at node %d',cfl_max,c_max_kx))
         warningprint(fid_log,sprintf('max. initial Fr  = %4.2f at node %d',Fr_max,Fr_max_kx))
         if input.mor.particle_activity==1 && any(kappa)~=0
@@ -216,7 +230,7 @@ F_all_new=m_dom_new./repmat(L_all_new,nf,1,1);
 % F_all_new=m_dom_new/L_all_new; %double check!
 
 if nf>1
-    if any(F_all_new>1+F_lim | F_all_new<-F_lim) 
+    if any(any(any(F_all_new>1+F_lim | F_all_new<-F_lim)))
         warningprint(fid_log,sprintf('ATTENTION!!! Volume fraction problem at kt= %d',kt))
     end
 end

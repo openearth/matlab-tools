@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
+%$Revision: 253 $
+%$Date: 2020-07-14 15:13:34 +0200 (Tue, 14 Jul 2020) $
 %$Author: chavarri $
-%$Id: extract_output.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/postprocessing/extract_output.m $
+%$Id: extract_output.m 253 2020-07-14 13:13:34Z chavarri $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/postprocessing/extract_output.m $
 %
 %function_name does this and that
 
@@ -84,8 +84,12 @@ switch fig_input.mdv.wh %
             erase_file(path_file_output,NaN);
         end
 
+        %this is necessary in case you copy the simulation while running
+        input(1,1).mdv.path_file_output=fullfile(path_fold_main,'output.mat');
+        input(1,1).mdv.path_folder_TMP_output=fullfile(path_fold_main,'TMP_output');
+        
         bring_output_single_2_ws
-        input=get_nT(input,NaN);        
+        input=get_nT(input,NaN);  
         output_creation(input,NaN)
         join_results(input,NaN);
 end

@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
-%$Author: chavarri $
-%$Id: preissmann.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/preissmann.m $
+%$Revision: 157 $
+%$Date: 2017-07-27 17:53:42 +0200 (Thu, 27 Jul 2017) $
+%$Author: V $
+%$Id: preissmann.m 157 2017-07-27 15:53:42Z V $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/preissmann.m $
 %
 %preissmann is the Preismmann scheme for unsteady flow update Implict scheme
 %

@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
-%$Author: chavarri $
-%$Id: write_results.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/write_results.m $
+%$Revision: 216 $
+%$Date: 2018-11-07 17:57:40 +0100 (Wed, 07 Nov 2018) $
+%$Author: v.chavarriasborras@tudelft.nl $
+%$Id: write_results.m 216 2018-11-07 16:57:40Z v.chavarriasborras@tudelft.nl $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/write_results.m $
 %
 %write_results does this and that
 %

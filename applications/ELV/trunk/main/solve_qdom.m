@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
-%$Author: chavarri $
-%$Id: solve_qdom.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/solve_qdom.m $
+%$Revision: 203 $
+%$Date: 2018-05-16 08:20:37 +0200 (Wed, 16 May 2018) $
+%$Author: v.chavarriasborras@tudelft.nl $
+%$Id: solve_qdom.m 203 2018-05-16 06:20:37Z v.chavarriasborras@tudelft.nl $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/solve_qdom.m $
 %
 function obj = solve_qdom(X,input,ib,F,AL,k)
 %solve_sedigraph computes the slope and surface fraction 

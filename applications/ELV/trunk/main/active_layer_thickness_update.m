@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
+%$Revision: 245 $
+%$Date: 2020-07-08 10:56:17 +0200 (Wed, 08 Jul 2020) $
 %$Author: chavarri $
-%$Id: active_layer_thickness_update.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/active_layer_thickness_update.m $
+%$Id: active_layer_thickness_update.m 245 2020-07-08 08:56:17Z chavarri $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/active_layer_thickness_update.m $
 %
 %active_layer_thickness_update is a function that updates the active layer thickness
 %
@@ -30,12 +30,13 @@
 %181104
 %   -V. Add possibility of CFL based time step
 
-function La=active_layer_thickness_update(~,~,La_old,bc,input,~,kt,time_l)
+function La=active_layer_thickness_update(~,~,La_old,eta_new,eta_old,psi,bc,input,~,kt,time_l)
 
 %%
 %% RENAME
 %%
 
+Struiksma=input.mor.Struiksma;
 bc_interp_type=input.mdv.bc_interp_type;
 nx=input.mdv.nx;
 
@@ -62,6 +63,11 @@ switch input.mor.Latype
                 La=repmat(La_1,1,nx); %[1,nx]
         end %bc_interp_type
 end %input.mor.Latype
+
+if Struiksma==1
+    La_psi=La+(eta_new-eta_old);
+    La(psi<1)=La_psi(psi<1);
+end
 
 end %active_layer_thickness_update
         

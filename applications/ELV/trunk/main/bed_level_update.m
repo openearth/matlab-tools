@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
+%$Revision: 255 $
+%$Date: 2020-07-15 07:01:03 +0200 (Wed, 15 Jul 2020) $
 %$Author: chavarri $
-%$Id: bed_level_update.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/bed_level_update.m $
+%$Id: bed_level_update.m 255 2020-07-15 05:01:03Z chavarri $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/bed_level_update.m $
 %
 %bed_level_update updates the bed elevation
 %
@@ -45,6 +45,9 @@
 %171005
 %   -V. Added entrianment deposition formulation
 %   -V. Add pmm to general update
+%
+%200715
+%   -V. Solved bug with unsteady flow and mixed-size sediment
 
 function etab_new=bed_level_update(etab,qbk,Dk,Ek,bc,input,~,kt,time_l,pmm)
 
@@ -104,32 +107,32 @@ end %bc_interp_type
 
 %% update
 
+%total load
+Qb=B.*sum(qbk,1); %[1,nx] double
+                
 switch input.mor.bedupdate
     case 0
         etab_new=etab;
     case 1
         switch input.mdv.flowtype
             case {1,6}
-                %total load
-                Qb=B.*sum(qbk,1); %[1xnf double]
                 etab_new(1,1)      = etab(1,1)      - MorFac * dt /cb /beta(1,1     ) * ((UpwFac * ((Qb(1)     -Qb0       ) /(dx/2)) + (1-UpwFac) * ((Qb(2)   -Qb(1)     ) /(dx/2))) /B(2   ));
                 etab_new(1,2:nx-1) = etab(1,2:nx-1) - MorFac * dt./cb./beta(1,2:nx-1).* ((UpwFac * ((Qb(2:nx-1)-Qb(1:nx-2))./(dx  )) + (1-UpwFac) * ((Qb(3:nx)-Qb(2:nx-1))./(dx  )))./B(3:nx));
                 etab_new(1,nx)     = etab(1,nx)     - MorFac * dt /cb /beta(1,nx    ) * (           (Qb(nx)    -Qb(nx-1)  ) /(dx  ))/B(end);  
-                
             case {3,4}
-                UpwFac = 1-(qbk<0); %sets the UpwFac to 1 if flow comes from left, and to 0 if flow comes from right
+                UpwFac = 1-(Qb<0); %sets the UpwFac to 1 if flow comes from left, and to 0 if flow comes from right [1,nx] double
 
-                %total load
-                Qb=B.*sum(qbk,1); %[1xnf double]
                 etab_new(1,1) = etab(1,1) - MorFac * dt./cb/beta(1,1).* ((UpwFac(1) * ((Qb(1)-Qb0)./(dx/2)) + (1-UpwFac(1)) * ((Qb(2)-Qb(1))./(dx/2)))./B(1));
-                
-                if qbk(nx)>0              
+                %!ATTENTION! there seems to be an inconsistency between the
+                %case above and this one regarding the width in the last
+                %fraction. Above it is B(3:nx) and below it is B(2:end-1)
+                etab_new(1,2:nx-1) = etab(1,2:nx-1) - MorFac * dt./cb./beta(1,2:nx-1).* (UpwFac(2:nx-1).* ((Qb(2:nx-1)-Qb(1:nx-2))./(dx)) + (1-UpwFac(2:nx-1)).* ((Qb(3:nx)-Qb(2:nx-1))./(dx)))./B(2:end-1);  
+                if Qb(nx)>0              
                     etab_new(1,nx) = etab(1,nx) - MorFac * dt/cb/beta(1,nx) * ((Qb(nx)-Qb(nx-1))/(dx))/B(end);
                 else
                     etab_new(1,nx) = etab(1,nx);
                 end
                           
-                etab_new(1,2:nx-1) = etab(1,2:nx-1) - MorFac * dt./cb./beta(1,2:nx-1).* (UpwFac(2:nx-1).* ((Qb(2:nx-1)-Qb(1:nx-2))./(dx)) + (1-UpwFac(2:nx-1)).* ((Qb(3:nx)-Qb(2:nx-1))./(dx)))./B(2:end-1);  
             otherwise
                 error('Supposedly you do not end up here');
         end

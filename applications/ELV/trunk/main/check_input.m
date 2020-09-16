@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
-%$Author: chavarri $
-%$Id: check_input.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/check_input.m $
+%$Revision: 227 $
+%$Date: 2019-02-22 14:09:52 +0100 (Fri, 22 Feb 2019) $
+%$Author: v.chavarriasborras@tudelft.nl $
+%$Id: check_input.m 227 2019-02-22 13:09:52Z v.chavarriasborras@tudelft.nl $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/check_input.m $
 %
 %check_input is a function that checks that the input is enough and makes sense
 %

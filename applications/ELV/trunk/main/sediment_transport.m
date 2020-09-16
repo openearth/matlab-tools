@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
+%$Revision: 245 $
+%$Date: 2020-07-08 10:56:17 +0200 (Wed, 08 Jul 2020) $
 %$Author: chavarri $
-%$Id: sediment_transport.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/sediment_transport.m $
+%$Id: sediment_transport.m 245 2020-07-08 08:56:17Z chavarri $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/sediment_transport.m $
 %
 %sediment transport calculation 
 %
@@ -42,6 +42,10 @@
         % flg.Dm = mean grain size
             % 1 = geometric
             % 2 = arithmetic 
+        % flg.mu = ripple factor in Meyer-Peter, Muller (1948)
+            % 0 = no
+            % 1 = constant
+            % 2 = C/C90 relation
     % cnt = constans ; structure
         % cnt.g         = gravity [m^2/s] ; double [1,1]
         % cnt.rho_s     = sediment density [kg/m^3] ; double [1,1]
@@ -138,7 +142,7 @@ q=reshape(q,nx,1);
 cf=reshape(cf,nx,1);
 dk=reshape(dk,1,nf);
 La=reshape(La,nx,1);
-Mak=reshape(Mak,nx,nef);
+Mak=reshape(Mak,nx,nef); 
 
 Fak=Mak2Fak(Mak',La',input_i);
 Fak=Fak';
@@ -184,6 +188,12 @@ switch flg.mu
         mu=ones(nx,nf);
     case 1 %specified constant
         mu=flg.mu_param.*ones(nx,nf); %this is crap, I need to parse the input to properly do this
+    case 2 %C/C90 expression
+        d90=grainsize_dX(Fak',dk',90);
+        Cg90=18*log10(12.*h./d90');
+        C=sqrt(cnt.g./cf);
+        mu_v=min((C./Cg90).^(1.5),1);
+        mu=repmat(mu_v,1,nf);        
     otherwise
         error('not implemented')        
 end
@@ -211,6 +221,7 @@ switch flg.sed_trans
         Qbk_st=a_am.*(thetak-xik.*theta_c).*(sqrt(thetak)-sqrt(xik.*theta_c));
         Qbk_st(no_trans_idx)=0; %the transport capacity of those fractions below threshold is 0
     case 4 %WC03 
+        alpha=sed_trans_param(1);
         theta_c=0;
         dk_sand_idx=dk<0.002; %size fractions indeces considered as sand ; boolean [1,nf]
         Fs=sum(dk_sand_idx.*Fak,2); %sand fraction (Fs) [-] ; double [nx,1]
@@ -225,7 +236,8 @@ switch flg.sed_trans
         Wk_st=14.*(1-0.894./(phi_k.^(1/2))).^(4.5); %dimensionsless transport W as if all values were in branch 2 [-] ; double [nx,nf] 
         Wk_st(phi_k_br1_idx)=Wk_st_br1(phi_k_br1_idx); %compose
 %         Qbk=Wk_st.*(cf.^(3/2).*(q./h).^3)./cnt.R./cnt.g./(1-cnt.p); %transform Wk into Qbk   
-        Qbk_st=Wk_st.*thetak.^(3/2);
+%         Qbk_st=Wk_st.*thetak.^(3/2);
+        Qbk_st=alpha.*Wk_st.*thetak.^(3/2);
         no_trans_idx=false(nx,nf);
     case 5 %Generalized load relation
         theta_c=0;

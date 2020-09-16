@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
+%$Revision: 257 $
+%$Date: 2020-07-15 07:06:09 +0200 (Wed, 15 Jul 2020) $
 %$Author: chavarri $
-%$Id: grain_size_distribution_update.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/grain_size_distribution_update.m $
+%$Id: grain_size_distribution_update.m 257 2020-07-15 05:06:09Z chavarri $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/grain_size_distribution_update.m $
 %
 %grain_size_distribution_update updates the mass at the active layer and the substrate and the substrate thickness
 %
@@ -42,6 +42,9 @@
 %181104
 %   -V. Add possibility of CFL based time step
 %   -V. Removed special functions _pmm
+%
+%200714
+%   -V. Add filter.
 
 function [Mak_new,msk_new,Ls_new,La_ne,etab_new,ell_idx,out_en,pmm]=grain_size_distribution_update(Mak,msk,Ls,La_old,La,etab_old,etab,qbk,Dk,Ek,bc,u,h,Cf,input,fid_log,kt,time_l)
 
@@ -110,6 +113,21 @@ switch input.mor.gsdupdate
 %         Mak_new=active_layer_mass_update_pmm(Mak,detaLa,fIk,qbk,bc,pmm,input,fid_log,kt,time_l); %obtain the new mass at the active layer        
         La_ne=La; %non-elliptic La
 end %gsdupdate
+
+%% prevent errors to propagate
+La_m=repmat(La,input.mdv.nef,1);
+Fak_new=Mak_new./La_m;
+idx_fil_1=Fak_new>1;
+idx_fil_2=Fak_new<0;
+if any(idx_fil_1) || any(idx_fil_2)
+    if input.mdv.chk.disp_Mak_update
+        Fak_max=max(Fak_new(:));
+        Fak_min=max(Fak_new(:));
+        warningprint(fid_log,sprintf('Filter applied, max Fak = %e, min Fak = %e',Fak_max,Fak_min));
+    end
+    Mak_new(idx_fil_1)=La_m(idx_fil_1);
+    Mak_new(idx_fil_2)=0;
+end
 
 end %function
     

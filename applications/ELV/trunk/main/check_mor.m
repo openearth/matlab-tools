@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
+%$Revision: 246 $
+%$Date: 2020-07-08 10:57:48 +0200 (Wed, 08 Jul 2020) $
 %$Author: chavarri $
-%$Id: check_mor.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/check_mor.m $
+%$Id: check_mor.m 246 2020-07-08 08:57:48Z chavarri $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/check_mor.m $
 %
 %check_input is a function that checks that the input is enough and makes sense
 %
@@ -115,6 +115,21 @@ if isfield(input.mor,'pmm_alpha_eps')==0 %if it does not exist
     input.mor.pmm_alpha_eps=0.05; %fraction added to alpha to avoid equal eigenvalues; [1x1 double]; e.g. [0.05]
 end
 
+%start time
+if isfield(input.mor,'Tstart')==0
+    input.mor.Tstart=-1;
+end
+
+%struiksma
+if isfield(input.mor,'Struiksma')==0
+    input.mor.Struiksma=0;
+end
+%I think it should be equal to the input active layer thickness
+% if input.mor.Struiksma==1
+%     if isfield(input.mor,'L_alluvial')
+%         
+%     end
+% end
 
 %% OUTPUT 
 

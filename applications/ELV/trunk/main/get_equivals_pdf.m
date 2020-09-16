@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
-%$Author: chavarri $
-%$Id: get_equivals_pdf.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/get_equivals_pdf.m $
+%$Revision: 168 $
+%$Date: 2017-08-02 12:08:36 +0200 (Wed, 02 Aug 2017) $
+%$Author: V $
+%$Id: get_equivals_pdf.m 168 2017-08-02 10:08:36Z V $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/get_equivals_pdf.m $
 %
 %get_equivals_pdf does this and that
 %

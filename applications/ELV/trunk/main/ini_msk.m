@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
-%$Author: chavarri $
-%$Id: ini_msk.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/ini_msk.m $
+%$Revision: 214 $
+%$Date: 2018-11-02 16:41:29 +0100 (Fri, 02 Nov 2018) $
+%$Author: v.chavarriasborras@tudelft.nl $
+%$Id: ini_msk.m 214 2018-11-02 15:41:29Z v.chavarriasborras@tudelft.nl $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/ini_msk.m $
 %
 %ini_msk is a function that creates the substrate variable
 %

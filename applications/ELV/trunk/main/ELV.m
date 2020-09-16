@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
+%$Revision: 249 $
+%$Date: 2020-07-09 10:42:49 +0200 (Thu, 09 Jul 2020) $
 %$Author: chavarri $
-%$Id: ELV.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/ELV.m $
+%$Id: ELV.m 249 2020-07-09 08:42:49Z chavarri $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/ELV.m $
 %
 %ELV is the main function of the model
 %
@@ -74,8 +74,7 @@ function ELV(path_file_input,fid_log)
 %% INPUT READING
 
 fprintf(fid_log,'%s %s\n',datestr(datetime('now')),'Start of input reading');
-input=NaN; %V is stupid and has just realised that 'input' is also a function in MatLab. GEFELICITEERD!
-load(path_file_input); %(input)
+load(path_file_input,'input'); 
 
 %% INPUT CHECK
 
@@ -94,7 +93,7 @@ tic_display=tic; %tic to control display in screen
 tic_totaltime=tic; %tic to track total simulation time
 time_l=input(1,1).mdv.t0; %time of the time step which is being computed
 kt=1; %time steps counter
-[u_bra,h_bra,etab_bra,Mak_bra,La_bra,msk_bra,Ls_bra,Cf_bra,Cf_b_bra,qbk_bra,thetak_bra,pmm_bra,ell_idx_bra,Gammak_bra,Ek_bra,Dk_bra,celerities,bc,time_loop]=preallocate_dependent_vars(input,fid_log);
+[u_bra,h_bra,etab_bra,Mak_bra,La_bra,msk_bra,Ls_bra,Cf_bra,Cf_b_bra,qbk_bra,thetak_bra,pmm_bra,ell_idx_bra,Gammak_bra,Ek_bra,Dk_bra,psi_bra,celerities,bc,time_loop]=preallocate_dependent_vars(input,fid_log);
 
 %% INITIAL AND BOUNDARY CONDITION CONSTRUCTION
 
@@ -121,61 +120,68 @@ tic_looptime=tic; %tic to track time spent in loop
 %% FLOW UPDATE
 [u_bra,h_bra,bc]=flow_update(u_bra,h_bra,etab_bra,Cf_bra,bc,input,fid_log,kt,time_l); 
 
-%% LOOP ON BRANCHES FOR SEDIMENT TRANSPORT
-for kb=1:input(1,1).mdv.nb
-    %% FRICTION CORRECTION
-    [Cf_b_bra{kb,1}]=friction_correction(u_bra{kb,1},h_bra{kb,1},Cf_bra{kb,1},Mak_bra{kb,1},La_bra{kb,1},input(kb,1),fid_log,kt);
-
-    %% SEDIMENT TRANSPORT
-   %[qbk,Qbk,thetak,qbk_st,Wk_st,u_st,xik,Qbk_st,Ek,Ek_st,Ek_g,Dk,Dk_st,Dk_g,vpk,vpk_st,Gammak_eq]
-    [qbk,~  ,thetak,~     ,~    ,~   ,~  ,~     ,Ek,~    ,Ek_g,Dk,~    ,Dk_g,vpk,~     ,Gammak_eq]=sediment_transport(...
-        input(kb,1).aux.flg,input(kb,1).aux.cnt,h_bra{kb,1}',(u_bra{kb,1}(1,:).*h_bra{kb,1})',Cf_b_bra{kb,1},La_bra{kb,1}',Mak_bra{kb,1}',input(kb,1).sed.dk,input(kb,1).tra.param,input(kb,1).aux.flg.hiding_parameter,1,input.tra.E_param,input.tra.vp_param,Gammak_bra{kb,1}',fid_log,kt);
-    qbk_bra{kb,1}=qbk';
-    thetak_bra{kb,1}=thetak';
-    Ek_bra{kb,1}=Ek';
-    Ek_g=Ek_g';
-    Dk_bra{kb,1}=Dk';
-    Dk_g=Dk_g';
-    vpk=vpk';
-    Gammak_eq=Gammak_eq';
+%% MORPHOLOGY UPDATE
+if time_l>input(1,1).mor.Tstart
     
-    %% PARTICLE ACTIVITY
-    Gammak_bra{kb,1}=particle_activity_update(Gammak_bra{kb,1},u_bra{kb,1},h_bra{kb,1},etab_bra{kb,1},Mak_bra{kb,1},La_bra{kb,1},Cf_bra{kb,1},Cf_b_bra{kb,1},vpk,Ek_g,Dk_g,Gammak_eq,bc(kb,1),input(kb,1),fid_log,kt,time_l);
-                                                                                                  
-end
+    %% LOOP ON BRANCHES FOR SEDIMENT TRANSPORT
+    for kb=1:input(1,1).mdv.nb
+        %% FRICTION CORRECTION
+        [Cf_b_bra{kb,1}]=friction_correction(u_bra{kb,1},h_bra{kb,1},Cf_bra{kb,1},Mak_bra{kb,1},La_bra{kb,1},input(kb,1),fid_log,kt);
 
-%% NODAL POINT RELATION
-if input(1,1).mdv.nb~=1
-    bc=nodal_point_distribution(u_bra,h_bra,etab_bra,qbk_bra,thetak_bra,Cf_bra,bc,input,fid_log,kt);
-end
+        %% SEDIMENT TRANSPORT
+       %[qbk,Qbk,thetak,qbk_st,Wk_st,u_st,xik,Qbk_st,Ek,Ek_st,Ek_g,Dk,Dk_st,Dk_g,vpk,vpk_st,Gammak_eq]
+        [qbk,~  ,thetak,~     ,~    ,~   ,~  ,~     ,Ek,~    ,Ek_g,Dk,~    ,Dk_g,vpk,~     ,Gammak_eq]=sediment_transport(...
+            input(kb,1).aux.flg,input(kb,1).aux.cnt,h_bra{kb,1}',(u_bra{kb,1}(1,:).*h_bra{kb,1})',Cf_b_bra{kb,1},La_bra{kb,1}',Mak_bra{kb,1}',input(kb,1).sed.dk,input(kb,1).tra.param,input(kb,1).aux.flg.hiding_parameter,1,input.tra.E_param,input.tra.vp_param,Gammak_bra{kb,1}',fid_log,kt);
+        qbk_bra{kb,1}=qbk';
+        thetak_bra{kb,1}=thetak';
+        Ek_bra{kb,1}=Ek';
+        Ek_g=Ek_g';
+        Dk_bra{kb,1}=Dk';
+        Dk_g=Dk_g';
+        vpk=vpk';
+        Gammak_eq=Gammak_eq';
+        
+        %% STRUIKSMA REDUCTION
+        [qbk_bra{kb,1},psi_bra{kb,1}]=struiksma_reduction(qbk_bra{kb,1},La_bra{kb,1},Ls_bra{kb,1},Mak_bra{kb,1},msk_bra{kb,1},input(kb,1),fid_log);
 
-%% LOOP ON BRANCHES FOR MORPHOLOGY UPDATE
-for kb=1:input(1,1).mdv.nb
-    %% BED LEVEL UPDATE
-    etab_old=etab_bra{kb,1}; %for Hirano
-    pmm_bra{kb,1}=ones(2,input.mdv.nx); %update without preconditioning
-    etab_bra{kb,1}=bed_level_update(etab_bra{kb,1},qbk_bra{kb,1},Dk_bra{kb,1},Ek_bra{kb,1},bc(kb,1),input(kb,1),fid_log,kt,time_l,pmm_bra{kb,1});
+        %% PARTICLE ACTIVITY
+        Gammak_bra{kb,1}=particle_activity_update(Gammak_bra{kb,1},u_bra{kb,1},h_bra{kb,1},etab_bra{kb,1},Mak_bra{kb,1},La_bra{kb,1},Cf_bra{kb,1},Cf_b_bra{kb,1},vpk,Ek_g,Dk_g,Gammak_eq,bc(kb,1),input(kb,1),fid_log,kt,time_l);
 
-    %% ACTIVE LAYER THICKNESS UPDATE
-    La_old=La_bra{kb,1}; %for Hirano
-    La_bra{kb,1}=active_layer_thickness_update(h_bra{kb,1},Mak_bra{kb,1},La_bra{kb,1},bc(kb,1),input(kb,1),fid_log,kt,time_l);
+    end
 
-    %% GRAIN SIZE DISTRIBUTION UPDATE
+    %% NODAL POINT RELATION
+    if input(1,1).mdv.nb~=1
+        bc=nodal_point_distribution(u_bra,h_bra,etab_bra,qbk_bra,thetak_bra,Cf_bra,bc,input,fid_log,kt);
+    end
 
-    %save for the check
-    Mak_old=Mak_bra{kb,1}; 
-    msk_old=msk_bra{kb,1};
-    Ls_old=Ls_bra{kb,1};
-    [Mak_bra{kb,1},msk_bra{kb,1},Ls_bra{kb,1},La_bra{kb,1},etab_bra{kb,1},ell_idx_bra{kb,1},celerities(kb,1),pmm_bra{kb,1}]=grain_size_distribution_update(...
-        Mak_bra{kb,1},msk_bra{kb,1},Ls_bra{kb,1},La_old,La_bra{kb,1},etab_old,etab_bra{kb,1},qbk_bra{kb,1},Dk_bra{kb,1},Ek_bra{kb,1},bc(kb,1),u_bra{kb,1},h_bra{kb,1},Cf_b_bra{kb,1},input(kb,1),fid_log,kt,time_l);
+    %% LOOP ON BRANCHES FOR MORPHOLOGY UPDATE
+    for kb=1:input(1,1).mdv.nb
+        %% BED LEVEL UPDATE
+        etab_old=etab_bra{kb,1}; %for Hirano
+        pmm_bra{kb,1}=ones(2,input.mdv.nx); %update without preconditioning
+        etab_bra{kb,1}=bed_level_update(etab_bra{kb,1},qbk_bra{kb,1},Dk_bra{kb,1},Ek_bra{kb,1},bc(kb,1),input(kb,1),fid_log,kt,time_l,pmm_bra{kb,1});
 
-    %% FRICTION UPDATE
-    Cf_bra{kb,1}=friction(h_bra{kb,1},Mak_bra{kb,1},Cf_bra{kb,1},La_bra{kb,1},input(kb,1),fid_log,kt);
+        %% ACTIVE LAYER THICKNESS UPDATE
+        La_old=La_bra{kb,1}; %for Hirano
+        La_bra{kb,1}=active_layer_thickness_update(h_bra{kb,1},Mak_bra{kb,1},La_bra{kb,1},etab_bra{kb,1},etab_old,psi_bra{kb,1},bc(kb,1),input(kb,1),fid_log,kt,time_l);
 
-    %% CHECK SIMULATION
-    check_simulation(u_bra{kb,1},h_bra{kb,1},Mak_bra{kb,1},Mak_old,msk_bra{kb,1},msk_old,La_bra{kb,1},La_old,Ls_bra{kb,1},Ls_old,qbk_bra{kb,1},bc(kb,1),ell_idx_bra{kb,1},celerities(kb,1),pmm_bra{kb,1},vpk,input(kb,1),fid_log,kt,time_l);
+        %% GRAIN SIZE DISTRIBUTION UPDATE
 
-end %kb
+        %save for the check
+        Mak_old=Mak_bra{kb,1}; 
+        msk_old=msk_bra{kb,1};
+        Ls_old=Ls_bra{kb,1};
+        [Mak_bra{kb,1},msk_bra{kb,1},Ls_bra{kb,1},La_bra{kb,1},etab_bra{kb,1},ell_idx_bra{kb,1},celerities(kb,1),pmm_bra{kb,1}]=grain_size_distribution_update(...
+            Mak_bra{kb,1},msk_bra{kb,1},Ls_bra{kb,1},La_old,La_bra{kb,1},etab_old,etab_bra{kb,1},qbk_bra{kb,1},Dk_bra{kb,1},Ek_bra{kb,1},bc(kb,1),u_bra{kb,1},h_bra{kb,1},Cf_b_bra{kb,1},input(kb,1),fid_log,kt,time_l);
+
+        %% FRICTION UPDATE
+        Cf_bra{kb,1}=friction(h_bra{kb,1},Mak_bra{kb,1},Cf_bra{kb,1},La_bra{kb,1},input(kb,1),fid_log,kt);
+        
+        %% CHECK SIMULATION
+        check_simulation(u_bra{kb,1},h_bra{kb,1},Mak_bra{kb,1},Mak_old,msk_bra{kb,1},msk_old,La_bra{kb,1},La_old,Ls_bra{kb,1},Ls_old,etab_bra{kb,1},etab_old,qbk_bra{kb,1},bc(kb,1),ell_idx_bra{kb,1},celerities(kb,1),pmm_bra{kb,1},vpk,input(kb,1),fid_log,kt,time_l);
+
+    end %kb
+end %if time_l>input.mor.Tstart
 
 %% RESULTS WRITING
 
@@ -221,7 +227,6 @@ end
 end %time loop
 
 %% PUT OUTPUT FILES TOGETHER
-
 
 input=get_nT(input,fid_log); 
 output_creation(input,fid_log)

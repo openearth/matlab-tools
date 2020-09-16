@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16573 $
-%$Date: 2020-09-08 16:03:40 +0200 (Tue, 08 Sep 2020) $
+%$Revision: 245 $
+%$Date: 2020-07-08 10:56:17 +0200 (Wed, 08 Jul 2020) $
 %$Author: chavarri $
-%$Id: substrate_update.m 16573 2020-09-08 14:03:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/main/substrate_update.m $
+%$Id: substrate_update.m 245 2020-07-08 08:56:17Z chavarri $
+%$HeadURL: https://repos.deltares.nl/repos/ELV/branches/V0171/main/substrate_update.m $
 %
 %function_name does this and that
 
@@ -48,11 +48,7 @@ nef=input.mdv.nef;
 nsl=input.mdv.nsl;
 nx=input.mdv.nx; %number of cells
 ThUnLyr=input.mor.ThUnLyr;
-if input.mor.interfacetype==2
-    fIk_alpha=input.mor.fIk_alpha;
-    Fbk=qbk(1:nef,:)./sum(qbk,1); %effective volume fraction of sediment in transport
-    Fbk(isnan(Fbk))=0; %if there is no sediment transport we use the same as Hirano (otherwise we divide by 0)
-end
+Tstart=input.mor.Tstart;
 
 %%
 %% CALC
@@ -85,6 +81,16 @@ Ls1_temp_new=Ls(:,:,1)+detaLa; %temporary new thickness of the top layer
 agr_idx=detaLa>=0; %agrading nodes
 % deg_idx=~agr_idx; %degrading indices
 
+%SPECIFIC FOR AGGRADATIONAL FLUX
+switch input.mor.interfacetype
+    case 2
+        fIk_alpha=input.mor.fIk_alpha;
+        Fbk=qbk(1:nef,:)./sum(qbk,1); %effective volume fraction of sediment in transport
+        Fbk(isnan(Fbk))=0; %if there is no sediment transport we use the same as Hirano (otherwise we divide by 0)
+    case 3
+        imm_idx_m=find_immobile_fractions(qbk,La,Mak,input,fid_log);
+end
+
 %LOOP ON X
 %yes, this is a loop with an if inside. V has been unable to avoid it. I am a loser... :( 
 %the problem is in ec and acj, which depend on x. 
@@ -97,15 +103,17 @@ for kx=1:nx
             case 2 %Hoey and Ferguson
                 fIk(:,kx)=(1-fIk_alpha).*Fak(:,kx)+fIk_alpha.*Fbk(:,kx);
             case 3 %Immobile deposits first
-                tol=1e-5;
-                Fak_full=NaN(nef+1,1);
-                Fak_full(1:nef,1)=Fak(:,kx);
-                Fak_full(end,1)=1-sum(Fak(:,kx));
-                Fak_full(Fak_full>1+tol)=1;
-                Fak_full(Fak_full<tol)=0;
-                imm_idx=Fak_full~=0 & qbk(:,kx)==0; %detect immobile fractions
+%                 tol=1e-5;
+%                 Fak_full=NaN(nef+1,1);
+%                 Fak_full(1:nef,1)=Fak(:,kx);
+%                 Fak_full(end,1)=1-sum(Fak(:,kx));
+%                 Fak_full(Fak_full>1+tol)=1;
+%                 Fak_full(Fak_full<tol)=0;
+%                 imm_idx=Fak_full~=0 & qbk(:,kx)==0; %detect immobile fractions
+                imm_idx=imm_idx_m(:,kx);
                 nif=sum(imm_idx); %number of fractions that are immobile
-                if nif==0 || kt<10 %there are no immobile fractions
+%                 if nif==0 || kt<10 %there are no immobile fractions %200708 Why did I put 10 time steps?
+                if nif==0 || kt<Tstart %there are no immobile fractions
                     fIk(:,kx)=Fak(:,kx);
                 else
                     fIk_full=zeros(nef+1,1);
