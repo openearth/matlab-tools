@@ -111,11 +111,11 @@ if OPT.extremes > 0
 end
 
 %% Statistics on values
-tmp                                  = EHY_statistics (sign.*hwlw_cmp(index(1:no_val)),sign.*hwlw_obs(index(1:no_val)));
+tmp                                  = EHY_pp_statistics (sign.*hwlw_cmp(index(1:no_val)),sign.*hwlw_obs(index(1:no_val)));
 Statistics_tide.serieshwlw_bias      = tmp.bias;
 Statistics_tide.serieshwlw_rmse      = tmp.rmse;
 
 %% Statistics on times
-tmp                                  = EHY_statistics(time_hwlw_cmp(index(1:no_val)),time_hwlw_obs(index(1:no_val)));
+tmp                                  = EHY_pp_statistics(time_hwlw_cmp(index(1:no_val)),time_hwlw_obs(index(1:no_val)));
 Statistics_tide.serieshwlw_time_bias = tmp.bias*1440.; % from days to minutes
 Statistics_tide.serieshwlw_time_rmse = tmp.rmse*1440.; % from days to minutes

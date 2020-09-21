@@ -157,7 +157,7 @@ Data      = EHY_getmodeldata                      (inputFile,stations_sim,modelT
 for i_per = 1: size(Periods,1)
     %% Initialise the statistics
     for i_stat = 1: no_stat
-        Statistics(i_stat) = EHY_PP_statistics([]             ,[]               , ...
+        Statistics(i_stat) = EHY_pp_statistics([]             ,[]               , ...
                                             'times'        ,[]               , ...
                                             'tide'         , true            , ...
                                             'extremes'     , 2               ) ;
@@ -178,13 +178,20 @@ for i_per = 1: size(Periods,1)
 
             %% Read the measurement Data
             if ~strcmpi(lower(meas_dir),'opendap') && ~strcmpi(lower(stations_tek{i_stat}(end-6:end)),'opendap')
-                % tekal files at specific location
-                INFO        = tekal('open',stations_tek{i_stat},'loaddata');
-                dates_meas  = num2str(INFO.Field(1).Data(:,1),'%8.8i');
-                times_meas  = num2str(INFO.Field(1).Data(:,2),'%6.6i');
-                dattim_meas = datenum([dates_meas(:,1:8) times_meas(:,1:6)],'yyyymmddHHMMSS');
-                wlev_meas   = INFO.Field(1).Data(:,Column);
-                wlev_meas(wlev_meas == 999.999) = NaN;     % Skip default values in measurement files
+                try
+                    % tekal files at specific location
+                    INFO        = tekal('open',stations_tek{i_stat},'loaddata');
+                    dates_meas  = num2str(INFO.Field(1).Data(:,1),'%8.8i');
+                    times_meas  = num2str(INFO.Field(1).Data(:,2),'%6.6i');
+                    dattim_meas = datenum([dates_meas(:,1:8) times_meas(:,1:6)],'yyyymmddHHMMSS');
+                    wlev_meas   = INFO.Field(1).Data(:,Column);
+                    wlev_meas(wlev_meas == 999.999) = NaN;     % Skip default values in measurement files
+                catch
+                    % nc files
+                    dattim_meas = ncread(stations_tek{i_stat},'time') + datenum(1970,1,1);
+                    wlev_meas   = ncread(stations_tek{i_stat},'sea_surface_height');
+                end
+                    
             else
                 % try to get the data from opendap server, only works for dutch stations
                 [dattim_meas,wlev_meas] = EHY_opendap('Parameter','waterhoogte','Station',stations_shortname{i_stat});
@@ -195,7 +202,8 @@ for i_per = 1: size(Periods,1)
             i_stop  = find(dattim_meas>=datenum(Periods{i_per,2},'yyyymmdd  HHMMSS'),1,'first');
             dattim_meas = dattim_meas(i_start:i_stop);
             wlev_meas   = wlev_meas  (i_start:i_stop);
-
+            
+            
             if ~isempty(find(~isnan(wlev_meas)))
                 [dattim_meas,wlev_meas] = FillGaps(dattim_meas,wlev_meas,'interval',120./1440.); % Fill with NaNs if interval between consequetive measurements is more than 2 hours
             end
@@ -241,7 +249,7 @@ for i_per = 1: size(Periods,1)
             fclose (fid);
 
             %% Do statistics
-            Statistics(i_stat) = EHY_statistics(wlev_cmp_interp, wlev_meas_interp, ...
+            Statistics(i_stat) = EHY_pp_statistics(wlev_cmp_interp, wlev_meas_interp, ...
                 'times'        , dattim_interp   , ...
                 'tide'         , true            , ...
                 'extremes'     , 2               ) ;
