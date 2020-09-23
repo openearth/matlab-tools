@@ -22,7 +22,7 @@ function gridInfo = EHY_getGridInfo(inputFile,varargin)
 %         Z    (side-view info/profile) E.Zcen (& E.Zcor), E.Zcen_cen & E.Zcen_int(in NetElem/faces)
 %               layer_perc              E.layer_perc (bed to surface), sum=100
 %               spherical               E.spherical (0=cartesian,1=spherical)
-%               grid                    E.grid [plot grid with plot(E.grid(:,1),E.grid(:,2)) ] 
+%               grid                    E.grid [plot grid with plot(E.grid(:,1),E.grid(:,2)) ]
 %
 % varargin{2:3) <keyword/value> pair
 %               stations                celll array of station names identical to
@@ -91,53 +91,55 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
     
     % get cell array with ncFiles based on inputFile (and requested partition numbers)
     ncFiles = EHY_getListOfPartitionedNcFiles(inputFile,OPT.mergePartitionNrs);
-     
+    
     for iF = 1:length(ncFiles)
         if OPT.disp
             disp(['Reading and merging grid info data from partitions: ' num2str(iF) '/' num2str(length(ncFiles))])
         end
         ncFile = ncFiles{iF};
-        gridInfoPart = EHY_getGridInfo(ncFile,varargin{1},'mergePartitions',0);
+        
+        try
+            gridInfoPart = EHY_getGridInfo(ncFile,varargin{1},'mergePartitions',0);
             
-        if iF == 1
-            gridInfo = gridInfoPart;
-            fn = fieldnames(gridInfoPart);
-        else            
-            for iFN = 1:length(fn)
-                if any(strcmp(fn{iFN},{'edge_nodes','face_nodes','face_nodes_x','face_nodes_y'}))
-                    % some partitions only contain triangles,squares, ..
-                    nrRows = size(gridInfo.(fn{iFN}),1);
-                    nrRowsPart = size(gridInfoPart.(fn{iFN}),1);
-                    if nrRowsPart > nrRows
-                        gridInfo.(fn{iFN})(nrRows+1:nrRowsPart,:) = NaN;
-                    elseif nrRowsPart < nrRows
-                        gridInfoPart.(fn{iFN})(nrRowsPart+1:nrRows,:) = NaN;
+            if iF == 1
+                gridInfo = gridInfoPart;
+                fn = fieldnames(gridInfoPart);
+            else
+                for iFN = 1:length(fn)
+                    if any(strcmp(fn{iFN},{'edge_nodes','face_nodes','face_nodes_x','face_nodes_y'}))
+                        % some partitions only contain triangles,squares, ..
+                        nrRows = size(gridInfo.(fn{iFN}),1);
+                        nrRowsPart = size(gridInfoPart.(fn{iFN}),1);
+                        if nrRowsPart > nrRows
+                            gridInfo.(fn{iFN})(nrRows+1:nrRowsPart,:) = NaN;
+                        elseif nrRowsPart < nrRows
+                            gridInfoPart.(fn{iFN})(nrRowsPart+1:nrRows,:) = NaN;
+                        end
+                    end
+                    
+                    if any(strcmp(fn{iFN},{'face_nodes_x','face_nodes_y'}))
+                        gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
+                    elseif any(strcmp(fn{iFN},{'face_nodes','edge_nodes'}))
+                        gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) addToAdministration+gridInfoPart.(fn{iFN})];
+                    elseif any(strcmp(fn{iFN},{'Xcor','Xcen','Ycor','Ycen','Zcor','Zcen','area','grid'}))
+                        gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}); gridInfoPart.(fn{iFN})];
+                    elseif any(strcmp(fn{iFN},{'no_NetNode','no_NetElem'}))
+                        gridInfo.(fn{iFN}) = gridInfo.(fn{iFN})+gridInfoPart.(fn{iFN});
+                    else
+                        % skip, info is the same in all partitions
                     end
                 end
-
-                if any(strcmp(fn{iFN},{'face_nodes_x','face_nodes_y'}))
-                    gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
-                elseif any(strcmp(fn{iFN},{'face_nodes','edge_nodes'}))
-                    gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) addToAdministration+gridInfoPart.(fn{iFN})];
-                elseif any(strcmp(fn{iFN},{'Xcor','Xcen','Ycor','Ycen','Zcor','Zcen','area','grid'}))
-                    gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}); gridInfoPart.(fn{iFN})];
-                elseif any(strcmp(fn{iFN},{'no_NetNode','no_NetElem'}))
-                    gridInfo.(fn{iFN}) = gridInfo.(fn{iFN})+gridInfoPart.(fn{iFN});
+            end
+            
+            if any(ismember(fn,{'face_nodes','edge_nodes'}))
+                tmp = ncinfo(ncFile,EHY_nameOnFile(ncFile,'mesh2d_node_x'));
+                if ~exist('addToAdministration','var')
+                    addToAdministration = tmp.Size;
                 else
-                    % skip, info is the same in all partitions
+                    addToAdministration = addToAdministration + tmp.Size;
                 end
             end
         end
-        
-        if any(ismember(fn,{'face_nodes','edge_nodes'}))
-            tmp = ncinfo(ncFile,EHY_nameOnFile(ncFile,'mesh2d_node_x'));
-            if ~exist('addToAdministration','var')
-                addToAdministration = tmp.Size;
-            else
-                addToAdministration = addToAdministration + tmp.Size;
-            end
-        end
-        
     end
     gridInfo.inputFile = [inputFile(1:end-11) '*' inputFile(end-6:end)];
     return
@@ -431,7 +433,7 @@ switch modelType
                             disp('Face_x_bnd-info not found in network. Import grid>export grid in RGFGRID and try again')
                         end
                     end
-     
+                    
                     if ismember('edge_nodes',wantedOutput)
                         varName = EHY_nameOnFile(inputFile,'mesh2d_edge_nodes');
                         if strcmp(varName,'noMatchFound')
@@ -441,7 +443,7 @@ switch modelType
                             E.edge_nodes = ncread(inputFile,varName);
                         end
                     end
-                                        
+                    
                     if ismember('dimensions',wantedOutput)
                         % no_NetNode
                         dimName = EHY_nameOnFile(inputFile,'mesh2d_nNodes');
@@ -517,14 +519,14 @@ switch modelType
                         end
                         E.boundary = [tmp.Xcor(K) tmp.Ycor(K)];
                     end
-
+                    
                     % If partitioned run, delete ghost cells
                     [~, name] = fileparts(inputFile);
                     varName = EHY_nameOnFile(inputFile,'FlowElemDomain');
                     if EHY_isPartitioned(inputFile,modelType) && nc_isvar(inputFile,varName)
                         domainNr = str2num(name(end-7:end-4));
                         FlowElemDomain = ncread(inputFile,varName);
-
+                        
                         % FlowElemGlobal(ghostCellsCenter)
                         ghostCellsCenter = FlowElemDomain ~= domainNr;
                         % to be implemenetd for ghostCellsCorner
@@ -591,10 +593,10 @@ switch modelType
                         E.grid = XYcor2grid(tmp.Xcor,tmp.Ycor);
                     end
                     if ismember('no_layers',wantedOutput)
-                       if nc_isvar(inputFile,'depth')
-                           infonc = ncinfo(inputFile,'depth');
-                           E.no_layers = infonc.Size;
-                       end
+                        if nc_isvar(inputFile,'depth')
+                            infonc = ncinfo(inputFile,'depth');
+                            E.no_layers = infonc.Size;
+                        end
                     end
                     if ismember('layer_model',wantedOutput)
                         E.layer_model = 'unknown';
@@ -720,7 +722,7 @@ switch modelType
                         E.Xcor = G.cor.x.*G.cor.mask;
                         E.Ycor = G.cor.y.*G.cor.mask;
                     end
-                                               
+                    
                     if ismember('XYcen',wantedOutput)
                         E.Xcen = G.cen.x.*G.cen.mask;
                         E.Ycen = G.cen.y.*G.cen.mask;
@@ -872,12 +874,12 @@ switch modelType
                         tmp = EHY_getGridInfo(OPT.gridFile,'dimensions');
                         E.no_layers = dw.NumSegm/tmp.no_NetElem;
                     elseif ismember(typeOfModelFileDetailGrid,{'lga','cco'})
-                       dw = delwaq('open',OPT.gridFile);
-                       E.no_layers = dw.MNK(3);
+                        dw = delwaq('open',OPT.gridFile);
+                        E.no_layers = dw.MNK(3);
                     end
                 end
         end % typeOfModelFile
-         
+        
     case 'SFINCS'
         switch typeOfModelFile
             case 'outputfile'
@@ -967,8 +969,8 @@ end
 if ~isempty(strfind(inputFile,'waqgeom.nc'))
     vars = intersect(fieldnames(E),{'Xcor','Ycor','Xcen','Ycen','face_nodes_x','face_nodes_y'});
     for iV = 1:length(vars)
-         nanInd = E.(vars{iV}) == -999;
-         E.(vars{iV})(nanInd) = NaN;
+        nanInd = E.(vars{iV}) == -999;
+        E.(vars{iV})(nanInd) = NaN;
     end
 end
 

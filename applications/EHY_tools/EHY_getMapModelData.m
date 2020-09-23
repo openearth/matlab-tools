@@ -125,7 +125,11 @@ if ~exist('Data','var')
                 disp(['Reading and merging map model data from partitions: ' num2str(iF) '/' num2str(length(ncFiles))])
             end
             ncFile = ncFiles{iF};
-            DataPart = EHY_getMapModelData(ncFile,OPT,'mergePartitions',0);
+            if nc_isvar(ncFile,OPT.varName)
+                DataPart = EHY_getMapModelData(ncFile,OPT,'mergePartitions',0);
+            else
+                disp(['Variable ',OPT.varName,' is not available in partition ' num2str(iF)])
+            end
             if iF==1
                 Data = DataPart;
             else
