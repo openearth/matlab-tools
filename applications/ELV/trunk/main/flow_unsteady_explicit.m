@@ -58,8 +58,22 @@
 %
 %170724
 %   -Pepijn Addition of branches
+%
+%200925
+%   -V. For some strange reason BC were not passed!
 
-function [u_new,h_new]=flow_unsteady_explicit(u,h,etab,Cf,input,fid_log,kt)
+function [u_new,h_new]=flow_unsteady_explicit(u,h,etab,Cf,Hdown,qwup,input,fid_log,kt)
+
+%% RENAME
+
+g=input.mdv.g;
+nx=input.mdv.nx;
+dt=input.mdv.dt;
+dx=input.grd.dx;
+
+etab=etab'; %why do you make my life soooo difficult Liselot!!! :D
+
+%% CALC
 
 H_old=h'; %water depth [m]; [nxx1 double]
 q_old=(u.*h)'; %specific water discharge [m^2/s]; [nxx1 double]
@@ -70,7 +84,8 @@ q_old=(u.*h)'; %specific water discharge [m^2/s]; [nxx1 double]
 Q = [H_old,q_old]; %size K
 
 % Adjust BCs
-Q(1,2) = qwup;
+% nQ(1,2) = qwup;
+Q(1,1) = qwup;
 Q(end,1)= Hdown;
 
 % Q has 4 ghost cells; two on each end.       
@@ -161,9 +176,9 @@ S = [zeros(nx,1), g*Q(3:end-2,1).*S0 - (Cf' .* (Q(3:end-2,2).^2)) ./ (Q(3:end-2,
 % ----------------- UPDATE ---------------------------------------%
 Q_new = Q(3:nx+2,:) -(dt/dx)*(AplusDq(2:nx+1,:)+AminDq(3:nx+2,:)) +dt*S -(dt/dx)*(Fl(:,2:nx+1)'-Fl(:,1:nx)');
 
-qw = Q_new(:,2);
+qw = Q_new(:,2)';
 h_new = (Q_new(:,1))';
-u_new = (qw./H)';
+u_new = (qw./h_new);
 
 
             

@@ -150,7 +150,7 @@ if nb==1 %one branch
         case {2,4} % quasi-steady or unsteady-implicit
             [u_new{1,1},h_new{1,1}]=preissmann(u,h,etab,Cf,Hdown,qwup,input,fid_log,kt);
         case 3 % unsteady-explicit
-            [u_new{1,1},h_new{1,1}]=flow_unsteady_explicit(u,h,etab,Cf,input,fid_log,kt);            
+            [u_new{1,1},h_new{1,1}]=flow_unsteady_explicit(u,h,etab,Cf,Hdown,qwup,input,fid_log,kt);            
         case 5 % already taken for space marching
             
         case 6 % Backwater solver;
