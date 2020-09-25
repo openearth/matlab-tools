@@ -26,6 +26,9 @@
 %HISTORY:
 %170720
 %   -V & Pepijn. Created for the first time.
+%
+%200925
+%   -V. deblank save variables
 
 function input_out=check_mdv(input,path_file_input,fid_log)
 
@@ -293,6 +296,7 @@ if isfield(input.mdv,'output_var')==0
 end
 
 input.mdv.output_var={input.mdv.output_var{:},'time_l'}; %#ok %You always have to save this one.
+input.mdv.output_var=cellfun(@deblank,input.mdv.output_var,'UniformOutput',0); %deblank for preventing that a space is added in the variable name to save.
 input.mdv.no=numel(input.mdv.output_var); %number of output variables [-]
 
 %test that time_loop is not saved if we use CFL based time step
