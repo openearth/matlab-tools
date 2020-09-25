@@ -1,13 +1,23 @@
-function [surge,vnor,vtan]=compute_normal_surge_along_coast(coast,trackt,phi_rel,ilandfall,varargin)
+function [surge,vnor,vtan]=compute_normal_surge_along_coast(coast,trackt,phi_rel,varargin)
 
+landdecay=1;
+
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'landdecay'}
+                landdecay=varargin{ii+1};
+        end
+    end
+end
 % trackt=interpolate_track_data(track,t);
 % 
 % [xacc,tacc,phi_rel]=compute_virtual_landfall_coordinates_v02(t,trackt,coast);
 
 
-[surge,vnor,vtan]=compute_normal_surge(phi_rel,coast.x,coast.y,coast.phi,trackt.x,trackt.y,trackt.vmax,trackt.rmax,trackt.r35,trackt.forward_speed,trackt.heading,trackt.phi_in,coast.w,coast.a,coast.omega,trackt.latitude,ilandfall);
+[surge,vnor,vtan]=compute_normal_surge(phi_rel,coast.x,coast.y,coast.phi,trackt.x,trackt.y,trackt.vmax,trackt.rmax,trackt.r35,trackt.forward_speed,trackt.heading,trackt.phi_in,coast.w,coast.a,coast.omega,trackt.latitude,landdecay);
 
-function [surge,vnor,vtan]=compute_normal_surge(phi_rel,xc,yc,phi_c,xe,ye,vmax,rmax,r35,vt,phi_t,phi_in,shelf_width,a,iid,lat,ilandfall,varargin)
+function [surge,vnor,vtan]=compute_normal_surge(phi_rel,xc,yc,phi_c,xe,ye,vmax,rmax,r35,vt,phi_t,phi_in,shelf_width,a,iid,lat,landdecay,varargin)
 
 if ~isempty(varargin)
     beta=varargin{1};
@@ -25,8 +35,8 @@ else
     redfac=compute_normal_surge_reduction_factor(shelf_width,rmax,phi_rel,vt);
     redext=compute_normal_surge_reduction_extent(shelf_width,phi_rel,rmax,r35,a);
 %    cshift=compute_normal_surge_cross_track_shift(shelf_width(ilandfall),vmax,rmax,phi_rel,r35,a(ilandfall),vt);
-    cshift=compute_normal_surge_cross_track_shift(shelf_width(ilandfall),vmax,rmax,phi_rel,r35,a(ilandfall));
-    ashift=compute_normal_surge_along_track_shift(shelf_width(ilandfall),phi_rel,a(ilandfall));
+    cshift=compute_normal_surge_cross_track_shift(shelf_width,vmax,rmax,phi_rel,r35,a);
+    ashift=compute_normal_surge_along_track_shift(shelf_width,phi_rel,a);
 %    lrfac=compute_normal_surge_land_reduction_factor(vmax,phi_rel,a,shelf_width,rmax,r35);
     lrfac=compute_normal_surge_land_reduction_factor(vmax,phi_rel,a,shelf_width);
 end
@@ -53,8 +63,11 @@ end
                                  
 
 % Land decay
-%Fld=land_decay_factor(t,vt,phi,vmax);
-Fld=1.0;
+if landdecay
+    Fld=land_decay_factor(t,vt,phi,vmax);
+else
+    Fld=1.0;
+end
 Fld=repmat(Fld,[1 length(xc)]);
 % Fld=1.0;
 vnor=vnor.*Fld;
