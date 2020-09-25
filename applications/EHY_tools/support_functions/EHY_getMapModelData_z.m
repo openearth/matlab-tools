@@ -54,7 +54,7 @@ end
 %% Calculate values at specified reference level
 
 % we are going to loop over fieldnames 'val','vel_x','vel_mag',etc.
-v = intersect(fieldnames(DataAll),{'val','vel_x','vel_y','vel_mag','val_x','val_y'});
+v = intersect(fieldnames(DataAll),{'val','vel_x','vel_y','vel_mag','vel_dir','val_x','val_y'});
 
 % initiate Data-struct
 Data      = DataAll;
