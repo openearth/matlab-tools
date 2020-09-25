@@ -80,6 +80,10 @@ switch input.bcm.type
         error('input.bcm.type can be: 1=sediment discharge; 2=periodic; 12 ')
 end
 
+if input.mdv.bc_interp_type==2 && ~any(input.bcm.type==[1,2])
+    error('If you interpolate in the loop, the only moprhodynamic boundary conditions possible are either 1 or 2.')
+end
+
 %%
 %% PARTICLE ACTIVITY
 %%

@@ -334,7 +334,7 @@ if isfield(input.mdv,'bc_interp_type')==0
 end
 
 if input.mdv.bc_interp_type==1 && input.mdv.dt_type==2
-    warningprint(fid_log,'You want to compute the time step based on CFL and interpolate the boundary conditions at the beginning. This is not possible! I overwrite the type of interpolation.')
+    error(fid_log,'You want to compute the time step based on CFL and interpolate the boundary conditions at the beginning. This is not possible!')
     input.mdv.bc_interp_type=2;
 end
 

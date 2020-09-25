@@ -94,6 +94,7 @@ tic_totaltime=tic; %tic to track total simulation time
 time_l=input(1,1).mdv.t0; %time of the time step which is being computed
 kt=1; %time steps counter
 [u_bra,h_bra,etab_bra,Mak_bra,La_bra,msk_bra,Ls_bra,Cf_bra,Cf_b_bra,qbk_bra,thetak_bra,pmm_bra,ell_idx_bra,Gammak_bra,Ek_bra,Dk_bra,psi_bra,celerities,bc,time_loop]=preallocate_dependent_vars(input,fid_log);
+vpk=NaN; %this is necessary in case you have CFL-based time step and morphodynamics do not start in the first time step. Maybe I should move it inside preallocating. 
 
 %% INITIAL AND BOUNDARY CONDITION CONSTRUCTION
 
