@@ -1,7 +1,16 @@
 function sfincs_write_obsfile(filename,obs)
+char_len_max = 11; % only first characters of supplied names are used
 
 fid=fopen(filename,'wt');
 for ii=1:length(obs.x)
-    fprintf(fid,'%10.2f %10.2f\n',obs.x(ii),obs.y(ii));
+    if isfield(obs,'names')  
+        name = obs.names{ii};
+        if length(name) > char_len_max
+            name = name(1:char_len_max); 
+        end
+        fprintf(fid,'%10.2f %10.2f %s\n',obs.x(ii),obs.y(ii),name);
+    else
+        fprintf(fid,'%10.2f %10.2f \n',obs.x(ii),obs.y(ii));        
+    end
 end
 fclose(fid);
