@@ -37,7 +37,8 @@ def.sim_in=2;
 % def.folder='C:\Users\chavarri\temporal\10_constant_discharge\ctq_001\dflowfm\';
 % def.folder='p:\11203223-tki-rivers\02_rijntakken_2020\04_runs\08_morpho_1\mr1_070\dflowfm';
 % def.folder='p:\11203223-tki-rivers\02_rijntakken_2020\04_runs\15_morpho_j11\straight_morpho_1995_2011\dflowfm\';
-def.folder='p:\11205272_waterverd_verzilting_2020\006_Vaardiepte_voorspellen\02_Modelresultaten\DIMR\realization_1\dflow1d\';
+def.folder='C:\Users\chavarri\temporal\200930_bendeffect\r002\dflowfm\';
+% def.folder='p:\11205272_waterverd_verzilting_2020\006_Vaardiepte_voorspellen\02_Modelresultaten\DIMR\realization_1\dflow1d\';
 % def.folder='p:\11204644-evaluatie-langsdammen\wp10_beheer_onderhoud_kosten\04_sm\01_runs\r_001\';
 % def.folder='c:\Users\chavarri\temporal\D3D\runs\V\080\dflowfm\';
     %3) (from script)
@@ -47,7 +48,7 @@ def.folder='p:\11205272_waterverd_verzilting_2020\006_Vaardiepte_voorspellen\02_
 simdef.file.checkouts='c:\Users\chavarri\checkouts\openearthtools_matlab\oetsettings.m';
 
     %% variable
-simdef.flg.which_p='b'; %which kind of plot: 
+simdef.flg.which_p=3; %which kind of plot: 
 %MAP
 %      LOOP ON TIME
 %   1=3D bed elevation and gsd
@@ -71,7 +72,7 @@ simdef.flg.which_p='b'; %which kind of plot:
 %GRID
 %   grid
 %
-simdef.flg.which_v=12; %which variable: 
+simdef.flg.which_v=8; %which variable: 
 %   1=etab
 %   2=h
 %   3=dm Fak
@@ -125,7 +126,7 @@ simdef.flg.which_s=4; %which plot style:
 % def.branch={'Channel_1D_1'}; 
 % def.branch={'BovenEijsden','Kalkmaas1','Kalkmaas2','Kalkmaas3','Kalkmaas4','Grensmaas1','Grensmaas2','Grensmaas3','Grensmaas4','Grensmaas5','Grensmaas6','Zandmaas01','Zandmaas02','Zandmaas03','Zandmaas04','Zandmaas05','Zandmaas06','Zandmaas07','Zandmaas08','Zandmaas09','Zandmaas10','Zandmaas11','Zandmaas12','Zandmaas13','Zandmaas14','Zandmaas15','Zandmaas16','Zandmaas17','Getijmaas1','Getijmaas2','Getijmaas3','Getijmaas4','BergscheMaas1','BergscheMaas2'}; 
 % def.branch={'01_SAZ','02_SAZ','03_SAZ','04_SAZ','05_SAZ','06_SAZ','07_SAZ','08_SAZ','09_SAZ','10_SAZ','11_SAZ','01_SAZ','13_SAZ_A','13_SAZ_B_A','13_SAZ_B_B_A','13_SAZ_B_B_B_A','13_SAZ_B_B_B_B','14_SAZ','15_SAZ','16_SAZ_A','16_SAZ_B'}; 
-% def.branch={'29_A','29_B_A','29_B_B','29_B_C','29_B_D','52_A','52_B','31_A_A','31_A_B','31_A_C','31_B','51_A','BovenLobith','Bovenrijn'};
+def.branch={'29_A','29_B_A','29_B_B','29_B_C','29_B_D','52_A','52_B','31_A_A','31_A_B','31_A_C','31_B','51_A','BovenLobith','Bovenrijn'};
 % def.branch={'Nederrijn1','Nederrijn2','Nederrijn3','Nederrijn4','Nederrijn5','Nederrijn6','Lek1','Lek2','Lek4','Lek5','Lek6','Lek7','Lek8'};
 % def.branch={'Waal1','Waal2','Waal3','Waal4','Waal5','Waal6'}; %RT+G Waal;
 % def.branch={'PanKan1','PanKan2'}; 
@@ -150,7 +151,7 @@ simdef.flg.which_s=4; %which plot style:
 % def.station={'obsCross_Pannerdenschekop_PK'};
 % def.station={'obsCross_Pannerdenschekop'};
 % def.station={'obsCross_900.00_WA'};
-def.station={'868.00_WA'};
+% def.station={'868.00_WA'};
 % def.station={'obsCross_878.00_PK'};
 
 %x,y,f coordinate if NaN, all
@@ -174,8 +175,8 @@ def.station={'868.00_WA'};
     %0=all the time steps; 
     %1='time' is a single time or a vector with the time steps to plot. If NaN it plots the last time step; 
     %2='time' is the spacing between 1 and the last results;
-def.rsl_input=0; 
-def.rsl_time=NaN;
+def.rsl_input=1; 
+def.rsl_time=1;
 
     %% print
 simdef.flg.print=0; %NaN=nothing; 0=pause until click; 0.5=pause 'pauset' time; 1=eps; 2=png
@@ -226,7 +227,7 @@ simdef.flg.interp_u=1;
 simdef.flg.save_data=0; %0=NO, 1=xyz
 
 %figure with face indices
-simdef.flg.fig_faceindices=1; %0=NO, 1=YES
+simdef.flg.fig_faceindices=0; %0=NO, 1=YES
 
 %not necessary
 simdef.D3D_home=NaN;

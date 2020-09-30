@@ -49,23 +49,19 @@ nf=length(dk); %number of fractions
 
 switch IFORM
     case 4
-        ACal=sedTrans(:,1);
-        PowerB=zeros(nf,1);
-        PowerC=sedTrans(:,2);
-        ThetaC=sedTrans(:,3);
-        RipFac=ones(nf,1);
+        ACal=sedTrans(:,1).*ones(nf,1);
+        PowerB=zeros(nf,1).*ones(nf,1);
+        PowerC=sedTrans(:,2).*ones(nf,1);
+        ThetaC=sedTrans(:,3).*ones(nf,1);
+        RipFac=ones(nf,1).*ones(nf,1);
     case 14
-        ACal=sedTrans(:,1);
-        ThetaC=sedTrans(:,2);
-        PowerM=1.5*ones(nf,1);
-        PowerP=ones(nf,1);
-        PowerQ=ones(nf,1);  
+        ACal=sedTrans(:,1).*ones(nf,1);
+        ThetaC=sedTrans(:,2).*ones(nf,1);
+        PowerM=1.5*ones(nf,1).*ones(nf,1);
+        PowerP=ones(nf,1).*ones(nf,1);
+        PowerQ=ones(nf,1).*ones(nf,1);  
 
 end
-
-%in case it is a single value
-ACal=ACal.*ones(nf,1);
-
 
 %% FILE
 

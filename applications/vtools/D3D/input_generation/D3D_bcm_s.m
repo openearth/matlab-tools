@@ -39,7 +39,11 @@ switch IBedCond
         deta_dt=simdef.bcm.deta_dt;
     case 5
         transport=simdef.bcm.transport;
-        nf=size(transport,2);
+        [nf,nt_a]=size(transport);
+        nf_a=numel(simdef.sed.dk);
+        if (nt_a~=nt) || (nf_a~=nf)
+            error('Inconsistent input in simdef.bcm.transport')
+        end
 end
 
 %% FILE

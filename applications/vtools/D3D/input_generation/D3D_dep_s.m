@@ -63,6 +63,7 @@ etab0_type=simdef.ini.etab0_type;
 
 %other
 ncy=N; %number of cells in y direction (N in RFGRID) [-]
+warning('I think this should be ncy=N-2')
 d0=etab; %depth (in D3D) at the downstream end (at x=L, where the water level is set)
 
 %varying slope flag
