@@ -52,11 +52,9 @@ for cc = 1:length(s.plot.const)
     % plot triana results for each station
     for ll = 1:length(s.modID)
         
-        %         plot search radius circle around model station and plot selected measurement station with a red x
-        try
-            hC = circle([s.triana.X(ll),s.triana.Y(ll)],s.selection.searchRadius,1000,'b');
-            set(hC,'Color',[0.8 0.8 0.8])
-        end
+        % plot search radius circle around model station and plot selected measurement station with a red x
+        hC = circle([s.triana.X(ll),s.triana.Y(ll)],s.selection.searchRadius,1000,'b');
+        set(hC,'Color',[0.8 0.8 0.8])
         
         if ~isnan(s.measID(ll))
             plot(meas.X(s.measID(ll)),meas.Y(s.measID(ll)),'rx')
@@ -78,7 +76,6 @@ for cc = 1:length(s.plot.const)
         plot([s.triana.X(ll)-txt_dist_hor s.triana.X(ll)+txt_dist_hor],[s.triana.Y(ll) s.triana.Y(ll)],'k')
         plot([s.triana.X(ll) s.triana.X(ll)],[s.triana.Y(ll)-txt_dist_ver s.triana.Y(ll)+txt_dist_ver],'k')
     end
-    
     
     % plot legend
     hTo2(1) = text(X_legend-txt_dist_hor,Y_legend+txt_dist_ver,'Ho');
