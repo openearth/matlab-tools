@@ -166,7 +166,9 @@ for i = 1 : length(yearArray)
         nanmax([maxaltrange  nanmax(maxAltitBlock)])];
     nc_attput(filename, 'max_altitude_measurement', 'actual_range', maxaltrange);
     
-    altrange = minmax([minaltrange maxaltrange]);
+    % altrange = minmax([minaltrange maxaltrange]) % Matlab R2019a: minmax is in the DL library
+    altrange = [min([minaltrange maxaltrange]), max([minaltrange maxaltrange])];
+    
     nc_attput(filename, 'altitude', 'actual_range', altrange);
 end
 nc_attput( filename, nc_global, 'geospatial_vertical_min', min(altrange))
