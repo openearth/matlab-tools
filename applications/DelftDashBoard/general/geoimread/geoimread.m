@@ -129,6 +129,23 @@ switch upper(ext)
         error('Unrecognized image file type. Must be tif, tiff, gtif, gtiff, jp2, jpeg2000, or geojp2.')
 end
 
+
+if length(I)>1
+    
+%     for ii=2:length(I)
+%         I(ii).ModelPixelScaleTag=I(1).ModelPixelScaleTag;
+%         I(ii).ModelTiepointTag=I(1).ModelTiepointTag;
+%         I(ii).GeoKeyDirectoryTag=I(1).GeoKeyDirectoryTag;
+%         I(ii).GeoDoubleParamsTag=I(1).GeoDoubleParamsTag;
+%         I(ii).GeoAsciiParamsTag=I(1).GeoAsciiParamsTag;
+%     end
+%     
+%     ilev=1;
+    
+    I=I(1);
+    
+end
+
 for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
