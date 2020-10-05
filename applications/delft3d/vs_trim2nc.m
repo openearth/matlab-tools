@@ -118,7 +118,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
                          'SSWV','SBUU','SBVV','SSUU','SSVV','RCA','DPS','BODSED','DPSED'};
    OPT.var            = {OPT.var_cf{:},OPT.var_primary{:}};
    OPT.var_all        = {OPT.var_cf{:},OPT.var_primary{:},OPT.var_derived{:}};
-   OPT.title          = ['NetCDF created from NEFIS-file ',filenameext(vsfile)];
+   OPT.title          = ['NetCDF created from NEFIS-file ',vsfile];
 
    if nargin==0
       varargout = {OPT};
@@ -129,12 +129,12 @@ function varargout = vs_trim2nc(vsfile,varargin)
       error('At least Matlab release R2011a is required for writing netCDF files due tue NCWRITESCHEMA.')
    end
 
-   if ~odd(nargin)
-      ncfile   = varargin{1};
-      varargin = {varargin{2:end}};
-   else
-      ncfile   = fullfile(fileparts(vsfile),[filename(vsfile) '.nc']);
-   end
+   
+  ncfile   = varargin{1};
+  varargin = {varargin{2:end}};
+
+  ncfile   = fullfile(fileparts(vsfile),[vsfile '.nc']);
+   
 
    tmp=dir(vsfile);
    if isempty(tmp)
@@ -144,7 +144,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       fprintf(2,'> Delft3D NEFIS files larger than 2 Gb cannot be mapped entirely to netCDF classic format, set keyword vs_trim2nc(...,''Format'',''64bit'').\n')
    end
 
-   OPT      = setproperty(OPT,varargin{:});
+   
 
 %% map NEFIS names to sensible netCDF names
 %  when adding new ones, update OPT.var_nefis, to allow for introspection
@@ -228,7 +228,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       nc.Attributes(    1) = struct('Name','title'              ,'Value',  OPT.title);
       nc.Attributes(end+1) = struct('Name','institution'        ,'Value',  OPT.institution);
       nc.Attributes(end+1) = struct('Name','source'             ,'Value',  'Delft3D trim file');
-      nc.Attributes(end+1) = struct('Name','history'            ,'Value', ['Original filename: ',filenameext(vsfile),...
+      nc.Attributes(end+1) = struct('Name','history'            ,'Value', ['Original filename: ',vsfile,...
                                          ', ' ,M.version,...
                                          ', file date:',M.datestr,...
                                          ', transformation to netCDF: $HeadURL$ $Id$']);
