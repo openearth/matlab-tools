@@ -22,7 +22,9 @@ function sfincs_write_netcdf_bndbzsbzifile(filename, x, y, EPSGcode, UTMname, re
 % EPSGcode = 32631;
 % UTMname = 'UTM31N';
 % 
-% refdate  = '1970-01-01 00:00:00';
+% refdate  = '1970-01-01 00:00:00'; 
+% possibly use formatOut = 'yyyy-mm-dd HH:MM:SS'; datestr(tref, formatOut); 
+
 % time = [0, 60];
 % 
 % rng('default');
