@@ -128,6 +128,11 @@ position = get(gca,'Position');
 Ylim(2)   = Ylim(1) + (position(4)/position(3))*(Xlim(2) - Xlim(1));
 set(gca,'Xlim' ,Xlim,'Ylim' ,Ylim);
 set(gca,'Xtick',  [],'Ytick',  [],'Box','on');
+% scale axes
+if max(abs(Xlim))<=180 && max(abs(Ylim))<=90
+	disp('Scaling axes for WGS84')
+	EHY_plot_satellite_map('plot_map',0);
+end
 
 %% Restore to original axes
 set (gcf,'CurrentAxes',originalAxes);
