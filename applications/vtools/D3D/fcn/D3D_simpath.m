@@ -14,7 +14,6 @@
 %
 %INPUT
 %   -simdef.D3D.dire_sim = path to the folder containg the simulation files
-%   -simdef.D3D.structure = model type: 1=D3D4; 2=FM; 3=SOBEK 3
 
 function simdef=D3D_simpath(simdef)
 
@@ -152,6 +151,9 @@ for kf1=1:nf
                     end
                     if strcmp(fname,'observations')
                         file.his=fullfile(dire_res(kf).folder,dire_res(kf).name);
+                    end
+                    if strcmp(fname,'reachsegments')
+                        file.reach=fullfile(dire_res(kf).folder,dire_res(kf).name);
                     end
             end
             end

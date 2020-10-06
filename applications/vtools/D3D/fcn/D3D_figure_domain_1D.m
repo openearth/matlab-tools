@@ -18,9 +18,34 @@ function D3D_figure_domain_1D(simdef,in)
 
 % file=simdef.file;
 flg=simdef.flg;
+v2struct(in);
 
-XZ=in.network1d_geom_x*flg.plot_unitx;
-YZ=in.network1d_geom_y.*flg.plot_unity;
+nb=numel(network1d_branch_order);
+nn=numel(network1d_node_id);
+
+geom_cs=[1;cumsum(network1d_geom_node_count)];
+
+%%
+
+if isfield(flg,'plot_unitx')==0
+    flg.plot_unitx=1;
+end
+
+if isfield(flg,'plot_unity')==0
+    flg.plot_unity=1;
+end
+
+if isfield(flg,'print')==0
+    flg.print=0;
+end
+
+if isfield(flg,'equal_axis')==0
+    flg.equal_axis=1;
+end
+
+%%
+XZ=network1d_geom_x*flg.plot_unitx;
+YZ=network1d_geom_y.*flg.plot_unity;
 % SZ=in.SZ.*flg.plot_unitx;
 % z=in.z.*flg.plot_unitz;
 % sub=in.sub;
@@ -138,7 +163,9 @@ han.sfig(1,1)=subaxis(npr,npc,1,1,1,1,'mt',mt,'mb',mb,'mr',mr,'ml',ml,'sv',sv,'s
 kpr=1; kpc=1;    
 hold(han.sfig(kpr,kpc),'on')
 han.sfig(kpr,kpc).Box='on';
-% axis(han.sfig(kpr,kpc),'equal')
+if flg.equal_axis
+axis(han.sfig(kpr,kpc),'equal')
+end
 han.sfig(kpr,kpc).XLim=lims.x;
 han.sfig(kpr,kpc).YLim=lims.y;
 % han.sfig(kpr,kpc).ZLim=lims.z;
@@ -194,6 +221,24 @@ han.sfig(kpr,kpc).YLabel.String='y coordinate [m]';
 %plots
 % han.p=scatter(in.mesh1d_x_node,in.mesh1d_y_node,10,'k','filled');
 han.p=scatter(XZ,YZ,10,'k','filled');
+
+
+%nodes
+for kn=1:nn
+    han.p=scatter(network1d_node_x(kn),network1d_node_y(kn),10,'sr','filled');
+    str_p=strrep(network1d_node_id(kn,:),'_',' ');
+    text(network1d_node_x(kn),network1d_node_y(kn),str_p,'Rotation',45,'Fontsize',10,'color','r')    
+end
+
+%branches
+for kb=1:nb
+    idx_br=mesh1d_node_branch==kb;
+    mean_x=mean(network1d_geom_x(geom_cs(kb):geom_cs(kb+1)));
+    mean_y=mean(network1d_geom_y(geom_cs(kb):geom_cs(kb+1)));
+    str_p=strrep(network1d_branch_id(kb,:),'_',' ');
+    text(mean_x,mean_y,str_p,'Rotation',0,'Fontsize',10,'color','k')    
+end
+
 
 % han.surf1.EdgeColor='none';
 

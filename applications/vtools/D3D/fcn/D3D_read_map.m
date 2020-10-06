@@ -64,12 +64,14 @@ end
 % end
 % out.nl=nl;
     %secondary flow
-mdf=delft3d_io_mdf('read',file.mdf);
-if isempty(strfind(mdf.keywords.sub1,'I'))
-    secflow=0;
-else
-    secflow=1;
-end
+% mdf=delft3d_io_mdf('read',file.mdf); %gives error?
+% if isempty(strfind(mdf.keywords.sub1,'I'))
+%     secflow=0;
+% else
+%     secflow=1;
+% end
+secflow=0;
+
 
 morpho=1;
 if isfield(file,'mor')==0
@@ -683,22 +685,26 @@ zcordvel_mat=NaN(npint,KMAX);
     case 4 %patch
         %%
         LYRFRAC=vs_let(NFStruct,'map-sed-series',{kt},'LYRFRAC',{ky,kx,1:nl,1:nf},'quiet'); %fractions at layers [-] (t,y,x,l,f)
-        DP_BEDLYR=vs_let(NFStruct,'map-sed-series',{kt},'DP_BEDLYR',{ky,kx,1:nl+1},'quiet'); %fractions at layers [-] (t,y,x,l)
-
+        
         DPS=vs_let(NFStruct,'map-sed-series',{kt},'DPS',{ky,kx},'quiet'); %depth at z point [m]
         
         %bed level at z point
-        bl=-DPS; %(because positive is downward for D3D depth)
-               
+        bl=-DPS; %(because positive is downward for D3D depth)        
+        
         %substrate elevation
-            %old
-%         THLYR=vs_let(NFStruct,'map-sed-series',{kt},'THLYR',{ky,kx},'quiet'); %thickness of layers [m] THIS OUTPUT HAS DISAPPEARED! 
-%         lay_abspos=repmat(bl,1,1,1,nl)-cumsum(THLYR,4);
-%         sub=NaN(nt,ny,nx,nl);
-%         sub(:,:,:,1   )=bl; 
-%         sub(:,:,:,2:nl+1)=lay_abspos(:,:,:,1:end);
-            %new
-        sub=repmat(bl,1,1,1,nl+1)-DP_BEDLYR;
+        isdpbedlyr=find_str_in_cell({NFStruct.ElmDef.Name},{'DP_BEDLYR'});
+        if ~isnan(isdpbedlyr)
+            DP_BEDLYR=vs_let(NFStruct,'map-sed-series',{kt},'DP_BEDLYR',{ky,kx,1:nl+1},'quiet'); %fractions at layers [-] (t,y,x,l)
+            sub=repmat(bl,1,1,1,nl+1)-DP_BEDLYR;
+        else
+            nt=1;
+%             THLYR=vs_let(NFStruct,'map-sed-series',{kt},'THLYR',{ky,kx},'quiet'); %thickness of layers [m] THIS OUTPUT HAS DISAPPEARED! 
+            THLYR=vs_let(NFStruct,'map-sed-series',{kt},'THLYR',{ky,kx,1:1:nl},'quiet'); %thickness of layers [m] THIS OUTPUT HAS DISAPPEARED! 
+            lay_abspos=repmat(bl,1,1,1,nl)-cumsum(THLYR,4);
+            sub=NaN(nt,ny,nx,nl);
+            sub(:,:,:,1   )=bl; 
+            sub(:,:,:,2:nl+1)=lay_abspos(:,:,:,1:end);
+        end
         
         %mean grain size
         dm=mean_grain_size(LYRFRAC,dchar,mean_type);

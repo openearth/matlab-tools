@@ -153,6 +153,16 @@ switch simdef.D3D.structure
         branch_length=branch_length_sobek3(offset,branch);
         
         branch_id=S3_get_branch_order(simdef);
+        
+        %reachsegments
+        x_node_reach=ncread(file.reach,'x_coordinate'); 
+        y_node_reach=ncread(file.reach,'y_coordinate'); 
+        
+        offset_reach=ncread(file.reach,'chainage');
+        branch_reach=ncread(file.reach,'branchid');
+        branch_length_reach=branch_length_sobek3(offset_reach,branch_reach);
+        
+        branch_id_reach=S3_get_branch_order(simdef);
 end
 
 if in.nfl>1
@@ -533,7 +543,7 @@ switch flg.which_p
                                     
                         end
                     case 3 %SOBEK3
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=get_sobek3_data('water_velocity',file.reach,in,branch_reach,offset_reach,x_node_reach,y_node_reach,branch_length_reach,branch_id_reach);
                 end
                 out.zlabel='depth-averaged velocity [m/s]';     
             case 11 %velocity

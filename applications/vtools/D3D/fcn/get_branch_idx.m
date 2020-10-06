@@ -43,8 +43,11 @@ end %is cell
 if any(isnan(branch_2p_idx))
     fprintf('The possible branch names are: \n')
     for kbt=1:nbt
-%        fprintf('%s\n',branch_id{kbt,1}) 
-        fprintf('%s\n',branch_id(kbt,:)) 
+        if iscell(branch_id)
+            fprintf('%s\n',branch_id{kbt,1}) 
+        else
+            fprintf('%s\n',branch_id(kbt,:)) 
+        end
     end
 %     if isnan(in
     fprintf('The branch name(s) I cannot find is(are): \n')
