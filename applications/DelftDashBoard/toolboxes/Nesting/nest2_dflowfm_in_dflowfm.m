@@ -41,6 +41,11 @@ wl=nc_varget(hisfile,'waterlevel');
 for ib=1:nb    
     
     np=length(xml.boundary(ib).node);
+    
+    if isempty(boundary)
+        boundary(ib).name=['bnd_' num2str(ib,'%0.3i')];
+        boundary(ib).forcingfile=['bnd_' num2str(ib,'%0.3i') '.bc'];
+    end
 
     % Read times
     for ip=1:np
@@ -78,9 +83,6 @@ for ib=1:nb
     
     np=length(xml.boundary(ib).node);
     
-    %     v=zeros(length(tim),np+1);
-    %     v(:,1)=(tim-refdate)*1440;
-    boundary(ib).forcingfile='ncar.bc';
     fname=boundary(ib).forcingfile;
     fid=fopen(fname,'wt');
     
