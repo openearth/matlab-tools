@@ -23,6 +23,7 @@ switch simdef.D3D.structure
         if is1d
             D3D_figure_domain_1D(simdef,in)
         else
+            D3D_figure_domain_2D(simdef,in)
             %%
             figure
             scatter(in.mesh2d_node_x,in.mesh2d_node_y)
