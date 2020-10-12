@@ -963,10 +963,12 @@ if strcmp('Fixed bins method',data.handles.method.method_dropdown.String{data.ha
         [inds_f,v,bin_limits] = fixed_bins(input_data,ndir,nhs,equi,info_dir);
     end
     
-    v=flipud(sortrows(v,4));
+    [v,ind_sort] = sortrows(v,4); v = flipud(v); ind_sort = flipud(ind_sort);
     tabs=array2table(v,'VariableNames',{'Hs','Tp','Dir','P'});
     data.data.output.v=tabs;
-    data.data.output.bin_limits=bin_limits;
+    data.data.output.bin_limits(ind_sort,1) = [1:size(bin_limits,1)]';
+    data.data.output.bin_limits(:,2:5)      = bin_limits;
+    inds_axis = [1:size(bin_limits,1)]'; inds_axis(ind_sort)
     data.data.output.cluster=inds_f;
     guidata(findobj('Tag','IRT','type','figure'),data);
 
@@ -1045,7 +1047,7 @@ elseif ~isempty(strfind(data.handles.method.method_dropdown.String{data.handles.
         [inds_f,v,v_iter] = k_means(input_data,k,ita,Del_eps_min,o,type,ini,ndir,nhs,m,info_dir,type_of_k_means);
     end
     
-    v=flipud(sortrows(v,4));
+    [v,ind_sort] = sortrows(v,4); v = flipud(v); ind_sort = flipud(ind_sort);
     tabs=array2table(v,'VariableNames',{'Hs','Tp','Dir','P'});
     data.data.output.v=tabs;
     data.data.output.v_iter=v_iter;
@@ -1065,10 +1067,11 @@ elseif strcmp('Energy flux method',data.handles.method.method_dropdown.String{da
     
     [v,inds_f,bin_limits] = energy_flux_method([data.data.stored_raw_data.H_s data.data.stored_raw_data.T_p data.data.stored_raw_data.dir],nhs,ndir);
     
-    v=flipud(sortrows(v,4));
+    [v,ind_sort] = sortrows(v,4); v = flipud(v); ind_sort = flipud(ind_sort);
     tabs=array2table(v,'VariableNames',{'Hs','Tp','Dir','P'});
     data.data.output.v=tabs;
-    data.data.output.bin_limits=bin_limits;
+    data.data.output.bin_limits(ind_sort,1) = [1:size(bin_limits,1)]';
+    data.data.output.bin_limits(:,2:5)      = bin_limits;
     data.data.output.cluster=inds_f;
     guidata(findobj('Tag','IRT','type','figure'),data);
 
@@ -1089,7 +1092,7 @@ elseif strcmp('Maximum dissimilarity method',data.handles.method.method_dropdown
 
     [v,inds_f,data_new] = MDA([data.data.stored_raw_data.H_s data.data.stored_raw_data.T_p data.data.stored_raw_data.dir],k,type);
     
-    v=flipud(sortrows(v,4));
+    [v,ind_sort] = sortrows(v,4); v = flipud(v); ind_sort = flipud(ind_sort);
     tabs=array2table(v,'VariableNames',{'Hs','Tp','Dir','P'});
     data.data.output.v=tabs;
     data.data.output.cluster=inds_f;
@@ -1119,10 +1122,11 @@ elseif strcmp('Sediment Transport Bins',data.handles.method.method_dropdown.Stri
         [v,inds_f,bin_limits]=sediment_transport_method([data.data.stored_raw_data.H_s data.data.stored_raw_data.T_p data.data.stored_raw_data.dir data.data.stored_raw_data.weight],nhs,ndir,SN_angle);
     end
     
-    v=flipud(sortrows(v,4));
+    [v,ind_sort] = sortrows(v,4); v = flipud(v); ind_sort = flipud(ind_sort);
     tabs=array2table(v,'VariableNames',{'Hs','Tp','Dir','P'});
     data.data.output.v=tabs;
-    data.data.output.bin_limits=bin_limits;
+    data.data.output.bin_limits(ind_sort,1) = [1:size(bin_limits,1)]';
+    data.data.output.bin_limits(:,2:5)      = bin_limits;
     data.data.output.cluster=inds_f;
     guidata(findobj('Tag','IRT','type','figure'),data);
 
@@ -1836,7 +1840,6 @@ else
     warndlg('Exporting cancelled by user','Warning');
 end
 
-data.data.output=[];
 guidata(findobj('Tag','IRT','type','figure'),data);
 
 end
