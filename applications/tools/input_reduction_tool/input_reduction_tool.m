@@ -692,7 +692,8 @@ function delete_data(hObject,eventdata)
 
 data = guidata(findobj('Tag','IRT','type','figure'));
 
-data.handles.visuals.table_ori.Data = [];
+data.handles.visuals.table_ori.Data     = [];
+data.handles.visuals.table_new.UserData = [];
 
 clear_plot;
 clear_output;
@@ -921,52 +922,55 @@ if strcmp('Fixed bins method',data.handles.method.method_dropdown.String{data.ha
     
     m = data.data.var_m; 
     
-    input_data   = [data.data.stored_raw_data.H_s data.data.stored_raw_data.T_p data.data.stored_raw_data.dir];
+    input_data   = [data.data.stored_raw_data.H_s data.data.stored_raw_data.T_p data.data.stored_raw_data.dir ones(length(data.data.stored_raw_data.H_s),1)];
     
     if ~strcmp(data.data.vars_to_plot{2},data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
         if strcmp([data.data.vars_to_plot{2} '^m'],data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
-            input_data_w = [data.data.stored_raw_data.H_s.^m data.data.stored_raw_data.T_p data.data.stored_raw_data.dir];
+            input_data_w = [data.data.stored_raw_data.H_s data.data.stored_raw_data.T_p data.data.stored_raw_data.dir data.data.stored_raw_data.H_s.^m];
         elseif strcmp(['Wave energy E (1/8*c_g*' data.data.vars_to_plot{2} '^2*g*Rho)'],data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
-            input_data_w = [data.data.stored_raw_data.H_s.^2.*9.81.*1000.*(1/8).*(1/2).*(9.81/(2*pi)).*data.data.stored_raw_data.T_p data.data.stored_raw_data.T_p data.data.stored_raw_data.dir data.data.stored_raw_data.H_s];
+            input_data_w = [data.data.stored_raw_data.H_s data.data.stored_raw_data.T_p data.data.stored_raw_data.dir data.data.stored_raw_data.H_s.^2.*9.81.*1000.*(1/8).*(1/2).*(9.81/(2*pi)).*data.data.stored_raw_data.T_p];
         elseif strcmp('Custom weighting',data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
-            input_data_w = [abs(data.data.stored_raw_data.weight) data.data.stored_raw_data.T_p data.data.stored_raw_data.dir data.data.stored_raw_data.H_s];
+            input_data_w = [data.data.stored_raw_data.H_s data.data.stored_raw_data.T_p data.data.stored_raw_data.dir abs(data.data.stored_raw_data.weight)];
         end
         
         [inds_f,v,bin_limits] = fixed_bins(input_data_w,ndir,nhs,equi,info_dir);
 
-        if strcmp([data.data.vars_to_plot{2} '^m'],data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
-            % Inverse function power:
-            v(:,1) = v(:,1).^(1./m);
-            bin_limits(:,1:2)=bin_limits(:,1:2).^(1./m);
-        elseif strcmp(['Wave energy E (1/8*c_g*' data.data.vars_to_plot{2} '^2*g*Rho)'],data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
-            % Inverse function wave energy:
-            v(:,1)        = (v(:,1)./v(:,2)./(9.81.*1000.*(1/8).*(1/2).*(9.81/(2*pi)))).^(1/2);
-            bin_limits=[];
-        elseif strcmp('Custom weighting',data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
-            % no inverse function available, get the nearest point:
-            for ii=1:max(inds_f)
-                input_data_bin=input_data(inds_f==ii,1);   
-                [value,ind]=findnearest(input_data_w(inds_f==ii,1),v(ii,1));
-                v(ii,1)=input_data_bin(ind,1);  
-            end
-            %                 % No inverse function available, use mean of the indices:
-            %         for ii = 1:max(inds_f)
-            %             v(ii,1) = mean(input_data((find(inds_f == ii)),1));
-            %         end
-            bin_limits=[];
-        end
+        % This is all no longer needed:
+        
+%         if strcmp([data.data.vars_to_plot{2} '^m'],data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
+%             % Inverse function power:
+%             v(:,1) = v(:,1).^(1./m);
+%             bin_limits(:,1:2)=bin_limits(:,1:2).^(1./m);
+%         elseif strcmp(['Wave energy E (1/8*c_g*' data.data.vars_to_plot{2} '^2*g*Rho)'],data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
+%             % Inverse function wave energy:
+%             v(:,1)        = (v(:,1)./v(:,2)./(9.81.*1000.*(1/8).*(1/2).*(9.81/(2*pi)))).^(1/2);
+%             bin_limits=[];
+%         elseif strcmp('Custom weighting',data.handles.method.weighting_dropdown.String{data.handles.method.weighting_dropdown.Value})
+%             % no inverse function available, get the nearest point:
+%             for ii=1:max(inds_f)
+%                 input_data_bin=input_data(inds_f==ii,1);   
+%                 [value,ind]=findnearest(input_data_w(inds_f==ii,1),v(ii,1));
+%                 v(ii,1)=input_data_bin(ind,1);  
+%             end
+%             %                 % No inverse function available, use mean of the indices:
+%             %         for ii = 1:max(inds_f)
+%             %             v(ii,1) = mean(input_data((find(inds_f == ii)),1));
+%             %         end
+%             bin_limits=[];
+%         end
     
     else
         [inds_f,v,bin_limits] = fixed_bins(input_data,ndir,nhs,equi,info_dir);
     end
     
-    tabs=array2table(flipud(sortrows(v,4)),'VariableNames',{'Hs','Tp','Dir','P'});
+    v=flipud(sortrows(v,4));
+    tabs=array2table(v,'VariableNames',{'Hs','Tp','Dir','P'});
     data.data.output.v=tabs;
     data.data.output.bin_limits=bin_limits;
     data.data.output.cluster=inds_f;
     guidata(findobj('Tag','IRT','type','figure'),data);
 
-   plot_fixed_bins_method(inds_f,v,bin_limits);
+    plot_fixed_bins_method(inds_f,v,bin_limits);
    
     
 elseif ~isempty(strfind(data.handles.method.method_dropdown.String{data.handles.method.method_dropdown.Value},'K-means method'))
@@ -1041,7 +1045,8 @@ elseif ~isempty(strfind(data.handles.method.method_dropdown.String{data.handles.
         [inds_f,v,v_iter] = k_means(input_data,k,ita,Del_eps_min,o,type,ini,ndir,nhs,m,info_dir,type_of_k_means);
     end
     
-    tabs=array2table(flipud(sortrows(v,4)),'VariableNames',{'Hs','Tp','Dir','P'});
+    v=flipud(sortrows(v,4));
+    tabs=array2table(v,'VariableNames',{'Hs','Tp','Dir','P'});
     data.data.output.v=tabs;
     data.data.output.v_iter=v_iter;
     data.data.output.cluster=inds_f;
@@ -1060,7 +1065,8 @@ elseif strcmp('Energy flux method',data.handles.method.method_dropdown.String{da
     
     [v,inds_f,bin_limits] = energy_flux_method([data.data.stored_raw_data.H_s data.data.stored_raw_data.T_p data.data.stored_raw_data.dir],nhs,ndir);
     
-    tabs=array2table(flipud(sortrows(v,4)),'VariableNames',{'Hs','Tp','Dir','P'});
+    v=flipud(sortrows(v,4));
+    tabs=array2table(v,'VariableNames',{'Hs','Tp','Dir','P'});
     data.data.output.v=tabs;
     data.data.output.bin_limits=bin_limits;
     data.data.output.cluster=inds_f;
@@ -1083,7 +1089,8 @@ elseif strcmp('Maximum dissimilarity method',data.handles.method.method_dropdown
 
     [v,inds_f,data_new] = MDA([data.data.stored_raw_data.H_s data.data.stored_raw_data.T_p data.data.stored_raw_data.dir],k,type);
     
-    tabs=array2table(flipud(sortrows(v,4)),'VariableNames',{'Hs','Tp','Dir','P'});
+    v=flipud(sortrows(v,4));
+    tabs=array2table(v,'VariableNames',{'Hs','Tp','Dir','P'});
     data.data.output.v=tabs;
     data.data.output.cluster=inds_f;
     data.data.output.data_new=data_new;
@@ -1112,7 +1119,8 @@ elseif strcmp('Sediment Transport Bins',data.handles.method.method_dropdown.Stri
         [v,inds_f,bin_limits]=sediment_transport_method([data.data.stored_raw_data.H_s data.data.stored_raw_data.T_p data.data.stored_raw_data.dir data.data.stored_raw_data.weight],nhs,ndir,SN_angle);
     end
     
-    tabs=array2table(flipud(sortrows(v,4)),'VariableNames',{'Hs','Tp','Dir','P'});
+    v=flipud(sortrows(v,4));
+    tabs=array2table(v,'VariableNames',{'Hs','Tp','Dir','P'});
     data.data.output.v=tabs;
     data.data.output.bin_limits=bin_limits;
     data.data.output.cluster=inds_f;
@@ -1122,7 +1130,7 @@ elseif strcmp('Sediment Transport Bins',data.handles.method.method_dropdown.Stri
 
 end
 
-v= v(~isnan(v(:,1)),:);
+v = v(~isnan(v(:,1)),:);
 show_output_data(v);
 
 data.handles.visuals.table_new_title.String = 'Reduced data (copy-ready)';
@@ -1515,6 +1523,8 @@ elseif get(data.handles.visuals.plot_dropdown,'Value') == 4
     rt.Enable = 'on';
 end
 
+delete(findobj(get(data.handles.visuals.plot_ax,'Children'),'Tag','test'));
+
 on_off = {'off','on'};
 
 if isfield(data.handles.visuals,'method_specific_plot_dir_vs_H_s') && ~isempty(data.handles.visuals.method_specific_plot_dir_vs_H_s) && min(ishandle(data.handles.visuals.method_specific_plot_dir_vs_H_s)) == 1
@@ -1540,6 +1550,10 @@ if isfield(data.handles.visuals,'method_bin_centre_handle_H_s_vs_T_p') && ~isemp
 end
 if isfield(data.handles.visuals,'method_bin_centre_handle_3D_view') && ~isempty(data.handles.visuals.method_bin_centre_handle_3D_view) && min(ishandle(data.handles.visuals.method_bin_centre_handle_3D_view))
     set(data.handles.visuals.method_bin_centre_handle_3D_view,'Visible',on_off{1+(get(data.handles.visuals.plot_dropdown,'Value') == 4)});
+end
+
+if ~isempty(data.handles.visuals.table_new.UserData)
+    plot_selected_pts(data.handles.visuals.table_new);
 end
 
 end
@@ -1740,6 +1754,9 @@ if isfield(data.handles.visuals,'method_bin_centre_handle_3D_view') && ~isempty(
     delete(data.handles.visuals.method_bin_centre_handle_3D_view)
 end
 
+delete(findobj(get(data.handles.visuals.plot_ax,'Children'),'Tag','test'));
+data.handles.visuals.table_new.UserData = [];
+
 if ~isempty(data.handles.visuals.plot_ax.Children)
     warn_state = warning;
     if strcmp(warn_state.state,'off')
@@ -1770,10 +1787,10 @@ function show_output_data(v)
 
 data = guidata(findobj('Tag','IRT','type','figure'));
 
-data.handles.visuals.table_new.Data = flipud(sortrows(v,4));
+data.handles.visuals.table_new.Data = v;
 
 table_text_width = data.sizes.table_size(1)-data.sizes.edge_spacing-data.sizes.button_spacing-(52+11*max(0,(ceil(log10(1+size(v,1)))-2)));
-set(data.handles.visuals.table_new,'ColumnEditable',logical([0 0 0 0]),'ColumnWidth',repmat({floor(table_text_width./4)},1,4),'ColumnName',{data.data.vars_to_plot{2}; data.data.vars_to_plot{3}; data.data.vars_to_plot{1}; 'P'},'FontSize',9);
+set(data.handles.visuals.table_new,'ColumnEditable',logical([0 0 0 0]),'ColumnWidth',repmat({floor(table_text_width./4)},1,4),'ColumnName',{data.data.vars_to_plot{2}; data.data.vars_to_plot{3}; data.data.vars_to_plot{1}; 'P'},'FontSize',9,'CellSelectionCallback',@select_output_pts);
 
 data.handles.export.export_data_button.Enable = 'on';
 data.handles.export.export_figure_button.Enable = 'on';
@@ -1860,3 +1877,35 @@ end
    
 end
 
+function select_output_pts(hObject,eventdata)
+
+data = guidata(findobj('Tag','IRT','type','figure'));
+
+hObject.UserData = unique(eventdata.Indices(:,1));
+
+guidata(findobj('Tag','IRT','type','figure'),data);
+
+if ~isempty(hObject.UserData)
+    plot_selected_pts(hObject);
+end
+
+end
+
+function plot_selected_pts(hObject)
+
+data = guidata(findobj('Tag','IRT','type','figure'));
+
+if strcmp(data.handles.visuals.method_bin_centre_handle_3D_view.Visible,'on')
+    d_h = data.handles.visuals.method_bin_centre_handle_3D_view;
+elseif strcmp(data.handles.visuals.method_bin_centre_handle_dir_vs_H_s.Visible,'on')
+    d_h = data.handles.visuals.method_bin_centre_handle_dir_vs_H_s;
+elseif strcmp(data.handles.visuals.method_bin_centre_handle_dir_vs_T_p.Visible,'on')
+    d_h = data.handles.visuals.method_bin_centre_handle_dir_vs_T_p;
+elseif strcmp(data.handles.visuals.method_bin_centre_handle_H_s_vs_T_p.Visible,'on')
+    d_h = data.handles.visuals.method_bin_centre_handle_H_s_vs_T_p;
+end
+
+delete(findobj(get(data.handles.visuals.plot_ax,'Children'),'Tag','test'));
+plot3(d_h.XData(hObject.UserData),d_h.YData(hObject.UserData),d_h.ZData(hObject.UserData),'k.','markersize',20,'Tag','test');
+
+end

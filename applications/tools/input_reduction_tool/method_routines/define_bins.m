@@ -69,13 +69,13 @@ dirlim(:,1)=classes_dir';
 
 %% Hs bin  
 if equi==1
-    max_hs=round(max(data(:,1)));
-    min_hs=round(min(data(:,1)));
+    max_hs=max(data(:,1));
+    min_hs=min(data(:,1));
     range_hs=[max_hs-min_hs];
     interval_hs=range_hs/nhs;
     
     classes_hs=[min_hs:interval_hs:max_hs];
-    hslim(:,1)=classes_hs';
+    hslim=repmat(classes_hs',1,ndir);
 
 elseif equi==0
     for j=1:ndir

@@ -74,62 +74,62 @@ make_plot = false;
 [dirlim,hslim]=define_bins([data(:,1) data(:,3)],ndir,nhs,equi,make_plot);
 
 inds_f = zeros(size(data,1),1); tel = 0;
-if ndir==1
-    [ind_dir]=find(data(:,3)>=dirlim(1) & data(:,3)<=dirlim(2));
-    class=data(ind_dir,:);
-    j=1;
-    
-    if equi==1
-        for i=1:nhs
-            tel=tel+1;
-            if i==nhs
-                [ind_hs]=find(class(:,1)>=hslim(i) & class(:,1)<=hslim(i+1));
-            else
-                [ind_hs]=find(class(:,1)>=hslim(i) & class(:,1)<hslim(i+1));
-            end
-            inds_f(ind_dir(ind_hs)) = tel;
-            bin=class(ind_hs,:);
-            count=size(bin,1);
-            p=count/N;
-            Climate(i,j)=p;
-            if isempty(bin)==1
-                Climate_Mean(i,j,3)=nan;
-                Climate_Mean(i,j,1)=nan;
-            else
-                Climate_Mean(i,j,3)=mean_angle(bin(:,3));
-                Climate_Mean(i,j,1)=(nansum(bin(:,1))/count);
-                %                 Climate_Mean(i,j,1)=sum((bin(:,1).^m)*(1/count)).^(1/m);
-            end
-            Climate_Mean(i,j,2)=mean(bin(:,2));
-        end
-        
-    else
-        
-        for i=1:nhs
-            tel=tel+1;
-            if i==nhs
-                [ind_hs]=find(class(:,1)>=hslim(i,j) & class(:,1)<=hslim(i+1,j));
-            else
-                [ind_hs]=find(class(:,1)>=hslim(i,j) & class(:,1)<hslim(i+1,j));
-            end
-            inds_f(ind_dir(ind_hs)) = tel;
-            bin=class(ind_hs,:);
-            count=size(bin,1);
-            p=count/N;
-            Climate(i,j)=p;
-            if isempty(bin)==1
-                Climate_Mean(i,j,3)=nan;
-                Climate_Mean(i,j,1)=nan;
-            else
-                Climate_Mean(i,j,3)=mean_angle(bin(:,3));
-                Climate_Mean(i,j,1)=(nansum(bin(:,1))/count);
-                %                 Climate_Mean(i,j,1)=sum((bin(:,1).^m)*(1/count)).^(1/m);
-            end
-            Climate_Mean(i,j,2)=mean(bin(:,2));
-        end
-    end
-    
-else
+% if ndir==1
+%     [ind_dir]=find(data(:,3)>=dirlim(1) & data(:,3)<=dirlim(2));
+%     class=data(ind_dir,:);
+%     j=1;
+%     
+%     if equi==1
+%         for i=1:nhs
+%             tel=tel+1;
+%             if i==nhs
+%                 [ind_hs]=find(class(:,1)>=hslim(i) & class(:,1)<=hslim(i+1));
+%             else
+%                 [ind_hs]=find(class(:,1)>=hslim(i) & class(:,1)<hslim(i+1));
+%             end
+%             inds_f(ind_dir(ind_hs)) = tel;
+%             bin=class(ind_hs,:);
+%             count=size(bin,1);
+%             p=count/N;
+%             Climate(i,j)=p;
+%             if isempty(bin)==1
+%                 Climate_Mean(i,j,3)=nan;
+%                 Climate_Mean(i,j,1)=nan;
+%             else
+%                 Climate_Mean(i,j,3)=mean_angle(bin(:,3));
+%                 Climate_Mean(i,j,1)=(nansum(bin(:,1))/count);
+%                 %                 Climate_Mean(i,j,1)=sum((bin(:,1).^m)*(1/count)).^(1/m);
+%             end
+%             Climate_Mean(i,j,2)=mean(bin(:,2));
+%         end
+%         
+%     else
+%         
+%         for i=1:nhs
+%             tel=tel+1;
+%             if i==nhs
+%                 [ind_hs]=find(class(:,1)>=hslim(i,j) & class(:,1)<=hslim(i+1,j));
+%             else
+%                 [ind_hs]=find(class(:,1)>=hslim(i,j) & class(:,1)<hslim(i+1,j));
+%             end
+%             inds_f(ind_dir(ind_hs)) = tel;
+%             bin=class(ind_hs,:);
+%             count=size(bin,1);
+%             p=count/N;
+%             Climate(i,j)=p;
+%             if isempty(bin)==1
+%                 Climate_Mean(i,j,3)=nan;
+%                 Climate_Mean(i,j,1)=nan;
+%             else
+%                 Climate_Mean(i,j,3)=mean_angle(bin(:,3));
+%                 Climate_Mean(i,j,1)=(nansum(bin(:,1))/count);
+%                 %                 Climate_Mean(i,j,1)=sum((bin(:,1).^m)*(1/count)).^(1/m);
+%             end
+%             Climate_Mean(i,j,2)=mean(bin(:,2));
+%         end
+%     end
+%     
+% else
     
     for j=1:ndir
         if j==ndir
@@ -138,31 +138,33 @@ else
             [ind_dir]=find(data(:,3)>=dirlim(j) & data(:,3)<dirlim(j+1));
         end
         class=data(ind_dir,:);
-        if equi==1
-            tel=tel+1;
-            for i=1:nhs
-                if i==nhs
-                    [ind_hs]=find(class(:,1)>=hslim(i) & class(:,1)<=hslim(i+1));
-                else
-                    [ind_hs]=find(class(:,1)>=hslim(i) & class(:,1)<hslim(i+1));
-                end
-                inds_f(ind_dir(ind_hs)) = tel;
-                bin=class(ind_hs,:);
-                count=size(bin,1);
-                p=count/N;
-                Climate(i,j)=p;
-                if isempty(bin)==1
-                    Climate_Mean(i,j,3)=nan;
-                    Climate_Mean(i,j,1)=nan;
-                else
-                    Climate_Mean(i,j,3)=mean_angle(bin(:,3));
-                    Climate_Mean(i,j,1)=(nansum(bin(:,1))/count);
-                    %                 Climate_Mean(i,j,1)=sum((bin(:,1).^m)*(1/count)).^(1/m);
-                end
-                Climate_Mean(i,j,2)=mean(bin(:,2));
-            end
-            
-        else
+%         if equi==1
+%             tel=tel+1;
+%             for i=1:nhs
+%                 if i==nhs
+%                     [ind_hs]=find(class(:,1)>=hslim(i) & class(:,1)<=hslim(i+1));
+%                 else
+%                     [ind_hs]=find(class(:,1)>=hslim(i) & class(:,1)<hslim(i+1));
+%                 end
+%                 inds_f(ind_dir(ind_hs)) = tel;
+%                 bin=class(ind_hs,:);
+%                 count=size(bin,1);
+%                 p=count/N;
+%                 Climate(i,j)=p;
+%                 if isempty(bin)==1
+%                     Climate_Mean(i,j,3)=nan;
+%                     Climate_Mean(i,j,2)=nan;
+%                     Climate_Mean(i,j,1)=nan;
+%                 else
+%                     Climate_Mean(i,j,3)=mean_angle(bin(:,3));
+%                     Climate_Mean(i,j,2)=mean(bin(:,2));
+% %                     Climate_Mean(i,j,1)=(nansum(bin(:,1))/count);
+%                     Climate_Mean(i,j,1)=nanmean(bin(:,1).*bin(:,4)) ./ nanmean(bin(:,4));
+%                     %                 Climate_Mean(i,j,1)=sum((bin(:,1).^m)*(1/count)).^(1/m);
+%                 end
+%             end
+%             
+%         else
             
             for i=1:nhs
                 tel=tel+1;
@@ -178,17 +180,20 @@ else
                 Climate(i,j)=p;
                 if isempty(bin)==1
                     Climate_Mean(i,j,3)=nan;
+                    Climate_Mean(i,j,2)=nan;
                     Climate_Mean(i,j,1)=nan;
                 else
                     Climate_Mean(i,j,3)=mean_angle(bin(:,3));
-                    Climate_Mean(i,j,1)=(nansum(bin(:,1))/count);
+                    Climate_Mean(i,j,2)=mean(bin(:,2));
+%                     Climate_Mean(i,j,1)=(nansum(bin(:,1))/count);
+                    Climate_Mean(i,j,1)=nanmean(bin(:,1).*bin(:,4)) ./ nanmean(bin(:,4));
                     %                 Climate_Mean(i,j,1)=sum((bin(:,1).^m)*(1/count)).^(1/m);
                 end
-                Climate_Mean(i,j,2)=mean(bin(:,2));
+                
             end
         end
-    end
-end
+%     end
+% end
 
 if info_dir==1
     temp=squeeze(Climate_Mean(:,:,3));
@@ -197,8 +202,10 @@ if info_dir==1
 end
 
 for c=1:ndir
-    aux=squeeze(Climate_Mean(:,c,:));
-    aux_p=squeeze(Climate(:,c));
+%     aux=squeeze(Climate_Mean(:,c,:));
+    aux=reshape(Climate_Mean(:,c,:),[nhs,3]);
+%     aux_p=squeeze(Climate(:,c));
+    aux_p=reshape(Climate(:,c),[nhs,1]);
     if c==1
         v=aux;
         P=aux_p;
@@ -217,16 +224,17 @@ for ii=1:size(dirlim,1)-1
     end
 end
 
+% This is no longer needed:
 
-if size(data,2)>3
-        for iii=1:size(bin_limits,1)
-        [val1 aux1]=findnearest(data(:,1),bin_limits(iii,1));
-        bin_limits(iii,1)=data(aux1,4);
-        [val2 aux2]=findnearest(data(:,1),bin_limits(iii,2));
-        bin_limits(iii,2)=data(aux2,4);
-    end
-end
-        
+% if size(data,2)>3
+%         for iii=1:size(bin_limits,1)
+%         [val1 aux1]=findnearest(data(:,1),bin_limits(iii,1));
+%         bin_limits(iii,1)=data(aux1,4);
+%         [val2 aux2]=findnearest(data(:,1),bin_limits(iii,2));
+%         bin_limits(iii,2)=data(aux2,4);
+%     end
+% end
+
 v=[v P];
 % v=sortrows(v,2);
 k=ndir*nhs;
