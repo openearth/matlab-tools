@@ -2060,4 +2060,3 @@ function matrix = apply_mask(matrix,mask)
    for k=1:size(matrix,3)
       matrix(:,:,k) = matrix(:,:,k).*mask;
    end
-
