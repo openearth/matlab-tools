@@ -74,8 +74,8 @@ function line1D = str2line(str2D,varargin)
 % TO DO implement apple
  
 %% defaults use lower case !!
-%OS = 'windows';
- OS = 'unix';
+OS = 'windows';
+%OS = 'unix';
 
 if nargin>1
    OS = lower(varargin{1});
