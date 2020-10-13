@@ -38,23 +38,26 @@ C
  
       integer*8 nmax, mmax, np, nbin
 
-      integer*8 d_pr,zmin_pr,zmax_pr,hrep_pr
+      integer*8 d_pr,zmin_pr,zmax_pr,hrep_pr,dhdz_pr
 
-      double precision, dimension(:,:,:),   allocatable :: d
-      double precision                                  :: dx
-      double precision                                  :: nbinr
+      double precision, dimension(:,:,:), allocatable :: d
+      double precision, dimension(:,:,:), allocatable :: manning
+      double precision                                :: dx
+      double precision                                :: nbinr
 
       double precision, dimension(:,:),     allocatable :: zmin
       double precision, dimension(:,:),     allocatable :: zmax
       double precision, dimension(:,:,:),   allocatable :: hrep
+      double precision, dimension(:,:),     allocatable :: dhdz
 
-      integer*8                                         :: dims_pr
-      integer*8                                         :: dx_pr
-      integer*8                                         :: nbin_pr
-      integer*8, dimension(2)                           :: dims2
-      integer*8, dimension(3)                           :: dims3
-      integer*8, dimension(3)                           :: dims3out
-      integer*4                                         :: classid
+      integer*8                        :: dims_pr
+      integer*8                        :: dx_pr
+      integer*8                        :: nbin_pr
+      integer*8                        :: manning_pr
+      integer*8, dimension(2)          :: dims2
+      integer*8, dimension(3)          :: dims3
+      integer*8, dimension(3)          :: dims3out
+      integer*4                        :: classid
      
 c      open(800,file='out01.txt')
 
@@ -71,8 +74,8 @@ c     Dimensions
       dims2(2) = mmax
       
 c     Numbers of bins 
-      nbin_pr    = mxGetPr(prhs(2))
-      dx_pr      = mxGetPr(prhs(3))
+      nbin_pr    = mxGetPr(prhs(3))
+      dx_pr      = mxGetPr(prhs(4))
       
       call mxCopyPtrToReal8(nbin_pr,nbinr,1)
       call mxCopyPtrToReal8(dx_pr,dx,1)
@@ -85,41 +88,50 @@ c     Numbers of bins
       
 c     Allocate
       allocate(d(1:nmax,1:mmax,1:np))
+      allocate(manning(1:nmax,1:mmax,1:np))
       allocate(zmin(1:nmax,1:mmax))
       allocate(zmax(1:nmax,1:mmax))
       allocate(hrep(1:nmax,1:mmax,1:nbin))      
+      allocate(dhdz(1:nmax,1:mmax))      
 
 C     Create matrix for the return argument.
       classid=mxClassIDFromClassName('double')
       plhs(1) = mxCreateNumericArray(2, dims2, classid, 0)
       plhs(2) = mxCreateNumericArray(2, dims2, classid, 0)
       plhs(3) = mxCreateNumericArray(3, dims3out, classid, 0)
+      plhs(4) = mxCreateNumericArray(2, dims2, classid, 0)
 
-      d_pr     = mxGetPr(prhs(1))
+      d_pr       = mxGetPr(prhs(1))
+      manning_pr = mxGetPr(prhs(2))
 
       zmin_pr = mxGetPr(plhs(1))
       zmax_pr = mxGetPr(plhs(2))
       hrep_pr = mxGetPr(plhs(3))
+      dhdz_pr = mxGetPr(plhs(4))
 
 
 C     Load the data into Fortran arrays.
       call mxCopyPtrToReal8(d_pr,d,nmax*mmax*np)
+      call mxCopyPtrToReal8(manning_pr,manning,nmax*mmax*np)
 
 C     Call the computational subroutine
 
       call subgrid_depths(nmax,mmax,np,nbin,dx,d,
-     &                     zmin,zmax,hrep)
+     &                    manning,zmin,zmax,hrep,dhdz)
      
       
 c     Load the output into a MATLAB array.
       call mxCopyReal8ToPtr(zmin,zmin_pr,nmax*mmax)
       call mxCopyReal8ToPtr(zmax,zmax_pr,nmax*mmax)
       call mxCopyReal8ToPtr(hrep,hrep_pr,nmax*mmax*nbin)
+      call mxCopyReal8ToPtr(dhdz,dhdz_pr,nmax*mmax)
 
       deallocate(zmin)
       deallocate(zmax)
       deallocate(d)
       deallocate(hrep)
+      deallocate(manning)
+      deallocate(dhdz)
 
 c      close(800)
       
@@ -128,7 +140,7 @@ c      close(800)
 
 
       subroutine subgrid_depths(nmax,mmax,np,nbin,dx,d,
-     &                           zmin,zmax,hrep)
+     &                    manning,zmin,zmax,hrep,dhdz)
 
       integer nmax
       integer mmax
@@ -136,9 +148,11 @@ c      close(800)
       integer nbin
       double precision dx
       double precision d(nmax,mmax,np)
+      double precision manning(nmax,mmax,np)
       double precision zmin(nmax,mmax)
       double precision zmax(nmax,mmax)
       double precision hrep(nmax,mmax,nbin)
+      double precision dhdz(nmax,mmax)
       double precision dd0(np)
       double precision dd(np)
       integer indx(np)
@@ -147,12 +161,16 @@ c      close(800)
       double precision q
       double precision h
       double precision zb
+      double precision manning0
+      double precision h10
 
       integer n
       integer m
       integer ibin
       integer j1
       integer j2
+      
+      manning0 = 0.02
 
 c      open(801,file='out02.txt')
 
@@ -187,16 +205,25 @@ c           Next bins
                q = 0.0
                do j1 = 1, np
                   h = max(zb - d(n,m,j1), 0.0)
-                  q = q + h**(5.0/3.0)*dw
+                  q = q + h**(5.0/3.0)*dw/manning(n,m,j1)
                enddo   
-               hrep(n,m,ibin) = (q/dx)**(3.0/5.0)
-               
-c               write(801,'(3i5,20e14.4)')n,m,ibin,hrep(n,m,ibin),q,dx
-               
+               hrep(n,m,ibin) = (q*manning0/dx)**(3.0/5.0)               
             enddo
+            
+c           Now compute slope above zmax            
+            zb = zmax(n,m) + 10.0
+            q = 0.0
+            do j1 = 1, np
+               h = max(zb - d(n,m,j1), 0.0)
+               q = q + h**(5.0/3.0)*dw/manning(n,m,j1)
+            enddo
+            h10       = (q*manning0/dx)**(3.0/5.0)
+            dhdz(n,m) = (h10 - hrep(n,m,nbin)) / 10.0
 
          enddo
       enddo
+      
+c      close(801)
 
       return
 

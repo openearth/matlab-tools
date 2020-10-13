@@ -1,4 +1,4 @@
-function sfincs_make_subgrid_file_v7(dr,subgridfile,bathy,cs,nbin,refi,refj,uopt,maxdzdv,usemex)
+function sfincs_make_subgrid_file_v7(dr,subgridfile,bathy,cs,nbin,refi,refj,uopt,maxdzdv,usemex,manning_deep,manning_shallow,manning_level)
 % Makes SFINCS subgrid file
 %
 % E.g.:
@@ -111,19 +111,22 @@ subgrd.z_volmax=zeros(imax,jmax);
 subgrd.z_depth=zeros(imax,jmax,nbin);
 %subgrd.z_repdepth=zeros(imax,jmax,nbin);
 subgrd.z_hrep=zeros(imax,jmax,nbin);
+subgrd.z_dhdz=zeros(imax,jmax);
 %subgrd.z_area=zeros(imax,jmax,nbin);
 %subgrd.z_width=zeros(imax,jmax,nbin);
 
-subgrd.u_zmin=zeros(nmax,mmax);
-subgrd.u_zmax=zeros(nmax,mmax);
-subgrd.u_hrep=zeros(nmax,mmax,nbin);
+% subgrd.u_zmin=zeros(nmax,mmax);
+% subgrd.u_zmax=zeros(nmax,mmax);
+% subgrd.u_hrep=zeros(nmax,mmax,nbin);
+% subgrd.u_dhdz=zeros(imax,jmax);
 %subgrd.u_area=zeros(nmax,mmax,nbin);
 %subgrd.u_width=zeros(nmax,mmax,nbin);
 %subgrd.u_depth=zeros(nmax,mmax,nbin);
 
-subgrd.v_zmin=zeros(nmax,mmax);
-subgrd.v_zmax=zeros(nmax,mmax);
-subgrd.v_hrep=zeros(nmax,mmax,nbin);
+% subgrd.v_zmin=zeros(nmax,mmax);
+% subgrd.v_zmax=zeros(nmax,mmax);
+% subgrd.v_hrep=zeros(nmax,mmax,nbin);
+% subgrd.v_dhdz=zeros(imax,jmax);
 %subgrd.v_area=zeros(nmax,mmax,nbin);
 %subgrd.v_width=zeros(nmax,mmax,nbin);
 %subgrd.v_depth=zeros(nmax,mmax,nbin);
@@ -291,7 +294,9 @@ for ii=1:ni
         end
         
         if usemex
+            tic
             [zmin,zmax,volmax,ddd]=mx_subgrid_volumes(d,nbin,dx,dy,maxdzdv);
+            toc
         else
             % Should get rid of this option
             [zmin,zmax,volmax,ddd]=sfincs_subgrid_volumes_ddd(d,nbin,dx,dy);
@@ -303,171 +308,347 @@ for ii=1:ni
          
 
         if usemex
-            [zmin,zmax,ddd]=mx_subgrid_depth(d,nbin,dx);
+            manning=zeros(size(d));
+            manning(d<manning_level)=manning_deep;
+            manning(d>=manning_level)=manning_shallow;
+            tic
+            [zmin,zmax,ddd,dhdz]=mx_subgrid_depth(d,manning,nbin,dx);
+            toc
         else
             % Should get rid of this option
             [zmin,zmax,ddd]=sfincs_subgrid_area_and_depth_v5(d,nbin,dy);
+            dhdz=zeros(size(ddd))+1;
         end
 
         subgrd.z_hrep(ic1:ic2,jc1:jc2,:)=ddd;
+        subgrd.z_dhdz(ic1:ic2,jc1:jc2,:)=dhdz;
                 
     end
 end
+
+% subgrd struture for z points has now been created (dimensions: nmax+1,mmax+1,nbin)
+
+% Now let's get subgrd structure for u and v points
+
+iopt=2;
+
+tic
+[u_zmin,u_zmax,u_dhdz,u_hrep,v_zmin,v_zmax,v_dhdz,v_hrep]=mx_subgrid_uv(subgrd.z_zmin,subgrd.z_zmax,subgrd.z_dhdz,subgrd.z_hrep,iopt);
+toc
 
 subgrd1.z_zmin   = subgrd.z_zmin(1:nmax,1:mmax,:);
 subgrd1.z_zmax   = subgrd.z_zmax(1:nmax,1:mmax,:);
 subgrd1.z_volmax = subgrd.z_volmax(1:nmax,1:mmax,:);
 subgrd1.z_depth  = subgrd.z_depth(1:nmax,1:mmax,:);
 
-if ~usemex
-    % Should get rid of this option
-    % Smooth very steep slopes
-    for n=1:nmax
-        for m=1:mmax
-            [volmax,dep,iok]=adjust_zvol_slope(subgrd.z_zmin(n,m),subgrd.z_volmax(n,m),squeeze(subgrd.z_depth(n,m,:)),dx,maxdzdv);
-            if ~iok
-                subgrd1.z_volmax(n,m)=volmax;
-                subgrd1.z_depth(n,m,:)=dep;
-            end
-        end
-    end
-end
+subgrd1.u_zmin   = u_zmin;
+subgrd1.u_zmax   = u_zmax;
+subgrd1.u_dhdz   = u_dhdz;
+subgrd1.u_hrep   = u_hrep;
+subgrd1.v_zmin   = v_zmin;
+subgrd1.v_zmax   = v_zmax;
+subgrd1.v_dhdz   = v_dhdz;
+subgrd1.v_hrep   = v_hrep;
 
-switch uopt
-    
-    case{'mean'}
-        
-        subgrd1.u_zmin=0.5*(subgrd.z_zmin(1:nmax,1:mmax)+subgrd.z_zmin(1:nmax,2:mmax+1));
-        subgrd1.u_zmax=0.5*(subgrd.z_zmax(1:nmax,1:mmax)+subgrd.z_zmax(1:nmax,2:mmax+1));
-        
-        for ibin=1:nbin
-            subgrd1.u_hrep(1:nmax,1:mmax,ibin)=0.5*(subgrd.z_hrep(1:nmax,1:mmax,ibin)+subgrd.z_hrep(1:nmax,2:mmax+1,ibin));
-        end
-        
-        subgrd1.v_zmin=0.5*(subgrd.z_zmin(1:nmax,1:mmax)+subgrd.z_zmin(2:nmax+1,1:mmax));
-        subgrd1.v_zmax=0.5*(subgrd.z_zmax(1:nmax,1:mmax)+subgrd.z_zmax(2:nmax+1,1:mmax));
-        for ibin=1:nbin
-            subgrd1.v_hrep(1:nmax,1:mmax,ibin)=0.5*(subgrd.z_hrep(1:nmax,1:mmax,ibin)+subgrd.z_hrep(2:nmax+1,1:mmax,ibin));
-        end
-        
-    case{'min'}
+% if ~usemex
+%     % Should get rid of this option
+%     % Smooth very steep slopes
+%     for n=1:nmax
+%         for m=1:mmax
+%             [volmax,dep,iok]=adjust_zvol_slope(subgrd.z_zmin(n,m),subgrd.z_volmax(n,m),squeeze(subgrd.z_depth(n,m,:)),dx,maxdzdv);
+%             if ~iok
+%                 subgrd1.z_volmax(n,m)=volmax;
+%                 subgrd1.z_depth(n,m,:)=dep;
+%             end
+%         end
+%     end
+% end
 
-        % Should get rid of this option ???
-        
-        hh=max(max(subgrd.z_zmax))+1; % Maximum elevation in the model
-        
-        % U points
-        
-        subgrd1.u_zmin=max(subgrd.z_zmin(1:nmax,1:mmax),subgrd.z_zmin(1:nmax,2:mmax+1));
-        subgrd1.u_zmax=max(subgrd.z_zmax(1:nmax,1:mmax),subgrd.z_zmax(1:nmax,2:mmax+1));
-        
-        zu=zeros(nmax,mmax,nbin);
-        for ibin=1:nbin
-            zu(:,:,ibin)=subgrd1.u_zmin+ibin*(subgrd1.u_zmax-subgrd1.u_zmin)/nbin;
-        end
-        
-        % Left
-        z_zmin=subgrd.z_zmin(1:nmax,1:mmax);
-        z_zmax=subgrd.z_zmax(1:nmax,1:mmax);
-        zmaxmin=z_zmax-z_zmin;
-        zmaxmin=max(zmaxmin,1e-4);
-        z_left=zeros(nmax,mmax,nbin+1);
-        for ibin=1:nbin+1
-            z_left(:,:,ibin)=z_zmin+(ibin-1)*zmaxmin/nbin;
-        end
-        h_left=zeros(nmax,mmax,nbin+1);
-        h_left(:,:,2:nbin+1)=subgrd.z_hrep(1:nmax,1:mmax,:);
-        % Add extra point
-        z_left(:,:,nbin+2)=zeros(nmax,mmax) + hh;
-        h_left(:,:,nbin+2)=h_left(:,:,nbin+1) + hh - z_zmax;
-        
-        % Right
-        z_zmin=subgrd.z_zmin(1:nmax,2:mmax+1);
-        z_zmax=subgrd.z_zmax(1:nmax,2:mmax+1);
-        zmaxmin=z_zmax-z_zmin;
-        zmaxmin=max(zmaxmin,1e-4);
-        z_right=zeros(nmax,mmax,nbin+1);
-        for ibin=1:nbin+1
-            z_right(:,:,ibin)=z_zmin+(ibin-1)*zmaxmin/nbin;
-        end
-        h_right=zeros(nmax,mmax,nbin+1);
-        h_right(:,:,2:nbin+1)=subgrd.z_hrep(1:nmax,2:mmax+1,:);        
-        % Add extra point
-        z_right(:,:,nbin+2)=zeros(nmax,mmax) + hh;
-        h_right(:,:,nbin+2)=h_right(:,:,nbin+1) + hh - z_zmax;
-        
-        for n=1:nmax
-            for m=1:mmax
-                
-                % Pick smallest width
-                
-                h1=interp1(squeeze(z_left(n,m,:)),squeeze(h_left(n,m,:)),squeeze(zu(n,m,:)));
-                h2=interp1(squeeze(z_right(n,m,:)),squeeze(h_right(n,m,:)),squeeze(zu(n,m,:)));
-                i1=find(h1<h2);
-                i2=find(h1>=h2);
-                subgrd1.u_hrep(n,m,i1)=h1(i1);
-                subgrd1.u_hrep(n,m,i2)=h2(i2);
-            end
-        end
-        
-        
-        % V points
-        
-        subgrd1.v_zmin=max(subgrd.z_zmin(1:nmax,1:mmax),subgrd.z_zmin(2:nmax+1,1:mmax));
-        subgrd1.v_zmax=max(subgrd.z_zmax(1:nmax,1:mmax),subgrd.z_zmax(2:nmax+1,1:mmax));
-        
-        zu=zeros(nmax,mmax,nbin);
-        for ibin=1:nbin
-            zu(:,:,ibin)=subgrd1.v_zmin+ibin*(subgrd1.v_zmax-subgrd1.v_zmin)/nbin;
-        end
-        
-        % Left
-        z_zmin=subgrd.z_zmin(1:nmax,1:mmax);
-        z_zmax=subgrd.z_zmax(1:nmax,1:mmax);
-        zmaxmin=z_zmax-z_zmin;
-        zmaxmin=max(zmaxmin,1e-4);
-        z_left=zeros(nmax,mmax,nbin+1);
-        for ibin=1:nbin+1
-            z_left(:,:,ibin)=z_zmin+(ibin-1)*zmaxmin/nbin;
-        end
-        h_left=zeros(nmax,mmax,nbin+1);
-        h_left(:,:,2:nbin+1)=subgrd.z_hrep(1:nmax,1:mmax,:);
-        % Add extra point
-        z_left(:,:,nbin+2)=zeros(nmax,mmax) + hh;
-        h_left(:,:,nbin+2)=h_left(:,:,nbin+1) + hh - z_zmax;
-        
-        % Right
-        z_zmin=subgrd.z_zmin(2:nmax+1,1:mmax);
-        z_zmax=subgrd.z_zmax(2:nmax+1,1:mmax);
-        zmaxmin=z_zmax-z_zmin;
-        zmaxmin=max(zmaxmin,1e-4);
-        z_right=zeros(nmax,mmax,nbin+1);
-        for ibin=1:nbin+1
-            z_right(:,:,ibin)=z_zmin+(ibin-1)*zmaxmin/nbin;
-        end
-        h_right=zeros(nmax,mmax,nbin+1);
-        h_right(:,:,2:nbin+1)=subgrd.z_hrep(2:nmax+1,1:mmax,:);        
-        % Add extra point
-        z_right(:,:,nbin+2)=zeros(nmax,mmax) + hh;
-        h_right(:,:,nbin+2)=h_right(:,:,nbin+1) + hh - z_zmax;
-        
-        for n=1:nmax
-            for m=1:mmax
-                
-                % Pick smallest width
-                
-                h1=interp1(squeeze(z_left(n,m,:)),squeeze(h_left(n,m,:)),squeeze(zu(n,m,:)));
-                h2=interp1(squeeze(z_right(n,m,:)),squeeze(h_right(n,m,:)),squeeze(zu(n,m,:)));
-                i1=find(h1<h2);
-                i2=find(h1>=h2);
-                subgrd1.v_hrep(n,m,i1)=h1(i1);
-                subgrd1.v_hrep(n,m,i2)=h2(i2);
+% switch uopt
+%     
+%     case{'mean'}
+%         
+%         subgrd1.u_zmin=0.5*(subgrd.z_zmin(1:nmax,1:mmax)+subgrd.z_zmin(1:nmax,2:mmax+1));
+%         subgrd1.u_zmax=0.5*(subgrd.z_zmax(1:nmax,1:mmax)+subgrd.z_zmax(1:nmax,2:mmax+1));
+%         subgrd1.u_dhdz=0.5*(subgrd.z_dhdz(1:nmax,1:mmax)+subgrd.z_dhdz(1:nmax,2:mmax+1));
+%         
+%         for ibin=1:nbin
+%             subgrd1.u_hrep(1:nmax,1:mmax,ibin)=0.5*(subgrd.z_hrep(1:nmax,1:mmax,ibin)+subgrd.z_hrep(1:nmax,2:mmax+1,ibin));
+%         end
+%         
+%         subgrd1.v_zmin=0.5*(subgrd.z_zmin(1:nmax,1:mmax)+subgrd.z_zmin(2:nmax+1,1:mmax));
+%         subgrd1.v_zmax=0.5*(subgrd.z_zmax(1:nmax,1:mmax)+subgrd.z_zmax(2:nmax+1,1:mmax));
+%         subgrd1.v_dhdz=0.5*(subgrd.z_dhdz(1:nmax,1:mmax)+subgrd.z_dhdz(2:nmax+1,1:mmax));
+%         for ibin=1:nbin
+%             subgrd1.v_hrep(1:nmax,1:mmax,ibin)=0.5*(subgrd.z_hrep(1:nmax,1:mmax,ibin)+subgrd.z_hrep(2:nmax+1,1:mmax,ibin));
+%         end
+%         
+%     case{'min'}
+% 
+%         % Should get rid of this option ???
+%         
+%         hh=max(max(subgrd.z_zmax))+1; % Maximum elevation in the model
+%         
+%         % U points
+%         
+%         subgrd1.u_zmin=max(subgrd.z_zmin(1:nmax,1:mmax),subgrd.z_zmin(1:nmax,2:mmax+1));
+%         subgrd1.u_zmax=max(subgrd.z_zmax(1:nmax,1:mmax),subgrd.z_zmax(1:nmax,2:mmax+1));
+%         
+%         zu=zeros(nmax,mmax,nbin);
+%         for ibin=1:nbin
+%             zu(:,:,ibin)=subgrd1.u_zmin+ibin*(subgrd1.u_zmax-subgrd1.u_zmin)/nbin;
+%         end
+%         
+%         % Left
+%         z_zmin=subgrd.z_zmin(1:nmax,1:mmax);
+%         z_zmax=subgrd.z_zmax(1:nmax,1:mmax);
+%         zmaxmin=z_zmax-z_zmin;
+%         zmaxmin=max(zmaxmin,1e-4);
+%         z_left=zeros(nmax,mmax,nbin+1);
+%         for ibin=1:nbin+1
+%             z_left(:,:,ibin)=z_zmin+(ibin-1)*zmaxmin/nbin;
+%         end
+%         h_left=zeros(nmax,mmax,nbin+1);
+%         h_left(:,:,2:nbin+1)=subgrd.z_hrep(1:nmax,1:mmax,:);
+%         % Add extra point
+%         z_left(:,:,nbin+2)=zeros(nmax,mmax) + hh;
+%         h_left(:,:,nbin+2)=h_left(:,:,nbin+1) + hh - z_zmax;
+%         
+%         % Right
+%         z_zmin=subgrd.z_zmin(1:nmax,2:mmax+1);
+%         z_zmax=subgrd.z_zmax(1:nmax,2:mmax+1);
+%         zmaxmin=z_zmax-z_zmin;
+%         zmaxmin=max(zmaxmin,1e-4);
+%         z_right=zeros(nmax,mmax,nbin+1);
+%         for ibin=1:nbin+1
+%             z_right(:,:,ibin)=z_zmin+(ibin-1)*zmaxmin/nbin;
+%         end
+%         h_right=zeros(nmax,mmax,nbin+1);
+%         h_right(:,:,2:nbin+1)=subgrd.z_hrep(1:nmax,2:mmax+1,:);        
+%         % Add extra point
+%         z_right(:,:,nbin+2)=zeros(nmax,mmax) + hh;
+%         h_right(:,:,nbin+2)=h_right(:,:,nbin+1) + hh - z_zmax;
+%         
+%         for n=1:nmax
+%             for m=1:mmax
+%                 
+%                 % Pick smallest width
+%                 
+%                 h1=interp1(squeeze(z_left(n,m,:)),squeeze(h_left(n,m,:)),squeeze(zu(n,m,:)));
+%                 h2=interp1(squeeze(z_right(n,m,:)),squeeze(h_right(n,m,:)),squeeze(zu(n,m,:)));
+%                 i1=find(h1<h2);
+%                 i2=find(h1>=h2);
+%                 subgrd1.u_hrep(n,m,i1)=h1(i1);
+%                 subgrd1.u_hrep(n,m,i2)=h2(i2);
+%             end
+%         end
+%         
+%         
+%         % V points
+%         
+%         subgrd1.v_zmin=max(subgrd.z_zmin(1:nmax,1:mmax),subgrd.z_zmin(2:nmax+1,1:mmax));
+%         subgrd1.v_zmax=max(subgrd.z_zmax(1:nmax,1:mmax),subgrd.z_zmax(2:nmax+1,1:mmax));
+%         
+%         zu=zeros(nmax,mmax,nbin);
+%         for ibin=1:nbin
+%             zu(:,:,ibin)=subgrd1.v_zmin+ibin*(subgrd1.v_zmax-subgrd1.v_zmin)/nbin;
+%         end
+%         
+%         % Left
+%         z_zmin=subgrd.z_zmin(1:nmax,1:mmax);
+%         z_zmax=subgrd.z_zmax(1:nmax,1:mmax);
+%         zmaxmin=z_zmax-z_zmin;
+%         zmaxmin=max(zmaxmin,1e-4);
+%         z_left=zeros(nmax,mmax,nbin+1);
+%         for ibin=1:nbin+1
+%             z_left(:,:,ibin)=z_zmin+(ibin-1)*zmaxmin/nbin;
+%         end
+%         h_left=zeros(nmax,mmax,nbin+1);
+%         h_left(:,:,2:nbin+1)=subgrd.z_hrep(1:nmax,1:mmax,:);
+%         % Add extra point
+%         z_left(:,:,nbin+2)=zeros(nmax,mmax) + hh;
+%         h_left(:,:,nbin+2)=h_left(:,:,nbin+1) + hh - z_zmax;
+%         
+%         % Right
+%         z_zmin=subgrd.z_zmin(2:nmax+1,1:mmax);
+%         z_zmax=subgrd.z_zmax(2:nmax+1,1:mmax);
+%         zmaxmin=z_zmax-z_zmin;
+%         zmaxmin=max(zmaxmin,1e-4);
+%         z_right=zeros(nmax,mmax,nbin+1);
+%         for ibin=1:nbin+1
+%             z_right(:,:,ibin)=z_zmin+(ibin-1)*zmaxmin/nbin;
+%         end
+%         h_right=zeros(nmax,mmax,nbin+1);
+%         h_right(:,:,2:nbin+1)=subgrd.z_hrep(2:nmax+1,1:mmax,:);        
+%         % Add extra point
+%         z_right(:,:,nbin+2)=zeros(nmax,mmax) + hh;
+%         h_right(:,:,nbin+2)=h_right(:,:,nbin+1) + hh - z_zmax;
+%         
+%         for n=1:nmax
+%             for m=1:mmax
+%                 
+%                 % Pick smallest width
+%                 
+%                 h1=interp1(squeeze(z_left(n,m,:)),squeeze(h_left(n,m,:)),squeeze(zu(n,m,:)));
+%                 h2=interp1(squeeze(z_right(n,m,:)),squeeze(h_right(n,m,:)),squeeze(zu(n,m,:)));
+%                 i1=find(h1<h2);
+%                 i2=find(h1>=h2);
+%                 subgrd1.v_hrep(n,m,i1)=h1(i1);
+%                 subgrd1.v_hrep(n,m,i2)=h2(i2);
+% 
+%             end
+%         end
+%         
+%     case{'minmean'}
+% 
+% %        hh=max(max(subgrd.z_zmax))+1; % Maximum elevation in the model
+%         zadd=max(max(subgrd.z_zmax)) + 1; % Elevation added to each point for extrapolation
+%         hadd=zadd - subgrd.z_zmax; % Elevation added to each point for extrapolation
+%         
+%         % U points
+%         
+%         subgrd1.u_zmin=max(subgrd.z_zmin(1:nmax,1:mmax),subgrd.z_zmin(1:nmax,2:mmax+1));
+%         subgrd1.u_zmax=max(subgrd.z_zmax(1:nmax,1:mmax),subgrd.z_zmax(1:nmax,2:mmax+1));
+%         
+%         zu=zeros(nmax,mmax,nbin);
+%         for ibin=1:nbin
+%             zu(:,:,ibin)=subgrd1.u_zmin+ibin*(subgrd1.u_zmax-subgrd1.u_zmin)/nbin;
+%         end
+%         
+%         % Left
+%         z_zmin=subgrd.z_zmin(1:nmax,1:mmax);
+%         z_zmax=subgrd.z_zmax(1:nmax,1:mmax);
+%         zmaxmin=z_zmax-z_zmin;
+%         zmaxmin=max(zmaxmin,1e-4);
+%         z_left=zeros(nmax,mmax,nbin+1);
+%         for ibin=1:nbin+1
+%             z_left(:,:,ibin)=z_zmin+(ibin-1)*zmaxmin/nbin;
+%         end
+%         h_left=zeros(nmax,mmax,nbin+1);
+%         h_left(:,:,2:nbin+1)=subgrd.z_hrep(1:nmax,1:mmax,:);
+%         % Add extra point
+%         dhdz_left=subgrd.z_dhdz(1:nmax,1:mmax);
+%         z_left(:,:,nbin+2)=zeros(nmax,mmax) + zadd;
+%         h_left(:,:,nbin+2)=h_left(:,:,nbin+1) + hadd(1:nmax,1:mmax).*dhdz_left;
+%         
+%         % Right
+%         z_zmin=subgrd.z_zmin(1:nmax,2:mmax+1);
+%         z_zmax=subgrd.z_zmax(1:nmax,2:mmax+1);
+%         zmaxmin=z_zmax-z_zmin;
+%         zmaxmin=max(zmaxmin,1e-4);
+%         z_right=zeros(nmax,mmax,nbin+1);
+%         for ibin=1:nbin+1
+%             z_right(:,:,ibin)=z_zmin+(ibin-1)*zmaxmin/nbin;
+%         end
+%         h_right=zeros(nmax,mmax,nbin+1);
+%         h_right(:,:,2:nbin+1)=subgrd.z_hrep(1:nmax,2:mmax+1,:);        
+%         % Add extra point
+% %        z_right(:,:,nbin+2)=zeros(nmax,mmax) + hh;
+% %        h_right(:,:,nbin+2)=h_right(:,:,nbin+1) + hh - z_zmax;
+%         dhdz_right=subgrd.z_dhdz(1:nmax,2:mmax+1);
+%         z_right(:,:,nbin+2)=zeros(nmax,mmax) + zadd;
+%         h_right(:,:,nbin+2)=h_right(:,:,nbin+1) + hadd(1:nmax,2:mmax+1).*dhdz_right;
+%         
+%         for n=1:nmax
+%             for m=1:mmax                
+%                 
+%                 try
+%                 h1=interp1(squeeze(z_left(n,m,:)),squeeze(h_left(n,m,:)),squeeze(zu(n,m,:)));
+%                 catch
+%                     shiet=1
+%                 end
+%                 h2=interp1(squeeze(z_right(n,m,:)),squeeze(h_right(n,m,:)),squeeze(zu(n,m,:)));
+% 
+%                 f=1/nbin:1/nbin:1;                
+%                 f=f*0.5;
+%                 f=f';
+%                 if z_left(n,m,1)>z_right(n,m,1)
+%                     % left shallower than right
+%                     f=1-f;
+%                 else
+%                     % right shallower than left
+%                 end
+%                 h=f.*h1 + (1-f).*h2;
+% 
+%                 subgrd1.u_hrep(n,m,:)=h;
+%                 subgrd1.u_dhdz(n,m)  = 0.5*(dhdz_left(n,m) + dhdz_right(n,m));                
+% 
+%             end
+%         end
+%         
+%         
+%         % V points
+%         
+%         subgrd1.v_zmin=max(subgrd.z_zmin(1:nmax,1:mmax),subgrd.z_zmin(2:nmax+1,1:mmax));
+%         subgrd1.v_zmax=max(subgrd.z_zmax(1:nmax,1:mmax),subgrd.z_zmax(2:nmax+1,1:mmax));
+%         
+%         zu=zeros(nmax,mmax,nbin);
+%         for ibin=1:nbin
+%             zu(:,:,ibin)=subgrd1.v_zmin+ibin*(subgrd1.v_zmax-subgrd1.v_zmin)/nbin;
+%         end
+%         
+%         % Left
+%         z_zmin=subgrd.z_zmin(1:nmax,1:mmax);
+%         z_zmax=subgrd.z_zmax(1:nmax,1:mmax);
+%         zmaxmin=z_zmax-z_zmin;
+%         zmaxmin=max(zmaxmin,1e-4);
+%         z_left=zeros(nmax,mmax,nbin+1);
+%         for ibin=1:nbin+1
+%             z_left(:,:,ibin)=z_zmin+(ibin-1)*zmaxmin/nbin;
+%         end
+%         h_left=zeros(nmax,mmax,nbin+1);
+%         h_left(:,:,2:nbin+1)=subgrd.z_hrep(1:nmax,1:mmax,:);
+%         % Add extra point
+%         dhdz_left=subgrd.z_dhdz(1:nmax,1:mmax);
+%         z_left(:,:,nbin+2)=zeros(nmax,mmax) + zadd;
+%         h_left(:,:,nbin+2)=h_left(:,:,nbin+1) + hadd(1:nmax,1:mmax).*dhdz_left;
+%         
+%         % Right
+%         z_zmin=subgrd.z_zmin(2:nmax+1,1:mmax);
+%         z_zmax=subgrd.z_zmax(2:nmax+1,1:mmax);
+%         zmaxmin=z_zmax-z_zmin;
+%         zmaxmin=max(zmaxmin,1e-4);
+%         z_right=zeros(nmax,mmax,nbin+1);
+%         for ibin=1:nbin+1
+%             z_right(:,:,ibin)=z_zmin+(ibin-1)*zmaxmin/nbin;
+%         end
+%         h_right=zeros(nmax,mmax,nbin+1);
+%         h_right(:,:,2:nbin+1)=subgrd.z_hrep(2:nmax+1,1:mmax,:);        
+%         % Add extra point
+%         dhdz_right=subgrd.z_dhdz(2:nmax+1,1:mmax);
+%         z_right(:,:,nbin+2)=zeros(nmax,mmax) + zadd;
+%         h_right(:,:,nbin+2)=h_right(:,:,nbin+1) + hadd(2:nmax+1,1:mmax).*dhdz_right;
+%         
+%         for n=1:nmax
+%             for m=1:mmax
+%                 
+%                 if n==24 && m==2
+%                     shite=1';
+%                 end
+%                 h1=interp1(squeeze(z_left(n,m,:)),squeeze(h_left(n,m,:)),squeeze(zu(n,m,:)));
+%                 h2=interp1(squeeze(z_right(n,m,:)),squeeze(h_right(n,m,:)),squeeze(zu(n,m,:)));
+% 
+% %                f=0:(1/(nbin-1)):1;                
+%                 f=1/nbin:1/nbin:1;                
+%                 f=f*0.5;
+%                 f=f';
+%                 if z_left(n,m,1)>z_right(n,m,1)
+%                     % left shallower than right
+%                     f=1-f;
+%                 else
+%                     % right shallower than left
+%                 end
+%                 h=f.*h1 + (1-f).*h2;
+% 
+%                 subgrd1.v_hrep(n,m,:)=h;
+%                 subgrd1.v_dhdz(n,m)  = 0.5*(dhdz_left(n,m) + dhdz_right(n,m));                
+%                                 
+%             end
+%         end
+%         
+% end
 
-            end
-        end
-end
-
-sfincs_write_binary_subgrid_tables_v7(subgrd1,msk,nbin,subgridfile);
+sfincs_write_binary_subgrid_tables_v7(subgrd1,msk,nbin,subgridfile,uopt);
 
 %%
 function [dmin,dmax,volmax,ddd]=sfincs_subgrid_volumes_ddd(d,nbin,dx,dy)
