@@ -15,8 +15,16 @@ fclose(fid);
 % Read subgrd file
 fid=fopen([folder inp.sbgfile],'r');
 np=fread(fid,1,'integer*4');
+uopt=fread(fid,1,'integer*4');
 nbin=fread(fid,1,'integer*4');
 
+switch uopt
+    case 0
+        subgrd.uopt='mean';
+    case 1
+        subgrd.uopt='min';
+end
+        
 v0=zeros(nmax,mmax);
 v0(v0==0)=NaN;
 v03=zeros(nmax,mmax);
@@ -27,9 +35,11 @@ subgrd.z_zmax=v0;
 subgrd.z_dep=v03;
 subgrd.u_zmin=v0;
 subgrd.u_zmax=v0;
+subgrd.u_dhdz=v0;
 subgrd.u_hrep=v03;
 subgrd.v_zmin=v0;
 subgrd.v_zmax=v0;
+subgrd.v_dhdz=v0;
 subgrd.v_hrep=v03;
 
 v=v0;
@@ -62,6 +72,10 @@ v=v0;
 d=fread(fid,np,'real*4');
 v(indices)=d;
 subgrd.u_zmax=v;
+v=v0;
+d=fread(fid,np,'real*4');
+v(indices)=d;
+subgrd.u_dhdz=v;
 for ibin=1:nbin
     v=v0;
     d=fread(fid,np,'real*4');
@@ -77,6 +91,10 @@ v=v0;
 d=fread(fid,np,'real*4');
 v(indices)=d;
 subgrd.v_zmax=v;
+v=v0;
+d=fread(fid,np,'real*4');
+v(indices)=d;
+subgrd.v_dhdz=v;
 for ibin=1:nbin
     v=v0;
     d=fread(fid,np,'real*4');
