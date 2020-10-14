@@ -1,4 +1,4 @@
-function sfincs_write_binary_subgrid_tables_v7(subgrd,msk,nbin,subgridfile)
+function sfincs_write_binary_subgrid_tables_v7(subgrd,msk,nbin,subgridfile,uopt)
 
 % Writes binary subgrid files for SFINCS
 % nmax=size(msk,1);
@@ -9,6 +9,16 @@ indices=find(msk>0);
 fid=fopen(subgridfile,'w');
 
 fwrite(fid,length(indices),'integer*4');
+
+switch lower(uopt)
+    case{'mean'}
+        fwrite(fid,0,'integer*4');
+    case{'min'}
+        fwrite(fid,1,'integer*4');
+    case{'minmean'}
+        fwrite(fid,2,'integer*4');
+end
+
 fwrite(fid,nbin,'integer*4');
 
 % Volumes
@@ -31,6 +41,8 @@ val=subgrd.u_zmin(msk>0);
 fwrite(fid,val,'real*4');
 val=subgrd.u_zmax(msk>0);
 fwrite(fid,val,'real*4');
+val=subgrd.u_dhdz(msk>0);
+fwrite(fid,val,'real*4');
 for ibin=1:nbin
     v=squeeze(subgrd.u_hrep(:,:,ibin));
     val=v(msk>0);
@@ -47,6 +59,8 @@ end
 val=subgrd.v_zmin(msk>0);
 fwrite(fid,val,'real*4');
 val=subgrd.v_zmax(msk>0);
+fwrite(fid,val,'real*4');
+val=subgrd.v_dhdz(msk>0);
 fwrite(fid,val,'real*4');
 for ibin=1:nbin
     v=squeeze(subgrd.v_hrep(:,:,ibin));
