@@ -178,6 +178,10 @@ switch flg.plot_unitt
         aux_t='h';
     case 1/3600/24
         aux_t='days';
+    case 1/3600/24/365
+        aux_t='years';
+    otherwise
+        error('add label')
 end
 % title(han.sfig(kpr,kpc),sprintf('%s time = %5.2f %s',aux_s,time_r,aux_t))
 % if flg.which_p~=8

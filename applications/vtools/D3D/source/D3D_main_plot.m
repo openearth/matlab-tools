@@ -37,7 +37,8 @@ def.sim_in=2;
 % def.folder='C:\Users\chavarri\temporal\10_constant_discharge\ctq_001\dflowfm\';
 % def.folder='p:\11203223-tki-rivers\02_rijntakken_2020\04_runs\08_morpho_1\mr1_070\dflowfm';
 % def.folder='p:\11203223-tki-rivers\02_rijntakken_2020\04_runs\15_morpho_j11\straight_morpho_1995_2011\dflowfm\';
-def.folder='C:\Users\chavarri\temporal\D3D\runs\AC\025\';
+% def.folder='p:\11203223-tki-rivers\03_maas_2020\04_runs\03_dflow1d_morphological\012\j19\dflow1d\';
+def.folder='p:\11203223-tki-rivers\02_rijntakken_2020\04_runs\17_finals\f_004\dflowfm\';
 % def.folder='p:\11205272_waterverd_verzilting_2020\006_Vaardiepte_voorspellen\02_Modelresultaten\DIMR\realization_1\dflow1d\';
 % def.folder='p:\11204644-evaluatie-langsdammen\wp10_beheer_onderhoud_kosten\04_sm\01_runs\r_001\';
 % def.folder='c:\Users\chavarri\temporal\D3D\runs\V\080\dflowfm\';
@@ -48,7 +49,7 @@ def.folder='C:\Users\chavarri\temporal\D3D\runs\AC\025\';
 simdef.file.checkouts='c:\Users\chavarri\checkouts\openearthtools_matlab\oetsettings.m';
 
     %% variable
-simdef.flg.which_p=4; %which kind of plot: 
+simdef.flg.which_p=3; %which kind of plot: 
 %MAP
 %      LOOP ON TIME
 %   1=3D bed elevation and gsd
@@ -72,7 +73,7 @@ simdef.flg.which_p=4; %which kind of plot:
 %GRID
 %   grid
 %
-simdef.flg.which_v=26; %which variable: 
+simdef.flg.which_v=34; %which variable: 
 %   1=etab
 %   2=h
 %   3=dm Fak
@@ -106,6 +107,7 @@ simdef.flg.which_v=26; %which variable:
 %   31=morphodynamic width [m]
 %   32=Chezy 
 %   33=cell area [m^2]
+%   34=space step (only 1D)
 
 simdef.flg.which_s=4; %which plot style: 
 %   1=surf
@@ -127,8 +129,8 @@ simdef.flg.which_s=4; %which plot style:
 % def.branch={'BovenEijsden','Kalkmaas1','Kalkmaas2','Kalkmaas3','Kalkmaas4','Grensmaas1','Grensmaas2','Grensmaas3','Grensmaas4','Grensmaas5','Grensmaas6','Zandmaas01','Zandmaas02','Zandmaas03','Zandmaas04','Zandmaas05','Zandmaas06','Zandmaas07','Zandmaas08','Zandmaas09','Zandmaas10','Zandmaas11','Zandmaas12','Zandmaas13','Zandmaas14','Zandmaas15','Zandmaas16','Zandmaas17','Getijmaas1','Getijmaas2','Getijmaas3','Getijmaas4','BergscheMaas1','BergscheMaas2'}; 
 % def.branch={'01_SAZ','02_SAZ','03_SAZ','04_SAZ','05_SAZ','06_SAZ','07_SAZ','08_SAZ','09_SAZ','10_SAZ','11_SAZ','01_SAZ','13_SAZ_A','13_SAZ_B_A','13_SAZ_B_B_A','13_SAZ_B_B_B_A','13_SAZ_B_B_B_B','14_SAZ','15_SAZ','16_SAZ_A','16_SAZ_B'}; 
 % def.branch={'29_A','29_B_A','29_B_B','29_B_C','29_B_D','52_A','52_B','31_A_A','31_A_B','31_A_C','31_B','51_A','BovenLobith','Bovenrijn'};
-% def.branch={'Nederrijn1','Nederrijn2','Nederrijn3','Nederrijn4','Nederrijn5','Nederrijn6','Lek1','Lek2','Lek4','Lek5','Lek6','Lek7','Lek8'};
-% def.branch={'Waal1','Waal2','Waal3','Waal4','Waal5','Waal6'}; %RT+G Waal;
+def.branch={'Nederrijn1','Nederrijn2','Nederrijn3','Nederrijn4','Nederrijn5','Nederrijn6','Lek1','Lek2','Lek4','Lek5','Lek6','Lek7','Lek8'};
+% def.branch={'Waal1','Wtaal2','Waal3','Waal4','Waal5','Waal6'}; %RT+G Waal;
 % def.branch={'PanKan1','PanKan2'}; 
 % def.branch={'IJssel01','IJssel02','IJssel03','IJssel04','IJssel05','IJssel06','IJssel07','IJssel08','IJssel09','IJssel10','IJssel11','IJssel12'}; 
 % def.branch={'Kattendiep2'}; 
@@ -167,8 +169,8 @@ simdef.flg.which_s=4; %which plot style:
 % def.kcs=[17,1]; %cross-sections to plot [first one, counter]
 
 %D3D4
-in_read.kx=NaN;
-in_read.ky=2;
+% in_read.kx=NaN;
+% in_read.ky=2;
 
     %% times to plot
     
@@ -176,10 +178,10 @@ in_read.ky=2;
     %1='time' is a single time or a vector with the time steps to plot. If NaN it plots the last time step; 
     %2='time' is the spacing between 1 and the last results;
 def.rsl_input=1; 
-def.rsl_time=[20,70];
+def.rsl_time=NaN;
 
     %% print
-simdef.flg.print=2; %NaN=nothing; 0=pause until click; 0.5=pause 'pauset' time; 1=eps; 2=png
+simdef.flg.print=NaN; %NaN=nothing; 0=pause until click; 0.5=pause 'pauset' time; 1=eps; 2=png
 simdef.flg.pauset=0.1;
 simdef.flg.save_name=NaN; %name to save a figure, if NaN it gives automatic name
 
@@ -190,23 +192,23 @@ simdef.flg.plot_unity=1; %conversion from m
 simdef.flg.plot_unitz=1; %conversion from m
 % simdef.flg.plot_unitt=1; %conversion from s
 % simdef.flg.plot_unitt=1/3600; %conversion from s
-simdef.flg.plot_unitt=1/3600/24; %conversion from s
-% simdef.flg.plot_unitt=1/3600/24/365; %conversion from s
+% simdef.flg.plot_unitt=1/3600/24; %conversion from s
+simdef.flg.plot_unitt=1/3600/24/365; %conversion from s
 
 %plot limits (comment to make it automatic)
-simdef.flg.lims.x=[60,70]; %x limit in [m]
-simdef.flg.lims.y=[69,71]; %y limit in [m]
+% simdef.flg.lims.x=[60,70]; %x limit in [m]
+% simdef.flg.lims.y=[69,71]; %y limit in [m]
 % simdef.flg.lims.z=[0,1]; %z limit in [m] (for 1D it is the limit of the vertical axis)
-simdef.flg.lims.f=[1,1.5]*1e-3; %variable limits [default units]
+% simdef.flg.lims.f=[1,1.5]*1e-3; %variable limits [default units]
 % simdef.flg.view=[56.5545   80.7235];
-simdef.flg.prnt_size=[0,0,25.4,19.05]./2; %slide=[0,0,25.4,19.05]; 
+% simdef.flg.prnt_size=[0,0,25.4,19.05]./2; %slide=[0,0,25.4,19.05]; 
 
-simdef.flg.marg.mt=1.0; %top margin [cm]
-simdef.flg.marg.mb=1.5; %bottom margin [cm]
-simdef.flg.marg.mr=1.5; %right margin [cm]
-simdef.flg.marg.ml=1.5; %left margin [cm]
-simdef.flg.marg.sh=1.0; %horizontal spacing [cm]
-simdef.flg.marg.sv=0.0; %vertical spacing [cm]
+% simdef.flg.marg.mt=1.0; %top margin [cm]
+% simdef.flg.marg.mb=1.5; %bottom margin [cm]
+% simdef.flg.marg.mr=1.5; %right margin [cm]
+% simdef.flg.marg.ml=1.5; %left margin [cm]
+% simdef.flg.marg.sh=1.0; %horizontal spacing [cm]
+% simdef.flg.marg.sv=0.0; %vertical spacing [cm]
 
 simdef.flg.equal_axis=0; %equal axis
 
@@ -235,7 +237,7 @@ simdef.D3D_home=NaN;
 simdef.flg.mean_type=2; %1=log2; 2=mean
 
 %% conversion to river kilometers
-% % in_read.path_rkm="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\river_kilometers\rijntakken\irm\rkm_rijntakken_rhein.csv";
+% in_read.path_rkm="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\river_kilometers\rijntakken\irm\rkm_rijntakken_rhein.csv";
 % in_read.rkm_curved="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\river_kilometers\rijntakken\irm\rijn-flow-model_map_curved.nc";
 % in_read.rkm_TolMinDist=300; %tolerance for accepting an rkm point
 

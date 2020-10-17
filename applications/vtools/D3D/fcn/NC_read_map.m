@@ -1094,7 +1094,50 @@ switch flg.which_p
                         out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='Chezy friction coefficient [m^(1/2)/s]';                
+            case 34 %dx
+                switch simdef.D3D.structure
+                    case 2 %FM
+                        if is1d
+                            nb=numel(in.branch);
+                            branch_aux=in.branch;
+                            dx=[];
+                            SZ=[];
+                            XZ=[];
+                            YZ=[];
+                            for kb=1:nb
+                                in.branch=branch_aux(1,kb);
+                                out=get_fm1d_data('mesh1d_node_offset',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                                dx_aux=diff(out.z);
+                                if ~isempty(dx_aux)
+                                    dx=cat(1,dx,dx_aux);
+%                                     XZ=cat(1,XZ,out.XZ(1:end-1));
+%                                     YZ=cat(1,YZ,out.YZ(1:end-1));
+%                                     SZ=cat(1,SZ,out.SZ(1:end-1));
+                                end
+                            end
+                            out.z=dx;
+                            out.SZ=1:1:numel(dx);
+%                             out.XZ=XZ;
+%                             out.YZ=YZ;
+                            
+                        else
+                            error('check')
+                            wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),1]);
 
+                            %output
+                            out.z=dx;
+                            out.x_node=x_node;
+                            out.y_node=y_node;
+                            out.x_face=x_face;
+                            out.y_face=y_face;
+                            out.faces=faces;
+                                 
+                        end
+                    case 3 %SOBEK3
+                        error('check')
+                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                end
+                out.zlabel='space step [m]';  
             otherwise
                 error('ups...')
 
@@ -1477,7 +1520,7 @@ kt=in.kt;
 
 %it does not matter whether it is nodes or edges
 switch tag_read
-    case {'mesh1d_flowelem_bl','mesh1d_flowelem_ba','mesh1d_mor_width_u'} %{s}
+    case {'mesh1d_flowelem_bl','mesh1d_flowelem_ba','mesh1d_mor_width_u','mesh1d_node_offset'} %{s}
         wl=ncread(file_map,tag_read,1,Inf);
     case {'mesh1d_sbcx','mesh1d_sbcy','mesh1d_sbcx_reconstructed','mesh1d_sbcy_reconstructed','mesh1d_sscx_reconstructed','mesh1d_sscy_reconstructed','mesh1d_sbn','mesh1d_sbt'} %{s,f,t}
         wl=ncread(file_map,tag_read,[1,1,kt(1)],[Inf,Inf,kt(2)]);
