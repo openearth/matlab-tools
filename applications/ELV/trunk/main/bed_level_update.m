@@ -119,7 +119,7 @@ switch input.mor.bedupdate
                 etab_new(1,1)      = etab(1,1)      - MorFac * dt /cb /beta(1,1     ) * ((UpwFac * ((Qb(1)     -Qb0       ) /(dx/2)) + (1-UpwFac) * ((Qb(2)   -Qb(1)     ) /(dx/2))) /B(2   ));
                 etab_new(1,2:nx-1) = etab(1,2:nx-1) - MorFac * dt./cb./beta(1,2:nx-1).* ((UpwFac * ((Qb(2:nx-1)-Qb(1:nx-2))./(dx  )) + (1-UpwFac) * ((Qb(3:nx)-Qb(2:nx-1))./(dx  )))./B(3:nx));
                 etab_new(1,nx)     = etab(1,nx)     - MorFac * dt /cb /beta(1,nx    ) * (           (Qb(nx)    -Qb(nx-1)  ) /(dx  ))/B(end);  
-            case {3,4}
+            case {2,3,4}
                 UpwFac = 1-(Qb<0); %sets the UpwFac to 1 if flow comes from left, and to 0 if flow comes from right [1,nx] double
 
                 etab_new(1,1) = etab(1,1) - MorFac * dt./cb/beta(1,1).* ((UpwFac(1) * ((Qb(1)-Qb0)./(dx/2)) + (1-UpwFac(1)) * ((Qb(2)-Qb(1))./(dx/2)))./B(1));
