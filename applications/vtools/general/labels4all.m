@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%                 VTOOLS                 %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
+% 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
 %$Revision: 16571 $
@@ -14,51 +14,35 @@
 %
 %INPUT
 %   -var: variable to generate label
-%       -'eta': bed elevation
+%       -'eta'      : bed elevation
+%       -'dist'     : distance
+%       -'dist_prof': distance along section
+%       -'etaw'     : water level
+%       -'h'        : flow depth
+%       -'sal'      : salinity
+%       -'cl'       : chloride
 %
 %   -un: factor for unit conversion from SI
+%
 %   -lan: language
 %       -'en': english
 %       -'nl': dutch
-%       -'es': Spanisch
+%       -'es': spanish
 
 function lab=labels4all(var,un,lan)
 
-%% Names
 switch var
-
-    %% Some general names
-    case 'meas'
+    case 'eta'
         switch lan
             case 'en'
-                str_var='Measurement ';
+                str_var='elevation';
             case 'nl'
-                str_var='Meting ';
+                error('write')
             case 'es'
-                str_var='Medición ';
+                str_var='elevación';
         end
-        un_type=-1; %[none]
-    case 'sim'
-        switch lan
-            case 'en'
-                str_var='Simulation ';
-            case 'nl'
-                str_var='Berekening ';
-            case 'es'
-                str_var='Cálculo ';
-        end
-        un_type=-1; %[none]
-    case 'date'
-        switch lan
-            case 'en'
-                str_var='Date ';
-            case 'nl'
-                str_var='Datum ';
-            case 'es'
-                str_var='Fecha ';
-        end
-        un_type=-1; %[none]
-     case 'dist'
+        un_type='L';
+    case 'dist'
         switch lan
             case 'en'
                 str_var='distance';
@@ -67,29 +51,17 @@ switch var
             case 'es'
                 str_var='distancia';
         end
-        un_type=1; %[L]
+        un_type='L'; 
     case 'dist_prof'
         switch lan
             case 'en'
-                str_var='Thalweg distance';
+                str_var='distance along section';
             case 'nl'
-                str_var='Afstand langs meetraai';
+                str_var='afstand langs gevaren track';
             case 'es'
-                str_var='Distancia transversal sección';
+                str_var='distancia a lo largo de la sección';
         end
-        un_type=1; %[L]
-
-    %% Parameters
-    case 'eta'
-        switch lan
-            case 'en'
-                str_var='elevation';
-            case 'nl'
-                str_var='hoogte';
-            case 'es'
-                str_var='altura';
-        end
-        un_type=1; %[L]
+        un_type='L'; 
     case 'etaw'
         switch lan
             case 'en'
@@ -99,7 +71,7 @@ switch var
             case 'es'
                 str_var='nivel del agua';
         end
-        un_type=1; %[L]
+        un_type='L'; 
     case 'h'
         switch lan
             case 'en'
@@ -109,59 +81,49 @@ switch var
             case 'es'
                 str_var='profundidad';
         end
-        un_type=1; %[L]
+        un_type='L';
     case 'sal'
         switch lan
             case 'en'
-                str_var='Salinity';
+                str_var='salinity';
             case 'nl'
-                str_var='Saliniteit';
+                str_var='saliniteit';
             case 'es'
-                str_var='Salinidad';
+                str_var='salinidad';
         end
-        un_type=2; %[sal]
-        case 'chl'
+    case 'cl'
         switch lan
             case 'en'
-                str_var='Chlorinity';
+                str_var='chloride';
             case 'nl'
-                str_var='Chloride';
+                str_var='chloride';
             case 'es'
-                str_var='Cloruro';
+                str_var='cloruro';
         end
-        un_type=3; %[chl]
-         case 'tem'
-        switch lan
-            case 'en'
-                str_var='Temperature';
-            case 'nl'
-                str_var='Temperatuur';
-            case 'es'
-                str_var='Temperatura';
-        end
-        un_type=4; %[oC]
+        un_type='-';
+    otherwise
+        error('this is missing')
 end %var
 
-%% Units
 switch un_type
-    case 1
+    case 'L'
         switch un
             case 1
                 str_un=' [m]';
             case 1/1000
                 str_un=' [km]';
+            otherwise
+                error('this factor is missing')
         end
-    case 2
-        str_un= ' [psu]';
-    case 3
-        str_un= ' [mg/l]';
-    case 4
-        str_un= ' [^oC]';
-    otherwise
-        str_un= '';
+    case '-'
+        switch var
+            case 'sal'
+                str_un=' [psu]';
+            otherwise
+                error('this is missing')
+        end
 end %un_type
-
-%% Names and units combined
-lab= [str_var,str_un];
+        
+lab=strcat(str_var,str_un);
 
 end %function
