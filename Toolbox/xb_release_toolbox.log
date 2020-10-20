@@ -1,0 +1,1240 @@
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\opendap\OPeNDAP_access_with_Matlab_tutorial.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_dump.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varget.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\plot_fun\colorbarwithtitle.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_mat\istype.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\plot_fun\pcolorcorcen.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\plot_fun\tickmap.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_fun\odd.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_mat\addrowcol.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_mat\pad.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\nctools\nc_cf_time.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_attget.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varget.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\time_fun\udunits2datenum.m
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\phys_fun\convert_units.m
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\time_fun\iso2datenum.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\opendap\OPeNDAP_subsetting_with_Matlab_tutorial.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\plot_fun\pcolorcorcen.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\plot_fun\tickmap.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_attget.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_dump.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_global.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_isvar.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varget.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\color_fun\colormaps\colormap_cpt.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_mat\count.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\netcdf\NcFile.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_create_empty.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\netcdf\NcDimension.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\netcdf\NcVariable.m
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\netcdf\NcDimension.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varget.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\plot_fun\axislat.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\plot_fun\clim.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\plot_fun\colorbarwithvtext.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_mat\istype.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\print_fun\print2screensize.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\filecheck.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\filename.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\filepathstr.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\mkpath.m
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\path2os.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\mktex.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\mkvar.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\strtokens2cell.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\opendap\contents.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\opendap\getOpenDAPinfo.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\opendap\getOpenDAPlinks.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\opendap\getOpenDAPlinks.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\opendap\opendap_catalog.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_fun\odd.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_mat\addrowcol.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\path2os.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\mktex.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\opendap\opendap_catalog_dataset.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\dprintf.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\findAllFiles.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_fun\odd.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\path2os.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\xml_read.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\isurl.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\isurl.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\str2line.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_mat\addrowcol.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_mat\pad.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\opendap\opendap_catalog_dataset.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\dprintf.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\path2os.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\str2line.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\opendap\opendap_catalog.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\multiWaitbar.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\opendap\opendap_folder_contents.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\opendap\opendap_folder_contents_test.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\opendap\opendap_get_cache.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\mkpath.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\path2os.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\opendap\opendap_catalog.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\filenameext.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\time_fun\pausedisp.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\opendap\opendap_select_example.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\plot_fun\axislat.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\plot_fun\tickmap.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\time_fun\pausedisp.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varget.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\poly_fun\polydraw.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\nctools\nc2struct.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\mkvar.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\nctools\nc_cf_time.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_isatt.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varget.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\opendap\opendap_url.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\fullurl.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\Contents.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\delft3d_matlab\private\Contents.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_add_dimension.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_adddim.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_add_recs.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_addrecs.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_adddim.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_adddim_hdf4.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_adddim_hdf4_2011b.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_adddim_mexnc.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_write_mode.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_adddim_tmw.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_write_mode.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_write_backend.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_format.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_addhist.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_attget.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_attput.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_global.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_addnewrecs.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_addrecs.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getlast.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getvarinfo.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varsize.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_find_record_variable.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_addrecs.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getvarinfo.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varput.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_addvar.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_write_backend.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_addvar_hdf4.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_attput.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_addvar_mexnc.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_write_mode.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_byte.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_char.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_double.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_float.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_short.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_attput_mex.m
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_write_mode.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_byte.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_char.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_double.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_float.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_short.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_addvar_tmw.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_write_mode.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_byte.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_char.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_double.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_float.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_short.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_attput_tmw.m
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_byte.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_char.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_double.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_float.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_short.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_archive_buffer.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_addnewrecs.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_attget.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_attget_hdf4.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_attget_hdf4_2011a.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_attget_java.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_opendap_open.m
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_opendap_open_2007b.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_attget_mexnc.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_nowrite_mode.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_byte.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_char.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_double.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_float.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_global.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_short.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_attget_tmw.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_global.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_attget_java.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_read_backend.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_format.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_turnoff_log4j.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_attput.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_attput_mex.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_attput_tmw.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_write_backend.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_attput_hdf4.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_attput_hdf4_2011b.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_byte.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_cat.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_addrecs.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getvarinfo.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_isvar.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varget.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_find_record_variable.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_cat_a.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_clobber_mode.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_add_dimension.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_addnewrecs.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_addvar.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_create_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getbuffer.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varget.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varput.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varsize.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_char.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_create_empty.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_clobber_mode.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_netcdf4_classic.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_datatype_string.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_byte.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_char.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_double.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_float.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_nat.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_short.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_diff.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_datatype_string.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getvarinfo.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varget.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_double.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_dump.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_vargetr.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_float.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getall.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varget.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getbuffer.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varget.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getdiminfo.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_read_backend.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getdiminfo_hdf4.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getdiminfo_hdf4_2011a.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getdiminfo_java.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_opendap_open.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getdiminfo_mexnc.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_nowrite_mode.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getdiminfo_tmw.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getlast.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getbuffer.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getvarinfo.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_read_backend.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getvarinfo_hdf4.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getvarinfo.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getvarinfo_hdf4_2011a.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getvarinfo.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getvarinfo_java.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_opendap_open.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getvaridinfo_java.m
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_byte.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_char.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_double.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_float.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_short.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getattsinfo_java.m
+04:         d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getattinfo_java.m
+05:           d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_pp_strings.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getvarinfo_mexnc.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_nowrite_mode.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_byte.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_char.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_double.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_float.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_nat.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_short.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getattsinfo_mexnc.m
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_byte.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_char.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_double.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_float.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_nat.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_short.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getvarinfo_tmw.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_byte.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_char.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_double.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_float.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int64.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_nat.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_short.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_ubyte.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_uint.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_uint64.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_ushort.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getattsinfo_tmw.m
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_byte.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_char.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_double.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_float.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int64.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_nat.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_short.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_ubyte.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_uint.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_uint64.m <
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_ushort.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_global.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_read_backend.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_info_hdf4.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_iscoordvar.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getvarinfo_hdf4.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_info_hdf4_sd.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getvarinfo_hdf4.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_info_java.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getattsinfo_java.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getvaridinfo_java.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_opendap_open.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_info_mexnc.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_nowrite_mode.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_global.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getattsinfo_mexnc.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getdiminfo_mexnc.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getvarinfo_mexnc.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_info_tmw.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_nowrite_mode.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_global.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getattsinfo_tmw.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getdiminfo_tmw.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getvarinfo_tmw.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int64.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_isatt.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_nowrite_mode.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_read_backend.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_iscoordvar.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getvarinfo.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_isdim.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getdiminfo.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_isunlimitedvar.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_read_backend.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_isunlimitedvar_hdf4.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getvarinfo.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_isunlimitedvar_java.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getvarinfo.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_isunlimitedvar_mexnc.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getvarinfo.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_isunlimitedvar_tmw.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getvarinfo.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_isvar.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_nowrite_mode.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_read_backend.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_isvar_tmw.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_nat.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_padheader.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_write_mode.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_write_backend.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_short.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_ubyte.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_uint.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_uint64.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_ushort.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varget.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_vargetr.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_vargetr.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_read_backend.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_varget_hdf4.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getvarinfo.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_varget_hdf4_2011a.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getvarinfo.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_varget_java.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getvarinfo_java.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_opendap_open.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_pp_strings.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_turnoff_log4j.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_get_indexing.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_varget_mexnc.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_byte.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_char.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_double.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_float.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_short.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getvarinfo_mexnc.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_get_indexing.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_varget_tmw.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getvarinfo_tmw.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_get_indexing.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varput.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getvarinfo.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_write_backend.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_varput_hdf4.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_get_varput_indexing.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_varput_hdf4_2011b.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_get_varput_indexing.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_varput_mexnc.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_write_mode.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_byte.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_char.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_short.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getvarinfo_mexnc.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_get_varput_indexing.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_varput_tmw.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_byte.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_char.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_short.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getpref.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_getvarinfo_tmw.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_get_varput_indexing.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varrename.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\snc_write_backend.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_varrename_mexnc.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_write_mode.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\private\nc_varrename_tmw.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_write_mode.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varsize.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getvarinfo.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\snc2mat.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_getall.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\test_snctools.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\thredds_dump.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\thredds_info.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\thredds_info.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\examples\nc_cf_grid_write_lat_lon_curvilinear_tutorial.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\netcdf\NcFile.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_adddim.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_addvar.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_attput.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_create_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_dump.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_global.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varget.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varput.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\examples\thredds_dump.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\thredds_dump.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\thredds_info.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\examples\thredds_info.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\Contents.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexcdf.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexcdf53.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexcdf60.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\private\mexnc_tmw.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\mexnc.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_byte.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_char.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_double.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_float.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_int.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_short.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_64bit_offset_mode.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_byte.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_char.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_clobber_mode.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_double.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_fill_mode.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_float.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_global.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_int.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_lock_mode.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_nat.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_netcdf4_classic.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_noclobber_mode.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_nofill_mode.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_nowrite_mode.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_share_mode.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_short.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\nc_write_mode.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\src\win32_make_mexnc.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\mexnc\src\win64_make_mexnc.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_compare.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_fun\compvar.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_consolidate.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_del.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\strfilter.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\strfilter.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\setproperty_filter.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_join.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\abspath.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_peel.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_rename.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_search.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\strfilter.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_show.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\strfilter.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\concat.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_split.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\options\xs_options_donar.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\options\xs_options_xb.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\filerefmultiplatform.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\dirlisting.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\getFunctionCall.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\checkfhandle.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\getInputSize.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\getInputVariables.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\checkfhandle.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\getFunctionCall.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\getOutputVariables.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\checkfhandle.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\getFunctionCall.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\getdefaults.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\writemessage.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\isOETInputCompatible.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\getInputVariables.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\writemessage.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\guidisp.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\bsd.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\createneweditordocument.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\gpl.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\lgpl.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\oetclasstemplate.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\oetconfig.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\oetlogo.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\first_subdir.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\path2os.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oetroot.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\oetlogourl.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\oetnewclass.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\createneweditordocument.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\config_FUN\getlocalsettings.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\mkpath.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\config_FUN\createconfig.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\oetnewfun.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\config_FUN\getlocalsettings.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\getInputVariables.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\getOutputVariables.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\createneweditordocument.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\str2line.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\oetnewtest.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\config_FUN\getlocalsettings.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\createneweditordocument.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\matlabinterface_fun\editorCurrentFile.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\oetrelease.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\dirlisting.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_fun\odd.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\abspath.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\mkpath.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oetroot.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\strfilter.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\getCalls.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\checkfhandle.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\getdefaults.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\oettemplate.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_template\oettesttemplate.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\contents.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_get_activeprofile.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_get_transect.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_get_coastline.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_orientation.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_get_hydro.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_get_transect.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_rename.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_get_morpho.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_get_sedero.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_get_transect.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_get_sedbal.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_stagger.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\strfilter.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_split.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_get_sedero.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\DUROS\analysis\Crossings\findCrossings.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\getdefaults.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\DUROS\analysis\Crossings\addXvaluesExactCrossings.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_fun\roundoff.m
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oet_defaults\getdefaults.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_get_sedtrans.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_get_transect.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_mat\range.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_get_spectrum.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_get_transect.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_skill.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\probabilistic\general\BrierSkillScore.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\stat_fun\corr_weighted.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\stat_fun\wmean.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_dat2nc.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_dat\xb_dat_dims.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_dat\xb_dat_read.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_get_varinfo.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_dims.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\strfilter.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_adddim.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_addvar.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_attput.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_create_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_global.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varput.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\isbinary.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_get_dt.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_get_output.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\abspath.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_get_params.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\abspath.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_get_varinfo.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\abspath.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_get_vars.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\strfilter.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_get_wavefiletype.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_bathy.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_bcffile.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_dims.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_bcflist.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_bcffile.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_consolidate.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_dat.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_dat\xb_dat_dims.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_dat\xb_dat_read.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_dims.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_dims2nc.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_getpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\isbinary.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\strfilter.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_dims.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varget.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_input.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_bathy.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_params.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_ship.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_tide.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_waves.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_mpi_dims.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_netcdf.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_get_vars.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_dims.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_index.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_varget.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_output.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_dat.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_netcdf.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_params.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_parlist.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\snctools\nc_info.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_ship.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_input.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_tide.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_waves.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_get_wavefiletype.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_consolidate.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_bathy.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_input.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_bathy.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_params.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_ship.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_tide.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_waves.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_params.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_get_params.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_plot.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_ship.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_input.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_tide.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_waves.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_fun\roundoff.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\abspath.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_dat\xb_dat_dims.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_get_output.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_dims.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_dat\xb_dat_read.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_dims2nc.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_getpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_index.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_axes.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_index.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_bathy2input.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_check_stagger.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_stagger.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_defpref.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_dims2nc.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_getpref.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_defpref.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_getprefdef.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_defpref.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_index.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_input2bathy.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_delft3d.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_reference.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_get_params.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_setpref.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_defpref.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_stagger.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_swap.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_transects2grid.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_world2xb.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_xb2world.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_fun\mean_angle.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_upgrade_1d.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_input.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_input.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_bathy2input.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_input2bathy.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_del.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_verbose.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_getpref.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_generate_model.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_input.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_verbose.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_bc\xb_bc_extracttp.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_bc\xb_bc_extractwl.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_bc\xb_generate_tide.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_bc\xb_generate_waves.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_generate_settings.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_generate_bathy.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_generate_wavedirgrid.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_join.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\struct_fun\get_optval.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\struct_fun\set_optval.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_generate_settings.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_verbose.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_bc\xb_bc_extracttp.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_bc\xb_bc_extractwl.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_bc\xb_generate_tide.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_verbose.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_bc\xb_generate_waves.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_verbose.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_bc\xb_set_start_time.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\DUROS\analysis\Crossings\findCrossings.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_fun\roundoff.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_generate_bathy.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_verbose.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_add.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_optimize.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_generate_wavedirgrid.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_verbose.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_add.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_bathy2input.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_crop.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_resolution.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_delft3d.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_input.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_input.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_input2bathy.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_delft3d\xb_delft3d_addpath.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_delft3d\xb_delft3d_wldep2xb.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_delft3d\xb_delft3d_wlgrid2xb.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_delft3d\xb_delft3d_xb2wldep.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_delft3d\xb_delft3d_xb2wlgrid.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_del.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_extent.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_finalise.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_getpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_stagger.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_verbose.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_finalise2.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_getpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_stagger.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_interpolate.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_world2xb.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_merge.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_extent.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_interpolate.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_resolution.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_trim.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_optimize.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_verbose.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_crop.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_finalise.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_resolution.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_rotate.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_rotation.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_xgrid.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_ygrid.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_fun\pointdistance_pairs.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_orientation.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_interpolate.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_resolution.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_resolution.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_extent.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_rotate.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_rotation.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_get_coastline.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\stat_fun\linreg.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_trim.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_world2xb.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_rotate.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_xb2world.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_rotate.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_xgrid.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_verbose.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\phys_fun\disper.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_ygrid.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_verbose.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\grid_fun\grid_transition.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_delft3d\xb_delft3d_addpath.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_delft3d\xb_delft3d_wldep2xb.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_delft3d\xb_delft3d_addpath.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_delft3d\xb_delft3d_wlgrid2xb.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\delft3d_matlab\wlgrid.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_delft3d\xb_delft3d_addpath.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_delft3d\xb_delft3d_xb2wldep.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_delft3d\xb_delft3d_xb2wlgrid.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\delft3d_matlab\wlgrid.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_delft3d\xb_delft3d_addpath.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_check_list.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_check_run.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_getprefdef.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_get_bin.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_resume.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_dims.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_input.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_output.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_del.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_mat\closest.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_run.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_input.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_get_bin.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_run_register.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\abspath.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\strfilter.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\get_app_list.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_run_list.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_getpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_setpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_run_parselog.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_peel.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_run_parselog.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\tail.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_run_queue.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_getpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_setpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_check_run.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_run.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\struct_fun\get_optval.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\struct_fun\set_optval.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_run_register.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_getpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_setpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_run_remote.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_write_input.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_getprefdef.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_get_bin.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_run_register.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_run_sh_scripts.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_write_sh_scripts.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\abspath.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_empty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_meta.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_set.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_run_sh_scripts.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_getpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\matlabinterface_fun\uilogin.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_run_unregister.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_getpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_setpref.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_run\xb_write_sh_scripts.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_getprefdef.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_get_handles.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_plot.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_join.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_plot_hydro.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_get_handles.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_plot_hydro2.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_get_handles.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_plot_klopman.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\phys_fun\disper.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\phys_fun\jonswap.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_plot_morpho.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_get_handles.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_plot_mpi.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_mpi_dims.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_get_handles.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_plot_profile.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_get_activeprofile.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_skill.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_mat\range.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_plot_sedtrans.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_get_handles.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_plot_spectrum.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_exist.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_select_crop.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_view.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_get_vars.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_dims.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_output.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_lib\xb_input2bathy.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\el_mat\closest.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_visualize_modelsetup.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_io\xb_read_input.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_modelsetup\xb_grid\xb_grid_xb2world.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_check.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\plot_fun\arrow.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_visualise\xb_write_skilltable.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\xb_analysis\xb_skill.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\xstruct_fun\xs_get.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\string_fun\matrix2latex.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\oetsettings.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\oetroot.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\addpathfast.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\dir2.m
+03:       d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\config_FUN\autosetSVNkeywords.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\io\netcdf\netcdf_settings.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\addpathfast.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\filename.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\general\io_fun\path2os.m <
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\setproperty.m <
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\delft3d_matlab\wlgrid.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\delft3d_matlab\enclosure.m
+02:     d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\delft3d_matlab\private\clockwise.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\delft3d_matlab\private\deblank2.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\delft3d_matlab\private\read_ecom_corners.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\delft3d_matlab\ustrcmpi.m
+00: d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\delft3d_matlab\wldep.m
+01:   d:\bieman\Documents\checkouts\OpenEarthTools\trunk\matlab\applications\delft3d_matlab\private\var2str.m
