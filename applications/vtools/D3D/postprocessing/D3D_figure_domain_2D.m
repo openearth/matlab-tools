@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 16624 $
-%$Date: 2020-10-06 21:18:25 +0200 (Tue, 06 Oct 2020) $
-%$Author: chavarri $
-%$Id: D3D_figure_domain_1D.m 16624 2020-10-06 19:18:25Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_figure_domain_1D.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %plot of 1D 
 

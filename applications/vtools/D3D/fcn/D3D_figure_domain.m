@@ -25,8 +25,8 @@ switch simdef.D3D.structure
         else
             D3D_figure_domain_2D(simdef,in)
             %%
-            figure
-            scatter(in.mesh2d_node_x,in.mesh2d_node_y)
+%             figure
+%             scatter(in.mesh2d_node_x,in.mesh2d_node_y)
 %             error('implement')
         end
 
