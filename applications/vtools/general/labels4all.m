@@ -81,8 +81,8 @@ switch var
             case 'es'
                 str_var='Marea';
         end
-        un_type=1; %[L]
-     case 'surge'
+        un_type='L'; 
+    case 'surge'
         switch lan
             case 'en'
                 str_var='Surge';
@@ -91,7 +91,7 @@ switch var
             case 'es'
                 str_var='marejada ciclónica';
         end
-        un_type=1; %[L]
+        un_type='L';
     case 'h'
         switch lan
             case 'en'
