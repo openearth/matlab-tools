@@ -62,16 +62,36 @@ switch var
                 str_var='distancia a lo largo de la sección';
         end
         un_type='L'; 
-    case 'etaw'
+    case {'etaw' 'waterlevel'}
         switch lan
             case 'en'
-                str_var='water level';
+                str_var='Water level';
             case 'nl'
-                str_var='waterstand';
+                str_var='Waterstand';
             case 'es'
-                str_var='nivel del agua';
+                str_var='Nivel del agua';
         end
         un_type='L'; 
+     case 'tide'
+        switch lan
+            case 'en'
+                str_var='Tide';
+            case 'nl'
+                str_var='Getij';
+            case 'es'
+                str_var='Marea';
+        end
+        un_type=1; %[L]
+     case 'surge'
+        switch lan
+            case 'en'
+                str_var='Surge';
+            case 'nl'
+                str_var='Opzet';
+            case 'es'
+                str_var='marejada ciclónica';
+        end
+        un_type=1; %[L]
     case 'h'
         switch lan
             case 'en'

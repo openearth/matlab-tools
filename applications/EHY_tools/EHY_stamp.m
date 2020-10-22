@@ -117,7 +117,7 @@ if ~isempty (OPT.measLoc.x) && isempty(OPT.location)
 end
 
 %% Add annotation with the location
-if ~isempty (OPT.measLoc.x) && ~isempty(OPT.location)
+if ~isempty (OPT.measLoc.x) && ~isempty(OPT.location)  
     plot(OPT.measLoc.x,OPT.measLoc.y,'r.'              ,'MarkerSize',20   );hold on;
     text(OPT.measLoc.x,OPT.measLoc.y,[' ' OPT.location],'Color'     ,'red');hold on;
 end
