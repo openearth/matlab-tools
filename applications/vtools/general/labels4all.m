@@ -31,7 +31,7 @@
 
 function lab=labels4all(var,un,lan)
 
-switch var
+switch lower(var)
     case 'eta'
         switch lan
             case 'en'
@@ -92,6 +92,26 @@ switch var
                 str_var='marejada ciclónica';
         end
         un_type='L';
+    case 'plotted period'
+        switch lan
+            case 'en'
+                str_var='plotted period';
+            case 'nl'
+                str_var='weegegeven periode';
+            case 'es'
+                str_var='período trazado';
+        end
+        un_type='-';
+    case 'entire period'
+        switch lan
+            case 'en'
+                str_var='entire period';
+            case 'nl'
+                str_var='gehele periode';
+            case 'es'
+                str_var='todo el período';
+        end
+        un_type='-';
     case 'h'
         switch lan
             case 'en'
@@ -121,8 +141,38 @@ switch var
                 str_var='cloruro';
         end
         un_type='-';
+    case 'simulation'
+        switch lan
+            case 'en'
+                str_var='Simulation';
+            case 'nl'
+                str_var='Berekening';
+            case 'es'
+                str_var='Simulación';
+        end
+        un_type='-';
+    case 'measurement'
+         switch lan
+            case 'en'
+                str_var='Measurement';
+            case 'nl'
+                str_var='Meting';
+            case 'es'
+                str_var='Medición';
+         end
+         un_type='-';
+     case 'difference'
+         switch lan
+            case 'en'
+                str_var='Difference';
+            case 'nl'
+                str_var='Verschil';
+            case 'es'
+                str_var='Diferencia';
+         end
+         un_type='-';
     otherwise
-        error('this is missing')
+         error('this is missing')
 end %var
 
 switch un_type
@@ -139,8 +189,10 @@ switch un_type
         switch var
             case 'sal'
                 str_un=' [psu]';
+            case 'cl'
+                str_un= ' [mg/l]'; 
             otherwise
-                error('this is missing')
+                str_un = '';
         end
 end %un_type
         
