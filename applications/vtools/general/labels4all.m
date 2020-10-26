@@ -134,6 +134,7 @@ switch lower(var)
             case 'es'
                 str_var='salinidad';
         end
+        un_type='-';
     case 'cl'
         switch lan
             case 'en'
@@ -143,6 +144,7 @@ switch lower(var)
             case 'es'
                 str_var='cloruro';
         end
+        un_type='-';
     case 'umag'
         switch lan
             case 'en'
@@ -159,8 +161,7 @@ switch lower(var)
             case 'en'
                 str_var='x-coordinate';
             case 'nl'
-                error('add')
-                str_var='chloride';
+                str_var='x-coordinaat';
             case 'es'
                 str_var='coordenada x';
         end
@@ -170,8 +171,7 @@ switch lower(var)
             case 'en'
                 str_var='y-coordinate';
             case 'nl'
-                error('add')
-                str_var='chloride';
+                str_var='y-coordinaat';
             case 'es'
                 str_var='coordenada y';
         end
