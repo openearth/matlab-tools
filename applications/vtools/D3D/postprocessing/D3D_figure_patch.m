@@ -178,6 +178,10 @@ switch flg.plot_unitt
     case 1/3600 %conversion from s
     title(han.sfig(kpr,kpc),sprintf('time = %5.2f h',time_r))
     % title(han.sfig(kpr,kpc),sprintf('%d years',round(time/3600/24/365)))
+    case 1/3600/24
+    title(han.sfig(kpr,kpc),sprintf('time = %5.2f days',time_r))
+    case 1/3600/24/365
+    title(han.sfig(kpr,kpc),sprintf('time = %5.2f years',time_r))
     otherwise
 %     error('Hard-code the label')
 end

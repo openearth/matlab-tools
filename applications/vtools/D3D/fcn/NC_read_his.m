@@ -77,10 +77,12 @@ switch simdef.D3D.structure
         switch flg.which_v
             case {1,11,12,18} %variables that are at stations
                 where_is_var=1; %default is station
-            case 22 %variables that are area
+            case {22} %variables at dump area
                 where_is_var=2;
             case 24 %variables that are at cross sections
                 where_is_var=3;
+            case 35 %variables at dredge area
+                where_is_var=4;
             otherwise
                 error('specify where is this variable')
         end
@@ -92,6 +94,8 @@ switch simdef.D3D.structure
                 sdc_name=ncread(file.his,'dump_area_name')';
             case 3
                 sdc_name=ncread(file.his,'cross_section_name')';
+            case 4
+                sdc_name=ncread(file.his,'dredge_area_name')';
         end
 
         if in.nfl~=1
@@ -141,7 +145,7 @@ end
 %get coordinate of stations in case of SOBEK-3
 tol_obs_sta=250; %tolerance for accepting station (in units od coordinates), very adhoc
 
-if simdef.D3D.structure
+if simdef.D3D.structure==3
     x_cord=ncread(file.map,'x_coordinate');    
     y_cord=ncread(file.map,'y_coordinate');    
     branchid=ncread(file.map,'branchid');
@@ -212,14 +216,13 @@ switch flg.which_p
                 out.zlabel='water discharge [m^3/s]';
                 out.station=sdc_name(sdc_2p_idx,:);
             case 22 %dredged volume
-                wl=ncread(file.his,'dump_discharge',[1,kt(1)],[ndump,kt(2)]);
+                wl=ncread(file.his,'dump_discharge',[1,kt(1)],[sdc_2p_idx,kt(2)]);
                 wl=wl(sdc_2p_idx,:);
 
                 %output
                 out.z=wl;
-%                 out.time_r=time_r(kt(1):kt(2)); 
-                out.dump_area=in.dump_area;
-                out.zlabel='nourished volume [m^3]';
+                out.station=sdc_name(sdc_2p_idx,:);
+                out.zlabel='cumulative nourished volume [m^3]';
             case 24 %cumulative bedload
                 switch simdef.D3D.structure
                     case 2
@@ -233,7 +236,15 @@ switch flg.which_p
                 out.z=wl;
 %                 out.time_r=time_r(kt(1):kt(2)); 
                 out.zlabel='cumulative bed load sediment transport [kg]';
-                out.station=sdc_name(sdc_2p_idx,:);                
+                out.station=sdc_name(sdc_2p_idx,:);    
+            case 35
+                wl=ncread(file.his,'dred_discharge',[1,kt(1)],[sdc_2p_idx,kt(2)]);
+                wl=wl(sdc_2p_idx,:);
+
+                %output
+                out.z=wl;
+                out.station=sdc_name(sdc_2p_idx,:);
+                out.zlabel='cumulative dredged volume [m^3]';
             otherwise
                 error('This variable has no his data')
         end

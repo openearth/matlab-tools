@@ -27,6 +27,8 @@
 % 
 % v2struct(in_p)
 
+fig_prnt=1;
+
 %figure input
 prnt.filename='name';
 prnt.size=[0,0,14,9]; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
@@ -181,7 +183,7 @@ cmap=brewermap(3,'set1');
 
 %figure initialize
 han.fig=figure('name',prnt.filename);
-set(han.fig,'paperunits','centimeters','paperposition',prnt.size,'visible',1)
+set(han.fig,'paperunits','centimeters','paperposition',prnt.size,'visible',~fig_prnt)
 set(han.fig,'units','normalized','outerposition',[0,0,1,1]) %full monitor 1
 % set(han.fig,'units','normalized','outerposition',[-1,0,1,1]) %full monitor 2
 [mt,mb,mr,ml,sh,sv]=pre_subaxis(han.fig,marg.mt,marg.mb,marg.mr,marg.ml,marg.sh,marg.sv);
@@ -250,6 +252,11 @@ han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
 han.p(kr,kc,1)=scatter(data_2f(data_2f(:,3)==0,1),data_2f(data_2f(:,3)==0,2),prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);
 surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
+
+% kr=2; kc=1;
+% set(han.fig,'CurrentAxes',han.sfig(kr,kc))
+% %data_map.grid=EHY_getGridInfo(filename,{'face_nodes_xy'});
+% EHY_plotMapModelData(data_map.grid,data_map.val,'t',1); 
 
 %duration ticks
 % xtickformat(han.sfig(kr,kc),'hh:mm')
@@ -325,6 +332,9 @@ set(findall(han.fig,'-property','FontName'),'FontName',prop.fn) %!!! attention, 
 han.fig.Renderer='painters';
 
 %print
+if fig_prnt
 print(han.fig,strcat(prnt.filename,'.eps'),'-depsc2','-loose','-cmyk')
 print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r600')
 print(han.fig,strcat(prnt.filename,'.jpg'),'-djpeg','-r300')
+close(han.fig)
+end

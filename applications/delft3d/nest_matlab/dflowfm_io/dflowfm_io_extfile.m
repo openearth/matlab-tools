@@ -6,6 +6,7 @@ function varargout=dflowfm_io_extfile(cmd,fname,varargin)
 switch lower(cmd)
     
     case 'read'
+        fprintf('Reading file %s \n',fname)
         OPT.strip = false;
         OPT       = setproperty(OPT,varargin);
         i_forcing = 0;
@@ -13,7 +14,10 @@ switch lower(cmd)
         
         try
             % New Format
+            fprintf('Trying new format \n')
+            fprintf('Start reading info \n')
             Info           = inifile('open',fname);
+            fprintf('End reading info \n')
             
             %% Cycle over the Chapters
             ListOfChapters = inifile('chapters',Info);
@@ -67,6 +71,7 @@ switch lower(cmd)
                                 end
                             end
                         end
+                        fprintf('Reading keyword %4.2f %% chapter %4.2f %% \n',i_key/length(ListOfKeywords)*100,i_chapter/length(ListOfChapters)*100)
                     end
                 end
             end

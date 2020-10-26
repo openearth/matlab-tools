@@ -19,9 +19,9 @@ clear
 
 %% INPUT
 
-path_folder='p:\11205272_waterverd_verzilting_2020\006_Vaardiepte_voorspellen\03_figures\738041.726213\m2\'; %path to the folder including the figures (and only the figures)
+path_folder='C:\Users\chavarri\temporal\201022_vstep\a_003\figures\'; %path to the folder including the figures (and only the figures)
 path_video=fullfile(path_folder,'m1'); %path including filename of the video
-frame_rate=5; %25
+frame_rate=20; %25
 quality=10; %[0,100]
 
 %% MAKE VIDEO

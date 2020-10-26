@@ -21,6 +21,9 @@
 %       -'h'        : flow depth
 %       -'sal'      : salinity
 %       -'cl'       : chloride
+%       -'umag'     : velocity magnitude
+%       -'x'        : x-coordinate
+%       -'y'        : y-coordinate
 %
 %   -un: factor for unit conversion from SI
 %
@@ -140,7 +143,39 @@ switch lower(var)
             case 'es'
                 str_var='cloruro';
         end
-        un_type='-';
+    case 'umag'
+        switch lan
+            case 'en'
+                str_var='velocity magnitude';
+            case 'nl'
+                error('add')
+                str_var='chloride';
+            case 'es'
+                str_var='magnitud de la velocidad';
+        end
+        un_type='L/T';
+    case 'x'
+        switch lan
+            case 'en'
+                str_var='x-coordinate';
+            case 'nl'
+                error('add')
+                str_var='chloride';
+            case 'es'
+                str_var='coordenada x';
+        end
+        un_type='L';
+    case 'y'
+        switch lan
+            case 'en'
+                str_var='y-coordinate';
+            case 'nl'
+                error('add')
+                str_var='chloride';
+            case 'es'
+                str_var='coordenada y';
+        end
+        un_type='L';
     case 'simulation'
         switch lan
             case 'en'
@@ -175,6 +210,8 @@ switch lower(var)
          error('this is missing')
 end %var
 
+%% UNIT
+
 switch un_type
     case 'L'
         switch un
@@ -193,6 +230,13 @@ switch un_type
                 str_un= ' [mg/l]'; 
             otherwise
                 str_un = '';
+        end
+    case 'L/T'
+        switch un
+            case 1
+                str_un=' [m/s]';
+            otherwise
+                error('this factor is missing')
         end
 end %un_type
         

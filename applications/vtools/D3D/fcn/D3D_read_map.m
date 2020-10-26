@@ -20,7 +20,7 @@ function out=D3D_read_map(simdef,in)
 file=simdef.file;
 flg=simdef.flg;
 
-kt=in.kt(1); 
+kt=in.kt(1);    
 ky=in.ky;
 kx=in.kx;
 kf=in.kf;
