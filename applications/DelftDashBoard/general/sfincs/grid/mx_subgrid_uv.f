@@ -232,17 +232,32 @@ c     Load the output into a MATLAB array.
       integer n
       integer m
       integer ibin
+      integer ibin2
 
-c      open(801,file='out05.txt')
+      open(801,file='out05.txt')
+                  write(801,*)iopt
 
       do n = 1, nmax
          do m = 1, mmax
         
 c           U points
 
-            u_zmin(n, m) = max(z_zmin(n, m), z_zmin(n, m + 1))
-            u_zmax(n, m) = max(z_zmax(n, m), z_zmax(n, m + 1))
-            u_dhdz(n, m) = 0.5*(z_dhdz(n,m) + z_dhdz(n,m + 1))
+            if (iopt==0) then
+               ! MEAN
+               u_zmin(n, m) = 0.5*(z_zmin(n, m) + z_zmin(n, m + 1))
+               u_zmax(n, m) = 0.5*(z_zmax(n, m) + z_zmax(n, m + 1))
+               u_dhdz(n, m) = 0.5*(z_dhdz(n,m)  + z_dhdz(n,m + 1))
+            elseif (iopt==1) then
+               ! MIN
+               u_zmin(n, m) = max(z_zmin(n, m), z_zmin(n, m + 1))
+               u_zmax(n, m) = max(z_zmax(n, m), z_zmax(n, m + 1))
+               u_dhdz(n, m) = 0.5*(z_dhdz(n,m) + z_dhdz(n,m + 1))
+            else
+               ! MINMEAN
+               u_zmin(n, m) = max(z_zmin(n, m), z_zmin(n, m + 1))
+               u_zmax(n, m) = max(z_zmax(n, m), z_zmax(n, m + 1))
+               u_dhdz(n, m) = 0.5*(z_dhdz(n,m) + z_dhdz(n,m + 1))
+            endif
 
             zadd = u_zmax(n, m) + 10.0
                     
@@ -285,22 +300,85 @@ c           Add extra point
                call interp1(z_left,  h_left,  zu(ibin), h1, nbin + 2)
                call interp1(z_right, h_right, zu(ibin), h2, nbin + 2)
                
-               f = 0.5*(ibin*1.0/nbin)
+               if (iopt==0) then
+
+c                 MEAN 
+                
+c                  if (h1<0.0) then
+c                  do ibin2=1,nbin+2
+c                     write(801,'(a,3i5,20e14.4)')'WTF?!',n,m,ibin2,
+c     &                h1,z_left(ibin2),h_left(ibin2),zu(ibin),
+c     &                z_zmin(n, m)
+c                  
+c                  enddo
+c                  endif
+
+c                  if (h1<0.0 .or. h2<0.0) then
+c                     write(801,*)'WTF?!',h1,h2
+c                  endif
+c                  u_hrep(n, m, ibin) = 0.5*h1 + 0.5*h2
+c                  if (u_hrep(n, m, ibin)<0.0) then
+c                     write(801,'(a,3i5,20e14.4)')'WTF?!',n,m,ibin,
+c     &                h1,h2,u_hrep(n, m, ibin)
+c                  endif
+
+                  u_hrep(n, m, ibin) = 0.5*h_left(ibin + 1) + 
+     &                           0.5*h_right(ibin + 1)
+
+
+               elseif (iopt==1) then
                
-               if (z_left(1)>z_right(1)) then
-                  f = 1.0 - f
+c                 MIN 
+               
+                  if (h1<0.0 .or. h2<0.0) then
+                     write(801,*)'WTF?!'
+                  endif
+                  u_hrep(n, m, ibin) = min(h1, h2)
+                  if (u_hrep(n, m, ibin)<0.0) then
+                     write(801,'(a,3i5,20e14.4)')'WTF?!',n,m,ibin,
+     &                h1,h2,u_hrep(n, m, ibin)
+                  endif
+                  
+                 
+               else
+
+c                 MINMEAN 
+
+                  f = 0.5*(ibin*1.0/nbin)
+               
+                  if (z_left(1)>z_right(1)) then
+                     f = 1.0 - f
+                  endif
+               
+                  u_hrep(n, m, ibin) = f*h1 + (1.0 - f)*h2
+                              
                endif
-               
-               u_hrep(n, m, ibin) = f*h1 + (1.0 - f)*h2
 
             enddo   
 
 
 c           V points
 
-            v_zmin(n, m) = max(z_zmin(n, m), z_zmin(n + 1, m))
-            v_zmax(n, m) = max(z_zmax(n, m), z_zmax(n + 1, m))
-            v_dhdz(n, m) = 0.5*(z_dhdz(n,m) + z_dhdz(n + 1, m))            
+c            v_zmin(n, m) = max(z_zmin(n, m), z_zmin(n + 1, m))
+c            v_zmax(n, m) = max(z_zmax(n, m), z_zmax(n + 1, m))
+c            v_dhdz(n, m) = 0.5*(z_dhdz(n,m) + z_dhdz(n + 1, m))            
+
+            if (iopt==0) then
+               ! MEAN
+               v_zmin(n, m) = 0.5*(z_zmin(n, m) + z_zmin(n + 1, m))
+               v_zmax(n, m) = 0.5*(z_zmax(n, m) + z_zmax(n + 1, m))
+               v_dhdz(n, m) = 0.5*(z_dhdz(n, m) + z_dhdz(n + 1, m))
+            elseif (iopt==1) then
+               ! MIN
+               v_zmin(n, m) = max(z_zmin(n, m), z_zmin(n + 1, m))
+               v_zmax(n, m) = max(z_zmax(n, m), z_zmax(n + 1, m))
+               v_dhdz(n, m) = 0.5*(z_dhdz(n, m) + z_dhdz(n + 1, m))
+            else
+               ! MINMEAN
+               v_zmin(n, m) = max(z_zmin(n, m), z_zmin(n + 1, m))
+               v_zmax(n, m) = max(z_zmax(n, m), z_zmax(n + 1, m))
+               v_dhdz(n, m) = 0.5*(z_dhdz(n,m) + z_dhdz(n + 1, m))
+            endif
 
             zadd = v_zmax(n, m) + 10.0
         
@@ -343,20 +421,40 @@ c           Add extra point
                call interp1(z_left,  h_left,  zu(ibin), h1, nbin + 2)
                call interp1(z_right, h_right, zu(ibin), h2, nbin + 2)
 
-               f = 0.5*(ibin*1.0/nbin)
+               if (iopt==0) then
+
+c                 MEAN 
+
+c                  v_hrep(n, m, ibin) = 0.5*h1 + 0.5*h2
+                  v_hrep(n, m, ibin) = 0.5*h_left(ibin + 1) + 
+     &                           0.5*h_right(ibin + 1)
+
+               elseif (iopt==1) then
                
-               if (z_left(1)>z_right(1)) then
-                  f = 1.0 - f
+c                 MIN 
+               
+                  v_hrep(n, m, ibin) = min(h1, h2)
+                 
+               else
+
+c                 MINMEAN 
+
+                  f = 0.5*(ibin*1.0/nbin)
+               
+                  if (z_left(1)>z_right(1)) then
+                     f = 1.0 - f
+                  endif
+               
+                  v_hrep(n, m, ibin) = f*h1 + (1.0 - f)*h2
+                              
                endif
-               
-               v_hrep(n, m, ibin) = f*h1 + (1.0 - f)*h2
 
             enddo   
 
          enddo
       enddo
       
-c      close(801)
+      close(801)
 
       return
 

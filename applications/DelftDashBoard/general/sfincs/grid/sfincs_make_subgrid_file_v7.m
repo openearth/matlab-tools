@@ -1,5 +1,5 @@
 function sfincs_make_subgrid_file_v7(dr,subgridfile,bathy,cs,nbin,refi,refj,uopt,maxdzdv,usemex,manning_deep,manning_shallow,manning_level)
-% Makes SFINCS subgrid file
+% Makes SFINCS subgrid file in the folder dr
 %
 % E.g.:
 %
@@ -21,10 +21,9 @@ function sfincs_make_subgrid_file_v7(dr,subgridfile,bathy,cs,nbin,refi,refj,uopt
 if ~isempty(cs)
     
     global bathymetry
-    % Initialize bathymetry datasets (must run oetsettings for this to work, and also have delftdashboard directory)
+
     if isempty(bathymetry)
-        bathymetry.dir='d:\delftdashboard\data\bathymetry\';
-        bathymetry=ddb_findBathymetryDatabases(bathymetry);
+        error('Bathymetry database has not yet been initialized! Please run initialize_bathymetry_database first.m first.')
     end
     
     subgridfile=[dr filesep subgridfile];
@@ -294,9 +293,7 @@ for ii=1:ni
         end
         
         if usemex
-            tic
             [zmin,zmax,volmax,ddd]=mx_subgrid_volumes(d,nbin,dx,dy,maxdzdv);
-            toc
         else
             % Should get rid of this option
             [zmin,zmax,volmax,ddd]=sfincs_subgrid_volumes_ddd(d,nbin,dx,dy);
@@ -311,9 +308,7 @@ for ii=1:ni
             manning=zeros(size(d));
             manning(d<manning_level)=manning_deep;
             manning(d>=manning_level)=manning_shallow;
-            tic
             [zmin,zmax,ddd,dhdz]=mx_subgrid_depth(d,manning,nbin,dx);
-            toc
         else
             % Should get rid of this option
             [zmin,zmax,ddd]=sfincs_subgrid_area_and_depth_v5(d,nbin,dy);
@@ -330,11 +325,16 @@ end
 
 % Now let's get subgrd structure for u and v points
 
-iopt=2;
+switch lower(uopt)
+    case{'mean'}
+        iopt=0;
+    case{'min'}
+        iopt=1;
+    case{'minmean'}
+        iopt=2;
+end
 
-tic
 [u_zmin,u_zmax,u_dhdz,u_hrep,v_zmin,v_zmax,v_dhdz,v_hrep]=mx_subgrid_uv(subgrd.z_zmin,subgrd.z_zmax,subgrd.z_dhdz,subgrd.z_hrep,iopt);
-toc
 
 subgrd1.z_zmin   = subgrd.z_zmin(1:nmax,1:mmax,:);
 subgrd1.z_zmax   = subgrd.z_zmax(1:nmax,1:mmax,:);

@@ -163,19 +163,45 @@ c      close(800)
       double precision zb
       double precision manning0
       double precision h10
+      double precision dsum
+      double precision dsum2
+      double precision hrepsum
+
+      double precision zz(nbin+1)
+      double precision hh(nbin+1)
+
 
       integer n
       integer m
       integer ibin
       integer j1
       integer j2
+
+      integer mmx
       
       manning0 = 0.02
 
+      if (dx<100.0) then
+      open(801,file='out050.txt')
+      mmx=5
+      else
+      open(801,file='out200.txt')
+      mmx=2
+      endif
+
 c      open(801,file='out02.txt')
 
-c      write(801,*)nmax,mmax,nbin,np
-
+      write(801,*)nmax,mmax,nbin,np
+      
+      dsum2 = 0.0
+      hrepsum = 0.0
+      
+      if (dx<100) then
+      mmx=5
+      else
+      mmx=2
+      endif
+      
       do n=1,nmax
          do m=1,mmax
          
@@ -184,6 +210,19 @@ c               write(801,*)n,m
             do ip=1,np
                dd0(ip)=d(n,m,ip)
             enddo
+
+            dsum = 0.0
+            do ip=1,np
+               dsum = dsum + dd0(ip)
+            enddo
+            if (n<mmx .and. m<mmx) then
+            dsum2 = dsum2 +dsum
+            endif
+            dsum = dsum/np
+            
+            if (n<mmx .and. m<mmx) then
+c               write(801,'(a,2i5,20e14.4)')'avgz',n,m,dsum
+            endif
             
             call sort(np,dd0,dd,indx)
 
@@ -200,14 +239,32 @@ c               write(801,*)n,m
             dw = dx/np
 
 c           Next bins
+            zz(1) = zmin(n,m)
+            hh(1) = 0.0
             do ibin = 1, nbin    
                zb = zmin(n,m) + ibin*dbin
                q = 0.0
                do j1 = 1, np
                   h = max(zb - d(n,m,j1), 0.0)
-                  q = q + h**(5.0/3.0)*dw/manning(n,m,j1)
+c                  q = q + h**(5.0/3.0)*dw/manning(n,m,j1)
+                  q = q + h**(5.0/3.0)/manning(n,m,j1)
                enddo   
+               q = dx*q/np
+c               hrep(n,m,ibin) = (q*manning0/dx)**(3.0/5.0)               
                hrep(n,m,ibin) = (q*manning0/dx)**(3.0/5.0)               
+               if (n<mmx .and. m<mmx) then
+c               write(801,'(a,3i5,20e14.4)')'hrep',n,m,ibin,zmin(n,m),
+c     &               zmax(n,m),hrep(n,m,ibin),zb
+               endif
+               
+               zz(ibin+1)=zb
+               hh(ibin+1)=hrep(n,m,ibin)
+               
+               if (hrep(n,m,ibin)<0.0) then
+               write(801,*)'WTF!!!'
+               write(801,'(3i5,20e14.4)')n,m,ibin,hrep(n,m,ibin)
+               endif
+               
             enddo
             
 c           Now compute slope above zmax            
@@ -215,15 +272,49 @@ c           Now compute slope above zmax
             q = 0.0
             do j1 = 1, np
                h = max(zb - d(n,m,j1), 0.0)
-               q = q + h**(5.0/3.0)*dw/manning(n,m,j1)
+c               q = q + h**(5.0/3.0)*dw/manning(n,m,j1)
+               q = q + h**(5.0/3.0)/manning(n,m,j1)
+               if (n<mmx .and. m<mmx) then            
+c              write(801,'(a,i5,20e14.4)')'j1,h',j1,h,q,manning(n,m,j1)
+               endif
             enddo
+            q = dx*q/np
+c            h10       = (q*manning0/dx)**(3.0/5.0)
             h10       = (q*manning0/dx)**(3.0/5.0)
             dhdz(n,m) = (h10 - hrep(n,m,nbin)) / 10.0
 
+            if (n<mmx .and. m<mmx) then            
+c            write(801,'(a,2i5,20e14.4)')'h10,dhdz',n,m,h10,dhdz(n,m),dx
+            endif
+            
+            zb = 0.0
+            if (zmax(n,m)<zb) then
+                q = hrep(n,m,nbin) + (zb - zmax(n,m))*dhdz(n,m)
+            elseif (zb<zmin(n,m)) then  
+            q=0.0
+            else
+                call interp1(zz,hh,zb,q,nbin+1)
+            endif
+            if (n<mmx .and. m<mmx) then            
+            write(801,'(a,2i5,20e14.4)')'hrep',n,m,q,hrep(n,m,nbin),
+     &                 zmax(n,m),dhdz(n,m)
+            hrepsum=hrepsum+q
+            endif
+            
          enddo
       enddo
       
-c      close(801)
+      if (dx<100) then
+          write(801,'(a,20e14.4)')'averaged',dsum2/(16*np)
+          write(801,'(a,20e14.4)')'averaged',hrepsum/(16)
+c          write(801,'(a,20e14.4)')'averaged',dsum2/(100*np)
+c          write(801,'(a,20e14.4)')'averaged',hrepsum/(100)
+      else
+          write(801,'(a,20e14.4)')'averaged',dsum2/(1*np)
+          write(801,'(a,20e14.4)')'averaged',hrepsum
+      endif
+      
+      close(801)
 
       return
 
