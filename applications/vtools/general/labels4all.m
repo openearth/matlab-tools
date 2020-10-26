@@ -35,7 +35,7 @@
 function lab=labels4all(var,un,lan)
 
 switch lower(var)
-    case 'eta'
+    case {'eta','etab'}
         switch lan
             case 'en'
                 str_var='elevation';
