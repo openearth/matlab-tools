@@ -12,10 +12,17 @@ function [Statistics,Z_int] = EHY_statistics(varargin)
 % Extrapolation method: None  (i.e. returns a NaN)
 
 %% Initiate and check
+Statistics.std_obs      = NaN;
+Statistics.std_obs_norm = NaN;
+Statistics.std_sim      = NaN;
+Statistics.std_sim_norm = NaN;
 Statistics.bias         = NaN;
+Statistics.bias_norm    = NaN;
 Statistics.meanerror    = NaN; % = bias
 Statistics.std          = NaN;
+Statistics.std_norm     = NaN;
 Statistics.RMSE         = NaN;
+Statistics.RMSE_norm    = NaN;
 Statistics.rmserror     = NaN; % = RMSE
 Statistics.maxerror     = NaN;
 Statistics.minerror     = NaN;
@@ -100,10 +107,17 @@ if sum(size(err)>1)>1
 end
 
 if numel(err) > 1   
+    Statistics.std_obs      = std(Z_obs(nonan),1);  % Note the difference with std(error) [= std(error,0)]
+    Statistics.std_obs_norm = 1;
+    Statistics.std_sim      = std(Z_int(nonan),1);  % Note the difference with std(error) [= std(error,0)]
+    Statistics.std_sim_norm = Statistics.std_sim/Statistics.std_obs;
     Statistics.bias         = mean(err);
+    Statistics.bias_norm    = Statistics.bias/Statistics.std_obs;
     Statistics.meanerror    = mean(err);
-    Statistics.std          = std(err,1);  % Note the difference with std(error) [= std(error,0)]
+    Statistics.std          = std(err,1);  % AKA crmsd; Note the difference with std(error) [= std(error,0)]
+    Statistics.std_norm     = Statistics.std/Statistics.std_obs;
     Statistics.RMSE         = norm(err)/sqrt(length(err));
+    Statistics.RMSE_norm    = Statistics.RMSE/Statistics.std_obs;
     Statistics.rmserror     = Statistics.RMSE;
     Statistics.maxerror     = max(err);
     Statistics.minerror     = min(err);
@@ -111,7 +125,7 @@ if numel(err) > 1
     Statistics.simrange     = max(max(Z_sim)) - min(min(Z_sim));
     Statistics.simrangeint  = max(Z_int) - min(Z_int);
     Statistics.rms_obs      = Statistics.rmserror / Statistics.obsrange;
-    r                       = corrcoef(Z_int,Z_obs);
+    r                       = corrcoef(Z_int(nonan),Z_obs(nonan));
     Statistics.corrcoef     = r(1,2);
     Statistics.n            = length(err);
 end
