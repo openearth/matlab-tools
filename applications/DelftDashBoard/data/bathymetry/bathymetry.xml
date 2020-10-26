@@ -308,4 +308,81 @@
     <source>GBR</source>
     <dataset/>
   </dataset>
+  <dataset>
+    <name>ncei_ninth_AL_nwFL</name>
+    <longName>CUDEM AL nwFL</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/ncei_ninth_AL_nwFL</URL>
+    <useCache>1</useCache>
+    <source>NCEI</source>
+    <dataset/>
+  </dataset>
+  <dataset>
+    <name>ncei_ninth_chesapeake_bay</name>
+    <longName>CUDEM Chesapeake Bay</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/ncei_ninth_chesapeake_bay</URL>
+    <useCache>1</useCache>
+    <source>NCEI</source>
+    <dataset/>
+  </dataset>
+  <dataset>
+    <name>ncei_ninth_FL</name>
+    <longName>CUDEM Florida</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/ncei_ninth_FL</URL>
+    <useCache>1</useCache>
+    <source>NCEI</source>
+    <dataset/>
+  </dataset>
+  <dataset>
+    <name>ncei_ninth_NC</name>
+    <longName>CUDEM North Carolina</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/ncei_ninth_NC</URL>
+    <useCache>1</useCache>
+    <source>NCEI</source>
+    <dataset/>
+  </dataset>
+  <dataset>
+    <name>ncei_ninth_northeast_sandy</name>
+    <longName>CUDEM Northeast</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/ncei_ninth_northeast_sandy</URL>
+    <useCache>1</useCache>
+    <source>NCEI</source>
+    <dataset/>
+  </dataset>
+  <dataset>
+    <name>ncei_ninth_southeast</name>
+    <longName>CUDEM RIMA</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/ncei_ninth_southeast</URL>
+    <useCache>1</useCache>
+    <source>NCEI</source>
+    <dataset/>
+  </dataset>
+  <dataset>
+    <name>ncei_ninth_TX</name>
+    <longName>CUDEM Texas</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/ncei_ninth_TX</URL>
+    <useCache>1</useCache>
+    <source>NCEI</source>
+    <dataset/>
+  </dataset>
 </root>
