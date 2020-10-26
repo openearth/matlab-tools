@@ -1,44 +1,80 @@
 function msk=sfincs_make_mask(x,y,z,zlev,varargin)
 % Leijnse april 18: included option to exclude points via polygon input
 
-xy.length = 0;
-xy_ex.length = 0;
+xy_in=[];
+xy_ex=[];
+xy_bnd_closed=[];
+xy_bnd_open=[];
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
             case{'includepolygon'}
-                xy=varargin{ii+1};
+                xy_in=varargin{ii+1};
             case{'excludepolygon'}
                 xy_ex=varargin{ii+1};
-                
+            case{'closedboundarypolygon'}
+                xy_bnd_closed=varargin{ii+1};
+            case{'openboundarypolygon'}
+                xy_bnd_open=varargin{ii+1};
         end
     end
 end
 
 
-if xy.length > 0
+if ~isempty(xy_in)
     % Throw away points below zlev(1), but not points within polygon
     % Do this by temporarily raising these points to zlev(1)+0.01
-    xp=xy.x;
-    yp=xy.y;
-    inp=inpolygon(x,y,xp,yp);
-    z(inp)=max(z(inp),zlev(1)+0.01);
+    for ip=1:length(xy_in)
+        if length(xy_in(ip).x)>1
+            %    xp=xy(:,1);
+            %    yp=xy(:,2);
+            xp=xy_in(ip).x;
+            yp=xy_in(ip).y;
+            inp=inpolygon(x,y,xp,yp);
+            z(inp)=max(z(inp),zlev(1)+0.01);
+        end
+    end
 end
 
-if xy_ex.length > 0
+if ~isempty(xy_ex)
     % Throw away points within polygon
-    xp_ex=xy_ex.x;
-    yp_ex=xy_ex.y;
-    inp_ex=inpolygon(x,y,xp_ex,yp_ex);
-    z(inp_ex)=NaN; %max(z(inp),zlev(1)+0.01);
+    % Do this by temporarily setting these points to NaN
+    for ip=1:length(xy_ex)
+        if length(xy_ex(ip).x)>1
+            %    xp=xy(:,1);
+            %    yp=xy(:,2);
+            xp=xy_ex(ip).x;
+            yp=xy_ex(ip).y;
+            inp=inpolygon(x,y,xp,yp);
+            z(inp)=NaN;
+        end
+    end
+%     xp_ex=xy_ex(:,1);
+%     yp_ex=xy_ex(:,2);
+%     inp_ex=inpolygon(x,y,xp_ex,yp_ex);
+%     z(inp_ex)=NaN; %max(z(inp),zlev(1)+0.01);
 end
 
+% Remove points below zlev(1)
 z(z<zlev(1))=NaN;
 
+% Set values in mask to 1 where z~=NaN 
 msk=zeros(size(z));
-
 msk(~isnan(z))=1;
+
+% % Larger matrix with two dummy rows
+% zex=zeros(size(z,1)+2,size(z,2)+2); 
+% zex(zex==0)=NaN;
+% zex(2:end-1,2:end-1)=z;
+
+% Boundary points
+
+% Set outer edges of grid to 2 (boundary points)
+msk(:,1)=2;
+msk(:,end)=2;
+msk(1,:)=2;
+msk(end,:)=2;
 
 imax=size(msk,1);
 jmax=size(msk,2);
@@ -86,13 +122,47 @@ ii2b(iside)=imax-1;
 jj1b(iside)=1;
 jj2b(iside)=jmax;
 
+% Find points with neighboring NaN value and set mask for these points to 2
 for iside=1:4
-    zb=z(ii1a(iside):ii2a(iside),jj1a(iside):jj2a(iside));
-    zc=z(ii1b(iside):ii2b(iside),jj1b(iside):jj2b(iside));
-    mskc=msk(ii1b(iside):ii2b(iside),jj1b(iside):jj2b(iside));
-    ibnd= isnan(zb) & ~isnan(zc);
+    zb=z(ii1a(iside):ii2a(iside),jj1a(iside):jj2a(iside));     % bed level of neighbour
+    zc=z(ii1b(iside):ii2b(iside),jj1b(iside):jj2b(iside));     % bed level cell itself
+    mskc=msk(ii1b(iside):ii2b(iside),jj1b(iside):jj2b(iside)); % original mask of cell itself
+    ibnd= isnan(zb) & ~isnan(zc);                              % if bed level of cell itself is not nan and the neighbour's is, we have a boundary point
     mskc(ibnd)=2;
     msk(ii1b(iside):ii2b(iside),jj1b(iside):jj2b(iside))=mskc;
 end
 
+% Set boundary points to closed
+if ~isempty(xy_bnd_closed)
+    % Set msk to 1 inside polygon where it is now 2
+    for ip=1:length(xy_bnd_closed)
+        if length(xy_bnd_closed(ip).x)>1
+            xp=xy_bnd_closed(ip).x;
+            yp=xy_bnd_closed(ip).y;
+            inp=inpolygon(x,y,xp,yp);
+            msk0=msk(inp); % original value of mask inside polygon
+            msk0(msk0==2)=1; % set to 1
+            msk(inp)=msk0;
+        end
+    end
+end
+
+
+% % Testing of removing boundary points
+% if ~isempty(xy_ex)
+%     % Set msk to 1 inside polygon where it is now 2 
+%     for ip=1:length(xy_ex)
+%         if length(xy_ex(ip).x)>1
+%             xp=xy_ex(ip).x;
+%             yp=xy_ex(ip).y;
+%             inp=inpolygon(x,y,xp,yp);
+%             msk0=msk(inp); % original value of mask inside polygon
+%             msk0(msk0==2)=1; % set to 1
+%             msk(inp)=msk0;
+%         end
+%     end
+% end
+
+
 msk(z>zlev(2))=0;
+msk(isnan(z))=0;
