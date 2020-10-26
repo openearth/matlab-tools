@@ -40,7 +40,7 @@ switch lower(var)
             case 'en'
                 str_var='elevation';
             case 'nl'
-                error('write')
+                str_var='hoogte';
             case 'es'
                 str_var='elevación';
         end
