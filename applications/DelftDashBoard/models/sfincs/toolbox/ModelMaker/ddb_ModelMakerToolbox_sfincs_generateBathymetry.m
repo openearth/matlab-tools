@@ -83,6 +83,10 @@ zmax=handles.toolbox.modelmaker.sfincs.zmax;
 xyinc=handles.toolbox.modelmaker.sfincs.mask.includepolygon;
 xyexc=handles.toolbox.modelmaker.sfincs.mask.excludepolygon;
 
+xyinc=[];
+xyexc=[];
+
+
 msk=sfincs_make_mask(xg,yg,zg,[zmin zmax],'includepolygon',xyinc,'excludepolygon',xyexc);
 msk(isnan(zg))=0;
 % zg(msk==0)=NaN;

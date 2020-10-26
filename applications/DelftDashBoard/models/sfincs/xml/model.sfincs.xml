@@ -69,14 +69,14 @@
       <callback>ddb_sfincs_numerics</callback>
     </tab>
     <tab>
-      <tabstring>Coastline</tabstring>
-      <element>model.sfincs.coastline.xml</element>
-      <callback>ddb_sfincs_coastline</callback>
-    </tab>
-    <tab>
       <tabstring>Boundary Conditions</tabstring>
       <callback>ddb_sfincs_boundary_conditions</callback>
       <element>model.sfincs.boundaryconditions.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Coastline</tabstring>
+      <element>model.sfincs.coastline.xml</element>
+      <callback>ddb_sfincs_coastline</callback>
     </tab>
     <tab>
       <tabstring>Meteo</tabstring>

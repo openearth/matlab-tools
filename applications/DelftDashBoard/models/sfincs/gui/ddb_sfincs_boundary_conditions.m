@@ -535,6 +535,35 @@ for ip=1:handles.model.sfincs.domain(ad).waveboundarypoints.length
 end
 fclose(fid);
 
+
+
+tt(1)=86400*(handles.model.sfincs.domain(ad).input.tstart-handles.model.sfincs.domain(ad).input.tref);
+tt(2)=86400*(handles.model.sfincs.domain(ad).input.tstop -handles.model.sfincs.domain(ad).input.tref);
+
+fmt=repmat(' %10.3f',[1 handles.model.sfincs.domain(ad).flowboundarypoints.length]);
+fmt=['%10.1f' fmt '\n'];
+
+filename=handles.model.sfincs.domain(ad).input.bhsfile;
+zz=repmat(handles.model.sfincs.boundaryconditions.hs,[1 handles.model.sfincs.domain(ad).waveboundarypoints.length]);
+fid=fopen(filename,'wt');
+fprintf(fid,fmt,[tt(1) zz]);
+fprintf(fid,fmt,[tt(2) zz]);
+fclose(fid);
+
+filename=handles.model.sfincs.domain(ad).input.btpfile;
+zz=repmat(handles.model.sfincs.boundaryconditions.tp,[1 handles.model.sfincs.domain(ad).waveboundarypoints.length]);
+fid=fopen(filename,'wt');
+fprintf(fid,fmt,[tt(1) zz]);
+fprintf(fid,fmt,[tt(2) zz]);
+fclose(fid);
+
+filename=handles.model.sfincs.domain(ad).input.bwdfile;
+zz=repmat(handles.model.sfincs.boundaryconditions.wd,[1 handles.model.sfincs.domain(ad).waveboundarypoints.length]);
+fid=fopen(filename,'wt');
+fprintf(fid,fmt,[tt(1) zz]);
+fprintf(fid,fmt,[tt(2) zz]);
+fclose(fid);
+
 setHandles(handles);
 
 

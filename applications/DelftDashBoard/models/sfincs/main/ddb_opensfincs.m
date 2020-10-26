@@ -47,6 +47,7 @@ switch lower(opt)
             % Coastline file
             if ~isempty(inp.cstfile)
                 handles.model.sfincs.domain(ad).coastline=sfincs_read_coastline(inp.cstfile);
+                handles.model.sfincs.domain(ad).coastline.active_point=1;
             end
             
             % Bnd file

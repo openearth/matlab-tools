@@ -17,7 +17,7 @@ for ii=1:length(varargin)
     end
 end
 
-wb = waitbox('Generating grid ...');pause(0.1);
+wb = waitbox('Generating grid ...');pause(0.01);
 
 x0=handles.toolbox.modelmaker.xOri;
 y0=handles.toolbox.modelmaker.yOri;
@@ -26,15 +26,10 @@ dy=handles.toolbox.modelmaker.dY;
 mmax=handles.toolbox.modelmaker.nX;
 nmax=handles.toolbox.modelmaker.nY;
 rot=mod(handles.toolbox.modelmaker.rotation,360)*pi/180;
+rot=handles.toolbox.modelmaker.rotation;
 
-[xg0,yg0]=meshgrid(0:dx:mmax*dx,0:dy:nmax*dy);
-x = x0 + xg0* cos(rot) + yg0*-sin(rot);
-y = y0 + xg0* sin(rot) + yg0*cos(rot);
+[xg,yg,x,y]=sfincs_make_grid(x0,y0,dx,dy,mmax,nmax,rot);
 
-% Cell centres!
-[xz,yz]=getXZYZ(x,y);
-x=xz(2:end,2:end);
-y=yz(2:end,2:end);
 close(wb);
 
 %% Now start putting things into the sfincs model

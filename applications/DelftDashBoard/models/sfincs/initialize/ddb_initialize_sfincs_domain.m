@@ -126,4 +126,5 @@ handles.model.sfincs.domain(id).sourcepoints.q=0;
 handles.model.sfincs.domain(id).obspoints.handle=[];
 handles.model.sfincs.domain(id).obspoints.x=[];
 handles.model.sfincs.domain(id).obspoints.y=[];
+handles.model.sfincs.domain(id).obspoints.names={''};
 handles.model.sfincs.domain(id).obspoints.length=0;

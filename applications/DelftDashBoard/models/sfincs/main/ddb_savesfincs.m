@@ -22,7 +22,7 @@ if handles.model.sfincs.domain(ad).sourcepoints.length==0
     inp.disfile='';
 end
 
-if handles.model.sfincs.domain(ad).obspoints.length==0
+if length(handles.model.sfincs.domain(ad).obspoints.x)==0
     inp.obsfile='';
 end
 

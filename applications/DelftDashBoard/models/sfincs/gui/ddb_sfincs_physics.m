@@ -1,4 +1,4 @@
-function ddb_sfincs_domain(varargin)
+function ddb_sfincs_physics(varargin)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -45,11 +45,12 @@ function ddb_sfincs_domain(varargin)
 %%
 ddb_zoomOff;
 
-
 if isempty(varargin)
+    
     % New tab selected
     ddb_refreshScreen;
     ddb_plotsfincs('update','active',1,'visible',1);
+
 else
     
     %Options selected
@@ -57,37 +58,34 @@ else
     opt=lower(varargin{1});
     
     switch lower(opt)
-        case{'drawboundaryspline'}
-            draw_boundary_spline;
-        case{'deleteboundaryspline'}
-            delete_boundary_spline;
-        case{'loadboundaryspline'}
-            load_boundary_spline;
-        case{'saveboundaryspline'}
-            save_boundary_spline;
-        case{'updatedepthcontour'}
-            update_depth_contour;
-
-        case{'createflowboundarypoints'}
-            create_flow_boundary_points;
-        case{'removeflowboundarypoints'}
-            remove_flow_boundary_points;
-        case{'loadflowboundarypoints'}
-            load_flow_boundary_points;
-        case{'saveflowboundarypoints'}
-            save_flow_boundary_points;
-
-        case{'createwaveboundarypoints'}
-            create_wave_boundary_points;
-        case{'removewaveboundarypoints'}
-            remove_wave_boundary_points;
-        case{'loadwaveboundarypoints'}
-            load_wave_boundary_points;
-        case{'savewaveboundarypoints'}
-            save_wave_boundary_points;
-        case{'saveboundaryconditions'}
-            save_boundary_conditions;
+        case{'changenrbreakpoints'}
+            change_nr_breakpoints;
             
     end
     
 end
+
+%%
+function change_nr_breakpoints
+
+handles=getHandles;
+nr=handles.model.sfincs.domain(ad).input.cdnrb;
+if nr==2
+    if length(handles.model.sfincs.domain(ad).input.cdwnd)==3
+        handles.model.sfincs.domain(ad).input.cdwnd=handles.model.sfincs.domain(ad).input.cdwnd(1:2);
+        handles.model.sfincs.domain(ad).input.cdval=handles.model.sfincs.domain(ad).input.cdval(1:2);
+    else
+    end
+else
+    if length(handles.model.sfincs.domain(ad).input.cdwnd)==2
+        handles.model.sfincs.domain(ad).input.cdwnd(3)=handles.model.sfincs.domain(ad).input.cdwnd(2);
+        handles.model.sfincs.domain(ad).input.cdval(3)=handles.model.sfincs.domain(ad).input.cdval(2);
+    else
+    end
+end
+
+setHandles(handles);
+
+gui_updateActiveTab;
+
+
