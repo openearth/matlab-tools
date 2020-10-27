@@ -155,6 +155,7 @@ if ~strcmpi(cs.type,'geographic')
     ylimg(2)=max(max(ygeo));
     unit='m';
 else
+    [xgeo,ygeo]=meshgrid(xlim(1):dx:xlim(2),ylim(1):dy:ylim(2));
     unit='degree';
 end
 
@@ -363,7 +364,8 @@ if nmeteo>1 || ~isempty(spw)
                     end
                     
                     % Interpolate this meteo dataset onto new grid
-                    val1=interp2(xg0,yg0,val0,xg,yg);
+%                     val1=interp2(xg0,yg0,val0,xg,yg);
+                    val1=interp2(xg0,yg0,val0,xgeo,ygeo);
                     % Only use data
                     val(isnan(val))=val1(isnan(val));
                     s.parameter(ipar).val(it,:,:)=val;
@@ -406,26 +408,27 @@ if ~isempty(spw)
     end
 end
 
-%% Now interpolate onto grid in local coordinate system
-if ~strcmpi(cs.type,'geographic')
-%     s.parameter(ipar).x=xlim(1):dx:xlim(2);
-%     s.parameter(ipar).y=ylim(1):dy:ylim(2);
-    % Convert grid to geographic coordinate system
-    [xg1,yg1]=convertCoordinates(xg,yg,'CS1.name',cs.name,'CS1.type',cs.type,'CS2.name','WGS 84','CS2.type','geographic');
-    for ipar=1:npar
-        x1=s.parameter(ipar).x;
-        y1=s.parameter(ipar).y;
-        val1=s.parameter(ipar).val; % Data on original grid
-        nt=length(s.parameter(ipar).time);
-        s.parameter(ipar).x=xlim(1):dx:xlim(2);
-        s.parameter(ipar).y=ylim(1):dy:ylim(2);
-        s.parameter(ipar).val=zeros(nt,size(xg,1),size(xg,2));
-        for it=1:nt
-            val=squeeze(val1(it,:,:));
-            s.parameter(ipar).val(it,:,:)=interp2(x1,y1,val,xg1,yg1);
-        end
-    end
-end
+% Is this still necessary?
+% %% Now interpolate onto grid in local coordinate system
+% if ~strcmpi(cs.type,'geographic')
+% %     s.parameter(ipar).x=xlim(1):dx:xlim(2);
+% %     s.parameter(ipar).y=ylim(1):dy:ylim(2);
+%     % Convert grid to geographic coordinate system
+%     [xg1,yg1]=convertCoordinates(xg,yg,'CS1.name',cs.name,'CS1.type',cs.type,'CS2.name','WGS 84','CS2.type','geographic');
+%     for ipar=1:npar
+%         x1=s.parameter(ipar).x;
+%         y1=s.parameter(ipar).y;
+%         val1=s.parameter(ipar).val; % Data on original grid
+%         nt=length(s.parameter(ipar).time);
+%         s.parameter(ipar).x=xlim(1):dx:xlim(2);
+%         s.parameter(ipar).y=ylim(1):dy:ylim(2);
+%         s.parameter(ipar).val=zeros(nt,size(xg,1),size(xg,2));
+%         for it=1:nt
+%             val=squeeze(val1(it,:,:));
+%             s.parameter(ipar).val(it,:,:)=interp2(x1,y1,val,xg1,yg1);
+%         end
+%     end
+% end
 
 %% Apply spline
 switch lower(interpolationmethod)
