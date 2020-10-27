@@ -262,7 +262,9 @@ else
 end
 
 ddb_setWindowButtonUpDownFcn(fn,[]);
+try
 ddb_updateCoordinateText(pntr);
+end
 
 %%
 function StartPan(imagefig, varargins, callback, varargin)
@@ -294,7 +296,9 @@ xl=xl0-dpos(1);
 yl=yl0-dpos(2);
 [xl,yl]=CompXYLim(xl,yl,xrange,yrange);
 set(handles.GUIHandles.mapAxis,'XLim',xl,'YLim',yl);
+try
 ddb_updateCoordinateText('closedhand');
+end
 
 %%
 function StopPan(imagefig, varargins, callback, varargin)
