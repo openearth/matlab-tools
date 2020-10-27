@@ -68,12 +68,15 @@ function write_meteo_file_delft3d(fname, s, par, gridunit, reftime, varargin)
 %%
 
 vsn='1.03';
+hcm=1;
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
             case{'version'}
                 vsn=varargin{ii+1};
+            case{'headercomments'}
+                hcm=varargin{ii+1};
         end
     end
 end
@@ -136,9 +139,11 @@ dy=parameter.y(2)-parameter.y(1);
 
 tic
 fid=fopen([fname '.' ext],'wt');
+if hcm
 fprintf(fid,'%s\n','### START OF HEADER');
 fprintf(fid,'%s\n','### All text on a line behind the first # is parsed as commentary');
 fprintf(fid,'%s\n','### Additional commments');
+end
 fprintf(fid,'%s\n',['FileVersion      =    ' vsn '                                               # Version of meteo input file, to check if the newest file format is used']);
 fprintf(fid,'%s\n','filetype         =    meteo_on_equidistant_grid                          # Type of meteo input file: meteo_on_flow_grid, meteo_on_equidistant_grid, meteo_on_curvilinear_grid or meteo_on_spiderweb_grid');
 fprintf(fid,'%s\n','NODATA_value     =    -999                                               # Value used for undefined or missing data');
@@ -155,7 +160,9 @@ fprintf(fid,'%s\n',['dy               =   ' num2str(min(dy))]);
 fprintf(fid,'%s\n','n_quantity       =    1                                                  # Number of quantities prescribed in the file');
 fprintf(fid,'%s\n',['quantity1        =    ' quantity '                                             # Name of quantity1']);
 fprintf(fid,'%s\n',['unit1            =    ' unit '                                              # Unit of quantity1']);
+if hcm
 fprintf(fid,'%s\n','### END OF HEADER');
+end
 
 fmt=[repmat(fmt,1,ncols) '\n'];
 fmt=repmat(fmt,1,nrows);
