@@ -295,11 +295,11 @@ if strcmpi(cs.type(1:3),'geo')
     netcdf.putAtt(NCid,varid,'value','value is equal to EPSG code');
     netcdf.endDef(NCid);
 else
-    EPSG=readEPSGData;
-    cs.code=[];
-    cs = ConvertCoordinatesFindCoordRefSys(cs,EPSG);
-    proj_conv = ConvertCoordinatesFindConversionParams(cs,EPSG);
-    proj_conv
+%     EPSG=readEPSGData;
+%     cs.code=[];
+%     cs = ConvertCoordinatesFindCoordRefSys(cs,EPSG);
+%     proj_conv = ConvertCoordinatesFindConversionParams(cs,EPSG);
+%     proj_conv
 end
 
 % Close file
