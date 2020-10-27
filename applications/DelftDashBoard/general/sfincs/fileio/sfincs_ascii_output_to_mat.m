@@ -1,33 +1,54 @@
-function sfincs_ascii_output_to_mat(folder,inpfile,ascfile,hmaxfile,matfile,refdate)
+function sfincs_ascii_output_to_mat(folder,inpfile,ascfile,matfile)
 
 thrsh=0.1;
 
 inp=sfincs_read_input([folder inpfile]);
-dep=load([folder inp.depfile]);
+% dep=load([folder inp.depfile]);
+% msk=load([folder inp.mskfile]);
 
-s0=load([folder ascfile]);
+s0=load([folder 'zs.dat']);
 nt=size(s0,1)/inp.nmax;
 % wl=reshape(s,[nt size(h,1) size(h,2)]);
 wlc = mat2cell(s0,inp.nmax*ones(nt,1),inp.mmax);
-val=zeros(nt,inp.nmax,inp.mmax);
+val=zeros(nt,inp.nmax+1,inp.mmax+1);
+zb=zeros(inp.nmax+1,inp.mmax+1);
 wdep=val;
 
-hmax=load([folder hmaxfile]);
-hmax(hmax<thrsh)=NaN;
+s0=load([folder 'u.txt']);
+nt=size(s0,1)/inp.nmax;
+uc = mat2cell(s0,inp.nmax*ones(nt,1),inp.mmax);
+
+s0=load([folder 'v.txt']);
+nt=size(s0,1)/inp.nmax;
+vc = mat2cell(s0,inp.nmax*ones(nt,1),inp.mmax);
+
+uu=val;
+vv=val;
 
 for it=1:nt
     % Cut out land points
     v0=wlc{it};
-    v0(v0<dep+thrsh)=NaN;
-    val(it,:,:)=v0;
-    wdep(it,:,:)=v0-dep;
+%     v0(msk==0)=NaN;
+%     v0(v0<dep+thrsh)=NaN;
+    val(it,1:end-1,1:end-1)=v0;
+%     wdep(it,:,:)=v0-dep;
+    uu0=uc{it};
+    uu(it,1:end-1,1:end-1)=uu0;
+    vv0=vc{it};
+    vv(it,1:end-1,1:end-1)=vv0;
 end
 
-dt=inp.dtout/86400; % output timestep in days
-t=refdate:dt:refdate+(nt-1)*dt;
+% zb(1:end-1,1:end-1)=dep;
 
-xx=0:inp.dx:inp.dx*(inp.mmax-1);
-yy=0:inp.dy:inp.dy*(inp.nmax-1);
+dt=inp.dtout/86400; % output timestep in days
+t0=inp.tstart;
+t1=t0+(nt-1)*dt;
+t=t0:dt:t1;
+
+%t=refdate:dt:refdate+(nt-1)*dt;
+
+xx=0:inp.dx:inp.dx*(inp.mmax);
+yy=0:inp.dy:inp.dy*(inp.nmax);
 xx=xx+inp.x0;
 yy=yy+inp.y0;
 
@@ -41,20 +62,37 @@ s.parameters(1).parameter.val=val;
 s.parameters(1).parameter.size=[nt 0 inp.nmax inp.mmax 0];
 s.parameters(1).parameter.quantity='scalar';
 
-s.parameters(2).parameter.name='water depth';
+s.parameters(2).parameter.name='bed level';
 s.parameters(2).parameter.time=t;
 s.parameters(2).parameter.x=x;
 s.parameters(2).parameter.y=y;
-s.parameters(2).parameter.val=wdep;
-s.parameters(2).parameter.size=[nt 0 inp.nmax inp.mmax 0];
+s.parameters(2).parameter.val=zb;
+s.parameters(2).parameter.size=[0 0 inp.nmax inp.mmax 0];
 s.parameters(2).parameter.quantity='scalar';
 
-s.parameters(3).parameter.name='maximum water depth';
+s.parameters(3).parameter.name='velocity';
+s.parameters(3).parameter.time=t;
 s.parameters(3).parameter.x=x;
 s.parameters(3).parameter.y=y;
-s.parameters(3).parameter.val=hmax;
+s.parameters(3).parameter.u=uu;
+s.parameters(3).parameter.v=vv;
 s.parameters(3).parameter.size=[0 0 inp.nmax inp.mmax 0];
-s.parameters(3).parameter.quantity='scalar';
+s.parameters(3).parameter.quantity='vector';
+
+% s.parameters(2).parameter.name='water depth';
+% s.parameters(2).parameter.time=t;
+% s.parameters(2).parameter.x=x;
+% s.parameters(2).parameter.y=y;
+% s.parameters(2).parameter.val=wdep;
+% s.parameters(2).parameter.size=[nt 0 inp.nmax inp.mmax 0];
+% s.parameters(2).parameter.quantity='scalar';
+% 
+% s.parameters(3).parameter.name='maximum water depth';
+% s.parameters(3).parameter.x=x;
+% s.parameters(3).parameter.y=y;
+% s.parameters(3).parameter.val=hmax;
+% s.parameters(3).parameter.size=[0 0 inp.nmax inp.mmax 0];
+% s.parameters(3).parameter.quantity='scalar';
 
 save([folder matfile],'-struct','s');
 
