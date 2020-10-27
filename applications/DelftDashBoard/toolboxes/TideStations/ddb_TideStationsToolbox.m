@@ -123,6 +123,15 @@ switch lower(model)
             ddb_DFlowFM_saveObsFile(handles,ad);
             setHandles(handles);
         end
+    case{'sfincs'}
+        [filename, pathname, filterindex] = uiputfile('*.obs', 'Observation File Name','sfincs.obs');
+        if pathname~=0
+            ddb_sfincs_add_tide_stations;
+            handles=getHandles;
+            handles.model.sfincs.domain(ad).input.obsfile=filename;
+            sfincs_save_obs_file(filename,handles.model.sfincs.domain(ad).obspoints);
+            setHandles(handles);
+        end
     otherwise
         ddb_giveWarning('text',['Sorry, generation of observation points from tide stations is not supported for ' handles.model.(model).longName ' ...']);
 end
