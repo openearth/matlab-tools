@@ -217,6 +217,8 @@ handles.toolbox.modelmaker.sfincs.zmin=-2;
 handles.toolbox.modelmaker.sfincs.zmax=10;
 handles.toolbox.modelmaker.sfincs.include_xy=[];
 handles.toolbox.modelmaker.sfincs.exclude_xy=[];
+handles.toolbox.modelmaker.sfincs.closedboundary_xy=[];
+handles.toolbox.modelmaker.sfincs.openboundary_xy=[];
 
 handles.toolbox.modelmaker.sfincs.mask.nrincludepolygons=0;
 handles.toolbox.modelmaker.sfincs.mask.includepolygonnames={''};
@@ -233,3 +235,20 @@ handles.toolbox.modelmaker.sfincs.mask.excludepolygon(1).length=0;
 handles.toolbox.modelmaker.sfincs.mask.excludepolygon(1).x=[];
 handles.toolbox.modelmaker.sfincs.mask.excludepolygon(1).y=[];
 handles.toolbox.modelmaker.sfincs.mask.excludepolygonfile='';
+
+handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons=0;
+handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonnames={''};
+handles.toolbox.modelmaker.sfincs.mask.activeclosedboundarypolygon=1;
+handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).length=0;
+handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).x=[];
+handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).y=[];
+handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonfile='';
+
+handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons=0;
+handles.toolbox.modelmaker.sfincs.mask.openboundarypolygonnames={''};
+handles.toolbox.modelmaker.sfincs.mask.activeopenboundarypolygon=1;
+handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(1).length=0;
+handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(1).x=[];
+handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(1).y=[];
+handles.toolbox.modelmaker.sfincs.mask.openboundarypolygonfile='';
+
