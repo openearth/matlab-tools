@@ -175,17 +175,16 @@ for id=1:length(datasets)
     xg(isn)=0;
     yg(isn)=0;
     
-    % Interpolate data to grid
-    z0=interp2(xx,yy,zz,xg,yg);
-    
-%     xx=xx(1,:);
-%     yy=yy(:,1);
-%     z0a=grid_cell_averaging5(xx,yy,zz,xg,yg);
-%     z0(2:end,2:end)=z0a(1:end-1,1:end-1);
-    
-    z0(isn)=NaN; 
-    % Copy new values (that are not NaN) to new bathymetry    
-    zg(~isnan(z0))=z0(~isnan(z0));
+    if ~isempty(xx)
+        
+        % Interpolate data to grid
+        z0=interp2(xx,yy,zz,xg,yg);
+        
+        z0(isn)=NaN;
+        % Copy new values (that are not NaN) to new bathymetry
+        zg(~isnan(z0))=z0(~isnan(z0));
+        
+    end
         
 end
 
