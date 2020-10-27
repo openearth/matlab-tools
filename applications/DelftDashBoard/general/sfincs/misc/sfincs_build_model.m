@@ -22,45 +22,14 @@ xy_ex=[];
 xy_bnd_closed=[];
 xy_bnd_open=[];
 
-if isempty(inp)
-    inp=sfincs_initialize_input;
-    inp.depfile='sfincs.inp';
-    inp.mskfile='sfincs.msk';
-    inp.indexfile='sfincs.ind';
-end
-
 %% Read input arguments
 for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
-            case{'sbgfile'}
-                inp.sbgfile=varargin{ii+1};
             case{'subgrid_nbin'}
                 nbin=varargin{ii+1};
             case{'subgrid_dx'}
                 subgrid_dx=varargin{ii+1};
-            case{'subgrid_uopt'}
-                subgrid_uopt=varargin{ii+1};
-            case{'x0'}
-                inp.x0=varargin{ii+1};                
-            case{'y0'}
-                inp.y0=varargin{ii+1};                
-            case{'dx'}
-                inp.dx=varargin{ii+1};                
-            case{'dy'}
-                inp.dy=varargin{ii+1};                
-            case{'mmax'}
-                inp.mmax=varargin{ii+1};                
-            case{'nmax'}
-                inp.nmax=varargin{ii+1};                
-            case{'rotation'}
-                inp.rotation=varargin{ii+1};                
-            case{'manning_sea'}
-                inp.manning_sea=varargin{ii+1};                
-            case{'manning_land'}
-                inp.manning_land=varargin{ii+1};                
-            case{'rgh_lev_land'}
-                inp.rgh_lev_land=varargin{ii+1};                
             case{'zmin'}
                 zmin=varargin{ii+1};                
             case{'zmax'}
