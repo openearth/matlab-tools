@@ -126,6 +126,8 @@ for id=1:length(datasets)
         verticaloffset=datasets(idata).verticaloffset;
     elseif isfield(datasets(idata),'offset')
         verticaloffset=datasets(idata).offset;
+    elseif isfield(datasets(idata),'vertical_offset')
+        verticaloffset=datasets(idata).vertical_offset;
     else
         verticaloffset=0;
     end
