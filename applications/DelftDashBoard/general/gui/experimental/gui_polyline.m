@@ -210,6 +210,7 @@ switch lower(opt)
             case{'curvedarrow'}
                 h=patch(x,y,'r');
                 set(h,'EdgeColor',options.linecolor);
+                hm=plot(x,y);
         end
 
         set(hg,'Visible','off');

@@ -22,6 +22,7 @@ setfcn=@gui_setUserData;
 resizefcn=[];
 closerequestfcn=[];
 rsz=1;
+include_zoom=0;
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})
@@ -62,6 +63,8 @@ for ii=1:length(varargin)
                 resizefcn=varargin{ii+1};
             case{'closerequestfcn'}
                 closerequestfcn=varargin{ii+1};
+            case{'zoom'}
+                include_zoom=varargin{ii+1};
         end
     end
 end
@@ -107,6 +110,8 @@ else
     end
 end
 
+
+
 if ~rsz
     set(figh,'Resize','off');
 end
@@ -136,6 +141,49 @@ if ~isempty(createcallback)
     feval(createcallback,createinput);
     gui_setElements(element);
 end
+
+
+if include_zoom
+    
+    % zoom toolbar
+    tbh = uitoolbar;
+    
+    settingsDir='d:\checkouts\OET\trunk\matlab\applications\DelftDashBoard\settings';
+    
+    c=load([settingsDir filesep 'icons' filesep 'icons_muppet.mat']);
+    cpan=load([settingsDir filesep 'icons' filesep 'icons.mat']);
+    
+    h = uitoggletool(tbh,'Separator','off','HandleVisibility','on','ToolTipString','Zoom In');
+    set(h,'ClickedCallback',{@ddb_zoomInOutPan,1,[],[],[],[]});
+    set(h,'Tag','UIToggleToolZoomIn');
+    set(h,'cdata',c.ico.zoomin16);
+    handles.GUIHandles.toolBar.zoomIn=h;
+    %set(h,'cdata',c2.ico.zoom_in_32x32);
+    
+    h = uitoggletool(tbh,'Separator','off','HandleVisibility','on','ToolTipString','Zoom Out');
+    set(h,'ClickedCallback',{@ddb_zoomInOutPan,2,[],[],[],[]});
+    set(h,'Tag','UIToggleToolZoomOut');
+    set(h,'cdata',c.ico.zoomout16);
+    handles.GUIHandles.toolBar.zoomOut=h;
+    
+    h = uitoggletool(tbh,'Separator','off','HandleVisibility','on','ToolTipString','Pan');
+    set(h,'ClickedCallback',{@ddb_zoomInOutPan,3,[],[],[],[]}');
+    set(h,'Tag','UIToggleToolPan');
+    set(h,'cdata',cpan.icons.pan);
+    handles.GUIHandles.toolBar.pan=h;
+    
+    handles.GUIHandles.mapAxis=gca;
+    
+    handles.screenParameters.coordinateSystem.type='geographic';
+    
+    handles.screenParameters.xMaxRange=[-1e9 1e9];
+    handles.screenParameters.yMaxRange=[-1e9 1e9];
+    handles.GUIHandles.toolBar.autoRefreshBathymetry=[];
+    
+    setHandles(handles);
+end
+
+
 
 if nargout>0
         
