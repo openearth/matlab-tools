@@ -114,7 +114,7 @@ function capabilities=getCapabilities(inputfile,outputfile,setglobal)
 
 if isempty(inputfile)
     % Get data from NDBC SOS server
-    capabilities=xml2struct('http://sdf.ndbc.noaa.gov/sos/server.php?request=GetCapabilities&service=SOS','structuretype','long','includeroot');
+    capabilities=xml2struct('https://sdf.ndbc.noaa.gov/sos/server.php?request=GetCapabilities&service=SOS','structuretype','long','includeroot');
 else
     % Get data from file
     [pathstr,name,ext]=fileparts(inputfile);
@@ -191,7 +191,7 @@ end
 %%
 function data=getData(id,parameter,t0,t1)
    
-url='http://sdf.ndbc.noaa.gov/sos/server.php';
+url='https://sdf.ndbc.noaa.gov/sos/server.php';
 
 arg.request          = 'GetObservation';
 arg.service          = 'SOS';
@@ -215,7 +215,12 @@ end
 
 disp(urlstr)
 
+try
 s=urlread(urlstr);
+catch
+options = weboptions('TimeOut',20,'ContentType','text');
+s=webread(urlstr,options);
+end
 
 data=[];
 
