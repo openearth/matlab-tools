@@ -23,6 +23,8 @@ switch uopt
         subgrd.uopt='mean';
     case 1
         subgrd.uopt='min';
+    case 2
+        subgrd.uopt='minmean';
 end
         
 v0=zeros(nmax,mmax);
