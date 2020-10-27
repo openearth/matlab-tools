@@ -66,13 +66,21 @@ for ii=1:length(varargin)
             case{'zmax'}
                 zmax=varargin{ii+1};                
             case{'includepolygon'}
-                xy_in=load_polygon(varargin{ii+1});
+                if ~isempty(varargin{ii+1})
+                    xy_in=load_polygon(varargin{ii+1});
+                end
             case{'excludepolygon'}
-                xy_ex=load_polygon(varargin{ii+1});
+                if ~isempty(varargin{ii+1})
+                    xy_ex=load_polygon(varargin{ii+1});
+                end
             case{'closedboundarypolygon'}
-                xy_bnd_closed=load_polygon(varargin{ii+1});
+                if ~isempty(varargin{ii+1})
+                    xy_bnd_closed=load_polygon(varargin{ii+1});
+                end
             case{'openboundarypolygon'}
-                xy_bnd_open=load_polygon(varargin{ii+1});
+                if ~isempty(varargin{ii+1})
+                    xy_bnd_open=load_polygon(varargin{ii+1});
+                end
         end
     end
 end
