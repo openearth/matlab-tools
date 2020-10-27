@@ -16,6 +16,8 @@ vobs=[];        % wind speed of observation -> used to fit xn
 holland2008 = 0;
 vt=0; dpdt = 0; lat = 0;
 
+vms=max(vms,1);
+
 % Oher
 estimate_rmax=0;  
 e=exp(1);
@@ -51,7 +53,7 @@ end
 
 % Calculate Holland B parameter based on Holland (2008)
 % Assume Dvorak method
-dp  = pn-pc;    
+dp  = max(pn-pc,1);    
 if holland2008 == 1
     bs  = -4.4 * 10^-5 * dp.^2 + 0.01 * dp + 0.03 * dpdt - 0.014 * lat + 0.15* vt + 1;
     bs  = min(max(bs, 0.5),2);  % numerical limits
@@ -62,7 +64,7 @@ if holland2008 == 1
     end
     vms = (100*bs*dp / (1.15*exp(1))).^0.5;
 else
-    bs  = vms^2*rhoa*e/(100*(pn-pc));
+    bs  = vms^2*rhoa*e/(100*dp);
 end
 
 %% 1. Determine xn (if needed)
@@ -76,9 +78,9 @@ if ~isempty(robs)
     end
 
     % Limits
-    xnmin=0.0001;
-    xnmax=1.00;
-    xnrange=xnmin:0.0001:xnmax;
+    xnmin=0.001;
+    xnmax=1.0;
+    xnrange=xnmin:0.001:xnmax;
     
     % Finding minimal
     esqmin=1e12;
@@ -104,15 +106,16 @@ end
 
 %% 2. Determine wind structure
 % Main
-if xn > 0.5
-    xn = 0.5;
-end
+% if xn > 0.5
+%     xn = 0.5;
+% end
+% bs=max(bs,1.5);
 [vr,pr]=h2010(r,pc,dp,rvms,bs,rhoa,xn,rn,a);
 
-% Check: needed to overcome instabilities
-if length(r)> 1 && (vr(end-1) - vr(end)) < 0
-    [vr,pr]=h2010(r,pc,dp,rvms,bs,rhoa,0.5,rn,a);
-end
+% % Check: needed to overcome instabilities
+% if length(r)> 1 && (vr(end-1) - vr(end)) < 0
+%     [vr,pr]=h2010(r,pc,dp,rvms,bs,rhoa,0.5,rn,a);
+% end
 
 %% Private function: Holland et al. (2010)
 function [vr,pr]=h2010(r,pc,dp,rvms,bs,rhoa,xn,rn,a)
