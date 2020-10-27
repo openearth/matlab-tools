@@ -1,7 +1,7 @@
 function TF = EHY_isCMEMS(fname)
 %% TF = EHY_isCMEMS(fname)
 % Returns logical (TRUE or FALSE) if the provided file (fname) is a CMEMS-file
-% This is needed as SFINCS-files are handled as Delft3D FM-files, but
+% This is needed as CMEMS-files are handled as Delft3D FM-files, but
 % sometimes it is useful to know if this is really the case
 TF = false;
 

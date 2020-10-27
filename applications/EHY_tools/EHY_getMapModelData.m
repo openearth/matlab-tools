@@ -155,11 +155,19 @@ if ~exist('Data','var')
             % initialise start+count and optimise if possible
             [dims,start,count] = EHY_getmodeldata_optimiseDims(dims);
             
-            if ~isempty(strfind(OPT.varName,'ucx')) || ~isempty(strfind(OPT.varName,'ucy')) || ismember(OPT.varName,{'u','v'})
-                value_x   =  nc_varget(inputFile,strrep(OPT.varName,'ucy','ucx'),start-1,count);
-                value_y   =  nc_varget(inputFile,strrep(OPT.varName,'ucx','ucy'),start-1,count);
+            if EHY_isCMEMS(inputFile) && (Data.times(1)>OPT.t0 || Data.times(end)<OPT.tend)
+                [Data.times,value]     = EHY_getMapCMEMSData(inputFile,start,count,OPT);
+                dims(timeInd).size     = length(Data.times);
+                dims(timeInd).sizeOut  = length(Data.times);
+                dims(timeInd).index    = 1:length(Data.times);
+                dims(timeInd).indexOut = 1:length(Data.times);
             else
-                value     =  nc_varget(inputFile,OPT.varName,start-1,count);
+                if ~isempty(strfind(OPT.varName,'ucx')) || ~isempty(strfind(OPT.varName,'ucy')) || ismember(OPT.varName,{'u','v'})
+                    value_x   =  nc_varget(inputFile,strrep(OPT.varName,'ucy','ucx'),start-1,count);
+                    value_y   =  nc_varget(inputFile,strrep(OPT.varName,'ucx','ucy'),start-1,count);
+                else
+                    value     =  nc_varget(inputFile,OPT.varName,start-1,count);
+                end
             end
             
             % initiate correct order if no_dims == 1

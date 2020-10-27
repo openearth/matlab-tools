@@ -191,10 +191,12 @@ if nargout > 2
     
     %% Get time information from simulation and determine index of required times
     if ~isempty(dimsInd.time)
-        Data.times                          = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
-        [Data,time_index,~,index_requested] = EHY_getmodeldata_time_index(Data,OPT);
-        dims(dimsInd.time).index            = time_index(index_requested);
-        dims(dimsInd.time).indexOut         = 1:length(dims(dimsInd.time).index);
+        Data.times = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
+        if ~EHY_isCMEMS(inputFile) || (EHY_isCMEMS(inputFile) && (Data.times(1)<=OPT.t0 && Data.times(end)>=OPT.tend))
+            [Data,time_index,~,index_requested] = EHY_getmodeldata_time_index(Data,OPT);
+            dims(dimsInd.time).index            = time_index(index_requested);
+            dims(dimsInd.time).indexOut         = 1:length(dims(dimsInd.time).index);
+        end
     end
     
     %% Get layer information and type of vertical schematisation
