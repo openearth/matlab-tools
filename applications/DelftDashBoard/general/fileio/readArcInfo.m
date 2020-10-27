@@ -67,6 +67,7 @@ irows=[];
 icols=[];
 xx=[];
 yy=[];
+noval=NaN;
 
 if ~isempty(varargin)
     for i=1:length(varargin)
@@ -137,6 +138,7 @@ if iinfo
     varargout{3}=xll;
     varargout{4}=yll;
     varargout{5}=cellsz;
+    varargout{6}=noval;
     
 else
     
