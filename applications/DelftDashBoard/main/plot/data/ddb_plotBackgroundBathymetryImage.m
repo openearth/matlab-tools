@@ -118,6 +118,7 @@ else
     hs=hs/255;
     hs=hs+0.2;
 %    hs=(hs+2)/3;
+hs=zeros(size(hs))+1;
     
     zz0=zz;
     zz=min(zz,mxz);
