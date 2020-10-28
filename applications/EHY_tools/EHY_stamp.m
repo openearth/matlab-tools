@@ -46,8 +46,9 @@ fileCrs      = '';
 OPT.measLoc  = '';
 OPT.thalweg  = '';
 OPT.location = '';
+OPT.rescaleLatLonAxis = 1;
 OPT          = setproperty(OPT,varargin);
-if ~isempty(OPT.thalweg) fileCrs = OPT.thalweg; end
+if ~isempty(OPT.thalweg); fileCrs = OPT.thalweg; end
 
 %% General settings
 if isstruct(genInp)
@@ -73,7 +74,7 @@ elseif exist(genInp,'file')
     end
     
     %  Measurement section (thalweg, sailed track) if defined
-    if ~isempty(get_nr(chapters,'Thalweg')) && isempty fileCrs
+    if ~isempty(get_nr(chapters,'Thalweg')) && isempty(fileCrs)
         fileCrs = inifile('get',Info,'Thalweg','fileCrs');
     end
 end
@@ -112,7 +113,7 @@ if ~isempty(fileCrs)
 end
 
 %% Plot the measurement locations
-if ~isempty (OPT.measLoc.x) && isempty(OPT.location)
+if ~isempty(OPT.measLoc.x) && isempty(OPT.location)
     plot(OPT.measLoc.x,OPT.measLoc.y,'k.','MarkerSize',7.5);hold on
 end
 
@@ -129,13 +130,12 @@ Ylim(2)   = Ylim(1) + (position(4)/position(3))*(Xlim(2) - Xlim(1));
 set(gca,'Xlim' ,Xlim,'Ylim' ,Ylim);
 set(gca,'Xtick',  [],'Ytick',  [],'Box','on');
 % scale axes
-if max(abs(Xlim))<=180 && max(abs(Ylim))<=90
+if OPT.rescaleLatLonAxis && max(abs(Xlim))<=180 && max(abs(Ylim))<=90
 	disp('Scaling axes for WGS84')
 	EHY_plot_satellite_map('plot_map',0);
 end
 
 %% Restore to original axes
-set (gcf,'CurrentAxes',originalAxes);
+set(gcf,'CurrentAxes',originalAxes);
 
 end
-

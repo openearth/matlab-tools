@@ -10,7 +10,8 @@ if ismember(typeOfModelFileDetail,{'his_nc','map_nc'})
 elseif ismember(typeOfModelFileDetail,{'trih','trim'})
     FI = qpfopen(fName);
     ind = strmatch(varName,{FI.ElmDef.Name},'exact');
-    unit = FI.ElmDef(ind).Units;
+    if ~isempty(ind)
+        unit = FI.ElmDef(ind).Units;
+    end
 end
 unit(ismember(unit,' []()')) = []; % remove brackets and spaces
-

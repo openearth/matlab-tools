@@ -735,7 +735,7 @@ switch modelType
                     if ismember('Z', wantedOutput)
                         tmp = EHY_getGridInfo(inputFile,{'layer_model'},'disp',0);
                         if strcmp(tmp.layer_model,'z-model')
-                            E.Zcen = G.cen.dep;
+                            E.Zcen = G.cen.dep';
                             E.Zcen_int = vs_let(trim,'map-const','ZK','quiet');
                         end
                     end
@@ -756,6 +756,12 @@ switch modelType
                     if ismember('grid',wantedOutput)
                         tmp = EHY_getGridInfo(inputFile,'XYcor');
                         E.grid = XYcor2grid(tmp.Xcor,tmp.Ycor);
+                    end
+                    
+                    if ismember('area',wantedOutput)
+                        E.area = permute(vs_let(trim,'map-const','GSQS','quiet'),[3 2 1]);
+                        E.area(E.area == 1) = NaN;
+                        E.area(:,1) = []; E.area(1,:) = [];
                     end
                     
                 end
@@ -851,6 +857,8 @@ switch modelType
             case 'grid'
                 if ismember(typeOfModelFileDetail,{'lga','cco'})
                     dw = delwaq('open',inputFile);
+                    dw.X(dw.X == -999) = NaN;
+                    dw.Y(dw.Y == -999) = NaN;
                     if ismember('dimensions',wantedOutput)
                         E.MNKmax = dw.MNK;
                     end
@@ -861,23 +869,40 @@ switch modelType
                         E.Xcor = dw.X;
                         E.Ycor = dw.Y;
                     end
+                    if ismember('XYcen',wantedOutput)
+                        [E.Xcen,E.Ycen] = corner2center(dw.X,dw.Y);
+                    end
+                    if ismember('area',wantedOutput)
+                        E.area = NaN(size(dw.X)-1);
+                        segArea = delwaq_seg_area(inputFile);
+                        for iSeg = 1:length(segArea)
+                            [m,n] = find(dw.Index == iSeg);
+                            E.area(m-1,n-1) = segArea(iSeg);
+                        end
+                    end
                 end
             case 'outputfile'
                 if isempty(OPT.gridFile)
-                    error('DelWAQ map output needs a grid file');
+                    error('DELWAQ map output needs a grid (.lga/.cco) file');
                 end
                 
-                if ismember('no_layers',wantedOutput)
-                    [~, typeOfModelFileDetailGrid] = EHY_getTypeOfModelFile(OPT.gridFile);
-                    if ismember(typeOfModelFileDetailGrid,'.nc')
-                        dw = delwaq('open', inputFile);
+                [~, typeOfModelFileDetailGrid] = EHY_getTypeOfModelFile(OPT.gridFile);
+                if ismember(typeOfModelFileDetailGrid,'.nc')
+                    dw = delwaq('open', inputFile);
+                    if ismember('no_layers',wantedOutput)
                         tmp = EHY_getGridInfo(OPT.gridFile,'dimensions');
                         E.no_layers = dw.NumSegm/tmp.no_NetElem;
-                    elseif ismember(typeOfModelFileDetailGrid,{'lga','cco'})
-                        dw = delwaq('open',OPT.gridFile);
+                    end
+                elseif ismember(typeOfModelFileDetailGrid,{'lga','cco'})
+                    dw = delwaq('open',OPT.gridFile);
+                    if ismember('no_layers',wantedOutput)
                         E.no_layers = dw.MNK(3);
                     end
+                    if ismember('dimensions',wantedOutput)
+                        E.MNKmax = dw.MNK;
+                    end
                 end
+                
         end % typeOfModelFile
         
     case 'SFINCS'
@@ -916,6 +941,14 @@ if ~isempty(OPT.stations)
     end
 end
 
+%% Return in info could not be found
+if ~exist('E','var') && OPT.disp
+    disp('Could not find any of this data in the provided file');
+    E.inputFile = inputFile;
+    gridInfo = E;
+    return
+end
+
 %% If [m,n]-selection is specified for structured grid, reduce output to specified grid cells only
 if ismember(modelType,{'d3d','delwaq'}) && ismember(typeOfModelFileDetail,{'trim','lga','cco'})
     % deal with ghost-cells start of grid
@@ -950,7 +983,7 @@ if ismember(modelType,{'d3d','delwaq'}) && ismember(typeOfModelFileDetail,{'trim
     end
 end
 % SFINCS
-if EHY_isSFINCS(inputFile) && exist('E','var')
+if EHY_isSFINCS(inputFile)
     if isfield(E,'Xcen') && ~all(OPT.m==0)
         E.Xcen = E.Xcen(OPT.m,:); E.Ycen = E.Ycen(OPT.m,:);
     end
@@ -975,9 +1008,6 @@ if ~isempty(strfind(inputFile,'waqgeom.nc'))
 end
 
 %% Output structure E
-if ~exist('E','var') && OPT.disp
-    disp('Could not find any of this data in the provided file');
-end
 E.inputFile = inputFile;
 gridInfo = E;
 

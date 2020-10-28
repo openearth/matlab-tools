@@ -134,7 +134,7 @@ switch modelType
                 X = EHY_getmodeldata(inputFile,Data.requestedStations(Data.exist_stat),'dfm',OPT,'varName',xVarName);
                 Y = EHY_getmodeldata(inputFile,Data.requestedStations(Data.exist_stat),'dfm',OPT,'varName',yVarName);
                 
-                if sum(size(X.val)>1) > 2 % moving stations or cross-section
+                if strncmp('cross_',yVarName,6) || sum(size(X.val)>1) > 2 % moving stations or cross-section
                     Data.locationX(Data.exist_stat,:) = X.val;
                     Data.locationY(Data.exist_stat,:) = Y.val;
                 else

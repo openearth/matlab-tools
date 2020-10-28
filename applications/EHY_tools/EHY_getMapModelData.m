@@ -48,6 +48,7 @@ OPT.k                 = 0;  % all (vertical   d3d grid [m,n,k])
 OPT.sedimentName      = {}; % char or cell array with the name of sediment fraction(s)
 OPT.mergePartitions   = 1;  % merge output from several dfm spatial *.nc-files
 OPT.mergePartitionNrs = []; % partition nrs that will be merged, e.g. [0, 4, 5]
+OPT.mergeCMEMSdata    = 1;  % merge data from different map-netCDF's
 OPT.disp              = 1;  % display status of getting map model data
 OPT.gridFile          = ''; % grid (either lga or nc file) needed in combination with delwaq output file
 OPT.sgft0             = 0;  % delwaq segment function (sgf) - datenum or datestr of t0
@@ -155,7 +156,7 @@ if ~exist('Data','var')
             % initialise start+count and optimise if possible
             [dims,start,count] = EHY_getmodeldata_optimiseDims(dims);
             
-            if EHY_isCMEMS(inputFile) && (Data.times(1)>OPT.t0 || Data.times(end)<OPT.tend)
+            if OPT.mergeCMEMSdata && EHY_isCMEMS(inputFile) && (Data.times(1)>OPT.t0 || Data.times(end)<OPT.tend)
                 [Data.times,value]     = EHY_getMapCMEMSData(inputFile,start,count,OPT);
                 dims(timeInd).size     = length(Data.times);
                 dims(timeInd).sizeOut  = length(Data.times);
@@ -329,7 +330,7 @@ if ~exist('Data','var')
             [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(inputFile);
             if strcmpi(typeOfModelFileDetail,'map')
                 dw       = delwaq('open',inputFile);
-                subs_ind   = strmatch(OPT.varName,dw.SubsName);
+                subs_ind   = strmatch(OPT.varName,strrep(dw.SubsName,' ',''));
                 [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(OPT.gridFile);
                 if ismember(typeOfModelFileDetail,{'lga','cco'})
                     dwGrid      = delwaq('open',OPT.gridFile);

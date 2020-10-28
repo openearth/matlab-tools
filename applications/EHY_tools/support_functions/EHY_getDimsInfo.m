@@ -192,7 +192,12 @@ if nargout > 2
     %% Get time information from simulation and determine index of required times
     if ~isempty(dimsInd.time)
         Data.times = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
-        if ~EHY_isCMEMS(inputFile) || (EHY_isCMEMS(inputFile) && (Data.times(1)<=OPT.t0 && Data.times(end)>=OPT.tend))
+        isCMEMS = EHY_isCMEMS(inputFile);
+        if isCMEMS
+            if isempty(OPT.t0);   OPT.t0 =   Data.times(1); end
+            if isempty(OPT.tend); OPT.tend = Data.times(end); end
+        end
+        if ~isCMEMS || (isCMEMS && (Data.times(1)<=OPT.t0 && Data.times(end)>=OPT.tend))
             [Data,time_index,~,index_requested] = EHY_getmodeldata_time_index(Data,OPT);
             dims(dimsInd.time).index            = time_index(index_requested);
             dims(dimsInd.time).indexOut         = 1:length(dims(dimsInd.time).index);
