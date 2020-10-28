@@ -10,8 +10,8 @@
 %% MASTER DEFINITION VARIABLES
 %% 
 
-input.mdv.flowtype=1; %flow assumption: 0=NO update 1=steady; 2=quasi-steady; 3=unsteady (explicit); 4=unsteady (implicit); [-]; [1x1 double]; e.g. [1]
-input.mdv.steady_solver=1; %steady solver: 1=energy-Euler; 2=energy-RK4; 3=depth-Euler; 4=depth-RK4; [1x1 double]; default=1
+input.mdv.flowtype=1; %flow assumption: 0=NO update 1=steady; 2=quasi-steady; 3=unsteady (explicit); 4=unsteady (implicit); [-]; 6=steady with floodplains [1x1 double]; e.g. [1]
+input.mdv.steady_solver=1; %(if input.mdv.flowtype=1); steady solver: 1=energy-Euler; 2=energy-RK4; 3=depth-Euler; 4=depth-RK4; [1x1 double]; default=1
 % input.mdv.fluxtype=1; %flux type (only if flowtype=3): 0=upwind; 1=Lax-Wendroff; 2=Beam-Warming; 3=Fromm; 4=minmod; 5=van Leer; 6=superbee; 7=MC; [-]; [1x1 double]; e.g. [1]
 % input.mdv.ade_solver=1; %solver for advection diffusion equation (for particle activity): [1x1 double]; e.g. [2]
     %1=theta-method in time, CS for advection, CS for diffusion;
