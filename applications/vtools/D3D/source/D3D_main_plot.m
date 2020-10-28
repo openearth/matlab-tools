@@ -38,7 +38,7 @@ def.sim_in=2;
 % def.folder='p:\11203223-tki-rivers\02_rijntakken_2020\04_runs\08_morpho_1\mr1_070\dflowfm';
 % def.folder='p:\11203223-tki-rivers\02_rijntakken_2020\04_runs\15_morpho_j11\straight_morpho_1995_2011\dflowfm\';
 % def.folder='p:\11203223-tki-rivers\03_maas_2020\04_runs\03_dflow1d_morphological\012\j19\dflow1d\';
-def.folder='c:\Users\chavarri\temporal\201009_rt_hkv\r008\dflowfm\';
+def.folder='c:\Users\chavarri\temporal\201009_rt_hkv\r007\dflowfm\';
 % def.folder='p:\11205272_waterverd_verzilting_2020\006_Vaardiepte_voorspellen\02_Modelresultaten\DIMR\realization_1\dflow1d\';
 % def.folder='p:\11204644-evaluatie-langsdammen\wp10_beheer_onderhoud_kosten\04_sm\01_runs\r_001\';
 % def.folder='c:\Users\chavarri\temporal\D3D\runs\V\080\dflowfm\';
@@ -73,7 +73,7 @@ simdef.flg.which_p=3; %which kind of plot:
 %GRID
 %   grid
 %
-simdef.flg.which_v=1; %which variable: 
+simdef.flg.which_v=28; %which variable: 
 %   1=etab
 %   2=h
 %   3=dm Fak
@@ -179,7 +179,7 @@ def.branch={'Nederrijn1','Nederrijn2','Nederrijn3','Nederrijn4','Nederrijn5','Ne
     %1='time' is a single time or a vector with the time steps to plot. If NaN it plots the last time step; 
     %2='time' is the spacing between 1 and the last results;
 def.rsl_input=1; 
-def.rsl_time=2;
+def.rsl_time=1;
 
     %% print
 simdef.flg.print=NaN; %NaN=nothing; 0=pause until click; 0.5=pause 'pauset' time; 1=eps; 2=png
