@@ -15,6 +15,8 @@
 %   
 %OPTIONAL:
 %   -WriteFile = write netCDF file with straigth grid [boolean]; default = false
+%   -polygon   = cell array with paths to the files with polygon(s) to plot
+%   on top of grid [cell array]; default = {} (i.e., no polygon) e.g. {'poly_1.pol','poly_2.ldb'}
 
 function straighten_domain(file_map,varargin)
 
@@ -24,11 +26,13 @@ parin=inputParser;
 
 addOptional(parin,'InitialWaterLevel','');
 addOptional(parin,'WriteFiles',false); %write output: 0=NO; 1=YES
+addOptional(parin,'polygon',{}); %write output: 0=NO; 1=YES
 
 parse(parin,varargin{:});
 
 file.wl=parin.Results.InitialWaterLevel;
 flg.write=parin.Results.WriteFiles;
+flg.polygon=parin.Results.polygon;
 file.map=file_map;
 
 straight_fact=1000; %straightening factor: it multiplies all y coordinates
@@ -62,6 +66,10 @@ network1d_node_y=ncread(file.map,'network1d_node_y');
 
 % network1d_geometry=ncread(file.map,'network1d_geometry');
  
+if ~isempty(flg.polygon)
+   ldb=D3D_read_ldb(flg.polygon);
+end
+
 %% MODIFY
 
 %% graph
@@ -419,6 +427,10 @@ scatter(network1d_node_x_stra,network1d_node_y_stra,50,'xr')
 for kn=1:nn
     str_p=strrep(network1d_node_id(kn,:),'_',' ');
     text(network1d_node_x_stra(kn),network1d_node_y_stra(kn),str_p,'Rotation',45,'Fontsize',10)    
+end
+if ~isempty(flg.polygon)
+%    plot(ldb.cord(:,1),ldb.cord(:,2),'*-b')
+    patch(ldb.cord(:,1),ldb.cord(:,2),'r','facealpha',0.5)
 end
 han.cbar=colorbar;
 han.cbar.Location='Northoutside';
