@@ -162,8 +162,6 @@ if nb==1 %one branch
             end
             u_new{1,1}=U';
             h_new{1,1}=H';
-        case 7 %steady-RK4
-            [u_new{1,1},h_new{1,1}]=flow_steady_energy_RK4(qwup,Hdown,Cf,etab,input,fid_log);
         otherwise
             error('We have not yet implemented the super flow solver that reads your mind to know how to solve the flow. Please provide a flowtype solver.')
     end
