@@ -58,7 +58,7 @@ switch gridInfo.layer_model
                 error ('Wrong reconstruction interfaces d3d sigma layers')
             end
         end
-
+        
     case 'z-model'
         no_times = size(int,1);
         no_cells = size(int,2);
@@ -79,7 +79,7 @@ switch gridInfo.layer_model
             
             logi = ZKlocal >= bl & ZKlocal <= wl(iT,:)';
             int_field(logi) = ZKlocal2(logi);
-          
+            
             % water level
             [~,cellIndMax] = max(int_field,[],2);
             cellIndMaxUni = unique(cellIndMax);
@@ -92,31 +92,70 @@ switch gridInfo.layer_model
                     int_field(logi,cellIndMaxUni(ii)+1) = wl(iT,logi);
                 end
             end
-           
-            % Keepzlayeringatbed
-            keepzlayeringatbed = 0; % Delft3D 4 
-%             if strcmp(modelType,'dfm')
-%                 try
-%                     mdu = dflowfm_io_mdu('read',EHY_getMdFile(inputFile));
-%                     fns = fieldnames(mdu.numerics);
-%                     ind = strmatch('keepzlayeringatbed',lower(fns),'exact');
-%                     keepzlayeringatbed = mdu.numerics.(fns{ind});
-%                 end
-%             end
             
-            % bed level
-            [~,cellIndMin] = min(int_field,[],2);
-            cellIndMinUni = unique(cellIndMin);
-            cellIndMinUni(cellIndMinUni == 1) = [];
-            for ii = 1:length(cellIndMinUni)
-                logi = cellIndMin == cellIndMinUni(ii);
-                if keepzlayeringatbed
-                    int_field(logi,cellIndMinUni(ii)-1) = ZKlocal(cellIndMinUni(ii)-1);
-                else
-                    int_field(logi,cellIndMinUni(ii)-1) = bl(logi);
+            %% mdu
+            try
+                if strcmp(modelType,'dfm')
+                    mdu = dflowfm_io_mdu('read',EHY_getMdFile(inputFile));
+                    % make sure needed variable names can be found in lower-case
+                    fns = fieldnames(mdu);
+                    for iF = 1:length(fns)
+                        mdu.(lower(fns{iF})) = mdu.(fns{iF});
+                    end
+                    fns = fieldnames(mdu.geometry);
+                    for iF = 1:length(fns)
+                        mdu.geometry.(lower(fns{iF})) = mdu.geometry.(fns{iF});
+                    end
                 end
             end
             
+            %% Keepzlayeringatbed
+            if ~exist('keepzlayeringatbed','var') % only needed to determine this value once
+                keepzlayeringatbed = 0; % Delft3D 4 default
+                try
+                    fns = fieldnames(mdu.numerics);
+                    ind = strmatch('keepzlayeringatbed',lower(fns),'exact');
+                    keepzlayeringatbed = mdu.numerics.(fns{ind});
+                end
+            end
+            
+            [~,cellIndMin] = min(int_field,[],2);
+            cellIndMinUni = unique(cellIndMin);
+            for ii = 1:length(cellIndMinUni)
+                if cellIndMinUni(ii) == 1; continue; end
+                logi = cellIndMin == cellIndMinUni(ii);
+                if keepzlayeringatbed == 0
+                    int_field(logi,cellIndMinUni(ii)-1) = bl(logi);
+                elseif keepzlayeringatbed == 1
+                    int_field(logi,cellIndMinUni(ii)-1) = ZKlocal(cellIndMinUni(ii)-1);
+                elseif keepzlayeringatbed == 2
+                    int_field(logi,cellIndMinUni(ii)-1) = bl(logi);
+                    if cellIndMinUni(ii) < length(ZKlocal)
+                        int_field(logi,cellIndMinUni(ii)) = mean([bl(logi) int_field(logi,cellIndMinUni(ii)+1)],2);
+                    end
+                end
+            end
+            
+            %% z-sigma-layer model? Add sigma-layers at the top
+            try
+                numtopsig = mdu.geometry.numtopsig;
+                if isfield(mdu.geometry,'numtopsiguniform') && mdu.geometry.numtopsiguniform
+                    sigma_bottom = max([int_field(:,end-numtopsig) bl],[],2) ;
+                    sigma_top    = wl(iT,:)';
+                    dz = sigma_top - sigma_bottom;
+                    int_field(:,(end-numtopsig):end) = sigma_bottom+linspace(0,1,numtopsig+1).*dz;
+                elseif mdu.geometry.numtopsig > 0
+                    for ii = 1:size(int_field,1)
+                        logi = ~isnan(int_field(ii,:));
+                        ind1 = find(logi,1,'first');
+                        ind2 = find(logi,1,'last');
+                        no_active_layers =  ind2-ind1+1;
+                        int_field(ii,logi) = linspace(int_field(ii,ind1),int_field(ii,ind2),no_active_layers);
+                    end
+                end
+            end
+            
+            %%
             int(iT,:,:) = int_field;
         end
 end
@@ -147,19 +186,19 @@ function [zcen_int,zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates_
 %         end
 %         Data_WL = EHY_getMapModelData(wlFile,OPT,'varName','zos');
 %         wl       = DataWL.val;
-        infonc = ncinfo(inputFile);
-        ind = strmatch('latitude',{infonc.Dimensions.Name},'exact');
-        lat_len = infonc.Dimensions(ind).Length;
-        ind = strmatch('longitude',{infonc.Dimensions.Name},'exact');
-        lon_len = infonc.Dimensions(ind).Length;
-        ind = strmatch('time',{infonc.Dimensions.Name},'exact');
-        time_len = infonc.Dimensions(ind).Length;
-        
-        depth = double(ncread(inputFile,'depth'));
-        depth_cen = permute(depth,[2 3 4 1]);
-        zcen_cen = -1*repmat(depth_cen,time_len,lon_len,lat_len);
-        depth_int = permute(center2corner1(depth)',[2 3 4 1]);
-        zcen_int = -1*repmat(depth_int,time_len,lon_len,lat_len);
-        wl = squeeze(zcen_int(:,:,:,1));
-        bl = squeeze(zcen_int(:,:,:,end));
+infonc = ncinfo(inputFile);
+ind = strmatch('latitude',{infonc.Dimensions.Name},'exact');
+lat_len = infonc.Dimensions(ind).Length;
+ind = strmatch('longitude',{infonc.Dimensions.Name},'exact');
+lon_len = infonc.Dimensions(ind).Length;
+ind = strmatch('time',{infonc.Dimensions.Name},'exact');
+time_len = infonc.Dimensions(ind).Length;
+
+depth = double(ncread(inputFile,'depth'));
+depth_cen = permute(depth,[2 3 4 1]);
+zcen_cen = -1*repmat(depth_cen,time_len,lon_len,lat_len);
+depth_int = permute(center2corner1(depth)',[2 3 4 1]);
+zcen_int = -1*repmat(depth_int,time_len,lon_len,lat_len);
+wl = squeeze(zcen_int(:,:,:,1));
+bl = squeeze(zcen_int(:,:,:,end));
 end

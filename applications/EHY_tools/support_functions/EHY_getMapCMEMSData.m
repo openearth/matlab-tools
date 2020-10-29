@@ -3,15 +3,18 @@ function [times,values] = EHY_getMapCMEMSData(inputFile,start,count,OPT)
     fileNames  = char({allFiles(:).name}');
     startTimes = datenum(fileNames(:,end-41:end-26),'yyyy-mm-dd_HH-MM');
     
-    idF = find(startTimes>=OPT.t0 & startTimes<=OPT.tend);
-    if isempty(idF)
-        idF = find(startTimes<OPT.t0,1,'last');
-    elseif startTimes(idF(1))>OPT.t0
-        idF = [idF(1)-1;idF];
+    if isempty(OPT.t0) && isempty(OPT.tend)
+        idFs = 1:length(allFiles);
+        OPT.t0 = startTimes(1);
+        OPT.tend = startTimes(end)+6;
+    else
+        idFs = find(startTimes<OPT.t0,1,'last'):find(startTimes>OPT.tend,1,'first');
     end
+
     values = NaN([OPT.tend-OPT.t0+1,count(2:end)]);
     idT = 1;
-    for iF = idF'
+    for iF = 1:length(idFs)
+        idF = idFs(iF);
         tic
         tmp    = nc_varget([allFiles(iF).folder filesep allFiles(iF).name],OPT.varName,start-1,[7 count(2:end)]);
         times  = nc_cf_time([allFiles(iF).folder filesep allFiles(iF).name]);
@@ -23,6 +26,8 @@ function [times,values] = EHY_getMapCMEMSData(inputFile,start,count,OPT)
         end
     end
     times  = OPT.t0:1:OPT.tend;
-    values = flipud(squeeze(values));
+    if size(values,1) == 1
+        values = squeeze(values);
+    end
 end
 
