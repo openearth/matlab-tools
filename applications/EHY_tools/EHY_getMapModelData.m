@@ -156,7 +156,7 @@ if ~exist('Data','var')
             % initialise start+count and optimise if possible
             [dims,start,count] = EHY_getmodeldata_optimiseDims(dims);
             
-            if OPT.mergeCMEMSdata && EHY_isCMEMS(inputFile) && (Data.times(1)>OPT.t0 || Data.times(end)<OPT.tend)
+            if OPT.mergeCMEMSdata && EHY_isCMEMS(inputFile)
                 [Data.times,value]     = EHY_getMapCMEMSData(inputFile,start,count,OPT);
                 dims(timeInd).size     = length(Data.times);
                 dims(timeInd).sizeOut  = length(Data.times);
@@ -188,6 +188,9 @@ if ~exist('Data','var')
             end
             while all(valueIndex{end}==1)
                 valueIndex(end) = [];
+            end
+            while size(value,1) == 1
+                value = permute(value,[2:ndims(value) 1]);
             end
             
             % put value(_x/_y) in output structure 'Data'
