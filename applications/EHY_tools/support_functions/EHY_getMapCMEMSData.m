@@ -18,7 +18,9 @@ function [times,values] = EHY_getMapCMEMSData(inputFile,start,count,OPT)
         idKeep = times>=OPT.t0 & times<=OPT.tend;
         values(idT:idT+sum(idKeep)-1,:,:,:) = tmp(idKeep,:,:,:);
         idT = idT+sum(idKeep);
-        disp(['Finished reading CMEMS data ' num2str(find(idF==iF),'%03.f') '/' num2str(length(idF),'%03.f') ' (' datestr(min(times(idKeep)),'yyyy-mm-dd') ' till ' datestr(max(times(idKeep)),'yyyy-mm-dd') ') in ' num2str(toc,'%.2f') 's']);
+        if OPT.disp
+            disp(['Finished reading CMEMS data ' num2str(find(idF==iF),'%03.f') '/' num2str(length(idF),'%03.f') ' (' datestr(min(times(idKeep)),'yyyy-mm-dd') ' till ' datestr(max(times(idKeep)),'yyyy-mm-dd') ') in ' num2str(toc,'%.2f') 's']);
+        end
     end
     times  = OPT.t0:1:OPT.tend;
     values = flipud(squeeze(values));
