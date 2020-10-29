@@ -88,8 +88,9 @@ try
 
     fldnames=fieldnames(handles.toolbox);
     for j=1:length(fldnames)
-        f=handles.toolbox.(fldnames{j}).plotFcn;
-        feval(f,'deactivate');
+        try
+            f=handles.toolbox.(fldnames{j}).plotFcn;
+            feval(f,'deactivate');
+        end
     end
-    
 end
