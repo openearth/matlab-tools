@@ -13,12 +13,14 @@ function string=waterDictionary (id,un,lan,varargin)
 %  lan - the language for the reulting string (en  -english, nl - dutch, es - spanisch)
 %
 %% Initialise
+string            = id;
 OPT.addUnit       = true;
+OPT.dict          = 'waterDictionary.csv';
 OPT               = setproperty(OPT,varargin);
 [pathDict,~,~]    = fileparts(mfilename('fullpath'));
 
 %% Load the dictionary
-data       = simona2mdu_csvread([pathDict filesep 'waterDictionary.csv']);
+data       = strtrim(simona2mdu_csvread([pathDict filesep OPT.dict],'convert',false));
 header     = data(1    ,:);
 dictionary = data(2:end,:);
 
@@ -30,12 +32,16 @@ colLang = get_nr(header,lan   );
 rowVar  = get_nr(dictionary(:,1),id);
 
 %% Construct the final string
-string = dictionary{rowVar,colLang};
+if ~isempty (rowVar) 
+    string = dictionary{rowVar,colLang}; 
+else
+    warning (['Name : ' string 'not found in' OPT.dict]);
+end
 
 %% Add the Unit
-if OPT.addUnit
+if OPT.addUnit && ~isempty(rowVar)
     unit = dictionary{rowVar,colUnit};
-    if ~isempty(unit) 
+    if ~isempty(unit)
         if ~isempty(un) && un == 1/1000 && strcmp(unit,'m') unit = ['k' unit]; end
         string = [string ' [' unit ']'];
     end
