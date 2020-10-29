@@ -74,7 +74,7 @@ switch lower(opt)
 
             % Obs file
             if ~isempty(inp.obsfile)
-                handles.model.sfincs.domain(ad).obspoints=sfincs_read_boundary_points(inp.obsfile);
+                handles.model.sfincs.domain(ad).obspoints=sfincs_read_observation_points(inp.obsfile);
             end
 
             % Obs file
