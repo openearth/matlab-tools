@@ -456,6 +456,13 @@ switch lower(tp)
                 
                 x=x(iy1:iy2,ix1:ix2);
                 y=y(iy1:iy2,ix1:ix2);
+                
+                data_in_cell_centres=1;
+                if data_in_cell_centres
+                    x=x+0.5*dx; % This really should be added as the data are defined in the cell centres!!!               
+                    y=y+0.5*dy;
+                end
+                
                 z=z(iy1:iy2,ix1:ix2);
 
                 q=q(iy1:iy2,ix1:ix2);
