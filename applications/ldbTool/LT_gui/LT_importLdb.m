@@ -40,7 +40,13 @@ function LT_importLdb(ext)
 
 switch ext
    case 'shp'
-    oriLDB =shape2ldb([],0)
+    oriLDB =shape2ldb([],0);
+    if iscell(oriLDB)
+        for ii=1:length(oriLDB)-1
+            oriLDB{ii} = [oriLDB{ii}; NaN NaN];
+        end
+        oriLDB = cell2mat(oriLDB);
+    end
    case 'dxf'
     [dxfNam, dxfPat]=uigetfile('*.dxf','Select dxf-file');
     if dxfNam == 0
@@ -53,7 +59,7 @@ switch ext
     oriLDB = dxf2tek_engine([dxfPat dxfNam],options);
     oriLDB(find(oriLDB(:,1)==999.999),:)=nan;
    case 'kml'
-        oriLDB=kml2ldb(0)
+    oriLDB=kml2ldb(0);
 end
 
 
