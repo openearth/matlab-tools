@@ -1,4 +1,4 @@
-function z0=gridcellaveraging3(xb0,yb0,zb0,x0,y0,dx,opt,npoints)
+function z0=gridcellaveraging4(xb0,yb0,zb0,x0,y0,dx,opt)
 %GRIDCELLAVERAGING2  One line description goes here.
 %
 %   More detailed description goes here.
@@ -61,191 +61,211 @@ function z0=gridcellaveraging3(xb0,yb0,zb0,x0,y0,dx,opt,npoints)
 
 %%
 
-if size(xb0,1)>1 || size(xb0,2)>1
-    xb0=reshape(xb0,[1 size(xb0,1)*size(xb0,2)]);
-    yb0=reshape(yb0,[1 size(yb0,1)*size(yb0,2)]);
-    zb0=reshape(zb0,[1 size(zb0,1)*size(zb0,2)]);
-end
-
-% Get rid of NaNs
-xb0=xb0(~isnan(zb0));
-yb0=yb0(~isnan(zb0));
-zb0=zb0(~isnan(zb0));
 
 z0=zeros(size(x0));
 z0(z0==0)=NaN;
 
-% Determine grid spacing
+dx=xb0(2)-xb0(1);
+dy=yb0(2)-yb0(1);
 
-% xg1=x(1:end-1,1:end);
-% xg2=x(2:end,1:end);
-% xg3=x(1:end,1:end-1);
-% xg4=x(1:end,2:end);
-
-% yg1=y(1:end-1,1:end);
-% yg2=y(2:end,1:end);
-% yg3=y(1:end,1:end-1);
-% yg4=y(1:end,2:end);
-
-% dst1=sqrt((xg2-xg1).^2+(yg2-yg1).^2);
-% dst2=sqrt((xg4-xg3).^2+(yg4-yg3).^2);
-
-% dx()=mean(dst1,dst2);
-
-
-
-dx=zeros(size(x0))+dx;
-%dx=zeros(size(x0))+0.02;
-
-mxdx=max(max(dx));
-mxdx=0.01;
-
-%% Get rid of excess points
-
+% Cut out unnecessary points
 xmin=min(min(x0));
 xmax=max(max(x0));
 ymin=min(min(y0));
 ymax=max(max(y0));
-xmin=xmin-mxdx;
-xmax=xmax+mxdx;
-ymin=ymin-mxdx;
-ymax=ymax+mxdx;
 
-%% First sort by x
-[xb0,iindex] = sort(xb0,2,'ascend');
-yb0=yb0(iindex);
-zb0=zb0(iindex);
+i1=find(xb0<xmin,1,'last');
+i2=find(xb0>xmax,1,'first');
+j1=find(yb0<ymin,1,'last');
+j2=find(yb0>ymax,1,'first');
 
-ii1=bsearch(xb0,xmin,-1);
-ii2=bsearch(xb0,xmax,-1);
+xb0=xb0(i1:i2);
+yb0=yb0(j1:j2);
+zb0=zb0(j1:j2,i1:i2);
 
-xb0=xb0(ii1:ii2);
-yb0=yb0(ii1:ii2);
-zb0=zb0(ii1:ii2);
+% Determine xmin, xmax, ymin, ymax of each grid cell
+xx(1,:,:)=x0(1:end-1,1:end-1);
+xx(2,:,:)=x0(2:end,  1:end-1);
+xx(3,:,:)=x0(1:end-1,2:end  );
+xx(4,:,:)=x0(2:end  ,2:end  );
+xmin=squeeze(min(xx,[],1));
+xmax=squeeze(max(xx,[],1));
 
-%% Sort by y
-[yb0,iindex] = sort(yb0,2,'ascend');
-xb0=xb0(iindex);
-zb0=zb0(iindex);
+yy(1,:,:)=y0(1:end-1,1:end-1);
+yy(2,:,:)=y0(2:end,  1:end-1);
+yy(3,:,:)=y0(1:end-1,2:end  );
+yy(4,:,:)=y0(2:end  ,2:end  );
+ymin=squeeze(min(yy,[],1));
+ymax=squeeze(max(yy,[],1));
 
-ii1=bsearch(yb0,ymin,-1);
-ii2=bsearch(yb0,ymax,-1);
 
-xb0=xb0(ii1:ii2);
-yb0=yb0(ii1:ii2);
-zb0=zb0(ii1:ii2);
-
-%% Sort by x again
-
-[xb0,iindex] = sort(xb0,2,'ascend');
-yb0=yb0(iindex);
-zb0=zb0(iindex);
-
-dd=20;
-nx=ceil(size(x0,1)/dd);
-ny=ceil(size(x0,2)/dd);
-
-for ix=1:nx
-    disp([num2str(ix), ' of ', num2str(nx)])
-    for iy=1:ny
+for i=1:size(x0,1)-1
+    for j=1:size(x0,2)-1
+%         i1=find(xb0<xmin(i,j),1,'last');
+%         i2=find(xb0>xmax(i,j),1,'first');
+%         j1=find(yb0<ymin(i,j),1,'last');
+%         j2=find(yb0>ymax(i,j),1,'first');        
+        i1=floor((xmin(i,j)-xb0(1))/dx)+1;
+        i2=ceil((xmax(i,j)-xb0(1))/dx);
+        j1=floor((ymin(i,j)-yb0(1))/dy)+1;
+        j2=ceil((ymax(i,j)-yb0(1))/dy);
+%        xb1=xb0(i1:i2);
+%        yb1=yb0(j1:j2);
+        [xb1,yb1]=meshgrid(xb0(j1:j2),yb0(i1:i2));
+        zb1=zb0(j1:j2,i1:i2);
+        xb1=reshape(xb1,[size(xb1,1)*size(xb1,2) 1]);
+        yb1=reshape(yb1,[size(yb1,1)*size(yb1,2) 1]);
+        zb1=reshape(zb1,[size(zb1,1)*size(zb1,2) 1]);
+        p=[xb1 yb1];
         
-        % Subgrid
-        disp(['  ', num2str(iy), ' of ', num2str(ny)])
-
-        ig1=(ix-1)*dd+1;
-        ig2=min(ig1+dd-1,size(x0,1));
-        jg1=(iy-1)*dd+1;
-        jg2=min(jg1+dd-1,size(x0,2));
-        x=x0(ig1:ig2,jg1:jg2);
-        y=y0(ig1:ig2,jg1:jg2);
+        p1 = [x0(i,j)   y0(i,j)];
+        p2 = [x0(i,j+1) y0(i,j+1)];
+        p3 = [x0(i+1,j+1) y0(i+1,j+1)];
+        p4 = [x0(i+1,j) y0(i+1,j)];
+        tri = [p1;p2;p3;p4];   
+        try
+        inq=isPointInQuadrangle(p, p1,p2,p3,p4);
+        zb5=zb1(inq==1);
+        z0(i,j)=mean(zb5);
         
-        z=zeros(size(x));
-        z(z==0)=NaN;
-        
-        % Get rid of excess points
-        
-        % Determine x and y range
-        xmin=min(min(x));
-        xmax=max(max(x));
-        ymin=min(min(y));
-        ymax=max(max(y));
-        xmin=xmin-mxdx;
-        xmax=xmax+mxdx;
-        ymin=ymin-mxdx;
-        ymax=ymax+mxdx;
-        
-        % Find points covering grid range
-        ii1=bsearch(xb0,xmin,-1);
-        ii2=bsearch(xb0,xmax,-1);
-        xb=xb0(ii1:ii2);
-        yb=yb0(ii1:ii2);
-        zb=zb0(ii1:ii2);
-        
-        % Sort by y
-        [yb,iindex] = sort(yb,2,'ascend');
-        xb=xb(iindex);
-        zb=zb(iindex);
-        
-        ii1=bsearch(yb,ymin,-1);
-        ii2=bsearch(yb,ymax,-1);
-        
-        xb=xb(ii1:ii2);
-        yb=yb(ii1:ii2);
-        zb=zb(ii1:ii2);
-        
-        % Sort by x again
-        [xb,iindex] = sort(xb,2,'ascend');
-        yb=yb(iindex);
-        zb=zb(iindex);
-        
-        for i=1:size(x,1)
-            for j=1:size(x,2)
-                
-                ii1=bsearch(xb,x(i,j)-dx(i,j),-1);
-                ii2=bsearch(xb,x(i,j)+dx(i,j),-1);
-                
-                if ~isempty(ii1) && ~isempty(ii2)
-                    
-                    xb2=xb(ii1:ii2);
-                    yb2=yb(ii1:ii2);
-                    zb2=zb(ii1:ii2);
-                    
-                    % Sort by y
-                    [yb2,iindex] = sort(yb2,2,'ascend');
-                    xb2=xb2(iindex);
-                    zb2=zb2(iindex);
-                    
-                    ii1=bsearch(yb2,y(i,j)-dx(i,j),-1);
-                    ii2=bsearch(yb2,y(i,j)+dx(i,j),-1);
-                    
-                    if ~isempty(ii1) && ~isempty(ii2)
-                        
-                        xb2=xb2(ii1:ii2);
-                        yb2=yb2(ii1:ii2);
-                        zb2=zb2(ii1:ii2);
-                        
-                        dst=sqrt((xb2-x(i,j)).^2+(yb2-y(i,j)).^2);
-                        zb3=zb2(dst<=0.5*dx(i,j));
-                        
-                        if ~isempty(zb3)
-                            if length(zb3)>npoints
-                                switch lower(opt)
-                                    case{'max'}
-                                        z(i,j)=max(zb3);
-                                    case{'mean'}
-                                        z(i,j)=mean(zb3);
-                                    case{'min'}
-                                        z(i,j)=min(zb3);
-                                end
-                            end
-                        end
-                    end
-                end
-            end
+        catch
+            shite=1
         end
-        z0(ig1:ig2,jg1:jg2)=z;
+
+        
     end
 end
+
+
+% if size(xb0,1)>1 || size(xb0,2)>1
+%     xb0=reshape(xb0,[1 size(xb0,1)*size(xb0,2)]);
+%     yb0=reshape(yb0,[1 size(yb0,1)*size(yb0,2)]);
+%     zb0=reshape(zb0,[1 size(zb0,1)*size(zb0,2)]);
+% end
+% 
+% % Get rid of NaNs
+% xb0=xb0(~isnan(zb0));
+% yb0=yb0(~isnan(zb0));
+% zb0=zb0(~isnan(zb0));
+% 
+% z0=zeros(size(x0));
+% z0(z0==0)=NaN;
+% 
+% % Determine grid spacing
+% 
+% % xg1=x(1:end-1,1:end);
+% % xg2=x(2:end,1:end);
+% % xg3=x(1:end,1:end-1);
+% % xg4=x(1:end,2:end);
+% 
+% % yg1=y(1:end-1,1:end);
+% % yg2=y(2:end,1:end);
+% % yg3=y(1:end,1:end-1);
+% % yg4=y(1:end,2:end);
+% 
+% % dst1=sqrt((xg2-xg1).^2+(yg2-yg1).^2);
+% % dst2=sqrt((xg4-xg3).^2+(yg4-yg3).^2);
+% 
+% % dx()=mean(dst1,dst2);
+% 
+% 
+% 
+% dx=zeros(size(x0))+dx;
+% %dx=zeros(size(x0))+0.02;
+% 
+% mxdx=max(max(dx));
+% mxdx=0.01;
+% 
+% %% Get rid of excess points
+% 
+% xmin=min(min(x0));
+% xmax=max(max(x0));
+% ymin=min(min(y0));
+% ymax=max(max(y0));
+% xmin=xmin-mxdx;
+% xmax=xmax+mxdx;
+% ymin=ymin-mxdx;
+% ymax=ymax+mxdx;
+% 
+% %% First sort by x
+% [xb0,iindex] = sort(xb0,2,'ascend');
+% yb0=yb0(iindex);
+% zb0=zb0(iindex);
+% 
+% ii1=bsearch(xb0,xmin,-1);
+% ii2=bsearch(xb0,xmax,-1);
+% 
+% xb0=xb0(ii1:ii2);
+% yb0=yb0(ii1:ii2);
+% zb0=zb0(ii1:ii2);
+% 
+% %% Sort by y
+% [yb0,iindex] = sort(yb0,2,'ascend');
+% xb0=xb0(iindex);
+% zb0=zb0(iindex);
+% 
+% ii1=bsearch(yb0,ymin,-1);
+% ii2=bsearch(yb0,ymax,-1);
+% 
+% xb0=xb0(ii1:ii2);
+% yb0=yb0(ii1:ii2);
+% zb0=zb0(ii1:ii2);
+% 
+% %% Sort by x again
+% 
+% [xb0,iindex] = sort(xb0,2,'ascend');
+% yb0=yb0(iindex);
+% zb0=zb0(iindex);
+% 
+% 
+% 
+% z0=cellfun(@average_in_polygon,x1,x2,x3,x4,y1,y2,y3,y4);
+% 
+% for i=1:size(x0,1)-1
+%     for j=1:size(x0,2)-1
+%         
+%         % Find points with x-coordinate near the grid cell
+%         ii1=bsearch(xb0,xmin(i,j),-1);
+%         ii2=bsearch(xb0,xmax(i,j),-1);
+%         xb2=xb0(ii1:ii2);
+%         yb2=yb0(ii1:ii2);
+%         zb2=zb0(ii1:ii2);
+%         
+%         % Now sort these points by y-coordinate
+%         [yb2,iindex] = sort(yb2,2,'ascend');
+%         xb2=xb2(iindex);
+%         zb2=zb2(iindex);
+%         
+%         % Find points with y-coordinate near the grid cell
+%         ii1=bsearch(yb2,ymin(i,j),-1);
+%         ii2=bsearch(yb2,ymax(i,j),-1);
+%         xb2=xb2(ii1:ii2);
+%         yb2=yb2(ii1:ii2);
+%         zb2=zb2(ii1:ii2);
+%         
+%         xpol=[x0(i,j) x0(i+1,j) x0(i+1,j+1) x0(i,j+1)];
+%         ypol=[y0(i,j) y0(i+1,j) y0(i+1,j+1) y0(i,j+1)];
+%         
+%         inpol=inpolygon(xb2,yb2,xpol,ypol);
+%         
+% %         xb2=xb2(inpol==1);
+% %         yb2=yb2(inpol==1);
+%         zb2=zb2(inpol==1);
+%         
+%         switch lower(opt)
+%             case{'max'}
+%                 z0(i,j)=max(zb2);
+%             case{'mean'}
+%                 z0(i,j)=mean(zb2);
+%             case{'min'}
+%                 z0(i,j)=min(zb2);
+%         end
+%         
+%     end
+% end
+
+%% 
+function z0=average_in_polygon
 
 %%
 function index = bsearch(vec, val, tol)

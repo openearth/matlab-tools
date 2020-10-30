@@ -40,7 +40,8 @@ for id=id1:id2
         case{'plot'}
             
             col='r';
-            handles=ddb_sfincs_plot_grid(handles,option,'domain',id,'color',col,'visible',1);
+            handles=ddb_sfincs_plot_grid_outline(handles,option,'domain',id,'color',col,'visible',1);
+            handles=ddb_sfincs_plot_grid(handles,option,'domain',id,'color',[0.8 0.8 0.8],'visible',1);
             handles=ddb_sfincs_plot_flow_boundary_points(handles,option,'domain',id,'visible',1);
             handles=ddb_sfincs_plot_wave_boundary_points(handles,option,'domain',id,'visible',1);
             handles=ddb_sfincs_plot_mask(handles,option,'domain',id,'visible',1);
@@ -48,6 +49,7 @@ for id=id1:id2
             
         case{'delete'}
             
+            handles=ddb_sfincs_plot_grid_outline(handles,option,'domain',id);
             handles=ddb_sfincs_plot_grid(handles,option,'domain',id);
             handles=ddb_sfincs_plot_flow_boundary_points(handles,option,'domain',id);
             handles=ddb_sfincs_plot_wave_boundary_points(handles,option,'domain',id);
@@ -85,7 +87,10 @@ for id=id1:id2
             else
                 col=[0.8 0.8 0.8];
             end
-            handles=ddb_sfincs_plot_grid(handles,option,'domain',id,'visible',vis,'color',col);
+            handles=ddb_sfincs_plot_grid_outline(handles,option,'domain',id,'visible',vis,'color',col);
+
+            col=[0.8 0.8 0.8];
+            handles=ddb_sfincs_plot_grid_outline(handles,option,'domain',id,'visible',vis,'color',col);
             
             if act && vis
                 ivis=1;

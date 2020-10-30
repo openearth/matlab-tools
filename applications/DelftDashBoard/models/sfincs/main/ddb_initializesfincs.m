@@ -70,7 +70,8 @@ handles.model.sfincs.domain=[];
 handles=ddb_initialize_sfincs_domain(handles,'dummy',1,'dummy');
 
 handles.model.sfincs.menuview.grid=1;
-handles.model.sfincs.menuview.bathymetry=1;
+handles.model.sfincs.menuview.bathymetry=0;
+handles.model.sfincs.menuview.mask=1;
 
 handles.model.sfincs.boundaryspline.handle=[];
 handles.model.sfincs.boundaryspline.filename='';
@@ -84,6 +85,8 @@ handles.model.sfincs.boundaryconditions.zs=0.0;
 handles.model.sfincs.boundaryconditions.hs=0.0;
 handles.model.sfincs.boundaryconditions.tp=5.0;
 handles.model.sfincs.boundaryconditions.wd=0.0;
+
+handles.model.sfincs.structurespline.handle=[];
 
 
 handles.model.sfincs.depthcontour.handle=[];

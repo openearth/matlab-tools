@@ -25,13 +25,11 @@ switch lower(opt)
             inp=handles.model.sfincs.domain(ad).input;
 
             % Grid
-            rot=inp.rotation*pi/180;
-            [xg0,yg0]=meshgrid(0:inp.dx:inp.mmax*inp.dx,0:inp.dy:inp.nmax*inp.dy);
-            x = inp.x0 + xg0* cos(rot) + yg0*-sin(rot);
-            y = inp.y0 + xg0* sin(rot) + yg0*cos(rot);
+            [xg,yg,xz,yz]=sfincs_make_grid(inp.x0,inp.y0,inp.dx,inp.dy,inp.mmax,inp.nmax,inp.rotation);
             
             % Cell centres!
-            [xz,yz]=getXZYZ(x,y);
+            handles.model.sfincs.domain(ad).xg=xg;
+            handles.model.sfincs.domain(ad).yg=yg;
             handles.model.sfincs.domain(ad).gridx=xz(2:end,2:end);
             handles.model.sfincs.domain(ad).gridy=yz(2:end,2:end);
             

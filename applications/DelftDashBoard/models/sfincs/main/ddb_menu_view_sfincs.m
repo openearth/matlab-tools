@@ -1,19 +1,21 @@
-function handles=ddb_addModelViewMenu(handles)
-%DDB_CHANGEFILEMENUITEMS  One line description goes here.
+function ddb_menu_view_sfincs(hObject, eventdata, option)
+%DDB_MENUVIEWDELFT3DFLOW  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   ddb_changeFileMenuItems
+%   ddb_menuViewDelft3DFLOW(hObject, eventdata, handles)
 %
 %   Input:
-
+%   hObject   =
+%   eventdata =
+%   handles   =
 %
 %
 %
 %
 %   Example
-%   ddb_changeFileMenuItems
+%   ddb_menuViewDelft3DFLOW
 %
 %   See also
 
@@ -52,36 +54,38 @@ function handles=ddb_addModelViewMenu(handles)
 % Created: 29 Nov 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id: ddb_changeFileMenuItems.m 8254 2013-03-01 13:55:47Z ormondt $
-% $Date: 2013-03-01 14:55:47 +0100 (Fri, 01 Mar 2013) $
-% $Author: ormondt $
-% $Revision: 8254 $
-% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/main/menu/ddb_changeFileMenuItems.m $
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
 % $Keywords: $
 
 %%
-hmain=handles.GUIHandles.Menu.View.Main;
-isep='on';
-models=fieldnames(handles.model);
-for ii=1:length(models)
-    model=models{ii};
-    if ~isempty(handles.model.(model).GUI.menu.view)
-        g=uimenu(hmain,'Label',handles.model.(model).longName,'separator',isep);
-        isep='off';
-        % And the attributes
-        for iatt=1:length(handles.model.(model).GUI.menu.view)
-            string=handles.model.(model).GUI.menu.view(iatt).string;
-            callback=handles.model.(model).GUI.menu.view(iatt).callback;
-            argin=handles.model.(model).GUI.menu.view(iatt).option;
-            checked='on';
-%             if isfield(handles.model.(model).GUI.menu,'menuview')
-%                 if isfield(handles.model.(model).menuview,argin)
-%                     if handles.model.(model).menuview.(argin)==0
-%                         checked='off';
-%                     end
-%                 end
-%             end
-            uimenu(g,'Label',string,'Callback',{callback,argin},'Checked',checked);
-        end
-    end
+handles=getHandles;
+
+checked=get(hObject,'Checked');
+
+if strcmp(checked,'on')
+    ivis=0;
+    set(hObject,'Checked','off');
+else
+    ivis=1;
+    set(hObject,'Checked','on');
 end
+
+switch option
+    case{'grid'}
+        handles.model.sfincs.menuview.grid=ivis;
+        handles=ddb_sfincs_plot_grid(handles,'update','domain',1,'visible',ivis);
+    case{'mask'}
+        handles.model.sfincs.menuview.mask=ivis;
+        handles=ddb_sfincs_plot_mask(handles,'update','domain',1,'visible',ivis);
+    case{'bathymetry'}
+        handles.model.sfincs.menuview.bathymetry=ivis;
+        handles=ddb_sfincs_plot_bathymetry(handles,'update','domain',1,'visible',ivis);
+end
+
+setHandles(handles);
+
+

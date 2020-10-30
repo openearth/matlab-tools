@@ -32,13 +32,18 @@
     <menuview>
       <attribute>
         <string>Grid</string>
-        <callback>ddb_menuView_sfincs</callback>
+        <callback>ddb_menu_view_sfincs</callback>
         <option>grid</option>
       </attribute>
       <attribute>
         <string>Bathymetry</string>
-        <callback>ddb_menuView_sfincs</callback>
+        <callback>ddb_menu_view_sfincs</callback>
         <option>bathymetry</option>
+      </attribute>
+      <attribute>
+        <string>Mask</string>
+        <callback>ddb_menu_view_sfincs</callback>
+        <option>mask</option>
       </attribute>
     </menuview>
   </menu>

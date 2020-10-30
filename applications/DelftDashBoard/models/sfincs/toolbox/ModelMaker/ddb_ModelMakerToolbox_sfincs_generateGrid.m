@@ -25,7 +25,6 @@ dx=handles.toolbox.modelmaker.dX;
 dy=handles.toolbox.modelmaker.dY;
 mmax=handles.toolbox.modelmaker.nX;
 nmax=handles.toolbox.modelmaker.nY;
-rot=mod(handles.toolbox.modelmaker.rotation,360)*pi/180;
 rot=handles.toolbox.modelmaker.rotation;
 
 [xg,yg,x,y]=sfincs_make_grid(x0,y0,dx,dy,mmax,nmax,rot);
@@ -39,6 +38,8 @@ handles.model.sfincs.domain(id).gridx     = x;
 handles.model.sfincs.domain(id).gridy     = y;
 handles.model.sfincs.domain(id).gridz     = zeros(size(x));
 handles.model.sfincs.domain(id).mask      = zeros(size(x));
+handles.model.sfincs.domain(id).xg        = xg;
+handles.model.sfincs.domain(id).yg        = yg;
 
 nans=zeros(size(x));
 nans(nans==0)=NaN;
@@ -52,7 +53,8 @@ handles.model.sfincs.domain(id).input.dy=handles.toolbox.modelmaker.dY;
 handles.model.sfincs.domain(id).input.rotation=handles.toolbox.modelmaker.rotation;
 
 % Plot new domain
-handles=ddb_sfincs_plotGrid(handles,'plot','domain',id,'active',1);
+handles=ddb_sfincs_plot_grid(handles,'plot','domain',id,'active',1);
+handles=ddb_sfincs_plot_grid_outline(handles,'plot','domain',id,'active',1);
 
 % Put info back
 setHandles(handles);

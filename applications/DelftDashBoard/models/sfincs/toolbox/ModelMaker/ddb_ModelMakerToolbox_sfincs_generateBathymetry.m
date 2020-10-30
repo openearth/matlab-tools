@@ -32,7 +32,8 @@ if icheck
     end
     % File name
     if isempty(handles.model.sfincs.domain(id).input.depfile)
-        handles.model.sfincs.domain(id).input.depfile=[handles.model.sfincs.domain.attName '.dep'];
+%        handles.model.sfincs.domain(id).input.depfile=[handles.model.sfincs.domain.attName '.dep'];
+        handles.model.sfincs.domain(id).input.depfile='sfincs.dep';
     end
     [filename,ok]=gui_uiputfile('*.dep', 'Depth File Name',handles.model.sfincs.domain(id).input.depfile);
     if ~ok
@@ -80,8 +81,8 @@ zmax=handles.toolbox.modelmaker.sfincs.zmax;
 
 % xyinc=handles.toolbox.modelmaker.sfincs.include_xy;
 % xyexc=handles.toolbox.modelmaker.sfincs.exclude_xy;
-xyinc=handles.toolbox.modelmaker.sfincs.mask.includepolygon;
-xyexc=handles.toolbox.modelmaker.sfincs.mask.excludepolygon;
+% xyinc=handles.toolbox.modelmaker.sfincs.mask.includepolygon;
+% xyexc=handles.toolbox.modelmaker.sfincs.mask.excludepolygon;
 
 xyinc=[];
 xyexc=[];
@@ -105,6 +106,8 @@ if strcmpi(handles.model.sfincs.domain(id).input.inputformat,'bin')
 else
     sfincs_write_ascii_inputs(zg,msk,bindepfile,binmskfile);
 end
+
+handles = ddb_sfincs_plot_bathymetry(handles, 'plot');
 
 handles = ddb_sfincs_plot_mask(handles, 'plot');
 

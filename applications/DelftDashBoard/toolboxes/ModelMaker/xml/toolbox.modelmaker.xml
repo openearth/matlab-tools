@@ -122,5 +122,11 @@
       <callback>ddb_ModelMakerToolbox_sfincs_coastline</callback>
       <element>toolbox.modelmaker.sfincs.coastline.xml</element>
     </tab>    
+    <tab>
+      <formodel>sfincs</formodel>
+      <tabstring>Structures</tabstring>
+      <callback>ddb_ModelMakerToolbox_sfincs_structures</callback>
+      <element>toolbox.modelmaker.sfincs.structures.xml</element>
+    </tab>    
   </element>
 </root>
