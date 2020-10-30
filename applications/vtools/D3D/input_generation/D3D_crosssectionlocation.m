@@ -10,12 +10,17 @@
 %$Id$
 %$HeadURL$
 %
-%
+%write cross-section locations file
 
 %INPUT:
+%   -simdef.D3D.dire_sim = path to the folder where to write the file [string]
+%   -simdef.csl = structure with cross-sectional info as it must be written (check by reading using S3_read_crosssectiondefinitions)
 %
 %OUTPUT:
-%   
+%   -       
+%
+%NOTES:
+%   -
 
 function D3D_crosssectionlocation(simdef)
 %% RENAME

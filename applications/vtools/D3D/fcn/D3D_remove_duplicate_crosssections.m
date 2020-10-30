@@ -1,0 +1,85 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
+%
+%$Revision: 16571 $
+%$Date: 2020-09-08 14:39:17 +0200 (Tue, 08 Sep 2020) $
+%$Author: chavarri $
+%$Id: D3D_crosssectionlocation.m 16571 2020-09-08 12:39:17Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/input_generation/D3D_crosssectionlocation.m $
+%
+%finds locations with shared cross-section definitions and duplicates the
+%cross-section definition. 
+
+%INPUT:
+%   -path_cs_def = path to the cross-section definition file
+%   -path_cs_loc = path to the cross-section location file
+%   -folder_out  = folder where to write the results
+%
+%OUTPUT:
+%   -       
+%
+%NOTES:
+%   -
+
+function D3D_remove_duplicate_crosssections(path_cs_def,path_cs_loc,folder_out)
+
+%% CALC
+
+%read
+[~,csdef]=S3_read_crosssectiondefinitions(path_cs_def,'file_type',2);
+[~,csloc]=S3_read_crosssectiondefinitions(path_cs_loc,'file_type',3);
+
+ncsloc=numel(csloc);
+ncsdef=numel(csdef);
+
+definitionId={csloc.definitionId};
+csdef_id={csdef.id};
+
+%find repeated
+[~,csdef_u_idx]=unique(definitionId);
+csshared=~ismember(1:1:ncsloc,csdef_u_idx);
+csshared_defid={csloc(csshared).definitionId};
+
+%find how may times it is repeated
+[csdef_u_u,~,~]=unique(csshared_defid);
+ncsshared_rep=numel(csdef_u_u);
+
+%new ones
+csdef_new=csdef;
+csloc_new=csloc;
+
+%loop
+num_rep=NaN(ncsshared_rep,1);
+knewcs=ncsdef+1;
+for kcsshared_rep=1:ncsshared_rep
+    idx_csid= find_str_in_cell(csshared_defid,csdef_u_u(kcsshared_rep));
+    idx_csdef=find_str_in_cell(csdef_id,csdef_u_u(kcsshared_rep));
+    idx_csloc=find_str_in_cell(definitionId,csdef_u_u(kcsshared_rep));
+    num_rep(kcsshared_rep)=numel(idx_csid);
+    
+    for krep=1:num_rep(kcsshared_rep)
+        defid_newname=sprintf('%s_nodup_%02d',csdef_id{idx_csdef},krep);
+
+        csdef_new(knewcs)=csdef(idx_csid(1));
+        csdef_new(knewcs).id=defid_newname;
+        csdef_new(knewcs).isShared=0;
+        csdef_new(idx_csid(krep)).isShared=0;
+        
+        csloc_new(idx_csloc(krep+1)).definitionId=defid_newname;
+        
+        knewcs=knewcs+1;
+    end
+end
+
+    %% write
+    
+simdef.D3D.dire_sim=folder_out;
+simdef.csd=csdef_new;
+simdef.csl=csloc_new;
+
+D3D_crosssectiondefinitions(simdef);
+D3D_crosssectionlocation(simdef); 
+
