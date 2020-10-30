@@ -100,12 +100,12 @@ if ischar(OPT.layer)
 end
 
 %% return output at specified reference level
-if ~exist('Data','var') && ~isempty(OPT.z)  
+if ~exist('Data','var') && ~isempty(OPT.z)
     Data = EHY_getMapModelData_z(inputFile,modelType,OPT);
 end
 
 %% return sideview output along a pli file
-if ~exist('Data','var') && ~isempty(OPT.pliFile)  
+if ~exist('Data','var') && ~isempty(OPT.pliFile)
     [Data,gridInfo] = EHY_getMapModelData_xy(inputFile,OPT);
 end
 
@@ -189,8 +189,15 @@ if ~exist('Data','var')
             while all(valueIndex{end}==1)
                 valueIndex(end) = [];
             end
-            while size(value,1) == 1
-                value = permute(value,[2:ndims(value) 1]);
+            if exist('value','var')
+                while size(value,1) == 1
+                    value = permute(value,[2:ndims(value) 1]);
+                end
+            elseif exist('value_x','var')
+                while size(value_x,1) == 1
+                    value_x = permute(value_x,[2:ndims(value_x) 1]);
+                    value_y = permute(value_y,[2:ndims(value_y) 1]);
+                end
             end
             
             % put value(_x/_y) in output structure 'Data'
@@ -418,6 +425,6 @@ end
 
 %% Assign output to varargout
 varargout{1} = Data;
-if nargout == 2 
+if nargout == 2
     varargout{2} = gridInfo;
 end
