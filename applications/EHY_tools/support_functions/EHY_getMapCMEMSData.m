@@ -16,13 +16,13 @@ function [times,values] = EHY_getMapCMEMSData(inputFile,start,count,OPT)
     for iF = 1:length(idFs)
         idF = idFs(iF);
         tic
-        tmp    = nc_varget([allFiles(iF).folder filesep allFiles(iF).name],OPT.varName,start-1,[7 count(2:end)]);
-        times  = nc_cf_time([allFiles(iF).folder filesep allFiles(iF).name]);
+        tmp    = nc_varget([allFiles(idF).folder filesep allFiles(idF).name],OPT.varName,start-1,[7 count(2:end)]);
+        times  = nc_cf_time([allFiles(idF).folder filesep allFiles(idF).name]);
         idKeep = times>=OPT.t0 & times<=OPT.tend;
         values(idT:idT+sum(idKeep)-1,:,:,:) = tmp(idKeep,:,:,:);
         idT = idT+sum(idKeep);
         if OPT.disp
-            disp(['Finished reading CMEMS data ' num2str(find(idF==iF),'%03.f') '/' num2str(length(idF),'%03.f') ' (' datestr(min(times(idKeep)),'yyyy-mm-dd') ' till ' datestr(max(times(idKeep)),'yyyy-mm-dd') ') in ' num2str(toc,'%.2f') 's']);
+            disp(['Finished reading CMEMS data ' num2str(iF,'%03.f') '/' num2str(length(idFs),'%03.f') ' (' datestr(min(times(idKeep)),'yyyy-mm-dd') ' till ' datestr(max(times(idKeep)),'yyyy-mm-dd') ') in ' num2str(toc,'%.2f') 's']);
         end
     end
     times  = OPT.t0:1:OPT.tend;
