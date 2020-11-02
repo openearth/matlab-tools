@@ -47,7 +47,7 @@ sqrt_gh=sqrt(g*h);
 %%
 
 switch input.mdv.flowtype
-    case 1 %steady flow
+    case {0,1} %no update or steady flow -> morpho
         if input.mor.particle_activity==0
             if isempty(celerities.eigen_pmm)==0
                 %maximum of the celerities with and without correcting for pmm

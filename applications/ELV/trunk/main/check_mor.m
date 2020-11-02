@@ -48,6 +48,9 @@ end
 if input.mor.particle_activity==1 && input.mor.gsdupdate>1
     error('Particle activity and PMM cannot be used')
 end
+if input.mor.particle_activity==1 && input.bcm.type==4
+    error('Particle activity and fixed bed boundary condition has not been implemented')
+end
 
 %active layer
 if input.mdv.nf~=1

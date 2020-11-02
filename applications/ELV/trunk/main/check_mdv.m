@@ -52,12 +52,17 @@ switch input.mdv.dt_type
         if input.mdv.cfl>1
             warningprint(fid_log,'Your CFL to march in time is larger than 1. I do not think that this will work dude...')
         end
-        if isfield(input.mdv,'dt')==0
-            warningprint(fid_log,'You are not setting the first time step. I will use 1e-6.')
-            input.mdv.dt=1e-6;
-        end   
+        if (isfield(input.mor,'Tstart')==0 || input.mor.Tstart>0) && (isfield(input.mdv,'flowtype')==0 || any(input.mdv.flowtype==[0,1])) && isfield(input.mdv,'dt')==0
+            error('You are not specifying a time step because you want CFL based time step, but you want to start morphodynamic changes aget Tstart and use steady flow. Hence, I have no manner to compute the celerities after we start morpho changes, so I need a dt')
+        else
+            if isfield(input.mdv,'dt')==0
+                warningprint(fid_log,'You are not setting the first time step. I will use 1e-6.')
+                input.mdv.dt=1e-6;
+            end 
+        end
+  
         if (isfield(input.mor,'ellcheck')==0 || input.mor.ellcheck==0) && input.mor.particle_activity==0 
-            input.mor.ellcheck=0;
+            input.mor.ellcheck=1;
             warningprint(fid_log,'You are not checking for ill-posedness, but it is necessesary to do so if you want to update the time step based on your CFL condition.')
         end   
         
@@ -243,9 +248,6 @@ end
 if isfield(input.mdv,'rhow')==0 
     input.mdv.rhow=1000;
 end
-% if isfield(input.frc,'nk')==0 
-%     input.frc.nk=2;
-% end
 if isfield(input.sed,'rhos')==0 
     input.sed.rhos=2650;
 end
@@ -277,7 +279,7 @@ input.mdv.path_folder_figures=fullfile(input.mdv.path_folder_main,'figures'); %p
 %% DISPLAY TIME
 
 if isfield(input.mdv,'disp_t_nt')==0
-    input.mdv.disp_t_nt=floor(input.mdv.Flmap_dt/input.mdv.dt);
+    input.mdv.disp_t_nt=floor(input.mdv.Flmap_dt/input.mdv.dt);   
 end
 if mod(input.mdv.disp_t_nt,1)~=0
     warningprint(fid_log,'The value you input in input.mdv.disp_t_nt is not an integer. I have rounded it.')
@@ -286,6 +288,10 @@ end
 if input.mdv.disp_t_nt>floor(input.mdv.Flmap_dt/input.mdv.dt)
     warningprint(fid_log,'The value you ask to average the time needed in each loop is larger than the saving time, I do not like you to waste computational time. I set it to the maximum. Check input.mdv.disp_t_nt')
     input.mdv.disp_t_nt=floor(input.mdv.Flmap_dt/input.mdv.dt);
+end
+if input.mdv.disp_t_nt>1e5
+    warningprint(fid_log,'The value for averaging the output time is huge. This is probably because you have automatic time steping. Consider setting it manually or increasing the first time step. I am setting it to 1000')
+    input.mdv.disp_t_nt=1000;
 end
 
 %% SAVE VARIABLES

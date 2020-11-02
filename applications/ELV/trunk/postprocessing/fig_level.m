@@ -110,7 +110,7 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
-han.sfig(kr,kc).Title.String=sprintf('%s=%f',titlestr{kr,kc},0);
+han.sfig(kr,kc).Title.String=sprintf('%s=%3.2f',titlestr{kr,kc},0);
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 

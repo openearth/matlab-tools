@@ -57,16 +57,20 @@ qb_qdq=sum(qbk_qdq,1); %qb(q+dq) [1 x nx]
 
 %% dMal
 
+if nf>1
+    
 qb_MaldMal=NaN(1,nx,nef);
 qbk_MaldMal=NaN(nf,nx,nef);
 for kl=1:nef
     Mal_dMal=Mak;
     Mal_dMal(kl,:)=Mal_dMal(kl,:)+dd;
-       
+
     [qbk_aux,~]=sediment_transport(input.aux.flg,input.aux.cnt,h',(u.*h)',Cf,La',Mal_dMal',input.sed.dk,input.tra.param,input.aux.flg.hiding_parameter,1,NaN(1,2),NaN(1,2),NaN,fid_log,kt);
     qbk_MaldMal(:,:,kl)=qbk_aux'; %qbk(Mal+dMal) [nf x nx]
-    
+
     qb_MaldMal(1,:,kl)=sum(qbk_MaldMal(:,:,kl),1); %qb(Mal+dMal) [1 x nx]
+end
+
 end
 
 %% 
@@ -81,17 +85,25 @@ dqb_dq=(qb_qdq-qb)/dd;
 %d(qbk)/d(q) ; double [nf,nx]
 dqbk_dq=(qbk_qdq-qbk)/dd;
 
-%d(qb)/d(Mal) ; double [1,nx,nef]
-qb_Mal=repmat(qb,1,1,nef); %qb(Mal) 
-dqb_dMal=(qb_MaldMal-qb_Mal)/dd;
+if nf>1
+    
+    %d(qb)/d(Mal) ; double [1,nx,nef]
+    qb_Mal=repmat(qb,1,1,nef); %qb(Mal) 
+    dqb_dMal=(qb_MaldMal-qb_Mal)/dd;
 
-%d(qbk)/d(Mal) ; double [nf,nx,nef]
-qbk_Mal=repmat(qbk,1,1,nef); %qbk(Mal)
-dqbk_dMal=(qbk_MaldMal-qbk_Mal)/dd;
+    %d(qbk)/d(Mal) ; double [nf,nx,nef]
+    qbk_Mal=repmat(qbk,1,1,nef); %qbk(Mal)
+    dqbk_dMal=(qbk_MaldMal-qbk_Mal)/dd;
 
-%d(qbk)/d(Dm) ; double [nf,nx,1]
-aux_invdkdiff=repmat(reshape(1./(dk(1:end-1)-dk(end)),1,1,nef),nf,nx,1); %double [nf,nx,nef]. When taking (:,kx,:) you have [1/(d1-d3), 1/(d1-d3), 1/(d1-d3); 1/(d2-d3), 1/(d2-d3), 1/(d2-d3)]
-dqbk_dDm=La.*sum(aux_invdkdiff.*dqbk_dMal,3); % double [nf,nx,1]. When taking (:,kx,1) you have [dqb1_Dm; dqb2_Dm; dqb3_Dm] 
-dqb_dDm=sum(dqbk_dDm,1); %double [1,nx,1]
+    %d(qbk)/d(Dm) ; double [nf,nx,1]
+    aux_invdkdiff=repmat(reshape(1./(dk(1:end-1)-dk(end)),1,1,nef),nf,nx,1); %double [nf,nx,nef]. When taking (:,kx,:) you have [1/(d1-d3), 1/(d1-d3), 1/(d1-d3); 1/(d2-d3), 1/(d2-d3), 1/(d2-d3)]
+    dqbk_dDm=La.*sum(aux_invdkdiff.*dqbk_dMal,3); % double [nf,nx,1]. When taking (:,kx,1) you have [dqb1_Dm; dqb2_Dm; dqb3_Dm] 
+    dqb_dDm=sum(dqbk_dDm,1); %double [1,nx,1]
 
+else
+    dqb_dMal=NaN(1,nx);
+    dqbk_dMal=NaN(1,nx);
+    dqb_dDm=NaN(1,nx);
+    dqbk_dDm=NaN(1,nx);
+end
 

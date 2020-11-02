@@ -86,6 +86,8 @@ switch bc_interp_type
             case 2
                 Qbk0=B(end)*qbk(:,end);
                 Qb0=sum(Qbk0,1); %[1x1 double]       
+            case 4
+                %nothing to do
             otherwise
                 error('Kapot! check input.bcm.type')
         end %input.bcm.type
@@ -99,7 +101,9 @@ switch bc_interp_type
                 Qb0=sum(Qbk0,1); %total load [m^3/s]; [1x1 double] 
             case 2
                 Qbk0=B(end)*qbk(:,end);
-                Qb0=sum(Qbk0,1); %[1x1 double]       
+                Qb0=sum(Qbk0,1); %[1x1 double]   
+            case 4
+                %nothing to do
             otherwise
                 error('Kapot! check input.bcm.type')
         end %input.bcm.type
@@ -109,20 +113,27 @@ end %bc_interp_type
 
 %total load
 Qb=B.*sum(qbk,1); %[1,nx] double
-                
+etab_new=NaN(1,nx);                
 switch input.mor.bedupdate
     case 0
         etab_new=etab;
     case 1
         switch input.mdv.flowtype
-            case {1,6}
-                etab_new(1,1)      = etab(1,1)      - MorFac * dt /cb /beta(1,1     ) * ((UpwFac * ((Qb(1)     -Qb0       ) /(dx/2)) + (1-UpwFac) * ((Qb(2)   -Qb(1)     ) /(dx/2))) /B(2   ));
+            case {0,1,6}
+                if input.bcm.type==4
+                    etab_new(1,1)=etab(1,1);
+                else
+                    etab_new(1,1)      = etab(1,1)      - MorFac * dt /cb /beta(1,1     ) * ((UpwFac * ((Qb(1)     -Qb0       ) /(dx/2)) + (1-UpwFac) * ((Qb(2)   -Qb(1)     ) /(dx/2))) /B(2   ));
+                end
                 etab_new(1,2:nx-1) = etab(1,2:nx-1) - MorFac * dt./cb./beta(1,2:nx-1).* ((UpwFac * ((Qb(2:nx-1)-Qb(1:nx-2))./(dx  )) + (1-UpwFac) * ((Qb(3:nx)-Qb(2:nx-1))./(dx  )))./B(3:nx));
                 etab_new(1,nx)     = etab(1,nx)     - MorFac * dt /cb /beta(1,nx    ) * (           (Qb(nx)    -Qb(nx-1)  ) /(dx  ))/B(end);  
             case {2,3,4}
                 UpwFac = 1-(Qb<0); %sets the UpwFac to 1 if flow comes from left, and to 0 if flow comes from right [1,nx] double
-
-                etab_new(1,1) = etab(1,1) - MorFac * dt./cb/beta(1,1).* ((UpwFac(1) * ((Qb(1)-Qb0)./(dx/2)) + (1-UpwFac(1)) * ((Qb(2)-Qb(1))./(dx/2)))./B(1));
+                if input.bcm.type==4
+                    etab_new(1,1)=etab(1,1);
+                else
+                    etab_new(1,1) = etab(1,1) - MorFac * dt./cb/beta(1,1).* ((UpwFac(1) * ((Qb(1)-Qb0)./(dx/2)) + (1-UpwFac(1)) * ((Qb(2)-Qb(1))./(dx/2)))./B(1));
+                end
                 %!ATTENTION! there seems to be an inconsistency between the
                 %case above and this one regarding the width in the last
                 %fraction. Above it is B(3:nx) and below it is B(2:end-1)

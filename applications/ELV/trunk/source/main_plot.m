@@ -8,7 +8,7 @@ cd('C:\Users\chavarri\checkouts\openearthtools_matlab\applications\ELV\trunk\sou
 
 %% INPUT
 
-dire_in='C:\Users\chavarri\temporal\ELV\trial\000\';
+dire_in='C:\Users\chavarri\temporal\ELV\Q\001\';
 
 %% PATHS
 
@@ -18,7 +18,7 @@ addpath('..\main\')
 
 %% RUN INPUT
 
-run('input_fig_input.m')
+run('input_fig_input_Q.m')
 
 %% patch
 fig_patch(dire_in,fig_input)    

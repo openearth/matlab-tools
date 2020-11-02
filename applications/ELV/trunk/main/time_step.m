@@ -48,7 +48,14 @@ dt=cfl/c_max*dx;
 %% OUT
 %%
 
-input.mdv.dt=dt;
+%dt=NaN occurs when the celerities are NaN, which happen when morpho changes
+%have not started but flow is steadt
+if isnan(dt) 
+    dt=input.mdv.dt;
+else
+    input.mdv.dt=dt;
+end
+
 time_l=time_l+dt;
 
 end %function time_step

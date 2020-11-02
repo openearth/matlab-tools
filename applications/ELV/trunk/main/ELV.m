@@ -122,7 +122,7 @@ tic_looptime=tic; %tic to track time spent in loop
 [u_bra,h_bra,bc]=flow_update(u_bra,h_bra,etab_bra,Cf_bra,bc,input,fid_log,kt,time_l); 
 
 %% MORPHOLOGY UPDATE
-if time_l>input(1,1).mor.Tstart
+if time_l>=input(1,1).mor.Tstart
     
     %% LOOP ON BRANCHES FOR SEDIMENT TRANSPORT
     for kb=1:input(1,1).mdv.nb

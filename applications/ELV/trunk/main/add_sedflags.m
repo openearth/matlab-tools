@@ -35,6 +35,10 @@ end
 
 %% make all variables to exist
 
+if isfield(input.mor,'particle_activity')==0 %necessary in case you use this function outside ELV
+    input.mor.particle_activity=0;
+end
+
 if isfield(input.tra,'cr')==0 
     input.tra.cr=1;
     warningprint(fid_log,'You have not specified a sediment transport relation (input.tra.cr). I will use Meyer-Peter Muller (1948) just because I like it.')
@@ -42,12 +46,16 @@ end
 
 if isfield(input.tra,'E_cr')==0 
     input.tra.E_cr=1;
-    warningprint(fid_log,'You have not specified an entrainment closure relation (input.tra.E_cr). I will use Fernandez-Luque and van Beek just because I like it.')
+    if input.mor.particle_activity==1
+        warningprint(fid_log,'You have not specified an entrainment closure relation (input.tra.E_cr). I will use Fernandez-Luque and van Beek just because I like it.')
+    end
 end
 
 if isfield(input.tra,'vp_cr')==0 
     input.tra.vp_cr=1;
-    warningprint(fid_log,'You have not specified a particle velocity closure relation (input.tra.vp_cr). I will use Fernandez-Luque and van Beek just because I like it.')
+    if input.mor.particle_activity==1
+        warningprint(fid_log,'You have not specified a particle velocity closure relation (input.tra.vp_cr). I will use Fernandez-Luque and van Beek just because I like it.')
+    end
 end
 
 if isfield(input.tra,'param')==0 
@@ -72,13 +80,17 @@ if isfield(input.tra,'param')==0
 end
 
 if isfield(input.tra,'E_param')==0 %entrainment function paramenters
-    warningprint(fid_log,'You have not specified the parameters of the entrainment function (input.tra.E_param). I will use the standard values for Fernandez-Luque van Beek')
     input.tra.E_param=[0.0199,1.5]; 
+    if input.mor.particle_activity==1
+        warningprint(fid_log,'You have not specified the parameters of the entrainment function (input.tra.E_param). I will use the standard values for Fernandez-Luque van Beek')
+    end
 end
 
 if isfield(input.tra,'vp_param')==0 %particle velocity function parameters
-    warningprint(fid_log,'You have not specified the parameters of the particle velocity function (input.tra.vp_param). I will use the standard values for Fernandez-Luque van Beek')
     input.tra.vp_param=[11.5,0.7]; 
+    if input.mor.particle_activity==1
+        warningprint(fid_log,'You have not specified the parameters of the particle velocity function (input.tra.vp_param). I will use the standard values for Fernandez-Luque van Beek')
+    end
 end
 
 if isfield(input.tra,'hid')==0 %hiding correction  
@@ -100,9 +112,7 @@ if isfield(input.tra,'kappa')==0
     input.tra.kappa=NaN(input.mdv.nf,1); 
 end
 
-if isfield(input.mor,'particle_activity')==0 %necessary in case you use this function outside ELV
-    input.mor.particle_activity=0;
-end
+
 
 if isfield(input.tra,'mu')==0 
     input.tra.mu=0;
@@ -114,7 +124,7 @@ end
 
 %% once everything exists 
 
-if input.tra.E_cr~=input.tra.cr
+if input.mor.particle_activity==1 && input.tra.E_cr~=input.tra.cr 
     warningprint(fid_log,'The closure relation for the sediment transport rate does not match the closure relation for the entrainment rate. This possible but problematic. It may creates a discontinuity in Dk because it is 0 when Qbk_st is 0 but it may cancel with the term in Ek_st')
 end
 
@@ -149,7 +159,7 @@ switch input.tra.E_cr
         if numel(input.tra.E_param)~=2
             error('wrong dimension in input.tra.E_param')
         end
-        if input.tra.E_param(2)~=input.tra.param(2)
+        if input.tra.E_param(2)~=input.tra.param(2) && input.mor.particle_activity==1
             warningprint(fid_log,'the power of the excess shield should be the same in the sediment transport relation than in the entrainement formulation. Otherwise tt may create a discontinuity in Dk because it is 0 when Qbk_st is 0 but it may cancel with the term in Ek_st')
         end
     case 3 %AM-type

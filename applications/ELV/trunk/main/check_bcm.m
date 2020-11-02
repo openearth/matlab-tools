@@ -68,7 +68,7 @@ switch input.bcm.type
             input.bcm.path_file_Qbk0=fullfile(path_folder_main, 'Qbk0.mat'); %path to the Qbk file
         end 
 
-    case {2,'set1'}
+    case {2,'set1',4}
 
     case 13
     %nothing implemented yet... 
@@ -80,8 +80,8 @@ switch input.bcm.type
         error('input.bcm.type can be: 1=sediment discharge; 2=periodic; 12 ')
 end
 
-if input.mdv.bc_interp_type==2 && ~any(input.bcm.type==[1,2])
-    error('If you interpolate in the loop, the only moprhodynamic boundary conditions possible are either 1 or 2.')
+if input.mdv.bc_interp_type==2 && ~any(input.bcm.type==[1,2,4])
+    error('If you interpolate in the loop, the only moprhodynamic boundary conditions possible are either 1, 2, or 4.')
 end
 
 %%

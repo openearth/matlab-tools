@@ -68,7 +68,9 @@ end
 %roughness height
 if isfield(input.frc,'nk')==0
     input.frc.nk=2;
-    warningprint(fid_log,'You have not specified a Nikuradse friction height. I will use standard value equal to 2. This is used (at least) if you correct for bedforms.');
+    if input.frc.Cfb_model==2
+        warningprint(fid_log,'You have not specified a Nikuradse friction height. I will use standard value equal to 2. This is used (at least) if you correct for bedforms.');
+    end
 end
 
 %%

@@ -176,6 +176,7 @@ input.bcm.type=1; %type of morphodynamic boundary condition:  [-] [1x1 double] e
 	%1=sediment discharge; 
 	%2=periodic; 
 	%3=cyclic hydrograph; 
+	%4=fixed bed
 	%13=Normal Flow Load Distribution (with Qw(t) we compute Qs(t) for normal flow ATT! more info is needed (input.bcm.NFLtype)); 
 % input.bcm.NFLtype=3; %only if input.bcm.type=13 : 1=specify slope and GSD of the bed; 2=specify the total sediment load and the GSD of the bed; 3=specify sediment load
 % input.bcm.NFLparam=[0.56;0.11]*1e9/2650/31536000; %if input.bcm.NFLtype=1: [slope,Fak (for all k)] e.g. [1e-4;0.1;0.9]; if input.bcm.NFLtype=2: [Qb,Fak (for all k)] e.g. [1e-5;0.1;0.9]; if input.bcm.NFLtype=3: [Qbk] e.g. [0.56;0.11]*1e9/2650/31536000

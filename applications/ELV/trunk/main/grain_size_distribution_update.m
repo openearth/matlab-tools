@@ -62,9 +62,19 @@ switch input.mor.gsdupdate
         Mak_new=Mak;
         msk_new=msk;
         Ls_new=Ls;
-        ell_idx=zeros(1,input.mdv.nx);
         La_ne=La; %non-elliptic La
-        out_en=struct('ls',[],'lb',[],'gamma',[],'mu',[],'A',[],'eigen',[],'eigen_pmm',[]);
+        if input.mor.ellcheck
+            if input.mdv.nf>1
+                [msk_new,Ls_new,fIk,detaLa]=substrate_update(Mak,msk,Ls,La_old,La,etab_old,etab,qbk,input,fid_log,kt);
+            else
+                fIk=NaN(size(La));
+            end
+            [ell_idx,out_en]=elliptic_nodes(u,h,Cf,La_old,qbk,Mak,fIk,input,fid_log,kt);
+            out_en.eigen_pmm=[]; %avoid dissimilar structures
+        else
+            ell_idx=zeros(1,input.mdv.nx);
+            out_en=struct('ls',[],'lb',[],'gamma',[],'mu',[],'A',[],'eigen',[],'eigen_pmm',[]);
+        end
         etab_new=etab;
         pmm(1,:)=ones(1,input.mdv.nx); %alpha
         pmm(2,:)=ones(1,input.mdv.nx); %beta

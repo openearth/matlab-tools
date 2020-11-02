@@ -94,6 +94,9 @@ switch bc_interp_type
                 qbk0=bc.qbk0(Qbkt,:); %total load [m^3/s]; [1xnf double]
             case 2
                 qbk0=qbk(:,end);
+            case 4
+                %it should be computed as the value that keeps the bed
+                %stable                
             otherwise
                 error('Kapot! check input.bcm.type')
         end %input.bcm.type
@@ -107,6 +110,9 @@ switch bc_interp_type
                 qbk0=Qbk0./input.grd.B(1);
             case 2
                 qbk0=qbk(:,end);
+            case 4
+                %it should be computed as the value that keeps the bed
+                %stable
             otherwise
                 error('Kapot! check input.bcm.type')
         end %input.bcm.type
