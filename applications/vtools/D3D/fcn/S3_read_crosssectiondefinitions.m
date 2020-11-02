@@ -45,18 +45,18 @@ file_type=parin.Results.file_type;
 switch file_type
     case 1 %SOBEK 3 cross-section definition
         tag_cs='[CrossSection]';
-        tags ={'id'            ,'branchid'      ,'chainage','name'          ,'shift'  ,'definition'    };            
-        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','\d+.\d+' ,'\w+([.-]?\w+)*','\d+.\d+','\w+([.-]?\w+)*'};
+        tags ={'id'            ,'branchid'      ,'chainage'  ,'name'          ,'shift'    ,'definition'    };            
+        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+' ,'\w+([.-]?\w+)*','-?\d+.\d+','\w+([.-]?\w+)*'};
         fcnts=[1               ,1               ,2         ,1               ,2        ,1               ];
     case 2 %FM cross-section definition
         tag_cs='[Definition]';
-        tags ={'id'            ,'type'          ,'thalweg','numLevels','levels' ,'flowWidths','totalWidths','leveeCrestLevel','leveeFlowArea','leveeTotalArea','leveeBaseLevel','mainWidth','fp1Width','fp2Width','isShared'};            
-        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','\d+.\d+','\d+.\d+'  ,'\d+.\d+','\d+.\d+'   ,'\d+.\d+'    ,'\d+.\d+'        ,'\d+.\d+'      ,'\d+.\d+'       ,'\d+.\d+'       ,'\d+.\d+'  ,'\d+.\d+' ,'\d+.\d+' ,'\d+.\d+' };
+        tags ={'id'            ,'type'          ,'thalweg'  ,'numLevels'  ,'levels'   ,'flowWidths'  ,'totalWidths'  ,'leveeCrestLevel'  ,'leveeFlowArea'  ,'leveeTotalArea','leveeBaseLevel','mainWidth','fp1Width','fp2Width','isShared'};            
+        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+','-?\d+.\d+'  ,'-?\d+.\d+','-?\d+.\d+'   ,'-?\d+.\d+'    ,'-?\d+.\d+'        ,'\d+.\d+'        ,'\d+.\d+'       ,'-?\d+.\d+'     ,'\d+.\d+'  ,'\d+.\d+' ,'\d+.\d+' ,'\d+.\d+' };
         fcnts=[1               ,1               ,2        ,2          ,2        ,2           ,2            ,2                ,2              ,2               ,2               ,2          ,2         ,2         ,2         ];
     case 3 %FM cross-section location
         tag_cs='[CrossSection]';
-        tags ={'id'            ,'branchId'      ,'chainage','shift'  ,'definitionId'    };            
-        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','\d+.\d+' ,'\d+.\d+','\w+([.-]?\w+)*'  };
+        tags ={'id'            ,'branchId'      ,'chainage'  ,'shift'    ,'definitionId'    };            
+        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+' ,'-?\d+.\d+','\w+([.-]?\w+)*'  };
         fcnts=[1               ,1               ,2         ,2        ,1                 ];
 end
 

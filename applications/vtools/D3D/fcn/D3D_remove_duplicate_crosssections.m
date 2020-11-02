@@ -83,3 +83,11 @@ simdef.csl=csloc_new;
 D3D_crosssectiondefinitions(simdef);
 D3D_crosssectionlocation(simdef); 
 
+    %% check monotonic cross-sections
+    
+file_name=fullfile(folder_out,'CrossSectionDefinitions.ini');
+D3D_check_monotonic_crosssections(file_name)
+
+end %function
+
+
