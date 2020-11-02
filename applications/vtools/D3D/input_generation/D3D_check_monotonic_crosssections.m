@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 16745 $
-%$Date: 2020-10-30 09:23:12 +0100 (Fri, 30 Oct 2020) $
-%$Author: chavarri $
-%$Id: D3D_crosssectiondefinitions.m 16745 2020-10-30 08:23:12Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/input_generation/D3D_crosssectiondefinitions.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %checks if the cross-section is non-monotonic
 
