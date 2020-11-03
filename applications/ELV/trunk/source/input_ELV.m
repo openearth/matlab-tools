@@ -87,6 +87,7 @@ input.grd.B=1; %width [m]; [1x1 double] | [1xnx double]; e.g. [10]
 
 input.mor.bedupdate=1; %update bed elevation 0=NO; 1=YES [-]; e.g. 1
 input.mor.gsdupdate=1; %update grain size distribution 0=NO; 1=Hirano ;2=eli 1 (max. La); 3=eli 1 (min. La); 4=pmm (a<1,b~=1); 5=pmm (a>1,b~=1); 6=(a<1,b=1); 7=(a>1,b=1); 8=impose a (by means of pmm_alpha_eps); 9=a_m (M_eta=1/b, M_Fak=1/(a*b)); [-]; e.g. 1 
+input.mor.scheme=0; %morphodynamic numerical scheme 0=FTBS (old style); 1=FTBS (new style); [1x1 double]; e.g. [0] 
 % input.mor.pmm_alpha_eps=0.01; %fraction added to alpha to avoid equal eigenvalues; [1x1 double]; e.g. [0.05]
 input.mor.particle_activity=0; %use particle activity model 0=NO; 1=YES [-]; [1x1 double]; e.g. [0]
 input.mor.ellcheck=0; %ellipticity check 0=NO; 1=YES (full model); 2=YES (approximate model) [-]; e.g. 1

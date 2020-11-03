@@ -18,8 +18,8 @@ cd('c:\Users\chavarri\checkouts\openearthtools_matlab\applications\ELV\trunk\sou
 %% INPUT 
 
 runid_serie='Q';
-runid_number='001';
-input_filename='input_ELV_Q001.m';
+runid_number='009';
+input_filename='input_ELV_Q009.m';
 % input_filename='input_ELV.m';
 paths_runs='C:\Users\chavarri\temporal\ELV\';
 erase_previous=1; %it is dangerous, use with care and attention

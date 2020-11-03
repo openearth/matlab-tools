@@ -38,6 +38,15 @@ if any(input.mor.gsdupdate==[2,3,4,5,6])
     warningprint(fid_log,'You shall not pass!!!!!!! You are trying to update the grain size distribution using techniques that do not work.')
 end
 
+%scheme
+if isfield(input.mor,'scheme')==0
+    input.mor.scheme=0;
+    warningprint(fid_log,'You are not specifying the type of morphodynamic scheme. I am using FTBS.')
+end
+if input.mor.scheme~=0 && input.mor.gsdupdate~=0
+    error('You are trying to update the bed GSD with a morphodynamic scheme different than FTBS. I have not implemented this yet...')
+end
+
 %particle activity
 if isfield(input.mor,'particle_activity')==0 %if it is not defined  
     input.mor.particle_activity=0;
