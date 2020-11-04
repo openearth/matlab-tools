@@ -60,16 +60,21 @@ for kcsshared_rep=1:ncsshared_rep
     idx_csloc=find_str_in_cell(definitionId,csdef_u_u(kcsshared_rep));
     num_rep(kcsshared_rep)=numel(idx_csid);
     
+    %remove isShared from non-added repeated cross-section
+    csdef_new(idx_csdef(1)).isShared=0;
+    
     for krep=1:num_rep(kcsshared_rep)
-        defid_newname=sprintf('%s_nodup_%02d',csdef_id{idx_csdef},krep);
-
-        csdef_new(knewcs)=csdef(idx_csid(1));
-        csdef_new(knewcs).id=defid_newname;
-        csdef_new(knewcs).isShared=0;
-        csdef_new(idx_csid(krep)).isShared=0;
+        defid_newname=sprintf('%s_nodup_%02d',csdef_id{idx_csdef},krep); %new name
         
+        %cross-section defintion
+        csdef_new(knewcs)=csdef(idx_csdef(1));
+        csdef_new(knewcs).id=defid_newname;
+        csdef_new(knewcs).isShared=0; 
+        
+        %cross_section location
         csloc_new(idx_csloc(krep+1)).definitionId=defid_newname;
         
+        %update definition counter
         knewcs=knewcs+1;
     end
 end

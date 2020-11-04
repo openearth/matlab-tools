@@ -27,16 +27,22 @@ load("c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\GE2M
 % ylima=  [4.40     4.60]*1e5;
 % coordinate_input=28992; %Amersfoort
 
-xlima=  [03+30/60+22/3600, 04+29/60+54/3600];
-ylima=  [51+52/60+01/3600, 52+21/60+16/3600];
+% xlima=  [05+28/60+37/3600, 05+29/60+40/3600];
+% ylima=  [51+53/60+04/3600, 51+53/60+26/3600];
+% xlima=  [05+26/60+08/3600, 05+27/60+07/3600];
+% ylima=  [51+52/60+44/3600, 51+53/60+07/3600];
+% xlima=  [05+24/60+38/3600, 05+25/60+27/3600];
+% ylima=  [51+51/60+14/3600, 51+51/60+33/3600];
+xlima=  [05+23/60+05/3600, 05+24/60+09/3600];
+ylima=  [51+49/60+54/3600, 51+50/60+20/3600];
 coordinate_input=4326; %google earth
 
-tzl = 11; %zoom
+tzl = 16; %zoom
 
 save_tiles=1;
-% coordinate_output=4326;
-coordinate_output=28992;
-path_save='p:\11205272_waterverd_verzilting_2020\006_Vaardiepte_voorspellen\01_data\05_tiles\';
+coordinate_output=4326;
+% coordinate_output=28992;
+path_save='p:\11204644-evaluatie-langsdammen\wp00_data_analyse\01_ADCP\input\tiles_z4.mat';
 
 %map type
 %1=satellite;
@@ -173,7 +179,7 @@ axis equal
 %% SAVE
 
 if save_tiles
-    path_full_save=fullfile(path_save,sprintf('tiles_%d.mat',map_type));
+    path_full_save=fullfile(path_save);
     if exist(path_full_save,'file')
         error('you are trying to overwrite a tiles variable')
     else
