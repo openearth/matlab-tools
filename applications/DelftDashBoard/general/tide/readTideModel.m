@@ -225,6 +225,9 @@ else
         if isempty(iddot)
         iddot = strfind(tidefile, '/');
         end
+        if isempty(iddot)
+            iddot =0;
+        end
         runname = tidefile((iddot(end)+1):end);
         str = ['Reading: ', runname, ' - ', tp]; 
         disp(str);
