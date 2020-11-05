@@ -8,8 +8,9 @@ function varargout = EHY_plot_ldb(varargin)
 % Example2: hLdb = EHY_plot_ldb;
 % Example3: hLdb = EHY_plot_ldb('color','r','type','rivers');
 % Example4: hLdb = EHY_plot_ldb('color','r','type',{'shorelines','rivers'},'linewidth',1);
+% Example5: hLdb = EHY_plot_ldb('color','r','type',{'shorelines','rivers'},'localEPSG',28992);
 %
-% Example5 - plot a map showing some capitals in Europe:
+% Example6 - plot a map showing some capitals in Europe:
 %    lat = [48.8708   51.5188   41.9260   40.4312   52.523   37.982];
 %    lon = [2.4131    -0.1300    12.4951   -3.6788    13.415   23.715];
 %    plot(lon,lat,'.r','MarkerSize',20)
@@ -29,6 +30,7 @@ function varargout = EHY_plot_ldb(varargin)
 OPT.type      = {'shorelines','borders'}; % choose from: 'borders','rivers','shorelines' // string or cell array
 OPT.color     = 'k';
 OPT.linewidth = 0.5;
+OPT.localEPSG = []; % specify local EPSG (e.g. 28992)
 OPT           = setproperty(OPT,varargin);
 
 %% structure to cell array
@@ -47,9 +49,34 @@ end
 hold on
 rootfolder = [fileparts(which('EHY')) filesep 'support_functions' filesep 'GSHHG'];
 
-for iT = 1:length(OPT.type) % loop over types
-    hLdb{iT} = gshhg('plot','type',OPT.type{iT},'color',OPT.color,'rootfolder',rootfolder);
-    set(hLdb{iT},'linewidth',OPT.linewidth); % linewidth
+if ~isempty(OPT.localEPSG)
+    x_lim = get(gca,'xlim');
+    y_lim = get(gca,'ylim');
+    hFig = figure('visible','off'); % dummy figure with [lat,lon]-axis
+    [x_lim, y_lim] = convertCoordinates(x_lim, y_lim,'CS1.code',OPT.localEPSG,'CS2.code',4326);
+    set(gca,'xlim',x_lim,'ylim',y_lim)
+    
+    X = [];
+    Y = [];
+    for iT = 1:length(OPT.type) % loop over types
+        h = gshhg('plot','type',OPT.type{iT},'color',OPT.color,'rootfolder',rootfolder);
+        child = get(gca,'children');
+        if isobject(child) && ~isempty(child)
+            for iC = 1:length(child)
+            X = [X child(iC).XData NaN];
+            Y = [Y child(iC).YData NaN];
+            end
+        end
+        delete(h);
+    end
+    delete(hFig); % close dummy fig
+    [X, Y] = convertCoordinates(X, Y,'CS1.code',4326,'CS2.code',OPT.localEPSG);
+    hLdb = plot(X,Y,'color',OPT.color,'linewidth',OPT.linewidth);
+else
+    for iT = 1:length(OPT.type) % loop over types
+        hLdb{iT} = gshhg('plot','type',OPT.type{iT},'color',OPT.color,'rootfolder',rootfolder);
+        set(hLdb{iT},'linewidth',OPT.linewidth); % linewidth
+    end
 end
 
 if nargout > 0
