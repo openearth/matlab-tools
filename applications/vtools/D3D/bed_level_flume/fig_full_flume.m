@@ -180,7 +180,7 @@ cmap=brewermap(100,'RdYlBu');
 
 %figure initialize
 han.fig=figure('name',prnt.filename);
-set(han.fig,'paperunits','centimeters','paperposition',prnt.size)
+set(han.fig,'paperunits','centimeters','paperposition',prnt.size,'visible','off')
 set(han.fig,'units','normalized','outerposition',[0,0,1,1]) %full monitor 1
 % set(han.fig,'units','normalized','outerposition',[-1,0,1,1]) %full monitor 2
 [mt,mb,mr,ml,sh,sv]=pre_subaxis(han.fig,marg.mt,marg.mb,marg.mr,marg.ml,marg.sh,marg.sv);
@@ -305,8 +305,8 @@ caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
 %general
 set(findall(han.fig,'-property','FontSize'),'FontSize',prop.fs)
 set(findall(han.fig,'-property','FontName'),'FontName',prop.fn) %!!! attention, there is a bug in Matlab and this is not enforced. It is necessary to change it in the '.eps' to 'ArialMT' (check in a .pdf)
-han.fig.Renderer='painters';
+%han.fig.Renderer='painters';
 
 %print
 % % print(han.fig,strcat(prnt.filename,'.eps'),'-depsc2','-loose','-cmyk')
-print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r600')
+print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r300')

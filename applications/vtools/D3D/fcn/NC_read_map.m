@@ -1137,7 +1137,34 @@ switch flg.which_p
                         error('check')
                         out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
-                out.zlabel='space step [m]';  
+                out.zlabel='space step [m]'; 
+            case 36 %Froude
+                switch simdef.D3D.structure
+                    case 2 %FM
+                        if is1d
+                            out=get_fm1d_data('mesh1d_ucmag',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out_h=get_fm1d_data('mesh1d_waterdepth',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out.z=out.z./sqrt(9.81.*out_h.z);
+                        else
+                            error('do')
+                            if out.nfl>1
+                                umag=ncread(file.map,'mesh2d_ucmaga',[kF(1),kt(1)],[kF(2),1]);                    
+                            else
+                                umag=ncread(file.map,'mesh2d_ucmag',[kF(1),kt(1)],[kF(2),1]);                    
+                            end
+                                out.z=umag;
+                                out.x_node=x_node;
+                                out.y_node=y_node;
+                                out.x_face=x_face;
+                                out.y_face=y_face;
+                                out.faces=faces;
+                                    
+                        end
+                    case 3 %SOBEK3
+                        error('do')
+                        out=get_sobek3_data('water_velocity',file.reach,in,branch_reach,offset_reach,x_node_reach,y_node_reach,branch_length_reach,branch_id_reach);
+                end
+                out.zlabel='Froude number [-]';   
             otherwise
                 error('ups...')
 

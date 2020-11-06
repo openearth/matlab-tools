@@ -107,6 +107,7 @@ simdef.flg.which_v=28; %which variable:
 %   33=cell area [m^2]
 %   34=space step (only 1D)
 %   35=cumulative dredged volume of sediment [m^3]
+%   36=Froude number [-]
 
 simdef.flg.which_s=4; %which plot style: 
 %   1=surf
