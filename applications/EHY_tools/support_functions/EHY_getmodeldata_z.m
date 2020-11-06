@@ -15,7 +15,9 @@ varName0 = OPT.varName;
 OPT.varName = 'Zcen_int'; % change wanted variabele to Zcen_int
 OPT.layer = 0;
 DataZ = EHY_getmodeldata(inputFile,stat_name,modelType,OPT);
-
+if ~isfield(DataZ,'Zcen_int')
+    DataZ.Zcen_int = DataZ.val;
+end
 %% get wanted "varName"-data for all necessary layers
 % get data
 OPT.varName = varName0; % change wanted variabele back to original value

@@ -20,10 +20,12 @@ elseif ~isempty(OPT.t0) && ~isempty(OPT.tend)
     if isfield(OPT,'tint') && ~isempty(OPT.tint)
         modelTimes_int = Data.times(3) - Data.times(2); % in days
         stride = OPT.tint/modelTimes_int;
-        if mod(stride,1) > 10^-5
-            error('OPT.tint (in days) needs to be a multiple of the model output timestep')
-        else
+        if mod(stride,1) < 10^-5 % mod(stride,1) is just above 0
             stride = round(stride);
+        elseif 1-mod(stride,1) < 10^-5 % mod(stride,1) is just below 1
+            stride = round(stride);
+        else
+            error('OPT.tint (in days) needs to be a multiple of the model output timestep')
         end
     else
         stride = 1;

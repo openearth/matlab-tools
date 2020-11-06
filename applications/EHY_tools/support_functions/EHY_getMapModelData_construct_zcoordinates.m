@@ -149,8 +149,10 @@ switch gridInfo.layer_model
                         logi = ~isnan(int_field(ii,:));
                         ind1 = find(logi,1,'first');
                         ind2 = find(logi,1,'last');
-                        no_active_layers =  ind2-ind1+1;
-                        int_field(ii,logi) = linspace(int_field(ii,ind1),int_field(ii,ind2),no_active_layers);
+                        if ~isempty(ind1) && ~isempty(ind2)
+                            no_active_layers =  ind2-ind1+1;
+                            int_field(ii,logi) = linspace(int_field(ii,ind1),int_field(ii,ind2),no_active_layers);
+                        end
                     end
                 end
             end

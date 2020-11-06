@@ -96,12 +96,19 @@ if strcmp(OPT.varName,'noMatchFound')
 end
 
 %% temp fix for incorrect z-coordinates in dfm
-if strcmp(modelType,'dfm') && strcmp(OPT.varName,'zcoordinate_w') && ~EHY_isCMEMS(inputFile)
-    Data = EHY_getmodeldata_zcen_int(inputFile,stat_name,modelType,OPT);
-    if nargout==1
-        varargout{1} = Data;
+if strcmp(OPT.varName,'zcoordinate_w') && ~EHY_isCMEMS(inputFile)
+    source = ncreadatt(inputFile,'/','source');
+    ind = strfind(source,'D-Flow FM Version');
+    source = source(ind+26:ind+30);
+    if str2num(source) < 67858
+        disp('<strong>Reconstruction of zcoordinate_w is not needed anymore when moving to FM version >= 67858 (Oct 27, 2020)</strong>')
+        disp('Fix for DFM: Reconstructing Zcen_int based on water level and z-coordinates of cell centers')
+        Data = EHY_getmodeldata_zcen_int(inputFile,stat_name,modelType,OPT);
+        if nargout==1
+            varargout{1} = Data;
+        end
+        return
     end
-    return
 end
 
 %% return output at specified reference level
@@ -506,7 +513,6 @@ end
 
 function Data = EHY_getmodeldata_zcen_int(inputFile,stat_name,modelType,OPT)
 %% temp fix for incorrect z-coordinates in dfm
-disp('Temp fix for DFM: Reconstructing Zcen_int based on water level and z-coordinates of cell centers')
 
 Data_wl       = EHY_getmodeldata(inputFile,stat_name,modelType,OPT,'varName','wl');
 Data_zcen_cen = EHY_getmodeldata(inputFile,stat_name,modelType,OPT,'varName','zcen_cen');
