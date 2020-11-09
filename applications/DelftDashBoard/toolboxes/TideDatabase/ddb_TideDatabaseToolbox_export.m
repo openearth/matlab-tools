@@ -118,7 +118,7 @@ function downloadData
 handles=getHandles;
 ii=handles.toolbox.tidedatabase.activeModel;
 name=handles.tideModels.model(ii).name;
-URL = 'http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/tidemodels/';
+URL = 'https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/tidemodels/';
 if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
     tidefile=[URL '/' name '.nc'];
 else
@@ -142,7 +142,7 @@ end
 wb = waitbox(['Downloading tide database. Size: ', size]);
 if strcmp(handles.tideModels.model(ii).name,'tpxo80')
     names = {'grid_tpxo8_atlas6.nc';'grid_tpxo8atlas_30.nc';'hf.k1_tpxo8.nc';'hf.k2_tpxo8.nc';'hf.m2_tpxo8.nc';'hf.m4_tpxo8.nc';'hf.mf_tpxo8.nc';'hf.mm_tpxo8.nc';'hf.mn4_tpxo8.nc';'hf.ms4_tpxo8.nc';'hf.n2_tpxo8.nc';'hf.o1_tpxo8.nc';'hf.p1_tpxo8.nc';'hf.q1_tpxo8.nc';'hf.s2_tpxo8.nc';'tpxo80.nc';'uv.k1_tpxo8.nc';'uv.k2_tpxo8.nc';'uv.m2_tpxo8.nc';'uv.m4_tpxo8.nc';'uv.mf_tpxo8.nc';'uv.mm_tpxo8.nc';'uv.mn4_tpxo8.nc';'uv.ms4_tpxo8.nc';'uv.n2_tpxo8.nc';'uv.o1_tpxo8.nc';'uv.p1_tpxo8.nc';'uv.q1_tpxo8.nc';'uv.s2_tpxo8.nc'};
-    tidefile2 = 'http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/tidemodels/tpxo80/';
+    tidefile2 = 'https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/tidemodels/tpxo80/';
     for jj = 1:length(names);
         file3 = [tidefile2, names{jj,:}];
         urlwrite(file3,names{jj,:});

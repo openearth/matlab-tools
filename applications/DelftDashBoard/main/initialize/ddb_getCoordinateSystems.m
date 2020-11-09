@@ -63,7 +63,7 @@ function ddb_getCoordinateSystems
 handles=getHandles;
 
 localdir = handles.superTransDir;
-url = 'http://opendap.deltares.nl/static/deltares/delftdashboard/supertrans/SuperTrans.xml';
+url = 'https://opendap.deltares.nl/static/deltares/delftdashboard/supertrans/SuperTrans.xml';
 xmlfile = 'SuperTrans.xml';
 supertransdata = ddb_getXmlData(localdir,url,xmlfile);
 

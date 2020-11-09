@@ -102,9 +102,9 @@ handles=getHandles;
 dmFig = get(hObject,'Parent');
 datatype = lower(get(dmFig,'Tag'));
 dataDir = handles.BathyDir(1:findstr(handles.BathyDir,'bathymetry')-1);
-ddb_opendap_fileS   = 'http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/';
-ddb_opendap_dodsC   = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/delftdashboard/';
-ddb_opendap_catalog = 'http://opendap.deltares.nl/thredds/catalog/opendap/deltares/delftdashboard/';
+ddb_opendap_fileS   = 'https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/';
+ddb_opendap_dodsC   = 'https://opendap.deltares.nl/thredds/dodsC/opendap/deltares/delftdashboard/';
+ddb_opendap_catalog = 'https://opendap.deltares.nl/thredds/catalog/opendap/deltares/delftdashboard/';
 cache = 'yes';
 
 switch datatype

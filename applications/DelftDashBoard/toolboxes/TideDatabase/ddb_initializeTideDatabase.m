@@ -90,7 +90,7 @@ handles.toolbox.tidedatabase.activeConstituent=1;
 %% Get list
 ii=handles.toolbox.tidedatabase.activeModel;
 name=handles.tideModels.model(ii).name;
-if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
+if strcmpi(handles.tideModels.model(ii).URL(1:5),'https')
     tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
 else
     tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
