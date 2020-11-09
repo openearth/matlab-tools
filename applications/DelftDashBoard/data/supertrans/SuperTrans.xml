@@ -4,11 +4,11 @@
   <file>
     <name>EPSG.mat</name>
     <version>1</version>
-    <URL>http://opendap.deltares.nl/static/deltares/delftdashboard/supertrans/EPSG.mat</URL>
+    <URL>https://opendap.deltares.nl/static/deltares/delftdashboard/supertrans/EPSG.mat</URL>
   </file>
   <file>
     <name>EPSG_ud.mat</name>
     <version>1</version>
-    <URL>http://opendap.deltares.nl/static/deltares/delftdashboard/supertrans/EPSG_ud.mat</URL>
+    <URL>https://opendap.deltares.nl/static/deltares/delftdashboard/supertrans/EPSG_ud.mat</URL>
   </file>
 </root>

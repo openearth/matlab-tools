@@ -72,7 +72,7 @@ try
         servername=varargin{1};
     end
     
-    url = ['http://opendap.deltares.nl/static/deltares/delftdashboard/toolboxes/' servername '/' servername '.xml'];
+    url = ['https://opendap.deltares.nl/static/deltares/delftdashboard/toolboxes/' servername '/' servername '.xml'];
     xmlfile = [name '.xml'];
     toolboxdata = ddb_getXmlData(localdir,url,xmlfile);
     

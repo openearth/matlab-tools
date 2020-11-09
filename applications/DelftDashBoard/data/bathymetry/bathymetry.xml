@@ -6,7 +6,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/gebco19</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/gebco19</URL>
     <useCache>1</useCache>
     <source>BODC</source>
     <dataset/>
@@ -17,7 +17,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/gebco_08</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/gebco_08</URL>
     <useCache>1</useCache>
     <source>GEBCO</source>
   </dataset>
@@ -27,7 +27,7 @@
      <version>1</version>
      <type>netCDFtiles</type>
      <edit>0</edit>
-     <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/srtm41</URL>
+     <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/srtm41</URL>
      <useCache>1</useCache>
      <source>NASA</source>
   </dataset>
@@ -37,7 +37,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/hawaii</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/hawaii</URL>
     <useCache>1</useCache>
     <source>USGS</source>
   </dataset>
@@ -47,7 +47,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/sfbay</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/sfbay</URL>
     <useCache>1</useCache>
     <source>USGS</source>
   </dataset>
@@ -57,7 +57,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/ngdc_crm</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/ngdc_crm</URL>
     <useCache>1</useCache>
     <source>NGDC</source>
   </dataset>
@@ -67,7 +67,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/usgs_socal</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/usgs_socal</URL>
     <useCache>1</useCache>
     <source>USGS</source>
   </dataset>
@@ -77,7 +77,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/rws_vaklodingen</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/rws_vaklodingen</URL>
     <useCache>1</useCache>
     <source>Rijkswaterstaat</source>
   </dataset>
@@ -87,7 +87,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/gulf_of_mexico</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/gulf_of_mexico</URL>
     <useCache>1</useCache>
     <source>SURA</source>
   </dataset>
@@ -97,7 +97,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_adriatic_ionian_centralmediterranean</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_adriatic_ionian_centralmediterranean</URL>
     <useCache>1</useCache>
     <source>EMODnet</source>
   </dataset>
@@ -107,7 +107,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_aegean_sea_levantine_sea</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_aegean_sea_levantine_sea</URL>
     <useCache>1</useCache>
     <source>EMODnet</source>
   </dataset>
@@ -117,7 +117,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_bay_of_biscay_iberian_coast</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_bay_of_biscay_iberian_coast</URL>
     <useCache>1</useCache>
     <source>EMODnet</source>
   </dataset>
@@ -127,7 +127,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_celtic_seas</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_celtic_seas</URL>
     <useCache>1</useCache>
     <source>EMODnet</source>
   </dataset>
@@ -137,7 +137,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_greater_north_sea</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_greater_north_sea</URL>
     <useCache>1</useCache>
     <source>EMODnet</source>
   </dataset>
@@ -147,7 +147,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_western_mediterranean</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_western_mediterranean</URL>
     <useCache>1</useCache>
     <source>EMODnet</source>
   </dataset>
@@ -157,7 +157,7 @@
     <version>2</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/west_of_lewis_2010</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/west_of_lewis_2010</URL>
     <useCache>1</useCache>
     <source>Marine Scotland</source>
   </dataset>
@@ -167,7 +167,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/ausbathytopo</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/ausbathytopo</URL>
     <useCache>1</useCache>
     <source>Geoscience Australia</source>
   </dataset>
@@ -177,7 +177,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/southwest_wa_1_3sec</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/southwest_wa_1_3sec</URL>
     <useCache>1</useCache>
     <source>NCTR</source>
   </dataset>
@@ -187,7 +187,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/southwest_wa_6sec</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/southwest_wa_6sec</URL>
     <useCache>1</useCache>
     <source>NCTR</source>
   </dataset>
@@ -197,7 +197,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/southwest_wa_48sec</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/southwest_wa_48sec</URL>
     <useCache>1</useCache>
     <source>NCTR</source>
   </dataset>
@@ -207,7 +207,7 @@
     <version>3</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/ace2</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/ace2</URL>
     <useCache>1</useCache>
     <source>DMU</source>
   </dataset>
@@ -217,7 +217,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/etopo1</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/etopo1</URL>
     <useCache>1</useCache>
     <source>NGDC</source>
   </dataset>
@@ -227,7 +227,7 @@
     <version>1</version>
     <type>netCDFtiles</type>
     <edit>0</edit>
-    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/etopo2</URL>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/etopo2</URL>
     <useCache>1</useCache>
     <source>NGDC</source>
   </dataset>

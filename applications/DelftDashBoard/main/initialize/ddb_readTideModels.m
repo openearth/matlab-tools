@@ -62,7 +62,7 @@ function handles = ddb_readTideModels(handles)
 %% When enabled on OpenDAP
 % Check for updates on OpenDAP and add data to structure
 localdir = handles.tideDir;
-url = 'http://opendap.deltares.nl/static/deltares/delftdashboard/tidemodels/tidemodels.xml';
+url = 'https://opendap.deltares.nl/static/deltares/delftdashboard/tidemodels/tidemodels.xml';
 xmlfile = 'tidemodels.xml';
 handles.tideModels = ddb_getXmlData(localdir,url,xmlfile);
 

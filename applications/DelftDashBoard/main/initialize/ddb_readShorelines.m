@@ -62,7 +62,7 @@ function handles = ddb_readShorelines(handles)
 %% When enabled on OpenDAP
 % Check for updates on OpenDAP and add data to structure
 localdir = handles.shorelineDir;
-url = 'http://opendap.deltares.nl/static/deltares/delftdashboard/shorelines/shorelines.xml';
+url = 'https://opendap.deltares.nl/static/deltares/delftdashboard/shorelines/shorelines.xml';
 xmlfile = 'shorelines.xml';
 handles.shorelines = ddb_getXmlData(localdir,url,xmlfile);
 
