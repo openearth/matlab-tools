@@ -24,7 +24,7 @@ end
 
 if ~isempty(xy_in)
     % Throw away points below zlev(1), but not points within polygon
-    % Do this by temporarily raising these points to zlev(1)+0.01
+    % Do this by temporarily raising these points to zlev(1)+0.01 
     for ip=1:length(xy_in)
         if length(xy_in(ip).x)>1
             %    xp=xy(:,1);
@@ -46,8 +46,8 @@ if ~isempty(xy_ex)
             %    yp=xy(:,2);
             xp=xy_ex(ip).x;
             yp=xy_ex(ip).y;
-            inp=inpolygon(x,y,xp,yp);
-            z(inp)=NaN;
+            exp=inpolygon(x,y,xp,yp);
+            z(exp)=NaN;
         end
     end
 %     xp_ex=xy_ex(:,1);
@@ -139,10 +139,10 @@ if ~isempty(xy_bnd_closed)
         if length(xy_bnd_closed(ip).x)>1
             xp=xy_bnd_closed(ip).x;
             yp=xy_bnd_closed(ip).y;
-            inp=inpolygon(x,y,xp,yp);
-            msk0=msk(inp); % original value of mask inside polygon
+            clsd=inpolygon(x,y,xp,yp);
+            msk0=msk(clsd); % original value of mask inside polygon
             msk0(msk0==2)=1; % set to 1
-            msk(inp)=msk0;
+            msk(clsd)=msk0;
         end
     end
 end
@@ -163,6 +163,10 @@ end
 %     end
 % end
 
-
-msk(z>zlev(2))=0;
+if ~isempty(xy_in)
+    msk(z>zlev(2)& ~inp)=0; % everything in include polygon we want to keep
+else
+    msk(z>zlev(2))=0;
+end
+    
 msk(isnan(z))=0;
