@@ -36,11 +36,19 @@ for ii=1:length(varargin)
                 zmax=varargin{ii+1};                
             case{'includepolygon'}
                 if ~isempty(varargin{ii+1})
-                    xy_in=load_polygon(varargin{ii+1});
+                    try
+                        xy_in=load_polygon(varargin{ii+1});
+                    catch
+                        xy_in=load_polygon_ascii(varargin{ii+1});                        
+                    end
                 end
             case{'excludepolygon'}
                 if ~isempty(varargin{ii+1})
-                    xy_ex=load_polygon(varargin{ii+1});
+                    try
+                        xy_ex=load_polygon(varargin{ii+1});
+                    catch
+                        xy_ex=load_polygon_ascii(varargin{ii+1});                        
+                    end                    
                 end
             case{'closedboundarypolygon'}
                 if ~isempty(varargin{ii+1})
@@ -61,6 +69,9 @@ disp('Making grid ...');
 % Create bathymetry
 disp('Making bathymetry ...');
 zz=interpolate_bathymetry_to_grid(xz,yz,[],bathy,cs,'quiet');
+if any(isnan(zz(:)))
+    disp('bathy contains NaNs, watch out!') 
+end
 
 % Create mask
 disp('Making mask ...');
@@ -98,3 +109,15 @@ for ip=1:np
     p(ip).x=x;
     p(ip).y=y;
 end
+%%
+function p=load_polygon_ascii(fname) %just load 1 polygon from ascii file
+data=load(fname);
+x = data(:,1);
+y = data(:,2);
+if x(end)~=x(1) || y(end)~=y(1)
+    x=[x;x(1)];
+    y=[y;y(1)];
+end
+
+p.x=x;
+p.y=y;
