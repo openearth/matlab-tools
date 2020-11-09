@@ -1,4 +1,17 @@
-function [r2p,setup,sig,sinc]=compute_r2p(hm0,tp,sl1,sl2,ztide,phi,drspr)
+function [r2p,setup,sig,sinc]=compute_r2p_van_ormondt(hm0,tp,sl1,sl2,ztide,phi,drspr)
+% Computes R2% run-up
+% [r2p,setup,sig,sinc]=compute_r2p_van_ormondt(hm0,tp,sl1,sl2,ztide,phi,drspr)
+% To be added: real beach profile (x,z)
+%
+% hm0   = deep water wave height Hm0 (m)
+% tp    = deep water peak wave period Tp (s)
+% sl1   = Dean slope (-)
+% sl2   = beach slope (-)
+% ztide = tide level (m)
+% phi   = angle of incidence (deg)
+% drspr = direction spreading (deg)
+%
+% e.g. [r2p,setup,sig,sinc]=compute_r2p_van_ormondt(4.0,12.0,0.03,0.05,0.0,20.0,10.0)
 %
 setup=compute_setup_filter(hm0,tp,sl1,sl2,ztide,phi,drspr);
 sig=compute_hm0_lf_filter(hm0,tp,sl1,sl2,ztide,phi,drspr);
@@ -19,7 +32,7 @@ ksi2=sl2./(sqrt(hm0./l1));
 r2p=setup+0.7917*sqrt((0.88945*sig).^2+(0.63539*sinc).^2).*ksi2.^0.16431.*ksi1.^-0.07031;
 
 
-function v=compute_setup(hm0,tp,sl1,sl2,ztide,phi,drspr)
+function v=compute_setup_filter(hm0,tp,sl1,sl2,ztide,phi,drspr)
 %
 beta(1)=6.3106953e-01;
 beta(2)=1.0000000e+00;
@@ -73,7 +86,7 @@ psib(ksib>ksibm)=psibr(ksib>ksibm);
 v=beta(1)*hm0.^beta(2).*psis.*psib.*steepness.^beta(9);
 v=v.*sqrt(cos(phi*pi/180));
 
-function v=compute_hm0_lf(hm0,tp,sl1,sl2,ztide,phi,drspr)
+function v=compute_hm0_lf_filter(hm0,tp,sl1,sl2,ztide,phi,drspr)
 %
 beta(1)=1.3353204e+00;
 beta(2)=4.0810559e-01;
@@ -127,7 +140,7 @@ if length(drspr)==1
     drspr=zeros(size(hm0))+drspr;
 end
 
-function v=compute_hm0_lf(hm0,tp,sl1,sl2,ztide,phi,drspr)
+function v=compute_hm0_hf_filter(hm0,tp,sl1,sl2,ztide,phi,drspr)
 %
 beta(1)=8.7761739e-01;
 beta(2)=1.8651668e+00;
@@ -208,7 +221,7 @@ surfslope=(fh*hm0)./(fh*hm0./sl1).^1.5;
 ksis=surfslope./(sqrt(hm0./l1));
 fac=exp(-max(beta(1).*dirspread.^beta(2) + beta(3).*ksis.^beta(4),0));
 
-function v=compute_tm01_ig(hm0,tp,sl1,sl2,ztide,phi,drspr)
+function v=compute_tm01_ig_filter(hm0,tp,sl1,sl2,ztide,phi,drspr)
 %
 beta(1)=4.3231843e+00;
 beta(2)=1.2159635e+00;
