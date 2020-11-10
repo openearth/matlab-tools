@@ -32,13 +32,21 @@ else
     % Should use phi at landfall here...
 %     phi_rel=phi_t;
 %     phi_rel=phi_rel*180/pi;
-    redfac=compute_normal_surge_reduction_factor(shelf_width,rmax,phi_rel,vt);
-    redext=compute_normal_surge_reduction_extent(shelf_width,phi_rel,rmax,r35,a);
-%    cshift=compute_normal_surge_cross_track_shift(shelf_width(ilandfall),vmax,rmax,phi_rel,r35,a(ilandfall),vt);
-    cshift=compute_normal_surge_cross_track_shift(shelf_width,vmax,rmax,phi_rel,r35,a);
-    ashift=compute_normal_surge_along_track_shift(shelf_width,phi_rel,a);
-%    lrfac=compute_normal_surge_land_reduction_factor(vmax,phi_rel,a,shelf_width,rmax,r35);
-    lrfac=compute_normal_surge_land_reduction_factor(vmax,phi_rel,a,shelf_width);
+%     redfac=compute_normal_surge_reduction_factor_02(shelf_width,rmax,phi_rel,vt);
+%     redext=compute_normal_surge_reduction_extent_02(shelf_width,phi_rel,rmax,r35,a);
+% %    cshift=compute_normal_surge_cross_track_shift(shelf_width(ilandfall),vmax,rmax,phi_rel,r35,a(ilandfall),vt);
+%     cshift=compute_normal_surge_cross_track_shift_02(shelf_width,vmax,rmax,phi_rel,r35,a);
+%     ashift=compute_normal_surge_along_track_shift_02(shelf_width,phi_rel,a);
+% %    lrfac=compute_normal_surge_land_reduction_factor(vmax,phi_rel,a,shelf_width,rmax,r35);
+%     lrfac=compute_normal_surge_land_reduction_factor_02(vmax,phi_rel,a,shelf_width);
+
+    phi=phi_rel;
+    redfac=compute_normal_surge_reduction_factor_02(shelf_width,rmax,phi,vt);
+    redext=compute_normal_surge_reduction_extent_02(shelf_width,phi,rmax,r35,a);
+    cshift=compute_normal_surge_cross_track_shift_02(shelf_width,phi,a);
+    ashift=compute_normal_surge_along_track_shift_02(shelf_width,vmax,rmax,phi,r35,a,vt);
+    lrfac=compute_normal_surge_land_reduction_factor_02(vmax,phi,a,shelf_width,rmax,r35);
+
 end
 
 % t in days

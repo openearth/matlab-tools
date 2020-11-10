@@ -1,4 +1,4 @@
-function surge=compute_ekman_surge_07(x,t,vmax,rmax,r35,vt,phi,phi_in,w,a,n,lat,iopt,varargin)
+function surge=compute_ekman_surge_11(x,t,vmax,rmax,r35,vt,phi,phi_in,w,a,n,lat,iopt,varargin)
 
 if ~isempty(varargin)
     beta=varargin{1};
@@ -49,7 +49,7 @@ end
 phi=phi*pi/180;
 
 % Positive
-tep=bet - tr - ggg*min(xx,0);
+tep=bet - tr - ggg.*min(xx,0);
 if iopt==1
     xep=xx + vt.*tr.*sin(phi) - bexp;
 else
