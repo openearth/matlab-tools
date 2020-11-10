@@ -17,8 +17,7 @@ function catalog = mvbCatalog(varargin)
 %   varargin  =
 %       token: <weboptions object>
 %           Weboptions object containing the accesstoken. Generate this
-%           token via mvbLogin. If no token is given or invalid, the user
-%           is prompted for credentials.
+%           token via mvbLogin.
 %
 %   Output:
 %       catalog: struct
@@ -27,7 +26,7 @@ function catalog = mvbCatalog(varargin)
 %   Example:
 %   Catalog = mvbCatalog(token);
 %
-%   See also: MVBLOGIN, MVBGETDATA.
+%   See also: MVBLOGIN, MVBTABLE, MVBGETDATA.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -66,15 +65,15 @@ function catalog = mvbCatalog(varargin)
 % Created: 02 May 2019
 % Created with Matlab version: 9.5.0.1067069 (R2018b) Update 4
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
-%%
-OPT.apiurl='https://api.meetnetvlaamsebanken.be';
+%% Input arguments
+OPT.apiurl='https://api.meetnetvlaamsebanken.be/V2/';
 OPT.token=weboptions;
 
 % return defaults (aka introspection)
@@ -88,9 +87,9 @@ else
     OPT = setproperty(OPT, varargin);
 end
 
-%% code
+%% Login Check
 % Check if login is still valid!
-response=webread([OPT.apiurl,'/V2/ping/'],OPT.token);
+response=webread([OPT.apiurl,'ping'],OPT.token);
 if isempty(response.Customer) %Check if login has expired.
     fprintf(1,['Your login token is invalid, please login using mvbLogin \n'...
         'Use the obtained token from mvbLogin in this function. \n']);
@@ -98,8 +97,9 @@ if isempty(response.Customer) %Check if login has expired.
     return
 end
 
+%% GET catalog
 % GET catalog from API
-catalog=webread([OPT.apiurl,'/V2/catalog'],OPT.token);
+catalog=webread([OPT.apiurl,'catalog'],OPT.token);
 
 end
 %EOF

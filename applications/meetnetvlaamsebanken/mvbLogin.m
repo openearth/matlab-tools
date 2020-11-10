@@ -29,13 +29,13 @@ function varargout = mvbLogin(varargin);
 %   varargout =
 %       token: <weboptions object>
 %           Weboptions object containing the accesstoken. 
-%       cred: struct
-%           Overview of login parameters.
+%       response: struct
+%           Server response to PING.
 %
 %   Example:
 %   token = mvbLogin('username','name@company.org','password','P4ssw0rd');
 %
-%   See also: MVBCATALOG, MVBGETDATA.
+%   See also: MVBCATALOG, MVBTABLE, MVBGETDATA.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -74,11 +74,11 @@ function varargout = mvbLogin(varargin);
 % Created: 02 May 2019
 % Created with Matlab version: 9.5.0.1067069 (R2018b) Update 4
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %% Input arguments
@@ -108,13 +108,14 @@ token=weboptions('HeaderFields',{'Authorization',[cred.token_type,' ',cred.acces
 response=webread([OPT.apiurl,'/V2/ping/'],token);
 
 if isempty(response.Customer);
+    %If the response is a struct with empty fields, login has failed.
     fprintf(2,'Login failed, try again \n');
-elseif response.Customer.Login==OPT.username
+elseif response.Customer.Login==OPT.username;
     fprintf(1,'Login successful! \n');
 end
 
-if nargout==2
-    varargout={token, cred};
+if nargout==2;
+    varargout={token, response};
 else
     varargout={token};
 end
