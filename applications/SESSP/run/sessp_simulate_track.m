@@ -14,6 +14,7 @@ landdecay=0;
 cstype='geographic';
 latitude=0;
 writeoutput=1;
+windspeedconversionfactor=0.88;
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})
@@ -44,6 +45,8 @@ for ii=1:length(varargin)
                 latitude=varargin{ii+1};
             case{'writeoutput'}
                 writeoutput=varargin{ii+1};
+            case{'windspeedconversionfactor'}
+                windspeedconversionfactor=varargin{ii+1};
         end
     end
 end
@@ -163,9 +166,10 @@ for it=1:length(track.time)
     track.r35(it)=nanmean([track.r35ne(it) track.r35se(it) track.r35sw(it) track.r35nw(it)]);
     track.phi_in(it)=phi_spiral;
 end
-track.vmax=track.vmax*1.852*0.88; % convert to km/h
-track.rmax=track.rmax*1.852; % convert to km
-track.r35 =track.r35*1.852;   % convert to km
+
+track.vmax=track.vmax*1.852*windspeedconversionfactor; % convert to km/h
+track.rmax=track.rmax*1.852;      % convert to km
+track.r35 =track.r35*1.852;       % convert to km
 
 % Compute surge
 
