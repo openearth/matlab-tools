@@ -123,23 +123,47 @@ if screensize(3)>1900
     ihres=1.2;
 end
 
-handles.GUIHandles.textAnn1=annotation('textbox',[0.02 0.3 0.7 0.2]);
-set(handles.GUIHandles.textAnn1,'Units','pixels','HitTest','off');
-set(handles.GUIHandles.textAnn1,'Position',[50 235*ihres 1000 20]);
-set(handles.GUIHandles.textAnn1,'VerticalAlignment','bottom');
-set(handles.GUIHandles.textAnn1,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0]);
+axtxt=axes;
+set(axtxt,'Parent',handles.GUIHandles.mapAxisPanel);
+set(axtxt,'Position',[10 10 300 50],'Units','pixels');
+set(axtxt,'xlim',[0 1],'ylim',[0 1]);
+set(axtxt,'color','none');
+set(axtxt,'hittest','off');
+set(axtxt,'Box','off');
+set(axtxt,'xcolor','none');
+set(axtxt,'ycolor','none');
 
-handles.GUIHandles.textAnn2=annotation('textbox',[0.02 0.3 0.7 0.2]);
-set(handles.GUIHandles.textAnn2,'Units','pixels','HitTest','off');
-set(handles.GUIHandles.textAnn2,'Position',[50 215*ihres 1000 20]);
-set(handles.GUIHandles.textAnn2,'VerticalAlignment','bottom');
-set(handles.GUIHandles.textAnn2,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0]);
+handles.GUIHandles.textAnn1=text(0.00,0.9,'');
+handles.GUIHandles.textAnn2=text(0.00,0.5,'');
+handles.GUIHandles.textAnn3=text(0.00,0.1,'');
+set(handles.GUIHandles.textAnn1,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0],'HitTest','off');
+set(handles.GUIHandles.textAnn2,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0],'HitTest','off');
+set(handles.GUIHandles.textAnn3,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0],'HitTest','off');
 
-handles.GUIHandles.textAnn3=annotation('textbox',[0.02 0.3 0.7 0.2]);
-set(handles.GUIHandles.textAnn3,'Units','pixels','HitTest','off');
-set(handles.GUIHandles.textAnn3,'Position',[50 195*ihres 1000 20]);
-set(handles.GUIHandles.textAnn3,'VerticalAlignment','bottom');
-set(handles.GUIHandles.textAnn3,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0]);
+handles.GUIHandles.instructionAxis=axtxt;
+
+axes(handles.GUIHandles.mapAxis);
+
+set(axtxt,'Position',[10 10 300 50],'Units','pixels');
+uistack(handles.GUIHandles.instructionAxis,'top');
+
+% handles.GUIHandles.textAnn1=annotation('textbox',[0.02 0.3 0.7 0.2]);
+% set(handles.GUIHandles.textAnn1,'Units','pixels','HitTest','off');
+% set(handles.GUIHandles.textAnn1,'Position',[50 235*ihres 1000 20]);
+% set(handles.GUIHandles.textAnn1,'VerticalAlignment','bottom');
+% set(handles.GUIHandles.textAnn1,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0]);
+% 
+% handles.GUIHandles.textAnn2=annotation('textbox',[0.02 0.3 0.7 0.2]);
+% set(handles.GUIHandles.textAnn2,'Units','pixels','HitTest','off');
+% set(handles.GUIHandles.textAnn2,'Position',[50 215*ihres 1000 20]);
+% set(handles.GUIHandles.textAnn2,'VerticalAlignment','bottom');
+% set(handles.GUIHandles.textAnn2,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0]);
+% 
+% handles.GUIHandles.textAnn3=annotation('textbox',[0.02 0.3 0.7 0.2]);
+% set(handles.GUIHandles.textAnn3,'Units','pixels','HitTest','off');
+% set(handles.GUIHandles.textAnn3,'Position',[50 195*ihres 1000 20]);
+% set(handles.GUIHandles.textAnn3,'VerticalAlignment','bottom');
+% set(handles.GUIHandles.textAnn3,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0]);
 
 % Now initialize the dummy data
 % Bathymetry

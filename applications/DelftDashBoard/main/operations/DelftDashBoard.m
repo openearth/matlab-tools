@@ -108,9 +108,12 @@ try
     drawnow;
         
     %maximizeWindow('Delft Dashboard');
+    set(gcf,'WindowState','maximized');
     
     pause(0.1);
-        
+    
+    ddb_resize;
+    
     set(handles.GUIHandles.mainWindow,'Visible','on');
 
     drawnow;

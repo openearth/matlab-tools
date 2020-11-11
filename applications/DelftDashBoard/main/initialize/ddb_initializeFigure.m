@@ -68,25 +68,17 @@ set(h,'WindowState','maximized');
 
 set(h,'Tag','MainWindow','Visible','off');
 
-%maximizeWindow('Delft Dashboard');
-
 set(h,'Renderer','opengl');
 
 handles.backgroundColor=get(h,'Color');
 
 figure(h);
 
-%set(h,'Tag','MainWindow','Visible','off');
-
 fh = get(h,'JavaFrame'); % Get Java Frame
 fh.setFigureIcon(javax.swing.ImageIcon([handles.settingsDir filesep 'icons' filesep 'deltares.gif']));
 
-%set(h,'Tag','MainWindow','Visible','off');
-
-
 set(h,'toolbar','figure');
 set(h,'Tag','MainWindow');
-
 
 handles=ddb_makeMenu(handles);
 
@@ -97,7 +89,7 @@ handles=ddb_makeToolBar(handles);
 str=['WGS 84 / UTM zone ' num2str(handles.screenParameters.UTMZone{1}) 'N'];
 set(handles.GUIHandles.Menu.CoordinateSystem.UTM,'Label',str);
 
-set(handles.GUIHandles.mainWindow,'Visible','off');
+% set(handles.GUIHandles.mainWindow,'Visible','off');
 
 set(handles.GUIHandles.mainWindow,'WindowKeyPressFcn',{@ddb_pan,'start',@ddb_updateDataInScreen,[],@ddb_updateDataInScreen,[]});
 set(handles.GUIHandles.mainWindow,'WindowKeyReleaseFcn',{@ddb_pan,'stop',@ddb_updateDataInScreen,[],@ddb_updateDataInScreen,[]});
@@ -106,4 +98,5 @@ handles.GUIHandles.panning=0;
 setHandles(handles);
 
 set(h,'Tag','MainWindow','Visible','off');
+
 drawnow;
