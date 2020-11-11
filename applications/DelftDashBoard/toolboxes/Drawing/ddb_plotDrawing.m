@@ -67,10 +67,14 @@ switch lower(option)
         delete(h);
         h=findobj(gca,'Tag','drawingpolygon');
         delete(h);
+        h=findobj(gca,'Tag','drawingspline');
+        delete(h);
     case{'activate'}
         h=findobj(gca,'Tag','drawingpolyline');
         set(h,'Visible','on');
         h=findobj(gca,'Tag','drawingpolygon');
+        set(h,'Visible','on');
+        h=findobj(gca,'Tag','drawingspline');
         set(h,'Visible','on');
     case{'deactivate'}
         handles=getHandles;
@@ -78,6 +82,8 @@ switch lower(option)
             h=findobj(gca,'Tag','drawingpolyline');
             set(h,'Visible','off');
             h=findobj(gca,'Tag','drawingpolygon');
+            set(h,'Visible','off');
+            h=findobj(gca,'Tag','drawingspline');
             set(h,'Visible','off');
         end
 end
