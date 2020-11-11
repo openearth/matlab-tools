@@ -179,13 +179,13 @@ if returnNONsubsetImage
     ylimOrLonlim = y(:); 
 end
 
-if usegeocoordinates
-    % lat/lon limits switch to x/y limits here: 
-    if ~strcmp(I.ModelType,'ModelTypeGeographic')
-        assert(license('test','map_toolbox')==1,'Mapping toolbox needed to project between lat/lon limits and x,y limits. Specify limits in x,y coordinates.')
-        [xlimOrLatlim,ylimOrLonlim]=projfwd(I,xlimOrLatlim,ylimOrLonlim);
-    end
-end
+%if usegeocoordinates
+%    % lat/lon limits switch to x/y limits here: 
+%    if ~strcmp(I.ModelType,'ModelTypeGeographic')
+%        assert(license('test','map_toolbox')==1,'Mapping toolbox needed to project between lat/lon limits and x,y limits. Specify limits in x,y coordinates.')
+%        [xlimOrLatlim,ylimOrLonlim]=projfwd(I,xlimOrLatlim,ylimOrLonlim);
+%    end
+%end
 
 
 xlim = [min(xlimOrLatlim)-buffer_x max(xlimOrLatlim)+buffer_x]; 
@@ -238,24 +238,24 @@ if nargout == 4
     I.FileSize = numel(A); 
     I.Height = size(A,1); 
     I.Width = size(A,2); 
-    try
-        I.TiePoints.WorldPoints.X = x(1);
-        I.TiePoints.WorldPoints.Y = y(1);
-        I.SpatialRef.RasterSize = [size(A,1),size(A,2)];
-        I.RefMatrix(3,1) = x(1);
-        I.RefMatrix(3,2) = y(1);
-        I.BoundingBox = [min(x) min(y); max(x) max(y)];
-        I.CornerCoords.X = [min(x) max(x) max(x) min(x)];
-        I.CornerCoords.Y = [max(y) max(y) min(y) min(y)];
-        %TODO: check whether GTRasterTypeGeoKey is RasterPixelIsArea or RasterPixelIsPoint
-        I.CornerCoords.Row = .5 + [0 0 size(A,1) size(A,1)]; %TODO: is this .5 always true?  
-        I.CornerCoords.Col = .5 + [0 size(A,2) size(A,2) 0];
-        [I.CornerCoords.Lat,I.CornerCoords.Lon] = projinv(I,I.CornerCoords.X,I.CornerCoords.Y);
-        I.GeoTIFFTags.ModelTiepointTag(4) = x(1);
-        I.GeoTIFFTags.ModelTiepointTag(5) = y(1);
-        I.SpatialRef.XLimWorld = [min(x),max(x)];
-        I.SpatialRef.YLimWorld = [min(y),max(y)];
-    catch,end
+%     try
+%         I.TiePoints.WorldPoints.X = x(1);
+%         I.TiePoints.WorldPoints.Y = y(1);
+%         I.SpatialRef.RasterSize = [size(A,1),size(A,2)];
+%         I.RefMatrix(3,1) = x(1);
+%         I.RefMatrix(3,2) = y(1);
+%         I.BoundingBox = [min(x) min(y); max(x) max(y)];
+%         I.CornerCoords.X = [min(x) max(x) max(x) min(x)];
+%         I.CornerCoords.Y = [max(y) max(y) min(y) min(y)];
+%         %TODO: check whether GTRasterTypeGeoKey is RasterPixelIsArea or RasterPixelIsPoint
+%         I.CornerCoords.Row = .5 + [0 0 size(A,1) size(A,1)]; %TODO: is this .5 always true?  
+%         I.CornerCoords.Col = .5 + [0 size(A,2) size(A,2) 0];
+%         [I.CornerCoords.Lat,I.CornerCoords.Lon] = projinv(I,I.CornerCoords.X,I.CornerCoords.Y);
+%         I.GeoTIFFTags.ModelTiepointTag(4) = x(1);
+%         I.GeoTIFFTags.ModelTiepointTag(5) = y(1);
+%         I.SpatialRef.XLimWorld = [min(x),max(x)];
+%         I.SpatialRef.YLimWorld = [min(y),max(y)];
+%     catch,end
 end
 
 %% Clean up: 
