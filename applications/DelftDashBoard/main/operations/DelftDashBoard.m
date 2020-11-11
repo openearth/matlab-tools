@@ -87,7 +87,7 @@ warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
 figureiconfile=[handles.settingsDir 'icons' filesep 'deltares.gif'];
 
 % Open Splash Screen
-frame=splash([handles.settingsDir 'icons' filesep 'DelftDashBoard.jpg'],2);
+frame=splash([handles.settingsDir 'icons' filesep 'DelftDashBoard.jpg'],10);
 
 try
     
@@ -109,7 +109,7 @@ try
         
     %maximizeWindow('Delft Dashboard');
     
-    pause(1);
+    pause(0.1);
         
     set(handles.GUIHandles.mainWindow,'Visible','on');
 

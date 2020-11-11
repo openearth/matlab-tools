@@ -207,6 +207,7 @@ if point1(1)>=xl(1) && point1(1)<=xl(2) && point1(2)>=yl(1) && point1(2)<=yl(2)
         end
     end
     set(handles.GUIHandles.mapAxis,'xlim',xl,'ylim',yl);
+    drawnow;
     handles.screenParameters.xLim=xl;
     handles.screenParameters.yLim=yl;
     

@@ -92,6 +92,7 @@ set(ax,'xlim',handles.screenParameters.xLim,'ylim',handles.screenParameters.yLim
 hold on;
 
 handles.GUIHandles.mapAxis=ax;
+toolbar = axtoolbar(ax); % turn off zoom buttons in axis
 
 % Adding colorbar
 setHandles(handles);

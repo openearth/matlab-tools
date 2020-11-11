@@ -97,9 +97,11 @@ switch lower(varargin{1}),
         disp('Initializing models ...');
         ddb_initializeModels;
 
+
         disp('Initializing toolboxes ...');
         ddb_initializeToolboxes;
 
+%        set(handles.GUIHandles.mainWindow,'visible','off');
         disp('Adding model tabpanels ...');
         ddb_addModelTabPanels;
         

@@ -64,6 +64,7 @@ handles=getHandles;
 
 handles.GUIHandles.mainWindow=MakeNewWindow('Delft Dashboard',[1300 700],[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 h=handles.GUIHandles.mainWindow;
+set(h,'WindowState','maximized');
 
 set(h,'Tag','MainWindow','Visible','off');
 
@@ -75,17 +76,23 @@ handles.backgroundColor=get(h,'Color');
 
 figure(h);
 
+%set(h,'Tag','MainWindow','Visible','off');
+
 fh = get(h,'JavaFrame'); % Get Java Frame
 fh.setFigureIcon(javax.swing.ImageIcon([handles.settingsDir filesep 'icons' filesep 'deltares.gif']));
+
+%set(h,'Tag','MainWindow','Visible','off');
+
 
 set(h,'toolbar','figure');
 set(h,'Tag','MainWindow');
 
+
 handles=ddb_makeMenu(handles);
+
 handles=ddb_makeToolBar(handles);
 
-% set(handles.GUIHandles.Menu.Toolbox.ModelMaker,'Checked','on');
-% set(handles.GUIHandles.Menu.Model.Delft3DFLOW,'Checked','on');
+%set(h,'Tag','MainWindow','Visible','off');
 
 str=['WGS 84 / UTM zone ' num2str(handles.screenParameters.UTMZone{1}) 'N'];
 set(handles.GUIHandles.Menu.CoordinateSystem.UTM,'Label',str);
@@ -98,3 +105,5 @@ handles.GUIHandles.panning=0;
 
 setHandles(handles);
 
+set(h,'Tag','MainWindow','Visible','off');
+drawnow;
