@@ -55,7 +55,7 @@ if isfield(flg,'lims')
         lims.x=flg.lims.x;
     end
     if isfield(flg.lims,'y')
-        lims.y=flg.lims.y;
+        lims.z=flg.lims.y; %we put it in z!
     end 
     if isfield(flg.lims,'z')
         lims.z=flg.lims.z;
