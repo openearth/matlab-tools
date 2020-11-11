@@ -181,7 +181,7 @@ switch lower(rawdataformat)
     case{'geotiff'}
         if ~iscell(fname1)
             % just one file
-            [z,x,y,I] = geoimread(fname1,'info');
+            [z,x,y,I] = ddb_geoimread(fname1,'info');
             z=flipud(z);
             z(z<-15000)=NaN; % Get rid of no data values
             x00=min(x);
@@ -195,7 +195,7 @@ switch lower(rawdataformat)
                 % Too large, read piece by piece...
                 pbyp=1;
             else
-                [z,xdum,ydum,I] = geoimread(fname1);
+                [z,xdum,ydum,I] = ddb_geoimread(fname1);
                 z=flipud(z);
                 z(z<-15000)=NaN;
             end
@@ -207,7 +207,7 @@ switch lower(rawdataformat)
             ymax=-1e9;
             for ii=1:length(fname1)
                 filename=fname1{ii};
-                [A,x,y,I]=geoimread(filename,'info');
+                [A,x,y,I]=ddb_geoimread(filename,'info');
                 xx=[x(1) x(end) x(end) x(1) x(1)];
                 yy=[y(end) y(end) y(1) y(1) y(end)];
                 dx=(x(end)-x(1))/(length(x)-1);
@@ -302,7 +302,7 @@ if imaketiles
 
                 if multiple_files
                     % This is where we read in the separate files
-                    [z,x,y,I] = geoimread(fname1{ifile});
+                    [z,x,y,I] = ddb_geoimread(fname1{ifile});
                     xminf=min(x);
                     yminf=min(y);
                     z=flipud(z);
@@ -404,7 +404,7 @@ if imaketiles
                                     end
                                     %                                [x,y,zz]=readArcInfo(fname1,'x',xx,'y',yy);
                                 case{'geotiff'}
-                                    [zz,xdum,ydum,I] = geoimread(fname1,[xmin xmax],[ymin ymax]);
+                                    [zz,xdum,ydum,I] = ddb_geoimread(fname1,[xmin xmax],[ymin ymax]);
                                     zz=flipud(zz);
                                     zz(zz<-15000)=NaN;
                                     zz(zz>15000)=NaN;
@@ -427,7 +427,7 @@ if imaketiles
                                         shite=1;
                                     end
                                     toc
-%                                     [zz,xdum,ydum,I] = geoimread(fname1,[xmin xmax],[ymin ymax]);
+%                                     [zz,xdum,ydum,I] = ddb_geoimread(fname1,[xmin xmax],[ymin ymax]);
 %                                     zz=flipud(zz);
 %                                     zz(zz<-15000)=NaN;
 %                                     zz(zz>15000)=NaN;
