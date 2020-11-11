@@ -62,31 +62,35 @@ function ddb_editViewSettings
 %%
 h=getHandles;
 
-f=MakeNewWindow('View Settings',[210 230],'modal',[h.settingsDir filesep 'icons' filesep 'deltares.gif']);
+f=MakeNewWindow('View Settings',[250 250],'modal',[h.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 bgc=get(gcf,'Color');
 
 str={'Earth','Jet'};
 ii=strmatch(h.screenParameters.colorMap,str,'exact');
-handles.SelectColorMap = uicontrol(gcf,'Style','popupmenu','Position',[30 165 80 20],'String',str,'BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.TextColorMap = uicontrol(gcf,'Style','text','String','Color Map','Position',[30 185  80 20],'BackgroundColor',bgc,'Tag','UIControl');
+handles.SelectColorMap = uicontrol(gcf,'Style','popupmenu','Position',[30 195 80 20],'String',str,'BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.TextColorMap = uicontrol(gcf,'Style','text','String','Color Map','Position',[30 215  80 20],'BackgroundColor',bgc,'Tag','UIControl');
 set(handles.SelectColorMap,'Value',ii);
 
-handles.EditCMin = uicontrol(gcf,'Style','edit','Position',[30 115  50 20],'HorizontalAlignment','right', 'BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.EditCMax = uicontrol(gcf,'Style','edit','Position',[30 140  50 20],'HorizontalAlignment','right', 'BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.EditCMin = uicontrol(gcf,'Style','edit','Position',[30 145  50 20],'HorizontalAlignment','right', 'BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.EditCMax = uicontrol(gcf,'Style','edit','Position',[30 170  50 20],'HorizontalAlignment','right', 'BackgroundColor',[1 1 1],'Tag','UIControl');
 set(handles.EditCMin,'String',h.screenParameters.cMin);
 set(handles.EditCMax,'String',h.screenParameters.cMax);
-handles.TextCMin = uicontrol(gcf,'Style','text','String','CMin','Position',[85 111  50 20],'HorizontalAlignment','left','BackgroundColor',bgc,'Tag','UIControl');
-handles.TextCMax = uicontrol(gcf,'Style','text','String','CMax','Position',[85 136  50 20],'HorizontalAlignment','left','BackgroundColor',bgc,'Tag','UIControl');
+handles.TextCMin = uicontrol(gcf,'Style','text','String','CMin','Position',[85 141  50 20],'HorizontalAlignment','left','BackgroundColor',bgc,'Tag','UIControl');
+handles.TextCMax = uicontrol(gcf,'Style','text','String','CMax','Position',[85 166  50 20],'HorizontalAlignment','left','BackgroundColor',bgc,'Tag','UIControl');
 
-handles.ToggleAutomatic = uicontrol(gcf,'Style','checkbox','String','Automatic Color Limits','Position',[30 90  200 20],'BackgroundColor',bgc,'Tag','UIControl');
+handles.ToggleAutomatic = uicontrol(gcf,'Style','checkbox','String','Automatic Color Limits','Position',[30 120  200 20],'BackgroundColor',bgc,'Tag','UIControl');
 set(handles.ToggleAutomatic,'Value',h.screenParameters.automaticColorLimits);
 
-handles.TextQuality = uicontrol(gcf,'Style','text','String','Quality','Position',[30 62  50 20],'BackgroundColor',bgc,'Tag','UIControl');
+handles.TextQuality = uicontrol(gcf,'Style','text','String','Quality','Position',[30 92  50 20],'BackgroundColor',bgc,'Tag','UIControl');
 str={'Low','Medium','High'};
-handles.SelectQuality = uicontrol(gcf,'Style','popupmenu','Position',[86 65 80 20],'String',str,'BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.SelectQuality = uicontrol(gcf,'Style','popupmenu','Position',[86 95 80 20],'String',str,'BackgroundColor',[1 1 1],'Tag','UIControl');
 ii=strmatch(h.screenParameters.backgroundQuality,str,'exact');
 set(handles.SelectQuality,'Value',ii);
+
+handles.EditHillShading = uicontrol(gcf,'Style','edit','Position',[100 65 40 20],'HorizontalAlignment','right', 'BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.TextHillShading = uicontrol(gcf,'Style','text','String','Hill Shading','Position',[30 62 60 20],'HorizontalAlignment','left','BackgroundColor',bgc,'Tag','UIControl');
+set(handles.EditHillShading,'String',h.screenParameters.hillShading);
 
 
 handles.PushOK     = uicontrol(gcf,'Style','pushbutton','String','OK',    'Position',[110 20 60 30]);
@@ -139,6 +143,8 @@ str=get(handles.SelectQuality,'String');
 ii=get(handles.SelectQuality,'Value');
 qual=str{ii};
 
+hs=str2double(get(handles.EditHillShading,'String'));
+
 if cmin~=h.screenParameters.cMin || cmax~=h.screenParameters.cMax || autocol~=h.screenParameters.automaticColorLimits || ~strcmpi(h.screenParameters.colorMap,clmap)
     plotnew=1;
 else
@@ -150,6 +156,7 @@ h.screenParameters.cMax=cmax;
 h.screenParameters.colorMap=clmap;
 h.screenParameters.automaticColorLimits=autocol;
 h.screenParameters.backgroundQuality=qual;
+h.screenParameters.hillShading=hs;
 
 setHandles(h);
 

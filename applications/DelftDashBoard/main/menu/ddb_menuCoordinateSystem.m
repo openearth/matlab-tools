@@ -95,6 +95,7 @@ if ok
     set(ch,'Checked','off');
     set(hObject,'Checked','on');
     handles.oldCoordinateSystem=handles.screenParameters.coordinateSystem;
+    handles.screenParameters.oldCoordinateSystem=handles.screenParameters.coordinateSystem;
     lab=get(hObject,'Label');
     if ~strcmp(handles.screenParameters.coordinateSystem.name,lab)
         handles.convertModelData=iconv;
@@ -118,6 +119,7 @@ if ok
     if ~strcmp(handles.screenParameters.coordinateSystem.name,lab)
         handles.convertModelData=iconv;
         handles.oldCoordinateSystem=handles.screenParameters.coordinateSystem;
+        handles.screenParameters.oldCoordinateSystem=handles.screenParameters.coordinateSystem;
         handles.screenParameters.coordinateSystem.name=lab;
         handles.screenParameters.coordinateSystem.type='Cartesian';
         setHandles(handles);
@@ -157,6 +159,7 @@ if ok
         if ~strcmp(handles.screenParameters.coordinateSystem.name,lab)
             handles.convertModelData=iconv;
             handles.oldCoordinateSystem=handles.screenParameters.coordinateSystem;
+            handles.screenParameters.oldCoordinateSystem=handles.screenParameters.coordinateSystem;
             handles.screenParameters.coordinateSystem.name=lab;
             handles.screenParameters.coordinateSystem.type='Cartesian';
             setHandles(handles);
@@ -178,6 +181,7 @@ if ok
     if ~strcmp(handles.screenParameters.coordinateSystem.name,lab)
         handles.convertModelData=iconv;
         handles.oldCoordinateSystem=handles.screenParameters.coordinateSystem;
+        handles.screenParameters.oldCoordinateSystem=handles.screenParameters.coordinateSystem;
         handles.screenParameters.coordinateSystem.name=lab;
         handles.screenParameters.coordinateSystem.type='Cartesian';
         setHandles(handles);
@@ -198,6 +202,7 @@ if ok
         ch=get(get(hObject,'Parent'),'Children');
         set(ch,'Checked','off');
         set(handles.GUIHandles.Menu.CoordinateSystem.Geographic,'Label',cs,'Checked','on');
+        handles.screenParameters.oldCoordinateSystem=handles.screenParameters.coordinateSystem;
         handles.screenParameters.coordinateSystem.name=cs;
         handles.screenParameters.coordinateSystem.type='Geographic';
         setHandles(handles);
@@ -218,6 +223,7 @@ if ok
         ch=get(get(hObject,'Parent'),'Children');
         set(ch,'Checked','off');
         set(handles.GUIHandles.Menu.CoordinateSystem.Cartesian,'Label',cs,'Checked','on');
+        handles.screenParameters.oldCoordinateSystem=handles.screenParameters.coordinateSystem;
         handles.screenParameters.coordinateSystem.name=cs;
         handles.screenParameters.coordinateSystem.type='Cartesian';
         setHandles(handles);

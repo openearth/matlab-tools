@@ -107,16 +107,20 @@ else
         mnz=handles.screenParameters.cMin;
     end
 
-    % Add shading
-    switch lower(handles.screenParameters.coordinateSystem.type)
-        case{'geographic'}        
-            zf=0.00010;
-        otherwise
-            zf=10;
+    if handles.screenParameters.hillShading>0
+        % Add shading
+        switch lower(handles.screenParameters.coordinateSystem.type)
+            case{'geographic'}
+                zf=0.00001*handles.screenParameters.hillShading;
+            otherwise
+                zf=handles.screenParameters.hillShading;
+        end
+        hs = hillshade(zz,xx,yy,'zfactor',zf);
+        hs=hs/255;
+        hs=hs+0.25;
+    else
+        hs=1;
     end
-    hs = hillshade(zz,xx,yy,'zfactor',zf);
-    hs=hs/255;
-    hs=hs+0.2;
     
     zz0=zz;
     zz=min(zz,mxz);

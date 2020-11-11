@@ -98,7 +98,7 @@ switch nsys,
             yutm1=(ii-11)*dy+10000000;
             yutm2=(ii-10)*dy+10000000;
         end
-        xutm1=0;
+        xutm1=-200000;
         xutm2=1000000;
         handles.screenParameters.xMaxRange=[-2000000 3000000];
         handles.screenParameters.yMaxRange=[-2000000 10000000];

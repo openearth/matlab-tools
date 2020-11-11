@@ -64,7 +64,8 @@ h=getHandles;
 
 % fig0=gcf;
 
-fig=MakeNewWindow('Select UTM Zone',[950 550],[h.settingsDir filesep 'icons' filesep 'deltares.gif'],'modal');
+%fig=MakeNewWindow('Select UTM Zone',[950 550],[h.settingsDir filesep 'icons' filesep 'deltares.gif'],'modal');
+fig=MakeNewWindow('Select UTM Zone',[950 550],[h.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 set(fig,'Renderer','opengl');
 
@@ -111,9 +112,10 @@ handles.TextZone = uicontrol(gcf,'Style','text','String',['UTM Zone : ',str],'Po
 
 PlotUTMZone(h.screenParameters.UTMZone);
 
+drawnow;
 %pause(0.2);
 
-set(gcf,'WindowButtonDownFcn',{@SelectZone});
+set(fig,'WindowButtonDownFcn',{@SelectZone});
 handles.screenParameters.UTMZone=h.screenParameters.UTMZone;
 
 guidata(gcf,handles);

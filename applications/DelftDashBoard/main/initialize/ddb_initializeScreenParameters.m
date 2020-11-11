@@ -82,6 +82,7 @@ for i=1:handles.shorelines.nrShorelines
 end
 
 handles.screenParameters.backgroundQuality='Medium';
+handles.screenParameters.hillShading=10;
 
 handles.screenParameters.satelliteImageType='aerial';
 
@@ -95,6 +96,7 @@ handles.screenParameters.cMin=-10000;
 handles.screenParameters.cMax=10000;
 handles.screenParameters.automaticColorLimits=1;
 handles.screenParameters.colorMap='Earth';
+
 
 handles.screenParameters.xLim=[-180 180];
 handles.screenParameters.yLim=[-90 90];
