@@ -36,7 +36,7 @@ def.sim_in=2;
 % def.folder='p:\11203223-tki-rivers\02_rijntakken_2020\04_runs\15_morpho_j11\straight_morpho_1995_2011\dflowfm\';
 % def.folder='p:\11203223-tki-rivers\03_maas_2020\04_runs\03_dflow1d_morphological\012\j19\dflow1d\';
 % def.folder='c:\Users\chavarri\temporal\201009_rt_hkv\r007\dflowfm\';
-def.folder='p:\11203223-tki-rivers\05_testing\09_dredging\r013\dflowfm';
+def.folder='p:\11203223-tki-rivers\02_rijntakken_2020\04_runs\08_morpho_1\mr1_070\dflowfm';
 % def.folder='p:\11205272_waterverd_verzilting_2020\006_Vaardiepte_voorspellen\02_Modelresultaten\DIMR\realization_1\dflow1d\';
 % def.folder='p:\11204644-evaluatie-langsdammen\wp10_beheer_onderhoud_kosten\04_sm\01_runs\r_001\';
 % def.folder='c:\Users\chavarri\temporal\D3D\runs\V\080\dflowfm\';
@@ -130,7 +130,7 @@ simdef.flg.which_s=4; %which plot style:
 % def.branch={'01_SAZ','02_SAZ','03_SAZ','04_SAZ','05_SAZ','06_SAZ','07_SAZ','08_SAZ','09_SAZ','10_SAZ','11_SAZ','01_SAZ','13_SAZ_A','13_SAZ_B_A','13_SAZ_B_B_A','13_SAZ_B_B_B_A','13_SAZ_B_B_B_B','14_SAZ','15_SAZ','16_SAZ_A','16_SAZ_B'}; 
 % def.branch={'29_A','29_B_A','29_B_B','29_B_C','29_B_D','52_A','52_B','31_A_A','31_A_B','31_A_C','31_B','51_A','BovenLobith','Bovenrijn'};
 % def.branch={'Nederrijn1','Nederrijn2','Nederrijn3','Nederrijn4','Nederrijn5','Nederrijn6','Lek1','Lek2','Lek4','Lek5','Lek6','Lek7','Lek8'};
-% def.branch={'Waal1','Waal2','Waal3','Waal4','Waal5','Waal6'}; %RT+G Waal;
+def.branch={'Waal1','Waal2','Waal3','Waal4','Waal5','Waal6'}; %RT+G Waal;
 % def.branch={'PanKan1','PanKan2'}; 
 % def.branch={'IJssel01','IJssel02','IJssel03','IJssel04','IJssel05','IJssel06','IJssel07','IJssel08','IJssel09','IJssel10','IJssel11','IJssel12'}; 
 % def.branch={'Kattendiep1','Kattendiep2'}; 
@@ -178,12 +178,14 @@ simdef.flg.which_s=4; %which plot style:
     %1='time' is a single time or a vector with the time steps to plot. If NaN it plots the last time step; 
     %2='time' is the spacing between 1 and the last results;
 def.rsl_input=1; 
-def.rsl_time=NaN;
+def.rsl_time=1;
 
     %% print
-simdef.flg.print=NaN; %NaN=nothing; 0=pause until click; 0.5=pause 'pauset' time; 1=eps; 2=png
+simdef.flg.print=2; %NaN=nothing; 0=pause until click; 0.5=pause 'pauset' time; 1=eps; 2=png
 simdef.flg.pauset=0.1;
 simdef.flg.save_name=NaN; %name to save a figure, if NaN it gives automatic name
+
+simdef.flg.fig_visible=1; %see plot: 0=NO; 1=YES
 
 simdef.flg.elliptic=0; %plot elliptic results: 0=NO; 1=YES (from ect); 2=YES (from D3D)
 
@@ -192,8 +194,8 @@ simdef.flg.plot_unity=1; %conversion from m
 simdef.flg.plot_unitz=1; %conversion from m
 % simdef.flg.plot_unitt=1; %conversion from s
 % simdef.flg.plot_unitt=1/3600; %conversion from s
-simdef.flg.plot_unitt=1/3600/24; %conversion from s
-% simdef.flg.plot_unitt=1/3600/24/365; %conversion from s
+% simdef.flg.plot_unitt=1/3600/24; %conversion from s
+simdef.flg.plot_unitt=1/3600/24/365; %conversion from s
 
 %plot limits (comment to make it automatic)
 % simdef.flg.lims.x=[60,70]; %x limit in [m]
@@ -237,9 +239,9 @@ simdef.D3D_home=NaN;
 simdef.flg.mean_type=2; %1=log2; 2=mean
 
 %% conversion to river kilometers
-% in_read.path_rkm="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\river_kilometers\rijntakken\irm\rkm_rijntakken_rhein.csv";
-% in_read.rkm_curved="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\river_kilometers\rijntakken\irm\rijn-flow-model_map_curved.nc";
-% in_read.rkm_TolMinDist=300; %tolerance for accepting an rkm point
+in_read.path_rkm="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\river_kilometers\rijntakken\irm\rkm_rijntakken_rhein.csv";
+in_read.rkm_curved="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\river_kilometers\rijntakken\irm\rijn-flow-model_map_curved.nc";
+in_read.rkm_TolMinDist=300; %tolerance for accepting an rkm point
 
 %%
 %% CALL

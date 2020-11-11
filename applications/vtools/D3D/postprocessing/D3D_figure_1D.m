@@ -47,6 +47,10 @@ if isfield(flg,'prnt_size')==0
     flg.prnt_size=[0,0,25.4,19.05];
 end
 
+if isfield(flg,'fig_visible')==0
+    flg.fig_visible=1;
+end
+
 %% data rework
 
 
@@ -129,7 +133,7 @@ cmap=brewermap(100,'RdYlBu');
 
 %figure initialize
 han.fig=figure('name',prnt.filename);
-set(han.fig,'paperunits','centimeters','paperposition',prnt.size)
+set(han.fig,'paperunits','centimeters','paperposition',prnt.size,'visible',flg.fig_visible)
 set(han.fig,'units','normalized','outerposition',[0,0,1,1])
 [mt,mb,mr,ml,sh,sv]=pre_subaxis(han.fig,marg.mt,marg.mb,marg.mr,marg.ml,marg.sh,marg.sv);
 
