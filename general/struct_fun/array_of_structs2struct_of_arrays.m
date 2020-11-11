@@ -25,8 +25,17 @@ function S1 = array_of_structs2struct_of_arrays(S2,varargin)
 % If a field has an odd size (or is []) in one element s2(i), this is 
 % considered an error. To continue with the other fieldnames that are OK 
 % use array_of_structs2struct_of_arrays(s2,'IgnoreErrors',1);
+%
+% Input:
+%   S2: non-scalar struct.
+%   varargin:
+%       IgnoreErrors: ignore fields that generate an error, boolean, default false
+%       ExclField: exclude fields from transformation, cell array, default none
+% 
+% Output:
+%   S1: scalar struct.
 %   
-%See also: CELL2STRUCT, STRUCT2CELL, PERMUTE, cell2mat
+%See also: CELL2STRUCT, STRUCT2CELL, PERMUTE, cell2mat, struct_of_arrays2array_of_structs
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -66,69 +75,73 @@ function S1 = array_of_structs2struct_of_arrays(S2,varargin)
 % $HeadURL$
 % $Keywords: $
 
-OPT.IgnoreErrors = 0;
+OPT.IgnoreErrors = false;
+OPT.ExclFld     = '';
 OPT = setproperty(OPT,varargin{:});
 
 fldnames = fieldnames(S2);
 n        = length(S2);
 
-C = struct2cell(S2);
+% C = struct2cell(S2);
 
 for ifld = 1 : length(fldnames)  % loop on fields
+    fldname = fldnames{ifld};
+    if any(strcmp(fldname,OPT.ExclFld))
+        fprintf(1,'Field: ''%s'' is excluded\n.',fldnames{ifld});
+    else
+        str = ischar(S2(1).(fldname)) || iscellstr(S2(1).(fldname));
+        ignore = 0;
 
-   fldname = fldnames{ifld};
-   str = ischar(S2(1).(fldname)) | iscellstr(S2(1).(fldname));
-   ignore = 0;
-   
-   if str
-      %% check for identical type
-      for i = 1 : n
-         if ~(ischar(S2(i).(fldname)) |iscellstr(S2(i).(fldname)))
-         if OPT.IgnoreErrors
-         warning(['Field ''',fldname,''' in struct(',num2str(i),') is not a char while in struct(1) it is.'])
-         ignore = 1;
-         else
-         error (['Field ''',fldname,''' in struct(',num2str(i),') is not a char while in struct(1) it is.'])
-         end
-         end
-      end
-      %% merge data      
-      if ~ignore
-          for i = 1 : n
-             if ischar(S2(i).(fldname))
-             S1.(fldname){i} = S2(i).(fldname);
-             else
-             S1.(fldname){i} = char(S2(i).(fldname));
-             end
-          end      
-      end
-   else
-      sz = size(S2(1).(fldname));
-      %% check for identical type
-      for i = 1 : n
-         if ~isnumeric(S2(i).(fldname))
-         error(['Field ''',fldname,''' in struct(',num2str(i),') is not numeric while in struct(1) it is.'])
-         end
-      end
-      %% check for identical size
-      for i = 1 : n
-         if ~isequal(size(S2(i).(fldname)),sz)
-         if OPT.IgnoreErrors
-         warning(['Size of field ''',fldname,''' in struct(',num2str(i),') does not have same size as in struct(1).'])
-         ignore = 1;
-         else
-         error (['Size of field ''',fldname,''' in struct(',num2str(i),') does not have same size as in struct(1).'])
-         end
-         end
-      end    
-      %% merge data
-      if ~ignore
-          S1.(fldname) = repmat(nan,[n sz(:)']);
-          for i = 1 : n
-             S1.(fldname)(i,:) = S2(i).(fldname)(:);
-          end
-      end
-   end
+        if str
+            %% check for identical type
+            for i = 1 : n
+                if ~(ischar(S2(i).(fldname)) || iscellstr(S2(i).(fldname)))
+                    if OPT.IgnoreErrors
+                        warning(['Field ''',fldname,''' in struct(',num2str(i),') is not a char while in struct(1) it is.'])
+                        ignore = 1;
+                    else
+                        error (['Field ''',fldname,''' in struct(',num2str(i),') is not a char while in struct(1) it is.'])
+                    end
+                end
+            end
+            %% merge data      
+            if ~ignore
+                for i = 1 : n
+                     if ischar(S2(i).(fldname))
+                        S1.(fldname){i} = S2(i).(fldname);
+                     else
+                        S1.(fldname){i} = char(S2(i).(fldname));
+                     end
+                end      
+            end
+        else
+            sz = size(S2(1).(fldname));
+            %% check for identical type
+            for i = 1 : n
+                if ~isnumeric(S2(i).(fldname))
+                    error(['Field ''',fldname,''' in struct(',num2str(i),') is not numeric while in struct(1) it is.'])
+                end
+            end
+            %% check for identical size
+            for i = 1 : n
+                if ~isequal(size(S2(i).(fldname)),sz)
+                    if OPT.IgnoreErrors
+                        warning(['Size of field ''',fldname,''' in struct(',num2str(i),') does not have same size as in struct(1).'])
+                        ignore = 1;
+                    else
+                        error  (['Size of field ''',fldname,''' in struct(',num2str(i),') does not have same size as in struct(1).'])
+                    end
+                end
+            end    
+            %% merge data
+            if ~ignore
+              S1.(fldname) = nan([n sz(:)']);
+              for i = 1 : n
+                 S1.(fldname)(i,:) = S2(i).(fldname)(:);
+              end
+            end
+        end
+    end
 
 end
 
