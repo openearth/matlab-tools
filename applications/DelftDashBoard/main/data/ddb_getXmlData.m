@@ -208,6 +208,35 @@ else
                         case{'No'}
                     end
                 end
+                
+                serverurl='    ';
+                if isfield(serverdata.(fld{ii})(jserver),'URL')
+                    if ~isempty(serverdata.(fld{ii})(jserver).URL)
+                        serverurl=serverdata.(fld{ii})(jserver).URL;
+                    end
+                end
+                localurl='    ';
+                if isfield(localdata.(fld{ii})(jlocal),'URL')
+                    if ~isempty(localdata.(fld{ii})(jlocal).URL)
+                        localurl=localdata.(fld{ii})(jlocal).URL;
+                    end
+                end
+
+                % When urls both start with http, but the urls are
+                % different
+                if strcmpi(serverurl(1:4),'http') && strcmpi(localurl(1:4),'http')
+                    if ~strcmpi(serverurl,localurl)
+                        iupdate=1;
+                        % Copy fields from server data to local data
+                        fld2=fieldnames(serverdata.(fld{ii})(jserver));
+                        for kk=1:length(fld2)
+                            localdata.(fld{ii})(jlocal).(fld2{kk})=serverdata.(fld{ii})(jserver).(fld2{kk});
+                        end
+                        localdata.(fld{ii})(jlocal).update = 1;
+                    end
+                end
+                
+                
             end
         end                    
                 

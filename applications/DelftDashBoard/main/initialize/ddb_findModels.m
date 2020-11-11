@@ -64,6 +64,9 @@ handles=getHandles;
 
 if isdeployed
     dr=[ctfroot filesep 'models']; % Changed back MvO (2017-4-20)
+    
+    dr=[ctfroot filesep 'DelftDashBoa' filesep 'ddbsettings' filesep 'models']; % Changed back MvO (2017-4-20)
+    
 %     [status, result] = system('path');
 %     exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
 %     dr = [fileparts(exeDir) filesep 'ddbsettings' filesep 'models']; % by Bart Grasmeijer    

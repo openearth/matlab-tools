@@ -64,12 +64,19 @@ function ddcompile3
 matlabfolder='n:/Applications/Matlab/Matlab2012a_64/';
 compilefolder='d:/delftdashboardsetup/';
 
+include_additional_toolboxes=0;
+include_additional_models=0;
+revisionnumber='16790';
 
 if ~exist(compilefolder,'dir')
     mkdir(compilefolder);
 end
-rmdir([compilefolder 'data']);
-rmdir([compilefolder 'bin']);
+try
+    rmdir([compilefolder 'data']);
+end
+try
+    rmdir([compilefolder 'bin']);
+end
 mkdir([compilefolder 'data']);
 mkdir([compilefolder 'bin']);
 
@@ -112,9 +119,10 @@ for j=1:length(flist)
     if flist(j).isdir
         model=flist(j).name;
         % Check if xml file exists and whether model is enabled
-        xmlfile=[inipath 'models' filesep model filesep 'xml' filesep model '.xml'];
-        if exist(xmlfile,'file')
-            xml=xml_load(xmlfile);
+        xmlfile=[inipath 'models' filesep model filesep 'xml' filesep 'model.' model '.xml'];
+        if exist(xmlfile,'file')>0
+%            xml=xml_load(xmlfile);
+            xml=xml2struct(xmlfile);
             switch lower(xml.enable)
                 case{'1','y','yes'}
                     % Model is enabled
@@ -145,9 +153,9 @@ for j=1:length(flist)
     if flist(j).isdir
         toolbox=flist(j).name;
         % Check if xml file exists and whether toolbox is enabled
-        xmlfile=[inipath 'toolboxes' filesep toolbox filesep 'xml' filesep toolbox '.xml'];
-        if exist(xmlfile,'file')
-            xml=xml_load(xmlfile);
+        xmlfile=[inipath 'toolboxes' filesep toolbox filesep 'xml' filesep 'toolbox.' toolbox '.xml'];
+        if exist(xmlfile,'file')>0
+            xml=xml2struct(xmlfile);
             switch lower(xml.enable)
                 case{'1','y','yes'}
                     % Model is enabled
@@ -171,43 +179,45 @@ for j=1:length(flist)
     end
 end
 
-% Add additional toolboxes
-inifile=[inipath 'DelftDashBoard.ini'];
-try
-    additionalToolboxDir=getINIValue(inifile,'AdditionalToolboxDir');
-    DataDir=getINIValue(inifile,'DataDir'); 
-catch
-    additionalToolboxDir=[];
-    DataDir=[];
-end
-if ~isempty(additionalToolboxDir)
-    % Add toolboxes
-    flist=dir(additionalToolboxDir);
-    for j=1:length(flist)
-        if flist(j).isdir
-            toolbox=flist(j).name;
-            % Check if xml file exists and whether toolbox is enabled
-            xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep toolbox '.xml'];
-            if exist(xmlfile,'file')
-                xml=xml_load(xmlfile);
-                switch lower(xml.enable)
-                    case{'1','y','yes'}
-                        % Model is enabled
-                        files=ddb_findAllFiles([additionalToolboxDir toolbox],'*.m');
-                        for i=1:length(files)
-                            fprintf(fid,'%s\n',files{i});
-                        end
-                        % Copy xml files and misc files
-                        try
-                            mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
-                            copyfile([additionalToolboxDir filesep toolbox filesep 'xml' filesep '*.xml'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
-                        end
-%                         try
-%                             if isdir([additionalToolboxDir filesep toolbox filesep 'misc'])
-%                                 mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
-%                                 copyfiles([additionalToolboxDir filesep toolbox filesep 'misc'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
-%                             end
-%                         end
+if include_additional_toolboxes
+    % Add additional toolboxes
+    inifile=[inipath 'DelftDashBoard.ini'];
+    try
+        additionalToolboxDir=getINIValue(inifile,'AdditionalToolboxDir');
+        DataDir=getINIValue(inifile,'DataDir');
+    catch
+        additionalToolboxDir=[];
+        DataDir=[];
+    end
+    if ~isempty(additionalToolboxDir)
+        % Add toolboxes
+        flist=dir(additionalToolboxDir);
+        for j=1:length(flist)
+            if flist(j).isdir
+                toolbox=flist(j).name;
+                % Check if xml file exists and whether toolbox is enabled
+                xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep 'toolbox.' toolbox '.xml'];
+                if exist(xmlfile,'file')>0
+                    xml=xml2struct(xmlfile);
+                    switch lower(xml.enable)
+                        case{'1','y','yes'}
+                            % Model is enabled
+                            files=ddb_findAllFiles([additionalToolboxDir toolbox],'*.m');
+                            for i=1:length(files)
+                                fprintf(fid,'%s\n',files{i});
+                            end
+                            % Copy xml files and misc files
+                            try
+                                mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
+                                copyfile([additionalToolboxDir filesep toolbox filesep 'xml' filesep '*.xml'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
+                            end
+                            %                         try
+                            %                             if isdir([additionalToolboxDir filesep toolbox filesep 'misc'])
+                            %                                 mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
+                            %                                 copyfiles([additionalToolboxDir filesep toolbox filesep 'misc'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
+                            %                             end
+                            %                         end
+                    end
                 end
             end
         end
@@ -232,7 +242,7 @@ copyfile('settings/icons/earthicon.res','./');
 mcc -m -v -d exe/bin DelftDashBoard.m -B complist -a ddbsettings -a ../../io/netcdf/netcdfAll-4.2.jar -M earthicon.res
 
 % make about.txt file
-Revision = '$Revision$';
+Revision = ['$Revision$'];
 eval([strrep(Revision(Revision~='$'),':','=') ';']);
 
 dos(['copy ' fileparts(which('ddsettings')) filesep 'main' filesep 'menu' filesep 'ddb_aboutDelftDashBoard.txt ' fileparts(which('ddsettings')) filesep 'exe']);

@@ -71,8 +71,9 @@ handles.workingDirectory=pwd;
 
 if isdeployed
     
-    handles.settingsDir=[ctfroot filesep 'ddbsettings' filesep]; % Changed back (MvO 2017-4-20)
-    
+%    handles.settingsDir=[ctfroot filesep 'ddbsettings' filesep]; % Changed back (MvO 2017-4-20)
+    handles.settingsDir=[ctfroot filesep 'DelftDashBoa' filesep 'ddbsettings' filesep]; % Changed back (MvO 2017-4-20)
+
     [status, result] = system('path');
     exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
     datadir=[fileparts(exeDir) filesep 'data' filesep];
