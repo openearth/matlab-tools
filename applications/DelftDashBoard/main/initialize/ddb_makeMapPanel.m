@@ -132,6 +132,7 @@ set(axtxt,'hittest','off');
 set(axtxt,'Box','off');
 set(axtxt,'xcolor','none');
 set(axtxt,'ycolor','none');
+set(axtxt,'tag','instructionaxis');
 
 handles.GUIHandles.textAnn1=text(0.00,0.9,'');
 handles.GUIHandles.textAnn2=text(0.00,0.5,'');
