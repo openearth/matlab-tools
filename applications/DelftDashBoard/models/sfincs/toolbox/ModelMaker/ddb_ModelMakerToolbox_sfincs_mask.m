@@ -749,6 +749,19 @@ xy_ex=handles.toolbox.modelmaker.sfincs.mask.excludepolygon;
 xy_closedboundary=handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon;
 xy_openboundary=handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon;
 
+if xy_in(1).length==0
+    xy_in=[];
+end
+if xy_ex(1).length==0
+    xy_ex=[];
+end
+if xy_closedboundary(1).length==0
+    xy_closedboundary=[];
+end
+if xy_openboundary(1).length==0
+    xy_openboundary=[];
+end
+
 msk=sfincs_make_mask(xg,yg,zg,[zmin zmax],'includepolygon',xy_in,'excludepolygon',xy_ex,'closedboundarypolygon',xy_closedboundary,'openboundarypolygon',xy_openboundary);
 msk(isnan(zg))=0;
 handles.model.sfincs.domain(id).mask=msk;
