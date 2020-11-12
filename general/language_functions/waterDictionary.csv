@@ -17,3 +17,7 @@ measurement   ,     , Measurement           , Meting                      , Medi
 difference    ,     , Difference            , Verschil                    , Diferencia
 date          ,     , Date                  , Datum                       , Fecha
 model         ,     , Model                 , Model                       , Modelo
+easting       ,  ^o , Easting               , Breedtegraad                , Este
+northing      ,  ^o , Northing              , Hoogtegraad                 , Norte
+X             ,   m , X                     , X-RD                        , X
+Y             ,   m , YY                    , Y-RD                        , Y
