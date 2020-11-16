@@ -36,6 +36,7 @@ MA_24760_R_LMW-H_Keizersveer              ,     ,MA_247.60_R_LMW-H_Keizersveer  
 MA_23061_L_LMW-H_Heesbeen                 ,     ,MA_230.61_L_LMW-H_Heesbeen                 ,Heesbeen
 MA_20237_L_LMW-H_Lith-dorp                ,     ,MA_202.37_L_LMW-H_Lith-dorp                ,Lith-dorp
 KH_000_LMW-Cl_Scheveningen-g6             ,     ,KH_0.00_LMW-Cl_Scheveningen-g6             ,Scheveningen
+HV_101775_L_LMW-Cl_Middelharnis-meetboe   ,     ,HV_1017.75_L_LMW-Cl_Middelharnis-meetboe   ,Middelharnis
 NZ_000_LMW-Cl_Lichteiland-Goeree          ,     ,NZ_0.00_LMW-Cl_Lichteiland-Goeree          ,Lichteiland-Goeree
 NZ_000_LMW-Cl_Haringvliet-10              ,     ,NZ_0.00_LMW-Cl_Haringvliet-10              ,Haringvliet-10
 NZ_000_LMW-Cl_Brouwershavense-Gat-8-meet  ,     ,NZ_0.00_LMW-Cl_Brouwershavense-Gat-8-meet  ,Brouwershavense-Gat-8-meet
@@ -53,12 +54,12 @@ NM_101091_R_LMW-Cl_Vlaardingen-g6         ,     ,NM_1010.91_R_LMW-Cl_Vlaardingen
 NM_100784_L_HBR-Cl_1e-Eemhaven-g6         ,     ,NM_1007.84_L_HBR-Cl_1e-Eemhaven-g6         ,Eemhaven
 NM_100249_R_HBR-Cl_Parkhaven              ,     ,NM_1002.49_R_HBR-Cl_Parkhaven              ,Parkhaven
 NM_99947_R_LMW-Cl_Rotterdam-g6            ,     ,NM_999.47_R_LMW-Cl_Rotterdam-g6            ,Rotterdam
-HY_1799_R_LMW-Cl_Krimpen-ad-IJssel-g6     ,     ,HY_17.99_R_LMW-Cl_Krimpen-ad-IJssel-g6     ,Krimpen-ad-IJssel
+HY_1784_L_LMW-Cl_Krimpen-ad-IJssel-g6     ,     ,HY_17.84_L_LMW-Cl_Krimpen-ad-IJssel-g6     ,Krimpen-ad-IJssel
 HY_086_R_LMW-Cl_Gouda-brug-g6             ,     ,HY_0.86_R_LMW-Cl_Gouda-brug-g6             ,Gouda-brug
 LE_9887_R_LMW-Cl_Krimpen-aan-de-Lek-g6    ,     ,LE_988.7_R_LMW-Cl_Krimpen-aan-de-Lek-g6    ,Krimpen-aan-de-Lek
 LE_9716_R_LMW-Cl_Schoonhoven              ,     ,LE_971.6_R_LMW-Cl_Schoonhoven              ,Schoonhoven
 LE_9471_R_LMW-Cl_Hagestein-beneden        ,     ,LE_947.1_R_LMW-Cl_Hagestein-beneden        ,Hagestein-beneden
-OM_100304_L_LMW-Cl_Spijkenisse            ,     ,OM_1003.04_L_LMW-Cl_Spijkenisse            ,Spijkenisse
+OM_100261_C_LMW-Cl_Spijkenisserbrug       ,     ,OM_1002.61_C_LMW-Cl_Spijkenisserbrug       ,Spijkenisse
 OM_99253_L_LMW-Cl_Goidschalxoord-g6       ,     ,OM_992.53_L_LMW-Cl_Goidschalxoord-g6       ,Goidschalxoord
 OM_97625_L_LMW-Cl_Dordrecht-g6            ,     ,OM_976.25_L_LMW-Cl_Dordrecht-g6            ,Dordrecht
 SG_090_L_LMW-Cl_Werkendam-buiten-g6       ,     ,SG_0.90_L_LMW-Cl_Werkendam-buiten-g6       ,Werkendam-buiten
@@ -71,3 +72,9 @@ HD_98455_L_LMW-Cl_Moerdijk-g6             ,     ,HD_984.55_L_LMW-Cl_Moerdijk-g6 
 MA_24760_R_LMW-Cl_Keizersveer             ,     ,MA_247.60_R_LMW-Cl_Keizersveer             ,Keizersveer
 MA_23061_L_LMW-Cl_Heesbeen                ,     ,MA_230.61_L_LMW-Cl_Heesbeen                ,Heesbeen
 MA_20237_L_LMW-Cl_Lith-dorp               ,     ,MA_202.37_L_LMW-Cl_Lith-dorp               ,Lith-dorp
+LE_98879_L_LMW-Cl_Kinderdijk-ad-Lek       ,     ,LE_988.79_L_LMW-Cl_Kinderdijk-ad-Lek       ,Kinderdijk-ad-Lek
+NM_100526_R_LMW-Cl_Lekhaven-g6            ,     ,NM_1005.26_R_LMW-Cl_Lekhaven-g6            ,Lekhaven
+NM_99521_R_LMW-Cl_Brienenoordbrug         ,     ,NM_995.21_R_LMW-Cl_Brienenoordbrug         ,Brienenoordbrug
+OM_99615_L_LMW-Cl_Beerenplaat-g6          ,     ,OM_996.15_L_LMW-Cl_Beerenplaat-g6          ,Beerenplaat
+SP_100713_R_LMW-Cl_Bernisse-Zuidland-g6   ,     ,SP_1007.13_R_LMW-Cl_Bernisse-Zuidland-g6   ,Bernisse-Zuidland
+SP_101157_L_LMW-Cl_Beningen               ,     ,SP_1011.57_L_LMW-Cl_Beningen               ,Beningen
