@@ -21,8 +21,9 @@ flg=simdef.flg;
 v2struct(in);
 
 nb=numel(network1d_branch_order);
-nn=numel(network1d_node_id);
-
+network1d_branch_id=network1d_branch_id';
+nn=size(network1d_node_id,2);
+network1d_node_id=network1d_node_id';
 geom_cs=[1;cumsum(network1d_geom_node_count)];
 
 %%
@@ -85,6 +86,13 @@ if isfield(flg,'addtitle')==0
     flg.addtitle=1;
 end
 
+if isfield(flg,'prop')==0
+    flg.prop.fs=10;
+end
+if isfield(flg.prop,'fs')==0
+    flg.prop.fs=10;
+end
+    
 %% FIGURE
 
 %figure input
@@ -101,7 +109,7 @@ marg.sv=0.0; %vertical spacing [cm]
 
 % prop.ms1=10; 
 % prop.lw=1;
-prop.fs=10;
+prop.fs=flg.prop.fs;
 % prop.fn='Helvetica';
 % prop.color=[... %>= matlab 2014b default
 %  0.0000    0.4470    0.7410;... %blue

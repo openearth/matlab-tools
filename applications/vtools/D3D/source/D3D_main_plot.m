@@ -47,7 +47,7 @@ def.folder='p:\11203223-tki-rivers\02_rijntakken_2020\04_runs\08_morpho_1\mr1_07
 simdef.file.checkouts='c:\Users\chavarri\checkouts\openearthtools_matlab\oetsettings.m';
 
     %% variable
-simdef.flg.which_p=3; %which kind of plot: 
+simdef.flg.which_p='b'; %which kind of plot: 
 %MAP
 %      LOOP ON TIME
 %   1=3D bed elevation and gsd
@@ -71,7 +71,7 @@ simdef.flg.which_p=3; %which kind of plot:
 %GRID
 %   grid
 %
-simdef.flg.which_v=28; %which variable: 
+simdef.flg.which_v=24; %which variable: 
 %   1=etab
 %   2=h
 %   3=dm Fak
@@ -130,7 +130,7 @@ simdef.flg.which_s=4; %which plot style:
 % def.branch={'01_SAZ','02_SAZ','03_SAZ','04_SAZ','05_SAZ','06_SAZ','07_SAZ','08_SAZ','09_SAZ','10_SAZ','11_SAZ','01_SAZ','13_SAZ_A','13_SAZ_B_A','13_SAZ_B_B_A','13_SAZ_B_B_B_A','13_SAZ_B_B_B_B','14_SAZ','15_SAZ','16_SAZ_A','16_SAZ_B'}; 
 % def.branch={'29_A','29_B_A','29_B_B','29_B_C','29_B_D','52_A','52_B','31_A_A','31_A_B','31_A_C','31_B','51_A','BovenLobith','Bovenrijn'};
 % def.branch={'Nederrijn1','Nederrijn2','Nederrijn3','Nederrijn4','Nederrijn5','Nederrijn6','Lek1','Lek2','Lek4','Lek5','Lek6','Lek7','Lek8'};
-def.branch={'Waal1','Waal2','Waal3','Waal4','Waal5','Waal6'}; %RT+G Waal;
+% def.branch={'Waal1','Waal2','Waal3','Waal4','Waal5','Waal6'}; %RT+G Waal;
 % def.branch={'PanKan1','PanKan2'}; 
 % def.branch={'IJssel01','IJssel02','IJssel03','IJssel04','IJssel05','IJssel06','IJssel07','IJssel08','IJssel09','IJssel10','IJssel11','IJssel12'}; 
 % def.branch={'Kattendiep1','Kattendiep2'}; 
@@ -154,7 +154,7 @@ def.branch={'Waal1','Waal2','Waal3','Waal4','Waal5','Waal6'}; %RT+G Waal;
 % def.station={'obsCross_Pannerdenschekop'};
 % def.station={'obsCross_900.00_WA'};
 % def.station={'868.00_WA'};
-% def.station={'obsCross_878.00_PK'};
+def.station={'obsCross_868.00_WA'};
 
 %x,y,f coordinate if NaN, all
 % def.rsl_x=NaN;
@@ -177,7 +177,7 @@ def.branch={'Waal1','Waal2','Waal3','Waal4','Waal5','Waal6'}; %RT+G Waal;
     %0=all the time steps; 
     %1='time' is a single time or a vector with the time steps to plot. If NaN it plots the last time step; 
     %2='time' is the spacing between 1 and the last results;
-def.rsl_input=1; 
+def.rsl_input=0; 
 def.rsl_time=1;
 
     %% print

@@ -314,7 +314,7 @@ end
 %general
 set(findall(han.fig,'-property','FontSize'),'FontSize',prop.fs)
 % set(findall(han.fig,'-property','FontName'),'FontName',prop.fn) %!!! attention, there is a bug in Matlab and this is not enforced. It is necessary to change it in the '.eps' to 'ArialMT' (check in a .pdf)
-han.fig.Renderer='painters';
+% han.fig.Renderer='painters';
 
 %return to default
 set(groot,'defaultAxesColorOrder','default') %reset the color order to the default value
