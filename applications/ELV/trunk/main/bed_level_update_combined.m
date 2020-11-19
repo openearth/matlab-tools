@@ -24,32 +24,11 @@
 %   -
 %
 %HISTORY:
-%160223
+%201102
 %   -V. Created for the first time.
 %
-%160429
-%   -V. Introduction of periodic boundary conditions
-%
-%160623
-%   -V. Cyclic boundary conditions.
-%
-%160803
-%	-L. Merging; including cycled boundary conditions
-%
-%170126
-%   -L. Added cases 13,14 (no new version)
-%
-%170516
-%   -V. Erased upwind factor
-%
-%171005
-%   -V. Added entrianment deposition formulation
-%   -V. Add pmm to general update
-%
-%200715
-%   -V. Solved bug with unsteady flow and mixed-size sediment
 
-function etab_new=bed_level_update_combined(input,etab,Qb0,Qb,beta)
+function etab_new=bed_level_update_combined(input,etab,Qb0,Qb,beta,celerities,u)
 
 %%
 %% RENAME
@@ -75,39 +54,56 @@ B=input.grd.B;
 if input.bcm.type==4
     etab_new(1,1)=etab(1,1);
 else
-    flux_BS=bed_flux_BS([Qb0,Qb(1)],B(1:2));
-    etab_new(1,1)      = etab(1,1)      - MorFac * dt /cb /beta(1,1)/(dx/2) * flux_BS;
+    flux_bed=bed_flux_BS([Qb0,Qb(1)],B(1:2));
+    etab_new(1,1)      = etab(1,1)      - MorFac * dt /cb /beta(1,1)/(dx/2) * flux_bed;
 end
         
 switch input.mor.scheme
     case 1 %FTBS
-        flux_BS=bed_flux_BS(Qb,B);
-        etab_new(1,2:nx)=etab(1,2:nx)-MorFac*dt./cb./beta(1,2:nx)./(dx).* flux_BS;
-    case 3 %QUICK
+        flux_bed=bed_flux_BS(Qb,B);
+        etab_new(1,2:nx)=etab(1,2:nx)-MorFac*dt./cb./beta(1,2:nx)./(dx).* flux_bed;
+    case 2 %Borsboom
         %second cell is BS
-        flux_BS=bed_flux_BS(Qb(1:2),B(2:3));
-        etab_new(1,2)      = etab(1,2)      - MorFac * dt /cb /beta(1,2)/(dx) * flux_BS;
+        flux_bed=bed_flux_BS(Qb(1:2),B(2:3));
+        etab_new(1,2)      = etab(1,2)      - MorFac * dt /cb /beta(1,2)/(dx) * flux_bed;
         
-        %rest is QUICK
-        flux_QUICK=bed_flux_QUICK(Qb,B);
-        etab_new(1,3:nx-1)=etab(1,3:nx-1)-MorFac*dt./cb./beta(1,3:nx-1)./(dx).* flux_QUICK;
+        %rest is Borsboom
+        pmm(2,:)=beta;
+        c=celerities4CFL(u,NaN,celerities,pmm,NaN,input,NaN,NaN);
+        
+        flux_bed=bed_flux_general(input,Qb,B,c,etab,dt);
+        etab_new(1,3:nx-1)=etab(1,3:nx-1)-MorFac*dt./cb./beta(1,3:nx-1)./(dx).* flux_bed;
         
         %last cell is BS
-        flux_BS=bed_flux_BS(Qb(end-1:end),B(end-1:end));
-        etab_new(1,nx)      = etab(1,nx)      - MorFac * dt /cb /beta(1,nx)/(dx) * flux_BS;
-    case 4
-        %second cell is BS
-        flux_BS=bed_flux_BS(Qb(1:2),B(2:3));
-        etab_new(1,2)      = etab(1,2)      - MorFac * dt /cb /beta(1,2)/(dx) * flux_BS;
+        flux_bed=bed_flux_BS(Qb(end-1:end),B(end-1:end));
+        etab_new(1,nx)      = etab(1,nx)      - MorFac * dt /cb /beta(1,nx)/(dx) * flux_bed;
         
-        %rest is flux limiter
-        flux_limiter=bed_flux_limiter(input,Qb,B);
-        etab_new(1,3:nx-1)=etab(1,3:nx-1)-MorFac*dt./cb./beta(1,3:nx-1)./(dx).* flux_limiter;
-        
-        %last cell is BS
-        flux_BS=bed_flux_BS(Qb(end-1:end),B(end-1:end));
-        etab_new(1,nx)      = etab(1,nx)      - MorFac * dt /cb /beta(1,nx)/(dx) * flux_BS;
+        %DEPRECATED: all higher order without CFL dependent correction are
+        %unstable with Euler forward. 
+%     case 3 %QUICK
+%         %second cell is BS
+%         flux_bed=bed_flux_BS(Qb(1:2),B(2:3));
+%         etab_new(1,2)      = etab(1,2)      - MorFac * dt /cb /beta(1,2)/(dx) * flux_bed;
+%         
+%         %rest is QUICK
+%         flux_bed=bed_flux_QUICK(Qb,B);
+%         etab_new(1,3:nx-1)=etab(1,3:nx-1)-MorFac*dt./cb./beta(1,3:nx-1)./(dx).* flux_bed;
+%         
+%         %last cell is BS
+%         flux_bed=bed_flux_BS(Qb(end-1:end),B(end-1:end));
+%         etab_new(1,nx)      = etab(1,nx)      - MorFac * dt /cb /beta(1,nx)/(dx) * flux_bed;
+%     case 4
+%         %second cell is BS
+%         flux_bed=bed_flux_BS(Qb(1:2),B(2:3));
+%         etab_new(1,2)      = etab(1,2)      - MorFac * dt /cb /beta(1,2)/(dx) * flux_bed;
+%         
+%         %rest is flux limiter
+%         flux_bed=bed_flux_limiter(input,Qb,B);
+%         etab_new(1,3:nx-1)=etab(1,3:nx-1)-MorFac*dt./cb./beta(1,3:nx-1)./(dx).* flux_bed;
+%         
+%         %last cell is BS
+%         flux_bed=bed_flux_BS(Qb(end-1:end),B(end-1:end));
+%         etab_new(1,nx)      = etab(1,nx)      - MorFac * dt /cb /beta(1,nx)/(dx) * flux_bed;
 end
-
 
 end %function

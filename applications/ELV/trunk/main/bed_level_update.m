@@ -48,20 +48,23 @@
 %
 %200715
 %   -V. Solved bug with unsteady flow and mixed-size sediment
+%
+%201102
+%   -V. Restructuring
 
-function etab_new=bed_level_update(etab,qbk,Dk,Ek,bc,input,fid_log,kt,time_l,pmm)
+function etab_new=bed_level_update(etab,qbk,Dk,Ek,bc,input,fid_log,kt,time_l,pmm,celerities,u)
 
 %%
 %% RENAME
 %%
 
-dx=input.grd.dx;
+% dx=input.grd.dx;
 dt=input.mdv.dt;    
 MorFac=input.mor.MorFac;
 cb=1-input.mor.porosity;
-nx=input.mdv.nx; %number of cells
+% nx=input.mdv.nx; %number of cells
 nf=input.mdv.nf; 
-UpwFac=input.mdv.UpwFac;
+% UpwFac=input.mdv.UpwFac;
 bc_interp_type=input.mdv.bc_interp_type;
 B=input.grd.B;
 beta=pmm(2,:); 
@@ -129,7 +132,7 @@ switch input.mor.bedupdate
             case 0
                 etab_new=bed_FTBS(input,etab,Qb0,Qb,beta);
             otherwise
-                etab_new=bed_level_update_combined(input,etab,Qb0,Qb,beta);
+                etab_new=bed_level_update_combined(input,etab,Qb0,Qb,beta,celerities,u);
         end
         
     otherwise
@@ -153,5 +156,15 @@ switch input.mor.bedupdate
 end %input.mor.bedupdate
 
 end %input.mor.particle_activity
+
+%% CHECK
+
+%this happens in the first time step when the flux depends on the
+%celerities
+if any(isnan(etab_new))
+    if time_l<=input(1,1).mdv.Tstop+dt
+        etab_new=etab;
+    end
+end
 
 end %function

@@ -61,6 +61,8 @@ elseif type==6          % superbee
     phi = max(zeros(1,n), max(min(ones(1,n),2*theta), min(2*ones(1,n),theta)));
 elseif type == 7        % MC
     phi = max(zeros(1,n), min(2,min((ones(1,n)+theta)/2,2*theta)));
+elseif type == 8        % Koren
+    phi = max(zeros(1,n), min(2,min((2*ones(1,n)+theta)/3,2*theta)));
 else
     error('incorrect fluxtype')
 end

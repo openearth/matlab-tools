@@ -160,7 +160,7 @@ if time_l>=input(1,1).mor.Tstart
         %% BED LEVEL UPDATE
         etab_old=etab_bra{kb,1}; %for Hirano
         pmm_bra{kb,1}=ones(2,input.mdv.nx); %update without preconditioning
-        etab_bra{kb,1}=bed_level_update(etab_bra{kb,1},qbk_bra{kb,1},Dk_bra{kb,1},Ek_bra{kb,1},bc(kb,1),input(kb,1),fid_log,kt,time_l,pmm_bra{kb,1});
+        etab_bra{kb,1}=bed_level_update(etab_bra{kb,1},qbk_bra{kb,1},Dk_bra{kb,1},Ek_bra{kb,1},bc(kb,1),input(kb,1),fid_log,kt,time_l,pmm_bra{kb,1},celerities(kb,1),u_bra{kb,1});
 
         %% ACTIVE LAYER THICKNESS UPDATE
         La_old=La_bra{kb,1}; %for Hirano

@@ -46,6 +46,21 @@ end
 if input.mor.scheme~=0 && input.mor.gsdupdate~=0
     error('You are trying to update the bed GSD with a morphodynamic scheme different than FTBS. I have not implemented this yet...')
 end
+switch input.mor.scheme
+    case 0
+    case 1
+    case 2
+        if isfield(input.mor,'fluxtype')==0
+            input.mor.fluxtype=8;
+            warningprint('This morphodynamic scheme requires a flux type limiter which you are not specifying, I am using Koren.')
+        else 
+            if input.mor.fluxtype>8
+                error('The automagic flux limiter for morphodynamics has not been implemented.')
+            end
+        end
+    otherwise
+        error('The automagic morphodynamic scheme has not been implemented.')
+end
 
 %particle activity
 if isfield(input.mor,'particle_activity')==0 %if it is not defined  

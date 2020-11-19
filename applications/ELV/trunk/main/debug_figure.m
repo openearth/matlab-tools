@@ -17,6 +17,9 @@
 %
 %debug_figure(u,h,Mak,Mak_old,msk,msk_old,La,La_old,Ls,Ls_old,etab,etab_old,qbk,bc,ell_idx,celerities,pmm,vpk,input,fid_log,kt,time_l)
 %
+%call in ELV: 
+%   hanfig=debug_figure(u_bra{kb,1},h_bra{kb,1},Mak_bra{kb,1},Mak_old,msk_bra{kb,1},msk_old,La_bra{kb,1},La_old,Ls_bra{kb,1},Ls_old,etab_bra{kb,1},etab_old,qbk_bra{kb,1},bc,NaN,celerities,NaN,vpk,input,fid_log,kt,time_l)
+%
 %INPUT:
 %   -input = variable containing the input [struct] e.g. input
 %
@@ -33,6 +36,7 @@ function hanfig=debug_figure(u,h,Mak,Mak_old,msk,msk_old,La,La_old,Ls,Ls_old,eta
 
 xcen=input.mdv.xcen;
 nef=input.mdv.nef;
+nf=input.mdv.nf;
 
 tol_qbk=1e-8;
 idx_qbk_neg=qbk<tol_qbk;
@@ -340,8 +344,8 @@ han.p(kr,kc,1)=plot(xcen,h,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'lin
 kr=2; kc=1;    
 han.p(kr,kc,1)=plot(xcen,u,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 
-kr=3; kc=1;    
-for kf=1:nef+1
+kr=3; kc=1;  
+for kf=1:nf
 han.p(kr,kc,kf)=plot(xcen,qbk(kf,:),'parent',han.sfig(kr,kc),'color',cmap(kf,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 end
 
@@ -380,6 +384,8 @@ for kf=1:nef
 han.p(kr,kc,1)=plot(xcen,msk(kf,:,1)./Ls(1,:,1)        ,'parent',han.sfig(kr,kc),'color',cmap(kf,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 han.p(kr,kc,2)=plot(xcen,msk_old(kf,:,1)./Ls_old(1,:,1),'parent',han.sfig(kr,kc),'color',cmap(kf,:),'linewidth',prop.lw2,'linestyle',prop.ls2,'marker',prop.m2);
 end
+
+linkaxes(han.sfig,'x');
 
 %duration ticks
 % xtickformat(han.sfig(kr,kc),'hh:mm')
@@ -425,11 +431,11 @@ kr=3; kc=1;
 % pos.sfig=han.sfig(kr,kc).Position;
 %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
 %han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,1:2),1,2),{'\tau<1','\tau>1'},'location','south');
-str_frac=cell(nef+1,1);
-for kf=1:nef+1
+str_frac=cell(nf,1);
+for kf=1:nf
    str_frac{kf,1}=sprintf('frac. %d',kf);
 end
-han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,numel(han.p(kr,kc,:))),str_frac,'location','east');
+han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,1:nf),1,numel(han.p(kr,kc,1:nf))),str_frac,'location','east');
 % pos.leg=han.leg(kr,kc).Position;
 % han.leg.Position=pos.leg(kr,kc)+[0,0,0,0];
 % han.sfig(kr,kc).Position=pos.sfig;

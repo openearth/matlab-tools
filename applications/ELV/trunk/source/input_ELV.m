@@ -12,7 +12,7 @@
 
 input.mdv.flowtype=1; %flow assumption: 0=NO update 1=steady; 2=quasi-steady; 3=unsteady (explicit); 4=unsteady (implicit); [-]; 6=steady with floodplains [1x1 double]; e.g. [1]
 input.mdv.steady_solver=1; %(if input.mdv.flowtype=1); steady solver: 1=energy-Euler; 2=energy-RK4; 3=depth-Euler; 4=depth-RK4; [1x1 double]; default=1
-% input.mdv.fluxtype=1; %flux type (only if flowtype=3): 0=upwind; 1=Lax-Wendroff; 2=Beam-Warming; 3=Fromm; 4=minmod; 5=van Leer; 6=superbee; 7=MC; [-]; [1x1 double]; e.g. [1]
+% input.mdv.fluxtype=1; %flux type (only if flowtype=3): 0=upwind; 1=Lax-Wendroff; 2=Beam-Warming; 3=Fromm; 4=minmod; 5=van Leer; 6=superbee; 7=MC; 8=Koren [-]; [1x1 double]; e.g. [1]
 % input.mdv.ade_solver=1; %solver for advection diffusion equation (for particle activity): [1x1 double]; e.g. [2]
     %1=theta-method in time, CS for advection, CS for diffusion;
     %2=theta-method in time, BS for advection, CS for diffusion;
@@ -88,6 +88,7 @@ input.grd.B=1; %width [m]; [1x1 double] | [1xnx double]; e.g. [10]
 input.mor.bedupdate=1; %update bed elevation 0=NO; 1=YES [-]; e.g. 1
 input.mor.gsdupdate=1; %update grain size distribution 0=NO; 1=Hirano ;2=eli 1 (max. La); 3=eli 1 (min. La); 4=pmm (a<1,b~=1); 5=pmm (a>1,b~=1); 6=(a<1,b=1); 7=(a>1,b=1); 8=impose a (by means of pmm_alpha_eps); 9=a_m (M_eta=1/b, M_Fak=1/(a*b)); [-]; e.g. 1 
 input.mor.scheme=0; %morphodynamic numerical scheme 0=FTBS (old style); 1=FTBS (new style); [1x1 double]; e.g. [0] 
+input.mor.fluxtype=8; %same as input.mdv.fluxtype
 % input.mor.pmm_alpha_eps=0.01; %fraction added to alpha to avoid equal eigenvalues; [1x1 double]; e.g. [0.05]
 input.mor.particle_activity=0; %use particle activity model 0=NO; 1=YES [-]; [1x1 double]; e.g. [0]
 input.mor.ellcheck=0; %ellipticity check 0=NO; 1=YES (full model); 2=YES (approximate model) [-]; e.g. 1

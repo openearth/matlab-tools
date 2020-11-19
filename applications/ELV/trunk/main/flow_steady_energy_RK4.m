@@ -15,17 +15,17 @@
 %
 %check_input is a function that checks that the input is enough and makes sense
 %
-%input_out=check_input(input,path_file_input,fid_log)
+%[U,H]=flow_steady_energy_RK4(qwup,Hdown,Cf,etab,input)
 %
 %INPUT:
-%   -input = variable containing the input [struct] e.g. input
+%   -
 %
 %OUTPUT:
-%   -input = variable containing the input [struct] e.g. input
+%   -
 %
 %HISTORY:
-%170720
-%   -V & Pepijn. Created for the first time.
+%??????
+%   -V. Created for the first time.
 
 function [U,H]=flow_steady_energy_RK4(qwup,Hdown,Cf,etab,input)
 
