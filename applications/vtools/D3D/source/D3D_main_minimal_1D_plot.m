@@ -55,11 +55,6 @@ simdef.flg.which_v=2;
 %   32=Chezy 
 %   33=cell area [m^2]
 
-%% conversion to river kilometers
-in_read.path_rkm="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\river_kilometers\rijntakken\irm\rkm_rijntakken_rhein.csv";
-in_read.rkm_curved="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\river_kilometers\rijntakken\irm\rijn-flow-model_map_curved.nc";
-in_read.rkm_TolMinDist=300; %tolerance for accepting an rkm point
-
 %% do not change
 
 simdef.flg.which_p=3; %plot type 
