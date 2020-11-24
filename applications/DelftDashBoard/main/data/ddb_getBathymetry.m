@@ -368,7 +368,23 @@ switch lower(tp)
                         if iopendap
                             if bathymetry.dataset(iac).useCache
                                 % First check if file is available locally
+                                idownload=0;
                                 if ~exist([localdir filename],'file')
+                                    idownload=1;
+                                else
+                                    f=dir([localdir filename]);
+                                    fsize=f.bytes;
+                                    if fsize<1000
+                                        % Probably something wrong with
+                                        % this file. Delete it and download
+                                        % again.
+                                        idownload=1;
+                                        try
+                                            delete([localdir filename]);
+                                        end
+                                    end
+                                end
+                                if idownload
                                     if ~exist(localdir,'dir')
                                         mkdir(localdir);
                                     end
