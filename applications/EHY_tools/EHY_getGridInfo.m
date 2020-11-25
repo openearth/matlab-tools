@@ -164,14 +164,15 @@ switch modelType
                         mdu.geometry.(lower(fn{iFN})) = mdu.geometry.(fn{iFN});
                     end
                     if ismember('no_layers',wantedOutput)
-                        tmp = EHY_getGridInfo(inputFile,{'layer_model'},'disp',0);
-                        if strcmp(tmp.layer_model,'z-model')
-                            disp('''no_layers'' taken from .mdu-file (keyword kmx), but z-layer model so could be different/overwritten.')
-                            disp('For actual number used, please check a model output file.')
-                        end
                         E.no_layers = mdu.geometry.kmx;
                         if E.no_layers == 0
                             E.no_layers = 1;
+                        elseif E.no_layers > 1
+                            tmp = EHY_getGridInfo(inputFile,{'layer_model'},'disp',0);
+                            if strcmp(tmp.layer_model,'z-model')
+                                disp('''no_layers'' taken from .mdu-file (keyword kmx), but z-layer model so could be different/overwritten.')
+                                disp('For actual number used, please check a model output file.')
+                            end
                         end
                     end
                     if ismember('dimensions',wantedOutput)
@@ -183,10 +184,10 @@ switch modelType
                         end
                     end
                     if ismember('layer_model',wantedOutput)
-                        if mdu.geometry.layertype == 1
-                            E.layer_model = 'sigma-model';
-                        elseif mdu.geometry.layertype == 2
+                        if isfield(mdu.geometry,'layertype') && mdu.geometry.layertype == 2
                             E.layer_model = 'z-model';
+                        else
+                            E.layer_model = 'sigma-model';
                         end
                     end
                     if ismember('layer_perc',wantedOutput)
@@ -880,6 +881,9 @@ switch modelType
                             E.area(m-1,n-1) = segArea(iSeg);
                         end
                     end
+                    if ismember('grid',wantedOutput)
+                        E.grid = XYcor2grid(dw.X,dw.Y);
+                    end
                 end
             case 'outputfile'
                 if isempty(OPT.gridFile)
@@ -894,12 +898,10 @@ switch modelType
                         E.no_layers = dw.NumSegm/tmp.no_NetElem;
                     end
                 elseif ismember(typeOfModelFileDetailGrid,{'lga','cco'})
-                    dw = delwaq('open',OPT.gridFile);
-                    if ismember('no_layers',wantedOutput)
-                        E.no_layers = dw.MNK(3);
-                    end
-                    if ismember('dimensions',wantedOutput)
-                        E.MNKmax = dw.MNK;
+                    tmp = EHY_getGridInfo(OPT.gridFile,wantedOutput);
+                    fns = fieldnames(tmp);
+                    for i = 1:length(fns)
+                        E.(fns{i}) = tmp.(fns{i});
                     end
                 end
                 

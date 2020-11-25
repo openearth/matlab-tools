@@ -83,6 +83,8 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'density'    ) newName = 'zrho'       ; end
     case 'sds' % simona
         if strcmpi(varName,'x_velocity' ) newName = 'uv'         ; end
+    case 'map' % DELWAQ .map-file
+        if strcmpi(varName,'temperature') newName = 'Temp'       ; end
 end
 
 %% for FM output (netCDF files)

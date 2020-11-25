@@ -66,7 +66,7 @@ switch gridInfo.layer_model
         gridInfo = EHY_getGridInfo(inputFile,{'Z'},'mergePartitions',OPT.mergePartitions, ...
             'mergePartitionNrs',OPT.mergePartitionNrs,'disp',0);
         if strcmp(modelType,'d3d')
-            bl = reshape(gridInfo.Zcen',[prod(modelSize(2:3)) 1]); % from [m,n] to cells (like FM)
+            bl = reshape(gridInfo.Zcen,[prod(modelSize(2:3)) 1]); % from [m,n] to cells (like FM)
         else
             bl = reshape(gridInfo.Zcen,no_cells,1);
         end
