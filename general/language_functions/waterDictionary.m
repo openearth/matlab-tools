@@ -35,7 +35,7 @@ rowVar  = get_nr(dictionary(:,1),id);
 if ~isempty (rowVar) 
     string = dictionary{rowVar,colLang}; 
 else
-    warning (['Name : ' string 'not found in' OPT.dict]);
+    warning (['Name : ' string ' not found in ' OPT.dict]);
 end
 
 %% Add the Unit
