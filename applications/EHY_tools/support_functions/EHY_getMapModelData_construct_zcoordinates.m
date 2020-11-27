@@ -144,9 +144,10 @@ switch gridInfo.layer_model
                     sigma_top    = wl(iT,:)';
                     dz = sigma_top - sigma_bottom;
                     int_field(:,(end-numtopsig):end) = sigma_bottom+linspace(0,1,numtopsig+1).*dz;
-                elseif mdu.geometry.numtopsig > 0
+                elseif numtopsig > 0
                     for ii = 1:size(int_field,1)
                         logi = ~isnan(int_field(ii,:));
+                        logi(1:end-numtopsig) = false; % only top numtopsig are changed into sigma-layers
                         ind1 = find(logi,1,'first');
                         ind2 = find(logi,1,'last');
                         if ~isempty(ind1) && ~isempty(ind2)
