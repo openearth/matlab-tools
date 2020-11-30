@@ -83,9 +83,10 @@ OPT = setproperty(OPT, varargin{:});
 
 %% Check whether run already exists
 
-FolderName          = ['h' num2str(OPT.Ph) '_H' num2str(OPT.PHm0) '_Tp' num2str(OPT.PTp) '_D50' num2str(OPT.D50)];
+FolderName          = ['h' num2str(OPT.Ph) '_H' num2str(OPT.PHm0) '_Tp' num2str(OPT.PTp)]; % '_D50' num2str(OPT.D50)];
 ModelOutputDir      = fullfile(OPT.ModelRunDir, FolderName);
 ModelOutputDir      = strrep(ModelOutputDir, '\', '/');
+MaxErosionPoint     = OPT.MaxErosionPoint;
 OPT                 = rmfield(OPT, {'ModelRunDir', 'MaxErosionPoint'});
 
 if ~isdir(ModelOutputDir)
@@ -97,8 +98,6 @@ else
 end
 
 %% Limit State Function
-MaxErosionPoint = OPT.MaxErosionPoint;
-
 zsize       = nc_varsize(fullfile(ModelOutputDir,'xboutput.nc'),'zb');
 xi          = nc_varget(fullfile(ModelOutputDir,'xboutput.nc'), 'globalx');
 zi          = nc_varget(fullfile(ModelOutputDir,'xboutput.nc'), 'zb',[0 0 0], [1 -1 -1]);
@@ -135,16 +134,16 @@ else
             ErosionPoint    = ErosionResult.VTVinfo.Xr;
         end
         % DEBUG: make dune erosion plots to check results
-        hFig    = figure;
-        hAx     = gca;
-        plotDuneErosion(ErosionResult,'xdir','normal')
-        hold on
-        plot(hAx,xe,ze,'b.-')
-        hold off
-        xlim(hAx,[min(xe) max(xe)])
-        ylim(hAx,[min(zi) max(zi)+5])
-        print('-dpng','-r600',[ModelOutputDir '.png'])
-        close(hFig)
+%         hFig    = figure;
+%         hAx     = gca;
+%         plotDuneErosion(ErosionResult,'xdir','normal')
+%         hold on
+%         plot(hAx,xe,ze,'b.-')
+%         hold off
+%         xlim(hAx,[min(xe) max(xe)])
+%         ylim(hAx,[min(zi) max(zi)+5])
+%         print('-dpng','-r600',[ModelOutputDir '.png'])
+%         close(hFig)
     else
         % Erosion volume can't be fitted, take most seaward crossing with
         % waterlevel as ErosionPoint

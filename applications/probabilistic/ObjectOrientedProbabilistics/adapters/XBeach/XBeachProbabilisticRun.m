@@ -116,15 +116,18 @@ xbModel = xs_set(xbModel, 'tstop', OPT.tstop);
 %% Run model
 
 ModelOutputDirLinux = path2os(ModelOutputDir);
+ModelOutputDirLinux = strrep(ModelOutputDirLinux,'\','/');
 ModelOutputDirLinux = ['/' strrep(ModelOutputDirLinux,':','')];
 
 mkdir(ModelOutputDir)
 if OPT.RunRemote
-    [~, FolderName, ~]  = fileparts(ModelOutputDir);
+    [DirWin, FolderName, pt2]  = fileparts(ModelOutputDir);
+    FolderName = [FolderName, pt2];
+    [DirLinux, ~, ~]  = fileparts(ModelOutputDirLinux);
     xb_run_remote(xbModel, 'nodes', OPT.NrNodes, 'queuetype', OPT.QueueType, ...
         'netcdf', true, 'ssh_user', OPT.sshUser, 'ssh_pass', OPT.sshPassword, ...
-        'path_local', ModelOutputDir, 'path_remote', ModelOutputDirLinux, ...
-        'mpitype', 'OPENMPI', 'name', FolderName)
+        'path_local', DirWin, 'path_remote', DirLinux, ...
+        'mpitype', 'OPENMPI', 'name', FolderName, 'mpidomains', 1);
 else
     xb_run(xbModel, 'binary', OPT.ExecutablePath, 'netcdf', true, ...
         'path', ModelOutputDir, 'name', '', 'copy', false);
