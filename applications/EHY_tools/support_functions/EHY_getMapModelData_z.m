@@ -74,7 +74,7 @@ else
 end
 
 % correct for order of layering > make layer 1 the bottom layer | This is only used within this function for the next loop
-gridInfo = EHY_getGridInfo(inputFile,'layer_model');
+gridInfo = EHY_getGridInfo(inputFile,'layer_model','mergePartitions',0);
 if strcmp(modelType,'d3d') && strcmp(gridInfo.layer_model,'sigma-model')
     for iV = 1:length(v) % loop over fieldname 'val','vel_x','vel_mag',etc.
         DataAll.(v{iV}) = flip(DataAll.(v{iV}),3);
@@ -95,7 +95,7 @@ for iZ = 1:length(OPT0.z)
             for iV = 1:length(v) % loop over fieldname 'val','vel_x','vel_mag',etc.
                 slicePerZ = NaN(size(Data.(v{1}),1),size(Data.(v{1}),2)); % size of first two dims of Data.val
                 for iL = 1:no_layers % loop over layers
-                    getFromThisModelLayer = DataZ.val(:,:,iL) <= wantedZ & DataZ.val(:,:,iL+1) >= wantedZ;
+                    getFromThisModelLayer = DataZ.val(:,:,iL) <= wantedZ+10^-6 & DataZ.val(:,:,iL+1) >= wantedZ-10^-6; % margin needed for precision issues
                     if any(any(getFromThisModelLayer))
                         valInThisModelLayer = DataAll.(v{iV})(:,:,iL);
                         slicePerZ(getFromThisModelLayer) = valInThisModelLayer(getFromThisModelLayer);
