@@ -14,14 +14,14 @@ demz=s2.parameters(1).parameter.val;
 clear s2
 
 inpfile='sfincs.inp';
-outfile='charleston_ncei_14m_indices.dat';
+outfile='charleston_ncei_14m_indices.dat'; % Name of indices file that will be used
 cs_dem.name='WGS 84';
 cs_dem.type='geographic';
 cs_sfincs.name='WGS 84 / UTM zone 18N';
 cs_sfincs.type='projected';
 
-% % Write indices file
-% sfincs_write_indices_for_dem(inpfile,outfile,demx,demy,cs_dem,cs_sfincs);
+% % Write indices file (this need to be done only once!)
+sfincs_write_indices_for_dem(inpfile,outfile,demx,demy,cs_dem,cs_sfincs);
 
 % Read indices file
 [indices,ndem,mdem]=sfincs_read_indices_for_dem(outfile);
@@ -47,3 +47,17 @@ colormap('jet');caxis([0 6]);
 figure(2)
 pcolor(xx,yy,hh);shading flat;axis equal;colorbar;title('max water depth');
 colormap('jet');caxis([0 6]);
+
+
+hh=flipud(hh); % y direction should be from north to south for geotiff
+hh=round(hh*100); % Convert to cm
+
+x0=min(xx);
+x1=max(xx);
+y0=min(yy);
+y1=max(yy);
+
+bbox=[x0 y0;x1 y1];
+bit_depth=8;
+tiffile=['h_' name '.tif'];
+geotiffwrite(tiffile, bbox, hh, bit_depth);
