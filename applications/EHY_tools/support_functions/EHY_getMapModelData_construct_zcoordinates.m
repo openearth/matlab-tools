@@ -138,6 +138,15 @@ switch gridInfo.layer_model
             
             %% z-sigma-layer model? Add sigma-layers at the top
             try
+                source = ncreadatt(inputFile,'/','source');
+                ind = strfind(source,'D-Flow FM');
+                source = source(ind+18:ind+22);
+                if str2num(source) < 67072
+                    disp('<strong>Numtopsiguniform was not yet implemented (correctly) in the FM version you used. You should move to FM >= 67072 (Jul 8, 2020) </strong>')
+                    disp('<strong>Reconstructing z-coordinates as if Numtopsiguniform = 0 (as was used in your run)</strong>')
+                    mdu.geometry.numtopsiguniform = 0;
+                end
+                
                 numtopsig = mdu.geometry.numtopsig;
                 if isfield(mdu.geometry,'numtopsiguniform') && mdu.geometry.numtopsiguniform
                     sigma_bottom = max([int_field(:,end-numtopsig) bl],[],2) ;
@@ -156,6 +165,8 @@ switch gridInfo.layer_model
                         end
                     end
                 end
+            catch
+                disp('Could not correct vertical coordinates for possible usage of numtopsig and numtopsiguniform')
             end
             
             %%
