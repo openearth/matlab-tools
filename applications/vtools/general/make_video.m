@@ -19,10 +19,10 @@ clear
 
 %% INPUT
 
-path_folder='C:\Users\chavarri\temporal\201022_vstep\a_003\figures\'; %path to the folder including the figures (and only the figures)
+path_folder='C:\Users\chavarri\temporal\201030_groynes_lab_exp\r004\figures\'; %path to the folder including the figures (and only the figures)
 path_video=fullfile(path_folder,'m1'); %path including filename of the video
 frame_rate=20; %25
-quality=10; %[0,100]
+quality=50; %[0,100]
 
 %% MAKE VIDEO
 

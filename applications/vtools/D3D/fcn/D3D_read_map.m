@@ -721,7 +721,7 @@ zcordvel_mat=NaN(npint,KMAX);
         if nmax==nx
             out.sub=reshape(sub(:,:,2:end-1,:),nmax-2,nl+1)';
             switch flg.which_v
-                case 2
+                case 8
                     out.cvar=reshape(LYRFRAC(:,:,2:end-1,:,kf),nmax-2,nl)';
                 case {3,26}
                     out.cvar=reshape(dm(:,:,2:end-1,:),nmax-2,nl)';
@@ -731,7 +731,7 @@ zcordvel_mat=NaN(npint,KMAX);
         else
             out.sub=reshape(sub(:,2:end-1,:,:),nmax-2,nl+1)';
             switch flg.which_v
-                case 2
+                case 8
                     out.cvar=reshape(LYRFRAC(:,2:end-1,:,:,kf),nmax-2,nl)';
                 case {3,26}
                     out.cvar=reshape(dm(:,2:end-1,:),nmax-2,nl)';
@@ -805,7 +805,11 @@ nT=lyr_s(1);
 ny=lyr_s(2);
 nx=lyr_s(3);
 nl=lyr_s(4);
-nf=lyr_s(5);
+if numel(lyr_s)<5
+    nf=1;
+else 
+    nf=lyr_s(5);
+end
 aux.m=NaN(nT,ny,nx,nl,nf);
 for kf=1:nf
     aux.m(:,:,:,:,kf)=dchar(kf).*ones(nT,ny,nx,nl);

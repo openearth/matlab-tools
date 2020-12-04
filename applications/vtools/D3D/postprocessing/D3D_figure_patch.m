@@ -53,7 +53,7 @@ end
 %limits
 lims.x=[min(XZ),max(XZ)];
 lims.y=[min(sub(:)),max(sub(:))];
-lims.f=[min(cvar(:)),max(cvar(:))];
+lims.f=[min(cvar(:))-eps,max(cvar(:))+eps];
 switch flg.which_v
     case 3
         
@@ -76,6 +76,10 @@ end
 
 if isfield(flg,'fig_visible')==0
     flg.fig_visible=1;
+end
+
+if isfield(flg,'plotLa')==0
+    flg.plotLa=0;
 end
 
 %% data rework
@@ -196,6 +200,10 @@ end
 
 %substrate
 han.surf=patch('Faces',f,'Vertices',v,'FaceVertexCData',col,'FaceColor','flat');
+if flg.plotLa
+han.p=stairs(XZ(1:end-1)',sub(2,:),'linewidth',2,'color','g');
+han.p=stairs(XZ(1:end-1)',sub(3,:),'linewidth',2,'color','c');
+end
 % idx_p=150:200;
 % han.surf=patch('Faces',f(idx_p,:),'Vertices',v,'FaceVertexCData',col(idx_p),'FaceColor','flat');
 % colorbar

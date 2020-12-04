@@ -24,6 +24,7 @@
 %       -'umag'     : velocity magnitude
 %       -'x'        : x-coordinate
 %       -'y'        : y-coordinate
+%       -'Q'        : water discharge
 %
 %   -un: factor for unit conversion from SI
 %
@@ -74,7 +75,7 @@ switch lower(var)
             case 'es'
                 str_var='Nivel del agua';
         end
-        un_type='L'; 
+        un_type='Lref'; 
      case 'tide'
         switch lan
             case 'en'
@@ -206,6 +207,16 @@ switch lower(var)
                 str_var='Diferencia';
          end
          un_type='-';
+     case 'q'
+         switch lan
+            case 'en'
+                str_var='discharge';
+            case 'nl'
+                str_var='afvoer';
+            case 'es'
+                str_var='caudal';
+         end
+         un_type='L3/T';
     otherwise
          error('this is missing')
 end %var
@@ -213,12 +224,30 @@ end %var
 %% UNIT
 
 switch un_type
+    case 'Lref'
+        switch un
+            case 1
+                str_un=' [m+NAP]';
+            case 1/1000
+                str_un=' [km]';
+            otherwise
+                error('this factor is missing')
+        end
     case 'L'
         switch un
             case 1
                 str_un=' [m]';
             case 1/1000
                 str_un=' [km]';
+            otherwise
+                error('this factor is missing')
+        end
+    case 'L3/T'
+        switch un
+            case 1
+                str_un=' [m^3/s]';
+%             case 1/1000
+%                 str_un=' [km]';
             otherwise
                 error('this factor is missing')
         end

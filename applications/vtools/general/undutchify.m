@@ -11,7 +11,9 @@
 %$HeadURL$
 %
 %if it is a string, it changes comma by dot and makes it a number
-
+%in case it is a cell array do:
+%
+%matrix=cellfun(@(x)undutchify(x),cell_array);
 
 function meaningfull_value=undutchify(nonsense_number)
 
