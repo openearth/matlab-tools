@@ -61,7 +61,6 @@ function handles = ddb_loadTsunamiTableFile(handles, filename)
 % $Keywords: $
 
 %%
-%xml=xml_load(filename);
 xml=xml2struct(filename,'structuretype','supershort');
 handles.toolbox.tsunami.segmentLon=str2num(xml.longitude);
 handles.toolbox.tsunami.segmentLat=str2num(xml.latitude);

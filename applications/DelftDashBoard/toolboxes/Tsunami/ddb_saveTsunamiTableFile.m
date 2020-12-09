@@ -71,5 +71,4 @@ xml.sliprake=handles.toolbox.tsunami.segmentSlipRake;
 xml.slip=handles.toolbox.tsunami.segmentSlip;
 xml.eqtype=handles.toolbox.tsunami.EQtype;
 struct2xml(filename,xml,'structuretype','supershort');
-%xml_save(filename,xml,'off');
 
