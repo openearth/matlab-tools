@@ -66,7 +66,7 @@ compilefolder='d:/delftdashboardsetup/';
 
 include_additional_toolboxes=0;
 include_additional_models=0;
-revisionnumber='16790';
+revisionnumber='16824';
 
 if ~exist(compilefolder,'dir')
     mkdir(compilefolder);
@@ -121,7 +121,6 @@ for j=1:length(flist)
         % Check if xml file exists and whether model is enabled
         xmlfile=[inipath 'models' filesep model filesep 'xml' filesep 'model.' model '.xml'];
         if exist(xmlfile,'file')>0
-%            xml=xml_load(xmlfile);
             xml=xml2struct(xmlfile);
             switch lower(xml.enable)
                 case{'1','y','yes'}
