@@ -1185,6 +1185,14 @@ el=element(i).element;
 getFcn=getappdata(el.handle,'getFcn');
 setFcn=getappdata(el.handle,'setFcn');
 s=feval(getFcn);
+
+if ~isempty(el.callback)
+    ok=feval(el.callback,s);
+    if ~ok
+        return
+    end
+end
+
 s.ok=1;
 feval(setFcn,s);
 uiresume;
