@@ -77,7 +77,10 @@ if isdeployed
     [status, result] = system('path');
     exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
     datadir=[fileparts(exeDir) filesep 'data' filesep];
-
+    
+    disp(['Exe directory      : ' exeDir]);
+    disp(['Data directory     : ' datadir]);
+    disp(['Settings directory : ' handles.settingsDir]);
 %    handles.settingsDir=[fileparts(exeDir) filesep 'ddbsettings' filesep]; % by Bart Grasmeijer
     
     additionalToolboxDir=[];
