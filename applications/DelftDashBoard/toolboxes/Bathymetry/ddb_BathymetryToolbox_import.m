@@ -309,7 +309,6 @@ ddb_makeBathymetryTiles(fname,dr,dataname,dataformat,datatype,nx,ny,x0,y0,dx,dy,
 
 % Now add data to data xml
 fname = [handles.bathymetry.dir 'bathymetry.xml'];
-%xmldata = xml_load(fname);
 xmldata = xml2struct(fname);
 nd=length(xmldata.dataset)+1;
 xmldata.dataset(nd).dataset.name=dataname;
