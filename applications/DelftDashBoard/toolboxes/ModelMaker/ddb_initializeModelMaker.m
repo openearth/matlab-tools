@@ -187,6 +187,12 @@ handles.toolbox.modelmaker.delft3d.boundary_forcing='A';
 handles.toolbox.modelmaker.delft3d.boundary_minimum_depth=5;
 handles.toolbox.modelmaker.delft3d.boundary_auto_section_length=1;
 
+%% Boundary options for Delft3D-FM
+handles.toolbox.modelmaker.dflowfm.boundary_type='water_level';
+handles.toolbox.modelmaker.dflowfm.boundary_forcing='A';
+handles.toolbox.modelmaker.dflowfm.boundary_minimum_depth=5;
+handles.toolbox.modelmaker.dflowfm.boundary_auto_section_length=1;
+
 %% GridGen
 handles.toolbox.modelmaker.gridgen.nrlines=0;
 handles.toolbox.modelmaker.gridgen.lines=[];
