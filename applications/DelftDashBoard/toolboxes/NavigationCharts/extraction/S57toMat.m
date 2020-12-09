@@ -18,7 +18,7 @@ system(sysstr);
 
 %%
 disp('Parsing ...');
-a=xml_load([outdir fname '.gml']);
+a=xml2struct([outdir fname '.gml']);
 
 %%
 disp('Making structure ...');
