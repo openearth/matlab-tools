@@ -15,6 +15,7 @@ fclose(fid);
 % Read subgrd file
 fid=fopen([folder inp.sbgfile],'r');
 np=fread(fid,1,'integer*4');
+uopt=fread(fid,1,'integer*4');
 nbin=fread(fid,1,'integer*4');
 
 v0=zeros(nmax,mmax);
