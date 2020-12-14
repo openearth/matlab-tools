@@ -425,6 +425,10 @@ switch opt
             gt(i).amp    = a;
             gt(i).phi    = p;
         end
+
+        if getd
+            depth=interp2(lon,lat,internaldiffusion(depth),xp,yp);
+        end
         
     case{'limits'}
         switch gt(i).ampstr

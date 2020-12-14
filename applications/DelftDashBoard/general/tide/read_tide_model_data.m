@@ -53,11 +53,11 @@ function [lon,lat, gt, depth, conList] = readTideModel(tidefile, varargin)
 % Created: 29 Nov 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: readTideModel.m 16770 2020-11-05 13:43:35Z bj.vanderspek.x $
+% $Date: 2020-11-05 14:43:35 +0100 (do, 05 nov 2020) $
+% $Author: bj.vanderspek.x $
+% $Revision: 16770 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/general/tide/readTideModel.m $
 % $Keywords: $
 
 %% Create output
@@ -112,74 +112,35 @@ for i=1:length(varargin)
     end
 end
 
-%% Available constituents
-if ~isempty(findstr(tidefile, 'tpxo80'))
-    constituents={'m2','s2','n2','k2','k1','o1','p1','q1','mf','mm','m4','ms4','mn4'};
-else
-    cnst=nc_varget(tidefile,'tidal_constituents');
-    for ic=1:size(cnst,1)
-        constituents{ic}=deblank(cnst(ic,:));
-    end    
-end
-
-%% Requested constituents
-if strcmpi(constituent,'all')
-    ncons = length(constituents);
-    const=constituents;
-else
+%% Consituents
+cnst=nc_varget(tidefile,'tidal_constituents');
+try
+    if findstr(constituent, 'all')
+        constituent = cnst;
+        ncons = length(constituent);
+    else
+        ncons = 1;
+    end
+catch
     ncons = 1;
-    const{1}=lower(constituent);
-end
-
-switch lower(tp)
-    case{'h','z'}
-        getz=1;
-    case{'vel'}
-        getu=1;
-        getv=1;
-    case{'q'}
-        getU=1;
-        getV=1;
-    case{'u'}
-        getu=1;
-    case{'v'}
-        getv=1;
-    case{'all'}
-        getz=1;
-        getu=1;
-        getv=1;
-        getU=1;
-        getV=1;
-end
-
-for icons=1:ncons
-    
-    % Get required data from tide file
-    
-    
-    
 end
 
 
 %% Only one time readtidemodel
 if ncons == 1
     
+    %% TPXO 8.0
     if ~isempty(findstr(tidefile, 'tpxo80'))
-
-        %% TPXO 8.0
-        
         ind = find(strcmp('constituent', varargin));
         C = cellstr(constituent(1,:));
         str = ['Reading: TPXO 8.0 -', C, '- ', tp]; str = strjoin(str);
         disp(str);
         varargin{1, ind+1} = C{1,1};
-        [lon, lat, gt, depth] = readTideModel_TPXO8(tidefile,varargin);
+        [lon, lat, gt, depth] = read_tide_model_TPXO8(tidefile,varargin);
         conList = C;
         
-    else
-        
         %% Other
-        
+    else
         iddot = strfind(tidefile, '\');
         if isempty(iddot)
             iddot = strfind(tidefile, '/');
@@ -191,9 +152,9 @@ if ncons == 1
         
         % Filter other results
         ind = find(strcmp(constituent, conList));
-        for jj = 1:length(gt)
+        for jj = 1:length(gt);
             [nx ny ncons] = size(gt(jj).amp);
-            if ncons > 1
+            if ncons > 1;
                 gt(jj).amp = gt(jj).amp(:,:,ind);
                 gt(jj).phi = gt(jj).phi(:,:,ind);
             else
@@ -203,14 +164,12 @@ if ncons == 1
         end
     end
     
+    %% All constituents
 else
     
-    %% All constituents
-    
+    %% TPXO 8.0
     if ~isempty(findstr(tidefile, 'tpxo80'))
-
-        %% TPXO 8.0
-
+%        for ii = 1:ncons
         for ii = 1:ncons
             % Replace constituent
             ind = find(strcmp('constituent', varargin));
