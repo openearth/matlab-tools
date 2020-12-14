@@ -68,6 +68,7 @@ gridtype='unstructured';
 %% Generate bathymetry
 [xg,yg,zg]=ddb_ModelMakerToolbox_generateBathymetry(handles,xg,yg,zg,datasets,'filename',filename,'overwrite',overwrite,'gridtype',gridtype,'modeloffset',modeloffset);
 
+%zg=zeros(size(zg))-1;
 %% Update model data
 handles.model.dflowfm.domain(id).netstruc.node.mesh2d_node_z=zg;
 % Update circumference

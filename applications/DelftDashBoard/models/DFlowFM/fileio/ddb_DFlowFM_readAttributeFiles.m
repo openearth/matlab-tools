@@ -51,44 +51,47 @@ function handles = ddb_DFlowFM_readAttributeFiles(handles, id)
 %%
 fname=handles.model.dflowfm.domain(id).netfile;
 
-if exist(fname,'file')    
+if exist(fname,'file')
+    
     % Load file
-%     handles.model.dflowfm.domain(id).netstruc=dflowfm.readNet_new(fname);
-
-try
-    netstruc=dflowfm.readNet_new(fname);
-catch    
-    netstruc=dflowfm.readNetOld(fname);
-
-    netstruc.edge.mesh2d_edge_nodes=netstruc.edge.NetLink;
-    netstruc.edge=rmfield(netstruc.edge,'NetLink');
-
-    netstruc.node.mesh2d_node_x=netstruc.node.x;
-    netstruc.node.mesh2d_node_y=netstruc.node.y;
-    netstruc.node.mesh2d_node_z=netstruc.node.z;
-    netstruc.node=rmfield(netstruc.node,'x');
-    netstruc.node=rmfield(netstruc.node,'y');
-    netstruc.node=rmfield(netstruc.node,'z');
+    %     handles.model.dflowfm.domain(id).netstruc=dflowfm.readNet_new(fname);
     
-    netstruc.face.mesh2d_face_nodes=netstruc.face.NetElemNode';
-    netstruc.face=rmfield(netstruc.face,'NetElemNode');
+    try
+        netstruc=dflowfm.readNet_new(fname);
+    catch
+        netstruc=dflowfm.readNetOld(fname);
+        
+        netstruc.edge.mesh2d_edge_nodes=netstruc.edge.NetLink;
+        netstruc.edge=rmfield(netstruc.edge,'NetLink');
+        
+        netstruc.node.mesh2d_node_x=netstruc.node.x;
+        netstruc.node.mesh2d_node_y=netstruc.node.y;
+        netstruc.node.mesh2d_node_z=netstruc.node.z;
+        netstruc.node=rmfield(netstruc.node,'x');
+        netstruc.node=rmfield(netstruc.node,'y');
+        netstruc.node=rmfield(netstruc.node,'z');
+        
+        netstruc.face.mesh2d_face_nodes=netstruc.face.NetElemNode';
+        netstruc.face=rmfield(netstruc.face,'NetElemNode');
+        
+    end
     
-end
-
-netstruc.node.mesh2d_node_z(netstruc.node.mesh2d_node_z==-999)=NaN;
-
-handles.model.dflowfm.domain(id).netstruc=netstruc;
+    netstruc.node.mesh2d_node_z(netstruc.node.mesh2d_node_z==-999)=NaN;
     
-%     % Compute circumference
-%    handles.model.dflowfm.domain.circumference=ddb_findNetCircumference(handles.model.dflowfm.domain(id).netstruc);
-    handles.model.dflowfm.domain.circumference=[];
+    handles.model.dflowfm.domain(id).netstruc=netstruc;
+    
+    circumference=delft3dfm_find_net_circumference(netstruc);
+
+    handles.model.dflowfm.domain.circumference=circumference;
+    
 else
     ddb_giveWarning('text','No net file found in mdu file!');
     return
 end
 
 if ~isempty(handles.model.dflowfm.domain.extforcefilenew)
-    handles=ddb_DFlowFM_readExternalForcing(handles);
+%    handles=ddb_DFlowFM_readExternalForcing(handles);
+    handles=ddb_delft3dfm_read_boundaries(handles);
 end
 
 if ~isempty(handles.model.dflowfm.domain.obsfile)

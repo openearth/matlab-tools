@@ -78,8 +78,12 @@
       <element>model.dflowfm.wind.xml</element>
     </tab>
     <tab>
-      <tabstring>External Forcing</tabstring>
-      <element>model.dflowfm.externalforcing.xml</element>
+      <tabstring>Boundaries</tabstring>
+      <element>model.dflowfm.boundaries.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Meteo</tabstring>
+      <element>model.dflowfm.meteo.xml</element>
     </tab>
     <tab>
       <tabstring>Output</tabstring>

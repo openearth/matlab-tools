@@ -43,8 +43,13 @@ function handles = ddb_DFlowFM_readExternalForcing(handles)
 % $HeadURL$
 % $Keywords: $
 
-%% Reads DFlow-FM external forcing
-fname=handles.model.dflowfm.domain.extforcefilenew;
+%% Reads DFlow-FM external forcing (ext and bc files)
+% Reorders boundaries and merges boundaries with the same pli file
+
+boundary=delft3dfm_read_ext_file(handles.model.dflowfm.domain.extforcefilenew);
+
+boundary=ddb_reorder_fm_boundaries(boundary);
+
 
 s=[];
 n=0;
@@ -106,6 +111,16 @@ for ii=1:length(s)
             handles.model.dflowfm.domain.bcfile=s(ii).forcingfile;
             handles.model.dflowfm.domain.boundarynames{nb}=name;            
         case{'riemannbnd'}
+            nb=nb+1;
+            plifile=s(ii).locationfile;
+            name=plifile(1:end-4);
+            [x,y]=landboundary('read',plifile);
+            boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,nb,handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop);
+            boundaries(nb).type=s(ii).quantity;
+            boundaries(nb).forcingfile=s(ii).forcingfile;
+            handles.model.dflowfm.domain.boundarynames{nb}=name;            
+            handles.model.dflowfm.domain.bcfile=s(ii).forcingfile;
+        case{'normalvelocitybnd'}
             nb=nb+1;
             plifile=s(ii).locationfile;
             name=plifile(1:end-4);

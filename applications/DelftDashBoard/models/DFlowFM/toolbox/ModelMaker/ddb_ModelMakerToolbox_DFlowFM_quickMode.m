@@ -234,20 +234,33 @@ function generateOpenBoundaries
 % Start
 handles=getHandles;
 
-% Find boundaries
-maxdist     = handles.toolbox.modelmaker.sectionLengthMetres;
-minlev      = handles.toolbox.modelmaker.zMax;
-boundaries  = [];
-
-if isnan(nanmax(handles.model.dflowfm.domain(ad).netstruc.node.z))
+if isnan(nanmax(handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_z))
     ddb_giveWarning('text','Could not generate open boundaries! Please generate bathymetry first.');
     return
 end
 
-if isempty(handles.model.dflowfm.domain(ad).circumference)
-    ddb_giveWarning('text','Sorry, open boundaries can only be created for grids that were just created, not for grids that were loaded in ...');
+% First edit type of boundary etc.
+h.type=handles.toolbox.modelmaker.dflowfm.boundary_type;
+h.forcing=handles.toolbox.modelmaker.dflowfm.boundary_forcing;
+h.minimum_depth=handles.toolbox.modelmaker.dflowfm.boundary_minimum_depth;
+h.auto_section_length=handles.toolbox.modelmaker.dflowfm.boundary_auto_section_length;
+
+xmldir=handles.model.dflowfm.xmlDir;
+xmlfile='model.dflowfm.modelmaker.boundaryoptions.xml';
+
+[h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif'],'modal',1);
+if ok
+    handles.toolbox.modelmaker.dflowfm.boundary_type=h.type;
+    handles.toolbox.modelmaker.dflowfm.boundary_forcing=h.forcing;
+    handles.toolbox.modelmaker.dflowfm.boundary_minimum_depth=h.minimum_depth;
+    handles.toolbox.modelmaker.dflowfm.boundary_auto_section_length=h.auto_section_length;
+else
     return
 end
+
+% Find boundaries
+maxdist     = handles.toolbox.modelmaker.sectionLengthMetres;
+minlev      = -handles.toolbox.modelmaker.dflowfm.boundary_minimum_depth;
 
 boundarysections = ddb_DFlowFM_findBoundarySections(handles.model.dflowfm.domain(ad).circumference,maxdist,minlev,handles.screenParameters.coordinateSystem.type);
 handles.model.dflowfm.domain(ad).boundarynames = {''};
@@ -255,21 +268,34 @@ handles.model.dflowfm.domain(ad).boundarynames = {''};
 % Delete existing boundaries
 ddb_DFlowFM_plotBoundaries(handles,'delete','domain',ad);
 
+handles.model.dflowfm.domain(ad).boundary=[];
+handles.model.dflowfm.domain(ad).boundarynames=[];
+
+nr=length(boundarysections);
+
 % Name boundaries
-for ib=1:length(boundarysections)
-    boundaries  = ddb_DFlowFM_initializeBoundary(boundaries,boundarysections(ib).x,boundarysections(ib).y,['bnd_' num2str(ib,'%0.3i')],ib, handles.model.dflowfm.domain(ad).tstart,handles.model.dflowfm.domain(ad).tstop);
-    handles.model.dflowfm.domain(ad).boundarynames{ib}=['bnd_' num2str(ib,'%0.3i')];
+for ib=1:nr
+    
+    name=['bnd' num2str(ib,'%0.3i')];
+    tp=handles.toolbox.modelmaker.dflowfm.boundary_type;
+    x=boundarysections(ib).x;
+    y=boundarysections(ib).y;
+    boundary  = ddb_delft3dfm_initialize_boundary(name,tp,handles.model.dflowfm.domain(ad).tstart,handles.model.dflowfm.domain(ad).tstop,x,y);    
+    handles.model.dflowfm.domain(ad).boundary(ib).boundary = boundary;
+    handles.model.dflowfm.domain(ad).boundarynames{ib}=boundary.name;
+
 end
 
+handles.model.dflowfm.domain.activeboundary=1;
+
 % Save files
-handles.model.dflowfm.domain(ad).boundaries         = boundaries;
-handles.model.dflowfm.domain(ad).nrboundaries       = length(boundaries);
+handles.model.dflowfm.domain(ad).nrboundaries = nr;
 handles = ddb_DFlowFM_plotBoundaries(handles,'plot','active',1);
-for ipol=1:length(handles.model.dflowfm.domain(ad).boundaries)
-    ddb_DFlowFM_saveBoundaryPolygon('.\',handles.model.dflowfm.domain(ad).boundaries,ipol);
-end
-handles.model.dflowfm.domain(ad).extforcefilenew='forcing.ext';
-ddb_DFlowFM_saveExtFile(handles);
+% for ipol=1:length(handles.model.dflowfm.domain(ad).boundaries)
+%     ddb_DFlowFM_saveBoundaryPolygon('.\',handles.model.dflowfm.domain(ad).boundaries,ipol);
+% end
+% handles.model.dflowfm.domain(ad).extforcefilenew='forcing.ext';
+% ddb_DFlowFM_saveExtFile(handles);
 
 % Finish
 setHandles(handles);
@@ -284,11 +310,6 @@ if handles.model.dflowfm.domain(ad).nrboundaries==0
     return
 end
 
-[filename,ok]=gui_uiputfile('*.bc', 'Boundary Forcing File',handles.model.dflowfm.domain(ad).bcfile);
-if ~ok
-    return
-end
-handles.model.dflowfm.domain(ad).bcfile=filename;
 
 [filename,ok]=gui_uiputfile('*.ext', 'External Forcing File',handles.model.dflowfm.domain(ad).extforcefilenew);
 if ~ok
@@ -296,31 +317,47 @@ if ~ok
 end
 handles.model.dflowfm.domain(ad).extforcefilenew=filename;
 
-% Start
-wb      = waitbox('Generating Boundary Conditions ...');
-%ad      = 1;
-
-% Make the tides
-boundaries = handles.model.dflowfm.domain(ad).boundaries;
-for ipol=1:length(boundaries)
-    [boundaries(ipol) error] = ddb_ModelMakerToolbox_Delft3DFM_generateBoundaryConditions(handles, boundaries(ipol));
-    if error == 1; 
-        ddb_giveWarning('Warning',['Delft Dashboard was unable to generate the tides']);    
-    end
+[forcing_file,ok]=gui_uiputfile('*.bc', 'Boundary Forcing File',handles.model.dflowfm.domain(ad).bcfile);
+if ~ok
+    return
 end
 
- % Save the data
-ddb_DFlowFM_saveBCfile(handles.model.dflowfm.domain.bcfile,boundaries);
-% for ii=1:length(boundaries)
-%     for jj=1:length(boundaries(ii).nodes)
-%         ddb_DFlowFM_saveCmpFile(boundaries,ii,jj);
-%     end
-% end
-handles.model.dflowfm.domain(ad).boundaries=boundaries;
-ddb_DFlowFM_saveExtFile(handles);
+% Start
+wb      = waitbox('Generating Boundary Conditions ...');
+
+% Make the tides
+for ipol=1:length(handles.model.dflowfm.domain(ad).boundary)
+
+
+    bnd=handles.model.dflowfm.domain(ad).boundary(ipol).boundary;
+
+    disp(['Processing boundary ' bnd.name]);
+    
+    [bnd,error] = ddb_ModelMakerToolbox_Delft3DFM_generate_astronomic_tides(handles, bnd, forcing_file);
+    
+    if error == 1
+        ddb_giveWarning('Warning',['Delft Dashboard was unable to generate the tides']);
+        return
+    end
+    
+    handles.model.dflowfm.domain(ad).boundary(ipol).boundary=bnd;
+    
+end
+
+ddb_delft3dfm_save_boundary_ext_file(handles);
+
+%  % Save the data
+% ddb_DFlowFM_saveBCfile(handles.model.dflowfm.domain.bcfile,boundaries);
+% % for ii=1:length(boundaries)
+% %     for jj=1:length(boundaries(ii).nodes)
+% %         ddb_DFlowFM_saveCmpFile(boundaries,ii,jj);
+% %     end
+% % end
+% handles.model.dflowfm.domain(ad).boundaries=boundaries;
+% ddb_DFlowFM_saveExtFile(handles);
 setHandles(handles);
 fclose('all');
 
 % Finish
-setHandles(handles);
+% setHandles(handles);
 close(wb);

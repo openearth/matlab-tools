@@ -41,6 +41,8 @@ else
             openExternalForcing;
         case{'saveexternalforcing'}
             saveExternalForcing;
+        case{'selecttype'}
+            select_boundary_type;
     end
 end
 
@@ -49,14 +51,14 @@ function editName
 handles=getHandles;
 iac=handles.model.dflowfm.domain.activeboundary;
 oriname=handles.model.dflowfm.domain.boundarynames{iac};
-name=handles.model.dflowfm.domain.boundaries(iac).name;
+name=handles.model.dflowfm.domain.boundary(iac).boundary.name;
 % Check for spaces
-if isempty(find(name==' ', 1));
-    handles.model.dflowfm.domain.boundaries(iac).locationfile=[name '.pli'];
+if isempty(find(name==' ', 1))
+    handles.model.dflowfm.domain.boundary(iac).boundary.location_file=[name '.pli'];
     handles=updateNames(handles);
 else
     ddb_giveWarning('text','Sorry, boundary names cannot contain spaces!');
-    handles.model.dflowfm.domain.boundaries(iac).name=oriname;
+    handles.model.dflowfm.domain.boundary(iac).boundary.name=oriname;
 end
 setHandles(handles);
 
@@ -88,19 +90,14 @@ for ip=1:length(x)
     y(ip)=handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_y(imin);
 end
 
-handles.model.dflowfm.domain.boundaries=ddb_DFlowFM_initializeBoundary(handles.model.dflowfm.domain.boundaries,x,y,['bnd_' num2str(nr,'%0.3i')],nr, ...
-    handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop);
+name=['bnd' num2str(nr,'%0.3i')];
+handles.model.dflowfm.domain.boundary(nr).boundary=ddb_delft3dfm_initialize_boundary(name,'water_level',handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop,x,y);
 
 handles=updateNames(handles);
 
-handles.model.dflowfm.domain.boundaries(nr).handle=h;
+handles.model.dflowfm.domain.boundary(nr).boundary.handle=h;
 
-% if nr>1
-%     % Copy from existing boundary
-%     handles.model.dflowfm.domain.boundaries(nr).definition=handles.model.dflowfm.domain.boundaries(handles.model.dflowfm.domain.activeboundary).definition;
-% end
 handles.model.dflowfm.domain.activeboundary=nr;
-
 
 setHandles(handles);
 
@@ -119,21 +116,18 @@ if handles.model.dflowfm.domain.nrboundaries>0
 
     iac=handles.model.dflowfm.domain.activeboundary;
     try
-        delete(handles.model.dflowfm.domain.boundaries(iac).handle);
+        delete(handles.model.dflowfm.domain.boundary(iac).boundary.handle);
     end
-    handles.model.dflowfm.domain.boundaries=removeFromStruc(handles.model.dflowfm.domain.boundaries,iac);
+    handles.model.dflowfm.domain.boundary=removeFromStruc(handles.model.dflowfm.domain.boundary,iac);
     handles.model.dflowfm.domain.nrboundaries=handles.model.dflowfm.domain.nrboundaries-1;
     handles.model.dflowfm.domain.activeboundary=max(min(handles.model.dflowfm.domain.activeboundary,handles.model.dflowfm.domain.nrboundaries),1);
     handles.model.dflowfm.domain.activeboundaries=handles.model.dflowfm.domain.activeboundary;
 
+
+     handles=updateNames(handles);
+     
     if handles.model.dflowfm.domain.nrboundaries==0
-        handles.model.dflowfm.domain.boundaries(1).name='';
-        handles.model.dflowfm.domain.boundaries(1).type='waterlevelbnd';
-        handles.model.dflowfm.domain.boundaries(1).activenode=1;
-        handles.model.dflowfm.domain.boundaries(1).nodenames={''};
-        handles.model.dflowfm.domain.boundaries(1).nodes(1).tim=0;
-        handles.model.dflowfm.domain.boundaries(1).nodes(1).cmp=0;
-        handles.model.dflowfm.domain.boundaries(1).nodes(1).cmptype='astro';
+        handles.model.dflowfm.domain.boundary(1).boundary=ddb_delft3dfm_initialize_boundary('','water_level',handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop,0,0);
     end
     
     % Rename boundaries
@@ -153,8 +147,8 @@ function changeBoundary(h,x,y,nr)
 iac=[];
 handles=getHandles;
 % Find which boundary this is
-for ii=1:length(handles.model.dflowfm.domain.boundaries)
-    if handles.model.dflowfm.domain.boundaries(ii).handle==h
+for ii=1:length(handles.model.dflowfm.domain.boundary)
+    if handles.model.dflowfm.domain.boundary(ii).boundary.handle==h
         iac=ii;
         break
     end
@@ -182,9 +176,9 @@ x(nr)=handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_x(imin);
 y(nr)=handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_y(imin);
 
 handles.model.dflowfm.domain(ad).activeboundary=iac;
-    handles.model.dflowfm.domain(ad).boundaries(iac).x=x;
-    handles.model.dflowfm.domain(ad).boundaries(iac).y=y;
-    handles.model.dflowfm.domain(ad).boundaries(iac).activenode=nr;
+    handles.model.dflowfm.domain(ad).boundary(iac).boundary.x=x;
+    handles.model.dflowfm.domain(ad).boundary(iac).boundary.y=y;
+    handles.model.dflowfm.domain(ad).boundary(iac).boundary.activenode=nr;
 %     
 % end
 
@@ -220,8 +214,11 @@ handles.model.dflowfm.domain.nrboundaries=nr;
 handles.model.dflowfm.domain.activeboundary=nr;
 
 name=filename(1:end-4);
-handles.model.dflowfm.domain.boundaries=ddb_DFlowFM_initializeBoundary(handles.model.dflowfm.domain.boundaries,x,y,name,nr, ...
-    handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop);
+
+handles.model.dflowfm.domain.boundary(nr).boundary=ddb_delft3dfm_initialize_boundary(handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop,x,y);
+handles.model.dflowfm.domain.boundary(nr).boundary.name=name;
+handles.model.dflowfm.domain.boundary(nr).boundary.type='water_level';
+handles.model.dflowfm.domain.boundary(nr).boundary.location_file=filename;
 
 handles=updateNames(handles);
 
@@ -230,11 +227,6 @@ h=gui_polyline('plot','x',x,'y',y,'tag','dflowfmboundary', ...
     'Marker','o','color','g','markeredgecolor','r','markerfacecolor','r');
 
 handles.model.dflowfm.domain.boundaries(nr).handle=h;
-
-% if nr>1
-%     % Copy from existing boundary
-%     handles.model.dflowfm.domain.boundaries(nr).definition=handles.model.dflowfm.domain.boundaries(handles.model.dflowfm.domain.activeboundary).definition;
-% end
 
 setHandles(handles);
 
@@ -256,26 +248,11 @@ iac=handles.model.dflowfm.domain.activeboundary;
 if pathname~=0
 
     % Save pli file
-    handles.model.dflowfm.domain.boundaries(iac).locationfile=filename;
-    handles.model.dflowfm.domain.boundaries(iac).name=filename(1:end-4);
+    handles.model.dflowfm.domain.boundary(iac).boundary.location_file=filename;
+    handles.model.dflowfm.domain.boundary(iac).boundary.name=filename(1:end-4);
     handles=updateNames(handles);
-%     x=handles.model.dflowfm.domain.boundaries(iac).x;
-%     y=handles.model.dflowfm.domain.boundaries(iac).y;
-    ddb_DFlowFM_saveBoundaryPolygon('.\',handles.model.dflowfm.domain.boundaries,iac);
-%    landboundary('write',filename,x,y);
-
-%     ddb_DFlowFM_saveBCfile(handles.model.dflowfm.domain.boundaries);
     
-    
-%     % Save component files
-%     for jj=1:length(x)
-%         if handles.model.dflowfm.domain.boundaries(iac).nodes(jj).cmp
-%             ddb_DFlowFM_saveCmpFile(handles.model.dflowfm.domain.boundaries,iac,jj);
-%         end
-%         if handles.model.dflowfm.domain.boundaries(iac).nodes(jj).tim
-%             ddb_DFlowFM_saveTimFile(handles.model.dflowfm.domain.boundaries,iac,jj,handles.model.dflowfm.domain.refdate);
-%         end        
-%     end
+    delft3dfm_write_boundary_polyline(handles.model.dflowfm.domain.boundary(iac).boundary);
 
 else
     return
@@ -292,32 +269,8 @@ handles=getHandles;
 
 for iac=1:handles.model.dflowfm.domain.nrboundaries
 
-    % Save pli file
-    x=handles.model.dflowfm.domain.boundaries(iac).x;
-    y=handles.model.dflowfm.domain.boundaries(iac).y;
-    ddb_DFlowFM_saveBoundaryPolygon('.\',handles.model.dflowfm.domain.boundaries,iac);
+    delft3dfm_write_boundary_polyline(handles.model.dflowfm.domain.boundary(iac).boundary);
 
-%    landboundary('write',handles.model.dflowfm.domain.boundaries(iac).filename,x,y);
-    for jj=1:length(x)
-        handles.model.dflowfm.domain.boundaries(iac).nodes(jj).bc.Function='timeseries';
-        handles.model.dflowfm.domain.boundaries(iac).nodes(jj).bc.Quantity1='time';
-        handles.model.dflowfm.domain.boundaries(iac).nodes(jj).bc.Unit1='-';
-        handles.model.dflowfm.domain.boundaries(iac).nodes(jj).bc.Quantity2='waterlevelbnd';
-        handles.model.dflowfm.domain.boundaries(iac).nodes(jj).bc.Unit2='-';
-    end
-
-    ddb_DFlowFM_saveBCfile('mackay.bc',handles.model.dflowfm.domain.boundaries,handles.model.dflowfm.domain.refdate);
-
-%     % Save component files
-%     for jj=1:length(x)
-%         if handles.model.dflowfm.domain.boundaries(iac).nodes(jj).cmp
-%             ddb_DFlowFM_saveCmpFile(handles.model.dflowfm.domain.boundaries,iac,jj);
-%         end
-%         if handles.model.dflowfm.domain.boundaries(iac).nodes(jj).tim
-%             handles.model.dflowfm.domain.boundaries(iac).nodes(jj).timfile=[handles.model.dflowfm.domain.boundaries(iac).name '_' num2str(jj,'%0.4i') '.tim'];
-%             ddb_DFlowFM_saveTimFile(handles.model.dflowfm.domain.boundaries,iac,jj,handles.model.dflowfm.domain.refdate);
-%         end
-%     end
 end
 
 setHandles(handles);
@@ -347,9 +300,10 @@ clearInstructions;
 handles=getHandles;
 
 [filename, pathname, filterindex] = uiputfile('*.ext', 'External Forcing File',handles.model.dflowfm.domain.extforcefilenew);
+
 if pathname~=0
     handles.model.dflowfm.domain.extforcefilenew=filename;
-    ddb_DFlowFM_saveExtFile(handles);
+    ddb_delft3dfm_save_boundary_ext_file(handles);
     setHandles(handles);
 end
 
@@ -358,11 +312,10 @@ function handles=updateNames(handles)
 % Change filename of pli file and component files
 handles.model.dflowfm.domain.boundarynames=[];
 for ib=1:handles.model.dflowfm.domain.nrboundaries
-    name=handles.model.dflowfm.domain.boundaries(ib).name;
+    name=handles.model.dflowfm.domain.boundary(ib).boundary.name;
     handles.model.dflowfm.domain.boundarynames{ib}=name;
-    for ip=1:length(handles.model.dflowfm.domain.boundaries(ib).x)
-        handles.model.dflowfm.domain.boundaries(ib).nodes(ip).name=[name '_' num2str(ip,'%0.4i')];
-%        handles.model.dflowfm.domain.boundaries(ib).nodes(ip).cmpfile=[name '_' num2str(ip,'%0.4i') '.cmp'];
+    for ip=1:length(handles.model.dflowfm.domain.boundary(ib).boundary.x)
+        handles.model.dflowfm.domain.boundary(ib).boundary.nodenames{ip}=[name '_' num2str(ip,'%0.4i')];
     end
 end
 
@@ -373,26 +326,26 @@ handles=getHandles;
 
 iac=handles.model.dflowfm.domain.activeboundary;
     
-nr=handles.model.dflowfm.domain.boundaries(iac).activenode;
+nr=handles.model.dflowfm.domain.boundary(iac).boundary.activenode;
 
-nrnodes0=length(handles.model.dflowfm.domain.boundaries(iac).nodes);
+nrnodes0=length(handles.model.dflowfm.domain.boundary(iac).boundary.nodes);
 
-nodes=handles.model.dflowfm.domain.boundaries(iac).nodes;
+nodes=handles.model.dflowfm.domain.boundary(iac).boundary.nodes;
 
 nodes=insert_in_structure(nodes,nr+1);
 nr=nr+1;
 
-handles.model.dflowfm.domain.boundaries(iac).nodes=nodes;
+handles.model.dflowfm.domain.boundary(iac).boundary.nodes=nodes;
 
 if nr>nrnodes0
     % Append to end
 else
     % Append in middle
-    xx=0.5*(handles.model.dflowfm.domain.boundaries(iac).x(nr-1)+handles.model.dflowfm.domain.boundaries(iac).x(nr));
-    yy=0.5*(handles.model.dflowfm.domain.boundaries(iac).y(nr-1)+handles.model.dflowfm.domain.boundaries(iac).y(nr));
-    x=[handles.model.dflowfm.domain.boundaries(iac).x(1:nr-1) xx handles.model.dflowfm.domain.boundaries(iac).x(nr:end)];
-    y=[handles.model.dflowfm.domain.boundaries(iac).y(1:nr-1) yy handles.model.dflowfm.domain.boundaries(iac).y(nr:end)];
-    handles.model.dflowfm.domain.boundaries(iac).nodes(nr)=handles.model.dflowfm.domain.boundaries(iac).nodes(nr-1);
+    xx=0.5*(handles.model.dflowfm.domain.boundary(iac).boundary.x(nr-1)+handles.model.dflowfm.domain.boundary(iac).boundary.x(nr));
+    yy=0.5*(handles.model.dflowfm.domain.boundary(iac).boundary.y(nr-1)+handles.model.dflowfm.domain.boundary(iac).boundary.y(nr));
+    x=[handles.model.dflowfm.domain.boundary(iac).boundary.x(1:nr-1) xx handles.model.dflowfm.domain.boundary(iac).boundary.x(nr:end)];
+    y=[handles.model.dflowfm.domain.boundary(iac).boundary.y(1:nr-1) yy handles.model.dflowfm.domain.boundary(iac).boundary.y(nr:end)];
+    handles.model.dflowfm.domain.boundary(iac).boundary.nodes(nr)=handles.model.dflowfm.domain.boundary(iac).boundary.nodes(nr-1);
 end
 
 % Find nearest point on circumference
@@ -404,12 +357,12 @@ x(nr)=xcir(imin);
 y(nr)=ycir(imin);
 
 handles.model.dflowfm.domain.activeboundary=iac;
-handles.model.dflowfm.domain.boundaries(iac).x=x;
-handles.model.dflowfm.domain.boundaries(iac).y=y;
-handles.model.dflowfm.domain.boundaries(iac).activenode=nr;
+handles.model.dflowfm.domain.boundary(iac).boundary.x=x;
+handles.model.dflowfm.domain.boundary(iac).boundary.y=y;
+handles.model.dflowfm.domain.boundary(iac).boundary.activenode=nr;
 
 for ip=1:nrnodes0+1
-    handles.model.dflowfm.domain.boundaries(iac).nodenames{ip}=[handles.model.dflowfm.domain.boundaries(iac).name '_' num2str(ip,'%0.4i')];
+    handles.model.dflowfm.domain.boundary(iac).boundary.nodenames{ip}=[handles.model.dflowfm.domain.boundary(iac).boundary.name '_' num2str(ip,'%0.4i')];
 end
 
 setHandles(handles);
@@ -418,3 +371,24 @@ ddb_DFlowFM_plotBoundaries(handles,'update');
 
 gui_updateActiveTab;
 
+%%
+function select_boundary_type
+
+handles=getHandles;
+iac=handles.model.dflowfm.domain.activeboundary;
+tp=handles.model.dflowfm.domain.boundary(iac).boundary.type;
+setHandles(handles);
+
+switch tp
+    case{'water_level'}
+        handles.model.dflowfm.domain.boundary(iac).boundary.water_level.astronomic_components.active=1;
+    case{'water_level_plus_normal_velocity'}
+        handles.model.dflowfm.domain.boundary(iac).boundary.water_level.astronomic_components.active=1;
+        handles.model.dflowfm.domain.boundary(iac).boundary.normal_velocity.astronomic_components.active=1;
+    case{'water_level_plus_normal_velocity_plus_tangential_velocity'}
+        handles.model.dflowfm.domain.boundary(iac).boundary.water_level.astronomic_components.active=1;
+        handles.model.dflowfm.domain.boundary(iac).boundary.normal_velocity.astronomic_components.active=1;
+        handles.model.dflowfm.domain.boundary(iac).boundary.tangential_velocity.astronomic_components.active=1;
+    case{'riemann'}
+    case{'discharge'}
+end

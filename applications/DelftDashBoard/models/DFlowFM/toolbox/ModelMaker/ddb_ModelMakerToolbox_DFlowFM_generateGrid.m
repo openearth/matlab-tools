@@ -154,7 +154,11 @@ netstruc.node.z=nans;
 
 handles.model.dflowfm.domain(id).netfile=filename;
 handles.model.dflowfm.domain(id).netstruc=netstruc;
-handles.model.dflowfm.domain(id).circumference=circ;
+
+circumference=delft3dfm_find_net_circumference(netstruc);
+
+handles.model.dflowfm.domain.circumference=circumference;
+
 %handles.model.dflowfm.domain.circumference=ddb_findNetCircumference(handles.model.dflowfm.domain(id).netstruc);
 
 % % Clip shallow areas

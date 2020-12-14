@@ -73,7 +73,10 @@ else
 end
 
 for ib=1:handles.model.dflowfm.domain(id).nrboundaries
-    plothandles(ib)=handles.model.dflowfm.domain(id).boundaries(ib).handle;
+    if isempty(handles.model.dflowfm.domain(id).boundary(ib).boundary.handle)
+        handles.model.dflowfm.domain(id).boundary(ib).boundary.handle=-999;
+    end        
+    plothandles(ib)=handles.model.dflowfm.domain(id).boundary(ib).boundary.handle;
 end
 
 switch lower(opt)
@@ -89,9 +92,9 @@ switch lower(opt)
         
         if handles.model.dflowfm.domain(id).nrboundaries>0
 
-            for isec=1:length(handles.model.dflowfm.domain(id).boundaries)
-                x=handles.model.dflowfm.domain(id).boundaries(isec).x;
-                y=handles.model.dflowfm.domain(id).boundaries(isec).y;
+            for isec=1:length(handles.model.dflowfm.domain(id).boundary)
+                x=handles.model.dflowfm.domain(id).boundary(isec).boundary.x;
+                y=handles.model.dflowfm.domain(id).boundary(isec).boundary.y;
                 if isec==handles.model.dflowfm.domain(id).activeboundary
                     markercolor='r';
                 else
@@ -100,7 +103,7 @@ switch lower(opt)
                 p=gui_polyline('plot','x',x,'y',y,'tag','dflowfmboundary', ...
                     'changecallback',@ddb_DFlowFM_boundaries,'changeinput','changeboundary','closed',0, ...
                     'Marker','o','color',linecolor,'markeredgecolor',markercolor,'markerfacecolor',markercolor);
-                handles.model.dflowfm.domain(id).boundaries(isec).handle=p;
+                handles.model.dflowfm.domain(id).boundary(isec).boundary.handle=p;
 
                 plothandles(isec)=p;
                 
@@ -154,8 +157,8 @@ switch lower(opt)
                         end                        
                     end
                     
-                    x=handles.model.dflowfm.domain.boundaries(ip).x;
-                    y=handles.model.dflowfm.domain.boundaries(ip).y;
+                    x=handles.model.dflowfm.domain.boundary(ip).boundary.x;
+                    y=handles.model.dflowfm.domain.boundary(ip).boundary.y;
                     
                     gui_polyline(plothandles(ip),'change','color',linecolor,'markeredgecolor',markercolor,'markerfacecolor',markercolor,'x',x,'y',y);
                     

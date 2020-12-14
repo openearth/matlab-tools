@@ -43,9 +43,21 @@ function ddb_DFlowFM_saveBCfile(forcingfile,boundaries,refdate)
 
 % Get boundary name
 
-fid=fopen(forcingfile,'wt');
+%fid=fopen(forcingfile,'wt');
 
-for ii = 1:length(boundaries);
+% First delete existing forcing files
+for ii = 1:length(boundaries)
+    fil=boundaries(ii).forcingfile;
+    if exist(fil,'file')
+        delete(fil);
+    end
+end
+
+
+for ii = 1:length(boundaries)
+    
+    fid=fopen(boundaries(ii).forcingfile,'a');
+    
     for jj = 1:length(boundaries(ii).nodenames)
         
         switch lower(boundaries(ii).nodes(jj).bc.Function)
@@ -64,7 +76,7 @@ for ii = 1:length(boundaries);
                 fprintf(fid,'%s\n',['Unit                            = ',boundaries(ii).nodes(jj).bc.Unit3]);
                 
                 % Values
-                for kk = 1 : size(boundaries(ii).nodes(jj).astronomiccomponents,2);
+                for kk = 1 : size(boundaries(ii).nodes(jj).astronomiccomponents,2)
                     name = boundaries(ii).nodes(jj).astronomiccomponents(kk).component;
                     name = [name repmat(' ',1,6-length(name))];
                     amp = boundaries(ii).nodes(jj).astronomiccomponents(kk).amplitude;
@@ -97,6 +109,8 @@ for ii = 1:length(boundaries);
         end
         
     end
-end
 
 fclose(fid);
+end
+
+%fclose(fid);

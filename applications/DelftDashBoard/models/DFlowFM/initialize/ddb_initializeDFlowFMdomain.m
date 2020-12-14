@@ -65,15 +65,7 @@ handles.model.dflowfm.domain(id).extforcefilenew        = '';
 handles.model.dflowfm.domain(id).bcfile                 = '';
 
 % Boundaries
-handles.model.dflowfm.domain(id).boundaries = [];
-handles.model.dflowfm.domain(id).boundaries(1).name = '';
-handles.model.dflowfm.domain(id).boundaries(1).type = 'waterlevelbnd';
-handles.model.dflowfm.domain(id).boundaries(1).nodenames = {''};
-handles.model.dflowfm.domain(id).boundaries(1).activenode = 1;
-handles.model.dflowfm.domain(id).boundaries(1).nodes(1).tim = 0;
-handles.model.dflowfm.domain(id).boundaries(1).nodes(1).cmp = 1;
-handles.model.dflowfm.domain(id).boundaries(1).nodes(1).cmptype = 'astro';
-handles.model.dflowfm.domain(id).boundaries(1).nodes(1).Function = 'astronomic';
+handles.model.dflowfm.domain(id).boundary(1).boundary=ddb_delft3dfm_initialize_boundary('','water_level',floor(now),floor(now)+10,0,0);
 handles.model.dflowfm.domain(id).nrboundaries = 0;
 handles.model.dflowfm.domain(id).boundarynames = {''};
 handles.model.dflowfm.domain(id).activeboundary=1;

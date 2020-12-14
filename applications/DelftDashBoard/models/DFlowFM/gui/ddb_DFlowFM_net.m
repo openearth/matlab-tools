@@ -87,10 +87,15 @@ netstruc.node.mesh2d_node_z(netstruc.node.mesh2d_node_z==-999)=NaN;
 
 handles.model.dflowfm.domain(ad).netstruc=netstruc;
 
+circumference=delft3dfm_find_net_circumference(netstruc);
+
+handles.model.dflowfm.domain.circumference=circumference;
+
+% ppp=plot(xbnd,ybnd);
+% set(ppp,'LineWidth',4);
 % handles.model.dflowfm.domain(ad).netstruc.edge.NetLink=handles.model.dflowfm.domain(ad).netstruc.edge.NetLink';
 
 %handles.model.dflowfm.domain.circumference=ddb_findNetCircumference(handles.model.dflowfm.domain(ad).netstruc);
-handles.model.dflowfm.domain.circumference=[];
 
 % Zoom to grid
 xl(1)=min(handles.model.dflowfm.domain.netstruc.node.mesh2d_node_x);

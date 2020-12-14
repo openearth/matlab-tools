@@ -171,12 +171,13 @@ s.wind.Rhoair.comment  = '# Air density (kg/m3)';
 
 %% Waves
 if isfield(inp, 'wavemodelnr')
+    if inp.wavemodelnr>0
     s.waves.Wavemodelnr.value          = inp.wavemodelnr;
     s.waves.Wavemodelnr.type           = 'integer';
     s.waves.Wavemodelnr.comment        = '# Wave model nr, 0=no, 1=fetch/depth limited hurdlestive,2=youngverhagen, 3 = D-Waves, 4=wave group forcing';               
     s.waves.Rouwav.value                = inp.rouwav;
     s.waves.Rouwav.comment              = ' '; 
-    
+    end
 else
     s.waves.Wavemodelnr.value          = 0;
     s.waves.Wavemodelnr.type           = 'integer';

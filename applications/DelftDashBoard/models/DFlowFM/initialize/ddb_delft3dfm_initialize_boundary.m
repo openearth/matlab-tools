@@ -1,0 +1,66 @@
+function boundary=ddb_delft3dfm_initialize_boundary(name,tp,t0,t1,x,y) 
+
+np=length(x);
+
+quantities={'water_level','normal_velocity','tangential_velocity','riemann','discharge'};
+
+boundary.name=name;
+boundary.type=tp;
+boundary.x=x;
+boundary.y=y;
+boundary.nrnodes=np;
+boundary.handle=-999;
+boundary.location_file=[name '.pli'];
+for ip=1:np
+    boundary.nodenames{ip}=[name '_' num2str(ip,'%0.4i')];
+end
+boundary.activenode=1;
+
+for iq=1:length(quantities)
+    
+    quant=quantities{iq};
+
+    % Time-series
+    boundary.(quant).time_series.forcing_file='test001.bc';
+    boundary.(quant).time_series.active=0;
+    for ip=1:np
+        boundary.(quant).time_series.nodes(ip).time=[t0;t1];
+        boundary.(quant).time_series.nodes(ip).value=[0;0];
+    end
+    
+    % Astro
+    boundary.(quant).astronomic_components.forcing_file='test001.bc';
+    boundary.(quant).astronomic_components.active=0;
+    for ip=1:np
+        boundary.(quant).astronomic_components.nodes(ip).name{1}='M2';
+        boundary.(quant).astronomic_components.nodes(ip).amplitude(1)=0;
+        boundary.(quant).astronomic_components.nodes(ip).phase(1)=0;
+    end
+    
+    % Harmo
+    boundary.(quant).harmonic_components.forcing_file='test001.bc';
+    boundary.(quant).harmonic_components.active=0;
+    for ip=1:np
+        boundary.(quant).harmonic_components.nodes(ip).frequency=30;
+        boundary.(quant).harmonic_components.nodes(ip).amplitude(1)=0;
+        boundary.(quant).harmonic_components.nodes(ip).phase(1)=0;
+    end
+    
+end
+
+switch tp
+    case{'water_level'}
+        % initialize with astro
+        boundary.water_level.astronomic_components.active=1;
+    case{'water_level_plus_normal_velocity'}
+        boundary.water_level.astronomic_components.active=1;
+        boundary.normal_velocity.astronomic_components.active=1;
+    case{'water_level_plus_normal_velocity_plus_tangential_velocity'}
+        boundary.water_level.astronomic_components.active=1;
+        boundary.normal_velocity.astronomic_components.active=1;
+        boundary.tangential_velocity.astronomic_components.active=1;
+    case{'riemann'}
+        boundary.riemann.astronomic_components.active=1;
+    case{'discharge'}
+        boundary.riemann.time_series.active=1;
+end
