@@ -91,7 +91,7 @@ for ip=1:length(x)
 end
 
 name=['bnd' num2str(nr,'%0.3i')];
-handles.model.dflowfm.domain.boundary(nr).boundary=ddb_delft3dfm_initialize_boundary(name,'water_level',handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop,x,y);
+handles.model.dflowfm.domain.boundary(nr).boundary=ddb_delft3dfm_initialize_boundary(name,'water_level','astronomic',handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop,x,y);
 
 handles=updateNames(handles);
 
@@ -127,7 +127,7 @@ if handles.model.dflowfm.domain.nrboundaries>0
      handles=updateNames(handles);
      
     if handles.model.dflowfm.domain.nrboundaries==0
-        handles.model.dflowfm.domain.boundary(1).boundary=ddb_delft3dfm_initialize_boundary('','water_level',handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop,0,0);
+        handles.model.dflowfm.domain.boundary(1).boundary=ddb_delft3dfm_initialize_boundary('','water_level','astronomic',handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop,0,0);
     end
     
     % Rename boundaries

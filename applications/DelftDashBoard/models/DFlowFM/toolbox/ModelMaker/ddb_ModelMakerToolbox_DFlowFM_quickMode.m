@@ -239,6 +239,12 @@ if isnan(nanmax(handles.model.dflowfm.domain(ad).netstruc.node.mesh2d_node_z))
     return
 end
 
+[filename,ok]=gui_uiputfile('*.ext', 'External Forcing File',handles.model.dflowfm.domain(ad).extforcefilenew);
+if ~ok
+    return
+end
+handles.model.dflowfm.domain(ad).extforcefilenew=filename;
+
 % First edit type of boundary etc.
 h.type=handles.toolbox.modelmaker.dflowfm.boundary_type;
 h.forcing=handles.toolbox.modelmaker.dflowfm.boundary_forcing;
@@ -280,7 +286,7 @@ for ib=1:nr
     tp=handles.toolbox.modelmaker.dflowfm.boundary_type;
     x=boundarysections(ib).x;
     y=boundarysections(ib).y;
-    boundary  = ddb_delft3dfm_initialize_boundary(name,tp,handles.model.dflowfm.domain(ad).tstart,handles.model.dflowfm.domain(ad).tstop,x,y);    
+    boundary  = ddb_delft3dfm_initialize_boundary(name,tp,handles.toolbox.modelmaker.dflowfm.boundary_forcing,handles.model.dflowfm.domain(ad).tstart,handles.model.dflowfm.domain(ad).tstop,x,y);    
     handles.model.dflowfm.domain(ad).boundary(ib).boundary = boundary;
     handles.model.dflowfm.domain(ad).boundarynames{ib}=boundary.name;
 
@@ -297,6 +303,9 @@ handles = ddb_DFlowFM_plotBoundaries(handles,'plot','active',1);
 % handles.model.dflowfm.domain(ad).extforcefilenew='forcing.ext';
 % ddb_DFlowFM_saveExtFile(handles);
 
+
+ddb_delft3dfm_save_boundary_ext_file(handles);
+
 % Finish
 setHandles(handles);
 
@@ -311,11 +320,11 @@ if handles.model.dflowfm.domain(ad).nrboundaries==0
 end
 
 
-[filename,ok]=gui_uiputfile('*.ext', 'External Forcing File',handles.model.dflowfm.domain(ad).extforcefilenew);
-if ~ok
-    return
-end
-handles.model.dflowfm.domain(ad).extforcefilenew=filename;
+% [filename,ok]=gui_uiputfile('*.ext', 'External Forcing File',handles.model.dflowfm.domain(ad).extforcefilenew);
+% if ~ok
+%     return
+% end
+% handles.model.dflowfm.domain(ad).extforcefilenew=filename;
 
 [forcing_file,ok]=gui_uiputfile('*.bc', 'Boundary Forcing File',handles.model.dflowfm.domain(ad).bcfile);
 if ~ok

@@ -31,9 +31,9 @@
     <listtext>Astronomic</listtext>
     <listtext>Harmonic</listtext>
     <listtext>Time series</listtext>
-    <listvalue>A</listvalue>
-    <listvalue>H</listvalue>
-    <listvalue>T</listvalue>
+    <listvalue>astronomic</listvalue>
+    <listvalue>harmonic</listvalue>
+    <listvalue>time_series</listvalue>
   </element>
   <element>
     <style>edit</style>

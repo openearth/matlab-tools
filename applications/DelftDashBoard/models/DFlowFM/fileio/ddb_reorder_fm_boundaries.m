@@ -83,7 +83,7 @@ for ibnd0=1:length(boundary0)
                 tp='riemann';
         end
         
-        boundary(ibnd).boundary=ddb_delft3dfm_initialize_boundary(name,tp,t0,t1,boundary0(ibnd0).x,boundary0(ibnd0).y);
+        boundary(ibnd).boundary=ddb_delft3dfm_initialize_boundary(name,tp,'astronomic',t0,t1,boundary0(ibnd0).x,boundary0(ibnd0).y);
         
         if boundary0(ibnd0).include_time_series
             boundary(ibnd).boundary.(tp).time_series.active=1;

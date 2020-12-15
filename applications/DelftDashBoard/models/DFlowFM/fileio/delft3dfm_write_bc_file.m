@@ -1,4 +1,4 @@
-function delft3dfm_write_bc_file(boundary,refdate)
+function delft3dfm_write_bc_file(boundary,refdate,varargin)
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares
@@ -41,8 +41,17 @@ function delft3dfm_write_bc_file(boundary,refdate)
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/models/DFlowFM/fileio/ddb_DFlowFM_writeComponentsFile.m $
 % $Keywords: $
 
-%types={'water_level','normal_velocity','tangential_velocity','riemann','uxuyadvection_velocity'};
-%quantities={'waterlevelbnd','normalvelocitybnd','tangentialvelocitybnd','riemannbnd','ucxucyadvectionvelocitybnd'};
+pth='.\';
+
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'path','folder','dir'}
+                pth=varargin{ii+1};   % water level correction
+        end
+    end                
+end
+
 types={'water_level','normal_velocity','tangential_velocity','riemann'};
 quantities={'waterlevelbnd','normalvelocitybnd','tangentialvelocitybnd','riemannbnd'};
 units={'m','m/s','m/s','m','m/s'};
@@ -56,22 +65,20 @@ for ibnd = 1:length(boundary)
         
         tp=types{iq};
         
-        for ip=1:bnd.nrnodes
-            
-            if bnd.(tp).time_series.active
-                try
-                   fil=bnd.(tp).time_series.forcing_file;
-                    delete(fil);
-                end
-            end
-            
-            if bnd.(tp).astronomic_components.active
-                try
-                fil=bnd.(tp).astronomic_components.forcing_file;
-                    delete(fil);
-                end
+        if bnd.(tp).time_series.active
+            try
+                fil=[pth filesep bnd.(tp).time_series.forcing_file];
+                delete(fil);
             end
         end
+        
+        if bnd.(tp).astronomic_components.active
+            try
+                fil=[pth filesep bnd.(tp).astronomic_components.forcing_file];
+                delete(fil);
+            end
+        end
+        
     end
 end
 
@@ -90,7 +97,7 @@ for ibnd = 1:length(boundary)
             nodename=[bnd.name '_' num2str(ip,'%0.4i')];
             
             if bnd.(tp).time_series.active
-                fil=bnd.(tp).time_series.forcing_file;
+                fil=[pth filesep bnd.(tp).time_series.forcing_file];
                 fid=fopen(fil,'a');
                 % Header
                 fprintf(fid,'%s\n',['[forcing]']);
@@ -124,7 +131,7 @@ for ibnd = 1:length(boundary)
             end
             
             if bnd.(tp).astronomic_components.active
-                fil=bnd.(tp).astronomic_components.forcing_file;
+                fil=[pth filesep bnd.(tp).astronomic_components.forcing_file];
                 fid=fopen(fil,'a');
                 % Header
                 fprintf(fid,'%s\n',['[forcing]']);
