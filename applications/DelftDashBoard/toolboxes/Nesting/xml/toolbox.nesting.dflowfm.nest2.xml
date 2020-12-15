@@ -8,8 +8,8 @@
     <onchange>ddb_NestingToolbox_DFlowFM_nest2</onchange>
     <option1>selecthisfile</option1>
     <showfilename>yes</showfilename>
-    <extension>trih*.dat</extension>
-    <selectiontext>Select Delft3D trih file</selectiontext>
+    <extension>*.nc</extension>
+    <selectiontext>Select Delft3D-FM history file</selectiontext>
     <tooltipstring>Select Delft3D history (trih) file</tooltipstring>
   </element>
   <element>

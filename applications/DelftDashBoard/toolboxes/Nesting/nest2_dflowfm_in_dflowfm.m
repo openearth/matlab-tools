@@ -1,18 +1,24 @@
-function boundary=nest2_dflowfm_in_dflowfm(hisfile,admfile,refdate,varargin)
+function boundary=nest2_dflowfm_in_dflowfm(hisfile,admfile,extfile,refdate,varargin)
 
-boundary=[];
-extfile=[];
+if ~isempty(fileparts(extfile))
+    pth=[fileparts(extfile) filesep];
+else
+    pth='.\';
+end
+
 zcor=0;
+% bcfile=[];
+cstype='projected';
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
-            case{'boundary'}
-                boundary=varargin{ii+1};
-            case{'extfile'}
-                extfile=varargin{ii+1};
             case{'zcor'}
-                zcor=varargin{ii+1};
+                zcor=varargin{ii+1};   % water level correction
+%             case{'bcfile'}
+%                 bcfile=varargin{ii+1}; % name of bc file
+            case{'cstype'}
+                cstype=varargin{ii+1}; % must be either projected or geographic
         end
     end                
 end
@@ -21,6 +27,9 @@ end
 xml=xml2struct(admfile,'structuretype','supershort');
 
 nb=length(xml.boundary);
+
+% Read all boundary data
+boundary = delft3dfm_read_boundaries(extfile);
 
 % Read times
 tim=nc_varget(hisfile,'time');
@@ -35,72 +44,148 @@ for istat=1:nstat
     stations{istat}=deblank2(stat(istat,:));
 end
 
-% Read all water level time series
-wl=nc_varget(hisfile,'waterlevel');
+iwl=0;
+ivel=0;
+
+for ib=1:nb
+    tp=boundary(ib).boundary.type;
+    switch tp
+        case{'water_level'}
+            iwl=1;
+        case{'water_level_plus_normal_velocity'}
+            iwl=1;
+            ivel=1;
+        case{'water_level_plus_normal_velocity_plus_tangential_velocity'}
+            iwl=1;
+            ivel=1;
+    end
+end
+
+% Read in all data from the his file
+if iwl
+    wl=nc_varget(hisfile,'waterlevel');
+end
+if ivel
+    u=nc_varget(hisfile,'x_velocity');
+    v=nc_varget(hisfile,'y_velocity');
+end
 
 for ib=1:nb    
     
     np=length(xml.boundary(ib).node);
     
-    if isempty(boundary)
-        boundary(ib).name=['bnd_' num2str(ib,'%0.3i')];
-        boundary(ib).forcingfile=['bnd_' num2str(ib,'%0.3i') '.bc'];
-    end
+    tp=boundary(ib).boundary.type;
+    
+    boundary(ib).boundary.water_level.astronomic_components.active=0;
+    boundary(ib).boundary.water_level.harmonic_components.active=0;
+    boundary(ib).boundary.water_level.time_series.active=0;
 
-    % Read times
-    for ip=1:np
-        istat=strmatch(lower(xml.boundary(ib).node(ip).obspoint.name),lower(stations),'exact');
-        val=squeeze(wl(:,istat));
-        boundary(ib).nodes(ip).timeseries.time=tim;
-        boundary(ib).nodes(ip).timeseries.value=val+zcor;
+    boundary(ib).boundary.normal_velocity.astronomic_components.active=0;
+    boundary(ib).boundary.normal_velocity.harmonic_components.active=0;
+    boundary(ib).boundary.normal_velocity.time_series.active=0;
+
+    boundary(ib).boundary.tangential_velocity.astronomic_components.active=0;
+    boundary(ib).boundary.tangential_velocity.harmonic_components.active=0;
+    boundary(ib).boundary.tangential_velocity.time_series.active=0;
+
+    % Set relevant forcing to active and set forcing files
+    icompuv=0;
+    switch tp
+        case{'water_level'}
+            boundary(ib).boundary.water_level.time_series.active=1;
+%            boundary(ib).boundary.water_level.time_series.forcing_file=bcfile;            
+        case{'water_level_plus_normal_velocity'}
+            boundary(ib).boundary.water_level.time_series.active=1;
+            boundary(ib).boundary.normal_velocity.time_series.active=1;
+%            boundary(ib).boundary.water_level.time_series.forcing_file=bcfile;            
+%            boundary(ib).boundary.normal_velocity.time_series.forcing_file=bcfile;            
+            icompuv=1;
+        case{'water_level_plus_normal_velocity_plus_tangential_velocity'}
+            boundary(ib).boundary.water_level.time_series.active=1;
+            boundary(ib).boundary.normal_velocity.time_series.active=1;
+            boundary(ib).boundary.tangential_velocity.time_series.active=1;
+%            boundary(ib).boundary.water_level.time_series.forcing_file=bcfile;            
+%            boundary(ib).boundary.normal_velocity.time_series.forcing_file=bcfile;            
+%            boundary(ib).boundary.tangential_velocity.time_series.forcing_file=bcfile;
+            icompuv=1;
+    end
+    
+    % Find indices of observation stations    
+    for ip=1:length(xml.boundary(ib).node)
+
+        nsur=length(xml.boundary(ib).node(ip).obspoint);
+        
+        zz=0;
+        uu=0;
+        vv=0;
+        
+        % Get data and weights from surrounding point and compute weighted
+        % average
+        for isur=1:nsur
+            iobs=strmatch(xml.boundary(ib).node(ip).obspoint(isur).name,stations,'exact');
+            w=str2double(xml.boundary(ib).node(ip).obspoint(isur).weight);
+            zz=zz+wl(:,iobs)*w;
+            uu=uu+u(:,iobs)*w;
+            vv=vv+v(:,iobs)*w;
+        end
+        
+        zz=zz+zcor;
+        
+        if icompuv
+
+            % Compute normal and tangential components
+            
+            % First compute angle of boundary segment
+            if ip==1
+                dx=boundary(ib).boundary.x(2)-boundary(ib).boundary.x(1);
+                dy=boundary(ib).boundary.y(2)-boundary(ib).boundary.y(1);
+            elseif ip==length(xml.boundary(ib).node)
+                dx=boundary(ib).boundary.x(ip)-boundary(ib).boundary.x(ip-1);
+                dy=boundary(ib).boundary.y(ip)-boundary(ib).boundary.y(ip-1);
+            else
+                dx=boundary(ib).boundary.x(ip+1)-boundary(ib).boundary.x(ip-1);
+                dy=boundary(ib).boundary.y(ip+1)-boundary(ib).boundary.y(ip-1);
+            end
+            
+            if strcmpi(cstype(1:3),'geo')
+                % Correct dx
+                dx=dx*abs(cos(boundary(ib).boundary.y(ip)*pi/180));
+            end
+            
+            alfa=atan2(dy,dx);           % angle of the segment
+            
+            % Rotate velocity vector
+            utan=cos(alfa)*uu-sin(alfa)*vv; 
+            unor=sin(alfa)*uu+cos(alfa)*vv; 
+            
+        end
+        
+        switch tp
+            
+            case{'water_level'}
+                boundary(ib).boundary.water_level.time_series.nodes(ip).time=tim;
+                boundary(ib).boundary.water_level.time_series.nodes(ip).value=zz;
+
+            case{'water_level_plus_normal_velocity'}
+                boundary(ib).boundary.water_level.time_series.nodes(ip).time=tim;
+                boundary(ib).boundary.water_level.time_series.nodes(ip).value=zz;
+                boundary(ib).boundary.normal_velocity.time_series.nodes(ip).time=tim;
+                boundary(ib).boundary.normal_velocity.time_series.nodes(ip).value=unor;
+
+            case{'water_level_plus_normal_velocity_plus_tangential_velocity'}
+                boundary(ib).boundary.water_level.time_series.nodes(ip).time=tim;
+                boundary(ib).boundary.water_level.time_series.nodes(ip).value=zz;
+                boundary(ib).boundary.normal_velocity.time_series.nodes(ip).time=tim;
+                boundary(ib).boundary.normal_velocity.time_series.nodes(ip).value=unor;
+                boundary(ib).boundary.tangential_velocity.time_series.nodes(ip).time=tim;
+                boundary(ib).boundary.tangential_velocity.time_series.nodes(ip).value=utan;
+
+        end
+        
+        
     end
     
 end
-
-% % Save bc files
-% for ib=1:nb    
-%     
-%     np=length(xml.boundary(ib).node);
-% 
-%     v=zeros(length(tim),np+1);
-%     v(:,1)=(tim-refdate)*1440;
-%     for ip=1:np
-%         v(:,ip+1)=boundary(ib).node(ip).timeseries.value;
-%     end
-%     
-%     fmt=['%10.2f' repmat('%10.3f',[1 np]) '\n'];
-%     fname=boundary(ib).bcfile;
-%     fid=fopen(fname,'wt');
-%     for it=1:length(tim)
-%         fprintf(fid,fmt,v(it,:));
-%     end
-%     fclose(fid);
-%     
-% end
 
 % Save bc files
-for ib=1:nb
-    
-    np=length(xml.boundary(ib).node);
-    
-    fname=boundary(ib).forcingfile;
-    fid=fopen(fname,'wt');
-    
-    for ip=1:np
-        
-        fprintf(fid,'%s\n','[forcing]');
-        fprintf(fid,'%s\n',['Name                            = ' boundary(ib).name '_' num2str(ip,'%0.4i') ]);
-        fprintf(fid,'%s\n','Function                        = timeseries');
-        fprintf(fid,'%s\n','Time-interpolation              = linear');
-        fprintf(fid,'%s\n','Quantity                        = time');
-        fprintf(fid,'%s\n',['Unit                            = seconds since ' datestr(refdate,'yyyy-mm-dd HHMMSS')]);
-        fprintf(fid,'%s\n','Quantity                        = waterlevelbnd');
-        fprintf(fid,'%s\n','Unit                            = m');
-        for it=1:length(tim)
-            fprintf(fid,'%12.1f %10.3f\n',(tim(it)-refdate)*86400,boundary(ib).nodes(ip).timeseries.value(it));
-        end
-    end
-    
-    fclose(fid);
-
-end
+delft3dfm_write_bc_file(boundary,refdate,'path',pth);
