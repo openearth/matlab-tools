@@ -1,4 +1,9 @@
 function boundary=nest2_dflowfm_in_dflowfm(hisfile,admfile,extfile,refdate,varargin)
+% Nesting script to generate bc file for Delft3D-FM model nested in other Delft3D-FM model
+% e.g.
+% nest2_dflowfm_in_dflowfm('..\..\overall\overall_his.nc','..\..\overall\nesting.adm','detail.exe',datenum(2020,1,1),'zcor',0.1,'cstype','projected');
+% cstype = coordinate system type (geographic or projected) of the detail model
+% zcor   = water level correction (m)
 
 if ~isempty(fileparts(extfile))
     pth=[fileparts(extfile) filesep];
