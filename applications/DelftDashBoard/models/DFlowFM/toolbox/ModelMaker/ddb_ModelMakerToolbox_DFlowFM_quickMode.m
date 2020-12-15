@@ -245,6 +245,12 @@ if ~ok
 end
 handles.model.dflowfm.domain(ad).extforcefilenew=filename;
 
+[filename,ok]=gui_uiputfile('*.bc', 'Boundary Conditions File',handles.model.dflowfm.domain(ad).bcfile);
+if ~ok
+    return
+end
+handles.model.dflowfm.domain(ad).bcfile=filename;
+
 % First edit type of boundary etc.
 h.type=handles.toolbox.modelmaker.dflowfm.boundary_type;
 h.forcing=handles.toolbox.modelmaker.dflowfm.boundary_forcing;

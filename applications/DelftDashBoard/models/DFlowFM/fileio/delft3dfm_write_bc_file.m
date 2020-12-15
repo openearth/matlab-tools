@@ -54,7 +54,7 @@ end
 
 types={'water_level','normal_velocity','tangential_velocity','riemann'};
 quantities={'waterlevelbnd','normalvelocitybnd','tangentialvelocitybnd','riemannbnd'};
-units={'m','m/s','m/s','m','m/s'};
+units={'m','m/s','m/s','m/s','m'};
 
 % First delete existing forcing files
 for ibnd = 1:length(boundary)
@@ -120,7 +120,7 @@ for ibnd = 1:length(boundary)
                         end
                     otherwise
                         fprintf(fid,'%s\n',['Quantity                        = ' quant]);
-                        fprintf(fid,'%s\n','Unit                            = m');
+                        fprintf(fid,'%s\n',['Unit                            = ' unit]);
                         % Values
                         for it=1:length(bnd.(tp).time_series.nodes(ip).time)
                             fprintf(fid,'%12.2f %8.4f\n',(bnd.(tp).time_series.nodes(ip).time(it)-refdate)*86400,bnd.(tp).time_series.nodes(ip).value(it));

@@ -96,6 +96,10 @@ s.numerics.Hdam.value          = inp.hdam;
 s.numerics.Hdam.type           = 'real';
 s.numerics.Hdam.comment        = '# Threshold for minimum bottomlevel step at which to apply energy conservation factor i.c. flow contraction';               
 
+s.numerics.Tlfsmo.value        = inp.tlfsmo;
+s.numerics.Tlfsmo.type         = 'real';
+s.numerics.Tlfsmo.comment      = '# Fourier smoothing time on water level boundaries';               
+
 %% Physics
 
 s.physics.UnifFrictCoef.value        = inp.uniffrictcoef;

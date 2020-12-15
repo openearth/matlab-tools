@@ -67,4 +67,12 @@
     <type>real</type>
     <tooltipstring>Edit threshold for minimum bottomlevel step at which to apply energy conservation factor i.c. flow contraction</tooltipstring>
   </element>
+  <element>
+    <style>edit</style>
+    <position>570 125 50 20</position>
+    <variable>handles.model.dflowfm.domain.tlfsmo</variable>
+    <type>real</type>
+    <tooltipstring>Edit smoothing time (s)</tooltipstring>
+    <text>Smoothing time</text>
+  </element>
 </root>

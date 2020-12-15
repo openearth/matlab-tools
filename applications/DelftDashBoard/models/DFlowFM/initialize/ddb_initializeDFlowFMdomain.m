@@ -99,6 +99,7 @@ handles.model.dflowfm.domain(id).cflwavefrac         = 0.1;
 handles.model.dflowfm.domain(id).advectype           = 3;
 handles.model.dflowfm.domain(id).limtypsa            = 0;
 handles.model.dflowfm.domain(id).hdam                = 0;
+handles.model.dflowfm.domain(id).tlfsmo              = 3600;
 
 %% Physics
 handles.model.dflowfm.domain(id).uniffrictcoef       = 0.023;

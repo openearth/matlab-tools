@@ -1,4 +1,15 @@
-function boundary=ddb_delft3dfm_initialize_boundary(name,tp,forcing,t0,t1,x,y) 
+function boundary=ddb_delft3dfm_initialize_boundary(name,tp,forcing,t0,t1,x,y,varargin)
+
+bcfile='test001.bc';
+
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'bcfile'}
+                bcfile=varargin{ii+1};   % water level correction
+        end
+    end                
+end
 
 np=length(x);
 
@@ -21,7 +32,7 @@ for iq=1:length(quantities)
     quant=quantities{iq};
 
     % Time-series
-    boundary.(quant).time_series.forcing_file='test001.bc';
+    boundary.(quant).time_series.forcing_file=bcfile;
     boundary.(quant).time_series.active=0;
     for ip=1:np
         boundary.(quant).time_series.nodes(ip).time=[t0;t1];
@@ -29,7 +40,7 @@ for iq=1:length(quantities)
     end
     
     % Astro
-    boundary.(quant).astronomic_components.forcing_file='test001.bc';
+    boundary.(quant).astronomic_components.forcing_file=bcfile;
     boundary.(quant).astronomic_components.active=0;
     for ip=1:np
         boundary.(quant).astronomic_components.nodes(ip).name{1}='M2';
@@ -38,7 +49,7 @@ for iq=1:length(quantities)
     end
     
     % Harmo
-    boundary.(quant).harmonic_components.forcing_file='test001.bc';
+    boundary.(quant).harmonic_components.forcing_file=bcfile;
     boundary.(quant).harmonic_components.active=0;
     for ip=1:np
         boundary.(quant).harmonic_components.nodes(ip).frequency=30;
