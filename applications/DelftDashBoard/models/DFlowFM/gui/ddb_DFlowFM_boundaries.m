@@ -284,10 +284,21 @@ clearInstructions;
 handles=getHandles;
 
 [filename, pathname, filterindex] = uigetfile('*.ext', 'External Forcing File',handles.model.dflowfm.domain.extforcefilenew);
-if ~isempty(pathname)
-    handles = ddb_DFlowFM_plotBoundaries(handles,'delete');
+if ~isempty(pathname)    
+    
     handles.model.dflowfm.domain.extforcefilenew=filename;
-    handles=ddb_DFlowFM_readExternalForcing(handles);
+
+    wb      = waitbox('Loading Boundary Conditions ...');
+    
+    try
+        handles = ddb_delft3dfm_read_boundaries(handles);
+    catch
+        close(wb);
+        ddb_giveWarning('text','An error occured while load the boundary conditions ...');
+    end
+    close(wb);
+
+    handles = ddb_DFlowFM_plotBoundaries(handles,'delete');
     handles = ddb_DFlowFM_plotBoundaries(handles,'plot','active',1);
     setHandles(handles);
 end

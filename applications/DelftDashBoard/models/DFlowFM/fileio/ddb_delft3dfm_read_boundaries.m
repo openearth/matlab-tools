@@ -1,4 +1,4 @@
-function handles = ddb_DFlowFM_readExternalForcing(handles)
+function handles = ddb_delft3dfm_read_boundaries(handles)
 % ddb_DFlowFM_readExternalForcing  One line description goes here.
 
 %% Copyright notice
@@ -44,44 +44,58 @@ function handles = ddb_DFlowFM_readExternalForcing(handles)
 % $Keywords: $
 
 %% Reads DFlow-FM boundary conditions (ext and bc files)
-% Reorders boundaries and merges boundaries with the same pli file
 
-[boundary,forcingfiles]=delft3dfm_read_ext_file(handles.model.dflowfm.domain.extforcefilenew);
-
-% Now read the pli files
-for ibnd=1:length(boundary)
-    [x,y]=landboundary('read',boundary(ibnd).locationfile);
-    boundary(ibnd).x=x;
-    boundary(ibnd).y=y;
-end
-
-frc=[];
-for ifrcf=1:length(forcingfiles)
-    frc0=delft3dfm_read_bc_file(forcingfiles{ifrcf});
-    frc=[frc frc0];
-end
-
-boundary=ddb_reorder_fm_boundaries(boundary,frc);
-
-% Clear boundary info
-boundaries=[];
-boundaries(1).name='';
 handles.model.dflowfm.domain.activeboundary=1;
 handles.model.dflowfm.domain.nrboundaries=0;
 handles.model.dflowfm.domain.boundarynames={''};
 
-for ib=1:length(boundary)
-    name=boundary(ib).boundary.location_file(1:end-4);
-    boundary(ib).boundary.name=name;
-    boundary(ib).boundary.activenode=1;
-    boundary(ib).boundary.handle=-999;
-    for ip=1:length(boundary(ib).boundary.x)
-        boundary(ib).boundary.nodenames{ip}=[name '_' num2str(ip,'%0.4i')];
-    end
-    handles.model.dflowfm.domain.boundarynames{ib}=name;            
-end
+boundary=delft3dfm_read_boundaries(handles.model.dflowfm.domain.extforcefilenew);
 
 handles.model.dflowfm.domain.nrboundaries=length(boundary);
 handles.model.dflowfm.domain.boundary=boundary;
 
+for ib=1:handles.model.dflowfm.domain.nrboundaries
+    handles.model.dflowfm.domain.boundarynames{ib}=handles.model.dflowfm.domain.boundary(ib).boundary.name;
+end
 
+
+% [boundary,forcingfiles]=delft3dfm_read_ext_file(handles.model.dflowfm.domain.extforcefilenew);
+% 
+% % Now read the pli files
+% for ibnd=1:length(boundary)
+%     [x,y]=landboundary('read',boundary(ibnd).locationfile);
+%     boundary(ibnd).x=x;
+%     boundary(ibnd).y=y;
+% end
+% 
+% frc=[];
+% for ifrcf=1:length(forcingfiles)
+%     frc0=delft3dfm_read_bc_file(forcingfiles{ifrcf});
+%     frc=[frc frc0];
+% end
+% 
+% boundary=ddb_reorder_fm_boundaries(boundary,frc);
+% 
+% 
+% % Clear boundary info
+% boundaries=[];
+% boundaries(1).name='';
+% handles.model.dflowfm.domain.activeboundary=1;
+% handles.model.dflowfm.domain.nrboundaries=0;
+% handles.model.dflowfm.domain.boundarynames={''};
+% 
+% for ib=1:length(boundary)
+%     name=boundary(ib).boundary.location_file(1:end-4);
+%     boundary(ib).boundary.name=name;
+%     boundary(ib).boundary.activenode=1;
+%     boundary(ib).boundary.handle=-999;
+%     for ip=1:length(boundary(ib).boundary.x)
+%         boundary(ib).boundary.nodenames{ip}=[name '_' num2str(ip,'%0.4i')];
+%     end
+%     handles.model.dflowfm.domain.boundarynames{ib}=name;            
+% end
+% 
+% handles.model.dflowfm.domain.nrboundaries=length(boundary);
+% handles.model.dflowfm.domain.boundary=boundary;
+% 
+% 
