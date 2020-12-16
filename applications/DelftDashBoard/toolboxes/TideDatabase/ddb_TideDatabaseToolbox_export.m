@@ -119,7 +119,7 @@ handles=getHandles;
 ii=handles.toolbox.tidedatabase.activeModel;
 name=handles.tideModels.model(ii).name;
 URL = 'https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/tidemodels/';
-if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
+if strcmpi(handles.tideModels.model(ii).URL(1:5),'https')
     tidefile=[URL '/' name '.nc'];
 else
     tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
@@ -184,7 +184,7 @@ handles=getHandles;
 ii=handles.toolbox.tidedatabase.activeModel;
 iac=handles.toolbox.tidedatabase.activeConstituent;
 name=handles.tideModels.model(ii).name;
-if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
+if strcmpi(handles.tideModels.model(ii).URL(1:5),'https')
     tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
 else
     tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
