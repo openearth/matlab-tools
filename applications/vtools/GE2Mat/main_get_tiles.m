@@ -33,16 +33,16 @@ load("c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\GE2M
 % ylima=  [51+52/60+44/3600, 51+53/60+07/3600];
 % xlima=  [05+24/60+38/3600, 05+25/60+27/3600];
 % ylima=  [51+51/60+14/3600, 51+51/60+33/3600];
-xlima=  [05+23/60+05/3600, 05+24/60+09/3600];
-ylima=  [51+49/60+54/3600, 51+50/60+20/3600];
+xlima=  [04+11/60+45/3600, 06+35/60+32/3600];
+ylima=  [51+28/60+52/3600, 52+42/60+24/3600];
 coordinate_input=4326; %google earth
 
-tzl = 16; %zoom
+tzl = 10; %zoom
 
 save_tiles=1;
-coordinate_output=4326;
-% coordinate_output=28992;
-path_save='p:\11204644-evaluatie-langsdammen\wp00_data_analyse\01_ADCP\input\tiles_z4.mat';
+% coordinate_output=4326;
+coordinate_output=28992;
+path_save='C:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\191016_rt_fm1D\data\tiles\tiles_3';
 
 %map type
 %1=satellite;

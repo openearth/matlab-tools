@@ -37,7 +37,7 @@ def.sim_in=2;
 % def.folder='p:\11203223-tki-rivers\03_maas_2020\04_runs\03_dflow1d_morphological\012\j19\dflow1d\';
 % def.folder='c:\Users\chavarri\temporal\201009_rt_hkv\r007\dflowfm\';
 % def.folder='p:\11203223-tki-rivers\02_rijntakken_2020\04_runs\08_morpho_1\mr1_070\dflowfm';
-def.folder='p:\11203223-tki-rivers\05_testing\09_dredging\r013\dflowfm\';
+def.folder='p:\11203223-tki-rivers\02_rijntakken_2020\04_runs\17_finals\f_007\dflowfm';
 % def.folder='p:\11205272_waterverd_verzilting_2020\006_Vaardiepte_voorspellen\02_Modelresultaten\DIMR\realization_1\dflow1d\';
 % def.folder='p:\11204644-evaluatie-langsdammen\wp10_beheer_onderhoud_kosten\04_sm\01_runs\r_001\';
 % def.folder='c:\Users\chavarri\temporal\D3D\runs\V\080\dflowfm\';
@@ -48,7 +48,7 @@ def.folder='p:\11203223-tki-rivers\05_testing\09_dredging\r013\dflowfm\';
 simdef.file.checkouts='c:\Users\chavarri\checkouts\openearthtools_matlab\oetsettings.m';
 
     %% variable
-simdef.flg.which_p='b'; %which kind of plot: 
+simdef.flg.which_p='grid'; %which kind of plot: 
 %MAP
 %      LOOP ON TIME
 %   1=3D bed elevation and gsd
@@ -72,7 +72,7 @@ simdef.flg.which_p='b'; %which kind of plot:
 %GRID
 %   grid
 %
-simdef.flg.which_v=24; %which variable: 
+simdef.flg.which_v=1; %which variable: 
 %   1=etab
 %   2=h
 %   3=dm Fak
@@ -124,6 +124,7 @@ simdef.flg.which_s=4; %which plot style:
 
 % def.branch={'channel1','channel2'}; 
 % def.branch={'Channel1','Channel2'}; 
+def.branch={'Channel1'}; 
 % def.branch={'Channel3','Channel1'}; 
 % def.branch={'1','2','3','4','5'}; 
 % def.branch={'Channel_1D_1'}; 
@@ -155,7 +156,7 @@ simdef.flg.which_s=4; %which plot style:
 % def.station={'obsCross_Pannerdenschekop'};
 % def.station={'obsCross_900.00_WA'};
 % def.station={'868.00_WA'};
-def.station={'obsCross_868.00_WA'};
+% def.station={'obsCross_868.00_WA'};
 
 %x,y,f coordinate if NaN, all
 % def.rsl_x=NaN;
@@ -178,13 +179,14 @@ def.station={'obsCross_868.00_WA'};
     %0=all the time steps; 
     %1='time' is a single time or a vector with the time steps to plot. If NaN it plots the last time step; 
     %2='time' is the spacing between 1 and the last results;
-def.rsl_input=0; 
-def.rsl_time=1;
+def.rsl_input=1; 
+def.rsl_time=NaN;
 
     %% print
 simdef.flg.print=2; %NaN=nothing; 0=pause until click; 0.5=pause 'pauset' time; 1=eps; 2=png
 simdef.flg.pauset=0.1;
 simdef.flg.save_name=NaN; %name to save a figure, if NaN it gives automatic name
+% simdef.flg.save_name='C:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\191016_rt_fm1D\docs\report\figures\network'; %name to save a figure, if NaN it gives automatic name
 
 simdef.flg.fig_visible=1; %see plot: 0=NO; 1=YES
 
@@ -193,10 +195,10 @@ simdef.flg.elliptic=0; %plot elliptic results: 0=NO; 1=YES (from ect); 2=YES (fr
 simdef.flg.plot_unitx=1; %conversion from m
 simdef.flg.plot_unity=1; %conversion from m
 simdef.flg.plot_unitz=1; %conversion from m
-% simdef.flg.plot_unitt=1; %conversion from s
+simdef.flg.plot_unitt=1; %conversion from s
 % simdef.flg.plot_unitt=1/3600; %conversion from s
 % simdef.flg.plot_unitt=1/3600/24; %conversion from s
-simdef.flg.plot_unitt=1/3600/24/365; %conversion from s
+% simdef.flg.plot_unitt=1/3600/24/365; %conversion from s
 
 %plot limits (comment to make it automatic)
 % simdef.flg.lims.x=[60,70]; %x limit in [m]
@@ -204,14 +206,14 @@ simdef.flg.plot_unitt=1/3600/24/365; %conversion from s
 % simdef.flg.lims.z=[0,1]; %z limit in [m] (for 1D it is the limit of the vertical axis)
 % simdef.flg.lims.f=[1,1.5]*1e-3; %variable limits [default units]
 % simdef.flg.view=[56.5545   80.7235];
-% simdef.flg.prnt_size=[0,0,25.4,19.05]./2; %slide=[0,0,25.4,19.05]; 
+simdef.flg.prnt_size=[0,0,14.5,14.5]; %slide=[0,0,25.4,19.05]; 
 
-% simdef.flg.marg.mt=1.0; %top margin [cm]
+% simdef.flg.marg.mt=0.7; %top margin [cm]
 % simdef.flg.marg.mb=1.5; %bottom margin [cm]
-% simdef.flg.marg.mr=1.5; %right margin [cm]
+% simdef.flg.marg.mr=0.5; %right margin [cm]
 % simdef.flg.marg.ml=1.5; %left margin [cm]
-% simdef.flg.marg.sh=1.0; %horizontal spacing [cm]
-% simdef.flg.marg.sv=0.0; %vertical spacing [cm]
+% simdef.flg.marg.sh=0.5; %horizontal spacing [cm]
+% simdef.flg.marg.sv=0.5; %vertical spacing [cm]
 
 simdef.flg.equal_axis=0; %equal axis
 
@@ -239,10 +241,18 @@ simdef.D3D_home=NaN;
 
 simdef.flg.mean_type=2; %1=log2; 2=mean
 
+%tiles
+simdef.flg.add_tiles=1; %add map tiles to background
+simdef.flg.tiles_path='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\191016_rt_fm1D\data\tiles\tiles_3.mat';
+
+%domain figure
+simdef.flg.plot_branches=0;
+simdef.flg.plot_nodes=0;
+
 %% conversion to river kilometers
-in_read.path_rkm="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\river_kilometers\rijntakken\irm\rkm_rijntakken_rhein.csv";
-in_read.rkm_curved="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\river_kilometers\rijntakken\irm\rijn-flow-model_map_curved.nc";
-in_read.rkm_TolMinDist=300; %tolerance for accepting an rkm point
+% in_read.path_rkm="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\river_kilometers\rijntakken\irm\rkm_rijntakken_rhein.csv";
+% in_read.rkm_curved="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\river_kilometers\rijntakken\irm\rijn-flow-model_map_curved.nc";
+% in_read.rkm_TolMinDist=300; %tolerance for accepting an rkm point
 
 %%
 %% CALL

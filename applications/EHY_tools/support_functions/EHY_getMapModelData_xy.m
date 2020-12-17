@@ -148,11 +148,21 @@ if nargout > 1
         gridInfo.Ycor = Data_xy.Zint; % [times,cells,layers]
     else
         gridInfo = [];
-        for i = 1:length(val)
-            Data_xy.val_staircase(2*i-1,1)  = Data_xy.val(i);
-            Data_xy.val_staircase(2*i,1)    = Data_xy.val(i);
-            Data_xy.Scor_staircase(2*i-1,1) = Data_xy.Scor(i);
-            Data_xy.Scor_staircase(2*i,1)   = Data_xy.Scor(i+1);
+        if isfield(Data,'val')
+            for i = 1:length(val)
+                Data_xy.val_staircase(2*i-1,1)  = Data_xy.val(i);
+                Data_xy.val_staircase(2*i,1)    = Data_xy.val(i);
+                Data_xy.Scor_staircase(2*i-1,1) = Data_xy.Scor(i);
+                Data_xy.Scor_staircase(2*i,1)   = Data_xy.Scor(i+1);
+            end
+        elseif isfield(Data,'vel_x')
+            %V: added the if clause, as it was crashing because 'va' was non-existent. 
+            %not sure when ~_staircase is needed. Change when needed.
+%             Data_xy.vel_x(iT,iC,:) = vel_x(iC,startBlock:endBlock);
+%             Data_xy.vel_y(iT,iC,:) = vel_y(iC,startBlock:endBlock);
+%             Data_xy.vel_mag(iT,iC,:) = vel_mag(iC,startBlock:endBlock);
+%             Data_xy.vel_dir(iT,iC,:) = vel_dir(iC,startBlock:endBlock);
         end
+
     end
 end

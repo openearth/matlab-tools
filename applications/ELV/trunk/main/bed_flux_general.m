@@ -35,8 +35,8 @@ switch input.mor.scheme
         vm=3:numel(Qb)-1;
 end
 
-fp05_p=f_flux_p(input,vm  ,Qb./B,c,etab,dt); %f_(m+1.5) when upwind positive
-fm05_p=f_flux_p(input,vm-1,Qb./B,c,etab,dt); %f_(m-1.5) when upwind positive
+fp05_p=f_flux_p(input,vm  ,Qb./B,c,etab,dt); %f_(m+0.5) when upwind positive
+fm05_p=f_flux_p(input,vm-1,Qb./B,c,etab,dt); %f_(m-0.5) when upwind positive
 
 bed_flux=fp05_p-fm05_p;
 
@@ -47,7 +47,9 @@ end %function
 %%
 
 function r=f_r(vm,v)
-r=(v(vm+1)-v(vm)+1e-10)./(v(vm)-v(vm-1)+1e-10); %epsilon to prevent NaN when flat
+r=(v(vm+1)-v(vm))./(v(vm)-v(vm-1)); %epsilon to prevent NaN when flat
+% r=(v(vm+1)-v(vm)+1e-10)./(v(vm)-v(vm-1)+1e-10); %epsilon to prevent NaN when flat
+% r=(v(vm)-v(vm-1)+1e-10)./(v(vm+1)-v(vm)+1e-10); %epsilon to prevent NaN when flat
 end
 
 function sigma_b=f_sigma_b(input,c,dt)

@@ -11,7 +11,16 @@
 %$HeadURL$
 %
 
-function fig_full_flume(x_m,y_m,z_m,x_lims_in,y_lims_in,z_lims_in,view_in,str_prnt)
+function fig_full_flume(x_m,y_m,z_m,x_lims_in,y_lims_in,z_lims_in,view_in,str_prnt,varargin)
+
+parin=inputParser;
+
+addOptional(parin,'do_ae',0,@isnumeric);
+
+parse(parin,varargin{:});
+
+do_ae=parin.Results.do_ae;
+
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error
 %   but it does not change the font [151102].
@@ -211,7 +220,9 @@ end
 kr=1; kc=1;   
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
-% axis(han.sfig(kr,kc),'equal')
+if do_ae
+    axis(han.sfig(kr,kc),'equal')
+end
 han.sfig(kr,kc).Box='on';
 han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 han.sfig(kr,kc).YLim=lims.y(kr,kc,:);

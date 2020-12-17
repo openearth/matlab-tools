@@ -26,7 +26,7 @@ nn=size(network1d_node_id,2);
 network1d_node_id=network1d_node_id';
 geom_cs=[1;cumsum(network1d_geom_node_count)];
 
-%%
+%% default
 
 if isfield(flg,'plot_unitx')==0
     flg.plot_unitx=1;
@@ -44,21 +44,19 @@ if isfield(flg,'equal_axis')==0
     flg.equal_axis=1;
 end
 
-%%
-XZ=network1d_geom_x*flg.plot_unitx;
-YZ=network1d_geom_y.*flg.plot_unity;
-% SZ=in.SZ.*flg.plot_unitx;
-% z=in.z.*flg.plot_unitz;
-% sub=in.sub;
-% cvar=in.cvar;
-% time_r=in.time_r.*flg.plot_unitt;
-% nx=in.nx;
-% nl=in.nl;
-
-%% data rework
-
+if isfield(flg,'marg')==0
+    flg.marg.mt=2.5; %top margin [cm]
+    flg.marg.mb=1.5; %bottom margin [cm]
+    flg.marg.mr=2.5; %right margin [cm]
+    flg.marg.ml=2.0; %left margin [cm]
+    flg.marg.sh=1.0; %horizontal spacing [cm]
+    flg.marg.sv=0.0; %vertical spacing [cm]
+end
 
 %defaults 
+XZ=network1d_geom_x*flg.plot_unitx;
+YZ=network1d_geom_y.*flg.plot_unity;
+
 lims.x=[min(XZ)-eps,max(XZ)+eps];
 lims.y=[min(YZ)-eps,max(YZ)+eps];
 
@@ -93,19 +91,32 @@ if isfield(flg.prop,'fs')==0
     flg.prop.fs=10;
 end
     
+%tiles
+if isfield(flg,'add_tiles')==0
+    flg.add_tiles=0;
+end
+
+%branches and nodes
+if isfield(flg,'plot_nodes')==0
+    flg.plot_nodes=1;
+end
+if isfield(flg,'plot_branches')==0
+    flg.plot_branches=1;
+end
+
 %% FIGURE
 
 %figure input
-prnt.filename=sprintf('network'); %time is already in the plotting unitsm here we recover [s]
+prnt.filename=sprintf('network'); 
 prnt.size=flg.prnt_size;
 npr=1; %number of plot rows
 npc=1; %number of plot columns
-marg.mt=0.5; %top margin [cm]
-marg.mb=1.5; %bottom margin [cm]
-marg.mr=0.5; %right margin [cm]
-marg.ml=2.0; %left margin [cm]
-marg.sh=1.0; %horizontal spacing [cm]
-marg.sv=0.0; %vertical spacing [cm]
+marg.mt=flg.marg.mt; %top margin [cm]
+marg.mb=flg.marg.mb; %bottom margin [cm]
+marg.mr=flg.marg.mr; %right margin [cm]
+marg.ml=flg.marg.ml; %left margin [cm]
+marg.sh=flg.marg.sh; %horizontal spacing [cm]
+marg.sv=flg.marg.sv; %vertical spacing [cm]
 
 % prop.ms1=10; 
 % prop.lw=1;
@@ -228,27 +239,37 @@ han.sfig(kpr,kpc).YLabel.String='y coordinate [m]';
 
 %plots
 % han.p=scatter(in.mesh1d_x_node,in.mesh1d_y_node,10,'k','filled');
-han.p=scatter(XZ,YZ,10,'k','filled');
-
+if flg.add_tiles
+    load(flg.tiles_path,'tiles')
+    [nx,ny,~]=size(tiles);
+    for kx=1:nx
+        for ky=1:ny
+             surf(tiles{kx,ky,1},tiles{kx,ky,2},zeros(size(tiles{kx,ky,2})),tiles{kx,ky,3},'EdgeColor','none')
+        end
+    end
+end
+han.p=scatter(XZ,YZ,10,'r','filled');
 
 %nodes
+if flg.plot_nodes
 for kn=1:nn
     han.p=scatter(network1d_node_x(kn),network1d_node_y(kn),10,'sr','filled');
     str_p=strrep(network1d_node_id(kn,:),'_',' ');
-    text(network1d_node_x(kn),network1d_node_y(kn),str_p,'Rotation',45,'Fontsize',10,'color','r')    
+    text(network1d_node_x(kn),network1d_node_y(kn),str_p,'Rotation',45,'Fontsize',10,'color','c')    
+end
 end
 
 %branches
+if flg.plot_branches
 for kb=1:nb
     idx_br=mesh1d_node_branch==kb;
     mean_x=mean(network1d_geom_x(geom_cs(kb):geom_cs(kb+1)));
     mean_y=mean(network1d_geom_y(geom_cs(kb):geom_cs(kb+1)));
     str_p=strrep(network1d_branch_id(kb,:),'_',' ');
-    text(mean_x,mean_y,str_p,'Rotation',0,'Fontsize',10,'color','k')    
+    text(mean_x,mean_y,str_p,'Rotation',0,'Fontsize',10,'color','p')    
+end
 end
 
-
-% han.surf1.EdgeColor='none';
 
 % light
 % material dull
