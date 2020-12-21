@@ -13,6 +13,7 @@ function writeSCO(SCOfilename,varargin)
 %                     .isWind          (optional) switch for wind conditions (=0 by default, 1=on)
 %                     .isTideoffset    (optional) switch for computing tide offset of S-Phi curve (=0 by default, 1=on)
 %                     .isTimeseries    (optional) Switch for time-series (=0 by default, 1=on)
+%                     .matchtidewaves  (optional) Use tide conditions that are 1 on 1 synced with wave conditions (=0 by default, 1=on)
 %                     .time            (optional) time point of each wave condition [hours] (specify for time-series only!)
 %                     .h0              Surge height per wave condition [m]
 %                     .hs              Significant wave height [m]
@@ -111,7 +112,6 @@ else
     if ~isfield(SCOdata,'isTimeseries')
         SCOdata.isTimeseries=0;
     end
-    
     if ~isfield(SCOdata,'time') && isfield(SCOdata,'timenum')
         SCOdata.time = (SCOdata.timenum-SCOdata.timenum(1))*24;
     end
@@ -126,7 +126,7 @@ else
 end
 
 %% INITIALISE NON-SPECIFIED FIELDS
-settingFLDS = {'isTimeseries','isWavecurrent','isDynamicBND','isWind','isTideoffset'};
+settingFLDS = {'isTimeseries','isWavecurrent','isDynamicBND','isWind','isTideoffset','matchtidewaves'};
 for kk=1:length(settingFLDS)
 if ~isfield(SCOdata,settingFLDS{kk})
     SCOdata.(settingFLDS{kk})=0;
@@ -149,7 +149,6 @@ for kk=1:length(fldnms)
     end
 end
 
-
 %% WRITE REGULAR SCO FILE (CLIMATE CONDITIONS)
 fid = fopen(SCOfilename,'wt');
 if SCOdata.isTimeseries~=1
@@ -169,6 +168,7 @@ if SCOdata.isTimeseries~=1
     if SCOdata.isTideoffset>0 || SCOdata.isTimeseries>0
     fprintf(fid,'%2.0f       (Use Tide offset for schematisation (on=1/off=0))\n',SCOdata.isTideoffset);
     fprintf(fid,'%2.0f       (Use timeseries)\n',SCOdata.isTimeseries);
+    fprintf(fid,'%2.0f       (Use tide conditions that are 1 on 1 synced with wave conditions\n',SCOdata.matchtidewaves);
     end
     fprintf(fid,'WAVM      H0            wave height   period   direction   Duration\n');
     fprintf(fid,'   %14.3f%14.3f%14.3f%14.3f%14.5f\n',[SCOdata.h0(:),SCOdata.hs(:),SCOdata.tp(:),SCOdata.xdir(:),SCOdata.dur(:)]');
@@ -179,7 +179,7 @@ if SCOdata.isTimeseries~=1
     elseif writedummyTIDE==0
         fprintf(fid,' %2.0f    (Number of Tide condition)\n',length(SCOdata.Htide));
         fprintf(fid,'     %9s %9s %9s %9s\n','DH','Vgety','Ref.depth','Perc');
-        fprintf(fid,'     %9.3f %9.3f %9.3f  %10.6f\n',[SCOdata.Htide(:), SCOdata.Vtide(:), SCOdata.RefDep(:), SCOdata.Ptide(:)]');
+        fprintf(fid,'     %9.3f %9.3f %9.3f  %10.6f\n',[SCOdata.Vtide(:),SCOdata.Htide(:), SCOdata.RefDep(:), SCOdata.Ptide(:)]');
     end
     fclose(fid);
    
@@ -192,6 +192,7 @@ elseif SCOdata.isTimeseries==1
     fprintf(fid,'%2.0f       (Use Wind Driven Currents (on=1/off=0))\n',SCOdata.isWind);
     fprintf(fid,'%2.0f       (Use Tide offset for schematisation (on=1/off=0))\n',SCOdata.isTideoffset);
     fprintf(fid,'%2.0f       (Use timeseries)\n',SCOdata.isTimeseries);
+    fprintf(fid,'%2.0f       (Use tide conditions that are 1 on 1 synced with wave conditions\n',SCOdata.matchtidewaves);
 
     if SCOdata.isWind~=1
         fprintf(fid,'      Time         H0       Hsig       Tper       Alf        Tide       Vtide     RefDep\n');
