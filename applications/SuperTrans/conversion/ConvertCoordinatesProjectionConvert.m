@@ -194,6 +194,17 @@ switch method.name
         ii = strcmp('Latitude of 1st standard parallel'       ,param.name); lat1  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
 
         [x1,y1]= Mercator2SP(x1,y1,a,invf,lono,fe,fn,lat1,iopt);
+
+    case 'Albers Equal Area'
+
+        ii = strcmp('Longitude of false origin'               ,param.name); lonf  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        ii = strcmp('Latitude of false origin'                ,param.name); latf  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        ii = strcmp('Latitude of 1st standard parallel'       ,param.name); lat1  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        ii = strcmp('Latitude of 2nd standard parallel'       ,param.name); lat2  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        ii = strcmp('Easting at false origin'                 ,param.name); fe    = convertUnits(param.value(ii),param.UoM.name{ii},'metre',STD);
+        ii = strcmp('Northing at false origin'                ,param.name); fn    = convertUnits(param.value(ii),param.UoM.name{ii},'metre',STD);
+
+        [x1,y1]= AlbersEqualArea(x1,y1,a,invf,lonf,latf,lat1,lat2,fe,fn,iopt);
         
     otherwise
         error(['conversion method ' method.name ' not (yet) supported'])

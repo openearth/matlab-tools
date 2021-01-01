@@ -67,6 +67,7 @@ ell1        = OPT.(OPT.(datum_trans).ellips1).ellips;
 ell2        = OPT.(OPT.(datum_trans).ellips2).ellips;
 
 datum_ok = 0;
+no_datum_transformation=1;
 
 switch method_name
 
@@ -152,7 +153,12 @@ switch method_name
 
                 fprintf(2,['Warning: Datum transformation method ''' method_name ''' not yet supported, please see: http://www.ngs.noaa.gov/TOOLS/Nadcon/Nadcon.html.\n']);
                 
-                datum_ok = 0;
+                
+                lon2=lon1;
+                lat2=lat1;
+                
+                no_datum_transformation=1;
+                datum_ok = 1;
         
             case 'NTv2' % external mapping grid
                 % http://www.geod.nrcan.gc.ca/tools-outils/ntv2_e.php
@@ -167,12 +173,14 @@ switch method_name
         end
 
         % convert geocentric coordinates to geographic 3D coordinates 
+        if no_datum_transformation==0
         a     = ell2.semi_major_axis;
         invf  = ell2.inv_flattening;
         f     = 1/invf;
         e2    = 2*f-f^2;
         [lat2,lon2,h]=xyz2ell(x,y,z,a,e2);
-
+        end
+        
         % and just forget about h...
         
     otherwise

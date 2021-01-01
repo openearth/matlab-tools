@@ -230,7 +230,7 @@ OPT = ConvertCoordinatesFindDatumTransOpt(OPT,EPSG);
 if ischar(OPT.datum_trans)
     if strcmpi(OPT.datum_trans,'no transformation available')
         error('No transformation methods available ...');
-    elseif strcmpi(OPT.datum_trans,'no transformation required');
+    elseif strcmpi(OPT.datum_trans,'no transformation required')
         % no transformation required
         lat2 = lat1;
         lon2 = lon1;
@@ -238,7 +238,7 @@ if ischar(OPT.datum_trans)
             lat2v = lat1v;
             lon2v = lon1v;
         end
-    elseif strcmpi(OPT.datum_trans,'no direct transformation available');
+    elseif strcmpi(OPT.datum_trans,'no direct transformation available')
         [lat2,lon2,OPT] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans_to_WGS84'  ,EPSG);
         [lat2,lon2,OPT] = ConvertCoordinatesDatumTransform(lat2,lon2,OPT,'datum_trans_from_WGS84',EPSG);
         if vectorCorrection
