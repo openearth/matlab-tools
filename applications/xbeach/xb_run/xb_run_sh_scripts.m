@@ -132,6 +132,11 @@ else
             cmd = sprintf('%s %s@%s -pw %s -batch "cd %s && qsub -q %s %s/%s"', ...
                 exe_path, OPT.ssh_user, OPT.ssh_host, OPT.ssh_pass, rpath, OPT.queue, rpath, script);
         end
+    elseif strcmpi(OPT.ssh_host,'h6-c7')
+
+        cmd = sprintf('%s %s@%s -pw %s -batch "cd %s && qsub %s/%s"', ...
+                exe_path, OPT.ssh_user, 'h6', OPT.ssh_pass, rpath, rpath, script);
+
     else
         cmd = sprintf('%s %s@%s -pw %s -batch "dos2unix %s/%s && %s/%s"', ...
             exe_path, OPT.ssh_user, OPT.ssh_host, OPT.ssh_pass, rpath, script, rpath, script);

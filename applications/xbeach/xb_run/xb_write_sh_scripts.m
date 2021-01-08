@@ -138,6 +138,23 @@ switch upper(OPT.mpitype)
                 fprintf(fid,'mpirun -report-bindings -np %d -map-by core -hostfile $hostFile xbeach\n\n', (OPT.nodes*OPT.mpidomains+1));
                 fprintf(fid,'rm -f $hostFile\n');
                 fprintf(fid,'%s\n', 'echo finished >> finished.txt');
+            case 'h6-c7'
+                fprintf(fid,'hostFile="$JOB_NAME.h$JOB_ID"\n\n');
+                fprintf(fid,'cat $PE_HOSTFILE | while read line; do\n');
+                fprintf(fid,'   echo $line | awk ''{print $1 " slots=" $4}''\n');
+                fprintf(fid,'done > $hostFile\n\n');
+                % h6-c7 is not compatible with all the older xbeach versions
+                fprintf(fid,'module purge\n');
+                fprintf(fid,'module load gcc/7.3.0\n');
+                fprintf(fid,'module load hdf5/1.12.0_gcc7.3.0\n');
+                fprintf(fid,'module load netcdf/v4.7.4_v4.5.3_gcc7.3.0\n');
+                fprintf(fid,'module load openmpi/4.0.4_gcc7.3.0\n');
+                fprintf(fid,'module load /opt/apps/modules/xbeach/xbeach-trunk_gcc_7.3.0_openmpi_4.0.4_HEAD\n\n');
+                fprintf(fid,'module list\n');
+                
+                fprintf(fid,'mpirun -report-bindings -np %d -oversubscribe -hostfile $hostFile xbeach\n\n', (OPT.nodes*OPT.mpidomains+1));
+                fprintf(fid,'rm -f $hostFile\n');
+                fprintf(fid,'%s\n', 'echo finished >> finished.txt');
         end
         
 otherwise
