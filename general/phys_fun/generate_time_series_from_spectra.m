@@ -114,14 +114,20 @@ fmin = Inf;
 fmax = 0;
 minthres = 1e-4;
 for i=1:nspec
-    ftemp = spec(i).f(spec(i).vf>minthres*max(spec(i).vf));
-    fmin = min(fmin,min(ftemp));
-    fmax = max(fmax,max(ftemp));
+    ftemp   = spec(i).f(spec(i).vf>minthres*max(spec(i).vf));
+    fmin    = min(fmin,min(ftemp));
+    fmax    = max(fmax,max(ftemp));
 end
 if fmin==0
     fmin = fmax/OPT.nCompFreq;
 end
-f = linspace(fmin,fmax,OPT.nCompFreq)';
+if isnan(OPT.nCompFreq)
+    df              = (ftemp(2)-ftemp(1));
+    f               = fmin:df:fmax;
+    disp([' PS: we are using the highest resolution possible (n=', num2str(length(f)) '). This might take a while']);
+else
+    f               = linspace(fmin,fmax,OPT.nCompFreq)';
+end
 df = median(diff(f));
 nf = length(f);
 
@@ -331,12 +337,14 @@ for j=1:length(xout)
         specinside= slopespec>=bins(1) & slopespec<bins(2);
         if any(specinside)==1
             count=count+1;
-            specind(count)= find(dist==min(dist(specinside)));
+            TMP           = find(dist==min(dist(specinside)));
+            specind(count)= TMP(1);
         end
         specoutside= slopespec<bins(1) | slopespec>=bins(2);
         if any(specoutside)==1
             count= count+1;
-            specind(count)= find(dist==min(dist(specoutside)));
+            TMP           = find(dist==min(dist(specoutside)));
+            specind(count)= TMP(1);;
         end
         
         %check in figure
