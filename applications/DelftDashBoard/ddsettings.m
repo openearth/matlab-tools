@@ -1,4 +1,4 @@
-ddbdisp(' ');
+disp(' ');
 disp('You can start DelftDashBoard by typing ddb or DelftDashBoard in the Matlab command prompt.');
 disp(' ');
 disp('First time users are recommended to change the data directory. Simply copy the data folder');
