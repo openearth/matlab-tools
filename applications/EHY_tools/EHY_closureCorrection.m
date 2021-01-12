@@ -65,10 +65,10 @@ end
 [ref_date,Tunit,TStart,TStop] = EHY_getTimeInfoFromMdFile(fileMdu,'dfm');
 TStart                        = ref_date + TStart*timeFactor(Tunit,'D');
 TStop                         = ref_date + TStop*timeFactor(Tunit,'D');
-t_bc                          = TStart:OPT.dt_bc/1440.:TStop;
+t_bc_ml                       = TStart:OPT.dt_bc/1440.:TStop;
 
-if t_bc(end)~=TStop
-    t_bc(end+1) = TStop;
+if t_bc_ml(end)~=TStop
+    t_bc_ml(end+1) = TStop;
 end
 
 %% Geometry data
@@ -112,22 +112,22 @@ for i_file = 1: length(pli_files)
         raw = importdata(tim_file{i_file});
         data = raw.data;
         data     (:,1     ) = data(:,1)/1440.0 + ref_date; % time from min. from ref_date to MATLAB-times
-        data_intp(:,nr_file) = interp1( data(:,1) , data(:,2) , t_bc);
+        data_intp(:,nr_file) = interp1( data(:,1) , data(:,2) , t_bc_ml);
     end
 end
 
 %% Discharges associated with water level variations
 for istat = 1: length(stations) 
-   wl_intp(:,istat) = interp1(obs.A(istat).time, obs.A(istat).wl, t_bc);
+   wl_intp(:,istat) = interp1(obs.A(istat).time, obs.A(istat).wl, t_bc_ml);
 end
 
 %  average over all stations, fill NaN values by linear interpolation
 DVpeil      = nanmean(wl_intp,2);
 nonan       = ~isnan(DVpeil);
-DVpeil      = interp1(t_bc(nonan), DVpeil(nonan), t_bc); % lineaire interp om kleine gaten te vullen
+DVpeil      = interp1(t_bc_ml(nonan), DVpeil(nonan), t_bc_ml); % lineaire interp om kleine gaten te vullen
 area_now    = interp1(interface,area  ,DVpeil);
 volume_now  = interp1(interface,volume,DVpeil);
-for i_time = 1: length(t_bc) - 1 
+for i_time = 1: length(t_bc_ml) - 1 
     Qpeil(i_time)  = 0.5*(area_now  (i_time + 1) + area_now  (i_time))*(DVpeil(i_time+1) - DVpeil(i_time))/(OPT.dt_bc*60.);
 end
 Qpeil (end + 1) = 0.;
@@ -136,7 +136,7 @@ Qpeil (end + 1) = 0.;
 closeCorr = movmean(Qpeil - sum(data_intp,2)',OPT.days_ave*(1440./OPT.dt_bc)); 
 
 %% Write closure correction tim file
-t_bc            = (t_bc - ref_date ) * 1440.0 ;
+t_bc            = (t_bc_ml - ref_date ) * 1440.0 ;
 tim.Comments{1} = '* COLUMN=2';
 tim.Comments{2} = ['* COLUMN1=Time (minutes since ' datestr(ref_date,'yyyy-mm-dd') ')'];
 tim.Comments{3} =  '* COLUMN2=Discharge (m3/s), positive in';
@@ -161,8 +161,8 @@ end
 dflowfm_io_series('write',fileCorr,tim)
 
 %% varargout
-if nargout > 0
-    out(:,1) = reshape(t_bc,[],1); % time in MATLABs datenum
+if nargout >= 1
+    out(:,1) = reshape(t_bc_ml,[],1); % time in MATLABs datenum
     out(:,2) = reshape(closeCorr,[],1);
     if ~isempty(OPT.salinity)
         out(:,end+1) = OPT.salinity;
@@ -170,5 +170,22 @@ if nargout > 0
     if ~isempty(OPT.temperature)
         out(:,end+1) = OPT.temperature;
     end
+    out(:,end + 1) = cumsum(reshape(closeCorr,[],1)*(t_bc_ml(2) - t_bc_ml(1))*1440.*60.);
     varargout{1} = out;
+    clear out
 end
+
+if nargout >=2
+    out(:,1)                     = reshape(t_bc_ml,[],1);
+    for i_file = 1: size(data_intp,2) 
+        out(:,1+i_file) = data_intp(:,i_file);
+    end
+    for i_file = 1: size(data_intp,2) 
+        out(:,1+size(data_intp,2) + i_file) = cumsum(data_intp(:,i_file)*(t_bc_ml(2) - t_bc_ml(1)) *1440*60.);
+    end
+    varargout{2} = out;
+    clear out
+end
+    
+    
+
