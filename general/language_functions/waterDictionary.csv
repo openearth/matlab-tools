@@ -20,4 +20,4 @@ model         ,     , Model                 , Model                       , Mode
 easting       ,  ^o , Easting               , Breedtegraad                , Este
 northing      ,  ^o , Northing              , Hoogtegraad                 , Norte
 X             ,   m , X                     , X-RD                        , X
-Y             ,   m , YY                    , Y-RD                        , Y
+Y             ,   m , Y                     , Y-RD                        , Y
