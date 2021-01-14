@@ -163,8 +163,11 @@ for ii=1:ni
                 % Determine bounding box                
 %                 bboxx=[nanmin(nanmin(xg)) nanmax(nanmax(xg))];
 %                 bboxy=[nanmin(nanmin(yg)) nanmax(nanmax(yg))];
-                bboxx=[nanmin(nanmin(xg0))-dx nanmax(nanmax(xg0))+dx];
-                bboxy=[nanmin(nanmin(yg0))-dy nanmax(nanmax(yg0))+dy];
+                factor = 100000;
+                bboxx=[nanmin(nanmin(xg))-2*dx/factor nanmax(nanmax(xg))+2*dx/factor];
+                bboxy=[nanmin(nanmin(yg))-2*dy/factor nanmax(nanmax(yg))+2*dy/factor];
+%                 bboxx=[nanmin(nanmin(xg0))-dx nanmax(nanmax(xg0))+dx];
+%                 bboxy=[nanmin(nanmin(yg0))-dy nanmax(nanmax(yg0))+dy];
                 
                 % Now get the bathy data for this block
                 if ~isempty(find(isnan(zg)))
@@ -185,8 +188,11 @@ for ii=1:ni
                 [xg,yg]=convertCoordinates(xg0,yg0,'persistent','CS1.name',model_manning.cs.name,'CS1.type',model_manning.cs.type,'CS2.name',model_manning.bathymetry(ibat).csname,'CS2.type',model_manning.bathymetry(ibat).cstype);
                 
                 % Determine bounding box                
-                bboxx=[nanmin(nanmin(xg0))-dx nanmax(nanmax(xg0))+dx];
-                bboxy=[nanmin(nanmin(yg0))-dy nanmax(nanmax(yg0))+dy];
+%                 bboxx=[nanmin(nanmin(xg0))-dx nanmax(nanmax(xg0))+dx];
+%                 bboxy=[nanmin(nanmin(yg0))-dy nanmax(nanmax(yg0))+dy];
+                factor = 100000;
+                bboxx=[nanmin(nanmin(xg))-2*dx/factor nanmax(nanmax(xg))+2*dx/factor];
+                bboxy=[nanmin(nanmin(yg))-2*dy/factor nanmax(nanmax(yg))+2*dy/factor];
                 
                 % Now get the bathy data for this block
                 if ~isempty(find(isnan(manning)))
@@ -214,18 +220,30 @@ for ii=1:ni
             manning(isnan(manning))=0.02;  %if NaN then give 0.02 of open water          
         end
         
-        
+        close all
+        A4nofig; axis equal; pcolor(xg,yg,zg); shading flat; 
+        plot(xg(1,:),yg(1,:),'r','linewidth',0.5); plot(xg(end,:),yg(end,:),'r','linewidth',0.5);
+        plot(xg(:,1),yg(:,1),'r','linewidth',0.5); plot(xg(:,end),yg(:,end),'r','linewidth',0.5);
+        cb = colorbar;        ylabel(cb,'Elevation [m+NAVD88]')
+        print([dr,'\bathy_',num2str(ib, '%03d'),'.png'],'-dpng','-r200')
+
         if ~isempty(find(isnan(zg)))
-            close all
-            A4fig; pcolor(xg,yg,zg); shading flat; 
-            plot(xg(1,:),yg(1,:),'r','linewidth',0.5); plot(xg(end,:),yg(end,:),'r','linewidth',0.5);
-            plot(xg(:,1),yg(:,1),'r','linewidth',0.5); plot(xg(:,end),yg(:,end),'r','linewidth',0.5);
-            
-            printpng(['bathy_tmp_',num2str(ib, '%03d')])
+
             disp(['NaNs found in bathymetry!!! Block ii = ' num2str(ii) ', jj = ' num2str(jj)]);
             zg(isnan(zg)) = 0;
         end
-                
+        close all
+        A4nofig; axis equal; pcolor(xg,yg,manning); shading flat; 
+        plot(xg(1,:),yg(1,:),'r','linewidth',0.5); plot(xg(end,:),yg(end,:),'r','linewidth',0.5);
+        plot(xg(:,1),yg(:,1),'r','linewidth',0.5); plot(xg(:,end),yg(:,end),'r','linewidth',0.5);
+        cb = colorbar;        ylabel(cb,'Manning roughness [s/m^{1/3}]')
+        print([dr,'\manning_',num2str(ib, '%03d'),'.png'],'-dpng','-r200')
+ 
+        if ~isempty(find(isnan(manning)))
+             disp(['NaNs found in manning!!! Block ii = ' num2str(ii) ', jj = ' num2str(jj)]);
+            zg(isnan(zg)) = 0;
+        end
+        
         clear xg yg zg1 xx yy zz
         
         %% Now compute subgrid properties
