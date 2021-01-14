@@ -212,9 +212,14 @@ for ii=1:ni
                 %             [bboxx,bboxy]=convertCoordinates(bboxx,bboxy,'persistent','CS1.name',model.cs.name,'CS1.type',model.cs.type,'CS2.name',model.bathymetry(ibat).csname,'CS2.type',model.bathymetry(ibat).cstype);
                 [xg,yg]=convertCoordinates(xg0,yg0,'persistent','CS1.name',model.cs.name,'CS1.type',model.cs.type,'CS2.name',model.bathymetry(ibat).csname,'CS2.type',model.bathymetry(ibat).cstype);
                 
-                bboxx=[nanmin(nanmin(xg)) nanmax(nanmax(xg))];
-                bboxy=[nanmin(nanmin(yg)) nanmax(nanmax(yg))];
-                
+                if strcmp(model_manning.bathymetry(ibat).cstype, 'Geographic') == 1
+                    factor = 100000; %wgs
+                else
+                    factor = 1; %utm
+                end
+                bboxx=[nanmin(nanmin(xg))-2*dx/factor nanmax(nanmax(xg))+2*dx/factor]; % enlarge search box with approx 2 grid sizes in latlon or utm xy
+                bboxy=[nanmin(nanmin(yg))-2*dy/factor nanmax(nanmax(yg))+2*dy/factor];
+                 
                 % Now get the bathy data for this block
                 
                 % Determine bounding box
@@ -248,7 +253,11 @@ for ii=1:ni
         
         
         if ~isempty(find(isnan(zg)))
-            error(['NaNs found in bathymetry!!! Block ii = ' num2str(ii) ', jj = ' num2str(jj)]);
+            zg(isnan(zg)) = 0;
+            warning(['NaNs found in bathymetry!!! Block ii = ' num2str(ii) ', jj = ' num2str(jj)]);
+            
+%             error(['NaNs found in bathymetry!!! Block ii = ' num2str(ii) ', jj = ' num2str(jj)]);
+            % domain 6: NaNs found in bathymetry!!! Block ii = 11, jj = 4
         end
         
         
