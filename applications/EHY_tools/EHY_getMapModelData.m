@@ -55,15 +55,15 @@ OPT.sgft0             = 0;  % delwaq segment function (sgf) - datenum or datestr
 OPT.sgfkmax           = []; % delwaq segment function (sgf) - number of layers (k_max)
 
 % return output at specified reference level
-OPT.z            = ''; % z = positive up. Wanted vertical level = OPT.zRef + OPT.z
-OPT.zRef         = ''; % choose: '' = model reference level, 'wl' = water level or 'bed' = from bottom level
-OPT.zMethod      = ''; % interpolation method: '' = corresponding layer or 'linear' = 'interpolation between two layers'
+OPT.z                 = ''; % z = positive up. Wanted vertical level = OPT.zRef + OPT.z
+OPT.zRef              = ''; % choose: '' = model reference level, 'wl' = water level or 'bed' = from bottom level
+OPT.zMethod           = ''; % interpolation method: '' = corresponding layer or 'linear' = 'interpolation between two layers'
 
 % return output (cross section view) along a pli (file)
-OPT.pliFile      = '';
-OPT.pliFile      = []; % thalweg [n x 2]
+OPT.pliFile           = ''; % *.pli, *.ldb , *.pol 
+OPT.pli               = []; % thalweg [n x 2]
 
-OPT              = setproperty(OPT,varargin);
+OPT                   = setproperty(OPT,varargin);
 
 %% modify input
 inputFile = strtrim(inputFile);
@@ -105,7 +105,7 @@ if ~exist('Data','var') && ~isempty(OPT.z)
 end
 
 %% return sideview output along a pli file
-if ~exist('Data','var') && ~isempty(OPT.pliFile)
+if ~exist('Data','var') && (~isempty(OPT.pliFile) || ~isempty(OPT.pli))
     [Data,gridInfo] = EHY_getMapModelData_xy(inputFile,OPT);
 end
 

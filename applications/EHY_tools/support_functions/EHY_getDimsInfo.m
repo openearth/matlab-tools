@@ -115,13 +115,13 @@ switch modelType
         % time
         dims(1).name = 'time';
         
-        if strcmp(typeOfModelFileDetail,'his')
+        if strcmpi(typeOfModelFileDetail,'his')
             % stations
             stationNames = EHY_getStationNames(inputFile,modelType,'varName',OPT.varName);
             if ~isempty(stationNames)
                 dims(end+1).name = 'stations';
             end
-        elseif strcmp(typeOfModelFileDetail,'map')
+        elseif strcmpi(typeOfModelFileDetail,'map')
             [~, typeOfModelFileDetailGrid] = EHY_getTypeOfModelFile(gridFile);
             if ismember(typeOfModelFileDetailGrid, {'lga', 'cco'})     % faces/grid cells
                 dims(end+1).name = 'm';

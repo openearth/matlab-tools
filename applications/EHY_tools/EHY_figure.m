@@ -27,6 +27,7 @@ OPT.box      = 'on';
 OPT.grid     = 'on';
 OPT.hold     = 'on';
 OPT.fontsize = 8;
+OPT.subOrientation = 'vert';
 
 % setproperty
 if nargin > 0
@@ -52,10 +53,18 @@ set(fh,'Position',[Left Bottom OPT.width OPT.height]);
 for i_sub = 1:OPT.no_sub
     fig_pos = get(fh,'Position');
     
-    height = (fig_pos(4) - (OPT.no_sub * (OPT.upper + OPT.lower))) / OPT.no_sub;
-    width  = fig_pos(3) - (OPT.left + OPT.right);
-    bottom = (OPT.no_sub - i_sub) * (OPT.lower + OPT.upper + height) + OPT.lower;
-    left   = OPT.left;
+    switch OPT.subOrientation
+        case 'vert'
+            height = (fig_pos(4) - (OPT.no_sub * (OPT.upper + OPT.lower))) / OPT.no_sub;
+            width  = fig_pos(3) - (OPT.left + OPT.right);
+            bottom = (OPT.no_sub - i_sub) * (OPT.lower + OPT.upper + height) + OPT.lower;
+            left   = OPT.left;
+        case 'hor'
+            height = fig_pos(4) - (OPT.upper + OPT.lower);
+            width  = (fig_pos(3) - (OPT.no_sub * (OPT.left  + OPT.right))) / OPT.no_sub;
+            bottom = OPT.lower;
+            left   = (OPT.no_sub - i_sub) * (OPT.left + OPT.right + width) + OPT.left;
+    end
     
     a_aspect = width / height;
     

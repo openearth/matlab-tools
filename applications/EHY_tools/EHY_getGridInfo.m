@@ -423,7 +423,8 @@ switch modelType
                     end
                     
                     if ismember('face_nodes',wantedOutput)
-                        E.face_nodes = ncread(inputFile,'mesh2d_face_nodes');
+                        varName = EHY_nameOnFile(inputFile,'mesh2d_face_nodes');
+                        E.face_nodes = ncread(inputFile,varName);
                     end
                     if ismember('face_nodes_xy',wantedOutput)
                         varName = EHY_nameOnFile(inputFile,'mesh2d_face_x_bnd');

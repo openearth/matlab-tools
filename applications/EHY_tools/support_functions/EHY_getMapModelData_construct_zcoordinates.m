@@ -71,7 +71,7 @@ switch gridInfo.layer_model
             bl = reshape(gridInfo.Zcen,no_cells,1);
         end
         
-        ZKlocal  = gridInfo.Zcen_int;
+        ZKlocal  = reshape(gridInfo.Zcen_int,1,[]);
         ZKlocal2 = repmat(ZKlocal,no_cells,1);
         
         for iT = 1:no_times
@@ -138,13 +138,15 @@ switch gridInfo.layer_model
             
             %% z-sigma-layer model? Add sigma-layers at the top
             try
-                source = ncreadatt(inputFile,'/','source');
-                ind = strfind(source,'D-Flow FM');
-                source = source(ind+18:ind+22);
-                if str2num(source) < 67072
-                    disp('<strong>Numtopsiguniform was not yet implemented (correctly) in the FM version you used. You should move to FM >= 67072 (Jul 8, 2020) </strong>')
-                    disp('<strong>Reconstructing z-coordinates as if Numtopsiguniform = 0 (as was used in your run)</strong>')
-                    mdu.geometry.numtopsiguniform = 0;
+                
+                % check
+                if isfield(mdu.geometry,'numtopsiguniform') && mdu.geometry.numtopsiguniform
+                    FMversion = EHY_getFMversion(inputFile,modelType);
+                    if FMversion < 67072
+                        disp('<strong>Numtopsiguniform was not yet implemented (correctly) in the FM version you used. You should move to FM >= 67072 (Jul 8, 2020) </strong>')
+                        disp('<strong>Reconstructing z-coordinates as if Numtopsiguniform = 0 (as was used in your run)</strong>')
+                        mdu.geometry.numtopsiguniform = 0;
+                    end
                 end
                 
                 numtopsig = mdu.geometry.numtopsig;
@@ -190,7 +192,7 @@ zcen_int = int;
 
 end
 
-function [zcen_int,zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates_CMEMS(inputFile,OPT)
+function [zcen_int,zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates_CMEMS(inputFile)
 %         % water level
 %         [pathstr, name, ext] = fileparts(inputFile);
 %         [~,name] = strtok(name,'_');
