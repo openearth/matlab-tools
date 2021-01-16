@@ -23,7 +23,7 @@ function [OUT] = read_csv(fname)
 %   [OUT] = waterinfo.read_csv('d:\waterinfo.csv\')
 %
 %   See also
-%   waterinfo.read_waterlevel
+%   waterinfo.read_csv
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -183,13 +183,18 @@ if diff(OUT.datenum) < 0
     for j = 1:nvars
         v = sprintf('NUMERIEKEWAARDE_%d',j);
         OUT.(v) = OUT.(v)(ids);
-        
-        % To Do: add unique statement to find double entries on a single
-        % date and average the data at the multiple time stamps
-        %         OUT.datenum = unique(OUT.datenum); % Multiple date stamps in file for different variables
-        %         OUT.datestr = cellstr(datestr(OUT.datenum));
     end
 end
+
+% find double date entries on a single value
+if length(OUT.datenum) > length(unique(OUT.datenum))
+    [OUT.datenum,ia,~] = unique(OUT.datenum);
+    for j = 1:nvars
+        v = sprintf('NUMERIEKEWAARDE_%d',j);
+        OUT.(v) = OUT.(v)(ia);
+    end
+end
+
 
 %% 4) Write information
 clc;
