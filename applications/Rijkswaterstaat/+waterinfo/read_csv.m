@@ -188,12 +188,21 @@ end
 
 % find double date entries on a single value
 if length(OUT.datenum) > length(unique(OUT.datenum))
+    fprintf('\tDouble date entries found and removed\n');
     [OUT.datenum,ia,~] = unique(OUT.datenum);
     for j = 1:nvars
         v = sprintf('NUMERIEKEWAARDE_%d',j);
         OUT.(v) = OUT.(v)(ia);
     end
 end
+
+% To add
+% % Remove outliers
+% for j = 1:nvars
+%     v = sprintf('NUMERIEKEWAARDE_%d',j);
+%     find(abs(OUT.(v)) > nanmean(OUT.(v)) +3*nanstd(OUT.(v)))
+% end
+
 
 
 %% 4) Write information
