@@ -67,7 +67,7 @@ ell1        = OPT.(OPT.(datum_trans).ellips1).ellips;
 ell2        = OPT.(OPT.(datum_trans).ellips2).ellips;
 
 datum_ok = 0;
-no_datum_transformation=1;
+no_datum_transformation=0;
 
 switch method_name
 
@@ -82,16 +82,16 @@ switch method_name
             'NADCON',...
             'NTv2'}
 
-            % convert geographic 2D coordinates to geographic 3D, by assuming
-            % height is 0
-            h    = zeros(size(lat1));
+        % convert geographic 2D coordinates to geographic 3D, by assuming
+        % height is 0
+        h    = zeros(size(lat1));
 
-            % convert geographic 3D coordinates to geocentric coordinates
-            a      = ell1.semi_major_axis;
-            invf   = ell1.inv_flattening;
-            f      = 1/invf;
-            e2     = 2*f-f^2;
-            [x,y,z]= ell2xyz(lat1,lon1,h,a,e2);
+        % convert geographic 3D coordinates to geocentric coordinates
+        a      = ell1.semi_major_axis;
+        invf   = ell1.inv_flattening;
+        f      = 1/invf;
+        e2     = 2*f-f^2;
+        [x,y,z]= ell2xyz(lat1,lon1,h,a,e2);
 
         switch method_name
 
@@ -174,13 +174,12 @@ switch method_name
 
         % convert geocentric coordinates to geographic 3D coordinates 
         if no_datum_transformation==0
-        a     = ell2.semi_major_axis;
-        invf  = ell2.inv_flattening;
-        f     = 1/invf;
-        e2    = 2*f-f^2;
-        [lat2,lon2,h]=xyz2ell(x,y,z,a,e2);
+            a     = ell2.semi_major_axis;
+            invf  = ell2.inv_flattening;
+            f     = 1/invf;
+            e2    = 2*f-f^2;
+            [lat2,lon2,h]=xyz2ell(x,y,z,a,e2);
         end
-        
         % and just forget about h...
         
     otherwise
@@ -191,58 +190,58 @@ end
 %% if failed, retry with available alternatives, if not deprecated,
 %  and mention alternative to logging
 
-  if strcmpi(datum_trans,'datum_trans') & ~(datum_ok) 
+if strcmpi(datum_trans,'datum_trans') && ~(datum_ok) 
     if isfield(OPT.(datum_trans),'alt')
        error(['Warning: Datum transformation method ''' method_name ''' not yet supported, and no alternatives available!']);
     end
     if isfield(OPT.(datum_trans),'alt_code')
-       ialt = 1;
-       nalt = length(OPT.(datum_trans).alt_code);
-       OPT.(datum_trans).alt = 0;
-       while ~(datum_ok)
-         if  (ialt >= nalt)
-           error(['Warning: Datum transformation method ''' method_name ''' not yet supported, and no alternatives available!']);
-         end
-    
-         OPT.datum_trans_failed.code        = OPT.(datum_trans).code       ;
-         OPT.datum_trans_failed.name        = OPT.(datum_trans).name       ;
-         OPT.datum_trans_failed.direction   = OPT.(datum_trans).direction  ;
-         OPT.datum_trans_failed.deprecated  = OPT.(datum_trans).deprecated ;
-         OPT.datum_trans_failed.scope       = OPT.(datum_trans).scope      ;
-         OPT.datum_trans_failed.accuray     = OPT.(datum_trans).accuray    ;
-         OPT.datum_trans_failed.params      = OPT.(datum_trans).params;
-         OPT.datum_trans_failed.method_code = OPT.(datum_trans).method_code;
-         OPT.datum_trans_failed.method_name = OPT.(datum_trans).method_name;
-
-         OPT.(datum_trans).code             = OPT.(datum_trans).alt_code       (ialt);
-         OPT.(datum_trans).name             = OPT.(datum_trans).alt_name       {ialt};
-         OPT.(datum_trans).direction        = OPT.(datum_trans).alt_direction  {ialt};
-         OPT.(datum_trans).deprecated       = OPT.(datum_trans).alt_deprecated {ialt};
-         OPT.(datum_trans).scope            = OPT.(datum_trans).alt_scope      {ialt};
-         OPT.(datum_trans).accuray          = OPT.(datum_trans).alt_accuray    {ialt};
-         OPT.datum_trans.params             = ConvertCoordinatesFindDatumTransParams(OPT.(datum_trans).code,EPSG);
-         OPT.(datum_trans).method_code      = OPT.(datum_trans).alt_method_code(ialt);
-         OPT.(datum_trans).method_name      = OPT.(datum_trans).alt_method_name{ialt};
-         
-         try
-            if strcmpi(OPT.(datum_trans).deprecated,'false')
-              [lat2,lon2,OPT] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,datum_trans,EPSG);
-              datum_ok = 1;
-              OPT.(datum_trans).alt = 1;
-              warning(['Warning: Alternative datum transformation method ''' OPT.(datum_trans).method_name ''' used. (#',num2str(ialt),' of ',num2str(nalt),')']);
-              ialt = ialt+1;
-            else
-              ialt = ialt+1;
+        ialt = 1;
+        nalt = length(OPT.(datum_trans).alt_code);
+        OPT.(datum_trans).alt = 0;
+        while ~(datum_ok)
+            if  (ialt >= nalt)
+                error(['Warning: Datum transformation method ''' method_name ''' not yet supported, and no alternatives available!']);
             end
-         catch
-            ialt = ialt+1;
-         end
+    
+            OPT.datum_trans_failed.code        = OPT.(datum_trans).code       ;
+            OPT.datum_trans_failed.name        = OPT.(datum_trans).name       ;
+            OPT.datum_trans_failed.direction   = OPT.(datum_trans).direction  ;
+            OPT.datum_trans_failed.deprecated  = OPT.(datum_trans).deprecated ;
+            OPT.datum_trans_failed.scope       = OPT.(datum_trans).scope      ;
+            OPT.datum_trans_failed.accuray     = OPT.(datum_trans).accuray    ;
+            OPT.datum_trans_failed.params      = OPT.(datum_trans).params     ;
+            OPT.datum_trans_failed.method_code = OPT.(datum_trans).method_code;
+            OPT.datum_trans_failed.method_name = OPT.(datum_trans).method_name;
+
+            OPT.(datum_trans).code             = OPT.(datum_trans).alt_code       (ialt);
+            OPT.(datum_trans).name             = OPT.(datum_trans).alt_name       {ialt};
+            OPT.(datum_trans).direction        = OPT.(datum_trans).alt_direction  {ialt};
+            OPT.(datum_trans).deprecated       = OPT.(datum_trans).alt_deprecated {ialt};
+            OPT.(datum_trans).scope            = OPT.(datum_trans).alt_scope      {ialt};
+            OPT.(datum_trans).accuray          = OPT.(datum_trans).alt_accuray    {ialt};
+            OPT.datum_trans.params             = ConvertCoordinatesFindDatumTransParams(OPT.(datum_trans).code,EPSG);
+            OPT.(datum_trans).method_code      = OPT.(datum_trans).alt_method_code(ialt);
+            OPT.(datum_trans).method_name      = OPT.(datum_trans).alt_method_name{ialt};
+         
+            try
+                if strcmpi(OPT.(datum_trans).deprecated,'false')
+                    [lat2,lon2,OPT] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,datum_trans,EPSG);
+                    datum_ok = 1;
+                    OPT.(datum_trans).alt = 1;
+                    warning(['Warning: Alternative datum transformation method ''' OPT.(datum_trans).method_name ''' used. (#',num2str(ialt),' of ',num2str(nalt),')']);
+                    ialt = ialt+1;
+                else
+                    ialt = ialt+1;
+                end
+            catch
+                ialt = ialt+1;
+            end
           
-      end
+        end
     else
         error(['Warning: Datum transformation method ''' method_name ''' not yet supported, and no alternatives available!']);
     end
-  end
+end
 
 %% 
 function val = getParamValue(param,name,unit,STD)
