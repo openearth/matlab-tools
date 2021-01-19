@@ -290,6 +290,7 @@ if ~exist('Data','var')
                     grp = char(vs_find(vs_use(inputFile,'quiet'), OPT.varName));
                     if ~isempty(strfind(grp,'-const'))
                         dims(timeInd).index = 1; % const
+                        Data.times = Data.times(1);
                     end
                     time_ind  = {dims(1).index};
                     other_ind = {dims(2:end).index};

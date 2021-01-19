@@ -39,6 +39,7 @@ if strcmpi(varName,'waterdepth'           ) varName = 'wd'         ; end
 if strcmpi(varName,'bed'                  ) varName = 'bedlevel'   ; end
 if strcmpi(varName,'suspendedload'        ) varName = 'suspload'   ; end
 if strcmpi(varName,'sedimentconcentration') varName = 'sedconc'    ; end
+if strcmpi(varName,'den'                  ) varName = 'density'    ; end
 
 %% Change the name of the requested Variable name
 newName = varName;
@@ -67,6 +68,7 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'wl'         ) newName = 'S1'         ; end
         if strcmpi(varName,'bedlevel'   ) newName = 'DPS0'       ; end
         if strcmpi(varName,'uv'         ) newName = 'U1'         ; end
+        if strcmpi(varName,'density'    ) newName = 'RHO'        ; end
         if strcmpi(varName,'dps'        ) newName = 'DPS0'       ; end
         if strcmpi(varName,'avbedload'  ) newName = 'SBUUA'      ; end
         if strcmpi(varName,'avsuspload' ) newName = 'SSUUA'      ; end

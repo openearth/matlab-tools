@@ -94,8 +94,8 @@ switch gridInfo.layer_model
             end
             
             %% mdu
-            try
-                if strcmp(modelType,'dfm')
+            if strcmp(modelType,'dfm')
+                try
                     mdu = dflowfm_io_mdu('read',EHY_getMdFile(inputFile));
                     % make sure needed variable names can be found in lower-case
                     fns = fieldnames(mdu);
@@ -137,38 +137,39 @@ switch gridInfo.layer_model
             end
             
             %% z-sigma-layer model? Add sigma-layers at the top
-            try
-                
-                % check
-                if isfield(mdu.geometry,'numtopsiguniform') && mdu.geometry.numtopsiguniform
-                    FMversion = EHY_getFMversion(inputFile,modelType);
-                    if FMversion < 67072
-                        disp('<strong>Numtopsiguniform was not yet implemented (correctly) in the FM version you used. You should move to FM >= 67072 (Jul 8, 2020) </strong>')
-                        disp('<strong>Reconstructing z-coordinates as if Numtopsiguniform = 0 (as was used in your run)</strong>')
-                        mdu.geometry.numtopsiguniform = 0;
-                    end
-                end
-                
-                numtopsig = mdu.geometry.numtopsig;
-                if isfield(mdu.geometry,'numtopsiguniform') && mdu.geometry.numtopsiguniform
-                    sigma_bottom = max([int_field(:,end-numtopsig) bl],[],2) ;
-                    sigma_top    = wl(iT,:)';
-                    dz = sigma_top - sigma_bottom;
-                    int_field(:,(end-numtopsig):end) = sigma_bottom+linspace(0,1,numtopsig+1).*dz;
-                elseif numtopsig > 0
-                    for ii = 1:size(int_field,1)
-                        logi = ~isnan(int_field(ii,:));
-                        logi(1:end-numtopsig) = false; % only top numtopsig are changed into sigma-layers
-                        ind1 = find(logi,1,'first');
-                        ind2 = find(logi,1,'last');
-                        if ~isempty(ind1) && ~isempty(ind2)
-                            no_active_layers =  ind2-ind1+1;
-                            int_field(ii,logi) = linspace(int_field(ii,ind1),int_field(ii,ind2),no_active_layers);
+            if strcmp(modelType,'dfm')
+                try
+                    % check
+                    if isfield(mdu.geometry,'numtopsiguniform') && mdu.geometry.numtopsiguniform
+                        FMversion = EHY_getFMversion(inputFile,modelType);
+                        if FMversion < 67072
+                            disp('<strong>Numtopsiguniform was not yet implemented (correctly) in the FM version you used. You should move to FM >= 67072 (Jul 8, 2020) </strong>')
+                            disp('<strong>Reconstructing z-coordinates as if Numtopsiguniform = 0 (as was used in your run)</strong>')
+                            mdu.geometry.numtopsiguniform = 0;
                         end
                     end
+                    
+                    numtopsig = mdu.geometry.numtopsig;
+                    if isfield(mdu.geometry,'numtopsiguniform') && mdu.geometry.numtopsiguniform
+                        sigma_bottom = max([int_field(:,end-numtopsig) bl],[],2) ;
+                        sigma_top    = wl(iT,:)';
+                        dz = sigma_top - sigma_bottom;
+                        int_field(:,(end-numtopsig):end) = sigma_bottom+linspace(0,1,numtopsig+1).*dz;
+                    elseif numtopsig > 0
+                        for ii = 1:size(int_field,1)
+                            logi = ~isnan(int_field(ii,:));
+                            logi(1:end-numtopsig) = false; % only top numtopsig are changed into sigma-layers
+                            ind1 = find(logi,1,'first');
+                            ind2 = find(logi,1,'last');
+                            if ~isempty(ind1) && ~isempty(ind2)
+                                no_active_layers =  ind2-ind1+1;
+                                int_field(ii,logi) = linspace(int_field(ii,ind1),int_field(ii,ind2),no_active_layers);
+                            end
+                        end
+                    end
+                catch
+                    disp('Could not correct vertical coordinates for possible usage of numtopsig and numtopsiguniform')
                 end
-            catch
-                disp('Could not correct vertical coordinates for possible usage of numtopsig and numtopsiguniform')
             end
             
             %%

@@ -250,6 +250,7 @@ function pliFile = makePliFileForSlice(outputfile,OPT)
 figure('units','normalized','outerposition',[0 0 1 1])
 title('Click traject using left-mouse-clicks. To stop, press any other button.')
 hold on
+if ~isfield(OPT,'mergePartitions'); OPT.mergePartitions = 0; end
 gridInfo = EHY_getGridInfo(outputfile,'grid','mergePartitions',OPT.mergePartitions);
 plot(gridInfo.grid(:,1),gridInfo.grid(:,2))
 pli = [];

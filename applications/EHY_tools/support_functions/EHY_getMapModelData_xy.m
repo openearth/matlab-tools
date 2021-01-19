@@ -141,6 +141,18 @@ if OPT.disp
     disp('Finished determining properties along trajectory')
 end
 
+if strcmp(Data.modelType,'dfm')
+    % remove polygon-points to mimic d3d-style
+    deleteLogi = arb.wght(:,3) > 0;
+    Data_xy.Xcor(deleteLogi) = [];Data_xy.Ycor(deleteLogi) = [];Data_xy.Scor(deleteLogi) = [];
+    if isfield(Data_xy,'Zint'); Data_xy.Zint(:,deleteLogi,:) = []; end
+    deleteLogi = deleteLogi(1:end-1);
+    Data_xy.Xcen(deleteLogi) = [];Data_xy.Ycen(deleteLogi) = [];Data_xy.Scen(deleteLogi) = [];
+    if isfield(Data_xy,'Zcen'); Data_xy.Zcen(:,deleteLogi,:) = []; end
+    Data_xy.val(:,deleteLogi,:) = []; % 2D or (not to be) 3D. 
+    no_XYcenTrajectory = length(Data_xy.Xcen);
+end
+
 %% make gridInfo for plotting using EHY_plotMapModelData
 if nargout > 1
     if no_layers > 1
@@ -149,20 +161,17 @@ if nargout > 1
     else
         gridInfo = [];
         if isfield(Data,'val')
-            for i = 1:length(val)
-                Data_xy.val_staircase(2*i-1,1)  = Data_xy.val(i);
-                Data_xy.val_staircase(2*i,1)    = Data_xy.val(i);
-                Data_xy.Scor_staircase(2*i-1,1) = Data_xy.Scor(i);
-                Data_xy.Scor_staircase(2*i,1)   = Data_xy.Scor(i+1);
+            for iC = 1:no_XYcenTrajectory
+                for iT = 1:no_times
+                    Data_xy.val_staircase(iT,2*iC-1)  = Data_xy.val(iT,iC);
+                    Data_xy.val_staircase(iT,2*iC)    = Data_xy.val(iT,iC);
+                end
+                Data_xy.Scor_staircase(2*iC-1,1) = Data_xy.Scor(iC);
+                Data_xy.Scor_staircase(2*iC,1)   = Data_xy.Scor(iC+1);
             end
         elseif isfield(Data,'vel_x')
-            %V: added the if clause, as it was crashing because 'va' was non-existent. 
-            %not sure when ~_staircase is needed. Change when needed.
-%             Data_xy.vel_x(iT,iC,:) = vel_x(iC,startBlock:endBlock);
-%             Data_xy.vel_y(iT,iC,:) = vel_y(iC,startBlock:endBlock);
-%             Data_xy.vel_mag(iT,iC,:) = vel_mag(iC,startBlock:endBlock);
-%             Data_xy.vel_dir(iT,iC,:) = vel_dir(iC,startBlock:endBlock);
+            error('to do')
         end
-
+        
     end
 end
