@@ -192,7 +192,7 @@ if nargout > 2
     %% Get time information from simulation and determine index of required times
     if ~isempty(dimsInd.time)
         Data.times = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
-        if EHY_isCMEMS(inputFile) && OPT.mergeCMEMSdata
+        if EHY_isCMEMS(inputFile) && strcmpi(typeOfModelFileDetail,'map_nc') && OPT.mergeCMEMSdata
             % handling of time indices is done within EHY_getMapCMEMSData
         else  
             [Data,time_index,~,index_requested] = EHY_getmodeldata_time_index(Data,OPT);
