@@ -141,7 +141,9 @@ if OPT.disp
     disp('Finished determining properties along trajectory')
 end
 
-if strcmp(Data.modelType,'dfm')
+% below was added to remove polygon-points and therewith mimic d3d-style,
+% but the new arbcross is better so d3d-style should include pol-points.
+if 0 && strcmp(Data.modelType,'dfm')
     % remove polygon-points to mimic d3d-style
     deleteLogi = arb.wght(:,3) > 0;
     Data_xy.Xcor(deleteLogi) = [];Data_xy.Ycor(deleteLogi) = [];Data_xy.Scor(deleteLogi) = [];
