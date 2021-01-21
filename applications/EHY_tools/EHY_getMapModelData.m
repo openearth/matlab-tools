@@ -303,8 +303,8 @@ if ~exist('Data','var')
                         Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
                     end
                     
-                    if strcmp(OPT.varName,'DPS0') % bedlevel (pos. up) loaded as DPS0 (pos. down)
-                        Data.val = -1*Data.val; % positive up
+                    if strcmp(OPT.varName,'DPS0') % make bedlevel positive up 
+                        Data.val = -1*Data.val;
                     end
             end
             

@@ -189,7 +189,7 @@ switch modelType
             indexOut = dims(stationsInd).indexOut(i_stat);
             
             switch OPT.varName
-                case 'bedlevel' % bedlevel (z-coordinate, negative)
+                case {'bedlevel','DPS'} % make bedlevel positive up 
                     DPS                  = vs_get(trih,'his-const',{1},'DPS',{stat_ind},'quiet');
                     Data.val(:,indexOut) = -DPS;
                 case 'wd'
