@@ -47,7 +47,7 @@ end
 
 %% availableConversions
 A=textread(which('EHY_convert.m'),'%s','delimiter','\n');
-searchLine='function [output,OPT]=EHY_convert_';
+searchLine='function [output,OPT] = EHY_convert_';
 lineNrs=find(~cellfun('isempty',strfind(A,searchLine)));
 availableConversions={'pli'};
 for ii=2:length(lineNrs)
@@ -117,7 +117,7 @@ end
 %% Choose and run conversion
 % coordinate conversion
 if strcmp(inputExt0(2:end),outputExt)
-    OPT=EHY_selectToAndFromEPSG(OPT);
+    OPT = EHY_selectToAndFromEPSG(OPT);
     if ~exist('inputExt0','var'); inputExt0=['.' inputExt]; end
     outputFile=strrep(inputFile,inputExt0,['_EPSG-' num2str(OPT.toEPSG) '.' outputExt]);
 end
@@ -126,7 +126,7 @@ end
 if ~isempty(OPT.outputFile) % outputFile was specified by user
     outputFile=OPT.outputFile;
 elseif strcmp(inputExt,outputExt) % coordinate conversion
-    OPT=EHY_selectToAndFromEPSG(OPT);
+    OPT = EHY_selectToAndFromEPSG(OPT);
     if ~exist('inputExt0','var'); inputExt0=['.' inputExt]; end
     outputFile=strrep(inputFile,['.' inputExt],['_EPSG-' num2str(OPT.toEPSG) '.' outputExt]);
 elseif exist('outputFile','var') % outputFile was determined based on coordinate conversion
@@ -167,12 +167,12 @@ if strcmpi(outputExt,'nc')
     end
 end
 
-output=[];
+output = [];
 
 if ~strcmp(inputExt,outputExt)
-    eval(['[output,OPT]=EHY_convert_' inputExt '2' outputExt '(''' inputFile ''',''' outputFile ''',OPT);'])
+    eval(['[output,OPT] = EHY_convert_' inputExt '2' outputExt '(''' inputFile ''',''' outputFile ''',OPT);'])
 else
-    eval(['[output,OPT]=EHY_convertCoordinates(''' inputFile ''',''' outputFile ''',OPT);'])
+    eval(['[output,OPT] = EHY_convertCoordinates(''' inputFile ''',''' outputFile ''',OPT);'])
 end
 
 if OPT.saveOutputFile
@@ -191,7 +191,7 @@ if OPT.saveOutputFile
 end
 %% conversion functions - in alphabetical order
 % ann2xyn
-    function [output,OPT]=EHY_convert_ann2xyn(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_ann2xyn(inputFile,outputFile,OPT)
         ann=delft3d_io_ann('read',inputFile);
         xyn.x=ann.DATA.x;
         xyn.y=ann.DATA.y;
@@ -202,11 +202,11 @@ end
         output=xyn;
     end
 % ann2kml
-    function [output,OPT]=EHY_convert_ann2kml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_ann2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
         OPT.saveOutputFile=0;
         xyn=EHY_convert_ann2xyn(inputFile,outputFile,OPT);
-        [xyn.x,xyn.y,OPT]=EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
+        [xyn.x,xyn.y,OPT] = EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
         OPT=OPT_user;
         if OPT.saveOutputFile
             [~,name]=fileparts(outputFile);
@@ -215,10 +215,10 @@ end
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
-        output=[];
+        output = [];
     end
 % arl2xyz
-    function [output,OPT]=EHY_convert_arl2xyz(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_arl2xyz(inputFile,outputFile,OPT)
         output = dlmread(inputFile);
         output = output(:,[1 2 4]); % x,y,code
         if OPT.saveOutputFile
@@ -228,7 +228,7 @@ end
         end
     end
 % box2dep
-    function [output,OPT]=EHY_convert_box2dep(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_box2dep(inputFile,outputFile,OPT)
         fid=fopen(inputFile,'r');
         line=lower(fgetl(fid));
         while feof(fid)==0 && ~isempty(strfind(line,'box')) % new box
@@ -255,7 +255,7 @@ end
         end
     end
 % cco2grd
-   function [output,OPT]=EHY_convert_cco2grd(inputFile,outputFile,OPT)
+   function [output,OPT] = EHY_convert_cco2grd(inputFile,outputFile,OPT)
         dw = delwaq('open',inputFile);
         grd.X = dw.X;
         grd.Y = dw.Y;
@@ -265,7 +265,7 @@ end
        output = grd;
    end
 % cco2kml
-   function [output,OPT]=EHY_convert_cco2kml(inputFile,outputFile,OPT)
+   function [output,OPT] = EHY_convert_cco2kml(inputFile,outputFile,OPT)
        if OPT.saveOutputFile
            [~,name] = fileparts(outputFile);
            tempFileGrd = [tempdir name '.grd'];
@@ -286,15 +286,15 @@ end
            end
            delete(tempFileKml)
        end
-       output=[];
+       output = [];
    end
 % crs2kml
-    function [output,OPT]=EHY_convert_crs2kml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_crs2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
         OPT.saveOutputFile=0;
         pol=EHY_convert_crs2pol(inputFile,outputFile,OPT);
-        [x,y,OPT]=EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
-        output=[x y];
+        [x,y,OPT] = EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
+        output = [x y];
         % delete multiple NaN rows
         output(find(isnan(output(2:end,1)) & isnan(output(1:end-1,1))),:)=[];
         OPT=OPT_user;
@@ -313,7 +313,7 @@ end
         end
     end
 % crs2pol
-    function [output,OPT]=EHY_convert_crs2pol(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_crs2pol(inputFile,outputFile,OPT)
         crs=delft3d_io_crs('read',inputFile);
         x=[];y=[];
         [OPT,grd]=EHY_convert_gridCheck(OPT,inputFile);
@@ -328,7 +328,7 @@ end
             x=[x;reshape(grd.X(mrange,nrange),[],1); NaN];
             y=[y;reshape(grd.Y(mrange,nrange),[],1); NaN];
         end
-        output=[x y];
+        output = [x y];
         if OPT.saveOutputFile
             if isfield(OPT,'fromEPSG') & isfield(OPT,'toEPSG') % convert if wanted
                 [x,y]=convertCoordinates(x,y,'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
@@ -348,7 +348,7 @@ end
         end
     end
 % curves2crs
-    function [output,OPT]=EHY_convert_curves2crs(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_curves2crs(inputFile,outputFile,OPT)
         % read curve file
         curv.p=[];
         curv.name=[];
@@ -405,16 +405,16 @@ end
         output=curv;
     end
 % curves2kml
-    function [output,OPT]=EHY_convert_curves2kml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_curves2kml(inputFile,outputFile,OPT)
         tempCrsFile=[fileparts(inputFile) filesep 'EHY_temporary.crs'];
-        [output,OPT]=EHY_convert_curves2crs(inputFile,tempCrsFile,OPT);
+        [output,OPT] = EHY_convert_curves2crs(inputFile,tempCrsFile,OPT);
         if OPT.saveOutputFile
-            [output,OPT]=EHY_convert_crs2kml(tempCrsFile,outputFile,OPT);
+            [output,OPT] = EHY_convert_crs2kml(tempCrsFile,outputFile,OPT);
             fclose('all');delete(tempCrsFile);
         end
     end
 % dep2box
-    function [output,OPT]=EHY_convert_dep2box(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_dep2box(inputFile,outputFile,OPT)
         [OPT,grd]=EHY_convert_gridCheck(OPT,inputFile);
         msize=size(grd.X,1);
         nsize=size(grd.X,2);
@@ -440,13 +440,13 @@ end
         output=dep;
     end
 % dry2xdrykml
-    function [output,OPT]=EHY_convert_dry2xdrykml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_dry2xdrykml(inputFile,outputFile,OPT)
         OPT_user.saveOutputFile=OPT.saveOutputFile;
         OPT.saveOutputFile=0;
-        [ldb,OPT]=EHY_convert_dry2xdryldb(inputFile,outputFile,OPT);
+        [ldb,OPT] = EHY_convert_dry2xdryldb(inputFile,outputFile,OPT);
         OPT.saveOutputFile=OPT_user.saveOutputFile;
         if OPT.saveOutputFile
-            [ldb(:,1),ldb(:,2),OPT]=EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
+            [ldb(:,1),ldb(:,2),OPT] = EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
             [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
@@ -456,7 +456,7 @@ end
         output=ldb;
     end
 % dry2xdryldb
-    function [output,OPT]=EHY_convert_dry2xdryldb(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_dry2xdryldb(inputFile,outputFile,OPT)
         dry=delft3d_io_dry('read',inputFile);
         [OPT,grd]=EHY_convert_gridCheck(OPT,inputFile);
         ldb=[];
@@ -474,7 +474,7 @@ end
         output=ldb;
     end
 % dry2thd
-    function [output,OPT]=EHY_convert_dry2thd(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_dry2thd(inputFile,outputFile,OPT)
         dry=delft3d_io_dry('read',inputFile);
         thd.DATA=struct;
         for iM=1:length(dry.m)
@@ -495,12 +495,12 @@ end
         if OPT.saveOutputFile
             delft3d_io_thd('write',outputFile,thd)
         end
-        output=[];
+        output = [];
     end
 % dry2xyz
-    function [output,OPT]=EHY_convert_dry2xyz(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_dry2xyz(inputFile,outputFile,OPT)
         dry=delft3d_io_dry('read',inputFile);
-        OPT=EHY_convert_gridCheck(OPT,inputFile);
+        OPT = EHY_convert_gridCheck(OPT,inputFile);
         [x,y]=EHY_mn2xy(dry.m,dry.n,OPT.grdFile);
         xyz=[x y zeros(length(x),1)];
         if OPT.saveOutputFile
@@ -509,7 +509,7 @@ end
         output=xyz;
     end
 % ext2kml
-    function [output,OPT]=EHY_convert_ext2kml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_ext2kml(inputFile,outputFile,OPT)
         fid=fopen(inputFile);
         ext=textscan(fid,'%s','delimiter','\n');ext=ext{1,1};
         fclose(fid);
@@ -533,8 +533,8 @@ end
                 [~,xyn.name{iF}]=fileparts(pliFiles{iF});
                 PLI=[PLI;NaN NaN; pol(:,1:2)];
             end
-            [PLI(:,1),PLI(:,2),OPT]=EHY_convert_coorCheck(PLI(:,1),PLI(:,2),OPT);
-            [xyn.x,xyn.y,OPT]=EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
+            [PLI(:,1),PLI(:,2),OPT] = EHY_convert_coorCheck(PLI(:,1),PLI(:,2),OPT);
+            [xyn.x,xyn.y,OPT] = EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
             if OPT.saveOutputFile
                 ldb2kml(PLI(:,1:2),strrep(outputFile,'.kml','_lines.kml'),OPT.lineColor,OPT.lineWidth);
                 KMLPlaceMark(xyn.y,xyn.x,strrep(outputFile,'.kml','_names.kml'),'name',xyn.name,'icon',OPT.iconFile);
@@ -543,14 +543,14 @@ end
         end
     end
 % grd2kml
-    function [output,OPT]=EHY_convert_grd2kml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_grd2kml(inputFile,outputFile,OPT)
         if OPT.saveOutputFile
             [~,name]=fileparts(outputFile);
             tempFileGrd=[tempdir name '.grd'];
             tempFileKml=[tempdir name '.kml'];
             copyfile(inputFile,tempFileGrd);
             grd=wlgrid('read',tempFileGrd);
-            [x,y,OPT]=EHY_convert_coorCheck(grd.X,grd.Y,OPT);
+            [x,y,OPT] = EHY_convert_coorCheck(grd.X,grd.Y,OPT);
             if ~any(any(grd.X==x)) % coordinates have been converted
                 grd.X=x; grd.Y=y; grd.CoordinateSystem='Spherical';
                 wlgrid('write',tempFileGrd,grd);
@@ -561,10 +561,10 @@ end
             delete(strrep(tempFileGrd,'.grd','.enc'))
             delete(tempFileKml)
         end
-        output=[];
+        output = [];
     end
 % grd2nc
-    function [output,OPT]=EHY_convert_grd2nc(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_grd2nc(inputFile,outputFile,OPT)
         if OPT.saveOutputFile
             % based on d3d2dflowfm_grd2net
             G             = delft3d_io_grd('read',inputFile);
@@ -593,10 +593,10 @@ end
             convertWriteNetcdf;
             disp('For grd2nc conversion incl. depth, have a look at function ''d3d2dflowfm_grd2net.m'' ');
         end
-        output=[];
+        output = [];
     end
 % grd2ldb
-    function [output,OPT]=EHY_convert_grd2ldb(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_grd2ldb(inputFile,outputFile,OPT)
         gridInfo = EHY_getGridInfo(inputFile,{'grid'});
         output = gridInfo.grid;
         if OPT.saveOutputFile
@@ -604,7 +604,7 @@ end
         end
     end
 % grd2pol
-    function [output,OPT]=EHY_convert_grd2pol(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_grd2pol(inputFile,outputFile,OPT)
         gridInfo = EHY_getGridInfo(inputFile,{'grid'});
         output = gridInfo.grid;
         if OPT.saveOutputFile
@@ -612,7 +612,7 @@ end
         end
     end
 % grd2shp
-    function [output,OPT]=EHY_convert_grd2shp(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_grd2shp(inputFile,outputFile,OPT)
         gridInfo = EHY_getGridInfo(inputFile,{'grid'});
         output = gridInfo.grid;
         nanInd = find(isnan(output(:,1)));
@@ -626,7 +626,7 @@ end
         end
     end
 % kml2ldb
-    function [output,OPT]=EHY_convert_kml2ldb(inputFile,outputFile,OPT)      
+    function [output,OPT] = EHY_convert_kml2ldb(inputFile,outputFile,OPT)      
         copyfile(inputFile,[tempdir 'kmlpath.kml'])
         output = kml2ldb(0,[tempdir 'kmlpath.kml']);
         if OPT.saveOutputFile
@@ -636,7 +636,7 @@ end
         delete([tempdir 'kmlpath.kml'])
     end
 % kml2pol
-    function [output,OPT]=EHY_convert_kml2pol(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_kml2pol(inputFile,outputFile,OPT)
         copyfile(inputFile,[tempdir 'kmlpath.kml'])
         [output, names] = kml2ldb(0,[tempdir 'kmlpath.kml']);
         if OPT.saveOutputFile
@@ -650,7 +650,7 @@ end
         delete([tempdir 'kmlpath.kml'])
     end
 % kml2shp
-    function [output,OPT]=EHY_convert_kml2shp(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_kml2shp(inputFile,outputFile,OPT)
         OPT_user = OPT;
         OPT.saveOutputFile = 0;
         lines = EHY_convert_kml2pol(inputFile,outputFile,OPT);
@@ -667,7 +667,7 @@ end
         output=lines;
     end
 % kml2xyn
-    function [output,OPT]=EHY_convert_kml2xyn(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_kml2xyn(inputFile,outputFile,OPT)
         kml = xml_read(inputFile);
         if any(contains(fieldnames(kml),'Document')) %JV: remove unwanted kml level
             kml = kml.Document;
@@ -698,7 +698,7 @@ end
         end
     end
 % kml2xyz
-    function [output,OPT]=EHY_convert_kml2xyz(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_kml2xyz(inputFile,outputFile,OPT)
         xyz=kml2ldb(0,inputFile);
         xyz(isnan(xyz(:,1)),:)=[];
         xyz(:,3)=0;
@@ -708,20 +708,20 @@ end
         output=xyz;
     end
 % ldb2kml
-    function [output,OPT]=EHY_convert_ldb2kml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_ldb2kml(inputFile,outputFile,OPT)
         ldb=landboundary('read',inputFile);
         if OPT.saveOutputFile
-            [ldb(:,1),ldb(:,2),OPT]=EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
+            [ldb(:,1),ldb(:,2),OPT] = EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
             [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
             delete(tempFile);
         end
-        output=[];
+        output = [];
     end
 % ldb2pol
-    function [output,OPT]=EHY_convert_ldb2pol(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_ldb2pol(inputFile,outputFile,OPT)
         if OPT.saveOutputFile
             copyfile(inputFile,outputFile);
         end
@@ -729,7 +729,7 @@ end
         output=ldb;
     end
 % ldb2shp
-    function [output,OPT]=EHY_convert_ldb2shp(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_ldb2shp(inputFile,outputFile,OPT)
         ldb = landboundary('read',inputFile);
         nanInd = find(isnan(ldb(:,1)));
         if nanInd(1)~=1; nanInd = [0; nanInd]; end
@@ -743,11 +743,11 @@ end
         output=ldb;
     end
 % locaties2kml
-    function [output,OPT]=EHY_convert_locaties2kml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_locaties2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
         OPT.saveOutputFile=0;
         xyn=EHY_convert_locaties2xyn(inputFile,outputFile,OPT);
-        [xyn{1,1},xyn{1,2},OPT]=EHY_convert_coorCheck(xyn{1,1},xyn{1,2},OPT);
+        [xyn{1,1},xyn{1,2},OPT] = EHY_convert_coorCheck(xyn{1,1},xyn{1,2},OPT);
         OPT=OPT_user;
         if OPT.saveOutputFile
             [~,name]=fileparts(outputFile);
@@ -756,10 +756,10 @@ end
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
-        output=[];
+        output = [];
     end
 % locaties2obs
-    function [output,OPT]=EHY_convert_locaties2obs(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_locaties2obs(inputFile,outputFile,OPT)
         obs.p=[];
         obs.m=[];
         obs.n=[];
@@ -786,13 +786,13 @@ end
         output=obs;
     end
 % locaties2xyn
-    function [output,OPT]=EHY_convert_locaties2xyn(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_locaties2xyn(inputFile,outputFile,OPT)
         OPT_user=OPT;
         OPT.saveOutputFile=0;
         obs=EHY_convert_locaties2obs(inputFile,outputFile,OPT);
         OPT=OPT_user;
         pathstr = fileparts(inputFile);
-        OPT=EHY_convert_gridCheck(OPT,inputFile);
+        OPT = EHY_convert_gridCheck(OPT,inputFile);
         [x,y]=EHY_mn2xy(obs.m,obs.n,OPT.grdFile);
         if OPT.saveOutputFile
             fid=fopen(outputFile,'w');
@@ -805,7 +805,7 @@ end
         output={x y cellstr(obs.namst)};
     end
 % mdu2xlsx
-    function [output,OPT]=EHY_convert_mdu2xlsx(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_mdu2xlsx(inputFile,outputFile,OPT)
         mdu = dflowfm_io_mdu('read',inputFile);
         A = {};
         ind = 0;
@@ -826,14 +826,14 @@ end
         output = A;
     end
 % nc2kml
-    function [output,OPT]=EHY_convert_nc2kml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_nc2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
         OPT.saveOutputFile=0;
         lines=EHY_convert_nc2ldb(inputFile,outputFile,OPT);
         OPT=OPT_user;
         lines=ipGlueLDB(lines);
         if OPT.saveOutputFile
-            [lines(:,1),lines(:,2),OPT]=EHY_convert_coorCheck(lines(:,1),lines(:,2),OPT);
+            [lines(:,1),lines(:,2),OPT] = EHY_convert_coorCheck(lines(:,1),lines(:,2),OPT);
             [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(lines,tempFile,OPT.lineColor,OPT.lineWidth)
@@ -857,7 +857,7 @@ end
         output = lines;
     end
 % nc2shp
-    function [output,OPT]=EHY_convert_nc2shp(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_nc2shp(inputFile,outputFile,OPT)
         OPT_user=OPT;
         OPT.saveOutputFile=0;
         lines=EHY_convert_nc2ldb(inputFile,outputFile,OPT);
@@ -874,11 +874,11 @@ end
         output=lines;
     end
 % obs2kml
-    function [output,OPT]=EHY_convert_obs2kml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_obs2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
         OPT.saveOutputFile=0;
         xyn=EHY_convert_obs2xyn(inputFile,outputFile,OPT);
-        [xyn.x,xyn.y,OPT]=EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
+        [xyn.x,xyn.y,OPT] = EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
         OPT=OPT_user;
         if OPT.saveOutputFile
             [~,name]=fileparts(outputFile);
@@ -887,10 +887,10 @@ end
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
-        output=[];
+        output = [];
     end
 % obs2locaties
-    function [output,OPT]=EHY_convert_obs2locaties(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_obs2locaties(inputFile,outputFile,OPT)
         obs=delft3d_io_obs('read',inputFile);
         if OPT.saveOutputFile
             fid=fopen(outputFile,'w');
@@ -903,10 +903,10 @@ end
         output=obs;
     end
 % obs2xyn
-    function [output,OPT]=EHY_convert_obs2xyn(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_obs2xyn(inputFile,outputFile,OPT)
         pathstr = fileparts(inputFile);
         obs=delft3d_io_obs('read',inputFile);
-        OPT=EHY_convert_gridCheck(OPT,inputFile);
+        OPT = EHY_convert_gridCheck(OPT,inputFile);
         [xyn.x,xyn.y]=EHY_mn2xy(obs.m,obs.n,OPT.grdFile);
         xyn.name=obs.namst;
         if ischar(xyn.name)
@@ -918,7 +918,7 @@ end
         output=xyn;
     end
 % pliz2kml
-    function [output,OPT]=EHY_convert_pliz2kml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_pliz2kml(inputFile,outputFile,OPT)
         if OPT.saveOutputFile
             T=tekal('read',inputFile,'loaddata');
             pol=[];
@@ -926,7 +926,7 @@ end
                 pol=[pol; T.Field(iT).Data(:,1:2); NaN NaN];
             end
             pol(end,:)=[];
-            [pol(:,1),pol(:,2),OPT]=EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
+            [pol(:,1),pol(:,2),OPT] = EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
             if OPT.saveOutputFile
                 [~,name]=fileparts(outputFile);
                 tempFile=[tempdir name '.kml'];
@@ -938,7 +938,7 @@ end
         end
     end
 % pliz2pol
-    function [output,OPT]=EHY_convert_pliz2pol(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_pliz2pol(inputFile,outputFile,OPT)
         if OPT.saveOutputFile
             T=tekal('read',inputFile,'loaddata');
             pol=[];
@@ -953,9 +953,9 @@ end
         end
     end
 % pol2kml
-    function [output,OPT]=EHY_convert_pol2kml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_pol2kml(inputFile,outputFile,OPT)
         pol=landboundary('read',inputFile);
-        [pol(:,1),pol(:,2),OPT]=EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
+        [pol(:,1),pol(:,2),OPT] = EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
         if OPT.saveOutputFile
             [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
@@ -963,17 +963,17 @@ end
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
-        output=[];
+        output = [];
     end
 % pol2ldb
-    function [output,OPT]=EHY_convert_pol2ldb(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_pol2ldb(inputFile,outputFile,OPT)
         if OPT.saveOutputFile
             copyfile(inputFile,outputFile)
         end
         output=landboundary('read',inputFile);
     end
 % pol2shp
-    function [output,OPT]=EHY_convert_pol2shp(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_pol2shp(inputFile,outputFile,OPT)
         pol=landboundary('read',inputFile);
         if ~isnan(pol(1,1)); pol=[NaN NaN; pol(:,1:2)];  end
         if ~isnan(pol(end,1)); pol=[pol(:,1:2);NaN NaN]; end
@@ -990,7 +990,7 @@ end
         output=pol;
     end
 % pol2xyz
-    function [output,OPT]=EHY_convert_pol2xyz(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_pol2xyz(inputFile,outputFile,OPT)
         xyz=landboundary('read',inputFile);
         xyz(isnan(xyz(:,1)),:)=[];
         if OPT.saveOutputFile
@@ -999,38 +999,47 @@ end
         output=xyz;
     end
 % shp2kml
-    function [output,OPT]=EHY_convert_shp2kml(inputFile,outputFile,OPT)
-        ldb=shape2ldb(inputFile,0);
+    function [output,OPT] = EHY_convert_shp2kml(inputFile,outputFile,OPT)
+        ldb = shape2ldb(inputFile,0);
+        if iscell(output) && numel(output) == 1
+            output = output{1};
+        end
         if OPT.saveOutputFile
-            [ldb(:,1),ldb(:,2),OPT]=EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
-            [~,name]=fileparts(outputFile);
-            tempFile=[tempdir name '.kml'];
+            [ldb(:,1),ldb(:,2),OPT] = EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
+            [~,name] = fileparts(outputFile);
+            tempFile = [tempdir name '.kml'];
             ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
-        output=ldb;
+        output = ldb;
     end
 % shp2ldb
-    function [output,OPT]=EHY_convert_shp2ldb(inputFile,outputFile,OPT)
-        output=shape2ldb(inputFile,0);
+    function [output,OPT] = EHY_convert_shp2ldb(inputFile,outputFile,OPT)
+        output = shape2ldb(inputFile,0);
+        if iscell(output) && numel(output) == 1
+            output = output{1};
+        end
         if OPT.saveOutputFile
             landboundary('write',outputFile,output(:,1:2));
         end
     end
 % shp2pol
-    function [output,OPT]=EHY_convert_shp2pol(inputFile,outputFile,OPT)
-        output=shape2ldb(inputFile,0);
+    function [output,OPT] = EHY_convert_shp2pol(inputFile,outputFile,OPT)
+        output = shape2ldb(inputFile,0);
+        if iscell(output) && numel(output) == 1
+            output = output{1};
+        end
         if OPT.saveOutputFile
             io_polygon('write',outputFile,output(:,1:2));
         end
     end
 % src2kml
-    function [output,OPT]=EHY_convert_src2kml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_src2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
         OPT.saveOutputFile=0;
         xyn=EHY_convert_src2xyn(inputFile,outputFile,OPT);
-        [xyn{1,1},xyn{1,2},OPT]=EHY_convert_coorCheck(xyn{1,1},xyn{1,2},OPT);
+        [xyn{1,1},xyn{1,2},OPT] = EHY_convert_coorCheck(xyn{1,1},xyn{1,2},OPT);
         OPT=OPT_user;
         if OPT.saveOutputFile
             [~,name]=fileparts(outputFile);
@@ -1039,12 +1048,12 @@ end
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
-        output=[];
+        output = [];
     end
 % src2xyn
-    function [output,OPT]=EHY_convert_src2xyn(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_src2xyn(inputFile,outputFile,OPT)
         src=delft3d_io_src('read',inputFile);
-        OPT=EHY_convert_gridCheck(OPT,inputFile);
+        OPT = EHY_convert_gridCheck(OPT,inputFile);
         [x,y]=EHY_mn2xy(src.m,src.n,OPT.grdFile);
         
         if OPT.saveOutputFile
@@ -1058,11 +1067,11 @@ end
         output={x y reshape({src.DATA.name},[],1)};
     end
 % thd2kml
-    function [output,OPT]=EHY_convert_thd2kml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_thd2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
         OPT.saveOutputFile=0;
         pol=EHY_convert_thd2pol(inputFile,outputFile,OPT);
-        [pol(:,1),pol(:,2),OPT]=EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
+        [pol(:,1),pol(:,2),OPT] = EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
         output=pol;
         OPT=OPT_user;
         if OPT.saveOutputFile
@@ -1074,7 +1083,7 @@ end
         end
     end
 % thd2pol
-    function [output,OPT]=EHY_convert_thd2pol(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_thd2pol(inputFile,outputFile,OPT)
         thd=delft3d_io_thd('read',inputFile);
         x=[];y=[];
         [OPT,grd]=EHY_convert_gridCheck(OPT,inputFile);
@@ -1092,13 +1101,13 @@ end
                     grd.Y(thd.DATA(iM).m(1)-1,thd.DATA(iM).n(1)); NaN];
             end
         end
-        output=[x y];
+        output = [x y];
         if OPT.saveOutputFile
             io_polygon('write',outputFile,x,y,'dosplit','-1');
         end
     end
 % xyn2kml
-    function [output,OPT]=EHY_convert_xyn2kml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_xyn2kml(inputFile,outputFile,OPT)
         try
             xyn=delft3d_io_xyn('read',inputFile);
         catch
@@ -1109,7 +1118,7 @@ end
             xyn.y=D{1,2};
             xyn.name=D{1,3};
         end
-        [xyn.x,xyn.y,OPT]=EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
+        [xyn.x,xyn.y,OPT] = EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
         if OPT.saveOutputFile
             [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
@@ -1117,10 +1126,10 @@ end
             copyfile(tempFile,outputFile);
             delete(tempFile);
         end
-        output=[];
+        output = [];
     end
 % xyn2obs
-    function [output,OPT]=EHY_convert_xyn2obs(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_xyn2obs(inputFile,outputFile,OPT)
         try
             xyn=delft3d_io_xyn('read',inputFile);
         catch
@@ -1131,16 +1140,16 @@ end
             xyn.y=D{1,2};
             xyn.name=D{1,3};
         end
-        OPT=EHY_convert_gridCheck(OPT,inputFile);
+        OPT = EHY_convert_gridCheck(OPT,inputFile);
         [m,n]=EHY_xy2mn(xyn.x,xyn.y,OPT.grdFile);
         if OPT.saveOutputFile
             obs.m=m; obs.n=n; obs.namst=xyn.name;
             delft3d_io_obs('write',outputFile,obs);
         end
-        output=[reshape(m,[],1) reshape(n,[],1)];
+        output = [reshape(m,[],1) reshape(n,[],1)];
     end
 % xyn2locaties
-    function [output,OPT]=EHY_convert_xyn2locaties(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_xyn2locaties(inputFile,outputFile,OPT)
         try
             xyn=delft3d_io_xyn('read',inputFile);
         catch
@@ -1151,7 +1160,7 @@ end
             xyn.y=D{1,2};
             xyn.name=D{1,3};
         end
-        OPT=EHY_convert_gridCheck(OPT,inputFile);
+        OPT = EHY_convert_gridCheck(OPT,inputFile);
         [obs.m,obs.n]=EHY_xy2mn(xyn.x,xyn.y,OPT.grdFile);
         obs.namst = xyn.name;
         if OPT.saveOutputFile
@@ -1165,7 +1174,7 @@ end
         output=obs;
     end
 % xyn2xyz
-    function [output,OPT]=EHY_convert_xyn2xyz(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_xyn2xyz(inputFile,outputFile,OPT)
         try
             xyn = delft3d_io_xyn('read',inputFile);
         catch
@@ -1184,18 +1193,18 @@ end
         output = xyz;
     end
 % xyz2dry
-    function [output,OPT]=EHY_convert_xyz2dry(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_xyz2dry(inputFile,outputFile,OPT)
         xyz=importdata(inputFile);
-        OPT=EHY_convert_gridCheck(OPT,inputFile);
+        OPT = EHY_convert_gridCheck(OPT,inputFile);
         [m,n]=EHY_xy2mn(xyz(:,1),xyz(:,2),OPT.grdFile);
         if OPT.saveOutputFile
             delft3d_io_dry('write',outputFile,m,n);
         end
         if size(m,1)==1; m=m'; n=n'; end
-        output=[m n];
+        output = [m n];
     end
 % xyz2kml
-    function [output,OPT]=EHY_convert_xyz2kml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_xyz2kml(inputFile,outputFile,OPT)
         xyz = dlmread(inputFile);
         [lon,lat,OPT] = EHY_convert_coorCheck(xyz(:,1),xyz(:,2),OPT);
         if OPT.saveOutputFile
@@ -1214,7 +1223,7 @@ end
         output = [lon lat];
     end
 % xyz2shp
-    function [output,OPT]=EHY_convert_xyz2shp(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_xyz2shp(inputFile,outputFile,OPT)
         xyz = importdata(inputFile);
         XY = xyz(:,1:2);
         if OPT.saveOutputFile
@@ -1223,13 +1232,13 @@ end
         output = XY;
     end
 % xyz2xdrykml
-    function [output,OPT]=EHY_convert_xyz2xdrykml(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_xyz2xdrykml(inputFile,outputFile,OPT)
         OPT_user.saveOutputFile=OPT.saveOutputFile;
         OPT.saveOutputFile=0;
-        [ldb,OPT]=EHY_convert_xyz2xdryldb(inputFile,outputFile,OPT);
+        [ldb,OPT] = EHY_convert_xyz2xdryldb(inputFile,outputFile,OPT);
         OPT.saveOutputFile=OPT_user.saveOutputFile;
         if OPT.saveOutputFile
-            [ldb(:,1),ldb(:,2),OPT]=EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
+            [ldb(:,1),ldb(:,2),OPT] = EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
             [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(ldb(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
@@ -1239,8 +1248,8 @@ end
         output=ldb;
     end
 % xyz2xdryldb
-    function [output,OPT]=EHY_convert_xyz2xdryldb(inputFile,outputFile,OPT)
-        OPT=EHY_convert_netCheck(OPT,inputFile);
+    function [output,OPT] = EHY_convert_xyz2xdryldb(inputFile,outputFile,OPT)
+        OPT = EHY_convert_netCheck(OPT,inputFile);
         try
             gridInfo=EHY_getGridInfo(OPT.netFile,{'XYcor','XYcen','face_nodes_xy'});
             nrCellCorners=sum(~isnan(gridInfo.face_nodes_x));
@@ -1283,7 +1292,7 @@ end
 
 end
 
-function varargout=EHY_convert_gridCheck(OPT,inputFile)
+function varargout = EHY_convert_gridCheck(OPT,inputFile)
 if isempty(OPT.grdFile) && isempty(OPT.grd)
     disp('Open the corresponding .grd-file')
     [grdName,grdPath]=uigetfile([fileparts(inputFile) filesep '.grd'],'Open the corresponding .grd-file');
@@ -1303,7 +1312,7 @@ end
 varargout{1}=OPT;
 end
 
-function OPT=EHY_convert_netCheck(OPT,inputFile)
+function OPT = EHY_convert_netCheck(OPT,inputFile)
 if isempty(OPT.netFile)
     disp('Open the corresponding _net.nc-file')
     [netName,netPath]=uigetfile([fileparts(inputFile) filesep '.nc'],'Open the corresponding _net.nc-file');
@@ -1311,13 +1320,13 @@ if isempty(OPT.netFile)
 end
 end
 
-function [x,y,OPT]=EHY_convert_coorCheck(x,y,OPT)
+function [x,y,OPT] = EHY_convert_coorCheck(x,y,OPT)
 % coordinates to check to guess coordinate system
 xx=x(~isnan(x));
 yy=y(~isnan(y));
 if isempty(OPT.fromEPSG)
     if isempty(OPT.fromEPSG) && all(all(xx>=-180)) && all(all(xx<=180)) && all(all(yy>=-90)) && all(all(yy<=90))
-        [outputId,~]=  listdlg('PromptString',{'Input coordinations are probably in [Longitude,Latitude] - WGS ''84, EPSG 4326',...
+        [outputId,~] = listdlg('PromptString',{'Input coordinations are probably in [Longitude,Latitude] - WGS ''84, EPSG 4326',...
             'Is this correct?'},...
             'SelectionMode','single',...
             'ListString',{'Yes','No'},'ListSize',[500 100]);
@@ -1325,7 +1334,7 @@ if isempty(OPT.fromEPSG)
             OPT.fromEPSG='4326';
         end
     elseif isempty(OPT.fromEPSG) && all(all(xx>-7000)) && all(all(xx<300000)) && all(all(yy>289000)) && all(all(yy<629000))   % probably RD in m
-        [outputId,~]=  listdlg('PromptString',{'Input coordinations are probably in meter Amersfoort/RD New, EPSG 28992',...
+        [outputId,~] = listdlg('PromptString',{'Input coordinations are probably in meter Amersfoort/RD New, EPSG 28992',...
             'Is this correct?'},...
             'SelectionMode','single',...
             'ListString',{'Yes','No'},'ListSize',[500 100]);
@@ -1358,7 +1367,7 @@ elseif ~isempty(OPT.fromEPSG) && ~strcmp(OPT.fromEPSG,'4326')
 end
 end
 
-function OPT=EHY_selectToAndFromEPSG(OPT)
+function OPT = EHY_selectToAndFromEPSG(OPT)
 availableCoorSys={'EPSG: 28992, Amersfoort / RD New',28992;,...
     'EPSG:  4326, WGS ''84',4326;,...
     'Other...',-999};
@@ -1390,7 +1399,7 @@ if isempty(OPT.toEPSG)
 end
 end
 
-function [output,OPT]=EHY_convertCoordinates(inputFile,outputFile,OPT)
+function [output,OPT] = EHY_convertCoordinates(inputFile,outputFile,OPT)
 % convert the file
 if OPT.fromEPSG~=OPT.toEPSG
     [~,~,ext]=fileparts(inputFile);
@@ -1429,7 +1438,7 @@ if OPT.fromEPSG~=OPT.toEPSG
                 end
             end
             
-            output=[]; % to do
+            output = []; % to do
             
             % don't take third dimensions into account
             if OPT.saveOutputFile
@@ -1453,7 +1462,7 @@ if OPT.fromEPSG~=OPT.toEPSG
         case '.nc'
             varNameX = EHY_nameOnFile(inputFile,'NetNode_x');
             varNameY = EHY_nameOnFile(inputFile,'NetNode_y');
-            output=[ncread(inputFile,varNameX) ncread(inputFile,varNameY)];
+            output = [ncread(inputFile,varNameX) ncread(inputFile,varNameY)];
              
             [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
             if OPT.saveOutputFile
@@ -1485,7 +1494,7 @@ if OPT.fromEPSG~=OPT.toEPSG
         case {'.xyn'}
             xyn=delft3d_io_xyn('read',inputFile);
             [xyn.x,xyn.y]=convertCoordinates(xyn.x,xyn.y,'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
-            output=[num2cell(xyn.x') num2cell(xyn.y') xyn.name'];
+            output = [num2cell(xyn.x') num2cell(xyn.y') xyn.name'];
             if OPT.saveOutputFile
                 fid=fopen(outputFile,'w');
                 for iM=1:length(xyn.x)
