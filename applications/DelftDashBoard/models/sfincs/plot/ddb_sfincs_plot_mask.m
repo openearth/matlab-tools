@@ -40,8 +40,8 @@ switch lower(opt)
         zg(1:end-1,1:end-1)=handles.model.sfincs.domain(id).mask;
         zg(zg==0)=NaN;
 
-        vals=[1;2];
-        rgb=[1 1 0; 1 0 0];
+        vals=[1;2;3];
+        rgb=[1 1 0; 1 0 0;0 0 1];
         p=indexpatch(xg,yg,zg,vals,rgb);
         handles.model.sfincs.domain(id).maskhandle=p;
         set(p,'HitTest','off');
