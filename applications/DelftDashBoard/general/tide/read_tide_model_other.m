@@ -65,7 +65,7 @@ function [lon, lat, amp, phi] = read_tide_model_other(fname,xl,yl,cns,tp)
 fname_needed=fname;
 
 switch tp
-    case{'z'}
+    case{'z','h'}
         lonstr='lon';
         latstr='lat';
         ampstr='tidal_amplitude_h'; phistr='tidal_phase_h';correction_factor=1.000;depth_name='depth';

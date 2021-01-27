@@ -66,7 +66,7 @@ idpath = strfind(tidefile, 'tpxo80.nc');
 fname_reduced = tidefile(1:idpath-1); % Path where all files sit
 
 switch tp
-    case{'z'}
+    case{'z','h'}
         lonstr='lon_z';
         latstr='lat_z';
         real_name = 'hRe'; complex_name = 'hIm';correction_factor=0.001;depth_name='hz';

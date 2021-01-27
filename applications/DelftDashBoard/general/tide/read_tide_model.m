@@ -165,6 +165,8 @@ for icons=1:ncons
     data(icons).lat=lat;
     data(icons).amp=amp;
     data(icons).phi=phi;
+    data(icons).amp(data(icons).amp==0)=NaN;
+    data(icons).phi(isnan(data(icons).amp))=NaN;
     
 end
 
