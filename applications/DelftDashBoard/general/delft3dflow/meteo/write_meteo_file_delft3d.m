@@ -94,12 +94,12 @@ switch par
         quantity='x_wind';
         unit='m s-1';
         ext='amu';
-        fmt='%7.1f';
+        fmt='%8.2f';
     case{'v'}
         quantity='y_wind';
         unit='m s-1';
         ext='amv';
-        fmt='%7.1f';
+        fmt='%8.2f';
     case{'p'}
         quantity='air_pressure';
         unit='Pa';
