@@ -1,4 +1,4 @@
- delft3d_io_meteo_writefunction fid = delft3d_io_meteo_write(filehandle,time,X,Y,data,varargin)
+function fid = delft3d_io_meteo_write(filehandle,time,X,Y,data,varargin)
 %DELFT3D_IO_METEO_WRITE   write meteo data file on curvilinear grid
 %
 %  <fid> = delft3d_io_meteo_write(file,time,x,y,data,<keyword,value>)
