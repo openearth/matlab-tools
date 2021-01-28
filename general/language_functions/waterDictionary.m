@@ -1,4 +1,4 @@
-function string=waterDictionary (id,un,lan,varargin)
+function [string,str_found]=waterDictionary(id,un,lan,varargin)
 
 %  First attempt for language support in scripting
 %  Allowing for easy creation of figures in different languages
@@ -34,8 +34,10 @@ rowVar  = get_nr(dictionary(:,1),id);
 %% Construct the final string
 if ~isempty (rowVar) 
     string = dictionary{rowVar,colLang}; 
+    str_found=true;
 else
     warning (['Name : ' string ' not found in ' OPT.dict]);
+    str_found=false;
 end
 
 %% Add the Unit
