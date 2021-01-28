@@ -1,4 +1,4 @@
-function fid = delft3d_io_meteo_write(filehandle,time,X,Y,data,varargin)
+ delft3d_io_meteo_writefunction fid = delft3d_io_meteo_write(filehandle,time,X,Y,data,varargin)
 %DELFT3D_IO_METEO_WRITE   write meteo data file on curvilinear grid
 %
 %  <fid> = delft3d_io_meteo_write(file,time,x,y,data,<keyword,value>)
@@ -106,6 +106,7 @@ OPT.newgrid          = 0;
 OPT.CoordinateSystem = [];
 OPT.fmt              = '%.6g'; % sufficient for pressure, for rest %.3g' is sufficient
 OPT.comment          = '';
+OPT.simpleheader     = 0;
 
 nextarg = 1;
         x = X;
@@ -135,20 +136,18 @@ elseif ischar (filehandle)
 end
 
 %% Header
-
-fprintf  (fid,'### START OF HEADER');
-fprinteol(fid,OPT.OS)
-fprintf  (fid,'# Created with $Id$ $Headurl: $ on %s',datestr(now));
-fprinteol(fid,OPT.OS)
-
-OPT.header = cellstr(OPT.header);
-for ii=1:length(OPT.header)
-    fprintf  (fid,'%s',['# ',OPT.header{ii}]);
-    fprinteol(fid,OPT.OS);
+if OPT.simpleheader == 0
+    fprintf  (fid,'### START OF HEADER');
+    fprinteol(fid,OPT.OS)
+    fprintf  (fid,'# Created with $Id$ $Headurl: $ on %s',datestr(now));
+    fprinteol(fid,OPT.OS)
+    OPT.header = cellstr(OPT.header);
+    for ii=1:length(OPT.header)
+        fprintf  (fid,'%s',['# ',OPT.header{ii}]);
+        fprinteol(fid,OPT.OS);
+    end
+    fprinteol(fid,OPT.OS)
 end
-
-fprintf  (fid,'FileVersion      = 1.03')                     ;%# Version of meteo input file, to check if the newest file format is used
-fprinteol(fid,OPT.OS)
     
 if strcmpi(OPT.filetype,'meteo_on_equidistant_grid')
 
@@ -190,8 +189,10 @@ if strcmpi(OPT.filetype,'meteo_on_equidistant_grid')
         end
         fprintf  (fid,['NODATA_value     = ',num2str(OPT.nodata_value)]);
         fprinteol(fid,OPT.OS);
-        fprintf(fid,'### END OF HEADER');
-        fprinteol(fid,OPT.OS)
+        if OPT.simpleheader == 0
+            fprintf(fid,'### END OF HEADER');
+            fprinteol(fid,OPT.OS)
+        end
     end    
     
 elseif strcmpi(OPT.filetype,'meteo_on_curvilinear_grid')
