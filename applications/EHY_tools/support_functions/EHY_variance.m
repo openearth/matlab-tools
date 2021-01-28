@@ -12,6 +12,10 @@ OPT.PEA       = false;
 OPT           = setproperty(OPT,varargin);
 if OPT.PEA Info.PEA = NaN; end
 
+%% Ensure row vectore
+if size(zCen,2) == 1 zCen = zCen'; end
+if size(val,2)  == 1 val  = val' ; end
+
 %% Restrict to valid points:
 zCen = zCen(~isnan(val));
 val  = val (~isnan(val));
