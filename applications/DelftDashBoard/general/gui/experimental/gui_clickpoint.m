@@ -162,6 +162,7 @@ if strcmpi(mouseclick,'normal')
             ddb_setWindowButtonUpDownFcn;
             ddb_setWindowButtonMotionFcn;
         end
+        set(gcf,'Pointer','arrow');
         feval(callback,x,y);
     end
 else
