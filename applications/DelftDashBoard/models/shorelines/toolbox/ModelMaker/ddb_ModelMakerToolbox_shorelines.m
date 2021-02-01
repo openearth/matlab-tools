@@ -216,6 +216,10 @@ switch handles.model.shorelines.status
         S.num_option1_value=handles.model.shorelines.domain.num_option1_value;        
         S.num_option2_value=handles.model.shorelines.domain.num_option2_value;        
         S.num_option3_value=handles.model.shorelines.domain.num_option3_value;        
+        if strcmpi(S.num_opt,'spring')
+            S.shoreline.x=handles.model.shorelines.domain.shoreline.x;
+            S.shoreline.y=handles.model.shorelines.domain.shoreline.y;
+        end
         handles.model.shorelines.S=S;        
         setHandles(handles);
         next_time_step;
