@@ -20,7 +20,7 @@ S.shoreline.x0=x0;
 S.shoreline.y0=y0;
 for j=1:length(x0)
     S.shoreline.phase(j)=2*pi*rand(1);
-    S.shoreline.omega(j)=0.2*rand(1);
+    S.shoreline.omega(j)=0.1*rand(1);
 end
 
 %%
