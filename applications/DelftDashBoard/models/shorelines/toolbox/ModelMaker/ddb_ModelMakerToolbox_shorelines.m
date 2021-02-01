@@ -152,8 +152,6 @@ handles=getHandles;
 
 S=handles.model.shorelines.S;
 
-disp(S.it);
-
 switch handles.model.shorelines.status
     case{'running'}
         
