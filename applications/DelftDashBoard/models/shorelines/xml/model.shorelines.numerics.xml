@@ -48,7 +48,7 @@
       <checkfor>all</checkfor>
       <check>
         <variable>handles.model.shorelines.domain.num_opt</variable>
-        <value>a</value>
+        <value>circle</value>
         <operator>eq</operator>
       </check>
     </dependency>
@@ -65,7 +65,7 @@
       <checkfor>all</checkfor>
       <check>
         <variable>handles.model.shorelines.domain.num_opt</variable>
-        <value>b</value>
+        <value>up_and_down</value>
         <operator>eq</operator>
       </check>
     </dependency>
@@ -82,7 +82,7 @@
       <checkfor>all</checkfor>
       <check>
         <variable>handles.model.shorelines.domain.num_opt</variable>
-        <value>c</value>
+        <value>left_to_right</value>
         <operator>eq</operator>
       </check>
     </dependency>
