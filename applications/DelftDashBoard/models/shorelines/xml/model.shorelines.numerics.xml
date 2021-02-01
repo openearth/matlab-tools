@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>panel</style>
+    <text>Numerics</text>
+    <position>40 10 900 160</position>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>150 130 50 20</position>
+    <text>Alpha (-)</text>
+    <variable>handles.model.shorelines.domain.alpha</variable>
+    <type>real</type>
+    <tooltipstring>Edit Courant coefficient alpha</tooltipstring>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>150 105 50 20</position>
+    <text>Theta (-)</text>
+    <variable>handles.model.shorelines.domain.theta</variable>
+    <tooltipstring>Edit smoothing coefficient theta</tooltipstring>
+    <type>real</type>
+  </element>
+  <element>
+    <style>popupmenu</style>
+    <text>Numerical Options</text>
+    <position>360 100 80 20</position>
+    <type>string</type>
+    <variable>handles.model.shorelines.domain.num_opt</variable>
+    <callback>ddb_shorelines_numerics</callback>
+    <option1>selectnumericaloption</option1>
+    <listtext>
+      <variable>handles.model.shorelines.num_opts_long</variable>
+    </listtext>
+    <listvalue>
+      <variable>handles.model.shorelines.num_opts_short</variable>
+    </listvalue>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>360 75 60 20</position>
+    <text>Option A</text>
+    <variable>handles.model.shorelines.domain.num_option1_value</variable>
+    <type>real</type>
+    <tooltipstring>Edit value for num opt A</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.shorelines.domain.num_opt</variable>
+        <value>a</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>360 50 60 20</position>
+    <text>Option B</text>
+    <variable>handles.model.shorelines.domain.num_option2_value</variable>
+    <type>real</type>
+    <tooltipstring>Edit value for num option B</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.shorelines.domain.num_opt</variable>
+        <value>b</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>360 25 60 20</position>
+    <text>Option C</text>
+    <variable>handles.model.shorelines.domain.num_option3_value</variable>
+    <type>real</type>
+    <tooltipstring>Edit value for num option C</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.shorelines.domain.num_opt</variable>
+        <value>c</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+</root>
