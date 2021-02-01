@@ -1,7 +1,7 @@
 function ddb_ModelMakerToolbox_shorelines(varargin)
 
 %%
-%handles=getHandles;
+
 ddb_zoomOff;
 
 if isempty(varargin)
@@ -214,6 +214,7 @@ switch handles.model.shorelines.status
         % First copy some stuff (new structures?) to the S structure
         S=handles.model.shorelines.S;
         S.rhow=handles.model.shorelines.domain.rhow;
+        S.num_opt=handles.model.shorelines.domain.num_opt;
         handles.model.shorelines.S=S;        
         setHandles(handles);
         next_time_step;

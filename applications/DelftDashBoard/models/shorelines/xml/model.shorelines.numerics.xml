@@ -24,7 +24,7 @@
   <element>
     <style>popupmenu</style>
     <text>Numerical Options</text>
-    <position>360 100 80 20</position>
+    <position>360 100 120 20</position>
     <type>string</type>
     <variable>handles.model.shorelines.domain.num_opt</variable>
     <callback>ddb_shorelines_numerics</callback>
