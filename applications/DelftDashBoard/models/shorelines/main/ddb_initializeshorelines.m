@@ -10,7 +10,7 @@ handles.model.shorelines.phys_opts_long ={'Option 1','Option 2','Option 3'};
 handles.model.shorelines.phys_opts_short={'opt1','opt2','opt3'};
 
 handles.model.shorelines.num_opts_long ={'Circle','Up and down','Spring'};
-handles.model.shorelines.num_opts_short={'circle','up_and_down','left_to_right'};
+handles.model.shorelines.num_opts_short={'circle','up_and_down','spring'};
 
 handles.model.shorelines.status='waiting';
 handles.model.shorelines.current_time_string=datestr(floor(now));

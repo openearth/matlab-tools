@@ -31,19 +31,18 @@ S.shoreline.av=zeros(size(x0));
 function S=timestep(S)
 
 S.it=S.it+1;
-amp=S.rhow; % use water density for this...
 switch S.num_opt
     case{'circle'}
         for j=1:length(S.shoreline.x)
-            S.shoreline.x(j)=S.shoreline.x0(j)+cos(S.it*S.shoreline.omega(j)-S.shoreline.phase(j))*amp;
-            S.shoreline.y(j)=S.shoreline.y0(j)+sin(S.it*S.shoreline.omega(j)-S.shoreline.phase(j))*amp;
+            S.shoreline.x(j)=S.shoreline.x0(j)+cos(S.it*S.shoreline.omega(j)-S.shoreline.phase(j))*S.num_option1_value;
+            S.shoreline.y(j)=S.shoreline.y0(j)+sin(S.it*S.shoreline.omega(j)-S.shoreline.phase(j))*S.num_option1_value;
         end
     case{'up_and_down'}
         for j=1:length(S.shoreline.x)
-            S.shoreline.y(j)=S.shoreline.y0(j)+sin(S.it*S.shoreline.omega(j)-S.shoreline.phase(j))*amp;
+            S.shoreline.y(j)=S.shoreline.y0(j)+sin(S.it*S.shoreline.omega(j)-S.shoreline.phase(j))*S.num_option2_value;
         end
-    case{'left_to_right'}
-        m=1e3;
+    case{'spring'}
+        m=S.num_option3_value;
         for j=1:length(S.shoreline.x)-1
             F(j)=sqrt((S.shoreline.x(j+1)-S.shoreline.x(j)).^2+(S.shoreline.y(j+1)-S.shoreline.y(j)).^2);
             phi(j)=atan2((S.shoreline.y(j+1)-S.shoreline.y(j)),(S.shoreline.x(j+1)-S.shoreline.x(j)));

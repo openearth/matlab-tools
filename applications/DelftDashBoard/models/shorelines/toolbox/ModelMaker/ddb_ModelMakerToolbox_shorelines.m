@@ -213,6 +213,9 @@ switch handles.model.shorelines.status
         S=handles.model.shorelines.S;
         S.rhow=handles.model.shorelines.domain.rhow;
         S.num_opt=handles.model.shorelines.domain.num_opt;
+        S.num_option1_value=handles.model.shorelines.domain.num_option1_value;        
+        S.num_option2_value=handles.model.shorelines.domain.num_option2_value;        
+        S.num_option3_value=handles.model.shorelines.domain.num_option3_value;        
         handles.model.shorelines.S=S;        
         setHandles(handles);
         next_time_step;
