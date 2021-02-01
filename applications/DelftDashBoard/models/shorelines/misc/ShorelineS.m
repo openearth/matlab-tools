@@ -20,6 +20,7 @@ S.shoreline.x0=x0;
 S.shoreline.y0=y0;
 for j=1:length(x0)
     S.shoreline.phase(j)=2*pi*rand(1);
+    S.shoreline.omega(j)=0.2*rand(1);
 end
 
 %%
@@ -27,9 +28,20 @@ function S=timestep(S)
 
 S.it=S.it+1;
 amp=S.rhow; % use water density for this...
-for j=1:length(S.shoreline.x)
-    S.shoreline.x(j)=S.shoreline.x0(j)+cos(S.it/10-S.shoreline.phase(j))*amp;
-    S.shoreline.y(j)=S.shoreline.y0(j)+sin(S.it/10-S.shoreline.phase(j))*amp;
+switch S.num_opt
+    case{'circle'}
+        for j=1:length(S.shoreline.x)
+            S.shoreline.x(j)=S.shoreline.x0(j)+cos(S.it*S.shoreline.omega(j)-S.shoreline.phase(j))*amp;
+            S.shoreline.y(j)=S.shoreline.y0(j)+sin(S.it*S.shoreline.omega(j)-S.shoreline.phase(j))*amp;
+        end
+    case{'up_and_down'}
+        for j=1:length(S.shoreline.x)
+            S.shoreline.y(j)=S.shoreline.y0(j)+sin(S.it*S.shoreline.omega(j)-S.shoreline.phase(j))*amp;
+        end
+    case{'left_to_right'}
+        for j=1:length(S.shoreline.x)
+            S.shoreline.x(j)=S.shoreline.x0(j)+cos(S.it*S.shoreline.omega(j)-S.shoreline.phase(j))*amp;
+        end
 end
 
 %%
