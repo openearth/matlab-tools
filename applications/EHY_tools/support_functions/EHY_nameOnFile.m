@@ -37,6 +37,7 @@ if strcmpi(varName,'tem'                  ) varName = 'temperature'; end
 if strcmpi(varName,'waterlevel'           ) varName = 'wl'         ; end
 if strcmpi(varName,'waterdepth'           ) varName = 'wd'         ; end
 if strcmpi(varName,'bed'                  ) varName = 'bedlevel'   ; end
+if strcmpi(varName,'bl'                   ) varName = 'bedlevel'   ; end
 if strcmpi(varName,'suspendedload'        ) varName = 'suspload'   ; end
 if strcmpi(varName,'sedimentconcentration') varName = 'sedconc'    ; end
 if strcmpi(varName,'den'                  ) varName = 'density'    ; end
@@ -59,6 +60,7 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'wl'         ) newName = 's1'         ; end
         if strcmpi(varName,'salinity'   ) newName = 'sa1'        ; end
         if strcmpi(varName,'temperature') newName = 'tem1'       ; end
+        if strcmpi(varName,'density')     newName = 'rho'        ; end
         if strcmpi(varName,'uv'         ) newName = 'ucx'        ; end
         if strcmpi(varName,'wd'         ) newName = 'waterdepth' ; end
         if strcmpi(varName,'bedlevel'   ) newName = 'FlowElem_bl'; end
@@ -85,6 +87,8 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'density'    ) newName = 'zrho'       ; end
     case 'sds' % simona
         if strcmpi(varName,'x_velocity' ) newName = 'uv'         ; end
+    case 'his' % DELWAQ .his-file
+        if strcmpi(varName,'temperature') newName = 'Temp'       ; end
     case 'map' % DELWAQ .map-file
         if strcmpi(varName,'temperature') newName = 'Temp'       ; end
 end

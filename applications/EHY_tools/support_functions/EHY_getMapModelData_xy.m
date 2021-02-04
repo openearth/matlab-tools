@@ -20,7 +20,7 @@ end
 if size(pli,1) == 2 && size(pli,2) > 2
     pli = pli';
 end
-    
+
 %% Determine which partitions to load data from
 if OPT.mergePartitions == 1
     partitionNrs = EHY_findPartitionNumbers(inputFile,'pli',pli,'disp',OPT.disp);
@@ -31,7 +31,8 @@ end
 OPT.mergePartitionNrs = partitionNrs;
 
 %% Horizontal (x,y) coordinates
-tmp   = EHY_getGridInfo(inputFile,{'XYcor', 'XYcen','edge_nodes','face_nodes','layer_model'},'mergePartitionNrs',OPT.mergePartitionNrs,'disp',OPT.disp);
+if ~isfield(OPT,'gridFile'); OPT.gridFile = ''; end
+tmp   = EHY_getGridInfo(inputFile,{'XYcor', 'XYcen','edge_nodes','face_nodes','layer_model'},'mergePartitionNrs',OPT.mergePartitionNrs,'disp',OPT.disp,'gridFile',OPT.gridFile);
 names = fieldnames(tmp); for i_name = 1: length(names) Data.(names{i_name}) = tmp.(names{i_name}); end
 
 %% get "z-data"
@@ -57,7 +58,7 @@ end
 warning off
 if strcmp(Data.modelType,'dfm') && isfield(Data,'face_nodes')
     arb = arbcross(Data.face_nodes',Data.Xcor,Data.Ycor,pli(:,1),pli(:,2));
-elseif strcmp(Data.modelType,'d3d') || isfield(Data,'Xcor')
+elseif ismember(Data.modelType,{'d3d','delwaq'}) || isfield(Data,'Xcor')
     arb = arbcross(Data.Xcor,Data.Ycor,pli(:,1),pli(:,2));
 end
 warning on
@@ -109,6 +110,7 @@ if no_layers > 1
 end
 for iT = 1:no_times
     for iC = 1:no_XYcenTrajectory
+        
         startBlock = (iT-1)*no_layers+1;
         endBlock = startBlock + no_layers - 1;
         
@@ -121,12 +123,9 @@ for iT = 1:no_times
             Data_xy.vel_dir(iT,iC,:) = vel_dir(iC,startBlock:endBlock);
         end
         
-        if strcmp(Data.modelType,'d3d') && strcmp(Data.layer_model,'sigma-model')
-            startBlock = (iT-1)*(no_layers+1)+1;
-        else
-            startBlock = (no_times-iT)*(no_layers+1)+1;
-        end
+        startBlock = (iT-1)*(no_layers+1)+1;
         endBlock = startBlock + (no_layers+1) - 1;
+        
         if no_layers > 1
             Data_xy.Zint(iT,iC,:) = Zint(iC,startBlock:endBlock);
         end
@@ -151,7 +150,7 @@ if 0 && strcmp(Data.modelType,'dfm')
     deleteLogi = deleteLogi(1:end-1);
     Data_xy.Xcen(deleteLogi) = [];Data_xy.Ycen(deleteLogi) = [];Data_xy.Scen(deleteLogi) = [];
     if isfield(Data_xy,'Zcen'); Data_xy.Zcen(:,deleteLogi,:) = []; end
-    Data_xy.val(:,deleteLogi,:) = []; % 2D or (not to be) 3D. 
+    Data_xy.val(:,deleteLogi,:) = []; % 2D or (not to be) 3D.
     no_XYcenTrajectory = length(Data_xy.Xcen);
 end
 

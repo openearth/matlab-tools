@@ -804,26 +804,38 @@ end
         end
         output={x y cellstr(obs.namst)};
     end
+% mdf2xlsx
+    function [output,OPT] = EHY_convert_mdf2xlsx(inputFile,outputFile,OPT)
+        mdf = delft3d_io_mdf('read',inputFile);
+        output = {};
+        fns = fieldnames(mdf.keywords);
+        for i = 1:length(fns)
+            output{end+1,1} = fns{i};
+            output{end  ,2} = mdf.keywords.(fns{i});
+        end
+        if OPT.saveOutputFile
+            xlswrite(outputFile,output);
+        end
+    end
 % mdu2xlsx
     function [output,OPT] = EHY_convert_mdu2xlsx(inputFile,outputFile,OPT)
         mdu = dflowfm_io_mdu('read',inputFile);
-        A = {};
+        output = {};
         ind = 0;
         fns = fieldnames(mdu);
         for i = 1:length(fns)
             ind = ind + 1;
-            A{ind,1} = fns{i};
+            output{ind,1} = fns{i};
             fns2 = fieldnames(mdu.(fns{i}));
             for j = 1:length(fns2)
-                A{ind,2} = fns2{j};
-                A{end,3} = mdu.(fns{i}).(fns2{j});
+                output{ind,2} = fns2{j};
+                output{end,3} = mdu.(fns{i}).(fns2{j});
                 ind = ind + 1;
             end
         end
         if OPT.saveOutputFile
-            xlswrite(outputFile,A);
+            xlswrite(outputFile,output);
         end
-        output = A;
     end
 % nc2kml
     function [output,OPT] = EHY_convert_nc2kml(inputFile,outputFile,OPT)

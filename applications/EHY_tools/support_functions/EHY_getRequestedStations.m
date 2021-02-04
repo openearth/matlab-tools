@@ -24,6 +24,11 @@ Data.stationNames = EHY_getStationNames(fileInp,modelType,'varName',varName);
 %% No station name specified, get data from all stations
 if isempty(requestedStations)
     requestedStations = Data.stationNames;
+elseif strcmp(modelType,'delwaq')
+    for iS = 1:length(requestedStations)
+        S = regexp(Data.stationNames, regexptranslate('wildcard',requestedStations{iS}));
+        requestedStations{iS} = Data.stationNames{find(~cellfun(@isempty,S),1,'first')};
+    end
 end
 if size(requestedStations,1)<size(requestedStations,2); requestedStations=requestedStations'; end
 Data.requestedStations=requestedStations;

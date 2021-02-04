@@ -885,10 +885,13 @@ switch modelType
                     if ismember('grid',wantedOutput)
                         E.grid = XYcor2grid(dw.X,dw.Y);
                     end
+                    if ismember('spherical',wantedOutput)
+                         E.spherical = EHY_isSpherical(dw.X,dw.Y);
+                    end
                 end
             case 'outputfile'
-                if isempty(OPT.gridFile)
-                    error('DELWAQ map output needs a grid (.lga/.cco) file');
+                if strcmpi(ext,'.map') && isempty(OPT.gridFile) && length(wantedOutput) > 1
+                    warning('DELWAQ map output may need a grid (.lga/.cco) file so determine this info');
                 end
                 
                 [~, typeOfModelFileDetailGrid] = EHY_getTypeOfModelFile(OPT.gridFile);
@@ -906,6 +909,12 @@ switch modelType
                     end
                 end
                 
+                if ismember('layer_model',wantedOutput)
+                    E.layer_model = 'z-model';
+                    if OPT.disp
+                        disp(['Assuming this DELWAQ-file is from a z-model: ' inputFile])
+                    end
+                end
         end % typeOfModelFile
         
     case 'SFINCS'

@@ -23,7 +23,7 @@ else % model reference level
 end
 
 %% get "zcen_int"-data
-DataZ.val = EHY_getMapModelData_construct_zcoordinates(inputFile,modelType,OPT);
+[DataZ.Zcen_int,DataZ.Zcen_cen] = EHY_getMapModelData_construct_zcoordinates(inputFile,modelType,OPT);
 
 %% get wanted "varName"-data for all necessary layers
 % get data
@@ -39,10 +39,11 @@ elseif isempty(strfind(DataAll.dimensions(2:dimTextInd(1)-1),'time'))
 end
 
 %% from [m,n] to cells (like FM)
-if strcmp(modelType,'d3d') 
+if ismember(modelType,{'d3d','delwaq'})
     modelSize = size(DataAll.val);
-    DataAll.val  = reshape(DataAll.val,[modelSize(1) prod(modelSize(2:3)) modelSize(4)]); 
-    DataZ.val    = reshape(DataZ.val  ,[modelSize(1) prod(modelSize(2:3)) modelSize(4)+1]); 
+    DataAll.val    = reshape(DataAll.val,   [modelSize(1) prod(modelSize(2:3)) modelSize(4)]); 
+    DataZ.Zcen_cen = reshape(DataZ.Zcen_cen,[modelSize(1) prod(modelSize(2:3)) modelSize(4)]); 
+    DataZ.Zcen_int = reshape(DataZ.Zcen_int,[modelSize(1) prod(modelSize(2:3)) modelSize(4)+1]); 
     if numel(refLevel)>1
         if size(refLevel,1) == 1
             refLevel = repmat(refLevel,modelSize(1),1,1); % repmat over time-dimension
@@ -74,8 +75,10 @@ else
 end
 
 % correct for order of layering > make layer 1 the bottom layer | This is only used within this function for the next loop
-gridInfo = EHY_getGridInfo(inputFile,'layer_model','mergePartitions',0);
-if strcmp(modelType,'d3d') && strcmp(gridInfo.layer_model,'sigma-model')
+gridInfo = EHY_getGridInfo(inputFile,'layer_model','mergePartitions',0,'disp',0);
+if strcmp(modelType,'delwaq') || (strcmp(modelType,'d3d') && strcmp(gridInfo.layer_model,'sigma-model'))
+    DataZ.Zcen_int = flip(DataZ.Zcen_int,3);
+    DataZ.Zcen_cen = flip(DataZ.Zcen_cen,3);
     for iV = 1:length(v) % loop over fieldname 'val','vel_x','vel_mag',etc.
         DataAll.(v{iV}) = flip(DataAll.(v{iV}),3);
     end
@@ -88,14 +91,14 @@ for iZ = 1:length(OPT0.z)
     % get corresponding layer/apply interpolation
     switch OPT0.zMethod
         case 'linear'
-            error('to do')
+            error('to do --> maybe this can be copied from/combined with EHY_getmodeldata_z')
             
         otherwise % corresponding layer
-            
+            dz = 10^-6; % margin needed for precision issues
             for iV = 1:length(v) % loop over fieldname 'val','vel_x','vel_mag',etc.
                 slicePerZ = NaN(size(Data.(v{1}),1),size(Data.(v{1}),2)); % size of first two dims of Data.val
                 for iL = 1:no_layers % loop over layers
-                    getFromThisModelLayer = DataZ.val(:,:,iL) <= wantedZ+10^-6 & DataZ.val(:,:,iL+1) >= wantedZ-10^-6; % margin needed for precision issues
+                    getFromThisModelLayer = DataZ.Zcen_int(:,:,iL) <= wantedZ+dz & DataZ.Zcen_int(:,:,iL+1) >= wantedZ-dz;
                     if any(any(getFromThisModelLayer))
                         valInThisModelLayer = DataAll.(v{iV})(:,:,iL);
                         slicePerZ(getFromThisModelLayer) = valInThisModelLayer(getFromThisModelLayer);
@@ -110,6 +113,6 @@ for iZ = 1:length(OPT0.z)
 end
 
 %% cells (like FM) back to [m,n]
-if strcmp(modelType,'d3d')
+if ismember(modelType,{'d3d','delwaq'})
     Data.val = reshape(Data.val,modelSize(1:3));
 end

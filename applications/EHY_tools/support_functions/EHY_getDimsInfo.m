@@ -134,7 +134,7 @@ switch modelType
             
             % layers
             gridInfo = EHY_getGridInfo(inputFile,{'no_layers'}, 'gridFile', gridFile);
-            if isfield(gridInfo,'no_layers') && gridInfo.no_layers > 1
+            if isfield(gridInfo,'no_layers') && gridInfo.no_layers > 1  && ~ismember(OPT.varName,{'wl','bedlevel'})
                 dims(end+1).name = 'layers';
             end
             
@@ -192,9 +192,10 @@ if nargout > 2
     %% Get time information from simulation and determine index of required times
     if ~isempty(dimsInd.time)
         Data.times = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
-        if EHY_isCMEMS(inputFile) && strcmpi(typeOfModelFileDetail,'map_nc') && OPT.mergeCMEMSdata
+        if EHY_isCMEMS(inputFile) && nc_isvar(inputFile,'latitude') && OPT.mergeCMEMSdata
             % handling of time indices is done within EHY_getMapCMEMSData
         else  
+            dims(dimsInd.time).size             = length(Data.times);
             [Data,time_index,~,index_requested] = EHY_getmodeldata_time_index(Data,OPT);
             dims(dimsInd.time).index            = time_index(index_requested);
             dims(dimsInd.time).indexOut         = 1:length(dims(dimsInd.time).index);

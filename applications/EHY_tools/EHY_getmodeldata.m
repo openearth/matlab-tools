@@ -68,9 +68,11 @@ OPT.sedimentName = ''; % name of sediment fraction
 
 % return output at specified reference level
 OPT.z            = ''; % z = positive up. Wanted vertical level = OPT.zRef + OPT.z
-OPT.zRef         = ''; % choose: '' = model reference level, 'wl' = water level or 'bed' = from bottom level or
-                       % 'middleOfWaterColumn' = middle of water column
+OPT.zRef         = ''; % choose: '' = model reference level, 'wl' = water level or 'bed' = from bottom level or 'middleOfWaterColumn' = middle of water column
 OPT.zMethod      = ''; % interpolation method: '' = corresponding layer or 'linear' = 'interpolation between two layers'
+
+% ini waterlevel needed for DELWAQ .his files
+OPT.dw_iniWL     = 0;
 
 OPT              = setproperty(OPT,varargin);
 
@@ -134,7 +136,7 @@ switch modelType
                 xVarName = EHY_nameOnFile(inputFile,'cross_section_x_coordinate');
             end
             yVarName = strrep(xVarName,'x','y');
-
+            
             if nc_isvar(inputFile,xVarName)
                 X = EHY_getmodeldata(inputFile,Data.requestedStations(Data.exist_stat),'dfm',OPT,'varName',xVarName);
                 Y = EHY_getmodeldata(inputFile,Data.requestedStations(Data.exist_stat),'dfm',OPT,'varName',yVarName);
@@ -188,15 +190,15 @@ switch modelType
             stat_ind = dims(stationsInd).index(i_stat);
             indexOut = dims(stationsInd).indexOut(i_stat);
             
-            switch OPT.varName
-                case {'bedlevel','DPS'} % make bedlevel positive up 
+            switch lower(OPT.varName)
+                case {'bedlevel','dps'} % make bedlevel positive up
                     DPS                  = vs_get(trih,'his-const',{1},'DPS',{stat_ind},'quiet');
                     Data.val(:,indexOut) = -DPS;
                 case 'wd'
                     wl                   = cell2mat(vs_get(trih,'his-series',{time_ind},'ZWL',{stat_ind},'quiet')); % ref to wl
                     DPS                  = vs_get(trih,'his-const',{1},'DPS',{stat_ind},'quiet'); % bed to ref
                     Data.val(:,indexOut) = wl+DPS;
-                case {'uv','ZCURU'}
+                case {'uv','zcuru'}
                     if no_layers == 1 % 2Dh
                         data = qpread(trih,1,'depth averaged velocity','griddata',time_ind,stat_ind);
                         Data.vel_x(:,indexOut) = data.XComp;
@@ -215,7 +217,7 @@ switch modelType
                     Data.vel_dir = mod(atan2(Data.vel_x,Data.vel_y)*180/pi,360);
                     Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
                     
-                case {'Zcen_cen' 'Zcen_int'}
+                case {'zcen_cen' 'zcen_int'}
                     if strcmp(gridInfo.layer_model,'sigma-model')
                         thick    = vs_let(trih,'his-const', 'THICK','quiet');
                         DPS      = vs_let(trih,'his-const', 'DPS',  'quiet');
@@ -253,7 +255,7 @@ switch modelType
                     end
                     
                     % return requested variable as 'Data.val'
-                    % and return other output as well 
+                    % and return other output as well
                     if strcmpi(OPT.varName    ,'Zcen_cen')
                         Data.val(:,indexOut,:) = Zcen_cen;
                     elseif strcmpi(OPT.varName,'Zcen_int')
@@ -457,11 +459,66 @@ switch modelType
     case 'delwaq'
         %% DELWAQ
         dw = delwaq('open',inputFile);
-        subInd = strmatch(OPT.varName,dw.SubsName);
-        if isempty(subInd); error(['Could not find substance ''' OPT.varName ''' on provided file']); end
-        [~,data] = delwaq('read',dw,subInd,dims(stationsInd).index,dims(timeInd).index);
-        Data.val(:,dims(stationsInd).indexOut) = permute(data,[3 2 1]);
+        time_ind  = dims(timeInd).index;
         
+        % loop over stations
+        for i_stat = 1:length(dims(stationsInd).index)
+            % stat_ind
+            if ischar(stat_name); stat_name = cellstr(stat_name); end
+            if ~strcmp(Data.requestedStations{i_stat},stat_name{i_stat})  %GTSO-03 > GTSO-03 (01), GTSO-03 (02), etc.
+                S = regexp(Data.stationNames, regexptranslate('wildcard',[stat_name{i_stat} '*']));
+                stat_ind = find(~cellfun(@isempty,S));
+                dims(end+1).name = 'layers';
+            else
+                stat_ind = dims(stationsInd).index(i_stat);
+            end
+            indexOut = dims(stationsInd).indexOut(i_stat);
+            
+            for LoopNeededToBreak = 1
+                if ismember(lower(OPT.varName),{'wl','bedlevel','zcen_cen','zcen_int'})
+                    % bed level
+                    subInd = strmatch('TotalDepth',dw.SubsName);
+                    [~,TotalDepth] = delwaq('read',dw,subInd,stat_ind,1);
+                    TotalDepth(TotalDepth==0) = []; TotalDepth = unique(TotalDepth); 
+                    if numel(TotalDepth)>1; error('debug me'); end
+                    bl = OPT.dw_iniWL - TotalDepth;
+                    
+                    if strcmpi(OPT.varName,'bedlevel')
+                        Data.val(:,indexOut) = bl; % of Data.val = bl;
+                        continue
+                    end
+                    
+                    % Zcen_int / Zcen_cen
+                    subInd = strmatch('Depth',dw.SubsName);
+                    [~,data] = delwaq('read',dw,subInd,stat_ind,time_ind);
+                    Depth = permute(data,[3 2 1]);
+                    Depth(:,end+1) = 0; % add bottom interface
+                    Zcen_int = bl + fliplr(cumsum(fliplr(Depth),2));
+                    % to do, set equal Zcen_int interfaces towards bed to NaN
+                    Zcen_cen = (Zcen_int(:,1:end-1) + Zcen_int(:,2:end))/2;
+                    
+                    % water level
+                    if strcmpi(OPT.varName,'wl')
+                        Data.val(:,indexOut) = Zcen_int(:,1);
+                        continue
+                    end
+                    
+                    if strcmpi(OPT.varName    ,'Zcen_cen')
+                        Data.val(:,indexOut,:) = Zcen_cen;
+                    elseif strcmpi(OPT.varName,'Zcen_int')
+                        Data.val(:,indexOut,:) = Zcen_int;
+                    end
+                    Data.Zcen_cen(:,indexOut,:) = Zcen_cen;
+                    Data.Zcen_int(:,indexOut,:) = Zcen_int;
+                    
+                else
+                    subInd = strmatch(OPT.varName,dw.SubsName);
+                    if isempty(subInd); error(['Could not find substance ''' OPT.varName ''' on provided file']); end
+                    [~,data] = delwaq('read',dw,subInd,stat_ind,time_ind);
+                    Data.val(:,indexOut,:) = permute(data,[3 2 1]);
+                end
+            end
+        end
 end
 
 %% fill data of non-existing stations with NaN's

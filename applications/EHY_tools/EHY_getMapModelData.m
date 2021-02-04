@@ -44,7 +44,7 @@ OPT.t                 = []; % time index. If OPT.t is specified, OPT.t0, OPT.ten
 OPT.layer             = 0;  % all
 OPT.m                 = 0;  % all (horizontal structured grid [m,n])
 OPT.n                 = 0;  % all (horizontal structured grid [m,n])
-OPT.k                 = 0;  % all (vertical   d3d grid [m,n,k])
+OPT.k                 = 0;  % all (vertical d3d grid [m,n,k])
 OPT.sedimentName      = {}; % char or cell array with the name of sediment fraction(s)
 OPT.mergePartitions   = 1;  % merge output from several dfm spatial *.nc-files
 OPT.mergePartitionNrs = []; % partition nrs that will be merged, e.g. [0, 4, 5]
@@ -62,6 +62,9 @@ OPT.zMethod           = ''; % interpolation method: '' = corresponding layer or 
 % return output (cross section view) along a pli (file)
 OPT.pliFile           = ''; % *.pli, *.ldb , *.pol 
 OPT.pli               = []; % thalweg [n x 2]
+
+% ini waterlevel needed for DELWAQ .map files
+OPT.dw_iniWL          = 0;
 
 OPT                   = setproperty(OPT,varargin);
 
@@ -340,39 +343,57 @@ if ~exist('Data','var')
         case 'delwaq'
             [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(inputFile);
             if strcmpi(typeOfModelFileDetail,'map')
-                dw       = delwaq('open',inputFile);
-                subs_ind   = strmatch(OPT.varName,strrep(dw.SubsName,' ',''));
-                [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(OPT.gridFile);
-                if ismember(typeOfModelFileDetail,{'lga','cco'})
-                    dwGrid      = delwaq('open',OPT.gridFile);
-                    Data.val = NaN([dims.sizeOut]); % allocate
-                    
-                    m_ind = dims(mInd).index;
-                    n_ind = dims(nInd).index;
-                    
-                    for iT = 1:length(dims(timeInd).index)
-                        time_ind  = dims(timeInd).index(iT);
-                        [~,data]  = delwaq('read',dw,subs_ind,0,time_ind);
-                        data      = waq2flow3d(data,dwGrid.Index);
-                        Data.val(dims(timeInd).indexOut(iT),:,:,:) = data(m_ind,n_ind,dims(layersInd).index);
-                    end
-                    
-                    % delete ghost cells
-                    if n_ind(1)==1; Data.val = Data.val(:,2:end,:,:); end
-                    if m_ind(1)==1; Data.val = Data.val(:,:,2:end,:); end
-                    
-                elseif strcmp(typeOfModelFileDetail, 'nc')
-                    no_segm_perlayer = dims(facesInd).size;
-                    
-                    if exist('layersInd','var') && ~isempty(layersInd)
-                        layer_ind = dims(layersInd).index;
+                if ismember(lower(OPT.varName),{'wl','bedlevel','zcen_cen','zcen_int'})
+                    [Zcen_int,Zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates(inputFile,modelType,OPT);
+                    if strcmpi(OPT.varName,'wl')
+                        Data.val = wl;
+                    elseif strcmpi(OPT.varName,'bedlevel')
+                        Data.val = reshape(bl,[1 size(bl)]); % [time(1),m,n]
+                        Data.times = Data.times(1);
                     else
-                        layer_ind = 1;
+                        if strcmpi(OPT.varName,'Zcen_cen')
+                            Data.val = Zcen_cen;
+                        elseif strcmpi(OPT.varName,'Zcen_int')
+                            Data.val = Zcen_int;
+                        end
+                        Data.Zcen_cen = Zcen_cen;
+                        Data.Zcen_int = Zcen_int;
                     end
-                    
-                    segm_ind = ((layer_ind - 1) * no_segm_perlayer + 1):(layer_ind * no_segm_perlayer);
-                    [~, data] = delwaq('read', dw, subs_ind, segm_ind, dims(timeInd).index);
-                    Data.val = permute(data,[3 2 1]);
+                else
+                    dw       = delwaq('open',inputFile);
+                    subs_ind   = strmatch(OPT.varName,strrep(dw.SubsName,' ',''));
+                    [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(OPT.gridFile);
+                    if ismember(typeOfModelFileDetail,{'lga','cco'})
+                        dwGrid      = delwaq('open',OPT.gridFile);
+                        Data.val = NaN([dims.sizeOut]); % allocate
+                        
+                        m_ind = dims(mInd).index;
+                        n_ind = dims(nInd).index;
+                        
+                        for iT = 1:length(dims(timeInd).index)
+                            time_ind  = dims(timeInd).index(iT);
+                            [~,data]  = delwaq('read',dw,subs_ind,0,time_ind);
+                            data      = waq2flow3d(data,dwGrid.Index);
+                            Data.val(dims(timeInd).indexOut(iT),:,:,:) = data(m_ind,n_ind,dims(layersInd).index);
+                        end
+                        
+                        % delete ghost cells
+                        if n_ind(1)==1; Data.val = Data.val(:,2:end,:,:); end
+                        if m_ind(1)==1; Data.val = Data.val(:,:,2:end,:); end
+                        
+                    elseif strcmp(typeOfModelFileDetail, 'nc')
+                        no_segm_perlayer = dims(facesInd).size;
+                        
+                        if exist('layersInd','var') && ~isempty(layersInd)
+                            layer_ind = dims(layersInd).index;
+                        else
+                            layer_ind = 1;
+                        end
+                        
+                        segm_ind = ((layer_ind - 1) * no_segm_perlayer + 1):(layer_ind * no_segm_perlayer);
+                        [~, data] = delwaq('read', dw, subs_ind, segm_ind, dims(timeInd).index);
+                        Data.val = permute(data,[3 2 1]);
+                    end
                 end
                 
             elseif strcmpi(typeOfModelFileDetail,'sgf')

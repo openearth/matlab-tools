@@ -18,6 +18,13 @@ DataZ = EHY_getmodeldata(inputFile,stat_name,modelType,OPT);
 if ~isfield(DataZ,'Zcen_int')
     DataZ.Zcen_int = DataZ.val;
 end
+if ~isfield(DataZ,'Zcen_cen')
+    % cell interfaces to cell centers
+    for iL = 1:size(DataZ.Zcen_int,3)-1
+        DataZ.Zcen_cen(:,:,iL) = mean(DataZ.Zcen_int(:,:,iL:iL+1),3);
+    end
+end
+
 %% get wanted "varName"-data for all necessary layers
 % get data
 OPT.varName = varName0; % change wanted variabele back to original value
@@ -83,9 +90,10 @@ else
 end
 
 % correct for order of layering > make layer 1 the bottom layer | This is only used within this function for the next loop
-gridInfo = EHY_getGridInfo(inputFile,'layer_model');
-if strcmp(modelType,'d3d') && strcmp(gridInfo.layer_model,'sigma-model')
-    DataZ.val = flip(DataZ.val,3);
+gridInfo = EHY_getGridInfo(inputFile,'layer_model','disp',0);
+if strcmp(modelType,'delwaq') || (strcmp(modelType,'d3d') && strcmp(gridInfo.layer_model,'sigma-model'))
+    DataZ.Zcen_int = flip(DataZ.Zcen_int,3);
+    DataZ.Zcen_cen = flip(DataZ.Zcen_cen,3);
     for iV = 1:length(v) % loop over fieldname 'val','vel_x','vel_mag',etc.
         DataAll.(v{iV}) = flip(DataAll.(v{iV}),3);
     end
@@ -99,47 +107,44 @@ for iZ = 1:length(OPT0.z)
     switch OPT0.zMethod
         case 'linear'
             
-            if iZ == 1
-                % cell interfaces to cell centers
-                for iL = 1:size(DataZ.val,3)-1
-                    DataZ.val_cen(:,:,iL) = mean(DataZ.val(:,:,iL:iL+1),3);
-                end
-                
+            if iZ == 1               
                  % add surface and bed layer interfaces
                 if strcmp(gridInfo.layer_model,'sigma-model')
-                    DataZ.val_cen = cat(3,DataZ.val(:,:,1),DataZ.val_cen,DataZ.val(:,:,end));
+                    DataZ.Zcen_cen = cat(3,DataZ.Zcen_int(:,:,1),DataZ.Zcen_cen,DataZ.Zcen_int(:,:,end));
                 elseif strcmp(gridInfo.layer_model,'z-model')
-                    bedlevel = squeeze(NaN*DataZ.val_cen(:,:,1)); % [times,stations]
+                    bedlevel = squeeze(NaN*DataZ.Zcen_cen(:,:,1)); % [times,stations]
                     for iL = 1:size(DataZ.Zcen_int,3)
                         valuesInThisLayer = squeeze(DataZ.Zcen_int(:,:,iL));
                         logi = ~isnan(valuesInThisLayer) & isnan(bedlevel);
                         bedlevel(logi) = valuesInThisLayer(logi);
                         if all(all(~isnan(bedlevel))); break; end
                     end
-                    waterlevel = squeeze(NaN*DataZ.val_cen(:,:,1)); % [times,stations]
+                    waterlevel = squeeze(NaN*DataZ.Zcen_cen(:,:,1)); % [times,stations]
                     for iL = size(DataZ.Zcen_int,3):-1:1
                         valuesInThisLayer = squeeze(DataZ.Zcen_int(:,:,iL));
                         logi = ~isnan(valuesInThisLayer) & isnan(waterlevel);
                         waterlevel(logi) = valuesInThisLayer(logi);
                         if all(all(~isnan(waterlevel))); break; end
                     end
-                    DataZ.val_cen = cat(3,bedlevel,DataZ.val_cen,waterlevel);
+                    DataZ.Zcen_cen2 = cat(3,bedlevel,DataZ.Zcen_cen,waterlevel);
                 end
             end
             
             for iV = 1:length(v) % loop over fieldname 'val','vel_x','vel_mag',etc.
                 if iZ == 1
                     % add surface and bed layer model values 
-                    % (At the moment, this also works for Z-layer models as model values are copied into inactive cells)
+                    % NOTE this should be adding the last non-NaN value!
+                    % This is not 100% OK at the moment!
                     DataAll.(v{iV})   = cat(3,DataAll.(v{iV})(:,:,1),DataAll.(v{iV}),DataAll.(v{iV})(:,:,end));
                 end
                 
                 for iT = 1:no_times % loop over time
                     for iS = 1:no_stat % loop over stations
                         if ~isnan(wantedZ(iS))
-                            logi = ~isnan(squeeze(DataZ.val_cen(iT,iS,:))); % active layers: prevent error for Z-layers
+                            Zcen_cen = squeeze(DataZ.Zcen_cen(iT,iS,:));
+                            logi = [diff(Zcen_cen)>0; true] & ~isnan(Zcen_cen); % active layers: prevent error for Z-layers
                             try
-                                Data.(v{iV})(iT,iS,iZ) = interp1(squeeze(DataZ.val_cen(iT,iS,logi)),squeeze(DataAll.(v{iV})(iT,iS,logi)),wantedZ(iT,iS));
+                                Data.(v{iV})(iT,iS,iZ) = interp1(Zcen_cen(logi),squeeze(DataAll.(v{iV})(iT,iS,logi)),wantedZ(iT,iS));
                             catch
                                 Data.(v{iV})(iT,iS,iZ) = NaN;
                             end
@@ -149,11 +154,11 @@ for iZ = 1:length(OPT0.z)
             end
             
         otherwise % corresponding layer
-            
+            dz = 10^-6; % margin needed for precision issues
             for iV = 1:length(v) % loop over fieldname 'val','vel_x','vel_mag',etc.
                 slicePerZ = NaN(size(Data.(v{1}),1),size(Data.(v{1}),2)); % size of first two dims of Data.val
                 for iL = 1:no_layers % loop over layers
-                    getFromThisModelLayer = DataZ.val(:,:,iL) <= wantedZ & DataZ.val(:,:,iL+1) >= wantedZ;
+                    getFromThisModelLayer = DataZ.Zcen_int(:,:,iL) <= wantedZ+dz & DataZ.Zcen_int(:,:,iL+1) >= wantedZ-dz;
                     if any(any(getFromThisModelLayer))
                         valInThisModelLayer = DataAll.(v{iV})(:,:,iL);
                         slicePerZ(getFromThisModelLayer) = valInThisModelLayer(getFromThisModelLayer);

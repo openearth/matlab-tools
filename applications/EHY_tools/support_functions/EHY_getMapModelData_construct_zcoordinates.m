@@ -1,10 +1,21 @@
-function [zcen_int,zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates(inputFile,modelType,OPT)
+function [Zcen_int,Zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates(inputFile,modelType,OPT)
 
 % This function uses the order of dimensions: [times,cells,layers]
 
+%%
+if ~exist('modelType','var')
+    modelType = EHY_getModelType(inputFile);
+end
+
 %% CMEMS?
 if EHY_isCMEMS(inputFile)
-    [zcen_int,zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates_CMEMS(inputFile,OPT);
+    [Zcen_int,Zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates_CMEMS(inputFile,OPT);
+    return
+end
+
+%% old DELWAQ .map?
+if strcmp(modelType,'delwaq')
+    [Zcen_int,Zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates_DELWAQ(inputFile,modelType,OPT);
     return
 end
 
@@ -77,9 +88,11 @@ switch gridInfo.layer_model
         for iT = 1:no_times
             int_field = NaN(no_cells,no_lay+1);
             
-            logi = ZKlocal >= bl & ZKlocal <= wl(iT,:)';
+            logi = ZKlocal >= bl; % ZKlocal <= wl(iT,:)'
             int_field(logi) = ZKlocal2(logi);
-            
+            logi = [-10^8 ZKlocal(1:end-1)] > wl(iT,:)'; 
+            int_field(logi) = NaN;
+
             % water level
             [~,cellIndMax] = max(int_field,[],2);
             cellIndMaxUni = unique(cellIndMax);
@@ -188,12 +201,12 @@ if strcmp(modelType,'d3d')
     bl  = reshape(bl , [1 modelSize(2:3)]);
 end
 
-zcen_cen = cen;
-zcen_int = int;
+Zcen_cen = cen;
+Zcen_int = int;
 
 end
 
-function [zcen_int,zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates_CMEMS(inputFile)
+function [Zcen_int,Zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates_CMEMS(inputFile)
 %         % water level
 %         [pathstr, name, ext] = fileparts(inputFile);
 %         [~,name] = strtok(name,'_');
@@ -213,9 +226,63 @@ time_len = infonc.Dimensions(ind).Length;
 
 depth = double(ncread(inputFile,'depth'));
 depth_cen = permute(depth,[2 3 4 1]);
-zcen_cen = -1*repmat(depth_cen,time_len,lon_len,lat_len);
+Zcen_cen = -1*repmat(depth_cen,time_len,lon_len,lat_len);
 depth_int = permute(center2corner1(depth)',[2 3 4 1]);
-zcen_int = -1*repmat(depth_int,time_len,lon_len,lat_len);
-wl = squeeze(zcen_int(:,:,:,1));
-bl = squeeze(zcen_int(:,:,:,end));
+Zcen_int = -1*repmat(depth_int,time_len,lon_len,lat_len);
+wl = squeeze(Zcen_int(:,:,:,1));
+bl = squeeze(Zcen_int(:,:,:,end));
+end
+
+function [Zcen_int,Zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates_DELWAQ(inputFile,modelType,OPT)
+
+% Get the available and requested dimensions
+OPT.layer = 0;
+[dims,~,~,OPT] = EHY_getDimsInfo(inputFile,OPT,modelType);
+
+dw = delwaq('open',inputFile);
+dwGrid = delwaq('open',OPT.gridFile);
+
+m_ind = dims(mInd).index;
+n_ind = dims(nInd).index;
+k_ind = 1:dwGrid.MNK(3);
+
+for iT = 1:length(dims(timeInd).index)
+    time_ind  = dims(timeInd).index(iT);
+    
+    % bed level
+    if ~exist('bl','var')
+        subs_ind   = strmatch('TotalDepth',dw.SubsName);
+        [~,data]  = delwaq('read',dw,subs_ind,0,1); % first time_ind to combine with OPT.dw_iniWL
+        data      = waq2flow3d(data,dwGrid.Index);
+        TotalDepth = data(m_ind,n_ind,k_ind);
+        TotalDepth = max(TotalDepth,[],3);
+        bl = OPT.dw_iniWL - TotalDepth;
+    end
+    
+    % Zcen_int / Zcen_cen
+    subs_ind   = strmatch('Depth',dw.SubsName);
+    [~,data]  = delwaq('read',dw,subs_ind,0,time_ind);
+    data      = waq2flow3d(data,dwGrid.Index);
+    Depth = data(m_ind,n_ind,k_ind);
+    Depth(:,:,end+1) = 0; % add bottom interface
+    Zcen_int(iT,:,:,:) = bl + flip(cumsum(flip(Depth,3),3),3);
+    Zcen_cen(iT,:,:,:) = (Zcen_int(iT,:,:,1:end-1) + Zcen_int(iT,:,:,2:end))/2;
+end
+
+% water level
+wl = Zcen_int(:,:,:,1);
+
+% delete ghost cells
+if n_ind(1) == 1
+    bl = bl(2:end,:);
+    wl = wl(:,2:end,:);
+    Zcen_int = Zcen_int(:,2:end,:,:);
+    Zcen_cen = Zcen_cen(:,2:end,:,:);
+end
+if m_ind(1)==1
+    bl = bl(:,2:end);
+    wl = wl(:,:,2:end);
+    Zcen_int = Zcen_int(:,:,2:end,:);
+    Zcen_cen = Zcen_cen(:,:,2:end,:);
+end
 end
