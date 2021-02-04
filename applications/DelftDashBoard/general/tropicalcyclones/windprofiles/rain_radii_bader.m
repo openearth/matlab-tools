@@ -81,6 +81,8 @@ y = rand(1,n);
 % use the formula for conditional sampling of a frank copula to produce a
 % list of n maximum rainfall intensity values within the copula dataspace
 v = -(1./theta_frank).* log( 1 + (y.*(exp(-theta_frank) - 1)) ./ (exp(-theta_frank.*u) - y.*(exp(-theta_frank.*u) - 1)));
+% v = -(1./theta_frank).* log( 1 + ( y.*(1 - exp(-theta_frank))) ./ (y.*(exp(-theta_frank.*u) - 1  ) - exp(-theta_frank.*u))); % alternative derivation in some literature
+% e.g.: https://support.sas.com/documentation/onlinedoc/ets/132/copula.pdf#page=51&zoom=100,60,749
 
 % convert the acquired samples back to its original dataspace with the
 % given marginal distribution parameters for pmax. 
