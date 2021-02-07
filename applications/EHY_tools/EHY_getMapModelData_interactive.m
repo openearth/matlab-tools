@@ -2,7 +2,7 @@ function varargout = EHY_getMapModelData_interactive
 %% EHY_getMapModelData_interactive
 %
 % Interactive retrieval of model data using EHY_getMapModelData
-% Example: Data = EHY_getMapModelData_interactive
+% Example: EHY_getMapModelData_interactive
 %
 % created by Julien Groenenboom, October 2018
 %
@@ -129,17 +129,17 @@ end
 
 % mergePartitions
 if strcmp(modelType,'dfm') && EHY_isPartitioned(outputfile,modelType)
-        option = listdlg('PromptString','Do you want to merge the info from different partitions?','SelectionMode','single','ListString',...
-            {'Yes','No'},'ListSize',[300 100]);
-        if option == 1
-            OPT.mergePartitions = 1;
-        else
-            OPT.mergePartitions = 0;
-        end
+    option = listdlg('PromptString','Do you want to merge the info from different partitions?','SelectionMode','single','ListString',...
+        {'Yes','No'},'ListSize',[300 100]);
+    if option == 1
+        OPT.mergePartitions = 1;
+    else
+        OPT.mergePartitions = 0;
+    end
 end
 
 if exist('verticalSlice','var')
-     OPT.pliFile = makePliFileForSlice(outputfile,OPT);
+    OPT.pliFile = makePliFileForSlice(outputfile,OPT);
 end
 
 %% return example MATLAB-line
@@ -149,18 +149,18 @@ if exist('OPT','var')
     fns = fieldnames(OPT);
     for iF = 1:length(fns)
         fn = fns{iF};
-        if strcmpi(fn,'mergePartitions') && OPT.(fn) == 1
-            continue
-        end
         val = OPT.(fn);
         if ~isempty(num2str(val)); val = num2str(val); end
-        if ~ismember(fn,{'m','n'}) 
-            extraText = [extraText ',''' fn ''',''' val ''''];
-        else
-            if ~all(val == '0')
-            extraText = [extraText ',''' fn ''',''' val ''''];
+        
+        if strcmpi(fn,'mergePartitions') && strcmp(val,'1')
+            continue % this is a default option
+        elseif (ismember(fn,{'m','n'}) && ~all(val == '0'))
+            continue % this is a default option
+        end
+        
+        extraText = [extraText ',''' fn ''',''' val ''''];
+        if ismember(fn,{'m','n','mergePartitions'}) % also needed in EHY_getGridInfo
             GI_extraText = [GI_extraText ',''' fn ''',''' val ''''];
-            end
         end
     end
 end
@@ -186,62 +186,67 @@ else
     end
 end
 
-% load and add grid information
-% (forward this example line to EHY_plotMapModelData if needed)
-if exist('OPT','var') && isfield(OPT,'pliFile')
-    EHY_getGridInfo_line = '';
-else
-    typeOfModelFile = EHY_getTypeOfModelFile(outputfile);
-    if EHY_isSFINCS(outputfile)
-        EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''XYcor''}' GI_extraText ');'];
-    elseif strcmp(typeOfModelFile,'nc_griddata')
-        EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''XYcen''}' GI_extraText ');'];
-    elseif strcmp(modelType,'dfm')
-        if isfield(OPT,'mergePartitions') && OPT.mergePartitions==0
-            EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''face_nodes_xy''},''mergePartitions'',0);'];
-        else
-            EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''face_nodes_xy''});'];
-        end
-    elseif strcmp(modelType,'d3d')
-        EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',{''XYcor''}' GI_extraText ');'];
-    elseif strcmp(modelType,'delwaq')
-        [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(gridFile);
-        if strcmp(typeOfModelFileDetail,'nc')
-            EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' gridFile ''',{''face_nodes_xy''});'];
-        elseif ismember(typeOfModelFileDetail,{'lga','cco'})
-            EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' gridFile ''',{''XYcor''}' GI_extraText ');'];
-        end
+% facecolor ('flat' or 'interp'/'Continuous shades') // needed if caller is EHY_plotMapModelData_interactive
+db = dbstack;
+if length(db) > 1 && strcmp(db(2).name,'EHY_plotMapModelData_interactive') && ~isfield(OPT,'pliFile')
+    option = listdlg('PromptString','Plot data as:','SelectionMode','single','ListString',...
+        {'Patches (''shading flat'')','Continuous shades (''shading interp'')'},'ListSize',[300 100]);
+    if option == 2
+        OPT.facecolor = 'interp';
     end
 end
-eval(EHY_getGridInfo_line);
 
-% add grid data
-if isfield(gridInfo,'face_nodes_x')
-    Data.face_nodes_x = gridInfo.face_nodes_x;
-    Data.face_nodes_y = gridInfo.face_nodes_y;
-elseif isfield(gridInfo,'Xcor')
-    Data.Xcor = gridInfo.Xcor;
-    Data.Ycor = gridInfo.Ycor;
-elseif isfield(gridInfo,'Xcen')
-    Data.Xcen = gridInfo.Xcen;
-    Data.Ycen = gridInfo.Ycen;
+% load and add grid information
+% (forward this example line to EHY_plotMapModelData if needed)
+if ~(exist('OPT','var') && isfield(OPT,'pliFile'))
+    typeOfModelFile = EHY_getTypeOfModelFile(outputfile);
+    if EHY_isSFINCS(outputfile) || strcmp(modelType,'d3d')
+        wantedVars = '''XYcor''';
+    elseif strcmp(typeOfModelFile,'nc_griddata')
+          wantedVars = '''XYcen''';
+    elseif strcmp(modelType,'dfm')
+        if isfield(OPT,'facecolor') && strcmp(OPT.facecolor,'interp')
+            wantedVars = '{''face_nodes'',''XYcor''}';
+        else
+            wantedVars = '''face_nodes_xy''';
+        end
+    elseif strcmp(modelType,'delwaq')
+        [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(gridFile);
+        outputfile = gridFile;
+        if strcmp(typeOfModelFileDetail,'nc')
+            wantedVars = '''face_nodes_xy''';
+        elseif ismember(typeOfModelFileDetail,{'lga','cco'})
+            wantedVars = '''XYcor''';
+        end
+    end
+    EHY_getGridInfo_line = ['gridInfo = EHY_getGridInfo(''' outputfile ''',' wantedVars '' GI_extraText ');'];
+    eval(EHY_getGridInfo_line);
 end
+
+% store gridInfo in Data (to pass to EHY_plotMapModelData in case of interactive retrieval of data)
+Data.gridInfo = gridInfo;
 
 disp('Finished retrieving the data!')
 assignin('base','Data',Data);
 open Data
 disp('Variable ''Data'' created by EHY_getMapModelData_interactive')
-if isempty(EHY_getGridInfo_line)
-    assignin('base','gridInfo',gridInfo);
-    disp('Variable ''gridInfo'' created by EHY_getMapModelData_interactive')
+
+if ~(isfield(OPT,'pliFile') && ~isempty(OPT.pliFile))
+    disp([newline 'If you also want to load the corresponding gridInfo, you can use:'])
+    disp(['<strong>'  EHY_getGridInfo_line '</strong>' ])
 end
+assignin('base','gridInfo',gridInfo);
+disp('Variable ''gridInfo'' created by EHY_getMapModelData_interactive')
 
 %% output
 if nargout > 0
     Data.OPT.outputfile = outputfile;
     varargout{1} = Data;
     if nargout > 1
-        varargout{2} = EHY_getGridInfo_line;
+        varargout{2} = gridInfo;
+    end
+    if nargout > 2
+        varargout{3} = OPT;
     end
 end
 end

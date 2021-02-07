@@ -69,6 +69,7 @@ if isempty(OPT.m);    OPT.m = 0;              end
 if isempty(OPT.n);    OPT.n = 0;              end
 if ~isnumeric(OPT.m); OPT.m = str2num(OPT.m); end
 if ~isnumeric(OPT.n); OPT.n = str2num(OPT.n); end
+if ~isnumeric(OPT.mergePartitions); OPT.mergePartitions = str2num(OPT.mergePartitions); end
 
 %% determine type of model and type of inputFile
 modelType = EHY_getModelType(inputFile);
@@ -97,50 +98,70 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
             disp(['Reading and merging grid info data from partitions: ' num2str(iF) '/' num2str(length(ncFiles))])
         end
         ncFile = ncFiles{iF};
+        gridInfoPart = EHY_getGridInfo(ncFile,varargin{1},'mergePartitions',0);
         
-        try
-            gridInfoPart = EHY_getGridInfo(ncFile,varargin{1},'mergePartitions',0);
-            
-            if iF == 1
-                gridInfo = gridInfoPart;
-                fn = fieldnames(gridInfoPart);
-            else
-                for iFN = 1:length(fn)
-                    if any(strcmp(fn{iFN},{'edge_nodes','face_nodes','face_nodes_x','face_nodes_y'}))
-                        % some partitions only contain triangles,squares, ..
-                        nrRows = size(gridInfo.(fn{iFN}),1);
-                        nrRowsPart = size(gridInfoPart.(fn{iFN}),1);
-                        if nrRowsPart > nrRows
-                            gridInfo.(fn{iFN})(nrRows+1:nrRowsPart,:) = NaN;
-                        elseif nrRowsPart < nrRows
-                            gridInfoPart.(fn{iFN})(nrRowsPart+1:nrRows,:) = NaN;
-                        end
-                    end
-                    
-                    if any(strcmp(fn{iFN},{'face_nodes_x','face_nodes_y'}))
-                        gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
-                    elseif any(strcmp(fn{iFN},{'face_nodes','edge_nodes'}))
-                        gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) addToAdministration+gridInfoPart.(fn{iFN})];
-                    elseif any(strcmp(fn{iFN},{'Xcor','Xcen','Ycor','Ycen','Zcor','Zcen','area','grid'}))
-                        gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}); gridInfoPart.(fn{iFN})];
-                    elseif any(strcmp(fn{iFN},{'no_NetNode','no_NetElem'}))
-                        gridInfo.(fn{iFN}) = gridInfo.(fn{iFN})+gridInfoPart.(fn{iFN});
-                    else
-                        % skip, info is the same in all partitions
+        if iF == 1
+            gridInfo = gridInfoPart;
+            fn = fieldnames(gridInfoPart);
+        else
+            for iFN = 1:length(fn)
+                if any(strcmp(fn{iFN},{'edge_nodes','face_nodes','face_nodes_x','face_nodes_y'}))
+                    % some partitions only contain triangles,squares, ..
+                    nrRows = size(gridInfo.(fn{iFN}),1);
+                    nrRowsPart = size(gridInfoPart.(fn{iFN}),1);
+                    if nrRowsPart > nrRows
+                        gridInfo.(fn{iFN})(nrRows+1:nrRowsPart,:) = NaN;
+                    elseif nrRowsPart < nrRows
+                        gridInfoPart.(fn{iFN})(nrRowsPart+1:nrRows,:) = NaN;
                     end
                 end
-            end
-            
-            if any(ismember(fn,{'face_nodes','edge_nodes'}))
-                tmp = ncinfo(ncFile,EHY_nameOnFile(ncFile,'mesh2d_node_x'));
-                if ~exist('addToAdministration','var')
-                    addToAdministration = tmp.Size;
+                
+                if any(strcmp(fn{iFN},{'face_nodes_x','face_nodes_y'}))
+                    gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
+                elseif any(strcmp(fn{iFN},{'face_nodes','edge_nodes'}))
+                    gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) addToAdministration+gridInfoPart.(fn{iFN})];
+                elseif any(strcmp(fn{iFN},{'Xcor','Xcen','Ycor','Ycen','Zcor','Zcen','area','grid'}))
+                    gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}); gridInfoPart.(fn{iFN})];
+                elseif any(strcmp(fn{iFN},{'no_NetNode','no_NetElem'}))
+                    gridInfo.(fn{iFN}) = gridInfo.(fn{iFN})+gridInfoPart.(fn{iFN});
                 else
-                    addToAdministration = addToAdministration + tmp.Size;
+                    % skip, info is the same in all partitions
+                end
+            end
+        end
+        
+        if any(ismember(fn,{'face_nodes','edge_nodes'}))
+            tmp = ncinfo(ncFile,EHY_nameOnFile(ncFile,'mesh2d_node_x'));
+            if ~exist('addToAdministration','var')
+                addToAdministration = tmp.Size;
+            else
+                addToAdministration = addToAdministration + tmp.Size;
+            end
+        end
+    end
+    
+    % update administration > connect cells that are separated because of partitioned domains
+    fns = fieldnames(gridInfo);
+    if all(ismember({'Xcor','Ycor'},fns)) && sum(ismember({'face_nodes','edge_nodes'},fns)) > 0
+        XY = [reshape(gridInfo.Xcor,[],1) reshape(gridInfo.Ycor,[],1)];
+        [~,uniqInd] = unique(XY,'rows');
+        nonUnique = setdiff(1:size(XY,1),uniqInd);
+        for i = 1:length(nonUnique)
+            ind = find(ismember(XY,XY(nonUnique(i),:),'rows'));
+            for ii = 2:length(ind)
+                if isfield(gridInfo,'face_nodes')
+                    logi = gridInfo.face_nodes == ind(ii);
+                    gridInfo.face_nodes(logi) = ind(1);
+                end
+                if isfield(gridInfo,'edge_nodes')
+                    logi = gridInfo.edge_nodes == ind(ii);
+                    gridInfo.edge_nodes(logi) = ind(1);
                 end
             end
         end
     end
+    
+    % inputFile
     gridInfo.inputFile = [inputFile(1:end-11) '*' inputFile(end-6:end)];
     return
 end

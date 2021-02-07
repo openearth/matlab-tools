@@ -1,5 +1,5 @@
-function varargout = EHY_plotMapModelData(gridInfo,zData,varargin)
-%% varargout = EHY_plotMapModelData(gridInfo,zData,varargin)
+function varargout = EHY_plotMapModelData(gridInfo,values,varargin)
+%% varargout = EHY_plotMapModelData(gridInfo,values,varargin)
 % Create top views using QuickPlot / d3d_qp functionalities (for
 % 'DFM'-runs) or pcolor (for 'D3D'-runs)
 %
@@ -8,21 +8,21 @@ function varargout = EHY_plotMapModelData(gridInfo,zData,varargin)
 %
 % gridInfo     :   struct (with fields face_nodes_x and face_nodes_x) obtained with:
 %                  gridInfo = EHY_getGridInfo(filename,{'face_nodes_xy'});
-% zData        :   matrix: Data in net elements (cell centers)
+% values        :   matrix: Data in net elements (cell centers)
 %
 % Example1: EHY_plotMapModelData
-% Example2: EHY_plotMapModelData(gridInfo,zData)
+% Example2: EHY_plotMapModelData(gridInfo,values)
 %             with gridInfo = EHY_getGridInfo(outputfile,{'face_nodes_xy'});
 %                  Data     = EHY_getMapModelData(outputfile, ... );
-%                  zData    = Data.val(1,:);
+%                  values    = Data.val(1,:);
 %
 % For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
 % created by Julien Groenenboom, October 2018
 %
 %% Settings
 OPT.linestyle = 'none'; % other options: '-'
-OPT.edgecolor = 'k';
-OPT.facecolor = 'flat';
+OPT.edgecolor = 'none';
+OPT.facecolor = 'flat'; % 'flat' or 'interp'/'continuous shades'
 OPT.linewidth = 0.5;
 OPT.t = []; % time index, needed for plotting data along xy-trajectory
 OPT.contour = []; % array with levels or number of lines (only for structured data)
@@ -41,7 +41,7 @@ if isempty(OPT.linestyle); OPT.linestyle='none'; end
 if ~isnumeric(OPT.t); OPT.t = str2num(OPT.t); end
 
 %% check input
-if ~all([exist('gridInfo','var') exist('zData','var')])
+if ~all([exist('gridInfo','var') exist('values','var')])
     % no input, start interactive script
     EHY_plotMapModelData_interactive
     return
@@ -49,7 +49,7 @@ end
 
 %% structured or unstructured grid
 if isstruct(gridInfo)
-    if isfield(gridInfo,'face_nodes_x') && isfield(gridInfo,'face_nodes_y')
+    if all(isfield(gridInfo,{'face_nodes_x','face_nodes_y'})) || all(isfield(gridInfo,{'face_nodes','Xcor','Ycor'}))
         modelType= 'dfm';
     elseif (isfield(gridInfo,'Xcor') && isfield(gridInfo,'Ycor')) || (isfield(gridInfo,'Xcen') && isfield(gridInfo,'Ycen'))
         modelType= 'd3d';
@@ -60,16 +60,16 @@ else
     error('Something wrong with first input argument');
 end
 
-if isempty(zData)
-    error('No zData to plot')
-elseif size(zData,1)==1
-    zData = squeeze(zData);
+if isempty(values)
+    error('No values to plot')
+elseif size(values,1)==1
+    values = squeeze(values);
 end
 
 %% check for unstructured grids (modelType = 'dfm')
-if strcmp(modelType,'dfm')
-    if size(gridInfo.face_nodes_x,2)~=numel(zData)
-        error('size(gridInfo.face_nodes_x,2) should be the same as  prod(size(zData))')
+if strcmp(modelType,'dfm') && strcmpi(OPT.facecolor,'flat')
+    if size(gridInfo.face_nodes_x,2)~=numel(values)
+        error('size(gridInfo.face_nodes_x,2) should be the same as  prod(size(values))')
     end
 end
 
@@ -100,12 +100,12 @@ if strcmp(modelType,'d3d')
                 gridInfo2.Xcor(2*ii  ,:) = gridInfo.Xcor(ii+1,:);
                 gridInfo2.Ycor(2*ii-1,:) = gridInfo.Ycor(ii,:);
                 gridInfo2.Ycor(2*ii  ,:) = gridInfo.Ycor(ii,:);
-                zData2(2*ii-1,:) = zData(ii,:);
-                zData2(2*ii  ,:) = zData(ii,:);
+                values2(2*ii-1,:) = values(ii,:);
+                values2(2*ii  ,:) = values(ii,:);
             end
-            zData2(end,:) = [];
+            values2(end,:) = [];
             gridInfo = gridInfo2;
-            zData = zData2;
+            values = values2;
         end
     end
     
@@ -113,14 +113,14 @@ if strcmp(modelType,'d3d')
         error('size(gridInfo.Xcor) and size(gridInfo.Ycor) should be the same')
     end
     
-    if all(size(gridInfo.Xcor)-size(zData) == [1 1])
+    if all(size(gridInfo.Xcor)-size(values) == [1 1])
         % this is needed for info in cell center, like Delft3d 4 output
-        zData(end+1,:) = NaN;
-        zData(:,end+1) = NaN;
-    elseif all(size(gridInfo.Xcor)-size(zData) == [0 0])
+        values(end+1,:) = NaN;
+        values(:,end+1) = NaN;
+    elseif all(size(gridInfo.Xcor)-size(values) == [0 0])
         error('Are these xy-corners that you provided? Seems like xy-centers .. ')
     else
-        error('size(gridInfo.Xcor/Ycor) should be one size bigger than size(zData)')
+        error('size(gridInfo.Xcor/Ycor) should be one size bigger than size(values)')
     end
     
 end
@@ -129,38 +129,65 @@ end
 switch modelType
     case 'dfm'
         
-        % don't plot NaN's (gives problems in older MATLAB versions)
-        nanInd = isnan(zData);
-        gridInfo.face_nodes_x(:,nanInd) = [];
-        gridInfo.face_nodes_y(:,nanInd) = [];
-        zData(nanInd) = [];
-        
-        nnodes = size(gridInfo.face_nodes_x,1) - sum(isnan(gridInfo.face_nodes_x));
-        unodes = unique(nnodes);
-        unodes(unodes==0) = [];
-        
-        for i = 1:length(unodes)
-            nr = unodes(i);
-            poly_n = find(nnodes==nr);
-            npoly = length(poly_n);
-            tvertex = nr*npoly;
-            XYvertex = NaN(tvertex,2);
-            Vpatch = NaN(npoly,1);
-            offset = 0;
-            for ip = 1:npoly
-                XYvertex(offset+(1:nr),:) = [gridInfo.face_nodes_x(1:nr,poly_n(ip)) gridInfo.face_nodes_y(1:nr,poly_n(ip))];
-                offset = offset+nr;
-                Vpatch(ip) = zData(poly_n(ip));
-            end
-            
-            hPatch(i,1)=patch('vertices',XYvertex, ...
-                'faces',reshape(1:tvertex,[nr npoly])', ...
-                'facevertexcdata',Vpatch, ...
-                'marker','none',...
-                'edgecolor',OPT.edgecolor,...
-                'linestyle',OPT.linestyle,...
-                'faceColor',OPT.facecolor,...
-                'LineWidth',OPT.linewidth);
+        switch lower(OPT.facecolor)
+            case 'flat'
+                % don't plot NaN's (gives problems in older MATLAB versions)
+                nanInd = isnan(values);
+                gridInfo.face_nodes_x(:,nanInd) = [];
+                gridInfo.face_nodes_y(:,nanInd) = [];
+                values(nanInd) = [];
+                
+                nnodes = size(gridInfo.face_nodes_x,1) - sum(isnan(gridInfo.face_nodes_x));
+                unodes = unique(nnodes);
+                unodes(unodes==0) = [];
+                
+                for i = 1:length(unodes)
+                    nr = unodes(i);
+                    poly_n = find(nnodes==nr);
+                    npoly = length(poly_n);
+                    tvertex = nr*npoly;
+                    XYvertex = NaN(tvertex,2);
+                    Vpatch = NaN(npoly,1);
+                    offset = 0;
+                    for ip = 1:npoly
+                        XYvertex(offset+(1:nr),:) = [gridInfo.face_nodes_x(1:nr,poly_n(ip)) gridInfo.face_nodes_y(1:nr,poly_n(ip))];
+                        offset = offset+nr;
+                        Vpatch(ip) = values(poly_n(ip));
+                    end
+                    
+                    hPatch(i,1) = patch('vertices',XYvertex, ...
+                        'faces',reshape(1:tvertex,[nr npoly])', ...
+                        'facevertexcdata',Vpatch, ...
+                        'marker','none',...
+                        'edgecolor',OPT.edgecolor,...
+                        'linestyle',OPT.linestyle,...
+                        'faceColor','flat',...
+                        'LineWidth',OPT.linewidth);
+                end
+                
+            case {'interp','continuous shades'}
+                
+                % use QUICKPLOT functionality to create dual grid
+                data.FaceNodeConnect = gridInfo.face_nodes';
+                data.X = gridInfo.Xcor;
+                data.Y = gridInfo.Ycor;
+                data = dual_ugrid(data,0);
+                
+                FaceNodeConnect = data.FaceNodeConnect;
+                XY = [data.X data.Y];
+                values = reshape(values,[],1);
+                
+                nNodes = sum(~isnan(FaceNodeConnect),2);
+                uNodes = unique(nNodes);
+                for i = length(uNodes):-1:1
+                    I = nNodes == uNodes(i);
+                    hPatch(i,1) = patch(...
+                        'vertices',XY, ...
+                        'faces',FaceNodeConnect(I,1:uNodes(i)), ...
+                        'facevertexcdata',values, ...
+                        'facecolor','interp', ...
+                        'edgecolor',OPT.edgecolor);
+                end
         end
         
         if nargout==1
@@ -168,10 +195,10 @@ switch modelType
         end
         
     case 'd3d'
-        hPcolor = pcolor(gridInfo.Xcor,gridInfo.Ycor,zData);
+        hPcolor = pcolor(gridInfo.Xcor,gridInfo.Ycor,values);
         set(hPcolor,'linestyle',OPT.linestyle,'edgecolor',OPT.edgecolor,'facecolor',OPT.facecolor);
         if ~isempty(OPT.contour)
-            [cCon,hCon] = contour(gridInfo.Xcor,gridInfo.Ycor,zData,OPT.contour,'LineStyle','-',...
+            [cCon,hCon] = contour(gridInfo.Xcor,gridInfo.Ycor,values,OPT.contour,'LineStyle','-',...
                 'LineColor',OPT.edgecolor,'LineWidth',OPT.linewidth,'ShowText',OPT.contourtext);
         else
             cCon = []; hCon = [];

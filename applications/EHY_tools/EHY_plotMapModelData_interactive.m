@@ -6,17 +6,7 @@ function EHY_plotMapModelData_interactive
 %
 %%
 % get data
-[Data,EHY_getGridInfo_line] = EHY_getMapModelData_interactive;
-if isfield(Data,'face_nodes_x')
-    gridInfo.face_nodes_x = Data.face_nodes_x;
-    gridInfo.face_nodes_y = Data.face_nodes_y;
-elseif isfield(Data,'Xcor')
-    gridInfo.Xcor = Data.Xcor;
-    gridInfo.Ycor = Data.Ycor;
-elseif isfield(Data,'Xcen')
-    gridInfo.Xcen = Data.Xcen;
-    gridInfo.Ycen = Data.Ycen;
-end
+[Data,gridInfo,OPT] = EHY_getMapModelData_interactive;
 
 if isfield(Data,'times') && length(Data.times)>1
     option=listdlg('PromptString','Plot these time steps (as animation): (Use CTRL to select multiple time steps)','ListString',...
@@ -29,24 +19,25 @@ else
     plotInd = [];
 end
 
-disp([newline 'Note that the example MATLAB-line to get the variable ''Data'' is a few lines above ^. '])
-if ~isempty(EHY_getGridInfo_line)
-    disp([newline 'Note that next time you want to plot this data, you can also use:'])
-    disp(['<strong>' EHY_getGridInfo_line '</strong>'])
+% facecolor ('flat' or 'interp'/'Continuous shades')
+if isfield(OPT,'facecolor') && strcmp(OPT.facecolor,'interp')
+    txt_facecolor = ',''facecolor'',''interp''';
+else
+    txt_facecolor = '';
 end
 
 % if velocity was selected
 if isfield(Data,'vel_mag')
-    disp(['<strong>EHY_plotMapModelData(gridInfo,Data.vel_mag(' num2str(plotInd(1)) repmat(',:',1,ndims(Data.vel_mag)-1) '));</strong>' ])
+    disp(['<strong>EHY_plotMapModelData(gridInfo,Data.vel_mag(' num2str(plotInd(1)) repmat(',:',1,ndims(Data.vel_mag)-1) ')' txt_facecolor ');</strong>' ])
 else
     if isempty(plotInd)
-        disp('<strong>EHY_plotMapModelData(gridInfo,Data.val);</strong>')
+        disp(['<strong>EHY_plotMapModelData(gridInfo,Data.val'  txt_facecolor ');</strong>'])
     else
-        if isempty(EHY_getGridInfo_line) % data along xy-trajectory
+        if isfield(OPT,'pliFile') && ~isempty(OPT.pliFile) % data along xy-trajectory
             disp(['<strong>t = ' num2str(plotInd(1)) ';</strong>' ])
             disp(['<strong>EHY_plotMapModelData(gridInfo,Data.val(t' repmat(',:',1,ndims(Data.val)-1) '),''t'',t);</strong>' ])
         else
-            disp(['<strong>EHY_plotMapModelData(gridInfo,Data.val(' num2str(plotInd(1)) repmat(',:',1,ndims(Data.val)-1) '));</strong>' ])
+            disp(['<strong>EHY_plotMapModelData(gridInfo,Data.val(' num2str(plotInd(1)) repmat(',:',1,ndims(Data.val)-1) ')' txt_facecolor ');</strong>' ])
         end
     end
 end
@@ -61,12 +52,20 @@ for iPI = 1:max([1 length(plotInd)])
             disp(['Plotting top-views: ' num2str(iPI) '/' num2str(length(plotInd))])
         end
         if isfield(Data,'vel_mag')
-            EHY_plotMapModelData(gridInfo,Data.vel_mag(iT,:,:,:))
+            if isfield(OPT,'facecolor') && strcmp(OPT.facecolor,'interp')
+                EHY_plotMapModelData(gridInfo,Data.vel_mag(iT,:,:,:),'facecolor','interp')
+            else
+                EHY_plotMapModelData(gridInfo,Data.vel_mag(iT,:,:,:))
+            end
         else
-            if isempty(EHY_getGridInfo_line) % data along xy-trajectory
+            if isfield(Data,'OPT') && isfield(Data.OPT,'pliFile') && ~isempty(Data.OPT.pliFile) % data along xy-trajectory
                 EHY_plotMapModelData(gridInfo,Data.val(iT,:,:,:),'t',iT)
             else
-                EHY_plotMapModelData(gridInfo,Data.val(iT,:,:,:))
+                if isfield(OPT,'facecolor') && strcmp(OPT.facecolor,'interp')
+                    EHY_plotMapModelData(gridInfo,Data.val(iT,:,:,:),'facecolor','interp')
+                else
+                    EHY_plotMapModelData(gridInfo,Data.val(iT,:,:,:))
+                end
             end
         end
         title(datestr(Data.times(plotInd(iPI)),'dd-mmm-yyyy HH:MM:SS'))
