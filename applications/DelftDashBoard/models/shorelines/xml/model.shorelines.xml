@@ -44,19 +44,34 @@
       <callback>ddb_shorelines_timeframe</callback>
     </tab>
     <tab>
-      <tabstring>Physics</tabstring>
-      <element>model.shorelines.physics.xml</element>
-      <callback>ddb_shorelines_physics</callback>
+      <tabstring>Wave conditions</tabstring>
+      <element>model.shorelines.wave_conditions.xml</element>
+      <callback>ddb_shorelines_wave_conditions</callback>
+    </tab>
+    <tab>
+      <tabstring>Sediment transport</tabstring>
+      <element>model.shorelines.sediment_transport.xml</element>
+      <callback>ddb_shorelines_sediment_transport</callback>
+    </tab>
+    <tab>
+      <tabstring>Spits and channels</tabstring>
+      <element>model.shorelines.spits_and_channels.xml</element>
+      <callback>ddb_shorelines_spits_and_channels</callback>
+    </tab>
+    <tab>
+      <tabstring>Structures</tabstring>
+      <element>model.shorelines.structures.xml</element>
+      <callback>ddb_shorelines_structures</callback>
+    </tab>
+    <tab>
+      <tabstring>Nourishments</tabstring>
+      <element>model.shorelines.nourishments.xml</element>
+      <callback>ddb_shorelines_nourishments</callback>
     </tab>
     <tab>
       <tabstring>Numerics</tabstring>
       <element>model.shorelines.numerics.xml</element>
       <callback>ddb_shorelines_numerics</callback>
-    </tab>
-    <tab>
-      <tabstring>Boundary Conditions</tabstring>
-      <callback>ddb_shorelines_boundary_conditions</callback>
-      <element>model.shorelines.boundaryconditions.xml</element>
     </tab>
     <tab>
       <tabstring>Output</tabstring>

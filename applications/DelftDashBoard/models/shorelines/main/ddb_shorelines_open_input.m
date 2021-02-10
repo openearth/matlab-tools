@@ -21,9 +21,30 @@ switch lower(opt)
             handles = ddb_initializeshorelines(handles);
             
             % Read in shorelines data here ...
-%            inp=shorelines_load_input('shorelines.inp');
-%            handles.model.shorelines.domain=inp;
             
+            [S0]=readkeys(filename);
+            fieldnms=fields(S0);
+            for ii=1:length(fieldnms)
+                handles.model.shorelines.domain.(fieldnms{ii}) = S0.(fieldnms{ii});
+            end
+%% Some options not specified in input file
+            if ~isempty(handles.model.shorelines.domain.Waveclimfile)
+                handles.model.shorelines.domain.wave_opt='wave_climate';
+            elseif ~isempty(handles.model.shorelines.domain.WVCfile)
+                handles.model.shorelines.domain.wave_opt='wave_timeseries';
+            else
+                handles.model.shorelines.domain.wave_opt='mean_and_spreading';
+            end
+            handles.model.shorelines.domain.transport_opt=lower(handles.model.shorelines.domain.trform)
+   
+            if ~isempty(handles.model.shorelines.domain.LDBcoastline)
+                handles.model.shorelines.domain.shoreline.filename=handles.model.shorelines.domain.LDBcoastline;
+                [x,y]=read_xy_columns(handles.model.shorelines.domain.shoreline.filename);
+                handles.model.shorelines.domain.shoreline.length=length(x);
+                handles.model.shorelines.domain.shoreline.x=x;
+                handles.model.shorelines.domain.shoreline.y=y;
+            end
+                          
             setHandles(handles);
             ddb_plotshorelines('plot','active',0,'visible',1);
             gui_updateActiveTab;

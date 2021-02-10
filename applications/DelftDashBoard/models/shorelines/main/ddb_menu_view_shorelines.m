@@ -1,4 +1,4 @@
-function ddb_menu_view_sfincs(hObject, eventdata, option)
+function ddb_menu_view_shorelines(hObject, eventdata, option)
 %DDB_MENUVIEWDELFT3DFLOW  One line description goes here.
 %
 %   More detailed description goes here.

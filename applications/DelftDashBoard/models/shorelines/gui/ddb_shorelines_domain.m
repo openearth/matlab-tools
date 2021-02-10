@@ -14,16 +14,26 @@ else
     opt=lower(varargin{1});
     
     switch lower(opt)
-        case{'blablabla'}
-            bla_bla_bla;
+        case{'loadshorelinefile'}
+            load_shoreline_file;
             
     end
     
 end
 
 %%
-function bla_bla_bla
+function load_shoreline_file
 
 handles=getHandles;
+[x,y]=read_xy_columns(handles.model.shorelines.domain.shoreline.filename);
+handles.model.shorelines.domain.shoreline.length=length(x);
+handles.model.shorelines.domain.shoreline.x=x;
+handles.model.shorelines.domain.shoreline.y=y;
+handles = ddb_shorelines_plot_shoreline(handles, 'plot');
 setHandles(handles);
+
+ch=get(handles.model.shorelines.domain.handle,'Children');
+set(ch,'HitTest','off');
+
+gui_updateActiveTab;
 

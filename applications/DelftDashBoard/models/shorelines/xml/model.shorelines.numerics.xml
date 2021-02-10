@@ -30,10 +30,10 @@
     <callback>ddb_shorelines_numerics</callback>
     <option1>selectnumericaloption</option1>
     <listtext>
-      <variable>handles.model.shorelines.num_opts_long</variable>
+      <variable>handles.model.shorelines.domain.num_opts_long</variable>
     </listtext>
     <listvalue>
-      <variable>handles.model.shorelines.num_opts_short</variable>
+      <variable>handles.model.shorelines.domain.num_opts_short</variable>
     </listvalue>
   </element>
   <element>

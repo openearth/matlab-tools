@@ -98,7 +98,8 @@ function load_shoreline
 
 handles=getHandles;
 
-[x,y]=landboundary('read',handles.model.shorelines.domain.shoreline.filename);
+%[x,y]=landboundary('read',handles.model.shorelines.domain.shoreline.filename);
+[x,y]=read_xy_columns(handles.model.shorelines.domain.shoreline.filename);
 
 handles.model.shorelines.domain.shoreline.x=x;
 handles.model.shorelines.domain.shoreline.y=y;
@@ -106,6 +107,9 @@ handles.model.shorelines.domain.shoreline.length=length(x);
 handles = ddb_shorelines_plot_shoreline(handles, 'plot');
 
 setHandles(handles);
+
+ch=get(handles.model.shorelines.domain.shoreline.handle,'Children');
+set(ch,'HitTest','off');
 
 gui_updateActiveTab;
 

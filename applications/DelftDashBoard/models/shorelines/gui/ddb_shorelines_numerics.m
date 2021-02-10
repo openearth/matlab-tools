@@ -24,6 +24,6 @@ end
 function select_numerical_option
 
 handles=getHandles;
-opt=handles.model.shorelines.domain.num_opt;
+opt=handles.model.shorelines.num_opt;
 ddb_giveWarning('text',['Thank you for selecting numerical option ' opt]);
 setHandles(handles);
