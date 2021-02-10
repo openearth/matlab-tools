@@ -1,5 +1,7 @@
 function supertrans_xls2csv(xlsFile)
-
+% Download MS Access data base from EPSG.org
+% Import database to excel
+% Use script to save xlsx to separate csv's
 % xlsFile = 'c:\Users\schri050\Tools\OET\matlab\applications\SuperTrans\data\csv_files\EPSG-v10_013.xlsx';
 [fpath,~,~] = fileparts(xlsFile);
 [fid,sheets] = xlsfinfo(xlsFile);
