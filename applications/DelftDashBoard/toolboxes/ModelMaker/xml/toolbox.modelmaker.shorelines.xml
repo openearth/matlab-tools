@@ -50,7 +50,7 @@
     <callback>ddb_ModelMakerToolbox_shorelines</callback>
     <option1>loadshoreline</option1>
     <showfilename>no</showfilename>
-    <extension>*.pli</extension>
+    <extension>*.txt</extension>
     <selectiontext>Select shoreline file</selectiontext>
     <tooltipstring>Select shoreline file</tooltipstring>
     <dependency>
