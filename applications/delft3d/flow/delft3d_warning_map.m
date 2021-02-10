@@ -48,6 +48,8 @@ if length(varargin)>0
     if length(varargin)>1
         disp(['Too much input arguments (' num2str(length(varargin)) '), please supply only the location/name of the *.mdf as a string']);
     end
+    [~,mdfName,mdfExt] =  fileparts(varargin{1});
+    ft_1 = [mdfName,mdfExt];
 else
     [ft_1,ft_2] = uigetfile({'*.mdf','*.mdf files'},'Pick a *.mdf');
     if ischar(ft_1) && ischar(ft_2)
