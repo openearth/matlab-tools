@@ -21,11 +21,17 @@ function goVgo(varargin)
 
 %% PARSE
 
-parin=inputParser;
-
-addOptional(parin,'music',true);
-parse(parin,varargin{:});
-play_music=parin.Results.music;
+if isempty(varargin)
+    play_music=1;
+else
+    play_music=varargin{1};
+end
+    
+% parin=inputParser;
+% 
+% addOptional(parin,'music',true);
+% parse(parin,varargin{:});
+% play_music=parin.Results.music;
 
 %% INPUT
 
