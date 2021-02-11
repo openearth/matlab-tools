@@ -37,17 +37,11 @@ flg_debug=parin.Results.flg_debug;
 
 file_type=get_file_type(fpath);
 
-[fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid]=get_file_data(file_type);
-
 switch file_type
-    case {1,2,3,4,6}
-        %locations in rows
+    case {1,2,3,4,6} %locations in rows
         vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug);
-    case 5
-        %locations in columns
+    case 5 %locations in columns
         vardata=read_data_2(file_type,fpath,'flg_debug',flg_debug);
-        
-        idx_waarheid=2; %we have used this index to indicate each of the locations. 
     otherwise
         error('Specify file type')
 end
@@ -60,6 +54,15 @@ rws_data=struct('location',[],'x',[],'y',[],'raai',[],'grootheid',[],'parameter'
 
 for kloc=1:nloc
 
+    %% get indexes 
+    
+    [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid]=get_file_data(file_type);
+    
+    switch file_type
+        case 5
+            idx_waarheid=2; %we have used this index to indicate each of the locations.
+    end
+    
     %% convert
 
     %convert time format 
@@ -164,6 +167,7 @@ for kloc=1:nloc
     if ~isnan(epsg)
         if abs(epsg-epsg_rd)>0.5 
             [x,y]=convertCoordinates(x,y,'CS1.code',epsg,'CS2.code',epsg_rd);
+            epsg=epsg_rd;   
         end
     end
 
