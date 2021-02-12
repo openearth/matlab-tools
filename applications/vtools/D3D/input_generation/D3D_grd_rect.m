@@ -22,7 +22,6 @@
 %
 %OUTPUT:
 %   -a .grd file compatible with D3D is created in folder_out
-%   -a .enc file compatible with D3D is created in folder_out
 %
 %ATTENTION:
 %   -

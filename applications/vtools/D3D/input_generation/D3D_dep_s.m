@@ -62,8 +62,7 @@ etab=simdef.ini.etab;
 etab0_type=simdef.ini.etab0_type;
 
 %other
-ncy=N; %number of cells in y direction (N in RFGRID) [-]
-warning('I think this should be ncy=N-2')
+ncy=N-2; %number of cells in y direction (N in RFGRID) [-]
 d0=etab; %depth (in D3D) at the downstream end (at x=L, where the water level is set)
 
 %varying slope flag
@@ -106,9 +105,11 @@ switch simdef.ini.etab_noise
     case 0
 %         noise=zeros(ny,nx);
     case 1 %random noise
+        warning('Check indeces after changin ny def')
         noise_amp=simdef.ini.noise_amp;
         noise(1:end-3,3:end-1)=noise_amp.*(rand(ny-3,nx-3)-0.5);
     case 2 %sinusoidal
+        warning('Check indeces after changin ny def')
         noise_amp=simdef.ini.noise_amp;
         noise_Lb=simdef.ini.noise_Lb;
         x_v=2*dx:dx:L;
@@ -116,9 +117,21 @@ switch simdef.ini.etab_noise
         [x_m,y_m]=meshgrid(x_v,y_v);
         noise(1:end-3,3:end-1)=noise_amp*sin(pi*y_m/B).*cos(2*pi*x_m/noise_Lb-pi/2);
     case 3 %random noise including at x=0
+        warning('Check indeces after changin ny def')
         noise_amp=simdef.ini.noise_amp;
 %         noise(1:end-3,2:end-1)=noise_amp.*(rand(ny-3,nx-2)-0.5);
         noise(1:end-3,1:end)=noise_amp.*(rand(ny-3,nx)-0.5);
+    case 4 %trench
+        noise_amp=simdef.ini.noise_amp;
+        noise_trench_x=simdef.ini.noise_trench_x;
+        
+        %identify patch coordinates
+        xedge=-dx/2:dx:L-dx/2;
+        [~,x0_idx]=min(abs(xedge-noise_trench_x(1)));
+        [~,xf_idx]=min(abs(xedge-noise_trench_x(2)));
+        
+        noise(:,x0_idx:xf_idx)=noise_amp;
+        
     otherwise
         error('say something about it!')
 end

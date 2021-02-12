@@ -22,7 +22,14 @@
 %   -
 
 
-function D3D_mini_thk_s(simdef)
+function D3D_mini_thk_s(simdef,varargin)
+
+%% PARSE
+
+if numel(varargin)>0
+    frc=varargin{1};
+end
+
 %% RENAME
 
 dire_sim=simdef.D3D.dire_sim; 
@@ -33,6 +40,7 @@ N=simdef.grd.N;
 ThTrLyr=simdef.mor.ThTrLyr;
 ThUnLyr=simdef.mor.ThUnLyr;
 total_ThUnLyr=simdef.mor.total_ThUnLyr;
+subs_type=simdef.ini.subs_type;
 
 %other
 ncy=N; %number of cells in y direction (N in RFGRID) [-]
@@ -52,6 +60,12 @@ thk(:,:,2:end-1)=ThUnLyr;
 
 %last layer
 thk(:,:,end)=ThUnLyr*10;
+
+%Struiksma
+if subs_type==3
+    tol=1e-5;
+    thk(frc(:,:,:,end)>1-tol)=0;
+end
 
 %% WRITE
 

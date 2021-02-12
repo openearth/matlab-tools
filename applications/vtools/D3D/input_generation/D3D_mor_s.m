@@ -89,7 +89,7 @@ data{kl,1}=        '   RDC              = 0.01                 [m]      Current 
 data{kl,1}=        '   RDW              = 0.02                 [m]      Wave related roughness height (only used if IopKCW <> 1)'; kl=kl+1;
 data{kl,1}=sprintf('   MorFac           =  %0.7E               [-]      Morphological scale factor',MorFac); kl=kl+1;
 data{kl,1}=sprintf('   MorStt           =  %0.7E               [s]      Spin-up interval from TStart till start of morphological changes',MorStt); kl=kl+1;
-data{kl,1}=        '   Thresh           =  1.0000000e-003      [m]      Threshold sediment thickness for transport and erosion reduction'; kl=kl+1;
+data{kl,1}=sprintf('   Thresh           =  %0.7E               [m]      Threshold sediment thickness for transport and erosion reduction',ThTrLyr); kl=kl+1;
 data{kl,1}=sprintf('   BedUpd           = %s                            Update bed levels during FLOW simulation',BedUpd); kl=kl+1;
 data{kl,1}=sprintf('   UpdInf           = %s                            Update bed levels at inflow boundaries during FLOW simulation',UpdInf); kl=kl+1;
 data{kl,1}=sprintf('   CmpUpd           = %s                            Update bed composition during flow run',CmpUpd); kl=kl+1;

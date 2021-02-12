@@ -39,8 +39,8 @@ if nf>1
     else
         if D3D_structure==1
             D3D_mini_nconst_s(simdef) %generate .ini
-            D3D_mini_thk_s(simdef) %generate .thk
-            D3D_mini_frc_s(simdef) %generate .frc
+            frc=D3D_mini_frc_s(simdef); %generate .frc
+            D3D_mini_thk_s(simdef,frc) %generate .thk
         else
             D3D_mini_nconst_u(simdef) %generate .ini
             D3D_mini_thk_u(simdef) %generate .thk

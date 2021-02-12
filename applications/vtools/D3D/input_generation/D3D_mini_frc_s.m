@@ -22,7 +22,7 @@
 %   -patch is very specific for simulations with flow to the right
 
 
-function D3D_mini_frc_s(simdef)
+function frc=D3D_mini_frc_s(simdef)
 %% RENAME
 
 dire_sim=simdef.D3D.dire_sim; 
@@ -40,7 +40,7 @@ total_ThUnLyr=simdef.mor.total_ThUnLyr;
 actlay_frac=simdef.ini.actlay_frac;
 
 switch simdef.ini.subs_type
-    case 2
+    case {2,3}
         patch_x=simdef.ini.subs_patch_x; %x coordinate of the upper corners of the patch [m] [double(1,2)]
         patch_releta=simdef.ini.subs_patch_releta; %substrate depth of the upper corners of the patch [m] [double(1,1)]     
 end
@@ -68,7 +68,7 @@ end
 
 %substrate
 switch simdef.ini.subs_type
-    case 2
+    case {2,3}
         %all with constant value
         for kl=2:ntl
             for kf=1:nef
@@ -91,7 +91,8 @@ switch simdef.ini.subs_type
                 frc(:,kx,kl,end)=1-sum(subs_patch_frac);
             end %kl    
         end %kx
-        
+    otherwise
+        error('Check simdef.ini.subs_type')
 end
 
 %% WRITE

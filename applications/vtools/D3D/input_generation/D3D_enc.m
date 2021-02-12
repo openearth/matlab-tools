@@ -15,12 +15,9 @@
 %INPUT:
 %   -simdef.D3D.dire_sim = full path to the output folder [string] e.g. 'd:\victorchavarri\SURFdrive\projects\ellipticity\D3D\runs\1D\998'
 %   -simdef.D3D.grd = folder the grid files are [string] e.g. 'd:\victorchavarri\SURFdrive\projects\ellipticity\D3D\runs\1D\files\grd\'
-%   -simdef.grd.L = domain length [m] [double(1,1)] e.g. [100]
-%   -simdef.grd.dx = horizontal discretization [m] [integer(1,1)]; e.g. [0.02] 
 %
 %OUTPUT:
-%   -a .grd file compatible with D3D is created in folder_out
-%   -a .end file compatible with D3D is created in folder_out
+%   -a .enc file compatible with D3D is created in folder_out
 %
 %ATTENTION:
 %   -

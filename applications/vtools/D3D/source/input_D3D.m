@@ -101,9 +101,10 @@ simdef.ini.etaw_file='etaw.xyz';
 simdef.ini.etab0_type=      1; %type of initial bed elevation: 1=sloping bed; 2=constant bed elevation; 3=xyz 
 simdef.ini.s=               0.001; %(if etab0_type=1) initial slope [-] [double(1,1)] | [double(M,1)] e.g. [3e-3] | linspace(0.001,0.0001,simdef.grd.L/simdef.grd.dx+1)]
 simdef.ini.etab=            -simdef.ini.h; %initial downstream bed level [m] [double(1,1)] e.g. [0] ATTENTION! if NaN, the bed level at the downstream end will be at 0; if you want the base level to be at 0, this should be -simdef.ini.h; if you want the bed level to be at 0, this should be 0;
-simdef.ini.etab_noise=      0; %flag for initial noise [double(1,1)] 0=NO; 1=random; 2=alternate bars; 3=random including upstream end
-simdef.ini.noise_Lb=        0; %bar length [m]
-simdef.ini.noise_amp=       0; %bar amplitude [m]
+simdef.ini.etab_noise=      0; %flag for initial noise [double(1,1)] 0=NO; 1=random; 2=alternate bars; 3=random including upstream end; 4 trench
+simdef.ini.noise_amp=       -0.04; %noise amplitude (also bar height, trench height) [m] In case of trench, positive is trench and negative is hump.
+simdef.ini.noise_Lb=        0; %(for etab_noise=2) bar length [m]
+simdef.ini.noise_trench_x=  [1,3]; %x-coordinates of the beginning and end of the trench [m] [double(1,2)]; e.g. [1,3]
 % aux=load('c:\Users\chavarri\temporal\D3D\runs\P\001\figures\etab_0002593800.mat');
 % simdef.ini.xyz=aux.data_save;
 %simdef.ini.xyz= [1,1,3;1,2,3]; % bed elevation coordinates (:,1)=x; (:,2)=y; (:,3)=etab
@@ -122,7 +123,7 @@ simdef.ini.actlay_patch_x=[5.5,6.5]; %x coordinates of the beginning and end of 
 simdef.ini.actlay_patch_y=[2.5,3.0]; %y coordinates of the beginning and end of the patch [m] [double(1,2)]
 simdef.ini.actlay_patch_frac=[0]; %effective (total-1) number of fractions at the active layer in the patch [-] [double(nf-1)]
     %substrate
-simdef.ini.subs_type=       1; %type of substrate: 1=constant; 2=patch [-] [double(1,1)]
+simdef.ini.subs_type=       1; %type of substrate: 1=constant; 2=patch; 3=patch is no sediment (Struiksma) [-] [double(1,1)]
 simdef.ini.subs_frac=       [1]; %efective (total-1) number of fractions at the substrate [-] [double(nf-1)]
 simdef.ini.subs_patch_x=    [1,10]; %x coordinate of the upper corners of the patch [m] [double(1,2)]
 simdef.ini.subs_patch_releta=0.01; %substrate depth of the upper corners of the patch [m] [double(1,1)]
