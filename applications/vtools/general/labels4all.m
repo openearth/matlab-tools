@@ -17,6 +17,7 @@
 %       -'eta'      : bed elevation
 %       -'dist'     : distance
 %       -'dist_prof': distance along section
+%       -'dist_mouth': distance from mouth
 %       -'etaw'     : water level
 %       -'h'        : flow depth
 %       -'sal'      : salinity
@@ -64,6 +65,16 @@ switch lower(var)
                 str_var='afstand langs gevaren track';
             case 'es'
                 str_var='distancia a lo largo de la sección';
+        end
+        un_type='L'; 
+    case 'dist_mouth'
+        switch lan
+            case 'en'
+                str_var='distance from mouth';
+            case 'nl'
+                str_var='afstand van de riviermonding';
+            case 'es'
+                str_var='distancia a la desembocadura';
         end
         un_type='L'; 
     case {'etaw' 'waterlevel'}

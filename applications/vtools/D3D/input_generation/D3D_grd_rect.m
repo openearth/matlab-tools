@@ -16,11 +16,13 @@
 %   -simdef.D3D.dire_sim = full path to the output folder [string] e.g. 'd:\victorchavarri\SURFdrive\projects\ellipticity\D3D\runs\1D\998'
 %   -simdef.D3D.grd = folder the grid files are [string] e.g. 'd:\victorchavarri\SURFdrive\projects\ellipticity\D3D\runs\1D\files\grd\'
 %   -simdef.grd.L = domain length [m] [double(1,1)] e.g. [100]
-%   -simdef.grd.dx = horizontal discretization [m] [integer(1,1)]; e.g. [0.02] 
+%   -simdef.grd.dx = horizontal discretization [m] [double(1,1)]; e.g. [0.02] 
+%   -simdef.grd.B = domain width [m] [double(1,1)] e.g. [2]
+%   -simdef.grd.dy = transversal discretization [m] [double(1,1)]; e.g. [0.05]
 %
 %OUTPUT:
 %   -a .grd file compatible with D3D is created in folder_out
-%   -a .end file compatible with D3D is created in folder_out
+%   -a .enc file compatible with D3D is created in folder_out
 %
 %ATTENTION:
 %   -
@@ -37,9 +39,18 @@ L=simdef.grd.L;
 B=simdef.grd.B;
 dx=simdef.grd.dx;
 dy=simdef.grd.dy;
+
+%in case we call directly
+if isfield(simdef.grd,'M')==0 || isfield(simdef.grd,'N')==0
+    simdef.grd.node_number_x=simdef.grd.L/simdef.grd.dx; %number of nodes 
+    simdef.grd.node_number_y=simdef.grd.B/simdef.grd.dy; %number of nodes 
+    simdef.grd.M=simdef.grd.node_number_x+2; %M (number of cells in x direction)
+    simdef.grd.N=simdef.grd.node_number_y+2; %N (number of cells in y direction)
+end
+
 M=simdef.grd.M;
 N=simdef.grd.N;
-
+    
 %% GRID
 
 % grid=NaN(M-1,N-1);
