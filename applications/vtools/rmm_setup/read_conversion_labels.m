@@ -56,6 +56,21 @@ for klr=1:nlr
     loclabels_rtc(klr).data=labels_data_rtc{klr,1};
     loclabels_rtc(klr).s3=labels_s3_rtc{klr,1};
     loclabels_rtc(klr).sre=labels_sre_rtc{klr,1};
+    if exist('labels_s3_rtc_block','var')
+        loclabels_rtc(klr).s3_block=labels_s3_rtc_block{klr,1};  
+    else
+        loclabels_rtc(klr).s3_block=loclabels_rtc(klr).s3;
+    end
+    if exist('function_s3_rtc','var')
+        loclabels_rtc(klr).s3_function=function_s3_rtc(klr,1);   
+    else
+        loclabels_rtc(klr).s3_function=0;
+    end
+    if exist('param_s3_rtc','var')
+        loclabels_rtc(klr).s3_param=function_s3_rtc(klr,1);   
+    else
+        loclabels_rtc(klr).s3_param=0;
+    end
 end %kl
 
 

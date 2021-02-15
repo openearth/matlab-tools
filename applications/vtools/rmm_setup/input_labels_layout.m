@@ -4,13 +4,6 @@
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %200610
 %
-%add paths to OET tools:
-%   https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab
-%   run(setproperty)
-%add paths to RIV tools:
-%   https://repos.deltares.nl/repos/RIVmodels/rivtools/trunk/matlab
-%   run(rivsettings)
-
 %% EXPLANATION
 
     %% input example
@@ -35,6 +28,7 @@
 %function to be applied in SOBEK-3:
 %   0 = nothing
 %   1 = time shift
+%   2 = add constant to value (after converting to SI unit)
 % function_s3(kl,1)=1;
 
 %parameter to apply to the function:
@@ -184,6 +178,9 @@ function_param_sre(kl,1)=0;
 
 %the long name of the component when importing into the SOBEK-3 GUI is
 %understandable. However, we use the id for consistency. 
+
+%% Haringvliet
+
 aux_labels_sre_rtc={
 '7154338'
 '7154339'
@@ -208,6 +205,86 @@ aux_labels_sre_rtc={
 for kl=1:17
 labels_data_rtc{kl,1}=sprintf('HVS%02d',kl);
 labels_s3_rtc{kl,1}=sprintf('HVSL_%02d',kl);
+labels_s3_rtc_block{kl,1}=sprintf('HVSL_%02d',kl);
+function_s3_rtc(kl,1)=2;
+param_s3_rtc(kl,1)=-5.5;
 labels_sre_rtc{kl,1}=aux_labels_sre_rtc{kl,1};
 end
+kl=numel(labels_data_rtc);
+
+%% Maeslantkering
+
+kl=kl+1;
+labels_data_rtc{kl,1}='SVKW-a-c-w';
+labels_s3_rtc{kl,1}='Maeslantkering';
+labels_s3_rtc_block{kl,1}='timeseries drempel width';
+function_s3_rtc(kl,1)=0;
+param_s3_rtc(kl,1)=0;
+labels_sre_rtc{kl,1}='';
+
+kl=kl+1;
+labels_data_rtc{kl,1}='SVKW-b-g-w';
+labels_s3_rtc{kl,1}='Maeslantkering';
+labels_s3_rtc_block{kl,1}='timeseries schuif width';
+function_s3_rtc(kl,1)=0;
+param_s3_rtc(kl,1)=0;
+labels_sre_rtc{kl,1}='';
+
+kl=kl+1;
+labels_data_rtc{kl,1}='SVKW-b-g-w';
+labels_s3_rtc{kl,1}='Maeslantkering';
+labels_s3_rtc_block{kl,1}='timeseries overstort width';
+function_s3_rtc(kl,1)=0;
+param_s3_rtc(kl,1)=0;
+labels_sre_rtc{kl,1}='';
+
+kl=kl+1;
+labels_data_rtc{kl,1}='SVKW-b-g-h';
+labels_s3_rtc{kl,1}='Maeslantkering';
+labels_s3_rtc_block{kl,1}='timeseries schuif crest';
+function_s3_rtc(kl,1)=0;
+param_s3_rtc(kl,1)=0;
+labels_sre_rtc{kl,1}='';
+
+kl=kl+1;
+labels_data_rtc{kl,1}='SVKW-c-s-p';
+labels_s3_rtc{kl,1}='Maeslantkering';
+labels_s3_rtc_block{kl,1}='timeseries overstort crest';
+function_s3_rtc(kl,1)=0;
+param_s3_rtc(kl,1)=0;
+labels_sre_rtc{kl,1}='';
+
+%% Hartelkering
+
+kl=kl+1;
+labels_data_rtc{kl,1}='SVKH-b-g-h';
+labels_s3_rtc{kl,1}='Hartelkering';
+labels_s3_rtc_block{kl,1}='hartel breed over';
+function_s3_rtc(kl,1)=0;
+param_s3_rtc(kl,1)=0;
+labels_sre_rtc{kl,1}='';
+
+kl=kl+1;
+labels_data_rtc{kl,1}='SVKH-s-g-h';
+labels_s3_rtc{kl,1}='Hartelkering';
+labels_s3_rtc_block{kl,1}='hartel smal over';
+function_s3_rtc(kl,1)=0;
+param_s3_rtc(kl,1)=0;
+labels_sre_rtc{kl,1}='';
+
+kl=kl+1;
+labels_data_rtc{kl,1}='SVKH-s-s-p';
+labels_s3_rtc{kl,1}='Hartelkering';
+labels_s3_rtc_block{kl,1}='timeseries smal onder';
+function_s3_rtc(kl,1)=0;
+param_s3_rtc(kl,1)=0;
+labels_sre_rtc{kl,1}='';
+
+kl=kl+1;
+labels_data_rtc{kl,1}='SVKH-b-s-p';
+labels_s3_rtc{kl,1}='Hartelkering';
+labels_s3_rtc_block{kl,1}='timeseries breed onder';
+function_s3_rtc(kl,1)=0;
+param_s3_rtc(kl,1)=0;
+labels_sre_rtc{kl,1}='';
 

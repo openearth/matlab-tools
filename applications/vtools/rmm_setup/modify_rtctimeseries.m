@@ -66,7 +66,8 @@ nseries=numel(loclabels); %number of time series to be changed
 block_line=NaN(nseries,1);
 for kseries=1:nseries
     name_rtc=loclabels(kseries).s3;
-    name_block=name_rtc; %modify if the name of the block with the time series is different than the name of the rtc control group
+%     name_block=name_rtc; %modify if the name of the block with the time series is different than the name of the rtc control group
+    name_block=loclabels(kseries).s3_block;
     idx_bcn=find(strcmp({bcn.tsc.Locatiecode},loclabels(kseries).data));
     search4block=true;
     kl=1;
@@ -173,8 +174,12 @@ nseries=numel(loclabels); %number of time series to be changed
 for kseries_bc=1:nseries
     kseries=o2(kseries_bc);
     name_rtc=loclabels(kseries).s3;
-    name_block=name_rtc; %modify if the name of the block with the time series is different than the name of the rtc control group
+    %     name_block=name_rtc; %modify if the name of the block with the time series is different than the name of the rtc control group
+    name_block=loclabels(kseries).s3_block;
     idx_bcn=find(strcmp({bcn.tsc.Locatiecode},loclabels(kseries).data));
+    if strcmp(name_block,'hartel breed over')
+        a=1;
+    end
     search4block=true;
     kl=1;
     while search4block
@@ -223,7 +228,19 @@ for kseries_bc=1:nseries
     for kts=1:nts
 %     for kts=1:5 %for debugging purposes
         auxt=bcn.tsc(idx_bcn).daty(kts);
-        auxv=-5.5+bcn.tsc(idx_bcn).val(kts)/100; %cm to m
+        switch bcn.tsc(idx_bcn).Parametereenheid
+            case 'cm'
+                unit_f=1/100;
+            case 'm'
+                unit_f=1;
+            otherwise
+                error('unknown unit (parametereenheid) in %s',bcn.tsc(idx_bcn).Locatiecode)
+        end
+        auxv=bcn.tsc(idx_bcn).val(kts)*unit_f; %cm to m
+        switch loclabels(kseries).s3_function
+            case 2
+                auxv=auxv+loclabels(kseries).s3_param; 
+        end
         fprintf(fID,'      <event date="%04d-%02d-%02d" time="%02d:%02d:%02d" value="%f" />\r\n',year(auxt),month(auxt),day(auxt),hour(auxt),minute(auxt),second(auxt),auxv);
     end
     

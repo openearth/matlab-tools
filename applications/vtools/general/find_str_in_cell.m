@@ -24,6 +24,10 @@ function idx=find_str_in_cell(data,str2find)
 %% all values
 %useful for later select left and right
 
+if ~iscell(str2find)
+    error('Second input must be cell array')
+end
+
 ns=numel(str2find);
 idx=[];
 for ks=1:ns
