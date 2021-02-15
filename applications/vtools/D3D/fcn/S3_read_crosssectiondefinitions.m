@@ -51,7 +51,7 @@ switch file_type
     case 2 %FM cross-section definition
         tag_cs='[Definition]';
         tags ={'id'            ,'type'          ,'thalweg'  ,'numLevels'  ,'levels'   ,'flowWidths'  ,'totalWidths'  ,'leveeCrestLevel'  ,'leveeFlowArea'  ,'leveeTotalArea','leveeBaseLevel','mainWidth','fp1Width','fp2Width','isShared'};            
-        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+','\d+.\d+'    ,'-?\d+.\d+','-?\d+.\d+'   ,'-?\d+.\d+'    ,'-?\d+.\d+'        ,'\d+.\d+'        ,'\d+.\d+'       ,'-?\d+.\d+'     ,'\d+.\d+'  ,'\d+.\d+' ,'\d+.\d+' ,'\d+.\d+' };
+        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+','\d+'        ,'-?\d+.\d+','-?\d+.\d+'   ,'-?\d+.\d+'    ,'-?\d+.\d+'        ,'\d+.\d+'        ,'\d+.\d+'       ,'-?\d+.\d+'     ,'\d+.\d+'  ,'\d+.\d+' ,'\d+.\d+' ,'\d+'     };
         fcnts=[1               ,1               ,2          ,2            ,2          ,2             ,2              ,2                  ,2                ,2               ,2               ,2          ,2         ,2         ,2         ];
     case 3 %FM cross-section location  
         tag_cs='[CrossSection]';
