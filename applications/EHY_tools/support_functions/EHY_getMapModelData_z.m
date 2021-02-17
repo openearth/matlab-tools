@@ -11,15 +11,17 @@ OPT = rmfield(OPT,{'z','zRef','zMethod','layer'});
 varName0 = OPT.varName;
 
 %% determine reference level
-if ismember(OPT0.zRef,{'wl','bed'})
+if ismember(OPT0.zRef,{'wl','bed','bl'})
     OPT.varName = OPT0.zRef;
     Data_zRef = EHY_getMapModelData(inputFile,OPT);
     refLevel = Data_zRef.val;
     if any(size(refLevel) == 1)
         refLevel = reshape(refLevel,[1 numel(refLevel)]);
     end
-else % model reference level
-    refLevel = 0;
+elseif isempty(OPT0.zRef) 
+    refLevel = 0; % model reference level
+else
+    error(['Unknown reference level: ' OPT0.zRef ])
 end
 
 %% get "zcen_int"-data

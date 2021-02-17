@@ -41,6 +41,7 @@ if strcmpi(varName,'bl'                   ) varName = 'bedlevel'   ; end
 if strcmpi(varName,'suspendedload'        ) varName = 'suspload'   ; end
 if strcmpi(varName,'sedimentconcentration') varName = 'sedconc'    ; end
 if strcmpi(varName,'den'                  ) varName = 'density'    ; end
+if strcmpi(varName,'wd'                   ) varName = 'waterdepth' ; end
 
 %% Change the name of the requested Variable name
 newName = varName;

@@ -154,7 +154,7 @@ if exist('OPT','var')
         
         if strcmpi(fn,'mergePartitions') && strcmp(val,'1')
             continue % this is a default option
-        elseif (ismember(fn,{'m','n'}) && ~all(val == '0'))
+        elseif ismember(fn,{'m','n'}) && all(val == '0')
             continue % this is a default option
         end
         

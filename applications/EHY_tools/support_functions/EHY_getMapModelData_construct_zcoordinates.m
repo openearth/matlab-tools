@@ -254,6 +254,7 @@ for iT = 1:length(dims(timeInd).index)
         subs_ind   = strmatch('TotalDepth',dw.SubsName);
         [~,data]  = delwaq('read',dw,subs_ind,0,1); % first time_ind to combine with OPT.dw_iniWL
         data      = waq2flow3d(data,dwGrid.Index);
+        data(data == -999) = NaN;
         TotalDepth = data(m_ind,n_ind,k_ind);
         TotalDepth = max(TotalDepth,[],3);
         bl = OPT.dw_iniWL - TotalDepth;
@@ -263,6 +264,7 @@ for iT = 1:length(dims(timeInd).index)
     subs_ind   = strmatch('Depth',dw.SubsName);
     [~,data]  = delwaq('read',dw,subs_ind,0,time_ind);
     data      = waq2flow3d(data,dwGrid.Index);
+    data(data == -999) = 0;
     Depth = data(m_ind,n_ind,k_ind);
     Depth(:,:,end+1) = 0; % add bottom interface
     Zcen_int(iT,:,:,:) = bl + flip(cumsum(flip(Depth,3),3),3);

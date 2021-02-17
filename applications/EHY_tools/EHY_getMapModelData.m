@@ -343,13 +343,15 @@ if ~exist('Data','var')
         case 'delwaq'
             [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(inputFile);
             if strcmpi(typeOfModelFileDetail,'map')
-                if ismember(lower(OPT.varName),{'wl','bedlevel','zcen_cen','zcen_int'})
+                if ismember(lower(OPT.varName),{'wl','bedlevel','zcen_cen','zcen_int','waterdepth'})
                     [Zcen_int,Zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates(inputFile,modelType,OPT);
                     if strcmpi(OPT.varName,'wl')
                         Data.val = wl;
                     elseif strcmpi(OPT.varName,'bedlevel')
                         Data.val = reshape(bl,[1 size(bl)]); % [time(1),m,n]
                         Data.times = Data.times(1);
+                    elseif ismember(lower(OPT.varName),{'wd','waterdepth'})
+                        Data.val = wl - reshape(bl,[1 size(bl)]); % [time,m,n]
                     else
                         if strcmpi(OPT.varName,'Zcen_cen')
                             Data.val = Zcen_cen;

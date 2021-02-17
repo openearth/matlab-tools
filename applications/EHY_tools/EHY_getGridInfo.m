@@ -661,25 +661,25 @@ switch modelType
                 end
                 
             case {'grid','network'}
-                if ismember('XY',wantedOutput)
-                    if strcmp(ext,'.grd')
-                        grd = delft3d_io_grd('read',inputFile);
-                        E.mmax = grd.mmax;
-                        E.nmax = grd.nmax;
-                        E.xcor = grd.cor.x;
-                        E.ycor = grd.cor.y;
-                        E.xcen = grd.cen.x;
-                        E.ycen = grd.cen.y;
-                        E.xu = grd.u.x;
-                        E.yu = grd.u.y;
-                        E.xv = grd.v.x;
-                        E.yv = grd.v.y;
-                    end
-                end
+                grd = delft3d_io_grd('read',inputFile);
+                E.grd = grd;
                 
+                if ismember('XYcor',wantedOutput)
+                    E.Xcor = grd.cor.x;
+                    E.Ycor = grd.cor.y;
+                end
+                if ismember('XYcen',wantedOutput)
+                    E.Xcen = grd.cen.x;
+                    E.Ycen = grd.cen.y;
+                end
+                if ismember('XYu',wantedOutput)
+                    E.Xu = grd.u.x;
+                    E.Yu = grd.u.y;
+                    E.Xv = grd.v.x;
+                    E.Yv = grd.v.y;
+                end
                 if ismember('grid',wantedOutput)
-                    tmp = wlgrid('read',inputFile);
-                    E.grid = XYcor2grid(tmp.X,tmp.Y);
+                    E.grid = XYcor2grid(grd.cor.x,grd.cor.y);
                 end
                 
             case 'outputfile'

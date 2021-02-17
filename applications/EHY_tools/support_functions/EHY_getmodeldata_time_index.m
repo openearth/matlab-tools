@@ -13,9 +13,14 @@ if ~isempty(OPT.t) && ~all(OPT.t==0)
     time_index    = OPT.t;
     Data.times    = Data.times(time_index);
     varargout{1}  = 1:length(time_index);
-elseif ~isempty(OPT.t0) && ~isempty(OPT.tend)
-    t0_ind = find(Data.times >= OPT.t0,1,'first');
-    tend_ind = find(Data.times <= OPT.tend,1,'last');
+elseif (~isempty(OPT.t0) && ~isempty(OPT.tend)) || ~isempty(OPT.tint)
+    if isempty(OPT.t0) && isempty(OPT.tend)
+        t0_ind = 1;
+        tend_ind = length(Data.times);
+    else
+        t0_ind = find(Data.times >= OPT.t0,1,'first');
+        tend_ind = find(Data.times <= OPT.tend,1,'last');
+    end
     
     if isfield(OPT,'tint') && ~isempty(OPT.tint)
         modelTimes_int = Data.times(3) - Data.times(2); % in days

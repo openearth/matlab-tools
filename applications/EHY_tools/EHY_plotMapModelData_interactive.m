@@ -52,20 +52,17 @@ for iPI = 1:max([1 length(plotInd)])
             disp(['Plotting top-views: ' num2str(iPI) '/' num2str(length(plotInd))])
         end
         if isfield(Data,'vel_mag')
-            if isfield(OPT,'facecolor') && strcmp(OPT.facecolor,'interp')
-                EHY_plotMapModelData(gridInfo,Data.vel_mag(iT,:,:,:),'facecolor','interp')
-            else
-                EHY_plotMapModelData(gridInfo,Data.vel_mag(iT,:,:,:))
-            end
+            values = Data.vel_mag(iT,:,:,:);
         else
-            if isfield(Data,'OPT') && isfield(Data.OPT,'pliFile') && ~isempty(Data.OPT.pliFile) % data along xy-trajectory
-                EHY_plotMapModelData(gridInfo,Data.val(iT,:,:,:),'t',iT)
+            values = Data.val(iT,:,:,:);
+        end
+        if isfield(Data,'OPT') && isfield(Data.OPT,'pliFile') && ~isempty(Data.OPT.pliFile) % data along xy-trajectory
+            EHY_plotMapModelData(gridInfo,values,'t',iT)
+        else
+            if isfield(OPT,'facecolor') && strcmp(OPT.facecolor,'interp')
+                EHY_plotMapModelData(gridInfo,values,'facecolor','interp')
             else
-                if isfield(OPT,'facecolor') && strcmp(OPT.facecolor,'interp')
-                    EHY_plotMapModelData(gridInfo,Data.val(iT,:,:,:),'facecolor','interp')
-                else
-                    EHY_plotMapModelData(gridInfo,Data.val(iT,:,:,:))
-                end
+                EHY_plotMapModelData(gridInfo,values)
             end
         end
         title(datestr(Data.times(plotInd(iPI)),'dd-mmm-yyyy HH:MM:SS'))

@@ -103,14 +103,9 @@ if strcmp(OPT.vectorStyle,'quiver')
             end
             
         case 'distance'
-            % Make use of QuickPlot-functionality, since reducepoints_r2007a_7p4.mexw64 is in private folder,
-            % make a temporary copy of reducepoints_r2007a_7p4.mexw64
-            copyfile([fileparts(which('d3d_qp')) filesep 'private' filesep 'reducepoints_r2007a_7p4.mexw64'],pwd)
+            % Make use of QuickPlot-functionality reducepoints_r2007a_7p4.mexw64 
             keep_index = calldll('reducepoints_r2007a_7p4',OPT.thinning,gridInfo.Xcen,gridInfo.Ycen);
-            
-            % delete copied file
-            delete([pwd filesep 'reducepoints_r2007a_7p4.mexw64'])
-            
+                        
             % next step works for both structured and unstructured grids
             vel_x = vel_x(keep_index);
             vel_y = vel_y(keep_index);
