@@ -25,5 +25,5 @@ function select_transport_option
 
 handles=getHandles;
 opt=handles.model.shorelines.domain.transport_opt;
-ddb_giveWarning('text',['Thank you for selecting transport option ' opt]);
+%ddb_giveWarning('text',['Thank you for selecting transport option ' opt]);
 setHandles(handles);

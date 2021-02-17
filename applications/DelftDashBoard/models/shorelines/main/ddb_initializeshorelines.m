@@ -24,11 +24,8 @@ handles.model.shorelines.domain.phys_opts_short={'opt1','opt2','opt3'};
 handles.model.shorelines.domain.spit_opts_long ={'Off','On'};
 handles.model.shorelines.domain.spit_opts_short={'off','on'};
 
-handles.model.shorelines.domain.channel_opts_long ={'Off','On'};
-handles.model.shorelines.domain.channel_opts_short={'off','on'};
-
-handles.model.shorelines.domain.status='waiting';
-handles.model.shorelines.domain.current_time_string=datestr(floor(now));
-handles.model.shorelines.domain.time_remaining_string='0';
+handles.model.shorelines.status='waiting';
+handles.model.shorelines.current_time_string=datestr(floor(now));
+handles.model.shorelines.time_remaining_string='0';
 
 handles=ddb_shorelines_initialize_domain(handles);

@@ -32,7 +32,8 @@ switch lower(opt)
             xp=handles.model.shorelines.domain.shoreline.x;
             yp=handles.model.shorelines.domain.shoreline.y;
             
-            h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@change_shoreline,'tag','shorelines_shoreline','marker','o');
+%             h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@change_shoreline,'tag','shorelines_shoreline','marker','o');
+            h=plot(xp,yp,'r','linewidth',1)
             handles.model.shorelines.domain.shoreline.handle=h;
                         
             if vis

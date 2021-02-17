@@ -32,7 +32,7 @@ function select_wave_option
 
 handles=getHandles;
 opt=handles.model.shorelines.domain.wave_opt;
-ddb_giveWarning('text',['Thank you for selecting wave option ' opt]);
+%ddb_giveWarning('text',['Thank you for selecting wave option ' opt]);
 setHandles(handles);
 
 %%
@@ -40,7 +40,7 @@ function select_wavetrans_option
 
 handles=getHandles;
 opt=handles.model.shorelines.domain.wavetrans_opt;
-ddb_giveWarning('text',['Thank you for selecting wave option ' opt]);
+%ddb_giveWarning('text',['Thank you for selecting wave option ' opt]);
 setHandles(handles);
 
 %%

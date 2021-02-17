@@ -154,7 +154,9 @@ handles=getHandles;
 
 x=handles.model.shorelines.domain.shoreline.x;
 y=handles.model.shorelines.domain.shoreline.y;
-landboundary('write',handles.model.shorelines.domain.shoreline.filename,x,y);
+%landboundary('write',handles.model.shorelines.domain.shoreline.filename,x,y);
+out=[x;y]';
+save(handles.model.shorelines.domain.shoreline.filename,'out','-ascii');
 
 setHandles(handles);
 

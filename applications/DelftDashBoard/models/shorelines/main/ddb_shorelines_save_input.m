@@ -6,8 +6,8 @@ inp=handles.model.shorelines.domain;
 
 switch lower(opt)
     case{'save'}
-                
-        shorelines_save_input('shorelines.inp',inp);
+        [filename, pathname, filterindex] = uiputfile('shorelines.inp','Select ShorelineS file');
+        shorelines_save_input(filename,inp);
         
 end
 
