@@ -2,98 +2,6 @@
 <root>
   <element>
     <style>pushbutton</style>
-    <position>20 110 100 20</position>
-    <text>Draw Shoreline</text>
-    <callback>ddb_ModelMakerToolbox_shorelines</callback>
-    <option1>drawshoreline</option1>
-    <tooltipstring>Draw shoreline</tooltipstring>
-    <dependency>
-      <action>enable</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.model.shorelines.status</variable>
-        <type>string</type>
-        <value>waiting</value>
-        <operator>eq</operator>
-      </check>
-    </dependency>
-  </element>
-  <element>
-    <style>pushbutton</style>
-    <position>20 85 100 20</position>
-    <text>Delete Shoreline</text>
-    <callback>ddb_ModelMakerToolbox_shorelines</callback>
-    <option1>deleteshoreline</option1>
-    <tooltipstring>Delete shoreline</tooltipstring>
-    <dependency>
-      <action>enable</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.model.shorelines.domain.shoreline.length</variable>
-        <type>integer</type>
-        <value>0</value>
-        <operator>gt</operator>
-      </check>
-      <check>
-        <variable>handles.model.shorelines.status</variable>
-        <type>string</type>
-        <value>waiting</value>
-        <operator>eq</operator>
-      </check>
-    </dependency>
-  </element>
-  <element>
-    <style>pushselectfile</style>
-    <position>20 60 100 20</position>
-    <text>Load Shoreline</text>
-    <variable>handles.model.shorelines.domain.shoreline.filename</variable>
-    <callback>ddb_ModelMakerToolbox_shorelines</callback>
-    <option1>loadshoreline</option1>
-    <showfilename>no</showfilename>
-    <extension>*.txt</extension>
-    <selectiontext>Select shoreline file</selectiontext>
-    <tooltipstring>Select shoreline file</tooltipstring>
-    <dependency>
-      <action>enable</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.model.shorelines.status</variable>
-        <type>string</type>
-        <value>waiting</value>
-        <operator>eq</operator>
-      </check>
-    </dependency>
-  </element>
-  <element>
-    <style>pushsavefile</style>
-    <position>20 35 100 20</position>
-    <text>Save Shoreline</text>
-    <variable>handles.model.shorelines.domain.shoreline.filename</variable>
-    <callback>ddb_ModelMakerToolbox_shorelines</callback>
-    <option1>saveshoreline</option1>
-    <showfilename>no</showfilename>
-    <extension>*.pli</extension>
-    <selectiontext>Select shoreline file</selectiontext>
-    <tooltipstring>Save shoreline file</tooltipstring>
-    <dependency>
-      <action>enable</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.model.shorelines.domain.shoreline.length</variable>
-        <type>integer</type>
-        <value>0</value>
-        <operator>gt</operator>
-      </check>
-      <check>
-        <variable>handles.model.shorelines.status</variable>
-        <type>string</type>
-        <value>waiting</value>
-        <operator>eq</operator>
-      </check>
-    </dependency>
-  </element>
-  <element>
-    <style>pushbutton</style>
     <position>870 65 120 20</position>
     <text>START ShorelineS</text>
     <callback>ddb_ModelMakerToolbox_shorelines</callback>
@@ -103,7 +11,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.shoreline.length</variable>
+        <variable>handles.model.shorelines.nrshorelines</variable>
         <type>integer</type>
         <value>0</value>
         <operator>gt</operator>
@@ -127,7 +35,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.shoreline.length</variable>
+        <variable>handles.model.shorelines.nrshorelines</variable>
         <type>integer</type>
         <value>0</value>
         <operator>gt</operator>
@@ -151,7 +59,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.shoreline.length</variable>
+        <variable>handles.model.shorelines.nrshorelines</variable>
         <type>integer</type>
         <value>0</value>
         <operator>gt</operator>
@@ -172,7 +80,7 @@
       <action>visible</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.shoreline.length</variable>
+        <variable>handles.model.shorelines.nrshorelines</variable>
         <type>integer</type>
         <value>0</value>
         <operator>gt</operator>
@@ -193,7 +101,7 @@
       <action>visible</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.shoreline.length</variable>
+        <variable>handles.model.shorelines.nrshorelines</variable>
         <type>integer</type>
         <value>0</value>
         <operator>gt</operator>
