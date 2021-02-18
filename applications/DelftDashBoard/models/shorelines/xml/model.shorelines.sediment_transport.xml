@@ -10,14 +10,14 @@
     <text>Transport Formula</text>
     <position>200 135 120 20</position>
     <type>string</type>
-    <variable>handles.model.shorelines.domain.transport_opt</variable>
+    <variable>handles.model.shorelines.domain.trform</variable>
     <callback>ddb_shorelines_sediment_transport</callback>
     <option1>selecttransportoption</option1>
     <listtext>
-      <variable>handles.model.shorelines.domain.transport_opts_long</variable>
+      <variable>handles.model.shorelines.transport_opts_long</variable>
     </listtext>
     <listvalue>
-      <variable>handles.model.shorelines.domain.transport_opts_short</variable>
+      <variable>handles.model.shorelines.transport_opts_short</variable>
     </listvalue>
   </element>
   <element>
@@ -31,12 +31,12 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>cerc</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>cerc3</value>
         <operator>eq</operator>
       </check>
@@ -61,17 +61,17 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>kamp</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>milh</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>vr14</value>
         <operator>eq</operator>
       </check>
@@ -87,17 +87,17 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>kamp</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>milh</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>vr14</value>
         <operator>eq</operator>
       </check>
@@ -113,17 +113,17 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>kamp</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>milh</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>vr14</value>
         <operator>eq</operator>
       </check>
@@ -140,7 +140,7 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>vr14</value>
         <operator>eq</operator>
       </check>
@@ -157,17 +157,17 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>kamp</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>milh</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>vr14</value>
         <operator>eq</operator>
       </check>
@@ -183,17 +183,17 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>kamp</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>milh</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>vr14</value>
         <operator>eq</operator>
       </check>
@@ -209,17 +209,17 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>kamp</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>milh</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>vr14</value>
         <operator>eq</operator>
       </check>
@@ -235,17 +235,17 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>kamp</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>milh</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.shorelines.domain.transport_opt</variable>
+        <variable>handles.model.shorelines.domain.trform</variable>
         <value>vr14</value>
         <operator>eq</operator>
       </check>

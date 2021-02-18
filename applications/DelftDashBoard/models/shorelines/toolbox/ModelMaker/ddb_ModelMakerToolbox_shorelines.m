@@ -19,16 +19,7 @@ else
     opt=lower(varargin{1});
     
     switch opt
-        case{'drawshoreline'}
-            draw_shoreline;
-        case{'drawisland'}
-            draw_island;
-        case{'deleteshoreline'}
-            delete_shoreline;
-        case{'loadshoreline'}
-            load_shoreline;
-        case{'saveshoreline'}
-            save_shoreline;
+
         case{'startshorelines'}
             start_model;
         case{'pauseshorelines'}
@@ -38,127 +29,6 @@ else
     end
     
 end
-
-%%
-function draw_shoreline
-
-handles=getHandles;
-
-% First delete existing shoreline
-%handles = ddb_shorelines_plot_shoreline(handles, 'delete');
-% handles.model.shorelines.domain.shoreline.x=[];
-% handles.model.shorelines.domain.shoreline.y=[];
-% handles.model.shorelines.domain.shoreline.length=0;
-
-gui_polyline('draw','axis',handles.GUIHandles.mapAxis,'tag','shorelines_tmp','marker','o', ...
-    'createcallback',@create_shoreline, ...
-    'linecolor','g','closed',0);
-
-setInstructions({'','Click on map to draw coastline','Use right-click to end coastline'});
-
-setHandles(handles);
-
-%%
-function draw_island
-
-handles=getHandles;
-
-% First delete existing shoreline
-%handles = ddb_shorelines_plot_shoreline(handles, 'delete');
-% handles.model.shorelines.domain.shoreline.x=[];
-% handles.model.shorelines.domain.shoreline.y=[];
-% handles.model.shorelines.domain.shoreline.length=0;
-
-gui_polyline('draw','axis',handles.GUIHandles.mapAxis,'tag','shorelines_tmp','marker','o', ...
-    'createcallback',@create_shoreline, ...
-    'linecolor','g','closed',1);
-
-setInstructions({'','Click on map to draw coastline','Use right-click to end coastline'});
-
-setHandles(handles);
-
-%%
-function create_shoreline(h,x,y)
-
-handles=getHandles;
-
-% Delete temporary shoreline
-
-delete(h);
-
-if ~isempty(handles.model.shorelines.domain.shoreline.x)
-    handles.model.shorelines.domain.shoreline.x=[handles.model.shorelines.domain.shoreline.x NaN x];
-    handles.model.shorelines.domain.shoreline.y=[handles.model.shorelines.domain.shoreline.y NaN y];
-else
-    handles.model.shorelines.domain.shoreline.x=x;
-    handles.model.shorelines.domain.shoreline.y=y;
-end
-
-handles.model.shorelines.domain.shoreline.length=length(handles.model.shorelines.domain.shoreline.x);
-
-handles = ddb_shorelines_plot_shoreline(handles, 'plot');
-
-handles.model.shorelines.status='waiting';
-
-setHandles(handles);
-
-clearInstructions;
-
-gui_updateActiveTab;
-
-draw_shoreline;
-
-%%
-function delete_shoreline
-
-handles=getHandles;
-
-% First delete existing shoreline
-handles = ddb_shorelines_plot_shoreline(handles, 'delete');
-handles.model.shorelines.domain.shoreline.x=[];
-handles.model.shorelines.domain.shoreline.y=[];
-handles.model.shorelines.domain.shoreline.length=0;
-
-setHandles(handles);
-
-gui_updateActiveTab;
-
-%%
-function load_shoreline
-
-handles=getHandles;
-
-%[x,y]=landboundary('read',handles.model.shorelines.domain.shoreline.filename);
-[x,y]=read_xy_columns(handles.model.shorelines.domain.shoreline.filename);
-
-handles.model.shorelines.domain.shoreline.x=x;
-handles.model.shorelines.domain.shoreline.y=y;
-handles.model.shorelines.domain.shoreline.length=length(x);
-handles = ddb_shorelines_plot_shoreline(handles, 'plot');
-
-%set(handles.model.shorelines.domain.shoreline.handle,'HitTest','off');
-ch=get(handles.model.shorelines.domain.shoreline.handle,'Children');
-set(ch,'HitTest','off');
-
-setHandles(handles);
-
-ch=get(handles.model.shorelines.domain.shoreline.handle,'Children');
-set(ch,'HitTest','off');
-
-gui_updateActiveTab;
-
-%%
-function save_shoreline
-
-handles=getHandles;
-
-x=handles.model.shorelines.domain.shoreline.x;
-y=handles.model.shorelines.domain.shoreline.y;
-%landboundary('write',handles.model.shorelines.domain.shoreline.filename,x,y);
-out=[x;y]';
-save(handles.model.shorelines.domain.shoreline.filename,'out','-ascii');
-
-setHandles(handles);
 
 %%
 function start_model

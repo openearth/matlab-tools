@@ -34,7 +34,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.nrnourishments</variable>
+        <variable>handles.model.shorelines.nrnourishments</variable>
         <type>integer</type>
         <value>0</value>
         <operator>gt</operator>
@@ -84,7 +84,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.nrnourishments</variable>
+        <variable>handles.model.shorelines.nrnourishments</variable>
         <type>integer</type>
         <value>0</value>
         <operator>gt</operator>
@@ -103,12 +103,12 @@
     <tooltipstring>Select nourishment</tooltipstring>
     <text>Nourishments</text>
     <textposition>above-center</textposition>
-    <variable>handles.model.shorelines.domain.activenourishment</variable>
+    <variable>handles.model.shorelines.activenourishment</variable>
     <type>integer</type>
     <onchange>ddb_shorelines_nourishments</onchange>
     <option1>selectfromlist</option1>
     <listtext>
-      <variable>handles.model.shorelines.domain.nourishmentnames</variable>
+      <variable>handles.model.shorelines.nourishmentnames</variable>
     </listtext>
   </element>
   <element>
@@ -119,7 +119,7 @@
     <style>edit</style>
     <position>560 125 120 20</position>
     <text>Start date</text>
-    <variable>handles.model.shorelines.domain.nourishments(handles.model.shorelines.domain.activenourishment).tstart</variable>
+    <variable>handles.model.shorelines.nourishments(handles.model.shorelines.activenourishment).tstart</variable>
     <tooltipstring>Edit start date of nourishment</tooltipstring>
     <callback>ddb_shorelines_nourishments</callback>
     <option1>editdate</option1>
@@ -128,7 +128,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.nrnourishments</variable>
+        <variable>handles.model.shorelines.nrnourishments</variable>
         <value>0</value>
         <operator>gt</operator>
       </check>
@@ -141,7 +141,7 @@
     <style>edit</style>
     <position>560 100 120 20</position>
     <text>End date </text>
-    <variable>handles.model.shorelines.domain.nourishments(handles.model.shorelines.domain.activenourishment).tend</variable>
+    <variable>handles.model.shorelines.nourishments(handles.model.shorelines.activenourishment).tend</variable>
     <tooltipstring>Edit end date of nourishment</tooltipstring>
     <callback>ddb_shorelines_nourishments</callback>
     <option1>editdate</option1>
@@ -150,7 +150,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.nrnourishments</variable>
+        <variable>handles.model.shorelines.nrnourishments</variable>
         <value>0</value>
         <operator>gt</operator>
       </check>
@@ -166,13 +166,13 @@
     <onchange>ddb_shorelines_nourishments</onchange>
     <option1>editvolume</option1>
     <tooltipstring>Edit nourishment volume (Mm^3)</tooltipstring>
-    <variable>handles.model.shorelines.domain.nourishments(handles.model.shorelines.domain.activenourishment).volume</variable>
+    <variable>handles.model.shorelines.nourishments(handles.model.shorelines.activenourishment).volume</variable>
     <type>real</type>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.nrnourishments</variable>
+        <variable>handles.model.shorelines.nrnourishments</variable>
         <value>0</value>
         <operator>gt</operator>
       </check>
@@ -188,13 +188,13 @@
     <onchange>ddb_shorelines_nourishments</onchange>
     <option1>editrate</option1>
     <tooltipstring>Edit shoreline change rate due to nourishment (m/yr)</tooltipstring>
-    <variable>handles.model.shorelines.domain.nourishments(handles.model.shorelines.domain.activenourishment).rate</variable>
+    <variable>handles.model.shorelines.nourishments(handles.model.shorelines.activenourishment).rate</variable>
     <type>real</type>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.nrnourishments</variable>
+        <variable>handles.model.shorelines.nrnourishments</variable>
         <value>0</value>
         <operator>gt</operator>
       </check>
@@ -210,13 +210,13 @@
     <onchange>ddb_shorelines_nourishments</onchange>
     <option1>editrate</option1>
     <tooltipstring>Shoreline length affected by nourishment</tooltipstring>
-    <variable>handles.model.shorelines.domain.nourishments(handles.model.shorelines.domain.activenourishment).nourlength</variable>
+    <variable>handles.model.shorelines.nourishments(handles.model.shorelines.activenourishment).nourlength</variable>
     <type>real</type>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.nrnourishments</variable>
+        <variable>handles.model.shorelines.nrnourishments</variable>
         <value>0</value>
         <operator>gt</operator>
       </check>

@@ -22,24 +22,24 @@ switch lower(opt)
     case{'plot'}
         
         
-        if handles.model.shorelines.domain.nrchannels>0
-            for as=1:handles.model.shorelines.domain.nrchannels
+        if handles.model.shorelines.nrchannels>0
+            for as=1:handles.model.shorelines.nrchannels
                 % First delete old shoreline
                 try
-                    delete(handles.model.shorelines.domain.channels(as).handle);
+                    delete(handles.model.shorelines.channels(as).handle);
                 end
-                handles.model.shorelines.domain.channels(as).handle=[];
-                xp=handles.model.shorelines.domain.channels(as).x;
-                yp=handles.model.shorelines.domain.channels(as).y;
+                handles.model.shorelines.channels(as).handle=[];
+                xp=handles.model.shorelines.channels(as).x;
+                yp=handles.model.shorelines.channels(as).y;
                 
                 % h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@change_shoreline,'tag','shorelines_shoreline','marker','o');
-                if as==handles.model.shorelines.domain.activechannel
+                if as==handles.model.shorelines.activechannel
                     %h=plot(xp,yp,'r','linewidth',2)
                     h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@modify_channel,'tag','shorelines_channel','color','b','linestyle','--','marker','o');
                 else
                     h=plot(xp,yp,'b--','linewidth',1.5)
                 end
-                handles.model.shorelines.domain.channels(as).handle=h;
+                handles.model.shorelines.channels(as).handle=h;
                 
                 if vis
                     set(h,'Visible','on');
@@ -54,14 +54,14 @@ switch lower(opt)
         
         % First delete old channel
         try
-            delete(handles.model.shorelines.domain.channel.handle);
+            delete(handles.model.shorelines.channel.handle);
         end
-        handles.model.shorelines.domain.channel.handle=[];
+        handles.model.shorelines.channel.handle=[];
         
     case{'update'}
         
         try
-            h=handles.model.shorelines.domain.channel.handle;
+            h=handles.model.shorelines.channel.handle;
             if ~isempty(h)
                 try
                     if vis
@@ -82,10 +82,10 @@ handles=getHandles;
 % Delete temporary channel
 
 % delete(h);
-as=handles.model.shorelines.domain.activechannel;
-handles.model.shorelines.domain.channels(as).x=x;
-handles.model.shorelines.domain.channels(as).y=y;
-%handles.model.shorelines.domain.channels(as).handle=h;
+as=handles.model.shorelines.activechannel;
+handles.model.shorelines.channels(as).x=x;
+handles.model.shorelines.channels(as).y=y;
+%handles.model.shorelines.channels(as).handle=h;
 
 setHandles(handles);
 

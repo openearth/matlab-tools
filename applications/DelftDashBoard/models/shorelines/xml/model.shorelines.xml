@@ -34,9 +34,9 @@
       <tabstring>Toolbox</tabstring>
     </tab>
     <tab>
-      <tabstring>Domain</tabstring>
-      <element>model.shorelines.domain.xml</element>
-      <callback>ddb_shorelines_domain</callback>
+      <tabstring>Shorelines</tabstring>
+      <element>model.shorelines.shorelines.xml</element>
+      <callback>ddb_shorelines_shorelines</callback>
     </tab>
     <tab>
       <tabstring>Time Frame</tabstring>

@@ -22,24 +22,24 @@ switch lower(opt)
     case{'plot'}
         
         
-        if handles.model.shorelines.domain.nrstructures>0
-            for as=1:handles.model.shorelines.domain.nrstructures
+        if handles.model.shorelines.nrstructures>0
+            for as=1:handles.model.shorelines.nrstructures
                 % First delete old shoreline
                 try
-                    delete(handles.model.shorelines.domain.structures(as).handle);
+                    delete(handles.model.shorelines.structures(as).handle);
                 end
-                handles.model.shorelines.domain.structures(as).handle=[];
-                xp=handles.model.shorelines.domain.structures(as).x;
-                yp=handles.model.shorelines.domain.structures(as).y;
+                handles.model.shorelines.structures(as).handle=[];
+                xp=handles.model.shorelines.structures(as).x;
+                yp=handles.model.shorelines.structures(as).y;
                 
                 % h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@change_shoreline,'tag','shorelines_shoreline','marker','o');
-                if as==handles.model.shorelines.domain.activestructure
+                if as==handles.model.shorelines.activestructure
                     %h=plot(xp,yp,'r','linewidth',2)
                     h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@modify_structure,'tag','shorelines_structure','color','k','marker','o');
                 else
                     h=plot(xp,yp,'k','linewidth',1.5)
                 end
-                handles.model.shorelines.domain.structures(as).handle=h;
+                handles.model.shorelines.structures(as).handle=h;
                 
                 if vis
                     set(h,'Visible','on');
@@ -54,14 +54,14 @@ switch lower(opt)
         
         % First delete old structure
         try
-            delete(handles.model.shorelines.domain.structure.handle);
+            delete(handles.model.shorelines.structure.handle);
         end
-        handles.model.shorelines.domain.structure.handle=[];
+        handles.model.shorelines.structure.handle=[];
         
     case{'update'}
         
         try
-            h=handles.model.shorelines.domain.structure.handle;
+            h=handles.model.shorelines.structure.handle;
             if ~isempty(h)
                 try
                     if vis
@@ -82,10 +82,10 @@ handles=getHandles;
 % Delete temporary structure
 
 % delete(h);
-as=handles.model.shorelines.domain.activestructure;
-handles.model.shorelines.domain.structures(as).x=x;
-handles.model.shorelines.domain.structures(as).y=y;
-%handles.model.shorelines.domain.structures(as).handle=h;
+as=handles.model.shorelines.activestructure;
+handles.model.shorelines.structures(as).x=x;
+handles.model.shorelines.structures(as).y=y;
+%handles.model.shorelines.structures(as).handle=h;
 
 setHandles(handles);
 

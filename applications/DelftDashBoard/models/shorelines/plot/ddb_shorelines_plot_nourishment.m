@@ -22,24 +22,24 @@ switch lower(opt)
     case{'plot'}
         
         
-        if handles.model.shorelines.domain.nrnourishments>0
-            for as=1:handles.model.shorelines.domain.nrnourishments
+        if handles.model.shorelines.nrnourishments>0
+            for as=1:handles.model.shorelines.nrnourishments
                 % First delete old shoreline
                 try
-                    delete(handles.model.shorelines.domain.nourishments(as).handle);
+                    delete(handles.model.shorelines.nourishments(as).handle);
                 end
-                handles.model.shorelines.domain.nourishments(as).handle=[];
-                xp=handles.model.shorelines.domain.nourishments(as).x;
-                yp=handles.model.shorelines.domain.nourishments(as).y;
+                handles.model.shorelines.nourishments(as).handle=[];
+                xp=handles.model.shorelines.nourishments(as).x;
+                yp=handles.model.shorelines.nourishments(as).y;
                 
                 % h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@change_shoreline,'tag','shorelines_shoreline','marker','o');
-                if as==handles.model.shorelines.domain.activenourishment
+                if as==handles.model.shorelines.activenourishment
                     %h=plot(xp,yp,'r','linewidth',2)
                     h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@modify_nourishment,'tag','shorelines_nourishment','color','k','linestyle',':','marker','o');
                 else
                     h=plot(xp,yp,'k:','linewidth',1.5)
                 end
-                handles.model.shorelines.domain.nourishments(as).handle=h;
+                handles.model.shorelines.nourishments(as).handle=h;
                 
                 if vis
                     set(h,'Visible','on');
@@ -54,14 +54,14 @@ switch lower(opt)
         
         % First delete old nourishment
         try
-            delete(handles.model.shorelines.domain.nourishment.handle);
+            delete(handles.model.shorelines.nourishment.handle);
         end
-        handles.model.shorelines.domain.nourishment.handle=[];
+        handles.model.shorelines.nourishment.handle=[];
         
     case{'update'}
         
         try
-            h=handles.model.shorelines.domain.nourishment.handle;
+            h=handles.model.shorelines.nourishment.handle;
             if ~isempty(h)
                 try
                     if vis
@@ -82,10 +82,10 @@ handles=getHandles;
 % Delete temporary nourishment
 
 % delete(h);
-as=handles.model.shorelines.domain.activenourishment;
-handles.model.shorelines.domain.nourishments(as).x=x;
-handles.model.shorelines.domain.nourishments(as).y=y;
-%handles.model.shorelines.domain.nourishments(as).handle=h;
+as=handles.model.shorelines.activenourishment;
+handles.model.shorelines.nourishments(as).x=x;
+handles.model.shorelines.nourishments(as).y=y;
+%handles.model.shorelines.nourishments(as).handle=h;
 
 setHandles(handles);
 

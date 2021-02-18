@@ -10,14 +10,14 @@
     <text>Spit overwash</text>
     <position>200 135 60 20</position>
     <type>string</type>
-    <variable>handles.model.shorelines.domain.spit_opt</variable>
+    <variable>handles.model.shorelines.spit_opt</variable>
     <callback>ddb_shorelines_spits_and_channels</callback>
     <option1>selectspitoption</option1>
     <listtext>
-      <variable>handles.model.shorelines.domain.spit_opts_long</variable>
+      <variable>handles.model.shorelines.spit_opts_long</variable>
     </listtext>
     <listvalue>
-      <variable>handles.model.shorelines.domain.spit_opts_short</variable>
+      <variable>handles.model.shorelines.spit_opts_short</variable>
     </listvalue>
   </element>
   <element>
@@ -31,7 +31,7 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.spit_opt</variable>
+        <variable>handles.model.shorelines.spit_opt</variable>
         <value>on</value>
         <operator>eq</operator>
       </check>
@@ -48,7 +48,7 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.spit_opt</variable>
+        <variable>handles.model.shorelines.spit_opt</variable>
         <value>on</value>
         <operator>eq</operator>
       </check>
@@ -65,7 +65,7 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.spit_opt</variable>
+        <variable>handles.model.shorelines.spit_opt</variable>
         <value>on</value>
         <operator>eq</operator>
       </check>
@@ -82,7 +82,7 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.spit_opt</variable>
+        <variable>handles.model.shorelines.spit_opt</variable>
         <value>on</value>
         <operator>eq</operator>
       </check>
@@ -99,7 +99,7 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.spit_opt</variable>
+        <variable>handles.model.shorelines.spit_opt</variable>
         <value>on</value>
         <operator>eq</operator>
       </check>
@@ -116,7 +116,7 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.spit_opt</variable>
+        <variable>handles.model.shorelines.spit_opt</variable>
         <value>on</value>
         <operator>eq</operator>
       </check>
@@ -151,7 +151,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.nrchannels</variable>
+        <variable>handles.model.shorelines.nrchannels</variable>
         <type>integer</type>
         <value>0</value>
         <operator>gt</operator>
@@ -201,7 +201,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.nrchannels</variable>
+        <variable>handles.model.shorelines.nrchannels</variable>
         <type>integer</type>
         <value>0</value>
         <operator>gt</operator>
@@ -220,26 +220,26 @@
     <tooltipstring>Select channel</tooltipstring>
     <text>Channels</text>
     <textposition>above-center</textposition>
-    <variable>handles.model.shorelines.domain.activechannel</variable>
+    <variable>handles.model.shorelines.activechannel</variable>
     <type>integer</type>
     <onchange>ddb_shorelines_spits_and_channels</onchange>
     <option1>selectfromlist</option1>
     <listtext>
-      <variable>handles.model.shorelines.domain.channelnames</variable>
+      <variable>handles.model.shorelines.channelnames</variable>
     </listtext>
   </element>
     <element>
       <style>edit</style>
       <position>1000 125 60 20</position>
       <text>Channel width (m)</text>
-      <variable>handles.model.shorelines.domain.channels(handles.model.shorelines.domain.activechannel).channel_width</variable>
+      <variable>handles.model.shorelines.channels(handles.model.shorelines.activechannel).channel_width</variable>
       <type>real</type>
       <tooltipstring>Edit value for channel width </tooltipstring>
       <dependency>
         <action>enable</action>
         <checkfor>all</checkfor>
         <check>
-          <variable>handles.model.shorelines.domain.nrchannels</variable>
+          <variable>handles.model.shorelines.nrchannels</variable>
           <value>0</value>
           <operator>gt</operator>
         </check>
@@ -249,14 +249,14 @@
       <style>edit</style>
       <position>1000 100 60 20</position>
       <text>Channel factor</text>
-      <variable>handles.model.shorelines.domain.channels(handles.model.shorelines.domain.activechannel).channel_fac</variable>
+      <variable>handles.model.shorelines.channels(handles.model.shorelines.activechannel).channel_fac</variable>
       <type>real</type>
       <tooltipstring>Edit value for channel factor</tooltipstring>
       <dependency>
         <action>enable</action>
         <checkfor>all</checkfor>
         <check>
-          <variable>handles.model.shorelines.domain.nrchannels</variable>
+          <variable>handles.model.shorelines.nrchannels</variable>
           <value>0</value>
           <operator>gt</operator>
         </check>

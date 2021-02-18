@@ -21,27 +21,32 @@ switch lower(opt)
     
     case{'plot'}
         
-        % First delete old shoreline
-        try
-            delete(handles.model.shorelines.domain.shoreline.handle);
-        end
-        handles.model.shorelines.domain.shoreline.handle=[];
         
-        if handles.model.shorelines.domain.shoreline.length>0
-            
-            xp=handles.model.shorelines.domain.shoreline.x;
-            yp=handles.model.shorelines.domain.shoreline.y;
-            
-%             h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@change_shoreline,'tag','shorelines_shoreline','marker','o');
-            h=plot(xp,yp,'r','linewidth',1)
-            handles.model.shorelines.domain.shoreline.handle=h;
-                        
-            if vis
-                set(h,'Visible','on');
-            else
-                set(h,'Visible','off');
+        if handles.model.shorelines.nrshorelines>0
+            for as=1:handles.model.shorelines.nrshorelines
+                % First delete old shoreline
+                try
+                    delete(handles.model.shorelines.shorelines(as).handle);
+                end
+                handles.model.shorelines.shorelines(as).handle=[];
+                xp=handles.model.shorelines.shorelines(as).x;
+                yp=handles.model.shorelines.shorelines(as).y;
+                
+                % h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@change_shoreline,'tag','shorelines_shoreline','marker','o');
+                if as==handles.model.shorelines.activeshoreline
+                    h=plot(xp,yp,'r','linewidth',1.5)
+                    %h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@modify_shoreline,'tag','shorelines_shoreline','color','k','marker','o');
+                else
+                    h=plot(xp,yp,'k','linewidth',1.5)
+                end
+                handles.model.shorelines.shorelines(as).handle=h;
+                
+                if vis
+                    set(h,'Visible','on');
+                else
+                    set(h,'Visible','off');
+                end
             end
-            
         end
         
         
@@ -49,14 +54,14 @@ switch lower(opt)
         
         % First delete old shoreline
         try
-            delete(handles.model.shorelines.domain.shoreline.handle);
+            delete(handles.model.shorelines.shoreline.handle);
         end
-        handles.model.shorelines.domain.shoreline.handle=[];
+        handles.model.shorelines.shoreline.handle=[];
         
     case{'update'}
         
         try
-            h=handles.model.shorelines.domain.shoreline.handle;
+            h=handles.model.shorelines.shoreline.handle;
             if ~isempty(h)
                 try
                     if vis
@@ -70,9 +75,18 @@ switch lower(opt)
 end
 
 %%
-function change_shoreline(h,x,y,nr)
+function modify_shoreline(h,x,y,number)
 
 handles=getHandles;
-handles.model.shorelines.domain.shoreline.x=x;
-handles.model.shorelines.domain.shoreline.y=y;
+
+% Delete temporary shoreline
+
+% delete(h);
+as=handles.model.shorelines.activeshoreline;
+handles.model.shorelines.shorelines(as).x=x;
+handles.model.shorelines.shorelines(as).y=y;
+%handles.model.shorelines.shorelines(as).handle=h;
+
 setHandles(handles);
+
+

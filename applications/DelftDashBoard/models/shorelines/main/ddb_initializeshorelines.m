@@ -6,23 +6,17 @@ function handles = ddb_initializeshorelines(handles, varargin)
 handles.model.shorelines.menuview.shoreline=1;
 
 % Just as an example ... (see Physics tab)
-handles.model.shorelines.domain.wave_opts_long ={'Mean and spreading','Wave climate','Wave time series'};
-handles.model.shorelines.domain.wave_opts_short={'mean_and_spreading','wave_climate','wave_time_series'};
+handles.model.shorelines.wave_opts_long ={'Mean and spreading','Wave climate','Wave time series'};
+handles.model.shorelines.wave_opts_short={'mean_and_spreading','wave_climate','wave_time_series'};
 
-handles.model.shorelines.domain.wavetrans_opts_long ={'None','Dynamic profile','Wave lookup table'};
-handles.model.shorelines.domain.wavetrans_opts_short={'none','dynamic_profile','lookup_table'};
+handles.model.shorelines.wavetrans_opts_long ={'None','Dynamic profile','Wave lookup table'};
+handles.model.shorelines.wavetrans_opts_short={'none','dynamic_profile','lookup_table'};
 
-handles.model.shorelines.domain.transport_opts_long ={'CERC','CERC 3','Kamphuis','Mil-Homens','van Rijn 2014'};
-handles.model.shorelines.domain.transport_opts_short={'cerc','cerc3','kamp','milh','vr14'};
+handles.model.shorelines.transport_opts_long ={'CERC','CERC 3','Kamphuis','Mil-Homens','van Rijn 2014'};
+handles.model.shorelines.transport_opts_short={'cerc','cerc3','kamp','milh','vr14'};
 
-handles.model.shorelines.domain.phys_opts_long ={'Option 1','Option 2','Option 3'};
-handles.model.shorelines.domain.phys_opts_short={'opt1','opt2','opt3'};
-
-handles.model.shorelines.domain.phys_opts_long ={'Option 1','Option 2','Option 3'};
-handles.model.shorelines.domain.phys_opts_short={'opt1','opt2','opt3'};
-
-handles.model.shorelines.domain.spit_opts_long ={'Off','On'};
-handles.model.shorelines.domain.spit_opts_short={'off','on'};
+handles.model.shorelines.spit_opts_long ={'Off','On'};
+handles.model.shorelines.spit_opts_short={'off','on'};
 
 handles.model.shorelines.status='waiting';
 handles.model.shorelines.current_time_string=datestr(floor(now));

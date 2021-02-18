@@ -21,7 +21,9 @@ for ii=1:length(fieldnms)
     if ischar(val)
         str=[key,'=','''',val,'''']
     elseif isnumeric(val)
-        str=[key,'=',num2str(val)]
+        if length(val)==1
+           str=[key,'=',num2str(val)]
+        end
     end
     
     try

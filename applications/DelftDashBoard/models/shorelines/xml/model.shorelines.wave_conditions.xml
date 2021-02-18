@@ -10,14 +10,14 @@
     <text>Wave Conditions Options</text>
     <position>200 135 120 20</position>
     <type>string</type>
-    <variable>handles.model.shorelines.domain.wave_opt</variable>
+    <variable>handles.model.shorelines.wave_opt</variable>
     <callback>ddb_shorelines_wave_conditions</callback>
     <option1>selectwaveoption</option1>
     <listtext>
-      <variable>handles.model.shorelines.domain.wave_opts_long</variable>
+      <variable>handles.model.shorelines.wave_opts_long</variable>
     </listtext>
     <listvalue>
-      <variable>handles.model.shorelines.domain.wave_opts_short</variable>
+      <variable>handles.model.shorelines.wave_opts_short</variable>
     </listvalue>
   </element>
   <element>
@@ -31,7 +31,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.wave_opt</variable>
+        <variable>handles.model.shorelines.wave_opt</variable>
         <value>mean_and_spreading</value>
         <operator>eq</operator>
       </check>
@@ -48,7 +48,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.wave_opt</variable>
+        <variable>handles.model.shorelines.wave_opt</variable>
         <value>mean_and_spreading</value>
         <operator>eq</operator>
       </check>
@@ -65,7 +65,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.wave_opt</variable>
+        <variable>handles.model.shorelines.wave_opt</variable>
         <value>mean_and_spreading</value>
         <operator>eq</operator>
       </check>
@@ -82,7 +82,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.wave_opt</variable>
+        <variable>handles.model.shorelines.wave_opt</variable>
         <value>mean_and_spreading</value>
         <operator>eq</operator>
       </check>
@@ -103,7 +103,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.wave_opt</variable>
+        <variable>handles.model.shorelines.wave_opt</variable>
         <value>wave_climate</value>
         <operator>eq</operator>
       </check>
@@ -124,7 +124,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.wave_opt</variable>
+        <variable>handles.model.shorelines.wave_opt</variable>
         <value>wave_time_series</value>
         <operator>eq</operator>
       </check>
@@ -135,14 +135,14 @@
     <text>Wave Transformation Options</text>
     <position>800 135 120 20</position>
     <type>string</type>
-    <variable>handles.model.shorelines.domain.wavetrans_opt</variable>
+    <variable>handles.model.shorelines.wavetrans_opt</variable>
     <callback>ddb_shorelines_wave_conditions</callback>
     <option1>selectwavetransoption</option1>
     <listtext>
-      <variable>handles.model.shorelines.domain.wavetrans_opts_long</variable>
+      <variable>handles.model.shorelines.wavetrans_opts_long</variable>
     </listtext>
     <listvalue>
-      <variable>handles.model.shorelines.domain.wavetrans_opts_short</variable>
+      <variable>handles.model.shorelines.wavetrans_opts_short</variable>
     </listvalue>
   </element>
   <element>
@@ -156,7 +156,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.wavetrans_opt</variable>
+        <variable>handles.model.shorelines.wavetrans_opt</variable>
         <value>dynamic_profile</value>
         <operator>eq</operator>
       </check>
@@ -173,7 +173,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.wavetrans_opt</variable>
+        <variable>handles.model.shorelines.wavetrans_opt</variable>
         <value>dynamic_profile</value>
         <operator>eq</operator>
       </check>
@@ -190,7 +190,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.wavetrans_opt</variable>
+        <variable>handles.model.shorelines.wavetrans_opt</variable>
         <value>dynamic_profile</value>
         <operator>eq</operator>
       </check>
@@ -211,7 +211,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.wavetrans_opt</variable>
+        <variable>handles.model.shorelines.wavetrans_opt</variable>
         <value>lookup_table</value>
         <operator>eq</operator>
       </check>
@@ -228,7 +228,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.wavetrans_opt</variable>
+        <variable>handles.model.shorelines.wavetrans_opt</variable>
         <value>lookup_table</value>
         <operator>eq</operator>
       </check>

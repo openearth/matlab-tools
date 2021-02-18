@@ -1,4 +1,4 @@
-function ddb_shorelines_numerics(varargin)
+function ddb_shorelines_sediment_transport(varargin)
 
 %%
 ddb_zoomOff;
@@ -24,6 +24,6 @@ end
 function select_transport_option
 
 handles=getHandles;
-opt=handles.model.shorelines.domain.transport_opt;
+opt=handles.model.shorelines.domain.trform;
 %ddb_giveWarning('text',['Thank you for selecting transport option ' opt]);
 setHandles(handles);

@@ -34,7 +34,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.nrstructures</variable>
+        <variable>handles.model.shorelines.nrstructures</variable>
         <type>integer</type>
         <value>0</value>
         <operator>gt</operator>
@@ -84,7 +84,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.nrstructures</variable>
+        <variable>handles.model.shorelines.nrstructures</variable>
         <type>integer</type>
         <value>0</value>
         <operator>gt</operator>
@@ -103,12 +103,12 @@
     <tooltipstring>Select structure</tooltipstring>
     <text>Structures</text>
     <textposition>above-center</textposition>
-    <variable>handles.model.shorelines.domain.activestructure</variable>
+    <variable>handles.model.shorelines.activestructure</variable>
     <type>integer</type>
     <onchange>ddb_shorelines_structures</onchange>
     <option1>selectfromlist</option1>
     <listtext>
-      <variable>handles.model.shorelines.domain.structurenames</variable>
+      <variable>handles.model.shorelines.structurenames</variable>
     </listtext>
   </element>
   <element>
@@ -122,13 +122,13 @@
     <onchange>ddb_shorelines_structures</onchange>
     <option1>editname</option1>
     <tooltipstring>Edit structure name</tooltipstring>
-    <variable>handles.model.shorelines.domain.structures(handles.model.shorelines.domain.activestructure).name</variable>
+    <variable>handles.model.shorelines.structures(handles.model.shorelines.activestructure).name</variable>
     <type>string</type>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.nrstructures</variable>
+        <variable>handles.model.shorelines.nrstructures</variable>
         <value>0</value>
         <operator>gt</operator>
       </check>
@@ -144,13 +144,13 @@
     <onchange>ddb_shorelines_structures</onchange>
     <option1>edit</option1>
     <tooltipstring>Edit wave transmission factor (0-1)</tooltipstring>
-    <variable>handles.model.shorelines.domain.structures(handles.model.shorelines.domain.activestructure).transmission</variable>
+    <variable>handles.model.shorelines.structures(handles.model.shorelines.activestructure).transmission</variable>
     <type>real</type>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.shorelines.domain.nrstructures</variable>
+        <variable>handles.model.shorelines.nrstructures</variable>
         <value>0</value>
         <operator>gt</operator>
       </check>

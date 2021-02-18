@@ -31,7 +31,7 @@ end
 function select_wave_option
 
 handles=getHandles;
-opt=handles.model.shorelines.domain.wave_opt;
+opt=handles.model.shorelines.wave_opt;
 %ddb_giveWarning('text',['Thank you for selecting wave option ' opt]);
 setHandles(handles);
 
@@ -39,7 +39,7 @@ setHandles(handles);
 function select_wavetrans_option
 
 handles=getHandles;
-opt=handles.model.shorelines.domain.wavetrans_opt;
+opt=handles.model.shorelines.wavetrans_opt;
 %ddb_giveWarning('text',['Thank you for selecting wave option ' opt]);
 setHandles(handles);
 
@@ -72,7 +72,7 @@ function load_wvcfile
 handles=getHandles;
 [tHTD]=load(handles.model.shorelines.domain.WVCfile);
 time=datenum(num2str(tHTD(:,1)),'yyyymmddhhMM');
-handles.model.shorelines.domain.time_ts=time;
+handles.model.shorelines.time_ts=time;
 Hs=tHTD(:,2);
 Tp=tHTD(:,3);
 phiw0=tHTD(:,4);
