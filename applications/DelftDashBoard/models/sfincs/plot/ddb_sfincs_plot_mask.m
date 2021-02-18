@@ -44,7 +44,9 @@ switch lower(opt)
         rgb=[1 1 0; 1 0 0;0 0 1];
         p=indexpatch(xg,yg,zg,vals,rgb);
         handles.model.sfincs.domain(id).maskhandle=p;
+        try
         set(p,'HitTest','off');
+        end
         
 %         figure(100)
 %         plot(xg,yg);axis equal
