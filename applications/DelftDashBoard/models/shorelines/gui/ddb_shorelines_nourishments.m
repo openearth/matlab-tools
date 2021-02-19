@@ -203,11 +203,15 @@ setHandles(handles);
 
 gui_updateActiveTab;
 
+%% Save in matfile with same root name as nourishment polygon
 matname=handles.model.shorelines.domain.LDBnourish;
 matname(end-2:end)='mat';
 nourishments=handles.model.shorelines.nourishments;
 nourishments=rmfield(nourishments,'handle');
 save(matname,'nourishments');
+%% Set nourishment switch on
+handles.model.shorelines.domain.nourish=1;
+
 %%
 function edit_name
 
