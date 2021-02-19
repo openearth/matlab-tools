@@ -1270,8 +1270,8 @@ switch flg.which_p
 %% cross-sections
 %%
     case 10
-        mesh1d_mor_crs_z=ncread(file.map,'mesh1d_mor_crs_z',[1,kcs(1),kt(1)],[Inf,kcs(2),kt(1)]); %'time-varying cross-section points level' [m]
-        mesh1d_mor_crs_n=ncread(file.map,'mesh1d_mor_crs_n',[1,kcs(1),kt(1)],[Inf,kcs(2),kt(1)]); %'time-varying cross-section points half width' [m]
+        mesh1d_mor_crs_z=ncread(file.map,'mesh1d_mor_crs_z',[1,kcs(1),kt(1)],[Inf,kcs(2),kt(2)]); %'time-varying cross-section points level' [m]
+        mesh1d_mor_crs_n=ncread(file.map,'mesh1d_mor_crs_n',[1,kcs(1),kt(1)],[Inf,kcs(2),kt(2)]); %'time-varying cross-section points half width' [m]
         mesh1d_mor_crs_name=ncread(file.map,'mesh1d_mor_crs_name',[1,kcs(1)],[Inf,kcs(2)])'; %'name of cross-section'
         
         out.z=mesh1d_mor_crs_z;

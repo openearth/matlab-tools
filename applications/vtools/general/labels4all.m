@@ -15,16 +15,23 @@
 %INPUT
 %   -var: variable to generate label
 %       -'eta'      : bed elevation
+%       -'deta'     : bed elevation change
+%
 %       -'dist'     : distance
 %       -'dist_prof': distance along section
 %       -'dist_mouth': distance from mouth
+%
 %       -'etaw'     : water level
 %       -'h'        : flow depth
+%
 %       -'sal'      : salinity
 %       -'cl'       : chloride
+%
 %       -'umag'     : velocity magnitude
+%
 %       -'x'        : x-coordinate
 %       -'y'        : y-coordinate
+%
 %       -'Q'        : water discharge
 %
 %   -un: factor for unit conversion from SI
@@ -45,6 +52,16 @@ switch lower(var)
                 str_var='hoogte';
             case 'es'
                 str_var='elevación';
+        end
+        un_type='L';
+    case {'detab'}
+        switch lan
+            case 'en'
+                str_var='bed elevation change';
+            case 'nl'
+                str_var='verandering van de hoogte van het bed';
+            case 'es'
+                str_var='';
         end
         un_type='L';
     case 'dist'

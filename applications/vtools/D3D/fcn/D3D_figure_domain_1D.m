@@ -240,13 +240,7 @@ han.sfig(kpr,kpc).YLabel.String='y coordinate [m]';
 %plots
 % han.p=scatter(in.mesh1d_x_node,in.mesh1d_y_node,10,'k','filled');
 if flg.add_tiles
-    load(flg.tiles_path,'tiles')
-    [nx,ny,~]=size(tiles);
-    for kx=1:nx
-        for ky=1:ny
-             surf(tiles{kx,ky,1},tiles{kx,ky,2},zeros(size(tiles{kx,ky,2})),tiles{kx,ky,3},'EdgeColor','none')
-        end
-    end
+    addTiles(flg.tiles_path)
 end
 han.p=scatter(XZ,YZ,10,'r','filled');
 

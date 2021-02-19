@@ -20,36 +20,9 @@ flg=simdef.flg;
 
 %% defaults
 
-if isfield(flg.prop,'edgecolor')==0
-    flg.prop.edgecolor='k'; %edge color in surf plot
-end
+flg=D3D_figure_defaults(flg);
 
-if isfield(flg,'cbar')==0
-        flg.cbar.displacement=[0,0,0,0];
-else
-    if isfield(flg.cbar,'displacement')==0
-        
-    end
-end
-
-if isfield(flg,'marg')==0
-    flg.marg.mt=2.5; %top margin [cm]
-    flg.marg.mb=1.5; %bottom margin [cm]
-    flg.marg.mr=2.5; %right margin [cm]
-    flg.marg.ml=2.0; %left margin [cm]
-    flg.marg.sh=1.0; %horizontal spacing [cm]
-    flg.marg.sv=0.0; %vertical spacing [cm]
-end
-
-if isfield(flg.prop,'fs')==0
-    flg.prop.fs=12;
-end
-
-if isfield(flg,'addtitle')==0
-    flg.addtitle=1;
-end
-
-%%
+%% limits
 
 switch flg.which_s
     case 1
@@ -75,16 +48,6 @@ switch flg.which_s
         lims.f=[min(min(cvar)),max(max(cvar))];
 end
 
-time_r=in.time_r.*flg.plot_unitt;
-
-switch flg.elliptic
-    case 1
-        ell=in.eigen_ell_p;
-    case 2
-        ell=in.HIRCHK;
-end
-
-%limits
 if isfield(flg,'lims')
     if isfield(flg.lims,'x')
         lims.x=flg.lims.x;
@@ -100,13 +63,14 @@ if isfield(flg,'lims')
     end
 end
 
+%% other
+
+time_r=in.time_r.*flg.plot_unitt;
+
 %% FIGURE
 
 %figure input
 prnt.filename=sprintf('2D_%d_%010.0f',flg.which_v,time_r./flg.plot_unitt); %time is already in the plotting unitsm here we recover [s]
-if isfield(flg,'prnt_size')==0
-    flg.prnt_size=[0,0,25.4,19.05];
-end
 prnt.size=flg.prnt_size;
 npr=1; %number of plot rows
 npc=1; %number of plot columns
@@ -144,40 +108,12 @@ marg.sv=flg.marg.sv; %vertical spacing [cm]
 cbar.sfig=[1,1]; 
 cbar.displacement=flg.cbar.displacement;
 cbar.location='northoutside';
-% switch flg.which_v
-%     case 1
-%         cbar.label='bed elevation [m]';
-%     case 2
-%         cbar.label='flow depth [m]';
-%     case 3
-%         switch flg.plot_unitz
-%             case 1
-%                 cbar.label='mean grain size at the bed surface [m]';
-%             case 1000
-%                 cbar.label='mean grain size at the bed surface [mm]';
-%             otherwise
-%                 error('ehem...')
-%         end
-%     case 4
-%         switch flg.plot_unitz
-%             case 1
-%                 cbar.label='mean grain size at the top substrate [m]';
-%             case 1000
-%                 cbar.label='mean grain size at the top substrate [mm]';
-%             otherwise
-%                 error('ehem...')
-%         end
-%     case 6
-%         cbar.label='secondary flow intensity [m/s]';
-%     case 10
-%         cbar.label='depth-averaged velocity [m/s]';
-%     case 12
-%         cbar.label='water level [m]';
-%     otherwise
-%         cbar.label='variable [?]';
-% end
-
-cbar.label=in.zlabel;
+if isfield(in,'zlabel_code')
+    cbar.label=labels4all(in.zlabel_code,flg.plot_unitz,flg.language);
+else
+    warning('Considering adding a code to zlabel in D3D_read_map')
+    cbar.label=in.zlabel;
+end
 
 %text
 % aux.sfig=11;
@@ -200,7 +136,7 @@ end
 
 %figure initialize
 han.fig=figure('name',prnt.filename);
-set(han.fig,'paperunits','centimeters','paperposition',prnt.size)
+set(han.fig,'paperunits','centimeters','paperposition',prnt.size,'visible',flg.fig_visible)
 set(han.fig,'units','normalized','outerposition',[0,0,1,1])
 [mt,mb,mr,ml,sh,sv]=pre_subaxis(han.fig,marg.mt,marg.mb,marg.mr,marg.ml,marg.sh,marg.sv);
 
@@ -227,63 +163,45 @@ han.sfig(kpr,kpc).YLim=lims.y;
 % % han.sfig(kpr,kpc).XScale='log';
 % % han.sfig(kpr,kpc).YScale='log';
 % han.sfig(kpr,kpc).Title.String='c';
-
-switch flg.plot_unitx
-    case 1
-        aux_s='[m]';
-    case 1/1000
-        aux_s='[km]';
-    otherwise
-        error('Hard-code the label')
-end
 % xlabel(han.sfig(kpr,kpc),sprintf('streamwise position %s',aux_s));
-xlabel(han.sfig(kpr,kpc),sprintf('x coordinate %s',aux_s));
-
-switch flg.plot_unity
-    case 1
-        aux_s='[m]';
-    case 1/1000
-        aux_s='[km]';
-    otherwise
-        error('Hard-code the label')
-end
+xlabel(han.sfig(kpr,kpc),labels4all('x',flg.plot_unitx,flg.language));
 % ylabel(han.sfig(kpr,kpc),sprintf('crosswise position %s',aux_s));
-ylabel(han.sfig(kpr,kpc),sprintf('y coordinate %s',aux_s));
+ylabel(han.sfig(kpr,kpc),labels4all('y',flg.plot_unity,flg.language));
 
-zlabel(han.sfig(kpr,kpc),'elevation [m]');
+% zlabel(han.sfig(kpr,kpc),'elevation [m]');
 % xlim(han.sfig(kpr,kpc),lims.x)
 % ylim(han.sfig(kpr,kpc),lims.y)
 % zlim(han.sfig(kpr,kpc),lims.y)
-switch flg.which_v
-    case 1 
-        aux_s='bed elevation [m] at';
-    case 3
-        switch flg.plot_unitz
-            case 1
-                aux_s='mean grain size at the bed surface [m] at';
-            case 1000
-                aux_s='mean grain size at the bed surface [mm] at';
-        end
-    case 4
-        switch flg.plot_unitz
-            case 1
-                aux_s='mean grain size at the top substrate [m] at';
-            case 1000
-                aux_s='mean grain size at the top substrate [mm] at';
-        end
-    case 6
-        aux_s='secondary flow intensity [m/s] at';
-    otherwise
-        aux_s='';
-end
-switch flg.plot_unitt
-    case 1 %conversion from s 
-        aux_t='s';
-    case 1/3600 %conversion from s
-        aux_t='h';
-    case 1/3600/24
-        aux_t='days';
-end
+% switch flg.which_v
+%     case 1 
+%         aux_s='bed elevation [m] at';
+%     case 3
+%         switch flg.plot_unitz
+%             case 1
+%                 aux_s='mean grain size at the bed surface [m] at';
+%             case 1000
+%                 aux_s='mean grain size at the bed surface [mm] at';
+%         end
+%     case 4
+%         switch flg.plot_unitz
+%             case 1
+%                 aux_s='mean grain size at the top substrate [m] at';
+%             case 1000
+%                 aux_s='mean grain size at the top substrate [mm] at';
+%         end
+%     case 6
+%         aux_s='secondary flow intensity [m/s] at';
+%     otherwise
+%         aux_s='';
+% end
+% switch flg.plot_unitt
+%     case 1 %conversion from s 
+%         aux_t='s';
+%     case 1/3600 %conversion from s
+%         aux_t='h';
+%     case 1/3600/24
+%         aux_t='days';
+% end
 % title(han.sfig(kpr,kpc),sprintf('%s time = %5.2f %s',aux_s,time_r,aux_t))
 % if flg.which_p~=8
 if flg.addtitle
@@ -294,6 +212,9 @@ end
 
 %plots
 % kpr=1; kpc=1;  
+if isfield(flg,'add_tiles') && flg.add_tiles
+addTiles(flg.tiles_path,flg.plot_unitx,flg.plot_unity);
+end
 
 %substrate
 switch flg.which_s
@@ -313,10 +234,13 @@ switch flg.which_s
         patch('Faces',faces,'Vertices',[x_node,y_node],'FaceVertexCData',z_var,'FaceColor','flat','EdgeColor',flg.prop.edgecolor); %in unstructure faces is transposed
 end
 
+%elliptic
 switch flg.elliptic
     case 1
+        ell=in.eigen_ell_p;
         han.el=scatter(XZ(2:end),repmat(lims.y(1),1,ncx),20,ell,'fill');
     case 2
+        ell=in.HIRCHK;
         idx_p=ell==0;
         han.p1=scatter3(XZ(idx_p),YZ(idx_p),lims.z(1)*ones(size(XZ(idx_p))),10,'g');
         idx_p=ell==1;

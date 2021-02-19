@@ -14,6 +14,7 @@
 
 function messageOut(fid,str)
 
+str=strrep(str,'%','%%');
 str_time=sprintf('%s %s',datestr(datetime('now')),str);
 str_time=strrep(str_time,'\','/');
 

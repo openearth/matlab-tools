@@ -670,6 +670,7 @@ zcordvel_mat=NaN(npint,KMAX);
                 z=-DPS+DPS0;
                 out=out_var_2DH(z,XZ,YZ,time_r,XCOR,YCOR,nT,nx,ny,flg,kt);
                 out.zlabel='bed elevation change [m]';
+                out.zlabel_code='detab';
             case 33 %cell area
                 z=vs_let(NFStruct,'map-const',{1},'GSQS',{ky,kx},'quiet'); 
                 out=out_var_2DH(z,XZ,YZ,time_r,XCOR,YCOR,nT,nx,ny,flg,kt);
@@ -886,10 +887,19 @@ function out=out_var_2DH(z,XZ,YZ,time_r,XCOR,YCOR,nT,nx,ny,flg,kt)
 if isfield(flg,'nine3sarenan')==0
     flg.nine3sarenan=0;
 end
-    
+
+if isfield(flg,'zerosinvarsarenan')==0
+    flg.zerosinvarsarenan=0;
+end
+
 if flg.nine3sarenan
     z(z==999)=NaN;
 end
+
+if flg.zerosinvarsarenan
+    z(z==0)=NaN;
+end
+ 
 %output
 switch flg.which_p
     case 2

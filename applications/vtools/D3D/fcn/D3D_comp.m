@@ -14,6 +14,8 @@
 
 function simdef=D3D_comp(simdef)
 
+warning('deprecated')
+
 %% SET PATHS
 
 [~,simdef.D3D.hostname]=system('hostname');
