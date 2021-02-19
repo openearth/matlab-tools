@@ -21,7 +21,7 @@ function varargout = EHY_plotMapModelData(gridInfo,values,varargin)
 %
 %% Settings
 OPT.linestyle = 'none'; % other options: '-'
-OPT.edgecolor = 'none';
+OPT.edgecolor = 'k';
 OPT.facecolor = 'flat'; % 'flat' or 'interp'/'continuous shades'
 OPT.linewidth = 0.5;
 OPT.t = []; % time index, needed for plotting data along xy-trajectory

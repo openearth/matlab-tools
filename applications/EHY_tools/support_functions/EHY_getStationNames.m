@@ -29,7 +29,11 @@ switch modelType
         if ~isempty(strfind(lower(OPT.varName),'cross_section'))
             stationNames  = nc_varget(inputFile,'cross_section_name');
         elseif ~isempty(strfind(lower(OPT.varName),'general_structure'))
-            stationNames  = nc_varget(inputFile,'general_structure_name');
+            if nc_isvar(inputFile,'general_structure_name')
+                stationNames  = nc_varget(inputFile,'general_structure_name');
+            elseif nc_isvar(inputFile,'general_structure_id')
+                stationNames = nc_varget(inputFile,'general_structure_id');
+            end
         else % 'wl' or 'uv'
             stationNames  = nc_varget(inputFile,'station_name'); 
         end
