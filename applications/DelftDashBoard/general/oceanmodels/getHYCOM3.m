@@ -78,7 +78,7 @@ end
 nt=round(t(2)-t(1))+1;
 t=t(1):t(2);
 
-d=s.d;
+%d=s.d;
 
 xl1=mod(xl,360);
 yl1=yl;

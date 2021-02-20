@@ -1,4 +1,4 @@
-function getHYCOM3(url, outname, outdir, par, xl, yl, dx, dy, t, s)
+function getHYCOM4(url, outname, outdir, par, xl, yl, dx, dy, t, s)
 %GETHYCOM  One line description goes here.
 %
 %   More detailed description goes here.
@@ -115,7 +115,7 @@ s.lat=transpose(yl(1):dy:yl(2));
 s.levels=d';
 s.long_name=par;
 
-t1=[];
+t1=[2019-01-01];
 yr0=-999;
 
 for it=1:nt
