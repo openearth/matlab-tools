@@ -34,6 +34,8 @@
 %
 %       -'Q'        : water discharge
 %
+%       -'t'        : time
+%
 %   -un: factor for unit conversion from SI
 %
 %   -lan: language
@@ -41,7 +43,7 @@
 %       -'nl': dutch
 %       -'es': spanish
 
-function lab=labels4all(var,un,lan)
+function [lab,str_var,str_un]=labels4all(var,un,lan)
 
 switch lower(var)
     case {'eta','etab'}
@@ -59,7 +61,7 @@ switch lower(var)
             case 'en'
                 str_var='bed elevation change';
             case 'nl'
-                str_var='verandering van de hoogte van het bed';
+                str_var='bodemverandering';
             case 'es'
                 str_var='';
         end
@@ -245,6 +247,16 @@ switch lower(var)
                 str_var='caudal';
          end
          un_type='L3/T';
+     case 't'
+         switch lan
+            case 'en'
+                str_var='time';
+            case 'nl'
+                str_var='tijd';
+            case 'es'
+                str_var='tiempo';
+         end
+         un_type='T';
     otherwise
          error('this is missing')
 end %var
@@ -292,6 +304,31 @@ switch un_type
         switch un
             case 1
                 str_un=' [m/s]';
+            otherwise
+                error('this factor is missing')
+        end
+    case 'T'
+        switch un
+            case 1
+                str_un=' [s]';
+            case 1/60
+                str_un=' [min]';
+            case 1/3600
+                str_un=' [h]';
+            case 1/3600/24
+                switch lan
+                    case 'en'
+                        str_un=' [day]';
+                    case 'nl'
+                        str_un=' [dag]';
+                end
+            case 1/3600/24/365
+                switch lan
+                    case 'en'
+                        str_un=' [year]';
+                    case 'nl'
+                        str_un=' [jaar]';
+                end
             otherwise
                 error('this factor is missing')
         end

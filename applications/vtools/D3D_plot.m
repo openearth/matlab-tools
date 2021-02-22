@@ -47,10 +47,10 @@ for ks=1:ns
             simdef.runid.serie=def.series{ks};
             simdef.D3D.paths_runs=def.paths_runs;
         case {2,3}
+            def.folder=simdef.D3D.dire_sim;
             aux.strspl=strsplit(def.folder,'\');
             simdef.runid.number=str2double(aux.strspl{end-1});
             simdef.runid.serie=aux.strspl{end-2};
-            simdef.D3D.dire_sim=def.folder;
     end %flg.sim_in
 %     simdef=D3D_comp(simdef);
     

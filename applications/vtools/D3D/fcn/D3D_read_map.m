@@ -74,20 +74,23 @@ secflow=0;
 
 
 morpho=1;
-if isfield(file,'mor')==0
+% if isfield(file,'mor')==0
+if isnan(find_str_in_cell({NFStruct.GrpDat.Name},{'map-infsed-serie'}))
     morpho=0;
 end
 
-if isfield(flg,'zerosarenan')==0
-    flg.zerosarenan=0;
-end
-    
+%done after
+% if isfield(flg,'zerosarenan')==0
+%     flg.zerosarenan=0;
+% end
+  
 %% plot input
 
-mean_type=1; %dg
-if flg.which_v==3
-    mean_type=2; 
-end
+mean_type=flg.mean_type;
+% mean_type=1; %dg
+% if flg.which_v==3
+%     mean_type=2; 
+% end
 
 if isfield(flg,'elliptic')==0
     flg.elliptic=0; 
@@ -95,27 +98,31 @@ else
     
 end
 
-if kt==0 %only give domain size as output
-    warning('do we reach this point?')
+% if kt==0 %only give domain size as output
+%     warning('do we reach this point?')
 %     flg.which_v=-1;
-    flg.which_p=-1;
-else
+%     flg.which_p=-1;
+% else
     nT=numel(kt);
-    out.nT=nT;
+%     out.nT=nT;
     ny=numel(ky);
-    out.ny=ny;
+%     out.ny=ny;
     nx=numel(kx);
-    out.nx=nx;
+%     out.nx=nx;
     nF=numel(kf);
-    out.nF=nF;
-end
+%     out.nF=nF;
+% end
 
 
     %% time and space
-if flg.which_p~=-1
+if flg.which_p~=-1 
 TUNIT=vs_let(NFStruct,'map-const','TUNIT','quiet'); %dt unit
 DT=vs_let(NFStruct,'map-const','DT','quiet'); %dt
 time_r=ITMAPC*DT*TUNIT; %results time vector [s]
+if morpho==1
+    MORFT=vs_let(NFStruct,'map-infsed-serie','MORFT','quiet'); %morphological time (days since start)
+    time_r_morpho=MORFT*24*3600; %seconds
+end
 
 XZ=vs_let(NFStruct,'map-const','XZ',{ky,kx},'quiet'); %x coordinate at z point [m]
 YZ=vs_let(NFStruct,'map-const','YZ',{ky,kx},'quiet'); %y coordinate at z point [m]
@@ -671,6 +678,7 @@ zcordvel_mat=NaN(npint,KMAX);
                 out=out_var_2DH(z,XZ,YZ,time_r,XCOR,YCOR,nT,nx,ny,flg,kt);
                 out.zlabel='bed elevation change [m]';
                 out.zlabel_code='detab';
+                out.time_r=time_r_morpho(kt);
             case 33 %cell area
                 z=vs_let(NFStruct,'map-const',{1},'GSQS',{ky,kx},'quiet'); 
                 out=out_var_2DH(z,XZ,YZ,time_r,XCOR,YCOR,nT,nx,ny,flg,kt);

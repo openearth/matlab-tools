@@ -335,7 +335,11 @@ han.fig.Renderer='painters';
 %print
 if fig_prnt
 print(han.fig,strcat(prnt.filename,'.eps'),'-depsc2','-loose','-cmyk')
+messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.eps'))) 
 print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r600')
+messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.png'))) 
 print(han.fig,strcat(prnt.filename,'.jpg'),'-djpeg','-r300')
+messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.jpg'))) 
+
 close(han.fig)
 end

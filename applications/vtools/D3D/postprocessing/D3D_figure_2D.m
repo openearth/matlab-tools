@@ -111,7 +111,7 @@ cbar.location='northoutside';
 if isfield(in,'zlabel_code')
     cbar.label=labels4all(in.zlabel_code,flg.plot_unitz,flg.language);
 else
-    warning('Considering adding a code to zlabel in D3D_read_map')
+    warning('Consider adding a code to zlabel in D3D_read_map')
     cbar.label=in.zlabel;
 end
 
@@ -167,47 +167,10 @@ han.sfig(kpr,kpc).YLim=lims.y;
 xlabel(han.sfig(kpr,kpc),labels4all('x',flg.plot_unitx,flg.language));
 % ylabel(han.sfig(kpr,kpc),sprintf('crosswise position %s',aux_s));
 ylabel(han.sfig(kpr,kpc),labels4all('y',flg.plot_unity,flg.language));
-
-% zlabel(han.sfig(kpr,kpc),'elevation [m]');
-% xlim(han.sfig(kpr,kpc),lims.x)
-% ylim(han.sfig(kpr,kpc),lims.y)
-% zlim(han.sfig(kpr,kpc),lims.y)
-% switch flg.which_v
-%     case 1 
-%         aux_s='bed elevation [m] at';
-%     case 3
-%         switch flg.plot_unitz
-%             case 1
-%                 aux_s='mean grain size at the bed surface [m] at';
-%             case 1000
-%                 aux_s='mean grain size at the bed surface [mm] at';
-%         end
-%     case 4
-%         switch flg.plot_unitz
-%             case 1
-%                 aux_s='mean grain size at the top substrate [m] at';
-%             case 1000
-%                 aux_s='mean grain size at the top substrate [mm] at';
-%         end
-%     case 6
-%         aux_s='secondary flow intensity [m/s] at';
-%     otherwise
-%         aux_s='';
-% end
-% switch flg.plot_unitt
-%     case 1 %conversion from s 
-%         aux_t='s';
-%     case 1/3600 %conversion from s
-%         aux_t='h';
-%     case 1/3600/24
-%         aux_t='days';
-% end
-% title(han.sfig(kpr,kpc),sprintf('%s time = %5.2f %s',aux_s,time_r,aux_t))
-% if flg.which_p~=8
 if flg.addtitle
-title(han.sfig(kpr,kpc),sprintf('time = %5.2f %s',time_r,aux_t))
+    [~,str_var,str_un]=labels4all('t',flg.plot_unitt,flg.language);
+    title(han.sfig(kpr,kpc),sprintf('%s = %5.2f%s',str_var,time_r,str_un))
 end
-% end
    
 
 %plots

@@ -164,7 +164,7 @@ simdef.flg.pauset=0.1;
 simdef.flg.save_name=NaN; %name to save a figure, if NaN it gives automatic name
 simdef.flg.save_name='C:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\200522_vow20\ge'; %name to save a figure, if NaN it gives automatic name
 
-simdef.flg.fig_visible=1; %see plot: 0=NO; 1=YES
+% simdef.flg.fig_visible=1; %see plot: 0=NO; 1=YES (if unspecified, it only appears if it is not printed)
 
 simdef.flg.elliptic=0; %plot elliptic results: 0=NO; 1=YES (from ect); 2=YES (from D3D)
 
@@ -243,3 +243,7 @@ simdef.flg.which_s=4; %which plot style:
 % in_read.path_rkm="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\river_kilometers\rijntakken\irm\rkm_rijntakken_rhein.csv";
 % in_read.rkm_curved="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\river_kilometers\rijntakken\irm\rijn-flow-model_map_curved.nc";
 % in_read.rkm_TolMinDist=300; %tolerance for accepting an rkm point
+
+%% prevent error if empty
+
+in_read.dummy=NaN;

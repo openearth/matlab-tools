@@ -19,7 +19,7 @@
 %idx=[1,2,4];
 
 
-function idx=find_str_in_cell(data,str2find)
+function [idx,bol]=find_str_in_cell(data,str2find)
 
 %% all values
 %useful for later select left and right
@@ -30,6 +30,7 @@ end
 
 ns=numel(str2find);
 idx=[];
+bol=false(size(data));
 for ks=1:ns
     aux_where=strfind(data,str2find(ks));
     %check exact agreement
@@ -38,9 +39,12 @@ for ks=1:ns
     for ka=1:na
         if strcmp(data{idx_rkm(ka)},str2find(ks))
             idx=[idx,idx_rkm(ka)];
+            
         end
     end
 end %ns
+
+bol(idx)=true;
 
 if isempty(idx)
     idx=NaN;

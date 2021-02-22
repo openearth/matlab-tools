@@ -18,6 +18,35 @@
 %
 %OUTPUT:
 %   -
+%
+%example of file_structure items:
+%
+% file_type=0;
+% fdelim=',';
+% var_once={''};
+% var_time={'CET/CEST','Debiet Lobith (m3/s)'};
+% var_loc={''};
+% idx_waarheid=2;
+% idx_location=NaN;
+% idx_x=NaN;
+% idx_y=NaN;
+% idx_epsg=NaN;
+% epsg=NaN;
+% idx_parameter=NaN;
+% idx_raai=NaN;
+% idx_hoedanigheid=NaN;
+% hoedanigheid=NaN;
+% idx_grootheid=NaN;
+% grootheid='Q';
+% idx_eenheid=NaN;
+% eenheid='m^3/s';
+% idx_datum=NaN;
+% fmt_datum='';
+% idx_tijd=NaN;
+% fmt_tijd='';
+% idx_time=1;
+% fmt_time='yy/MM/dd HH:mm';
+% tzone='Europe/Amsterdam';
 
 function rws_data=read_csv_data(fpath,varargin)
 
@@ -28,19 +57,26 @@ parin=inputParser;
 flg_debug=0;
 
 addOptional(parin,'flg_debug',flg_debug);
+addOptional(parin,'file_structure',NaN);
 
 parse(parin,varargin{:});
 
 flg_debug=parin.Results.flg_debug;
+file_structure=parin.Results.file_structure;
+v2struct(file_structure) %output from get_file_data and file_type=0 or file_type=-1
 
 %% READ DATA
 
-file_type=get_file_type(fpath);
+if ~isstruct(file_structure) %there is no file structure as input
+    file_type=get_file_type(fpath);
+end
 
 switch file_type
+    case 0
+        vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug,'file_structure',file_structure);
     case {1,2,3,4,6} %locations in rows
         vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug);
-    case 5 %locations in columns
+    case {5} %locations in columns
         vardata=read_data_2(file_type,fpath,'flg_debug',flg_debug);
     otherwise
         error('Specify file type')
@@ -56,7 +92,9 @@ for kloc=1:nloc
 
     %% get indexes 
     
-    [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid]=get_file_data(file_type);
+    if ~isstruct(file_structure)
+        [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter]=get_file_data(file_type);
+    end
     
     switch file_type
         case 5
@@ -67,8 +105,8 @@ for kloc=1:nloc
 
     %convert time format 
     if isnan(idx_time)
-        time_aux=datetime(vardata{kloc,1}(:,idx_tijd),'inputFormat',fmt_tijd)-datetime(vardata{kloc,1}(1,idx_tijd),'inputFormat',fmt_tijd);
-        time_mea=datetime(vardata{kloc,1}(:,idx_datum),'inputFormat',fmt_datum)+time_aux;
+%         time_aux=datetime(vardata{kloc,1}(:,idx_tijd),'inputFormat',fmt_tijd)-datetime(vardata{kloc,1}(1,idx_tijd),'inputFormat',fmt_tijd);
+        time_mea=datetime(vardata{kloc,1}(:,idx_datum),'inputFormat',fmt_datum)+duration(vardata{kloc,1}(:,idx_tijd),'inputFormat',lower(fmt_tijd));
     else
         time_mea=datetime(vardata{kloc,1}(:,idx_time),'InputFormat',fmt_time);
     end
@@ -86,10 +124,12 @@ for kloc=1:nloc
     %% variables to save
 
         %location
-    if isnan(idx_location)
-        error('No location')
-    else
-        location=vardata{kloc,2}{idx_location};
+    if isnan(location)
+        if isnan(idx_location)
+            error('No location')
+        else
+            location=vardata{kloc,2}{idx_location};
+        end
     end
         %x
     if isnan(idx_x)
@@ -130,14 +170,16 @@ for kloc=1:nloc
         end
     end
         %parameter
-    if isnan(idx_parameter)
-        if strcmp(grootheid,'CONCTTE')
-            param='Cl'; %ASSUMPTION: if nothing is said, it is salt. 
+    if isnan(parameter)
+        if isnan(idx_parameter)
+            if strcmp(grootheid,'CONCTTE')
+                parameter='Cl'; %ASSUMPTION: if nothing is said, it is salt. 
+            else
+                parameter='';
+            end
         else
-            param='';
+            parameter=vardata{kloc,2}{idx_parameter};
         end
-    else
-        param=vardata{kloc,2}{idx_parameter};
     end
         %epsg
     if isnan(epsg)
@@ -225,7 +267,7 @@ for kloc=1:nloc
     rws_data(kloc).epsg=epsg;
     rws_data(kloc).location=location;
     rws_data(kloc).eenheid=eenheid;
-    rws_data(kloc).parameter=param;
+    rws_data(kloc).parameter=parameter;
     rws_data(kloc).grootheid=grootheid;
     rws_data(kloc).source=fpath;
     rws_data(kloc).time=time_mea;
@@ -335,10 +377,13 @@ parin=inputParser;
 flg_debug=0;
 
 addOptional(parin,'flg_debug',flg_debug);
+addOptional(parin,'file_structure',NaN);
 
 parse(parin,varargin{:});
 
 flg_debug=parin.Results.flg_debug;
+file_structure=parin.Results.file_structure;
+v2struct(file_structure) %output from get_file_data and file_type=0 or file_type=-1
 
 %% header
 fid=fopen(fpath,'r');
@@ -346,7 +391,10 @@ fline=fgetl(fid); %first line
 
 %% file type data
 
+if file_type~=0 
 [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg]=get_file_data(file_type);
+end
+
 tok_header=regexp(fline,fdelim,'split');
 idx_var_once=find_str_in_cell(tok_header,var_once);
 idx_var_time=find_str_in_cell(tok_header,var_time);    
@@ -375,13 +423,21 @@ ks=1; %time counter
     tok=regexp(fline,fdelim,'split');
     
     %check location change
-    locname_tm1=tok(idx_var_loc); %t-1
+    if ~isnan(idx_var_loc)
+        locname_tm1=tok(idx_var_loc); %t-1
+    else
+        locname_tm1=''; %no location column in file
+    end
     
     %save time
     vardata{kloc,1}(ks,:)=tok(idx_var_time);
     
     %save constant
-    vardata{kloc,2}=tok(idx_var_once);
+    if ~isnan(idx_var_once)
+        vardata{kloc,2}=tok(idx_var_once);
+    else
+        vardata{kloc,2}='';
+    end
     
     %update
     kl=kl+1;
@@ -392,7 +448,11 @@ while ~feof(fid) && keep_going
     tok=regexp(fline,fdelim,'split');
     
     %check location change
-    locname_t=tok(idx_var_loc);
+    if ~isnan(idx_var_loc)
+        locname_t=tok(idx_var_loc);
+    else
+        locname_t='';
+    end
     if ~strcmp(locname_t,locname_tm1)
         %schrink finished location
         vardata{kloc,1}=vardata{kloc,1}(1:ks-1,:); 
@@ -403,7 +463,11 @@ while ~feof(fid) && keep_going
         ks=1;
         
         %new constants
-        vardata{kloc,2}=tok(idx_var_once);
+        if ~isnan(idx_var_once)
+            vardata{kloc,2}=tok(idx_var_once);
+        else
+            vardata{kloc,2}='';
+        end
     else
         ks=ks+1;
     end
@@ -440,8 +504,10 @@ end %function
 
 %%
 
-function [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid]=get_file_data(file_type)
+function [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter]=get_file_data(file_type)
 
+parameter=NaN;
+location=NaN;
 idx_grootheid=NaN;
 grootheid=NaN;
 idx_eenheid=NaN;
