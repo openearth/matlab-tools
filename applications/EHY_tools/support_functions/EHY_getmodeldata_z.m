@@ -126,7 +126,7 @@ for iZ = 1:length(OPT0.z)
                         waterlevel(logi) = valuesInThisLayer(logi);
                         if all(all(~isnan(waterlevel))); break; end
                     end
-                    DataZ.Zcen_cen2 = cat(3,bedlevel,DataZ.Zcen_cen,waterlevel);
+                    DataZ.Zcen_cen = cat(3,bedlevel,DataZ.Zcen_cen,waterlevel);
                 end
             end
             
