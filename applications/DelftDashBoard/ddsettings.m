@@ -49,4 +49,4 @@ disp(' ');
 % 
 % netcdf_settings('quiet',false) % in /io/netcdf/
 
-run('..\..\oetsettings');
+run('../../oetsettings');
