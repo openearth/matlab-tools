@@ -49,7 +49,7 @@ if isfield(xml,'element')
               % Elements in separate xml file
               if readlowerlevel
                   xmlfile2=element(k).element.tab(j).tab.element;
-                  newelement=gui_readXMLfile(xmlfile2,dr,'lowerlevel',1);
+                  newelement=gui_readXMLfile(xmlfile2,dr,'lowerlevel',3);
                   element(k).element.tab(j).tab.element = newelement;
               end
             else
