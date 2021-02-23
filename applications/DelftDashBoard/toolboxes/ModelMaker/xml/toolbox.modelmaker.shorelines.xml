@@ -2,7 +2,7 @@
 <root>
   <element>
     <style>pushbutton</style>
-    <position>870 65 120 20</position>
+    <position>70 65 120 20</position>
     <text>START ShorelineS</text>
     <callback>ddb_ModelMakerToolbox_shorelines</callback>
     <option1>startshorelines</option1>
@@ -26,7 +26,7 @@
   </element>
   <element>
     <style>pushbutton</style>
-    <position>870 40 120 20</position>
+    <position>70 40 120 20</position>
     <text>PAUSE/CONTINUE</text>
     <callback>ddb_ModelMakerToolbox_shorelines</callback>
     <option1>pauseshorelines</option1>
@@ -50,7 +50,7 @@
   </element>
   <element>
     <style>pushbutton</style>
-    <position>870 15 120 20</position>
+    <position>70 15 120 20</position>
     <text>STOP</text>
     <callback>ddb_ModelMakerToolbox_shorelines</callback>
     <option1>stopshorelines</option1>
@@ -74,7 +74,7 @@
   </element>
   <element>
     <style>text</style>
-    <position>870 110 120 20</position>
+    <position>70 110 120 20</position>
     <variable>handles.model.shorelines.current_time_string</variable>
     <dependency>
       <action>visible</action>
@@ -95,7 +95,7 @@
   </element>
   <element>
     <style>text</style>
-    <position>870 90 120 20</position>
+    <position>70 90 120 20</position>
     <variable>handles.model.shorelines.time_remaining_string</variable>
     <dependency>
       <action>visible</action>
