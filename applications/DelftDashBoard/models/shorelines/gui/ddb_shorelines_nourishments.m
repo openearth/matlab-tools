@@ -7,9 +7,14 @@ ddb_zoomOff;
 if isempty(varargin)
 
     % New tab selected
-    %ddb_refreshScreen;
+    ddb_refreshScreen;
     % Make shoreline visible
-    ddb_plotnourishments('update','active',1,'visible',1);
+    ddb_plotshorelines('update','active',1,'visible',1);
+    handles=getHandles;
+    
+    handles = ddb_shorelines_plot_nourishment(handles, 'plot');
+    
+    setHandles(handles);
 
 else
     
@@ -192,6 +197,7 @@ handles=getHandles;
 
 x=handles.model.shorelines.nourishments(1).x;
 y=handles.model.shorelines.nourishments(1).y;
+handles.model.shorelines.domain.nourish=1;
 for as=2:handles.model.shorelines.nrnourishments
     x=[x,NaN,handles.model.shorelines.nourishments(as).x];
     y=[y,NaN,handles.model.shorelines.nourishments(as).y];

@@ -54,6 +54,7 @@ handles.model.shorelines.shorelines(1).name='';
 handles.model.shorelines.shorelines(1).x=[];
 handles.model.shorelines.shorelines(1).y=[];
 handles.model.shorelines.shorelines(1).length=[];
+handles.model.shorelines.newshoreline.handle=[];
 
 handles.model.shorelines.nrstructures=0;
 handles.model.shorelines.activestructure=1;

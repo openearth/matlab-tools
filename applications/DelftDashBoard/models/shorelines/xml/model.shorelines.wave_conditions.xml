@@ -57,7 +57,7 @@
   <element>
     <style>edit</style>
     <position>200 55 60 20</position>
-    <text>Mean wave direction (deg. N)</text>
+    <text>Mean wave direction (°N)</text>
     <variable>handles.model.shorelines.domain.phiw0</variable>
     <type>real</type>
     <tooltipstring>Edit value for wave direction offshore</tooltipstring>
@@ -74,7 +74,7 @@
   <element>
     <style>edit</style>
     <position>200 30 60 20</position>
-    <text>Spreading (deg.)</text>
+    <text>Spreading (°)</text>
     <variable>handles.model.shorelines.domain.spread</variable>
     <type>real</type>
     <tooltipstring>Edit value for spreading in wave direction</tooltipstring>
@@ -182,7 +182,7 @@
   <element>
     <style>edit</style>
     <position>800 30 60 20</position>
-    <text>Nearshore orientation(deg. N)</text>
+    <text>Shoreface orientation(deg. N)</text>
     <variable>handles.model.shorelines.domain.phif</variable>
     <type>real</type>
     <tooltipstring>Edit value for orientation of nearshore contour</tooltipstring>

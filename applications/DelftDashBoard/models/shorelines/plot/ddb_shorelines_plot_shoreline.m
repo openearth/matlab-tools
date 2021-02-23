@@ -34,7 +34,7 @@ switch lower(opt)
                 
                 % h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@change_shoreline,'tag','shorelines_shoreline','marker','o');
                 if as==handles.model.shorelines.activeshoreline
-                    h=plot(xp,yp,'r','linewidth',1.5)
+                    h=plot(xp,yp,'r',xp(1),yp(1),'o','linewidth',1.5)
                     %h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@modify_shoreline,'tag','shorelines_shoreline','color','k','marker','o');
                 else
                     h=plot(xp,yp,'k','linewidth',1.5)
@@ -60,15 +60,23 @@ switch lower(opt)
         
     case{'update'}
         
-        try
-            h=handles.model.shorelines.shoreline.handle;
-            if ~isempty(h)
+        if handles.model.shorelines.nrshorelines>0
+            for as=1:handles.model.shorelines.nrshorelines
+                % First delete old shoreline
                 try
-                    if vis
-                        set(h,'Visible','on');
-                    else
-                        set(h,'Visible','off');
-                    end
+                    delete(handles.model.shorelines.shorelines(as).handle);
+                end
+                handles.model.shorelines.shorelines(as).handle=[];
+                xp=handles.model.shorelines.shorelines(as).x;
+                yp=handles.model.shorelines.shorelines(as).y;
+                
+                h=plot(xp,yp,'k','linewidth',1.5)
+                handles.model.shorelines.shorelines(as).handle=h;
+                
+                if vis
+                    set(h,'Visible','on');
+                else
+                    set(h,'Visible','off');
                 end
             end
         end

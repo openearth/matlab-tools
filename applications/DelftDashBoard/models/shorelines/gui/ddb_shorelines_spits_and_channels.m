@@ -1,11 +1,18 @@
-function ddb_shorelines_numerics(varargin)
+function ddb_shorelines_spits_and_channels(varargin)
 
 %%
 ddb_zoomOff;
 
 if isempty(varargin)
     % New tab selected
+    ddb_refreshScreen;
+    % Make shoreline visible
     ddb_plotshorelines('update','active',1,'visible',1);
+    handles=getHandles;
+    
+    handles = ddb_shorelines_plot_channel(handles, 'plot');
+    
+    setHandles(handles);
 else
     
     %Options selected
@@ -112,8 +119,8 @@ function load_channels
 handles=getHandles;
 
 %[x,y]=landboundary('read',handles.model.shorelines.channel.filename);
-[x,y]=read_xy_columns(handles.model.shorelines.domain.LDBchannels);
-matname=handles.model.shorelines.domain.LDBchannels;
+[x,y]=read_xy_columns(handles.model.shorelines.domain.LDBchannel);
+matname=handles.model.shorelines.domain.LDBchannel;
 matname(end-2:end)='mat';
 load(matname);
 handles.model.shorelines.channels=channels;
@@ -142,24 +149,29 @@ function save_channels
 
 handles=getHandles;
 
-x=handles.model.shorelines.channels(1).x;
-y=handles.model.shorelines.channels(1).y;
-for as=2:handles.model.shorelines.nrchannels
-    x=[x,NaN,handles.model.shorelines.channels(as).x];
-    y=[y,NaN,handles.model.shorelines.channels(as).y];
+if handles.model.shorelines.nrchannels>0
+    handles.model.shorelines.domain.channel=1;
+    x=handles.model.shorelines.channels(1).x;
+    y=handles.model.shorelines.channels(1).y;
+    for as=2:handles.model.shorelines.nrchannels
+        x=[x,NaN,handles.model.shorelines.channels(as).x];
+        y=[y,NaN,handles.model.shorelines.channels(as).y];
+    end
+    %landboundary('write',handles.model.shorelines.channel.filename,x,y);
+    out=[x;y]';
+    save(handles.model.shorelines.domain.LDBchannel,'out','-ascii');
+    setHandles(handles);
+    
+    gui_updateActiveTab;
+    
+    matname=handles.model.shorelines.domain.LDBchannel;
+    matname(end-2:end)='mat';
+    channels=handles.model.shorelines.channels;
+    channels=rmfield(channels,'handle');
+    save(matname,'channels');
+else
+    handles.model.shorelines.domain.channel=0;
 end
-%landboundary('write',handles.model.shorelines.channel.filename,x,y);
-out=[x;y]';
-save(handles.model.shorelines.domain.LDBchannels,'out','-ascii');
-setHandles(handles);
-
-gui_updateActiveTab;
-
-matname=handles.model.shorelines.domain.LDBchannels;
-matname(end-2:end)='mat';
-channels=handles.model.shorelines.channels;
-channels=rmfield(channels,'handle');
-save(matname,'channels');
 %%
 function edit_name
 

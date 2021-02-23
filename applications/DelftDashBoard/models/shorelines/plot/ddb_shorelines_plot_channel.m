@@ -26,7 +26,11 @@ switch lower(opt)
             for as=1:handles.model.shorelines.nrchannels
                 % First delete old shoreline
                 try
-                    delete(handles.model.shorelines.channels(as).handle);
+                    delete(handles.model.shorelines.channels(as).handle);                    
+                end
+                try
+                    h=findobj(gca,'tag','shorelines_channel')
+                    delete(h);
                 end
                 handles.model.shorelines.channels(as).handle=[];
                 xp=handles.model.shorelines.channels(as).x;
@@ -37,7 +41,7 @@ switch lower(opt)
                     %h=plot(xp,yp,'r','linewidth',2)
                     h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@modify_channel,'tag','shorelines_channel','color','b','linestyle','--','marker','o');
                 else
-                    h=plot(xp,yp,'b--','linewidth',1.5)
+                    h=plot(xp,yp,'b--','linewidth',1.5,'tag','shorelines_channel')
                 end
                 handles.model.shorelines.channels(as).handle=h;
                 
@@ -60,15 +64,23 @@ switch lower(opt)
         
     case{'update'}
         
-        try
-            h=handles.model.shorelines.channel.handle;
-            if ~isempty(h)
+        if handles.model.shorelines.nrchannels>0
+            for as=1:handles.model.shorelines.nrchannels
+                % First delete old shoreline
                 try
-                    if vis
-                        set(h,'Visible','on');
-                    else
-                        set(h,'Visible','off');
-                    end
+                    delete(handles.model.shorelines.channels(as).handle);
+                end
+                handles.model.shorelines.channels(as).handle=[];
+                xp=handles.model.shorelines.channels(as).x;
+                yp=handles.model.shorelines.channels(as).y;
+                
+                h=plot(xp,yp,'b--','linewidth',1.5)
+                handles.model.shorelines.channels(as).handle=h;
+                
+                if vis
+                    set(h,'Visible','on');
+                else
+                    set(h,'Visible','off');
                 end
             end
         end

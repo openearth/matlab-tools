@@ -60,15 +60,23 @@ switch lower(opt)
         
     case{'update'}
         
-        try
-            h=handles.model.shorelines.structure.handle;
-            if ~isempty(h)
+        if handles.model.shorelines.nrstructures>0
+            for as=1:handles.model.shorelines.nrstructures
+                % First delete old shoreline
                 try
-                    if vis
-                        set(h,'Visible','on');
-                    else
-                        set(h,'Visible','off');
-                    end
+                    delete(handles.model.shorelines.structures(as).handle);
+                end
+                handles.model.shorelines.structures(as).handle=[];
+                xp=handles.model.shorelines.structures(as).x;
+                yp=handles.model.shorelines.structures(as).y;
+                
+                h=plot(xp,yp,'k','linewidth',1.5)
+                handles.model.shorelines.structures(as).handle=h;
+                
+                if vis
+                    set(h,'Visible','on');
+                else
+                    set(h,'Visible','off');
                 end
             end
         end

@@ -12,24 +12,24 @@
     <variable>handles.model.shorelines.domain.tref</variable>
     <callback>ddb_shorelines_timeframe</callback>
     <option1>edittime</option1>
-    <type>datetime</type>
+    <type>date</type>
   </element>
   <element>
     <style>edit</style>
     <position>130 105 110 20</position>
     <text>Start Time</text>
-    <variable>handles.model.shorelines.domain.tstart</variable>
+    <variable>handles.model.shorelines.domain.timenum0</variable>
     <callback>ddb_shorelines_timeframe</callback>
     <option1>edittime</option1>
-    <type>datetime</type>
+    <type>date</type>
   </element>
   <element>
     <style>edit</style>
     <position>130 80 110 20</position>
     <text>Stop Time</text>
-    <variable>handles.model.shorelines.domain.tstop</variable>
+    <variable>handles.model.shorelines.domain.tend</variable>
     <callback>ddb_shorelines_timeframe</callback>
     <option1>edittime</option1>
-    <type>datetime</type>
+    <type>date</type>
   </element>
 </root>

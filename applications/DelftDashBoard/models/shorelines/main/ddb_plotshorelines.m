@@ -26,11 +26,19 @@ switch option
         
         col='r';
         handles=ddb_shorelines_plot_shoreline(handles,option,'color',col,'visible',1);
+        handles=ddb_shorelines_plot_structure(handles,option,'color',col,'visible',1);
+        handles=ddb_shorelines_plot_nourishment(handles,option,'color',col,'visible',1);
+        handles=ddb_shorelines_plot_channel(handles,option,'color',col,'visible',1);
         
     case{'delete'}
         
         handles=ddb_shorelines_plot_shoreline(handles,option);
-        
+        handles=ddb_shorelines_plot_structure(handles,option);
+        handles=ddb_shorelines_plot_nourishment(handles,option);
+        handles=ddb_shorelines_plot_channel(handles,option);
+        try
+           delete(handles.model.shorelines.newshoreline.handle);
+        end
     case{'update'}
         
         % Change colors and visibility
@@ -45,6 +53,9 @@ switch option
         
         
         handles=ddb_shorelines_plot_shoreline(handles,option,'color',col,'visible',vis);
+        handles=ddb_shorelines_plot_structure(handles,option,'color',col,'visible',vis);
+        handles=ddb_shorelines_plot_nourishment(handles,option,'color',col,'visible',vis);
+        handles=ddb_shorelines_plot_channel(handles,option,'color',col,'visible',vis);
         
 end
 

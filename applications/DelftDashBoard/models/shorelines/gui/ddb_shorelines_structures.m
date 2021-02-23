@@ -7,9 +7,14 @@ ddb_zoomOff;
 if isempty(varargin)
 
     % New tab selected
-    %ddb_refreshScreen;
+    ddb_refreshScreen;
     % Make shoreline visible
-    ddb_plotstructures('update','active',1,'visible',1);
+    ddb_plotshorelines('update','active',1,'visible',1);
+    handles=getHandles;
+    
+    handles = ddb_shorelines_plot_structure(handles, 'plot');
+    
+    setHandles(handles);
 
 else
     
@@ -39,20 +44,7 @@ function select_from_list
 
 handles=getHandles;
 
-% First delete existing structure
-%handles = ddb_shorelines_plot_shoreline(handles, 'delete');
-% handles.model.shorelines.shoreline.x=[];
-% handles.model.shorelines.shoreline.y=[];
-% handles.model.shorelines.shoreline.length=0;
-
 handles = ddb_shorelines_plot_structure(handles, 'plot');
-% as=handles.model.shorelines.activestructure;
-% xp=handles.model.shorelines.structures(as).x;
-% yp=handles.model.shorelines.structures(as).y;
-% gui_polyline('plot','axis',handles.GUIHandles.mapAxis,'tag','structures_tmp','marker','o', ...
-%     'x',xp,'y',yp, ...
-%     'changecallback',@modify_structure, ...
-%     'linecolor','g','closed',1);
 
 setInstructions({'','Click on map to draw structure','Use right-click to end structure'});
 
@@ -173,6 +165,7 @@ end
 %landboundary('write',handles.model.shorelines.structure.filename,x,y);
 out=[x;y]';
 save(handles.model.shorelines.domain.LDBstructures,'out','-ascii');
+handles.model.shorelines.domain.struct=1;
 setHandles(handles);
 
 gui_updateActiveTab;

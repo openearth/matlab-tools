@@ -168,7 +168,7 @@
     <style>pushselectfile</style>
     <position>600 75 100 20</position>
     <text>Load channels</text>
-    <variable>handles.model.shorelines.domain.LDBchannels</variable>
+    <variable>handles.model.shorelines.domain.LDBchannel</variable>
     <callback>ddb_shorelines_spits_and_channels</callback>
     <option1>loadchannels</option1>
     <showfilename>no</showfilename>
@@ -190,7 +190,7 @@
     <style>pushsavefile</style>
     <position>600 50 100 20</position>
     <text>Save channels</text>
-    <variable>handles.model.shorelines.domain.LDBchannels</variable>
+    <variable>handles.model.shorelines.domain.LDBchannel</variable>
     <callback>ddb_shorelines_spits_and_channels</callback>
     <option1>savechannels</option1>
     <showfilename>no</showfilename>

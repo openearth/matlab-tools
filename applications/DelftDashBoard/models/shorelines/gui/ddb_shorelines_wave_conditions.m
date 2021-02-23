@@ -5,6 +5,8 @@ ddb_zoomOff;
 
 if isempty(varargin)
     % New tab selected
+    ddb_refreshScreen;
+    % Make shoreline visible
     ddb_plotshorelines('update','active',1,'visible',1);
 else
     
@@ -32,7 +34,16 @@ function select_wave_option
 
 handles=getHandles;
 opt=handles.model.shorelines.wave_opt;
-%ddb_giveWarning('text',['Thank you for selecting wave option ' opt]);
+switch lower(opt)
+    case{'mean_and_spreading'}
+        handles.model.shorelines.domain.Waveclimfile='';
+        handles.model.shorelines.domain.WVCfile='';
+    case('wave_climate')
+        handles.model.shorelines.domain.WVCfile='';
+    case('wave_time_series')
+        handles.model.shorelines.domain.Waveclimfile='';
+end
+    %ddb_giveWarning('text',['Thank you for selecting wave option ' opt]);
 setHandles(handles);
 
 %%

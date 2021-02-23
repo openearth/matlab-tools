@@ -60,15 +60,23 @@ switch lower(opt)
         
     case{'update'}
         
-        try
-            h=handles.model.shorelines.nourishment.handle;
-            if ~isempty(h)
+        if handles.model.shorelines.nrnourishments>0
+            for as=1:handles.model.shorelines.nrnourishments
+                % First delete old shoreline
                 try
-                    if vis
-                        set(h,'Visible','on');
-                    else
-                        set(h,'Visible','off');
-                    end
+                    delete(handles.model.shorelines.nourishments(as).handle);
+                end
+                handles.model.shorelines.nourishments(as).handle=[];
+                xp=handles.model.shorelines.nourishments(as).x;
+                yp=handles.model.shorelines.nourishments(as).y;
+                
+                h=plot(xp,yp,'k:','linewidth',1.5)
+                handles.model.shorelines.nourishments(as).handle=h;
+                
+                if vis
+                    set(h,'Visible','on');
+                else
+                    set(h,'Visible','off');
                 end
             end
         end
