@@ -14,6 +14,7 @@
 % - Specify infiltration (note unit change 2020 onwards)
 % - Add observation points
 % - Inifile
+% - Drainage pump/culvert
 %%%%%
 
 %% Create SFINCS struct
@@ -495,6 +496,28 @@ fid = fopen(inp.qinffile,'w');
 fwrite(fid,inf_q,'real*4');
 fclose(fid);
 
+%%%%%
+% Specify spatially varying infiltration using CN method
+%%%%%
+% .rgh
+% CNx0y0 CNx1y0 
+% CNx0y1 CNx1y1 
+%%%%%
+% Example: (Data in binary with size data dep-file)
+inp.scsfile = 'sfincs.scs';  
+
+polygon  = landboundary('read','change_infiltration.pol');
+id = inpolygon(xg,yg,polygon(:,1),polygon(:,2));
+
+CN(1:size(xg,1),1:size(xg,2)) = 100; % [+mm/hr] set general infiltration
+CN(id) = 0; %open water set polygon infiltration
+
+% Replace open water (=0) and NaN (-9999 and real NaN) with 100=no  infiltration
+zv = CN(indices);
+fid=fopen(inp.scsfile ,'w');
+fwrite(fid,zv,'real*4');
+fclose(fid);
+        
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%
 % Thin dam file (from 2020 onwards)
 %%%%%
@@ -560,7 +583,7 @@ points_obs.length = length(points_obs.x);
 sfincs_write_boundary_points(inp.obsfile,points_obs);
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%
-%% Add an initial water level file
+% Add an initial water level file
 %%%%%
 %.ini
 % zinix0y0 zinix1y0
@@ -570,3 +593,32 @@ fid3 = fullfile(fname, 'sfincs.ini');
 zini=zeros(nmax,mmax);
 zini(:,1:24+1)=0.6;       
 save(fid3,'-ascii','zini');
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%
+% Add an drainage pump or weir file
+%%%%%
+%.drain
+% xsnk1 ysnk1 xsrc1 ysrc1 type1 par1-1 par2-1 par3-1 par4-1 par5-1
+% xsnk2 ysnk2 xsrc2 ysrc2 type2 par1-2 par2-2 par3-2 par4-2 par5-2
+%%%%%
+jj=1;
+drain(jj).xsnk = 75; %sink x-coordinate(s), from where water is taken
+drain(jj).ysnk = 25; %sink y-coordinate(s)
+drain(jj).xsrc = 125; %source x-coordinate(s), to where water is discharged
+drain(jj).ysrc = 25; %source x-coordinate(s)
+if strcmp(model_version{ii} , 'pump')
+    drain(jj).type = 1; %1= pump, 2=culvert, 3= XX (drainage pipe?)
+elseif strcmp(model_version{ii} , 'culvert')
+    drain(jj).type = 2; %1= pump, 2=culvert, 3= XX (drainage pipe?)
+end
+drain(jj).par1 = 1; % possible drainage discharge in m3/s
+drain(jj).par2 = 0; % not used yet
+drain(jj).par3 = 0; % not used yet
+drain(jj).par4 = 0; % not used yet
+drain(jj).par5 = 0; % not used yet    
+
+inp.drnfile = 'sfincs.drain';
+sfincs_write_drainage_file(inp.drnfile,drain)
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%
+% Add a CN infiltration spatially varying file

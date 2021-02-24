@@ -14,7 +14,7 @@ function sfincs_write_netcdf_amprfile(filename, x, y, EPSGcode, UTMname, refdate
 % - data is now written away as singles
 % 
 % Example:
-% filename = 'sfincs_netamuamvfile.nc';
+% filename = 'sfincs_netamprfile.nc';
 % 
 % x = [0, 100, 200];
 % y = [50, 150, 250, 350];
@@ -28,7 +28,7 @@ function sfincs_write_netcdf_amprfile(filename, x, y, EPSGcode, UTMname, refdate
 % rng('default');
 % ampr = 1 * randi([0 10],length(time),length(y),length(x));
 %
-% sfincs_write_netcdf_amuamvfile(filename, x, y, EPSGcode, UTMname, refdate, time, ampr)
+% sfincs_write_netcdf_amprfile(filename, x, y, EPSGcode, UTMname, refdate, time, ampr)
 %
 %% General info
 ncid                = netcdf.create(filename,'NC_WRITE');
