@@ -6,5 +6,5 @@ function [x,y]=read_xy_columns(filename)
 %     Created by Dano Roelvink - IHE Delft / Deltares
 
 xy=load(filename);
-x=xy(:,1);
-y=xy(:,2);
+x=xy(:,1)';
+y=xy(:,2)';
