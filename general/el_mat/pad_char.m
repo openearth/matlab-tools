@@ -1,9 +1,9 @@
-function varargout = pad(prepad,L,varargin)
-%PAD   Pads 2D char/numeric array on either side to required length.
+function varargout = pad_char(prepad,L,varargin)
+%PAD_CHAR   Pads 2D char/numeric array on either side to required length.
 %
-% pad(array,L)
-% pad(array,L,symbol)
-% pad(array,symbol,L) % also, but for ASCII padding only !
+% pad_char(array,L)
+% pad_char(array,L,symbol)
+% pad_char(array,symbol,L) % also, but for ASCII padding only !
 %
 % Pads an array with symbol 'symbol'
 % until it has width abs(L). More precise, 
@@ -27,15 +27,15 @@ function varargout = pad(prepad,L,varargin)
 %
 % Example:
 %
-% pad(['aaa';'bbb'],-4,'_') =
+% pad_char(['aaa';'bbb'],-4,'_') =
 % _aaa
 % _bbb
 %
-% pad(['aaa';'bbb'],-4,'_') =
+% pad_char(['aaa';'bbb'],-4,'_') =
 % aaa_
 % bbb_
 %
-% Note: always returns amtpy matrix for empty array
+% Note: always returns emtpy matrix for empty array
 %
 % See also: ADDROWCOL, NUM2STR (number,'%0.nd')
 
@@ -104,7 +104,7 @@ end
    
    if (size(prepad,2) < absL)
            
-      if length(symbol)==0
+      if isempty(symbol)
    	
          error('syntax: pad(array,L,symbol) where symbol should not be empty');
    	
@@ -129,7 +129,7 @@ end
    else
        
        if displaywarning
-       disp(['Array not padded, as its length ',num2str(length(prepad)),' >= ',num2str(absL)])
+       disp(['Array not padded, as its length ',num2str(length(prepad)),' >= ',num2str(absL)]);
        end
        
        padded = prepad;
