@@ -90,19 +90,18 @@ switch handles.model.shorelines.status
             else
                set(handles.model.shorelines.newshoreline.handle,'xdata',x,'ydata',y);
             end
-            
-            drawnow;
 
             setHandles(handles);
-
+            
+            drawnow; % this is where the event queue
+            
             gui_updateActiveTab;
-            
-            % Change shoreline on the map
-                     
-            
+                
             % And on the the next time step
             next_time_step;
-
+            
+            % Change shoreline on the map
+                                 
         else
             stop_model;
         end
@@ -129,20 +128,33 @@ switch handles.model.shorelines.status
         % Continue on
         handles.model.shorelines.status='running';
         % First copy some stuff (new structures?) to the S structure
-%         S=handles.model.shorelines.S;
-%         S.rhow=handles.model.shorelines.domain.rhow;
-%         S.num_opt=handles.model.shorelines.domain.num_opt;
-%         S.num_option1_value=handles.model.shorelines.domain.num_option1_value;        
-%         S.num_option2_value=handles.model.shorelines.domain.num_option2_value;        
-%         S.num_option3_value=handles.model.shorelines.domain.num_option3_value;        
-%         if strcmpi(S.num_opt,'spring')
-%             S.shoreline.x=handles.model.shorelines.domain.shoreline.x;
-%             S.shoreline.y=handles.model.shorelines.domain.shoreline.y;
-%         end
-        S=handles.model.shorelines.domain;        
+        %         S=handles.model.shorelines.S;
+        %         S.rhow=handles.model.shorelines.domain.rhow;
+        %         S.num_opt=handles.model.shorelines.domain.num_opt;
+        %         S.num_option1_value=handles.model.shorelines.domain.num_option1_value;
+        %         S.num_option2_value=handles.model.shorelines.domain.num_option2_value;
+        %         S.num_option3_value=handles.model.shorelines.domain.num_option3_value;
+        %         if strcmpi(S.num_opt,'spring')
+        %             S.shoreline.x=handles.model.shorelines.domain.shoreline.x;
+        %             S.shoreline.y=handles.model.shorelines.domain.shoreline.y;
+        %         end
+        
+        inp=handles.model.shorelines.domain;
+        
+        S=inp;
+        O=handles.model.shorelines.O;
+        
+        S.yesplot=0;
+        %S=ShorelineS(S,'initialize');
+        [S,O]=ShorelineS_in_ddb(S,O,'initialize');
+        
+        handles.model.shorelines.domain=S;
+        handles.model.shorelines.O=O;
+        
+        %         S=handles.model.shorelines.domain;
         setHandles(handles);
-        next_time_step;
         disp('Model started again');
+        next_time_step;
 end
 
 gui_updateActiveTab;

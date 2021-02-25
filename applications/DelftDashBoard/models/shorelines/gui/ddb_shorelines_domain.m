@@ -5,7 +5,7 @@ ddb_zoomOff;
 if isempty(varargin)
     
     % New tab selected
-    ddb_plotshorelines('update','active',1,'visible',1);        
+    ddb_plotshorelines('update','active',0,'visible',1);        
 
 else
     

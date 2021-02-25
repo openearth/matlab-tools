@@ -35,7 +35,7 @@ switch lower(opt)
             else
                 handles.model.shorelines.domain.wave_opt='mean_and_spreading';
             end
-            handles.model.shorelines.domain.transport_opt=lower(handles.model.shorelines.domain.trform)
+            handles.model.shorelines.domain.transport_opt=lower(handles.model.shorelines.domain.trform);
             setHandles(handles);
 
             if ~isempty(handles.model.shorelines.domain.LDBcoastline)
@@ -66,11 +66,13 @@ switch lower(opt)
                 %handles.model.shorelines.domain.y_mc=y;
             end
                           
-            %ddb_plotshorelines('plot','active',0,'visible',1);
-            handles = ddb_shorelines_plot_shoreline(handles, 'plot');
-            handles = ddb_shorelines_plot_structure(handles, 'plot');
-            handles = ddb_shorelines_plot_nourishment(handles, 'plot');
-            handles = ddb_shorelines_plot_channel(handles, 'plot');
+            ddb_plotshorelines('delete');
+            ddb_plotshorelines('plot','active',0,'visible',1);
+            
+%             handles = ddb_shorelines_plot_shoreline(handles, 'plot');
+%             handles = ddb_shorelines_plot_structure(handles, 'plot');
+%             handles = ddb_shorelines_plot_nourishment(handles, 'plot');
+%             handles = ddb_shorelines_plot_channel(handles, 'plot');
             gui_updateActiveTab;
 
         end        

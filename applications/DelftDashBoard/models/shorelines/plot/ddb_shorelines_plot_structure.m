@@ -21,6 +21,10 @@ switch lower(opt)
     
     case{'plot'}
         
+        try
+            h=findobj(gca,'tag','shorelines_structure');
+            delete(h);
+        end
         
         if handles.model.shorelines.nrstructures>0
             for as=1:handles.model.shorelines.nrstructures
@@ -37,7 +41,7 @@ switch lower(opt)
                     %h=plot(xp,yp,'r','linewidth',2)
                     h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@modify_structure,'tag','shorelines_structure','color','k','marker','o');
                 else
-                    h=plot(xp,yp,'k','linewidth',1.5)
+                    h=plot(xp,yp,'k','linewidth',1.5,'tag','shorelines_structure');
                 end
                 handles.model.shorelines.structures(as).handle=h;
                 
@@ -55,6 +59,10 @@ switch lower(opt)
         % First delete old structure
         try
             delete(handles.model.shorelines.structure.handle);
+        end
+        try
+            h=findobj(gca,'tag','shorelines_structure');
+            delete(h);
         end
         handles.model.shorelines.structure.handle=[];
         

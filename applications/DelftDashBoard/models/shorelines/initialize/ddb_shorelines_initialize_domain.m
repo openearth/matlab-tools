@@ -1,5 +1,7 @@
 function handles=ddb_shorelines_initialize_domain(handles)
 
+handles.model.shorelines.domain=[];
+
 handles.model.shorelines.domain.runid='tst';
 
 handles.model.shorelines.domain.handle=[];
@@ -50,6 +52,7 @@ handles.model.shorelines.nrshorelines=0;
 handles.model.shorelines.activeshoreline=1;
 handles.model.shorelines.shorelinenames={''};
 handles.model.shorelines.domain.LDBcoastline='';
+handles.model.shorelines.shorelines=[];
 handles.model.shorelines.shorelines(1).name='';
 handles.model.shorelines.shorelines(1).x=[];
 handles.model.shorelines.shorelines(1).y=[];
@@ -60,6 +63,7 @@ handles.model.shorelines.nrstructures=0;
 handles.model.shorelines.activestructure=1;
 handles.model.shorelines.structurenames={''};
 handles.model.shorelines.domain.LDBstructures='';
+handles.model.shorelines.structures=[];
 handles.model.shorelines.structures(1).name='';
 handles.model.shorelines.structures(1).x=[];
 handles.model.shorelines.structures(1).y=[];
@@ -70,6 +74,7 @@ handles.model.shorelines.nrnourishments=0;
 handles.model.shorelines.activenourishment=1;
 handles.model.shorelines.nourishmentnames={''};
 handles.model.shorelines.domain.LDBnourish='';
+handles.model.shorelines.nourishments=[];
 handles.model.shorelines.nourishments(1).name='';
 handles.model.shorelines.nourishments(1).x=[];
 handles.model.shorelines.nourishments(1).y=[];
@@ -85,6 +90,7 @@ handles.model.shorelines.nrchannels=0;
 handles.model.shorelines.activechannel=1;
 handles.model.shorelines.channelnames={''};
 handles.model.shorelines.domain.LDBchannels='';
+handles.model.shorelines.channels=[];
 handles.model.shorelines.channels(1).name='';
 handles.model.shorelines.channels(1).x=[];
 handles.model.shorelines.channels(1).y=[];
