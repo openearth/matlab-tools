@@ -89,7 +89,20 @@ sfincs_write_input([folder 'sfincs.inp'],inp);
 if ~isempty(inp.sbgfile)
     disp('Making subgrid file ...');
     refi=ceil(inp.dx/subgrid_dx);
-    refj=refi;
+    refj=ceil(inp.dy/subgrid_dx); %dx and dy could be varying
+    
+    if inp.dx~=inp.dy
+       disp('WARNING: subgrid generation - dx is not equal to dy, this might cause problems') 
+    end
+    
+    if rem(inp.dx,1) > 0
+       disp('WARNING: subgrid generation: dx is not a whole number, this might cause problems') 
+    end
+    
+    if rem(inp.dy,1) > 0
+       disp('WARNING: subgrid generation: dy is not a whole number, this might cause problems') 
+    end    
+%     refj=refi;
     sfincs_make_subgrid_file_v7(folder,inp.sbgfile,bathy,cs,nbin,refi,refj,subgrid_uopt,maxdzdv,usemex,inp.manning_sea,inp.manning_land,inp.rgh_lev_land);       
 end
 
