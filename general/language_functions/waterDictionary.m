@@ -29,7 +29,7 @@ colUnit = get_nr(header,'Unit');
 colLang = get_nr(header,lan   );
 
 %% Find the right row
-rowVar  = get_nr(dictionary(:,1),id);
+rowVar  = get_nr(dictionary(:,1),strtrim(id));
 
 %% Construct the final string
 if ~isempty (rowVar) 
