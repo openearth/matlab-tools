@@ -1,3 +1,16 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
+%
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
+%
+%
 
 %% PREAMBLE
 
@@ -6,24 +19,25 @@ clc
 
 %% INPUT
 
-deletefiles=0; %if 0; it will display which ones it will delete
+deletefiles=1; %if 0; it will display which ones it will delete
 
-path_main_folder='p:\11204511-tenryuu-5b-2019\B3_Large-scale-modelling\2_simulations-2019\tenryuu\';
-tag2erase={'_map.nc';'_his.nc';'_rst.nc'}; %erase files based on the last part of the file name
-% folder2erase={'r_065','r_066'}; %folders to erase
+path_main_folder='C:\Users\chavarri\temporal\210122_rmm_salinity_2020\02_data\hagestein\';
+% tag2erase={'_map.nc';'_his.nc';'_rst.nc'}; %erase files based on the last part of the file name
+tag2erase={'LOBH_OW_Q_NVT_ddl_wq.csv'}; %erase files based on the last part of the file name
+folder2erase={'hagestein'}; %folders to erase
 
-folder2erase={};
+% folder2erase={};
 % for kfol=1:20
 %     folder2erase=cat(2,folder2erase,{sprintf('%03d',kfol)});
 % end
-for kfol=21:44
-    folder2erase=cat(2,folder2erase,{sprintf('r_%03d',kfol)});
-end
+% for kfol=21:44
+%     folder2erase=cat(2,folder2erase,{sprintf('r_%03d',kfol)});
+% end
 
 %% CALC
 
 ntag=numel(tag2erase);
-nfe=numel(folder2erase);
+% nfe=numel(folder2erase);
 
 [pathNames,dirNames,fileNames]=dirwalk(path_main_folder);
 

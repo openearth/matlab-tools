@@ -16,7 +16,11 @@ function D3D_figure_patch(simdef,in)
 
 %% RENAME in
 
+simdef=D3D_figure_defaults(simdef);
+
 flg=simdef.flg;
+
+%%
 
 XZ=in.XZ.*flg.plot_unitx;
 sub=in.sub;
@@ -33,22 +37,6 @@ end
 
 %% defaults
 
-if isfield(flg,'marg')==0
-    flg.marg.mb=1.5; %bottom margin [cm]
-    flg.marg.mt=2.5; %top margin [cm]
-    flg.marg.mr=2.5; %right margin [cm]
-    flg.marg.ml=2.0; %left margin [cm]
-    flg.marg.sh=1.0; %horizontal spacing [cm]
-    flg.marg.sv=0.0; %vertical spacing [cm]
-end
-
-if isfield(flg.prop,'fs')==0
-    flg.prop.fs=12;
-end
-
-if isfield(flg,'prnt_size')==0
-    flg.prnt_size=[0,0,25.4,19.05];
-end
 
 %limits
 lims.x=[min(XZ),max(XZ)];
@@ -72,10 +60,6 @@ if isfield(flg,'lims')
     if isfield(flg.lims,'f')
         lims.f=flg.lims.f;
     end
-end
-
-if isfield(flg,'fig_visible')==0
-    flg.fig_visible=1;
 end
 
 if isfield(flg,'plotLa')==0

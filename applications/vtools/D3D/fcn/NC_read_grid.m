@@ -23,5 +23,6 @@ out.network1d_node_x=ncread(simdef.file.grd,'network1d_node_x');
 out.network1d_node_y=ncread(simdef.file.grd,'network1d_node_y');
 out.mesh1d_node_branch=ncread(simdef.file.grd,'mesh1d_node_branch');
 out.network1d_branch_id=ncread(simdef.file.grd,'network1d_branch_id');
+out.mesh1d
 
 end %function

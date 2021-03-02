@@ -12,10 +12,20 @@
 %
 %plot of 1D volume fraction 2
 
-function flg=D3D_figure_defaults(flg)
+function simdef=D3D_figure_defaults(simdef)
+
+flg=simdef.flg;
+
+if isfield(flg,'print')==0
+    flg.print=0;
+end
 
 if isfield(flg,'prnt_size')==0
     flg.prnt_size=[0,0,25.4,19.05];
+end
+
+if isfield(flg,'prop')==0
+    flg.prop.dummy=NaN;
 end
 
 if isfield(flg.prop,'edgecolor')==0
@@ -57,4 +67,34 @@ if isfield(flg,'fig_visible')==0
     else
         flg.fig_visible=1;
     end
+end
+
+if isfield(flg,'plot_unitx')==0
+    flg.plot_unitx=1;
+end
+
+if isfield(flg,'plot_unity')==0
+    flg.plot_unity=1;
+end
+
+if isfield(flg,'plot_unitt')==0
+    flg.plot_unitt=1;
+end
+
+if isfield(flg,'equal_axis')==0
+    flg.equal_axis=0;
+end
+
+if isfield(flg,'add_tiles')==0
+    flg.add_tiles=0;
+end
+
+if isfield(flg,'elliptic')==0
+    flg.elliptic=0;
+end
+
+%% OUT
+
+simdef.flg=flg;
+
 end %function

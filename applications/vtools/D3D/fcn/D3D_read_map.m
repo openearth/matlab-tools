@@ -26,6 +26,12 @@ kx=in.kx;
 kf=in.kf;
 nl=in.nl;
 
+%%
+
+if isfield(flg,'zerosarenan')==0
+    flg.zerosarenan=0;
+end
+
 %% results structure
 
 NFStruct=vs_use(file.map,'quiet');

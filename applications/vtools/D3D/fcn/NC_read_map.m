@@ -36,6 +36,12 @@ if isfield(flg,'mean_type')==0
 else
     mean_type=flg.mean_type; 
 end
+%overwritten by input variable
+if flg.which_v==3
+    mean_type=2;
+elseif flg.which_v==26
+    mean_type=1;
+end
 
 if isfield(flg,'elliptic')==0
     flg.elliptic=0;
@@ -1185,7 +1191,7 @@ switch flg.which_p
                     lyrfrac=out_lyrfrac.z;
 %                     lyrfrac_nomud=out_lyrfrac.z(:,:,idx_bedload);
                     lyrfrac_nomud=out_lyrfrac.z;
-                    warning('solve this')
+%                     warning('solve this')
                     
                     %layer thickness
                     out_thlyr=get_fm1d_data('mesh1d_thlyr',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id); %nBedLayers,mesh1d_nNodes,time
@@ -1235,10 +1241,10 @@ switch flg.which_p
                    error('you want to plot the volume fraction content of more than one fraction at the same time') 
                 end
                 out.cvar=lyrfrac(:,:,kf)';
-            case 3
+            case {3,26}
                 out.cvar=dm';
             otherwise
-                error('3 or 8')
+                error('3, 8, or 26')
         end
         out.kf=kf;
         

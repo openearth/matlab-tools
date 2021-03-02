@@ -16,11 +16,9 @@ function D3D_figure_2D(simdef,in)
 
 %% RENAME in
 
+simdef=D3D_figure_defaults(simdef);
+
 flg=simdef.flg;
-
-%% defaults
-
-flg=D3D_figure_defaults(flg);
 
 %% limits
 

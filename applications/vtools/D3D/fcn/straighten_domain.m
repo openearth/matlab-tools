@@ -10,6 +10,8 @@
 %$Id$
 %$HeadURL$
 %
+%straighten_domain(file_map,varargin)
+%
 %INPUT:
 %   -file_map = path to the netCDF file with the curved grid [string]
 %   
@@ -49,20 +51,32 @@ end
 
 % ncdisp(file.map)
 
-network1d_geom_x=ncread(file.map,'network1d_geom_x');
-network1d_geom_y=ncread(file.map,'network1d_geom_y');
+nci=ncinfo(file.map);
+var_names={nci.Name};
+
+idx=find_str_in_cell(var_names,{'network1d_geom_x'});
+if isnan(idx)
+    old_style=1;
+    str_network='network';
+else
+    old_style=0;
+    str_network='network1d';
+end
+
+network1d_geom_x=ncread(file.map,sprintf('%s_geom_x',str_network));
+network1d_geom_y=ncread(file.map,sprintf('%s_geom_y',str_network));
 % network1d_branch_order=ncread(file.map,'network1d_branch_order');
-network1d_branch_id=ncread(file.map,'network1d_branch_id')';
+% network1d_branch_id=ncread(file.map,sprintf('%s_branch_id',str_network))';
 % network1d_branch_long_name=ncread(file.map,'network1d_branch_long_name')';
 
-network1d_geom_node_count=ncread(file.map,'network1d_geom_node_count');
+network1d_geom_node_count=ncread(file.map,sprintf('%s_geom_node_count',str_network));
 
-network1d_edge_nodes=ncread(file.map,'network1d_edge_nodes'); %Start and end nodes of network edges
+network1d_edge_nodes=ncread(file.map,sprintf('%s_edge_nodes',str_network)); %Start and end nodes of network edges
 
-network1d_node_id=ncread(file.map,'network1d_node_id')';
-network1d_node_long_name=ncread(file.map,'network1d_node_long_name')';
-network1d_node_x=ncread(file.map,'network1d_node_x');
-network1d_node_y=ncread(file.map,'network1d_node_y');
+network1d_node_id=ncread(file.map,sprintf('%s_node_id',str_network))';
+% network1d_node_long_name=ncread(file.map,sprintf('%s_node_long_name',str_network))';
+network1d_node_x=ncread(file.map,sprintf('%s_node_x',str_network));
+network1d_node_y=ncread(file.map,sprintf('%s_node_y',str_network));
 
 % network1d_geometry=ncread(file.map,'network1d_geometry');
  
@@ -74,6 +88,10 @@ end
 
 %% graph
 
+%in old style the count starts at 0, which is not accepted by digraph
+if old_style
+    network1d_edge_nodes=network1d_edge_nodes+1;
+end
 G=digraph(network1d_edge_nodes(1,:),network1d_edge_nodes(2,:));
 figure
 % plot(G)
@@ -354,11 +372,11 @@ if flg.write
 file_nc_straight=fullfile(nc_folder,strcat(nc_fname,'_straight',nc_ext));
 copyfile(file.map,file_nc_straight)
 
-ncwrite_class(file_nc_straight,'network1d_geom_x',network1d_geom_x,network1d_geom_x_stra);
-ncwrite_class(file_nc_straight,'network1d_geom_y',network1d_geom_y,network1d_geom_y_stra);
+ncwrite_class(file_nc_straight,sprintf('%s_geom_x',str_network),network1d_geom_x,network1d_geom_x_stra);
+ncwrite_class(file_nc_straight,sprintf('%s_geom_y',str_network),network1d_geom_y,network1d_geom_y_stra);
 
-ncwrite_class(file_nc_straight,'network1d_node_x',network1d_node_x,network1d_node_x_stra);
-ncwrite_class(file_nc_straight,'network1d_node_y',network1d_node_y,network1d_node_y_stra);
+ncwrite_class(file_nc_straight,sprintf('%s_node_x',str_network),network1d_node_x,network1d_node_x_stra);
+ncwrite_class(file_nc_straight,sprintf('%s_node_y',str_network),network1d_node_y,network1d_node_y_stra);
 
 fprintf('Straigth grid is written here: %s \n',file_nc_straight)
 

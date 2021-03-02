@@ -63,18 +63,29 @@ parse(parin,varargin{:});
 
 flg_debug=parin.Results.flg_debug;
 file_structure=parin.Results.file_structure;
-v2struct(file_structure) %output from get_file_data and file_type=0 or file_type=-1
+if ~isstruct(file_structure) %there is no file structure as input
+    input_file_structure=false;
+else
+    input_file_structure=true;
+    
+    %get empty values
+    [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time]=empty_file_structure;
+    %substitute the ones that are input
+    v2struct(file_structure) %output from get_file_data and file_type=0 or file_type=-1
+    %pack again to pass to reading function
+    file_structure=v2struct(fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time);
+end
 
 %% READ DATA
 
-if ~isstruct(file_structure) %there is no file structure as input
+if ~input_file_structure %there is no file structure as input
     file_type=get_file_type(fpath);
 end
 
 switch file_type
     case 0
         vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug,'file_structure',file_structure);
-    case {1,2,3,4,6} %locations in rows
+    case {1,2,3,4,6,7,8} %locations in rows
         vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug);
     case {5} %locations in columns
         vardata=read_data_2(file_type,fpath,'flg_debug',flg_debug);
@@ -92,8 +103,8 @@ for kloc=1:nloc
 
     %% get indexes 
     
-    if ~isstruct(file_structure)
-        [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter]=get_file_data(file_type);
+    if ~input_file_structure
+        [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time]=get_file_data(file_type,fpath);
     end
     
     switch file_type
@@ -105,10 +116,13 @@ for kloc=1:nloc
 
     %convert time format 
     if isnan(idx_time)
-%         time_aux=datetime(vardata{kloc,1}(:,idx_tijd),'inputFormat',fmt_tijd)-datetime(vardata{kloc,1}(1,idx_tijd),'inputFormat',fmt_tijd);
         time_mea=datetime(vardata{kloc,1}(:,idx_datum),'inputFormat',fmt_datum)+duration(vardata{kloc,1}(:,idx_tijd),'inputFormat',lower(fmt_tijd));
     else
-        time_mea=datetime(vardata{kloc,1}(:,idx_time),'InputFormat',fmt_time);
+        if contains(fmt_time,{'z','x'})%there is a time zone in the input
+            time_mea=datetime(vardata{kloc,1}(:,idx_time),'InputFormat',fmt_time,'TimeZone',tzone);
+        else
+            time_mea=datetime(vardata{kloc,1}(:,idx_time),'InputFormat',fmt_time);
+        end
     end
 
     time_mea.TimeZone=tzone;
@@ -132,16 +146,20 @@ for kloc=1:nloc
         end
     end
         %x
-    if isnan(idx_x)
-        x=NaN;
-    else
-        x=undutchify(vardata{kloc,2}{idx_x});
+    if isnan(x)    
+        if isnan(idx_x)
+            x=NaN;
+        else
+            x=undutchify(vardata{kloc,2}{idx_x});
+        end
     end
         %y
-    if isnan(idx_y)
-        y=NaN;
-    else
-        y=undutchify(vardata{kloc,2}{idx_y});
+    if isnan(y)
+        if isnan(idx_y)
+            y=NaN;
+        else
+            y=undutchify(vardata{kloc,2}{idx_y});
+        end
     end
         %raai
     if isnan(idx_raai)
@@ -167,6 +185,9 @@ for kloc=1:nloc
             end
         else
             grootheid=vardata{kloc,2}{idx_grootheid};
+            if strcmp(grootheid,'Debiet') %in some file types the code is not given and we assing the omschrijving to grotheid
+                grootheid='Q';
+            end
         end
     end
         %parameter
@@ -198,6 +219,10 @@ for kloc=1:nloc
     %         hoedanigheid=hoedanigheid(~isspace(ref));
         end
     else
+        %elevation
+% 	if isnan(bemonsteringshoogte)
+        
+%     end
 
     end
 
@@ -272,6 +297,7 @@ for kloc=1:nloc
     rws_data(kloc).source=fpath;
     rws_data(kloc).time=time_mea;
     rws_data(kloc).waarde=mea;
+    rws_data(kloc).bemonsteringshoogte=bemonsteringshoogte;
 
 end %kloc
 
@@ -392,15 +418,26 @@ fline=fgetl(fid); %first line
 %% file type data
 
 if file_type~=0 
-[fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg]=get_file_data(file_type);
+[fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time]=get_file_data(file_type,fpath);
 end
 
 tok_header=regexp(fline,fdelim,'split');
-idx_var_once=find_str_in_cell(tok_header,var_once);
-idx_var_time=find_str_in_cell(tok_header,var_time);    
+if isempty(var_once)
+    idx_var_once=NaN;
+else
+    idx_var_once=find_str_in_cell(tok_header,var_once);
+end
+if isnan(idx_var_time)
+    idx_var_time=find_str_in_cell(tok_header,var_time);    
+end
 idx_var_loc =find_str_in_cell(tok_header,var_loc );
 
 nv=numel(idx_var_time);
+
+%cycle header
+for kl=1:headerlines-1
+    fgetl(fid);
+end
 
 %% read
 
@@ -419,8 +456,7 @@ kloc=1; %location counter
 ks=1; %time counter
 
     %get info
-    fline=fgetl(fid); 
-    tok=regexp(fline,fdelim,'split');
+    tok=get_clean_line(fid,fdelim);
     
     %check location change
     if ~isnan(idx_var_loc)
@@ -444,8 +480,7 @@ ks=1; %time counter
 
 while ~feof(fid) && keep_going
     %get info
-    fline=fgetl(fid); 
-    tok=regexp(fline,fdelim,'split');
+    tok=get_clean_line(fid,fdelim);
     
     %check location change
     if ~isnan(idx_var_loc)
@@ -504,28 +539,9 @@ end %function
 
 %%
 
-function [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter]=get_file_data(file_type)
+function [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time]=get_file_data(file_type,fpath)
 
-parameter=NaN;
-location=NaN;
-idx_grootheid=NaN;
-grootheid=NaN;
-idx_eenheid=NaN;
-eenheid=NaN;
-idx_epsg=NaN;
-idx_raai=NaN;
-idx_x=NaN;
-idx_y=NaN;
-idx_parameter=NaN;
-idx_time=NaN; %date+time
-fmt_time='';
-idx_datum=NaN; %date
-fmt_datum='';
-idx_tijd=NaN; %time
-fmt_tijd='';
-epsg=NaN;
-idx_hoedanigheid=NaN;
-hoedanigheid='';
+         [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time]=empty_file_structure;
 
 switch file_type
     case 1
@@ -557,6 +573,7 @@ switch file_type
         
         fdelim=';';
         tzone='+0000'; %File <"Overzicht data Hollandsche IJssel_v18-01-2021.xlsx" > specifies that this set is in UTC.
+        headerlines=1;
     case 2
         % Datum              ,Serie                                                                                               ,Waarde   ,Eenheid,
         % "1-1-2018 00:00:00","GOUDA ADCP_3237-K_GOUDA ADCP-debietmeter - KW323711 - Q[m3/s][NVT][OW] - Debiet CAW [m3/s] - 15min","15.5958","m3/s"
@@ -577,6 +594,7 @@ switch file_type
         
         fdelim=',';
         tzone='Europe/Amsterdam'; %File <"Overzicht data Hollandsche IJssel_v18-01-2021.xlsx" > specifies that this set is in local time.
+        headerlines=1;
     case 3
 %        "";"Date"    ;"Time"  ;"P"    ;"T"  ;"EGV";"G";"loc"                         ;"K_18_t"        ;"cl"            ;"D_T"              ;"raai";"zomertijd"
 %       "1";2020-05-26;12:10:00;1607,31;18,08;0,636;636;" LEK_981_200713102930_V8523 ";634,897163168224;110,867149947533;2020-05-26 12:10:00;"981" ;2020-05-26 11:10:00
@@ -600,6 +618,7 @@ switch file_type
         
         fdelim=';';
         tzone='+02:00'; %we get the summertime and add the UTC shift to be sure. 
+        headerlines=1;
         
     case 4
         % "";"Date";"Time";"P";"T";"EGV";"G";"loc";"K_18_t";"cl";"D_T";"wintertijd"
@@ -623,6 +642,7 @@ switch file_type
         
         fdelim=';';
         tzone='+01:00'; %we get the wintertime and add the UTC shift to be sure. 
+        headerlines=1;
     case 5
     %     "";"D_T";"972";"977";"979";"982";"983.5";"985";"986";"989";"GROEN-18";"GROEN-26";"ROOD-12";"ROOD-6";"ROOD-9"
     %     "1";2020-09-04 09:00:00;NA;NA;NA;NA;NA;119,369608158169;NA;236,661232888235;200,15535414911;NA;199,37711013335;164,142701624404;173,556143951793
@@ -644,6 +664,8 @@ switch file_type
         
         fdelim=';';
         tzone='+02:00'; %we assume it is local time
+        headerlines=1;
+        
     case 6
         %MONSTER_IDENTIFICATIE;MEETPUNT_IDENTIFICATIE;TYPERING_OMSCHRIJVING;TYPERING_CODE;GROOTHEID_OMSCHRIJVING;GROOTHEID_ CODE;PARAMETER_OMSCHRIJVING;PARAMETER_ CODE;EENHEID_CODE;HOEDANIGHEID_OMSCHRIJVING     ;HOEDANIGHEID_CODE;COMPARTIMENT_OMSCHRIJVING;COMPARTIMENT_CODE;WAARDEBEWERKINGSMETHODE_OMSCHRIJVING;WAARDEBEWERKINGSMETHODE_CODE;WAARDEBEPALINGSMETHODE_OMSCHRIJVING                              ;WAARDEBEPALINGSMETHODE_CODE    ;BEMONSTERINGSSOORT_OMSCHRIJVING;BEMONSTERINGSSOORT_CODE;WAARNEMINGDATUM;WAARNEMINGTIJD;LIMIETSYMBOOL;NUMERIEKEWAARDE;ALFANUMERIEKEWAARDE;KWALITEITSOORDEEL_CODE;STATUSWAARDE   ;OPDRACHTGEVENDE_INSTANTIE;MEETAPPARAAT_OMSCHRIJVING;MEETAPPARAAT_CODE;BEMONSTERINGSAPPARAAT_OMSCHRIJVING;BEMONSTERINGSAPPARAAT_CODE;PLAATSBEPALINGSAPPARAAT_OMSCHRIJVING;PLAATSBEPALINGSAPPARAAT_CODE;BEMONSTERINGSHOOGTE;REFERENTIEVLAK;EPSG ;X               ;Y               ;ORGAAN_OMSCHRIJVING;ORGAAN_CODE;TAXON_NAME
 %                             ;Lobith                ;                     ;             ;Debiet                ;Q              ;                      ;               ;m3/s        ;                              ;                 ;Oppervlaktewater         ;OW               ;                                    ;                            ;Debiet uit Q-f relatie                                           ;other:F216                     ;Rechtstreekse meting           ;01                     ;01-01-2020     ;00:00:00      ;             ;3072,2         ;                   ;Normale waarde        ;Ongecontroleerd;ONXXREG_AFVOER           ;                         ;                 ;                                  ;                          ;                                    ;                            ;-999999999         ;NVT           ;25831;713748,798641064;5748949,04523234;                   ;           ;           
@@ -672,6 +694,114 @@ switch file_type
         
         fdelim=';';
         tzone='+01:00'; %waterinfo in CET
+        headerlines=1;
+        
+    case 7
+% Parameter                    : Cl               chloride
+% Eenheid                      : mg/l
+% Gebied                       : OUDMS            Oude Maas
+% Locatie                      : BEERPLKOVR       Beerenplaat linker oever (kilometer 996.1)
+% Referentievlak               : NAP
+% Bemonsteringshoogte          : -200
+% X-coordinaat RD in m         :  88407
+% Y-coordinaat RD in m         : 428330
+%%
+        %read from file
+        if exist('fpath','var') %if not, we are calling this function without second argument
+        fid=fopen(fpath,'r');
+        
+        lin=fgetl(fid);
+        tok=regexp(lin,':','split');
+        tok2=regexp(tok{1,2},'(\w*)','tokens');
+        parameter=tok2{1,1}{1,1};
+        
+        lin=fgetl(fid);
+        tok=regexp(lin,':','split');
+        tok2=regexp(tok{1,2},'(\w*(/?\w*))','tokens');
+        eenheid=tok2{1,1}{1,1};
+        
+        lin=fgetl(fid);
+        
+        lin=fgetl(fid);
+        tok=regexp(lin,':','split');
+        tok2=regexp(tok{1,2},'(\w*)','tokens');
+        location=tok2{1,1}{1,1};
+        
+        lin=fgetl(fid);
+        
+        lin=fgetl(fid);
+        tok=regexp(lin,':','split');
+        tok2=regexp(tok{1,2},'(-?\d*)','tokens');
+        bemonsteringshoogte=str2double(tok2{1,1}{1,1})./1000; %assume it is mm
+        
+        lin=fgetl(fid);
+        tok=regexp(lin,':','split');
+        tok2=regexp(tok{1,2},'(\d*)','tokens');
+        x=str2double(tok2{1,1}{1,1});
+        
+        lin=fgetl(fid);
+        tok=regexp(lin,':','split');
+        tok2=regexp(tok{1,2},'(\d*)','tokens');
+        y=str2double(tok2{1,1}{1,1});
+        
+        if contains(tok{1,1},' RD ')
+            epsg=28992;
+        else
+            error('no idea what coordinates are')
+        end
+        
+        lin=fgetl(fid);
+        
+        lin=fgetl(fid);
+        if contains(lin,' MET')
+            tzone='+01:00';
+        else
+            error('no idea about time zone')
+        end
+        
+        fclose(fid);
+        
+        %other
+        if strcmp(parameter,'Cl')
+            grootheid='CONCTTE'; %assing, as they are not in head
+        end
+        
+        idx_var_time=[1,2,3];
+        idx_datum=1;
+        fmt_datum='dd-MM-yyyy';
+        idx_tijd=2;
+        fmt_tijd='hh:mm';
+        idx_waarheid=3;
+        fdelim=' ';
+        headerlines=12;
+        
+
+        end
+    case 8
+%         locatie.code;locatie.naam   ;coordinatenstelsel;geometriepunt.x ;geometriepunt.y ;tijdstip            ;eenheid.code;grootheid.omschrijving;hoedanigheid.code;numeriekewaarde
+%         HAGSBVN     ;Hagestein boven;25831             ;646656.911653319;5762067.30484693;2000-12-04T07:00:00Z;m3/s        ;Debiet                ;NVT              ;477
+        var_once={'locatie.code','coordinatenstelsel','geometriepunt.x','geometriepunt.y','eenheid.code','grootheid.omschrijving','hoedanigheid.code'};
+        idx_location=1;
+        idx_epsg=2;
+        idx_x=3;
+        idx_y=4;
+        idx_eenheid=5;
+        idx_grootheid=6; %should be the code, but it is not present and we assing omschrijving for later changing it 
+        idx_hoedanigheid=7;
+        
+        %variables to save with time
+        var_time={'tijdstip','numeriekewaarde'};
+        idx_time=1;
+        fmt_time='yyyy-MM-dd''T''HH:mm:ssz';
+        idx_waarheid=2;
+        
+        tzone='+01:00'; %as there is a time zone in the input, this is the timezone in which is will be saved
+        
+        %variable with location, to check for different places in same file.
+        var_loc={'locatie.code'};
+        
+        fdelim=';';
+        headerlines=1;
     otherwise
         error('You are asking for an inexisteng file type')
 
@@ -689,30 +819,94 @@ fid=fopen(fpath,'r');
 fline=fgetl(fid); %first line
 fclose(fid);
 
-%% loop 
-file_type=1;
 keep_searching=true;
-while keep_searching
-    [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_param,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg]=get_file_data(file_type);
-    tok_header=regexp(fline,fdelim,'split');
-    idx_var_once=find_str_in_cell(tok_header,var_once);
-    idx_var_time=find_str_in_cell(tok_header,var_time);    
-    idx_var_loc =find_str_in_cell(tok_header,var_loc );
-    %it is possible to make it in one expression, but it gets unreadable
-    if ~isempty(var_once{1,1}) 
-        if any(isnan(idx_var_once))  || numel(var_once)~=numel(idx_var_once) || any(isnan(idx_var_time)) || numel(var_time)~=numel(idx_var_time)
-            file_type=file_type+1;
+
+%% check for header with several lines of info
+%very ad-hoc. This is not the nicest.
+
+if strcmp(fline(1:9),'Parameter')
+    file_type=7;
+    keep_searching=false;
+end
+
+%% loop 
+if keep_searching
+    
+    file_type=1;
+
+    while keep_searching
+        [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_param,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg]=get_file_data(file_type);
+        tok_header=regexp(fline,fdelim,'split');
+        idx_var_once=find_str_in_cell(tok_header,var_once);
+        idx_var_time=find_str_in_cell(tok_header,var_time);    
+    %     idx_var_loc =find_str_in_cell(tok_header,var_loc );
+        %it is possible to make it in one expression, but it gets unreadable
+        if ~isempty(var_once{1,1}) 
+            if any(isnan(idx_var_once))  || numel(var_once)~=numel(idx_var_once) || any(isnan(idx_var_time)) || numel(var_time)~=numel(idx_var_time)
+                file_type=file_type+1;
+            else
+                keep_searching=false;
+            end
         else
-            keep_searching=false;
+            if any(isnan(idx_var_time)) || numel(var_time)~=numel(idx_var_time)
+                file_type=file_type+1;
+            else
+                keep_searching=false;
+            end
         end
-    else
-        if any(isnan(idx_var_time)) || numel(var_time)~=numel(idx_var_time)
-            file_type=file_type+1;
-        else
-            keep_searching=false;
-        end
-    end
-end %keep_searching
+    end %keep_searching
+end %keep searching
 
 end %get_file_type
 
+%%
+
+function tok=get_clean_line(fid,fdelim)
+
+fline=fgetl(fid); 
+tok=regexp(fline,fdelim,'split');
+if strcmp(fdelim,' ') %this is only an issue if separator is space, although it could be passed to all cases
+    bol_val=~cellfun(@(X)isempty(X),(tok(:)));
+    tok=tok(bol_val);
+end
+
+end
+
+%%
+
+function [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time]=empty_file_structure
+
+idx_location=NaN;
+var_once={''};
+idx_var_time=NaN;
+var_time={''};
+var_loc={''};
+parameter=NaN;
+location=NaN;
+idx_grootheid=NaN;
+grootheid=NaN;
+idx_eenheid=NaN;
+eenheid=NaN;
+idx_epsg=NaN;
+idx_raai=NaN;
+idx_x=NaN;
+x=NaN;
+idx_y=NaN;
+y=NaN;
+idx_parameter=NaN;
+idx_time=NaN; %date+time
+fmt_time='';
+idx_datum=NaN; %date
+fmt_datum='';
+idx_tijd=NaN; %time
+fmt_tijd='';
+epsg=NaN;
+idx_hoedanigheid=NaN;
+hoedanigheid='';
+bemonsteringshoogte=NaN;
+headerlines=NaN;
+fdelim=',';
+idx_waarheid=NaN;
+tzone=NaN;
+
+end 

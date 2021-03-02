@@ -109,7 +109,7 @@ for ks=1:ns
     end
     
     %load elliptic
-    if simdef.flg.elliptic==1
+    if isfield(simdef.flg,'elliptic')==1 && simdef.flg.elliptic==1
         load(fullfile(simdef.D3D.dire_sim,'ect','eigen_ell_p'));
     end
     

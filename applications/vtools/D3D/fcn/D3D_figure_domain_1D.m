@@ -16,8 +16,11 @@ function D3D_figure_domain_1D(simdef,in)
 
 %% RENAME in
 
-% file=simdef.file;
+simdef=D3D_figure_defaults(simdef);
+
 flg=simdef.flg;
+
+    %%
 v2struct(in);
 
 nb=numel(network1d_branch_order);
@@ -27,31 +30,6 @@ network1d_node_id=network1d_node_id';
 geom_cs=[1;cumsum(network1d_geom_node_count)];
 
 %% default
-
-if isfield(flg,'plot_unitx')==0
-    flg.plot_unitx=1;
-end
-
-if isfield(flg,'plot_unity')==0
-    flg.plot_unity=1;
-end
-
-if isfield(flg,'print')==0
-    flg.print=0;
-end
-
-if isfield(flg,'equal_axis')==0
-    flg.equal_axis=1;
-end
-
-if isfield(flg,'marg')==0
-    flg.marg.mt=2.5; %top margin [cm]
-    flg.marg.mb=1.5; %bottom margin [cm]
-    flg.marg.mr=2.5; %right margin [cm]
-    flg.marg.ml=2.0; %left margin [cm]
-    flg.marg.sh=1.0; %horizontal spacing [cm]
-    flg.marg.sv=0.0; %vertical spacing [cm]
-end
 
 %defaults 
 XZ=network1d_geom_x*flg.plot_unitx;
@@ -74,26 +52,6 @@ if isfield(flg,'lims')
 %     if isfield(flg.lims,'f')
 %         lims.f=flg.lims.f;
 %     end
-end
-
-if isfield(flg,'prnt_size')==0
-    flg.prnt_size=[0,0,25.4,19.05];
-end
-
-if isfield(flg,'addtitle')==0
-    flg.addtitle=1;
-end
-
-if isfield(flg,'prop')==0
-    flg.prop.fs=10;
-end
-if isfield(flg.prop,'fs')==0
-    flg.prop.fs=10;
-end
-    
-%tiles
-if isfield(flg,'add_tiles')==0
-    flg.add_tiles=0;
 end
 
 %branches and nodes
@@ -260,9 +218,11 @@ for kb=1:nb
     mean_x=mean(network1d_geom_x(geom_cs(kb):geom_cs(kb+1)));
     mean_y=mean(network1d_geom_y(geom_cs(kb):geom_cs(kb+1)));
     str_p=strrep(network1d_branch_id(kb,:),'_',' ');
-    text(mean_x,mean_y,str_p,'Rotation',0,'Fontsize',10,'color','p')    
+    text(mean_x,mean_y,str_p,'Rotation',0,'Fontsize',10,'color','k')    
 end
 end
+
+%mesh1d
 
 
 % light
