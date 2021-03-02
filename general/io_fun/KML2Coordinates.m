@@ -178,10 +178,14 @@ function[names,coordCell,metadata]= kml_placemark_read(p)
            names{jj} = num2str(names{jj});
        end
        if isfield(p(jj),'LineString')
-          if size(p(jj).LineString.coordinates,1) == 1
-             coordCell{jj} = reshape(p(jj).LineString.coordinates,3,[])';
+           tmp = p(jj).LineString.coordinates;
+            if ~isnumeric(tmp); % some are already converted to numbers, apparently
+              tmp = str2num(tmp);
+           end
+          if size(tmp,1) == 1
+             coordCell{jj} = reshape(tmp,3,[])';
           else
-             coordCell{jj} = p(jj).LineString.coordinates;
+             coordCell{jj} = tmp;
           end
        else
            tmp = p(jj).Polygon.outerBoundaryIs.LinearRing.coordinates;
