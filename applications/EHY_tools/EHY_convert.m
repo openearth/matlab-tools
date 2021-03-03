@@ -1185,6 +1185,41 @@ end
         end
         output=obs;
     end
+% xyn2segmnr
+    function [output,OPT] = EHY_convert_xyn2segmnr(inputFile,outputFile,OPT)
+        try
+            xyn=delft3d_io_xyn('read',inputFile);
+        catch
+            fid=fopen(inputFile,'r');
+            D=textscan(fid,'%f%f%s','delimiter','\n');
+            fclose(fid);
+            xyn.x=D{1,1};
+            xyn.y=D{1,2};
+            xyn.name=D{1,3};
+        end
+        OPT = EHY_convert_ccoCheck(OPT,inputFile);
+        GI = EHY_getGridInfo(OPT.grdFile,{'XYcen','no_layers'});
+        dw = delwaq('open',OPT.grdFile);
+        [k,dist] = dsearchn([GI.Xcen(:) GI.Ycen(:)],[reshape(xyn.x,[],1) reshape(xyn.y,[],1)]);
+        [m,n] = ind2sub(size(GI.Xcen),k);
+        for i = 1:length(m)
+            output.segmnr(i,1) = dw.Index(m(i)+1,n(i)+1,1);
+        end
+        output.name = reshape(xyn.name,[],1);
+        no_stat = length(output.name);
+        for k = 1:GI.no_layers
+            output.name = [output.name; strcat(output.name(1:no_stat),[' (' num2str(k) ')']) ];
+            output.segmnr = [output.segmnr; output.segmnr(1:no_stat) + (k-1)*dw.NoSegPerLayer ];
+        end
+        
+        if OPT.saveOutputFile
+            fid = fopen(outputFile,'w');
+            for i = 1:length(output.segmnr)
+                fprintf(fid,'%-s\t%d \n',output.name{i},output.segmnr(i));
+            end
+            fclose(fid);
+        end
+    end
 % xyn2xyz
     function [output,OPT] = EHY_convert_xyn2xyz(inputFile,outputFile,OPT)
         try
@@ -1329,6 +1364,14 @@ if isempty(OPT.netFile)
     disp('Open the corresponding _net.nc-file')
     [netName,netPath]=uigetfile([fileparts(inputFile) filesep '.nc'],'Open the corresponding _net.nc-file');
     OPT.netFile=[netPath netName];
+end
+end
+
+function OPT = EHY_convert_ccoCheck(OPT,inputFile)
+if isempty(OPT.grdFile)
+    disp('Open the corresponding .cco/.lga-file')
+    [netName,netPath]=uigetfile([fileparts(inputFile) filesep '.cco'],'Open the corresponding .cco-file');
+    OPT.grdFile=[netPath netName];
 end
 end
 
