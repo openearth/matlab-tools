@@ -21,11 +21,11 @@
 %       -'dist_prof': distance along section
 %       -'dist_mouth': distance from mouth
 %
-%       -'etaw'     : water level
+%       -{'etaw','WATHTE'}     : water level
 %       -'h'        : flow depth
 %
-%       -'sal'      : salinity
-%       -'cl'       : chloride
+%       -'sal'      : salinity [psu]
+%       -{'cl','CONCTTE'}       : chloride [mg/l]
 %
 %       -'umag'     : velocity magnitude
 %
@@ -96,7 +96,7 @@ switch lower(var)
                 str_var='distancia a la desembocadura';
         end
         un_type='L'; 
-    case {'etaw' 'waterlevel'}
+    case {'etaw','waterlevel','wathte'}
         switch lan
             case 'en'
                 str_var='Water level';
@@ -156,7 +156,7 @@ switch lower(var)
                 str_var='profundidad';
         end
         un_type='L';
-    case 'sal'
+    case {'sal'}
         switch lan
             case 'en'
                 str_var='salinity';
@@ -166,7 +166,7 @@ switch lower(var)
                 str_var='salinidad';
         end
         un_type='-';
-    case 'cl'
+    case {'cl','conctte'}
         switch lan
             case 'en'
                 str_var='chloride';
@@ -292,10 +292,10 @@ switch un_type
                 error('this factor is missing')
         end
     case '-'
-        switch var
+        switch lower(var)
             case 'sal'
                 str_un=' [psu]';
-            case 'cl'
+            case {'cl','conctte'}
                 str_un= ' [mg/l]'; 
             otherwise
                 str_un = '';
