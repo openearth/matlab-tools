@@ -52,7 +52,12 @@ for ii=1:length(varargin)
                 end
             case{'closedboundarypolygon'}
                 if ~isempty(varargin{ii+1})
-                    xy_bnd_closed=load_polygon(varargin{ii+1});
+                    try
+                        xy_bnd_closed=load_polygon(varargin{ii+1});
+                    catch
+                        xy_bnd_closed=load_polygon_ascii(varargin{ii+1});
+                    end                    
+                     
                 end
             case{'openboundarypolygon'}
                 if ~isempty(varargin{ii+1})
@@ -70,13 +75,21 @@ disp('Making grid ...');
 disp('Making bathymetry ...');
 zz=interpolate_bathymetry_to_grid(xz,yz,[],bathy,cs,'quiet');
 if any(isnan(zz(:)))
-    disp('bathy contains NaNs, watch out!') 
+    disp('bathy contains NaNs, watch out!')
+%     disp('bathy contains NaNs, zb will be set to 10')
+    
+    zz(isnan(zz)) = -2.2;    
 end
+close all
+A4fig; axis equal; pcolor(xz,yz,zz); shading flat; colorbar; caxis([-2 10]); xlim([minmin(xz),maxmax(xz)]);ylim([minmin(yz),maxmax(yz)]);
+print([folder,'\sfincs_depth.png'],'-dpng','-r500')
 
 % Create mask
 disp('Making mask ...');
 msk=sfincs_make_mask(xz,yz,zz,[zmin zmax],'includepolygon',xy_in,'excludepolygon',xy_ex,'closedboundarypolygon',xy_bnd_closed,'openboundarypolygon',xy_bnd_open);
 %msk=zeros(size(zz))+1;
+A4fig; axis equal; pcolor(xz,yz,msk); shading flat; colorbar;xlim([minmin(xz),maxmax(xz)]);ylim([minmin(yz),maxmax(yz)]);
+print([folder,'\sfincs_msk.png'],'-dpng','-r500')
 
 % Write grid files
 disp('Writing files ...');
