@@ -24,7 +24,8 @@ function addOET(varargin)
     %default
 use_drive_default=1; %1=C; 2=P;
 path_oet_c_default='c:\Users\chavarri\checkouts\openearthtools_matlab\oetsettings.m';
-path_oet_p_default=fullfile('11205258-016-kpp2020rmm-3d','E_Software_Scripts','repositories','openearthtools_matlab','oetsettings.m');
+% path_oet_p_default=fullfile('11205258-016-kpp2020rmm-3d','E_Software_Scripts','repositories','openearthtools_matlab','oetsettings.m');
+path_oet_p_default=fullfile('dflowfm','projects','2020_d-morphology','modellen','checkout','oetsettings.m');
 
     %parse
 parin=inputParser;
