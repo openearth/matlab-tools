@@ -51,16 +51,24 @@ end
 %quite expensive. Only if necessary.
 if any(flg.which_v==[1,2])
     
-    mdu=dflowfm_io_mdu('read',file.mdf);
+    %sometimes does not work
+%     mdu=dflowfm_io_mdu('read',file.mdf);
+% 
+%     ismor=1;
+%     if isfield(mdu,'sediment')==0
+%         ismor=0;
+%     elseif isempty(mdu.sediment.MorFile)
+%         ismor=0;
+%     end
 
-    ismor=1;
-    if isfield(mdu,'sediment')==0
-        ismor=0;
-    elseif isempty(mdu.sediment.MorFile)
-        ismor=0;
-    end
-    
+nci=ncinfo(file.map);
+idx=find_str_in_cell({nci.Variables.Name},{'mesh2d_mor_bl','mesh1d_mor_bl'});
+ismor=1;
+if any(isnan(idx))
+    ismor=0;
 end
+
+end %if 1,2
 
     %secondary flow
 % if isempty(strfind(mdf.keywords.sub1,'I'))
@@ -143,12 +151,25 @@ switch simdef.D3D.structure
                 branch_id=ncread(file.map,'network_branch_id')';
             end
         else
-            x_node=ncread(file.map,'mesh2d_node_x'); 
-            y_node=ncread(file.map,'mesh2d_node_y');
+%             if file.partitions>1
+                map_info=EHY_getMapModelData(file.map);
+                gridInfo=EHY_getGridInfo(file.map,{'face_nodes_xy','XYcen','face_nodes','XYcor'});
+                                
+%                 x_node=gridInfo.Xcor;
+%                 y_node=gridInfo.Ycor;
+                face_nodes_x=gridInfo.face_nodes_x;
+                face_nodes_y=gridInfo.face_nodes_y;
+%                 faces=gridInfo.face_nodes;
+                
+%             else
+                x_node=ncread(file.map,'mesh2d_node_x'); 
+                y_node=ncread(file.map,'mesh2d_node_y');
 
-            x_face=ncread(file.map,'mesh2d_face_x',kF(1),kF(2));
-            y_face=ncread(file.map,'mesh2d_face_y',kF(1),kF(2));
-            faces=ncread(file.map,'mesh2d_face_nodes',[1,kF(1)],[Inf,kF(2)]);
+                x_face=ncread(file.map,'mesh2d_face_x',kF(1),kF(2));
+                y_face=ncread(file.map,'mesh2d_face_y',kF(1),kF(2));
+                faces=ncread(file.map,'mesh2d_face_nodes',[1,kF(1)],[Inf,kF(2)]);
+                time_dnum=map_info.times(kt(1));
+%             end
         end
     case 3 %SOBEK3
         x_node=ncread(file.map,'x_coordinate'); 
@@ -249,14 +270,26 @@ switch flg.which_p
                                 out=get_fm1d_data('mesh1d_flowelem_bl',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             end
                         else
-                            bl=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt(1)],[kF(2),1]);
+%                             if file.partitions==1
+%                                 bl=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt(1)],[kF(2),1]);
+%                             else
+                                OPT.varName='mesh2d_mor_bl';
+                                OPT.t0=map_info.times(kt(1));
+                                OPT.tend=map_info.times(kt(1));
+                                OPT.disp=0;
+
+                                map_data=EHY_getMapModelData(file.map,OPT);
+                                bl=map_data.val';
+%                             end
 
                             %output
                             out.z=bl;
-                            out.x_node=x_node;
-                            out.y_node=y_node;
-                            out.x_face=x_face;
-                            out.y_face=y_face;
+%                             out.x_node=x_node;
+%                             out.y_node=y_node;
+%                             out.x_face=x_face;
+%                             out.y_face=y_face;
+                            out.face_nodes_x=face_nodes_x;
+                            out.face_nodes_y=face_nodes_y;
                             out.faces=faces;
                         end
                     case 3 %SOBEK3
@@ -1314,6 +1347,9 @@ end
 
 %% OUTPUT FOR ALL
 
+if exist('time_dnum','var')
+out.time_dnum=time_dnum;
+end
 out.time_r=time_r;
 out.kf=kf;
 

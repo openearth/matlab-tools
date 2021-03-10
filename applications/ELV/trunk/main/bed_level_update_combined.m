@@ -71,7 +71,7 @@ switch input.mor.scheme
         pmm(2,:)=beta;
         c=celerities4CFL(u,NaN,celerities,pmm,NaN,input,NaN,NaN);
         
-        flux_bed=bed_flux_general(input,Qb,B,c,etab,dt);
+        flux_bed=	(input,Qb,B,c,etab,dt);
         etab_new(1,3:nx-1)=etab(1,3:nx-1)-MorFac*dt./cb./beta(1,3:nx-1)./(dx).* flux_bed;
         
         %last cell is BS

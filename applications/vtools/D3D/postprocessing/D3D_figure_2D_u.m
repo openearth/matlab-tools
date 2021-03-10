@@ -16,43 +16,12 @@ function D3D_figure_2D_u(simdef,in)
 
 %% RENAME in
 
+simdef=D3D_figure_defaults(simdef);
+
 flg=simdef.flg;
-% prop=flg.prop;
 
 %% defaults
 
-if isfield(flg.prop,'edgecolor')==0
-    flg.prop.edgecolor='k'; %edge color in surf plot
-end
-
-if isfield(flg,'cbar')==0
-        flg.cbar.displacement=[0,0,0,0];
-else
-    if isfield(flg.cbar,'displacement')==0
-        
-    end
-end
-
-if isfield(flg,'marg')==0
-    flg.marg.mb=1.5; %bottom margin [cm]
-    flg.marg.mt=2.5; %top margin [cm]
-    flg.marg.mr=2.5; %right margin [cm]
-    flg.marg.ml=2.0; %left margin [cm]
-    flg.marg.sh=1.0; %horizontal spacing [cm]
-    flg.marg.sv=0.0; %vertical spacing [cm]
-end
-
-if isfield(flg.prop,'fs')==0
-    flg.prop.fs=12;
-end
-
-if isfield(flg,'addtitle')==0
-    flg.addtitle=1;
-end
-
-if isfield(flg,'prnt_size')==0
-    flg.prnt_size=[0,0,25.4,19.05];
-end
 
 %%
 x_node=in.x_node;
@@ -265,6 +234,7 @@ end
     
 %plots
 patch('Faces',faces','Vertices',[x_node,y_node],'FaceVertexCData',z_var,'FaceColor','flat','EdgeColor',flg.prop.edgecolor,'parent',han.sfig(1,1))
+
 
 % switch flg.elliptic
 %     case 1

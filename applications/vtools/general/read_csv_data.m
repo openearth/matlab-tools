@@ -19,34 +19,6 @@
 %OUTPUT:
 %   -
 %
-%example of file_structure items:
-%
-% file_type=0;
-% fdelim=',';
-% var_once={''};
-% var_time={'CET/CEST','Debiet Lobith (m3/s)'};
-% var_loc={''};
-% idx_waarheid=2;
-% idx_location=NaN;
-% idx_x=NaN;
-% idx_y=NaN;
-% idx_epsg=NaN;
-% epsg=NaN;
-% idx_parameter=NaN;
-% idx_raai=NaN;
-% idx_hoedanigheid=NaN;
-% hoedanigheid=NaN;
-% idx_grootheid=NaN;
-% grootheid='Q';
-% idx_eenheid=NaN;
-% eenheid='m^3/s';
-% idx_datum=NaN;
-% fmt_datum='';
-% idx_tijd=NaN;
-% fmt_tijd='';
-% idx_time=1;
-% fmt_time='yy/MM/dd HH:mm';
-% tzone='Europe/Amsterdam';
 
 function rws_data=read_csv_data(fpath,varargin)
 
@@ -69,11 +41,11 @@ else
     input_file_structure=true;
     
     %get empty values
-    [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time]=empty_file_structure;
+    [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone]=empty_file_structure;
     %substitute the ones that are input
     v2struct(file_structure) %output from get_file_data and file_type=0 or file_type=-1
     %pack again to pass to reading function
-    file_structure=v2struct(fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time);
+    file_structure=v2struct(fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone);
 end
 
 %% READ DATA
@@ -85,7 +57,7 @@ end
 switch file_type
     case 0
         vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug,'file_structure',file_structure);
-    case {1,2,3,4,6,7,8} %locations in rows
+    case {1,2,3,4,6,7,8,9} %locations in rows
         vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug);
     case {5} %locations in columns
         vardata=read_data_2(file_type,fpath,'flg_debug',flg_debug);
@@ -104,7 +76,7 @@ for kloc=1:nloc
     %% get indexes 
     
     if ~input_file_structure
-        [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time]=get_file_data(file_type,fpath);
+        [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone]=get_file_data(file_type,fpath);
     end
     
     switch file_type
@@ -113,6 +85,20 @@ for kloc=1:nloc
     end
     
     %% convert
+    
+    %time zone
+    if isnan(tzone)
+        if isnan(idx_tzone)
+            error('Provide a time zone')
+        else
+            tzone=vardata{kloc,2}{idx_tzone};
+        end
+    end
+    
+    switch tzone
+        case 'CENT'
+            tzone='+01:00';
+    end
 
     %convert time format 
     if isnan(idx_time)
@@ -180,6 +166,8 @@ for kloc=1:nloc
         if isnan(idx_grootheid)
             if strcmp(eenheid,'m3/s')
                 grootheid='Q';
+            elseif strcmp(eenheid,'mg/l')
+                grootheid='CONCTTE';
             else
                 error('A parameter must be given')
             end
@@ -191,7 +179,7 @@ for kloc=1:nloc
         end
     end
         %parameter
-    if isnan(parameter)
+   if isnan(parameter)
         if isnan(idx_parameter)
             if strcmp(grootheid,'CONCTTE')
                 parameter='Cl'; %ASSUMPTION: if nothing is said, it is salt. 
@@ -207,7 +195,13 @@ for kloc=1:nloc
         if isnan(idx_epsg)
     %         epsg=NaN;
         else
-            epsg=str2double(vardata{kloc,2}{idx_epsg});
+            epsg=vardata{kloc,2}{idx_epsg};
+            if strcmp(epsg,'RD')
+                epsg=28992;
+            else
+                epsg=str2double(epsg);
+            end
+            
         end
     end
         %reference
@@ -218,12 +212,14 @@ for kloc=1:nloc
             hoedanigheid=vardata{kloc,2}{idx_hoedanigheid};
     %         hoedanigheid=hoedanigheid(~isspace(ref));
         end
-    else
+    end
         %elevation
-% 	if isnan(bemonsteringshoogte)
-        
-%     end
-
+    if isnan(bemonsteringshoogte)
+        if isnan(idx_bemonsteringshoogte)
+            bemonsteringshoogte=NaN;
+        else
+            bemonsteringshoogte=undutchify(vardata{kloc,2}{idx_bemonsteringshoogte})./1000;
+        end
     end
 
 
@@ -539,9 +535,9 @@ end %function
 
 %%
 
-function [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time]=get_file_data(file_type,fpath)
+function [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone]=get_file_data(file_type,fpath)
 
-         [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time]=empty_file_structure;
+         [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone]=empty_file_structure;
 
 switch file_type
     case 1
@@ -694,9 +690,9 @@ switch file_type
         
         fdelim=';';
         tzone='+01:00'; %waterinfo in CET
-        headerlines=1;
-        
+        headerlines=1;    
     case 7
+        %%
 % Parameter                    : Cl               chloride
 % Eenheid                      : mg/l
 % Gebied                       : OUDMS            Oude Maas
@@ -705,7 +701,7 @@ switch file_type
 % Bemonsteringshoogte          : -200
 % X-coordinaat RD in m         :  88407
 % Y-coordinaat RD in m         : 428330
-%%
+
         %read from file
         if exist('fpath','var') %if not, we are calling this function without second argument
         fid=fopen(fpath,'r');
@@ -778,6 +774,7 @@ switch file_type
 
         end
     case 8
+        %%
 %         locatie.code;locatie.naam   ;coordinatenstelsel;geometriepunt.x ;geometriepunt.y ;tijdstip            ;eenheid.code;grootheid.omschrijving;hoedanigheid.code;numeriekewaarde
 %         HAGSBVN     ;Hagestein boven;25831             ;646656.911653319;5762067.30484693;2000-12-04T07:00:00Z;m3/s        ;Debiet                ;NVT              ;477
         var_once={'locatie.code','coordinatenstelsel','geometriepunt.x','geometriepunt.y','eenheid.code','grootheid.omschrijving','hoedanigheid.code'};
@@ -802,6 +799,37 @@ switch file_type
         
         fdelim=';';
         headerlines=1;
+    case 9
+        %%
+% kannum;wnsnum;parcod;paroms  ;casnum    ;staind;cpmcod;cpmoms          ;domein;ehdcod;hdhcod;hdhoms                ;orgcod;orgoms             ;sgkcod;1.klscod;1.klsoms;2.klscod;2.klsoms;3.klscod;3.klsoms;muxcod;muxoms;btccod;btlcod;btxoms             ;btnnam             ;ivscod;ivsoms             ;anicod     ;anioms                                   ;bhicod     ;bhioms                                       ;bmicod     ;bmioms                                       ;ogicod      ;ogioms                                   ;gbdcod   ;gbdoms            ;loccod      ;locoms                                          ;locsrt;crdtyp;loc_xcrdgs;loc_ycrdgs;ghoekg    ;rhoekg    ;metrng    ;straal    ;xcrdmp    ;ycrdmp    ;omloop;anacod;anaoms                                               ;bemcod ;bemoms                                  ;bewcod;bewoms             ;vatcod;vatoms             ;rkstyp;refvlk;bemhgt;rks_xcrdgs;rks_ycrdgs;vakstp    ;tydehd;tydstp;rks_begdat;rks_begtyd;rks_enddat;rks_endtyd;syscod;beginv;endinv;vzmcod;vzmoms;svzcod;svzoms;ssvcod;ssvoms;ssscod;sssoms;xcrdwb    ;ycrdzb    ;xcrdob    ;ycrdnb    ;xcrdmn    ;ycrdmn    ;xcrdmx    ;ycrdmx    ;datum     ;tijd ;bpgcod;waarde    ;kwlcod;rkssta
+% 0     ;46    ;Cl    ;chloride;16887-00-6;J     ;10    ;Oppervlaktewater;E     ;mg/l  ;Cl    ;Uitgedrukt in Chloride;NVT   ;Niet van toepassing;NVT   ;        ;        ;        ;        ;        ;        ;      ;      ;NVT   ;NVT   ;Niet van toepassing;Niet van toepassing;NVT   ;Niet van toepassing;ZLXXWVMMDBG;Dir. Zeeland - afdeling WVM te Middelburg;ZHXXZXMRTDM;Dir. Zuid-Holland - afdeling ZXM te Rotterdam;ZHXXZXMRTDM;Dir. Zuid-Holland - afdeling ZXM te Rotterdam;ZHXXREG_ZOUT;Dir. Zuid-Holland - Regionaal zoutmeetnet;HOLLSIJSL;Hollandsche IJssel;KRIMPADIJSLK;Krimpen a/d IJssel linker oever (kilometer 18.0);P     ;RD    ;9946325   ;43679456  ;-999999999;-999999999;-999999999;-999999999;-999999999;-999999999;      ;F072  ;Berekende chloride concentratie - methode NDB '80-'81;VELDMTG;Veldmeting, directe bepaling in het veld;NVT   ;Niet van toepassing;NVT   ;Niet van toepassing;TE    ;NAP   ;-550  ;9946325   ;43679456  ;-999999999;min   ;10    ;01 01 2017;00:00     ;21 11 2017;23:50     ;CENT  ;      ;      ;      ;      ;      ;      ;      ;      ;      ;      ;-999999999;-999999999;-999999999;-999999999;-999999999;-999999999;-999999999;-999999999;01 01 2017;00:00;      ;194,000000;0     ;G
+        
+        %variables to be read once
+        var_once={'parcod','ehdcod','crdtyp','loc_xcrdgs','loc_ycrdgs','bemhgt','syscod','loccod'};
+        idx_parameter=1;
+        idx_eenheid=2;
+        idx_epsg=3;
+        idx_x=4;
+        idx_y=5;
+        idx_bemonsteringshoogte=6;
+        idx_tzone=7;
+        idx_location=8;
+        
+        %variables to save with time
+        var_time={'datum','tijd','waarde'};
+        idx_datum=1;
+        fmt_datum='dd MM yyyy';
+        idx_tijd=2;
+        fmt_tijd='HH:mm';
+        idx_waarheid=3;
+        
+        %variable with location, to check for different places in same file.
+        var_loc={'loccod'};
+        
+        
+        fdelim=';';
+        headerlines=1;
+        
     otherwise
         error('You are asking for an inexisteng file type')
 
@@ -874,7 +902,7 @@ end
 
 %%
 
-function [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time]=empty_file_structure
+function [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone]=empty_file_structure
 
 idx_location=NaN;
 var_once={''};
@@ -903,10 +931,12 @@ fmt_tijd='';
 epsg=NaN;
 idx_hoedanigheid=NaN;
 hoedanigheid='';
+idx_bemonsteringshoogte=NaN;
 bemonsteringshoogte=NaN;
 headerlines=NaN;
 fdelim=',';
 idx_waarheid=NaN;
+idx_tzone=NaN;
 tzone=NaN;
 
 end 

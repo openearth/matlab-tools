@@ -26,6 +26,7 @@ function [tiles,ax,logs]=plotMapTiles(varargin)
 %       tzl: Tile Zoom Level, from 0 (continent) to 19 (house). Default [10]
 %       save_tiles: Cache tiles locally, default [true]
 %       path_save: path to cache tiles to, default ['./earth_tiles']
+%       han_ax: handle to the axis. If NaN, it creates a new figure
 %
 %   Output:
 %       tiles: cell array with map tiles
@@ -95,6 +96,7 @@ OPT.save_tiles=true;
 OPT.path_save=fullfile(pwd,'earth_tiles');
 OPT.path_tiles=fullfile(pwd,'earth_tiles'); 
 OPT.map_type=2;%map type
+OPT.han_ax=NaN;
 %1=satellite;
 %2=openstreetmap; 
 %3=google earth (satellite); 
@@ -102,7 +104,7 @@ OPT.map_type=2;%map type
 %5=google earth (hybrid); 
 %6=google earth (terrain); 
 
-if nargin==0;
+if nargin==0
     tiles = {OPT};
     return
 end
@@ -218,17 +220,21 @@ end
 
 %% PLOT
 [nx,ny,~]=size(tiles);
+if ~isaxes(OPT.han_ax)
 figure;
 hold on
-ax=gca;
+OPT.han_ax=gca;
+axis equal
+ax=OPT.han_ax;
+end
 for kx=1:nx
     for ky=1:ny
-         surf(ax,tiles{kx,ky,1},tiles{kx,ky,2},zeros(size(tiles{kx,ky,2})),tiles{kx,ky,3},'EdgeColor','none')
+         surf(OPT.han_ax,tiles{kx,ky,1},tiles{kx,ky,2},zeros(size(tiles{kx,ky,2})),tiles{kx,ky,3},'EdgeColor','none');
     end
 end
 % switch logs.CS2.type
 %     case 'projected'
-axis equal
+
 %     otherwise
 % end
 
@@ -238,9 +244,9 @@ if OPT.save_tiles
     if exist(path_full_save,'file')
         fprintf(2,'you are trying to overwrite a tiles variable: %s\n',path_full_save);
         yn=input('Overwrite? [yes/no/rename] ','s');
-        if strncmpi(yn,'y',1);
+        if strncmpi(yn,'y',1)
              save(path_full_save,'tiles')
-        elseif strncmpi(yn,'r',1);
+        elseif strncmpi(yn,'r',1)
             fname = input('Filename: ','s');
             save(path_full_save,fname);
         end
@@ -250,13 +256,13 @@ if OPT.save_tiles
 end
 end
 
-function [xtile,ytile] = deg2osm(zoom,lat_deg,lon_deg);
+function [xtile,ytile] = deg2osm(zoom,lat_deg,lon_deg)
     n = 2^zoom;
     xtile = n * ((lon_deg + 180) / 360);
     ytile = n/ 2 * (1 - (log(tan(lat_deg*pi/180) + sec(lat_deg*pi/180)) / pi)) ;
 end
 
-function [lat_deg,lon_deg] = osm2deg(zoom,xtile,ytile);
+function [lat_deg,lon_deg] = osm2deg(zoom,xtile,ytile)
     % OSM documentation
     n = 2^zoom;
     lon_deg = xtile ./ n * 360.0 - 180.0;

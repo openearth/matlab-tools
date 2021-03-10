@@ -61,7 +61,7 @@ function f_flux_p=f_flux_p(input,vm,Qb,c,etab,dt)
 input.mdv.fluxtype=input.mor.fluxtype; %we use the same function as for flow
 
 switch input.mor.scheme
-    case 2 %Boorsboom
+    case 2 %Borsboom
         r=f_r(vm,etab);
         sigma_b=f_sigma_b(input,c(vm),dt);
         f_flux_p=Qb(vm)+c(vm).*0.5.*((1-sigma_b).*phi_func(r,input)-1).*(etab(vm+1)-etab(vm));

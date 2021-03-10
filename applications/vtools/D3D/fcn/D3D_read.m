@@ -95,7 +95,7 @@ if ~(isfield(in,'kt') && any(in.kt==0)) %you want something else than dimensions
         if isfield(in,'kF')==0
             in.kF=NaN;
         end
-        if isnan(in.kf)
+        if isnan(in.kF)
             in.kF=[1,Inf];
         end
 

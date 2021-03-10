@@ -198,31 +198,11 @@ end
     %if irregular
 % han.sfig(1,1)=subaxis(npr,npc,1,1,1,1,'mt',mt,'mb',mb,'mr',mr,'ml',ml,'sv',sv,'sh',sh);
 
-    %add axis to sub1
-% kr=1; kc=2;
-% pos.sfig=[0.25,0.6,0.25,0.25]; % position of first axes    
-% han.sfig(kr,kc)=axes('units','normalized','Position',pos.sfig,'XAxisLocation','bottom','YAxisLocation','right');
-% % han.sfig(kr,kc).YLabel.String='sediment transport rate (coarse) [g/min]';
-% hold(han.sfig(kr,kc),'on')
-% grid(han.sfig(kr,kc),'on')
-% han.sfig(kr,kc).Box='on';
-% han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-
     %add axis on top
 % kr=1; kc=2;
 % % pos.sfig=[0.25,0.6,0.25,0.25]; % position of first axes    
 % pos.sfig=han.sfig(1,1).Position; % position of first axes    
-% han.sfig(kr,kc)=axes('units','normalized','Position',pos.sfig,'XAxisLocation','bottom','YAxisLocation','right');
-% han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
-% hold(han.sfig(kr,kc),'on')
-% grid(han.sfig(kr,kc),'on')
-% han.sfig(kr,kc).Box='on';
-% % han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-% % han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-% han.sfig(kr,kc).XColor='none';
-% han.sfig(kr,kc).YColor=prop.color(2,:);
-% han.sfig(kr,kc).Color='none';
+% han.sfig(kr,kc)=axes('units','normalized','Position',pos.sfig,'XAxisLocation','bottom','YAxisLocation','right','Color','none');
 
 %properties
     %sub11
@@ -253,6 +233,20 @@ han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewi
 han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
 han.p(kr,kc,1)=scatter(data_2f(data_2f(:,3)==0,1),data_2f(data_2f(:,3)==0,2),prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);
 surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
+
+% OPT.xlim=x_lims;
+% OPT.ylim=y_lims;
+% OPT.epsg_in=28992; %WGS'84 / google earth
+% OPT.epsg_out=28992; %Amersfoort
+% OPT.tzl=tzl; %zoom
+% OPT.save_tiles=false;
+% OPT.path_save='C:\Users\chavarri\checkouts\riv\earth_tiles\';
+% % OPT.path_tiles=fullfile(pwd,'earth_tiles'); 
+% OPT.map_type=3;%map type
+% OPT.han_ax=han.sfig(kr,kc);
+% 
+% plotMapTiles(OPT);
+
 
 % kr=2; kc=1;
 % set(han.fig,'CurrentAxes',han.sfig(kr,kc))

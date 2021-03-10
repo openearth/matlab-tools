@@ -77,6 +77,10 @@ if isfield(flg,'plot_unity')==0
     flg.plot_unity=1;
 end
 
+if isfield(flg,'plot_unitz')==0
+    flg.plot_unitz=1;
+end
+
 if isfield(flg,'plot_unitt')==0
     flg.plot_unitt=1;
 end
@@ -91,6 +95,10 @@ end
 
 if isfield(flg,'elliptic')==0
     flg.elliptic=0;
+end
+
+if isfield(flg,'fig_faceindices')==0
+   flg.fig_faceindices=0;
 end
 
 %% OUT
