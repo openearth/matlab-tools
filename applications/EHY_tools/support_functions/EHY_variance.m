@@ -28,7 +28,11 @@ if ~isempty(val)
     val  = val (index);
     
     %% Interfaces, Layer Thickness and resulting depth
-    zInt      = center2corner1(zCen);
+    if length (zCen) > 1
+        zInt      = center2corner1(zCen);
+    else
+        zInt      = [-100 0];
+    end
     dz        = zInt(2:end) - zInt(1:end - 1);
     depth     = zInt(end)   - zInt(1);
     
