@@ -110,7 +110,9 @@ if input.mdv.nb~=1
 end
 
 for kb=1:nb
-    
+    %we pass twice through the check to prevent dependencies between functions. Better would be
+    %to pass while there are change in input. 
+%     for kit=1:2 
 %% MDV
 input_out(kb,1)=check_mdv(input_out(kb,1),path_file_input,fid_log);
 
@@ -143,7 +145,7 @@ input_out(kb,1)=check_nour(input_out(kb,1),fid_log);
 
 %% OUTPUT CHECK
 % input_out(kb,1)=check_out(input_out(kb,1),fid_log); %as under CFl based time step the number of output files is not known, this input check is deprecated
-
+%     end %kit
 end %kb
 
 %%

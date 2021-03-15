@@ -64,6 +64,9 @@
 %
 %200403
 %   -V. Deposition of immobile fractions.
+%
+%210315
+%   -V. Added interpolation at edges.
 
 function ELV(path_file_input,fid_log)
 
@@ -93,7 +96,7 @@ tic_display=tic; %tic to control display in screen
 tic_totaltime=tic; %tic to track total simulation time
 time_l=input(1,1).mdv.t0; %time of the time step which is being computed
 kt=1; %time steps counter
-[u_bra,h_bra,etab_bra,Mak_bra,La_bra,msk_bra,Ls_bra,Cf_bra,Cf_b_bra,qbk_bra,thetak_bra,pmm_bra,ell_idx_bra,Gammak_bra,Ek_bra,Dk_bra,psi_bra,celerities,bc,time_loop]=preallocate_dependent_vars(input,fid_log);
+[u_bra,h_bra,etab_bra,Mak_bra,La_bra,msk_bra,Ls_bra,Cf_bra,Cf_b_bra,qbk_bra,thetak_bra,pmm_bra,ell_idx_bra,Gammak_bra,Ek_bra,Dk_bra,psi_bra,u_edg_bra,h_edg_bra,qbk_edg_bra,Cf_b_edg_bra,Mak_edg_bra,La_edg_bra,celerities,bc,time_loop]=preallocate_dependent_vars(input,fid_log);
 vpk=NaN; %this is necessary in case you have CFL-based time step and morphodynamics do not start in the first time step. Maybe I should move it inside preallocating. 
 
 %% INITIAL AND BOUNDARY CONDITION CONSTRUCTION
@@ -126,9 +129,10 @@ if time_l>=input(1,1).mor.Tstart
     
     %% LOOP ON BRANCHES FOR SEDIMENT TRANSPORT
     for kb=1:input(1,1).mdv.nb
+        
         %% FRICTION CORRECTION
         [Cf_b_bra{kb,1}]=friction_correction(u_bra{kb,1},h_bra{kb,1},Cf_bra{kb,1},Mak_bra{kb,1},La_bra{kb,1},input(kb,1),fid_log,kt);
-
+        
         %% SEDIMENT TRANSPORT
        %[qbk,Qbk,thetak,qbk_st,Wk_st,u_st,xik,Qbk_st,Ek,Ek_st,Ek_g,Dk,Dk_st,Dk_g,vpk,vpk_st,Gammak_eq]
         [qbk,~  ,thetak,~     ,~    ,~   ,~  ,~     ,Ek,~    ,Ek_g,Dk,~    ,Dk_g,vpk,~     ,Gammak_eq]=sediment_transport(...
@@ -142,6 +146,9 @@ if time_l>=input(1,1).mor.Tstart
         vpk=vpk';
         Gammak_eq=Gammak_eq';
         
+        %% INTERPOLATE
+        [u_edg_bra{kb,1},h_edg_bra{kb,1},Cf_b_edg_bra{kb,1},La_edg_bra{kb,1},Mak_edg_bra{kb,1},qbk_edg_bra{kb,1}]=interpolate_at_edges(input(kb,1),u_bra{kb,1},h_bra{kb,1},Cf_b_bra{kb,1},La_bra{kb,1},Mak_bra{kb,1},fid_log);
+ 
         %% STRUIKSMA REDUCTION
         [qbk_bra{kb,1},psi_bra{kb,1}]=struiksma_reduction(qbk_bra{kb,1},La_bra{kb,1},Ls_bra{kb,1},Mak_bra{kb,1},msk_bra{kb,1},input(kb,1),fid_log);
 
@@ -160,7 +167,7 @@ if time_l>=input(1,1).mor.Tstart
         %% BED LEVEL UPDATE
         etab_old=etab_bra{kb,1}; %for Hirano
         pmm_bra{kb,1}=ones(2,input.mdv.nx); %update without preconditioning
-        etab_bra{kb,1}=bed_level_update(etab_bra{kb,1},qbk_bra{kb,1},Dk_bra{kb,1},Ek_bra{kb,1},bc(kb,1),input(kb,1),fid_log,kt,time_l,pmm_bra{kb,1},celerities(kb,1),u_bra{kb,1});
+        etab_bra{kb,1}=bed_level_update(etab_bra{kb,1},qbk_bra{kb,1},Dk_bra{kb,1},Ek_bra{kb,1},bc(kb,1),input(kb,1),fid_log,kt,time_l,pmm_bra{kb,1},celerities(kb,1),u_bra{kb,1},u_edg_bra{kb,1},qbk_edg_bra{kb,1});
 
         %% ACTIVE LAYER THICKNESS UPDATE
         La_old=La_bra{kb,1}; %for Hirano

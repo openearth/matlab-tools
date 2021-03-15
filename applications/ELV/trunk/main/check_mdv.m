@@ -348,6 +348,12 @@ if input.mdv.bc_interp_type==1
     input.mdv.time=0:input.mdv.dt:input.mdv.nt*input.mdv.dt; %time vector [s] needed to interpolate the boundary conditions
 end
 
+%% edges interpolation
+
+if isfield(input.mdv,'interp_edges')==0
+input.mdv.interp_edges=0; %do not conduct interpolation at edges
+end
+
 %% OUTPUT 
 
 input_out=input;

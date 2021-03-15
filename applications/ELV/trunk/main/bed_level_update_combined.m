@@ -28,7 +28,7 @@
 %   -V. Created for the first time.
 %
 
-function etab_new=bed_level_update_combined(input,etab,Qb0,Qb,beta,celerities,u)
+function etab_new=bed_level_update_combined(input,etab,Qb0,Qb,beta,celerities,u,u_edg,Qb_edg)
 
 %%
 %% RENAME
@@ -43,6 +43,7 @@ nx=input.mdv.nx; %number of cells
 % UpwFac=input.mdv.UpwFac;
 % bc_interp_type=input.mdv.bc_interp_type;
 B=input.grd.B;
+B_edg=input.grd.B_edg;
 
 %%
 %% CALC
@@ -64,15 +65,16 @@ switch input.mor.scheme
         etab_new(1,2:nx)=etab(1,2:nx)-MorFac*dt./cb./beta(1,2:nx)./(dx).* flux_bed;
     case 2 %Borsboom
         %second cell is BS
-        flux_bed=bed_flux_BS(Qb(1:2),B(2:3));
-        etab_new(1,2)      = etab(1,2)      - MorFac * dt /cb /beta(1,2)/(dx) * flux_bed;
+%         flux_bed=bed_flux_BS(Qb(1:2),B(2:3));
+%         etab_new(1,2)      = etab(1,2)      - MorFac * dt /cb /beta(1,2)/(dx) * flux_bed;
         
         %rest is Borsboom
         pmm(2,:)=beta;
-        c=celerities4CFL(u,NaN,celerities,pmm,NaN,input,NaN,NaN);
+        c_edg=celerities4CFL(u_edg,NaN,celerities,pmm,NaN,input,NaN,NaN); %dimensional and scaled with MF/cb
         
-        flux_bed=	(input,Qb,B,c,etab,dt);
-        etab_new(1,3:nx-1)=etab(1,3:nx-1)-MorFac*dt./cb./beta(1,3:nx-1)./(dx).* flux_bed;
+        flux_bed=bed_flux_general(input,Qb_edg,B_edg,c_edg,etab,dt);
+        etab_new(1,2:nx-1)=etab(1,2:nx-1)-MorFac*dt./cb./beta(1,2:nx-1)./(dx).* flux_bed(1,2:nx-1);
+%         etab_new(1,3:nx-1)=etab(1,3:nx-1)-MorFac*dt./cb./beta(1,3:nx-1)./(dx).* flux_bed;
         
         %last cell is BS
         flux_bed=bed_flux_BS(Qb(end-1:end),B(end-1:end));

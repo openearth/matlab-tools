@@ -37,6 +37,7 @@ function c=celerities4CFL(u,h,celerities,pmm,vpk,input,fid_log,kt)
 nef=input.mdv.nef;
 g=input.mdv.g;
 porosity=input.mor.porosity;
+MorFac=input.mor.MorFac;
 
 alpha=pmm(1,:);
 beta=pmm(2,:);
@@ -52,15 +53,15 @@ switch input.mdv.flowtype
             if isempty(celerities.eigen_pmm)==0
                 %maximum of the celerities with and without correcting for pmm
                 %ATT! the outcome from 'celerities' is dimensionless and does not account for porosity
-                c_pmm=u/(1-porosity).*celerities.eigen_pmm; %this will not work prior to R2016b, use repmat in u.
+                c_pmm=MorFac*u/(1-porosity).*celerities.eigen_pmm; %this will not work prior to R2016b, use repmat in u.
                 c=max(c_pmm,[],1); 
             elseif isempty(celerities.eigen)==0
-                c_npmm=u/(1-porosity).*celerities.eigen; %this will not work prior to R2016b, use repmat in u.
+                c_npmm=MorFac*u/(1-porosity).*celerities.eigen; %this will not work prior to R2016b, use repmat in u.
                 c=max(c_npmm,[],1);
             else
                 %Attention! We are using the APPROXIMATED eigenvalues of the bed and sorting. To use the exact values it is necessary to have as output the variable 'eigen' in elliptic_nodes
-                clb=u.*celerities.lb./(1-porosity)./beta; %dimensional bed celerity
-                cls=repmat(u,nef,1).*celerities.ls./(1-porosity)./alpha./beta; %dimensional sorting celerity
+                clb=MorFac*u.*celerities.lb./(1-porosity)./beta; %dimensional bed celerity
+                cls=MorFac*repmat(u,nef,1).*celerities.ls./(1-porosity)./alpha./beta; %dimensional sorting celerity
                 c=max([clb;cls]); %maximum celerity
             end
         else %particle activity

@@ -112,6 +112,13 @@ switch input.mdv.flowtype
         end
 end
 
+%% interpolate if needed
+% if isfield(input.grd,'B_edg')==0
+%     if isfield(input.mdv,'interp_edg')==1 && input.mdv.interp_edg==1
+        input.grd.B_edg=interp1(input.mdv.xcen',input.grd.B',input.mdv.xedg'); %interpolate always, it is just initialization
+%     end
+% end
+
 %%
 %% FOR FLOWTYPE 6, with variable width; check input
 %% MDV and GRD

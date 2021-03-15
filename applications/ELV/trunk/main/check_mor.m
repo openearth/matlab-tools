@@ -50,6 +50,7 @@ switch input.mor.scheme
     case 0
     case 1
     case 2
+        input.mdv.interp_edges=1;
         if isfield(input.mor,'fluxtype')==0
             input.mor.fluxtype=8;
             warningprint('This morphodynamic scheme requires a flux type limiter which you are not specifying, I am using Koren.')
@@ -151,6 +152,12 @@ end
 if isfield(input.mor,'Struiksma')==0
     input.mor.Struiksma=0;
 end
+if input.mor.Struiksma==1
+    if input.mor.scheme==2
+        error('This is not yet possible. You have to modify function ''struiksma_reduction'' for dealing with interpolated sediment transport')
+    end
+end
+    
 %I think it should be equal to the input active layer thickness
 % if input.mor.Struiksma==1
 %     if isfield(input.mor,'L_alluvial')

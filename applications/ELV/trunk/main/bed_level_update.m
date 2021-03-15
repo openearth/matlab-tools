@@ -52,7 +52,7 @@
 %201102
 %   -V. Restructuring
 
-function etab_new=bed_level_update(etab,qbk,Dk,Ek,bc,input,fid_log,kt,time_l,pmm,celerities,u)
+function etab_new=bed_level_update(etab,qbk,Dk,Ek,bc,input,fid_log,kt,time_l,pmm,celerities,u,u_edh,qbk_edg)
 
 %%
 %% RENAME

@@ -26,8 +26,11 @@
 %HISTORY:
 %170720
 %   -V & Pepijn. Created for the first time.
+%
+%210315
+%   -V. Added interpolation at edges.
 
-function [u_bra,h_bra,etab_bra,Mak_bra,La_bra,msk_bra,Ls_bra,Cf_bra,Cf_b_bra,qbk_bra,thetak_bra,pmm_bra,ell_idx_bra,Gammak_bra,Ek_bra,Dk_bra,psi_bra,celerities,bc,time_loop]=preallocate_dependent_vars(input,fid_log)
+function [u_bra,h_bra,etab_bra,Mak_bra,La_bra,msk_bra,Ls_bra,Cf_bra,Cf_b_bra,qbk_bra,thetak_bra,pmm_bra,ell_idx_bra,Gammak_bra,Ek_bra,Dk_bra,psi_bra,u_edg_bra,h_edg_bra,qbk_edg_bra,Cf_b_edg_bra,Mak_edg_bra,La_edg_bra,celerities,bc,time_loop]=preallocate_dependent_vars(input,fid_log)
 
 %%
 %% RENAME
@@ -61,6 +64,12 @@ Gammak_bra=cell(nb,1);
 Ek_bra=cell(nb,1);
 Dk_bra=cell(nb,1);
 psi_bra=cell(nb,1);
+u_edg_bra=cell(nb,1);
+h_edg_bra=cell(nb,1);
+qbk_edg_bra=cell(nb,1);
+Cf_b_edg_bra=cell(nb,1);
+Mak_edg_bra=cell(nb,1);
+La_edg_bra=cell(nb,1);
 
 %structures
 bc(nb,1)=struct('q0',[],'Q0',[],'repQT',[],'etaw0',[],'rephT',[],'qbk0',[],'Qbk0',[],'repQbkT',[],'repGammakT_u',[],'repGammakT_d',[],'Gammak0',[],'GammakL',[],'g_u',[],'g_d',[],'repLaT',[],'La',[]); %if you change this line, copy paste the changes in boundary_condition_construction.m
@@ -89,6 +98,13 @@ for kb=1:nb
     Ek_bra{kb,1}     =NaN(nf ,nx,1  );
     Dk_bra{kb,1}     =NaN(nf ,nx,1  );
     psi_bra{kb,1}    =NaN(1  ,nx    );
+    
+    u_edg_bra{kb,1}   =NaN(1  ,nx+1,1  );
+    h_edg_bra{kb,1}   =NaN(1  ,nx+1,1  );
+    qbk_edg_bra{kb,1} =NaN(nf ,nx+1,1  );
+    Cf_b_edg_bra{kb,1}=NaN(1  ,nx+1,1  );
+    Mak_edg_bra{kb,1} =NaN(nef,nx+1,1  );
+    La_edg_bra{kb,1}  =NaN(1  ,nx+1,1  );
 
     celerities(kb,1).ls   =NaN(nef,nx    );
     celerities(kb,1).lb   =NaN(1  ,nx    );

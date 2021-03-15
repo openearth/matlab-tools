@@ -28,17 +28,39 @@
 %   -V. Created for the first time.
 %
 
-function bed_flux=bed_flux_general(input,Qb,B,c,etab,dt)
+function bed_flux=bed_flux_general(input,Qb_edg,B_edg,c_edg,etab,dt)
+
+%% 
+%% RENAME
+%%
+
+nx=input.mdv.nx;
+ne=nx+1;
+dx=input.mdv.dx;
+input.mdv.fluxtype=input.mor.fluxtype; %we use the same function as for flow
+
+%% CALC
 
 switch input.mor.scheme
     case 2 %Boorsboom
-        vm=3:numel(Qb)-1;
+        %Firts useful flux is for node 2. 
+        %The needed edges are at 2-0.5=1.5 (i.e., edge 2) and 2+0.5 (i.e., edge 3)
+        %
+        %
+        % |---x---|---x---|---x---|---x---|---x---|
+        % 1       2       3       4       5       6 edges (cell edge)
+        %     1       2       3       4       5     nodes (cell centre)
+        %
+        r=NaN(1,nx); %nodes
+        r(2:nx-1)=(etab(2:nx-1)-etab(1:nx-2))./(etab(3:nx)-etab(2:nx-1)+1e-10); %useful double(1,nx-2) for cell centres 2:nx-1. epsilon to prevent NaN when flat
+        sigma_b=c_edg.*dt./dx; %double(1,nx+1) for cell edges 1:nx+1. c_edg must account for MorFac/cb
+        phi_val=NaN(1,nx);
+        phi_val(2:nx-1)=phi_func(r(2:nx-1),input); %useful double(1,nx) for cell centres 2:nx-1.
+        flux_edg=NaN(1,ne);
+        flux_edg(2:ne-1)=Qb_edg(2:ne-1)./B_edg(2:ne-1)+c_edg(2:ne-1).*0.5.*((1-sigma_b(2:ne-1)).*phi_val(2:nx-1)-1).*(etab(3:nx)-etab(2:nx-1)); %useful double(1,nx-1) for cell edges 2:nx
+        bed_flux=NaN(1,nx);
+        bed_flux(2:nx-1)=flux_edg(3:ne-1)-flux_edg(2:ne-2);
 end
-
-fp05_p=f_flux_p(input,vm  ,Qb./B,c,etab,dt); %f_(m+0.5) when upwind positive
-fm05_p=f_flux_p(input,vm-1,Qb./B,c,etab,dt); %f_(m-0.5) when upwind positive
-
-bed_flux=fp05_p-fm05_p;
 
 end %function
 
@@ -46,25 +68,41 @@ end %function
 %% FUNCTIONS
 %%
 
-function r=f_r(vm,v)
-r=(v(vm+1)-v(vm))./(v(vm)-v(vm-1)); %epsilon to prevent NaN when flat
-% r=(v(vm+1)-v(vm)+1e-10)./(v(vm)-v(vm-1)+1e-10); %epsilon to prevent NaN when flat
-% r=(v(vm)-v(vm-1)+1e-10)./(v(vm+1)-v(vm)+1e-10); %epsilon to prevent NaN when flat
-end
+%%
+%% OLD
+%%
 
-function sigma_b=f_sigma_b(input,c,dt)
-sigma_b=input.mor.MorFac.*c.*dt./(1-input.mor.porosity)./input.grd.dx;
-end
+% idx_edg=2:nx-1; %[2,nx-1] are updated with this scheme. 
 
-function f_flux_p=f_flux_p(input,vm,Qb,c,etab,dt)
+% fp05_p=f_flux_p(input,2:1:nx+1,Qb_edg./B_edg,c_edg,etab,dt); %f_(n+0.5) when upwind positive. Fluxes at edges 2:nx+1 (e.g. 2:6)
+% fm05_p=f_flux_p(input,1:1:nx  ,Qb_edg./B_edg,c_edg,etab,dt); %f_(n-0.5) when upwind positive. Fluxes at edges 1:nx   (e.g. 1:5)
 
-input.mdv.fluxtype=input.mor.fluxtype; %we use the same function as for flow
+% fm_p=f_flux_p(input,1:1:nx,Qb_edg./B_edg,c_edg,etab,dt); 
 
-switch input.mor.scheme
-    case 2 %Borsboom
-        r=f_r(vm,etab);
-        sigma_b=f_sigma_b(input,c(vm),dt);
-        f_flux_p=Qb(vm)+c(vm).*0.5.*((1-sigma_b).*phi_func(r,input)-1).*(etab(vm+1)-etab(vm));
-end %switch
+%bed_flux has same dimensions as the nodes, although not all are useful
 
-end %function
+% bed_flux(:)=fp05_p-fm05_p;
+% 
+% function r=f_r(vm,v)
+% % r=(v(vm+1)-v(vm))./(v(vm)-v(vm-1)); %epsilon to prevent NaN when flat
+% % r=(v(vm+1)-v(vm)+1e-10)./(v(vm)-v(vm-1)+1e-10); %epsilon to prevent NaN when flat
+% r=(v(vm)-v(vm-1))./(v(vm+1)-v(vm)+1e-10); %epsilon to prevent NaN when flat
+% end
+% 
+% function sigma_b=f_sigma_b(input,c_edg,dt)
+% % sigma_b=input.mor.MorFac.*c_edg.*dt./(1-input.mor.porosity)./input.grd.dx;
+% sigma_b=c_edg.*dt./input.grd.dx; %c_edg is already scaled with MorFac/cb
+% end
+% 
+% function f_flux_p=f_flux_p(input,vm,Qb_edg,c_edg,etab,dt)
+% 
+% input.mdv.fluxtype=input.mor.fluxtype; %we use the same function as for flow
+% 
+% switch input.mor.scheme
+%     case 2 %Borsboom
+%         r=f_r(vm,etab);
+%         sigma_b=f_sigma_b(input,c_edg(vm),dt);
+%         f_flux_p=Qb_edg(vm)+c_edg(vm).*0.5.*((1-sigma_b).*phi_func(r,input)-1).*(etab(vm+1)-etab(vm));
+% end %switch
+% 
+% end %function
