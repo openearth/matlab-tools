@@ -4,7 +4,7 @@ function varargout=dflowfm_io_mdu(cmd,varargin)
 %
 %  [DATA]        = unstruc_io_mdu('read' ,<filename>);
 %
-%                  unstruc_io_mdu('write',<filename>,mdu_structure);
+%                  unstruc_io_mdu('write',<filename>,mdu_structure,mdu_Comments);
 %
 %  [DATA]        = unstruc_io_mdu('new',<*.csv>)
 %
@@ -33,12 +33,12 @@ case 'read'
    %
    % Create one structure
    %
-
+   
    for igroup = 1: size(tmp.Data,1)
        for ipar = 1:size(tmp.Data{igroup,2},1)
             grpnam = strtrim(tmp.Data{igroup,1});
             parnam = strtrim(tmp.Data{igroup,2}{ipar,1});
-
+            
             %replace spaces by underscore
 
             grpnam = simona2mdu_replacechar(grpnam,' ','_');
@@ -47,15 +47,22 @@ case 'read'
             % Fill mdu structure
 
             if ~isempty(str2num(tmp.Data{igroup,2}{ipar,2}))
-                var = str2num(tmp.Data{igroup,2}{ipar,2});
+                val = str2num(tmp.Data{igroup,2}{ipar,2}); %it was called var. Don't use function names! V
             else
-                var = tmp.Data{igroup,2}{ipar,2};
+                val = tmp.Data{igroup,2}{ipar,2};
             end
-            if isletter(parnam(1)) % first char is a letter
-                mdu.(grpnam).(parnam) = var;
+            if isempty(parnam) %input to previous parameter is in several lines
+                %                 e.g.
+                % ObsFile = file1.xyn   \
+                %           file2.xyn   \
+                mdu.(grpnam).(parnam_prev) = [mdu.(grpnam).(parnam_prev)(:)',{val}];
+            elseif isletter(parnam(1)) % first char is a letter
+                mdu.(grpnam).(parnam) = val;
+                parnam_prev=parnam;
             else  % first char is number (not allowed in MATLAB)
                 % e.g. mdu.particles.3Dtype > mdu.particles.mdu_3Dtype
-                mdu.(grpnam).(['mdu_' parnam]) = var;
+                mdu.(grpnam).(['mdu_' parnam]) = val;
+                parnam_prev=parnam;
             end
        end
    end
@@ -64,7 +71,12 @@ case 'read'
 
 case 'write'
    mdu          = varargin{2};
-   mdu_Comments = varargin{3};
+   if numel(varargin)>2
+       isComments=true;
+       mdu_Comments = varargin{3};
+   else
+       isComments=false;
+   end
 
    %
    % Fill a temporary strucrure such hat it can be written by the function inifile
@@ -75,13 +87,18 @@ case 'write'
    for igroup= 1: length(names)
        tmp.Data{igroup,1} = simona2mdu_replacechar(names{igroup},'_',' ');
        pars = fieldnames(mdu.(names{igroup}));
-       for ipar = 1: length(pars);
-           tmp2{ipar,1} = simona2mdu_replacechar(pars{ipar},'_',' ');
-           if  strcmpi(tmp2{ipar,1},'wall ks') tmp2{ipar,1} = simona2mdu_replacechar(tmp2{ipar,1},' ','_'); end
-           if ~isempty(num2str(mdu.(names{igroup}).(pars{ipar})))
-               line = num2str(mdu.(names{igroup}).(pars{ipar})) ;
+       for ipar = 1: length(pars)
+           tmp2{ipar,1}=pars{ipar};
+%            tmp2{ipar,1} = simona2mdu_replacechar(pars{ipar},'_',' '); %why is this? not only wall_ks has underscore V
+%            if  strcmpi(tmp2{ipar,1},'wall ks') tmp2{ipar,1} = simona2mdu_replacechar(tmp2{ipar,1},' ','_'); end
+           val=mdu.(names{igroup}).(pars{ipar});
+           if iscell(val)
+               line=sprintf('%s ',val{:});
+               line=strrep(line,' \ ',''); %a bar may have been used to seprate input in several lines
+           elseif ~isempty(num2str(val))
+               line = num2str(val);
            else
-               line = mdu.(names{igroup}).(pars{ipar});
+               line = val;
            end
            maxlen = max(maxlen,length(line) + 1);
 %            line(40:c = ['# ' mdu_Comments.(names{igroup}).(pars{ipar})];
@@ -92,6 +109,7 @@ case 'write'
    end
 
    %% add comments
+   if isComments
    for igroup = 1: length(names)
        pars = fieldnames(mdu.(names{igroup}));
        for ipar = 1: length(pars)
@@ -104,6 +122,7 @@ case 'write'
            ['# ' mdu_Comments.(names{igroup}).(pars{ipar})]
            tmp.Data{igroup,2}{ipar,2} = line;
        end
+   end
    end
 
    inifile ('write',fname,tmp);
